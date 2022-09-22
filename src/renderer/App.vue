@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import Hello from './components/Hello.vue'
-
-window.electron.ipcRenderer.send('message', 'Hello from App.vue!');
+import { RouterView } from "vue-router";
 </script>
 
 <template>
   <div id="app">
-    <Hello/>
+    <RouterView />
   </div>
 </template>
