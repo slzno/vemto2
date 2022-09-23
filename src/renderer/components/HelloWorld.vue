@@ -5,11 +5,11 @@ const msg = ref("Electron + Vue3 template")
 </script>
 
 <template>
-  <div id="hello">
-    <p>
-      {{ msg }}
-    </p>
+    <div id="hello">
+        <p>
+            {{ msg }}
+        </p>
 
-    <input type="text" v-model="msg" />
-  </div>
+        <input type="text" v-model="msg" />
+    </div>
 </template>

@@ -12,7 +12,7 @@
     "win": {
         "target": "nsis"
     },
-    "linux":  {
+    "linux": {
         "target": ["snap"]
     },
     "files": [
