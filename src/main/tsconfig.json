@@ -9,6 +9,7 @@
     "outDir": "../../build/main",
     "allowJs": true,
     "noImplicitAny": false,
+    "sourceMap": true,
   },
   "exclude": ["static"]
 }
