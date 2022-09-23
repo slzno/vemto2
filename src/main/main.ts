@@ -1,5 +1,4 @@
 import { join } from "path"
-// import devtools from "@vue/devtools";
 import { app, BrowserWindow, ipcMain, session } from "electron"
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer"
 
@@ -17,7 +16,6 @@ function createWindow() {
   if (process.env.NODE_ENV === "development") {
     const rendererPort = process.argv[2]
     mainWindow.loadURL(`http://localhost:${rendererPort}`)
-    // devtools.connect();
     installExtension(VUEJS3_DEVTOOLS)
   } else {
     mainWindow.loadFile(join(app.getAppPath(), "renderer", "index.html"))
