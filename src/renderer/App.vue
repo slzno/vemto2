@@ -3,7 +3,7 @@ import { RouterView } from "vue-router"
 </script>
 
 <template>
-    <div id="app">
-        <RouterView />
+    <div id="app" class="w-full h-screen">
+        <RouterView/>
     </div>
 </template>

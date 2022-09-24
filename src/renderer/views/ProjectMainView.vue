@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { RouterView, RouterLink } from 'vue-router';
+import { RouterView } from 'vue-router';
+import ProjectNavbar from '@Renderer/components/ProjectNavbar.vue';
 </script>
 
 <template>
-    <RouterLink to="/">Back</RouterLink>
-    
-    <div>
-        <RouterLink to="project/schema">Open Schema</RouterLink>
+    <div class="h-full flex">
+        <ProjectNavbar/>
+        
+        <!-- Content -->
+        <div class="flex-1">
+            <RouterView/>
+        </div>
     </div>
-
-    <RouterView/>
 </template>
