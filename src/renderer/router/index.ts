@@ -22,8 +22,8 @@ const router = createRouter({
                     path: "schema",
                     name: "project-schema",
                     component: ProjectSchemaViewVue,
-                }
-            ]
+                },
+            ],
         },
     ],
 })

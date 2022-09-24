@@ -4,6 +4,6 @@ import { RouterView } from "vue-router"
 
 <template>
     <div id="app" class="w-full h-screen">
-        <RouterView/>
+        <RouterView />
     </div>
 </template>

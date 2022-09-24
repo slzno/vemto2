@@ -10,7 +10,18 @@
         "resolveJsonModule": true,
         "esModuleInterop": true,
         "lib": ["esnext", "dom"],
-        "types": ["vite/client"]
+        "types": ["vite/client"],
+        "paths": {
+            "@Main/*": ["../main/*"],
+            "@Renderer/*": ["./*"],
+            "@Common/*": ["../common/*"],
+        },
     },
-    "include": ["./**/*.ts", "./**/*.d.ts", "./**/*.tsx", "./**/*.vue", "misc/mainExtensions.js"]
+    "include": [
+        "./**/*.ts",
+        "./**/*.d.ts",
+        "./**/*.tsx",
+        "./**/*.vue",
+        "misc/mainExtensions.js"
+    ]
 }

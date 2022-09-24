@@ -39,6 +39,7 @@
         "vue-tsc": "^0.40.13"
     },
     "dependencies": {
+        "@heroicons/vue": "^2.0.11",
         "prettier": "^2.7.1",
         "vue": "^3.2.36",
         "vue-router": "4"

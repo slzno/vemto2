@@ -9,7 +9,12 @@
         "outDir": "../../build/main",
         "allowJs": true,
         "noImplicitAny": false,
-        "sourceMap": true
+        "sourceMap": true,
+        "paths": {
+            "@Main/*": ["./*"],
+            "@Renderer/*": ["../renderer/*"],
+            "@Common/*": ["../common/*"],
+        },
     },
     "exclude": ["static"]
 }

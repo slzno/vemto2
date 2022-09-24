@@ -1203,6 +1203,11 @@
   dependencies:
     "@hapi/hoek" "^9.0.0"
 
+"@heroicons/vue@^2.0.11":
+  version "2.0.11"
+  resolved "https://registry.yarnpkg.com/@heroicons/vue/-/vue-2.0.11.tgz#b228ed87b99ddf1e99faa56134a6a05a7c870a2d"
+  integrity sha512-nTfN4aZVCP8Xntt9Q9RvH+vDagFHA4zFCUge6oCdkBrELH1i6K9feubvnEMhRIYdwC+nWULqKyJP7iVoWkR6Eg==
+
 "@humanwhocodes/config-array@^0.10.4":
   version "0.10.5"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.10.5.tgz#bb679745224745fff1e9a41961c1d45a49f81c04"

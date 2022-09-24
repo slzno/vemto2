@@ -4,9 +4,14 @@ module.exports = {
     theme: {
         extend: {},
         fontFamily: {
-            'sans': ['Roboto', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-            'mono': ['Roboto Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
-        }
+            sans: ["Roboto", "ui-sans-serif", "system-ui", "sans-serif"],
+            mono: [
+                "Roboto Mono",
+                "ui-monospace",
+                "SFMono-Regular",
+                "monospace",
+            ],
+        },
     },
     plugins: [],
 }

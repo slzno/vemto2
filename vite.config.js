@@ -38,8 +38,16 @@ export default defineConfig({
     plugins: plugins,
     resolve: {
         alias: {
+            "@Main": fileURLToPath(
+                new URL("./src/main", import.meta.url)
+            ),
+
             "@Renderer": fileURLToPath(
                 new URL("./src/renderer", import.meta.url)
+            ),
+
+            "@Common": fileURLToPath(
+                new URL("./src/common", import.meta.url)
             ),
         },
     },
