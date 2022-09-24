@@ -7,8 +7,8 @@ const isTesting = process.env.NODE_ENV === "test",
 
 function createWindow() {
     const mainWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 1024,
+        height: 768,
         webPreferences: {
             preload: join(__dirname, "preload.js"),
             nodeIntegration: false,
@@ -33,7 +33,7 @@ app.whenReady().then(() => {
             responseHeaders: {
                 ...details.responseHeaders,
                 "Content-Security-Policy": isDevelopment
-                    ? ["*"]
+                    ? ["default-src 'self' http: https: 'unsafe-inline'"]
                     : ["script-src 'self'"],
             },
         })
