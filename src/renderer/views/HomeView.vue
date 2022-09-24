@@ -12,8 +12,10 @@ window.electron.ipcRenderer.send("message", "Hello from Home View")
     {{ message }}
 
     <p>
-        <input type="text" v-model="message" />
+        <input class="p-4 bg-red-100" type="text" v-model="message" />
     </p>
 
-    <button @click="showMessage()">Click me</button>
+    <button class="border border-red-200" @click="showMessage()">
+        Click me
+    </button>
 </template>

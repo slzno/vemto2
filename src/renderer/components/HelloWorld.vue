@@ -10,6 +10,6 @@ const msg = ref("Electron + Vue3 template")
             {{ msg }}
         </p>
 
-        <input type="text" v-model="msg" />
+        <input class="p-8 bg-gray-100" type="text" v-model="msg" />
     </div>
 </template>

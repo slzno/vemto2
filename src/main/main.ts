@@ -2,7 +2,7 @@ import { join } from "path"
 import { app, BrowserWindow, ipcMain, session } from "electron"
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer"
 
-const isTesting = process.env.NODE_ENV === "test", 
+const isTesting = process.env.NODE_ENV === "test",
     isDevelopment = process.env.NODE_ENV === "development"
 
 function createWindow() {
@@ -32,7 +32,9 @@ app.whenReady().then(() => {
         callback({
             responseHeaders: {
                 ...details.responseHeaders,
-                "Content-Security-Policy": isDevelopment ? ["*"] : ["script-src 'self'"],
+                "Content-Security-Policy": isDevelopment
+                    ? ["*"]
+                    : ["script-src 'self'"],
             },
         })
     })
