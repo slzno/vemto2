@@ -38,7 +38,7 @@ export default defineConfig({
     plugins: plugins,
     resolve: {
         alias: {
-            "@": fileURLToPath(new URL("./src/renderer", import.meta.url)),
+            "@Renderer": fileURLToPath(new URL("./src/renderer", import.meta.url)),
         },
     },
 })

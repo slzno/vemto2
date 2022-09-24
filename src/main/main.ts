@@ -2,6 +2,9 @@ import { join } from "path"
 import { app, BrowserWindow, ipcMain, session } from "electron"
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer"
 
+const isTesting = process.env.NODE_ENV === "test", 
+    isDevelopment = process.env.NODE_ENV === "development"
+
 function createWindow() {
     const mainWindow = new BrowserWindow({
         width: 800,
@@ -13,7 +16,7 @@ function createWindow() {
         },
     })
 
-    if (process.env.NODE_ENV === "development") {
+    if (isDevelopment) {
         const rendererPort = process.argv[2]
         mainWindow.loadURL(`http://localhost:${rendererPort}`)
         installExtension(VUEJS3_DEVTOOLS)
@@ -29,7 +32,7 @@ app.whenReady().then(() => {
         callback({
             responseHeaders: {
                 ...details.responseHeaders,
-                "Content-Security-Policy": ["script-src 'self'"],
+                "Content-Security-Policy": isDevelopment ? ["*"] : ["script-src 'self'"],
             },
         })
     })
