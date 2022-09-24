@@ -7,7 +7,7 @@ const isTesting = process.env.NODE_ENV === "test",
 
 function createWindow() {
     const mainWindow = new BrowserWindow({
-        width: 1024,
+        width: 1320,
         height: 768,
         webPreferences: {
             preload: join(__dirname, "preload.js"),
@@ -20,7 +20,10 @@ function createWindow() {
         const rendererPort = process.argv[2]
         mainWindow.loadURL(`http://localhost:${rendererPort}`)
         installExtension(VUEJS3_DEVTOOLS)
+
+        if(process.env.VEMTO_HIDE_MENU) mainWindow.setMenu(null)
     } else {
+        mainWindow.setMenu(null)
         mainWindow.loadFile(join(app.getAppPath(), "renderer", "index.html"))
     }
 }
