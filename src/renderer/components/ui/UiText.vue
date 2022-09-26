@@ -18,9 +18,10 @@
 </script>
 
 <template>
-    <input 
-        class="w-full py-2 px-4 rounded border border-slate-300" 
+    <input
+        class="w-full py-2 px-4 rounded border border-slate-300"
         type="text"
         v-model="localValue"
-        @input="$emit('update:modelValue', localValue)">
+        @input="$emit('update:modelValue', localValue)"
+    />
 </template>

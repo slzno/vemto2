@@ -21,7 +21,7 @@ function createWindow() {
         mainWindow.loadURL(`http://localhost:${rendererPort}`)
         installExtension(VUEJS3_DEVTOOLS)
 
-        if(process.env.VEMTO_HIDE_MENU) mainWindow.setMenu(null)
+        if (process.env.VEMTO_HIDE_MENU) mainWindow.setMenu(null)
     } else {
         mainWindow.setMenu(null)
         mainWindow.loadFile(join(app.getAppPath(), "renderer", "index.html"))

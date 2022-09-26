@@ -13,8 +13,8 @@
         "paths": {
             "@Main/*": ["./*"],
             "@Renderer/*": ["../renderer/*"],
-            "@Common/*": ["../common/*"],
-        },
+            "@Common/*": ["../common/*"]
+        }
     },
     "exclude": ["static"]
 }

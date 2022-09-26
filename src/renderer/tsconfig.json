@@ -14,8 +14,8 @@
         "paths": {
             "@Main/*": ["../main/*"],
             "@Renderer/*": ["./*"],
-            "@Common/*": ["../common/*"],
-        },
+            "@Common/*": ["../common/*"]
+        }
     },
     "include": [
         "./**/*.ts",

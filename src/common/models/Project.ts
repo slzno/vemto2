@@ -1,6 +1,5 @@
 export default class Project {
-    
-    path: string = ''
+    path: string = ""
 
     setPath(path: string) {
         this.path = path
@@ -9,5 +8,4 @@ export default class Project {
     getPath(): string {
         return this.path
     }
-
 }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref } from "vue"
+    import { ref } from "vue"
 
-const msg = ref("Electron + Vue3 template")
+    const msg = ref("Electron + Vue3 template")
 </script>
 
 <template>
