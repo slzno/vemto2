@@ -1,24 +1,27 @@
 <script setup lang="ts">
-import Test from "@Common/services/Test"
+import { ref } from "vue"
+import { useRouter } from "vue-router"
+import UiText from "@Renderer/components/ui/UiText.vue"
+import UiButton from "@Renderer/components/ui/UiButton.vue"
 
-const test = new Test()
-test.test()
+let projectPath = ref(
+    localStorage.getItem("projectPath") || ""
+)
 
-const showAlert = () => {
-    alert("Hello from Vue3!")
+const router = useRouter()
+
+const openProject = () : void => {
+    localStorage.setItem("projectPath", projectPath.value)
+    router.push("/project/schema")
 }
 </script>
 
 <template>
-    <p>
-        <input class="p-4 bg-red-100 rounded-lg" type="text" />
-    </p>
-
-    <RouterLink
-        class="shadow-md p-4 bg-blue-100 rounded-lg"
-        to="/project/schema"
-        >Open Project</RouterLink
-    >
-
-    <button @click="showAlert"></button>
+    <section class="p-4 space-y-4">
+        <p>
+            <UiText v-model="projectPath" />
+        </p>
+    
+        <UiButton @click="openProject">Open Project</UiButton>
+    </section>
 </template>
