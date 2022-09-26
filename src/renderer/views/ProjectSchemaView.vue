@@ -1,4 +1,15 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+    import { onMounted } from 'vue'
+    import { useProjectStore } from '@Renderer/stores/useProjectStore'
+
+    const projectStore = useProjectStore()
+
+    let project = projectStore.project
+
+    onMounted(() => {
+        console.log(project)
+    })
+</script>
 
 <template>
     <div

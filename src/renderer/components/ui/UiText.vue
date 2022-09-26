@@ -10,10 +10,10 @@
 
     defineEmits(["update:modelValue"])
 
-    let value = ref("")
+    let localValue = ref("")
 
-    onMounted(() => {
-        value.value = props.modelValue
+    onMounted((): void => {
+        localValue.value = props.modelValue
     })
 </script>
 
@@ -21,6 +21,6 @@
     <input 
         class="w-full py-2 px-4 rounded border border-slate-300" 
         type="text"
-        v-model="value"
-        @input="$emit('update:modelValue', value)">
+        v-model="localValue"
+        @input="$emit('update:modelValue', localValue)">
 </template>
