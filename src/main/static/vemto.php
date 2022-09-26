@@ -367,61 +367,21 @@ class TableRepository {
 
     public function getTables()
     {
-        return $this->tables;
+        return collect($this->tables)->map(function ($table, $tableName) {
+            return [
+                'name' => $tableName,
+                'columns' => $table,
+            ];
+        })->toArray();
     }
 }
 
 $tablesRepository = new TableRepository();
 $tablesRepository->buildTablesFromMigrations();
-// dump($tablesRepository->getTables());
 
-use function Termwind\{render};
+$response = $tablesRepository->getTables();
+$jsonResponse = json_encode($response);
 
-$tableHtml = '
-<div>
-    <div class="pb-1">
-        Vemto on Fire 🔥
-    </div>
-    @foreach($tables as $table => $columns)
-        <div class="bg-green-300 text-green-900 font-bold uppercase p-2" colspan="5">{{ $table }}</div>
-
-        <div>
-            <table class="bg-gray-100">
-                <thead>
-                    <tr>
-                        <th>Column</th>
-                        <th>Type</th>
-                        <th>Creator</th>
-                        <th>Length</th>
-                        <th>Default</th>
-                        <th>Nullable</th>
-                        <th>Unsigend</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($columns as $column)
-                        <tr>
-                            <td>{{ $column["name"] }}</td>
-                            <td>{{ $column["type"] }}</td>
-                            <td>{{ $column["creatorMethod"] }}</td>
-                            <td>{{ $column["length"] }}</td>
-                            <td>{{ $column["default"] }}</td>
-                            <td>{{ $column["nullable"] ? "✅" : "" }}</td>
-                            <td>{{ $column["unsigned"] ? "✅" : "" }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    @endforeach
-</div>
-';
-
-$renderedHtml = Blade::render($tableHtml, [
-    'tables' => $tablesRepository->getTables()
-]);
-render($renderedHtml);
-
-// file_put_contents('tables.html', $renderedHtml);
+echo "VEMTO_JSON_RESPONSE_INIT(" . $jsonResponse . ")VEMTO_JSON_RESPONSE_END";
 
 exit(0);

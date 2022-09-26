@@ -1,19 +1,27 @@
 <script setup lang="ts">
-    import { onMounted } from "vue"
+    import { onMounted, ref } from "vue"
+    import Project from "@Renderer/../common/models/Project"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
 
     const projectStore = useProjectStore()
 
-    let project = projectStore.project
+    let project: Project = projectStore.project,
+        tables: any = ref([])
 
     onMounted(() => {
         console.log(project)
+
+        window.api.loadSchema(project.path)
+
+        window.api.onSchemaLoaded((data) => {
+            tables.value = data
+        })
     })
 </script>
 
 <template>
     <div
-        id="entitiesContainer"
+        id="tablesContainer"
         class="bg-slate-100 w-full h-full relative rounded-r-xl text-slate-700"
     >
         <div class="absolute top-0 right-0 p-4">
@@ -125,7 +133,7 @@
                 <div
                     class="flex italic text-sm text-slate-500 hover:text-slate-900 cursor-help"
                 >
-                    Showing 4 of 15 entities
+                    Showing 4 of 15 tables
                 </div>
             </div>
         </div>
@@ -177,157 +185,47 @@
 
         <!-- Entities -->
         <div
-            id="entity1"
-            class="entity cursor-move absolute shadow-lg p-4 rounded-lg bg-white"
-            style="min-width: 270px; top: 210px; left: 500px"
+            id="table1"
+            class="table cursor-move absolute shadow-lg p-4 rounded-lg bg-white"
+            style="min-width: 270px;"
+            :style="{
+                top: Math.floor(Math.random() * 1000) + 1 + 'px',
+                left: Math.floor(Math.random() * 800) + 1 + 'px',
+            }"
+            v-for="table in tables"
+            :key="table.name"
         >
-            <span class="title w-full font-bold text-lg">User</span>
+            <span class="title w-full font-bold text-lg">{{ table.name }}</span>
 
             <div class="mt-4 font-mono">
-                <div class="w-full flex items-center">
+
+                <div class="w-full flex items-center" 
+                    v-for="column in table.columns" 
+                    :key="column.name"
+                >
                     <span
                         class="flex-grow pr-8 flex items-center text-slate-900"
                     >
                         <div
+                            :class="{
+                                'bg-yellow-400': column.autoIncrement,
+                                'bg-slate-300': !column.autoIncrement,
+                            }"
                             class="w-2 h-2 mr-2 rounded-full bg-yellow-400"
                         ></div>
-                        id
+                        {{ column.name }}
                     </span>
                     <span
                         class="text-xs text-slate-400 display:none flex items-center"
-                        >bigIncrements</span
+                        >{{ column.type }}</span
                     >
                     <span
-                        class="text-slate-200 hover:text-red-500 font-bold pl-3"
+                        :class="{'text-red-300': column.nullable, 'text-slate-200': !column.nullable}"
+                        class="hover:text-red-500 font-bold pl-3"
                         >N</span
                     >
                 </div>
-
-                <div class="w-full flex items-center">
-                    <span
-                        class="flex-grow pr-8 flex items-center text-slate-900"
-                    >
-                        <div
-                            class="w-2 h-2 mr-2 rounded-full bg-slate-200"
-                        ></div>
-                        name
-                    </span>
-                    <span
-                        class="text-xs text-slate-400 display:none flex items-center"
-                        >string(255)</span
-                    >
-                    <span
-                        class="text-slate-200 hover:text-red-500 font-bold pl-3"
-                        >N</span
-                    >
-                </div>
-
-                <div class="w-full flex items-center">
-                    <span
-                        class="flex-grow pr-8 flex items-center text-slate-900"
-                    >
-                        <div class="w-2 h-2 mr-2 rounded-full bg-red-400"></div>
-                        email
-                    </span>
-                    <span
-                        class="text-xs text-slate-400 display:none flex items-center"
-                        >string(255)</span
-                    >
-                    <span
-                        class="text-slate-200 hover:text-red-500 font-bold pl-3"
-                        >N</span
-                    >
-                </div>
-
-                <div class="w-full flex items-center">
-                    <span
-                        class="flex-grow pr-8 flex items-center text-slate-900"
-                    >
-                        <div
-                            class="w-2 h-2 mr-2 rounded-full bg-slate-200"
-                        ></div>
-                        name
-                    </span>
-                    <span
-                        class="text-xs text-slate-400 display:none flex items-center"
-                        >string(255)</span
-                    >
-                    <span
-                        class="text-slate-200 hover:text-red-500 font-bold pl-3"
-                        >N</span
-                    >
-                </div>
-
-                <div class="w-full flex mt-4">
-                    <span
-                        class="flex-grow pr-8 flex items-center text-slate-900"
-                    >
-                        <div
-                            class="w-2 h-2 mr-2 rounded-full bg-slate-200"
-                        ></div>
-                        created_at
-                    </span>
-                    <span
-                        class="text-xs text-slate-400 display:none flex items-center"
-                        >timestamp</span
-                    >
-                    <span class="text-red-300 hover:text-red-500 font-bold pl-3"
-                        >N</span
-                    >
-                </div>
-
-                <div class="w-full flex items-center">
-                    <span
-                        class="flex-grow pr-8 flex items-center text-slate-900"
-                    >
-                        <div
-                            class="w-2 h-2 mr-2 rounded-full bg-slate-200"
-                        ></div>
-                        updated_at
-                    </span>
-                    <span
-                        class="text-xs text-slate-400 display:none flex items-center"
-                        >timestamp</span
-                    >
-                    <span class="text-red-300 hover:text-red-500 font-bold pl-3"
-                        >N</span
-                    >
-                </div>
-
-                <div class="w-full border-t-2 border-slate-100 mt-4"></div>
-
-                <div class="w-full flex items-center mt-2">
-                    <span
-                        class="flex-grow pr-8 flex items-center text-slate-900"
-                    >
-                        <div
-                            class="w-2 h-2 mr-2 rounded-full bg-slate-200"
-                        ></div>
-                        <span class="font-semibold text-red-500 text-sm"
-                            >hasMany:</span
-                        >
-                        <span class="font-semibold ml-1 text-slate-800 text-sm"
-                            >Post</span
-                        >
-                    </span>
-                    <!-- <span class="text-xs text-slate-400 display:none flex items-center">Rel</span> -->
-                </div>
-                <div class="w-full flex items-center">
-                    <span
-                        class="flex-grow pr-8 flex items-center text-slate-900"
-                    >
-                        <div
-                            class="w-2 h-2 mr-2 rounded-full bg-slate-200"
-                        ></div>
-                        <span class="font-semibold text-red-500 text-sm"
-                            >hasMany:</span
-                        >
-                        <span class="font-semibold ml-1 text-slate-800 text-sm"
-                            >Video</span
-                        >
-                    </span>
-                    <!-- <span class="text-xs text-slate-400 display:none flex items-center">Rel</span> -->
-                </div>
+                
             </div>
         </div>
     </div>

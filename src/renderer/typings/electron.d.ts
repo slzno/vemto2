@@ -1,14 +1,13 @@
-import * as Electron from "electron"
-
 /**
  * Should match main/preload.ts for typescript support in renderer
  */
 export default interface ElectronApi {
-    ipcRenderer: Electron.IpcRenderer
+    loadSchema: (path: string) => void,
+    onSchemaLoaded: (callback: (data: any) => void) => void,
 }
 
 declare global {
     interface Window {
-        electron: ElectronApi
+        api: ElectronApi
     }
 }

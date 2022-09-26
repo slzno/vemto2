@@ -1,5 +1,6 @@
 import { join } from "path"
-import { app, BrowserWindow, ipcMain, session } from "electron"
+import { IpcMessagesHandler } from "./IpcMessagesHandler"
+import { app, BrowserWindow, session } from "electron"
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer"
 
 const isTesting = process.env.NODE_ENV === "test",
@@ -55,6 +56,4 @@ app.on("window-all-closed", function () {
     if (process.platform !== "darwin") app.quit()
 })
 
-ipcMain.on("message", (event, message) => {
-    console.log(message)
-})
+IpcMessagesHandler()
