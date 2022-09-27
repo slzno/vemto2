@@ -11,6 +11,7 @@
         "esModuleInterop": true,
         "lib": ["esnext", "dom"],
         "types": ["vite/client"],
+        "allowJs": true,
         "paths": {
             "@Main/*": ["../main/*"],
             "@Renderer/*": ["./*"],

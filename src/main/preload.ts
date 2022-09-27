@@ -7,4 +7,7 @@ contextBridge.exposeInMainWorld("api", {
     onSchemaLoaded: (callback: (data: any) => void) => { 
         ipcRenderer.on("data:project:schema", (event, data) => callback(data))
     },
+    offSchemaLoaded: () => {
+        ipcRenderer.removeAllListeners("data:project:schema")
+    }
 })
