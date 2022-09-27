@@ -80,6 +80,7 @@ class MigrationRepository {
             'addedColumns' => [],
             'changedColumns' => [],
             'droppedColumns' => [],
+            'commands' => [],
         ];
     }
 
@@ -91,6 +92,11 @@ class MigrationRepository {
     public function changeColumn($column)
     {
         $this->migrations[$this->currentMigration]['changedColumns'][] = $column;
+    }
+
+    public function addCommand($command)
+    {
+        $this->migrations[$this->currentMigration]['commands'][] = $command;
     }
 
     public function dropColumn($columns) {
@@ -149,18 +155,16 @@ class ExtendedBlueprint extends Illuminate\Database\Schema\Blueprint
         $this->migrationsRepository = app('localMigrationsRepository');
     }
 
-    public function addColumn($type, $name, array $parameters = [])
+    protected function addColumnDefinition($definition)
     {
         $debug = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 10);
 
         $toppestCaller = $this->getToppestCaller($debug);
 
-        $parameters = array_merge($parameters, [
-            'table' => $this->getTable(),
-            'creatorMethod' => $toppestCaller['function'] ?? $type,
-        ]);
+        $definition['table'] = $this->getTable();
+        $definition['creatorMethod'] = $toppestCaller['function'] ?? $definition['type'];
 
-        return parent::addColumn($type, $name, $parameters);
+        return parent::addColumnDefinition($definition);
     }
 
     protected function getToppestCaller($debug)
@@ -205,36 +209,43 @@ class ExtendedBuilder extends Illuminate\Database\Schema\Builder
 
     public function create($table, Closure $callback)
     {
-        tap($this->createBlueprint($table), function ($blueprint) use ($callback) {
+        tap($this->createBlueprint($table), function ($blueprint) use ($table, $callback) {
             $blueprint->create();
 
             $callback($blueprint);
             
-            $this->processTable($blueprint);
+            $this->processTable($table, $blueprint);
         });
     }
 
     public function table($table, Closure $callback)
     {
-        tap($this->createBlueprint($table), function ($blueprint) use ($callback) {
+        tap($this->createBlueprint($table), function ($blueprint) use ($table, $callback) {
             $blueprint->create();
 
             $callback($blueprint);
 
-            $this->processTable($blueprint);
+            $this->processTable($table, $blueprint);
         });
     }
 
-    protected function processTable($blueprint)
+    protected function processTable($table, $blueprint)
     {
         $addedColumns = $blueprint->getAddedColumns();
         foreach ($addedColumns as $column) {
-            $this->migrationsRepository->addColumn($column);
+            $this->migrationsRepository->addColumn($column->toArray());
         }
 
         $changedColumns = $blueprint->getChangedColumns();
         foreach ($changedColumns as $column) {
-            $this->migrationsRepository->changeColumn($column);
+            $this->migrationsRepository->changeColumn($column->toArray());
+        }
+
+        $addedCommands = $blueprint->getCommands();
+        foreach ($addedCommands as $command) {
+            $finalCommand = $command->toArray();
+            $finalCommand['table'] = $table;
+            $this->migrationsRepository->addCommand($finalCommand);
         }
     }
 
@@ -305,6 +316,7 @@ class TableRepository {
             $this->processAddedColumns($migration['addedColumns']);
             $this->processChangedColumns($migration['changedColumns']);
             $this->processDroppedColumns($migration['droppedColumns']);
+            $this->processCommands($migration['commands']);
         }
     }
 
@@ -321,10 +333,10 @@ class TableRepository {
         $columnName = $column['name'];
 
         if (!isset($this->tables[$tableName])) {
-            $this->tables[$tableName] = [];
+            $this->initTable($tableName);
         }
 
-        $this->tables[$tableName][$columnName] = $column;
+        $this->tables[$tableName]['columns'][$columnName] = $column;
     }
 
     protected function processChangedColumns($changedColumns)
@@ -340,10 +352,10 @@ class TableRepository {
         $columnName = $column['name'];
 
         if (!isset($this->tables[$tableName])) {
-            $this->tables[$tableName] = [];
+            $this->initTable($tableName);
         }
 
-        $this->tables[$tableName][$columnName] = $column;
+        $this->tables[$tableName]['columns'][$columnName] = $column;
     }
 
     protected function processDroppedColumns($droppedColumns)
@@ -359,20 +371,87 @@ class TableRepository {
         $columnName = $column['name'];
 
         if (!isset($this->tables[$tableName])) {
-            $this->tables[$tableName] = [];
+            $this->initTable($tableName);
         }
 
-        unset($this->tables[$tableName][$columnName]);
+        unset($this->tables[$tableName]['columns'][$columnName]);
+    }
+
+    protected function processCommands($commands)
+    {
+        foreach ($commands as $command) {
+            $this->processCommand($command);
+        }
+    }
+
+    protected function processCommand($command)
+    {
+        $tableName = $command['table'];
+        $commandName = $command['name'];
+
+        if (!isset($this->tables[$tableName])) {
+            $this->initTable($tableName);
+        }
+
+        if ($commandName == 'index') {
+            $this->addIndex($command);
+        }
+
+        if ($commandName == 'unique') {
+            $this->addUnique($command);
+        }
+
+        if ($commandName == 'foreign') {
+            $this->addForeign($command);
+        }
+    }
+
+    protected function addIndex($command)
+    {
+        $tableName = $command['table'];
+        $indexName = $command['index'];
+
+        if (!isset($this->tables[$tableName]['indexes'][$indexName])) {
+            $this->tables[$tableName]['indexes'][$indexName] = $command;
+        }
+    }
+
+    protected function addUnique($command)
+    {
+        $tableName = $command['table'];
+        $indexName = $command['index'];
+
+        if (!isset($this->tables[$tableName]['uniques'][$indexName])) {
+            $this->tables[$tableName]['uniques'][$indexName] = $command;
+        }
+    }
+
+    protected function addForeign($command)
+    {
+        $tableName = $command['table'];
+        $indexName = $command['index'];
+
+        if (!isset($this->tables[$tableName]['foreigns'][$indexName])) {
+            $this->tables[$tableName]['foreigns'][$indexName] = $command;
+        }
+    }
+
+    protected function initTable($tableName)
+    {
+        $this->tables[$tableName] = [
+            'columns' => [],
+            'indexes' => [],
+            'uniques' => [],
+            'foreigns' => [],
+        ];
     }
 
     public function getTables()
     {
-        return collect($this->tables)->map(function ($table, $tableName) {
-            return [
-                'name' => $tableName,
-                'columns' => $table,
-            ];
-        })->toArray();
+        return collect($this->tables)->map(function($table, $tableName) {
+            $table['name'] = $tableName;
+            return $table;
+        });
     }
 }
 

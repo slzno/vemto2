@@ -14,6 +14,7 @@
         window.api.loadSchema(project.path)
 
         window.api.onSchemaLoaded((data) => {
+            console.log(data)
             tables.value = data
         })
     })
@@ -22,9 +23,9 @@
 <template>
     <div
         id="tablesContainer"
-        class="bg-slate-100 w-full h-full relative rounded-r-xl text-slate-700"
+        class="bg-slate-100 w-full h-full relative rounded-r-xl text-slate-700 overflow-hidden"
     >
-        <div class="absolute top-0 right-0 p-4">
+        <div class="absolute z-50 top-0 right-0 p-4">
             <div class="flex items-center bg-white rounded-full shadow px-1">
                 <!-- Tools and Icons -->
                 <div class="flex">
@@ -82,7 +83,7 @@
             </div>
         </div>
 
-        <div class="absolute flex top-0 left-0 p-4 space-x-2 text-sm">
+        <div class="absolute z-50 flex top-0 left-0 p-4 space-x-2 text-sm">
             <div class="flex items-center bg-white rounded-full shadow">
                 <div
                     class="px-5 cursor-pointer text-red-500 hover:text-red-500"
@@ -128,7 +129,7 @@
             </div>
         </div>
 
-        <div class="absolute bottom-0 left-0 py-1 px-1 w-full">
+        <div class="absolute z-50 bottom-0 left-0 py-1 px-1 w-full">
             <div class="flex items-center justify-center">
                 <div
                     class="flex italic text-sm text-slate-500 hover:text-slate-900 cursor-help"
@@ -138,7 +139,7 @@
             </div>
         </div>
 
-        <div class="absolute bottom-0 right-0 p-4">
+        <div class="absolute z-50 bottom-0 right-0 p-4">
             <div class="flex items-center bg-white rounded-full shadow p-1">
                 <!-- Tools and Icons -->
                 <div class="flex">
@@ -184,48 +185,52 @@
         </div>
 
         <!-- Entities -->
-        <div
-            id="table1"
-            class="table cursor-move absolute shadow-lg p-4 rounded-lg bg-white"
-            style="min-width: 270px;"
-            :style="{
-                top: Math.floor(Math.random() * 1000) + 1 + 'px',
-                left: Math.floor(Math.random() * 800) + 1 + 'px',
-            }"
-            v-for="table in tables"
-            :key="table.name"
-        >
-            <span class="title w-full font-bold text-lg">{{ table.name }}</span>
-
-            <div class="mt-4 font-mono">
-
-                <div class="w-full flex items-center" 
-                    v-for="column in table.columns" 
-                    :key="column.name"
-                >
-                    <span
-                        class="flex-grow pr-8 flex items-center text-slate-900"
+        <div class="relative block w-full h-full overflow-auto">
+            <div
+                :id="`table_${table.name}`"
+                :ref="`table_${table.name}`"
+                class="table cursor-move absolute shadow-lg p-4 rounded-lg bg-white"
+                style="min-width: 270px;"
+                :style="{
+                    top: Math.floor(Math.random() * 1000) + 1 + 'px',
+                    left: Math.floor(Math.random() * 1000) + 1 + 'px',
+                }"
+                v-for="table in tables"
+                :key="table.name"
+            >
+                <span class="title w-full font-bold text-lg">{{ table.name }}</span>
+    
+                <div class="mt-4 font-mono">
+    
+                    <div class="w-full flex items-center" 
+                        v-for="column in table.columns" 
+                        :key="column.name"
                     >
-                        <div
-                            :class="{
-                                'bg-yellow-400': column.autoIncrement,
-                                'bg-slate-300': !column.autoIncrement,
-                            }"
-                            class="w-2 h-2 mr-2 rounded-full bg-yellow-400"
-                        ></div>
-                        {{ column.name }}
-                    </span>
-                    <span
-                        class="text-xs text-slate-400 display:none flex items-center"
-                        >{{ column.type }}</span
-                    >
-                    <span
-                        :class="{'text-red-300': column.nullable, 'text-slate-200': !column.nullable}"
-                        class="hover:text-red-500 font-bold pl-3"
-                        >N</span
-                    >
+                        <span
+                            class="flex-grow pr-8 flex items-center text-slate-900"
+                        >
+                            <div
+                                :class="{
+                                    'text-red-500': column.unique,
+                                    'bg-yellow-400': column.autoIncrement,
+                                    'bg-slate-300': !column.autoIncrement,
+                                }"
+                                class="w-2 h-2 mr-2 rounded-full bg-yellow-400"
+                            ></div>
+                            {{ column.name }}
+                        </span>
+                        <span
+                            class="text-xs text-slate-400 display:none flex items-center"
+                            >{{ column.type }}</span
+                        >
+                        <span
+                            :class="{'text-red-400': column.nullable, 'text-slate-200': !column.nullable}"
+                            class="cursor-pointer hover:text-red-500 font-bold pl-3"
+                            >N</span
+                        >
+                    </div>
+                    
                 </div>
-                
             </div>
         </div>
     </div>

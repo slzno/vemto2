@@ -1277,6 +1277,39 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
+"@jsplumb/browser-ui@^5.12.0":
+  version "5.12.0"
+  resolved "https://registry.yarnpkg.com/@jsplumb/browser-ui/-/browser-ui-5.12.0.tgz#671e7a11f0ea9d907c3ae7904c4623d14c7edc38"
+  integrity sha512-LIHYQh0Jc+s1zxR0jG2t907mEZedyL3bjA233++y9GN+bYA8k9k+xraZV1lrkR7oAqLnT++Vr/YmULEOPZRoaA==
+  dependencies:
+    "@jsplumb/core" "5.12.0"
+
+"@jsplumb/common@5.12.0":
+  version "5.12.0"
+  resolved "https://registry.yarnpkg.com/@jsplumb/common/-/common-5.12.0.tgz#78ff7c014a946a33fe3ce3721dad6f02e545e0c7"
+  integrity sha512-srpPl9uSt91U1igscCdqbnx5PMZQqdMeWnP3cqcPCvw3SJkB9bllXQiNp3ju8gtUVo/aiXkoo00dnhgjQ76acg==
+  dependencies:
+    "@jsplumb/util" "5.12.0"
+
+"@jsplumb/connector-bezier@^5.12.0":
+  version "5.12.0"
+  resolved "https://registry.yarnpkg.com/@jsplumb/connector-bezier/-/connector-bezier-5.12.0.tgz#a5a55ad80d39dd49caa0f5c4aadc91db9d733c38"
+  integrity sha512-qLJRqo7V8MQw+v2KlGdjw8LYPtHW1IwDQ4rRslE027y04DKL8BrDD+KQkv3nnEKF8fM2GDVfHFjVtWwt3hIyDw==
+  dependencies:
+    "@jsplumb/core" "5.12.0"
+
+"@jsplumb/core@5.12.0":
+  version "5.12.0"
+  resolved "https://registry.yarnpkg.com/@jsplumb/core/-/core-5.12.0.tgz#6793d0dacdce2835ae225c7676288b22823e0e8c"
+  integrity sha512-0GPNoVcWMrxQ5483QIe/0R+f4jiKVrTS7/2muyiFXWHajO/TDe+O4PCml01MbERsPgcM3CT+33VmgyzMEYp/gg==
+  dependencies:
+    "@jsplumb/common" "5.12.0"
+
+"@jsplumb/util@5.12.0":
+  version "5.12.0"
+  resolved "https://registry.yarnpkg.com/@jsplumb/util/-/util-5.12.0.tgz#c38c4d3f5e7970e6e7e7caee21fd5bcb8032fcc9"
+  integrity sha512-vxnmHKXkIqdlGyFnQONGWh9dXtxvIRcE4M+hh0dJW9ITvqLbNbQn/ZFuczGXNPoNjYmD7RjfipJt3Fy/hdtSDg==
+
 "@malept/cross-spawn-promise@^1.1.0":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@malept/cross-spawn-promise/-/cross-spawn-promise-1.1.1.tgz#504af200af6b98e198bce768bc1730c6936ae01d"
