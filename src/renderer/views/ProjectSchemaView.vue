@@ -1,6 +1,4 @@
 <script setup lang="ts">
-    // import "@jsplumb/css/jsplumbtoolkit-defaults.css"
-
     import { nextTick, onMounted, onUnmounted, ref, watch } from "vue"
     import Project from "@Renderer/../common/models/Project"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
@@ -16,7 +14,7 @@
 
     onMounted(() => {
         window.api.loadSchema(project.path)
-        window.api.onSchemaLoaded((data) => tablesBaseData.value = data)
+        window.api.onSchemaLoaded((data) => (tablesBaseData.value = data))
     })
 
     onUnmounted(() => {
@@ -35,15 +33,15 @@
 
     const initSchema = () => {
         let instance = newInstance({
-            container: document.getElementById('tablesContainer')!,
+            container: document.getElementById("tablesContainer")!,
             // elementsDraggable: true,
         })
 
         instance.connect({
-            source: document.getElementById('table1')!,
-            target: document.getElementById('table2')!,
-            anchor:"Continuous",
-            cssClass: 'connector',
+            source: document.getElementById("table1")!,
+            target: document.getElementById("table2")!,
+            anchor: "Continuous",
+            cssClass: "connector",
             connector: BezierConnector.type,
         })
 
@@ -73,12 +71,13 @@
 
 <template>
     <div
-        id="tablesContainer"
         class="bg-slate-100 w-full h-full relative rounded-r-xl text-slate-700 overflow-hidden"
     >
-
         <!-- Entities -->
-        <div class="relative block w-full h-full overflow-hidden">
+        <div
+            id="tablesContainer"
+            class="relative block w-full h-full overflow-hidden"
+        >
             <!-- <div
                 :id="`table_${table.name}`"
                 :ref="`table_${table.name}`"
@@ -129,11 +128,19 @@
                 </div>
             </div> -->
 
-            <div id="table1" class="absolute w-32 h-32 bg-white shadow p-8"  style="top: 20px; left: 20px">
+            <div
+                id="table1"
+                class="absolute w-32 h-32 bg-white shadow p-8"
+                style="top: 20px; left: 20px"
+            >
                 Test 1
             </div>
 
-            <div id="table2" class="absolute w-32 h-32 bg-white shadow p-8" style="top: 20px; left: 500px">
+            <div
+                id="table2"
+                class="absolute w-32 h-32 bg-white shadow p-8"
+                style="top: 20px; left: 500px"
+            >
                 Test 1
             </div>
         </div>
@@ -142,11 +149,11 @@
 
 <style scoped>
     .jtk-drag-select * {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;    
-}  
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
 </style>
