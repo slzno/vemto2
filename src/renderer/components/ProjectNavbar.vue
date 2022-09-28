@@ -8,10 +8,10 @@
 </script>
 
 <template>
-    <nav class="w-20 h-full bg-white border-r-2 border-slate-100 rounded-l-xl">
+    <nav class="w-20 h-full bg-white dark:bg-slate-900 border-r-2 border-slate-100 dark:border-slate-800">
         <ul>
             <RouterLink
-                class="w-full h-12 flex justify-center items-center py-10 text-slate-400"
+                class="w-full h-12 flex justify-center items-center py-10 text-slate-400 dark:text-slate-600"
                 as="li"
                 to="/"
             >
@@ -25,13 +25,13 @@
             </li>
 
             <li
-                class="w-full h-12 flex justify-center items-center py-10 text-slate-400 hover:text-slate-800"
+                class="w-full h-12 flex justify-center items-center py-10 text-slate-400 dark:text-slate-600 hover:text-slate-800"
             >
                 <CodeBracketIcon class="w-9 h-9 stroke-2" />
             </li>
 
             <li
-                class="w-full h-12 flex justify-center items-center py-10 text-slate-400 hover:text-slate-800"
+                class="w-full h-12 flex justify-center items-center py-10 text-slate-400 dark:text-slate-600 hover:text-slate-800"
             >
                 <Cog8ToothIcon class="w-9 h-9 stroke-2" />
             </li>
