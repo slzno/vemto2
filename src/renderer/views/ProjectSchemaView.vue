@@ -37,35 +37,29 @@
             // elementsDraggable: true,
         })
 
-        instance.connect({
-            source: document.getElementById("table1")!,
-            target: document.getElementById("table2")!,
-            anchor: "Continuous",
-            cssClass: "connector",
-            connector: BezierConnector.type,
+        tablesData.value.forEach((table: any) => {
+            let node = document.getElementById('table_' + table.name)!
+
+            instance.manage(node)
+
+            if(table.hasRelatedTables()) {
+                let relatedTables = table.relatedTables
+
+                relatedTables.forEach((relatedTable: any) => {
+                    let relatedNode = document.getElementById('table_' + relatedTable.name)
+
+                    instance.connect({
+                        source: node!,
+                        target: relatedNode!,
+                        anchor:"Continuous",
+                        // anchors: ["Right", "Left"],
+                        cssClass: 'connector',
+                        connector: BezierConnector.type,
+                    })
+                })
+
+            }
         })
-
-        // tablesData.value.forEach((table: any) => {
-        //     let node = document.getElementById('table_' + table.name)
-
-        //     if(table.hasRelatedTables()) {
-        //         let relatedTables = table.relatedTables
-
-        //         relatedTables.forEach((relatedTable: any) => {
-        //             let relatedNode = document.getElementById('table_' + relatedTable.name)
-
-        //             instance.connect({
-        //                 source: node!,
-        //                 target: relatedNode!,
-        //                 anchor:"Continuous",
-        //                 // anchors: ["Right", "Left"],
-        //                 cssClass: 'connector',
-        //                 connector: BezierConnector.type,
-        //             })
-        //         })
-
-        //     }
-        // })
     }
 </script>
 
@@ -76,9 +70,9 @@
         <!-- Entities -->
         <div
             id="tablesContainer"
-            class="relative block w-full h-full overflow-hidden"
+            class="relative block w-full h-full overflow-auto"
         >
-            <!-- <div
+            <div
                 :id="`table_${table.name}`"
                 :ref="`table_${table.name}`"
                 class="schema-table cursor-move absolute shadow-lg p-4 rounded-lg bg-white"
@@ -126,9 +120,9 @@
                     </div>
                     
                 </div>
-            </div> -->
+            </div>
 
-            <div
+            <!-- <div
                 id="table1"
                 class="absolute w-32 h-32 bg-white shadow p-8"
                 style="top: 20px; left: 20px"
@@ -142,7 +136,7 @@
                 style="top: 20px; left: 500px"
             >
                 Test 1
-            </div>
+            </div> -->
         </div>
     </div>
 </template>
