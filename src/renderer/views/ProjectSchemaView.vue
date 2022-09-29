@@ -26,11 +26,11 @@
     onMounted(() => {
         window.api.loadSchema(project.path)
 
-        setInterval(() => {
-            if(isDragging) return
-            // if(jsPlumbInstance) jsPlumbInstance.setSuspendDrawing(true)
-            window.api.loadSchema(project.path)
-        }, 500)
+        // setInterval(() => {
+        //     if(isDragging) return
+        //     // if(jsPlumbInstance) jsPlumbInstance.setSuspendDrawing(true)
+        //     window.api.loadSchema(project.path)
+        // }, 500)
 
         window.api.onSchemaLoaded((data) => (tablesBaseData.value = data))
     })
@@ -40,6 +40,7 @@
     })
 
     watch(tablesBaseData, (data) => {
+        console.log('loaded')
         if(isDragging) return
 
         let formatter = new FormatMigrationsTables(data)
