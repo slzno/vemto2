@@ -3,7 +3,7 @@
     import Project from "@Renderer/../common/models/Project"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import FormatMigrationsTables from "@Common/services/FormatMigrationsTables"
-    import { newInstance } from "@jsplumb/browser-ui"
+    import { newInstance, EVENT_DRAG_STOP, EVENT_DRAG_START } from "@jsplumb/browser-ui"
     import { BezierConnector } from "@jsplumb/connector-bezier"
 
     const projectStore = useProjectStore()
@@ -12,9 +12,11 @@
         tablesData: any = ref([]),
         tablesBaseData: any = ref([]),
         zoom = ref(1),
+        isDragging = false,
+        currentConnections: any = {},
         jsPlumbInstance: any = null,
         tablesPositions: any = {
-            'users': {'top': 60, 'left': 30},
+            'users': {'top': 80, 'left': 30},
             'failed_jobs': {'top': 100, 'left': 900},
             'password_resets': {'top': 500, 'left': 900},
             'personal_access_tokens': {'top': 400, 'left': 30},
@@ -24,9 +26,11 @@
     onMounted(() => {
         window.api.loadSchema(project.path)
 
-        // setInterval(() => {
-        //     window.api.loadSchema(project.path)
-        // }, 1000)
+        setInterval(() => {
+            if(isDragging) return
+            // if(jsPlumbInstance) jsPlumbInstance.setSuspendDrawing(true)
+            window.api.loadSchema(project.path)
+        }, 500)
 
         window.api.onSchemaLoaded((data) => (tablesBaseData.value = data))
     })
@@ -36,6 +40,8 @@
     })
 
     watch(tablesBaseData, (data) => {
+        if(isDragging) return
+
         let formatter = new FormatMigrationsTables(data)
 
         tablesData.value = formatter.get()
@@ -46,17 +52,32 @@
     })
 
     const initSchema = () => {
-        jsPlumbInstance = newInstance({
-            container: document.getElementById("tablesContainer")!,
-            // elementsDraggable: true,
-        })
-
-        let currentConnections: any = {}
+        if(!jsPlumbInstance) {
+            jsPlumbInstance = newInstance({
+                container: document.getElementById("tablesContainer")!,
+                // elementsDraggable: true,
+            })
+        }
 
         tablesData.value.forEach((table: any) => {
             let node = document.getElementById('table_' + table.name)!
 
             jsPlumbInstance.manage(node)
+
+            jsPlumbInstance.bind(EVENT_DRAG_START, () => {
+                isDragging = true
+            })
+
+            jsPlumbInstance.bind(EVENT_DRAG_STOP, (p: any) => { 
+                isDragging = false
+
+                let tableName = p.el.getAttribute('data-table-name')
+
+                tablesPositions[tableName] = {
+                    'top': p.el.style.top.replace('px', ''),
+                    'left': p.el.style.left.replace('px', ''),
+                }
+            })
 
             if(table.hasRelatedTables()) {
                 let relatedTables = table.relatedTables
@@ -113,7 +134,11 @@
     <div
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative text-slate-700 overflow-hidden"
     >
-        <div class="absolute top-0 right-0 p-4 z-20">
+        <!-- <div class="absolute top-0 right-0 p-4 z-20">
+            
+        </div> -->
+
+        <div class="absolute flex top-0 left-0 p-4 space-x-2 text-sm z-20">
             <div class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow px-1">
                 <!-- Tools and Icons -->
                 <div class="flex">
@@ -136,9 +161,7 @@
                     <input type="text" class="bg-slate-100 dark:bg-slate-950 px-4 py-1 rounded-full" placeholder="Search">
                 </div>
             </div>
-        </div>
 
-        <div class="absolute flex top-0 left-0 p-4 space-x-2 text-sm z-20">
             <div class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow">
                 <div class="px-5 cursor-pointer text-red-500 hover:text-red-500">
                     Main
@@ -185,6 +208,7 @@
             <div
                 :id="`table_${table.name}`"
                 :ref="`table_${table.name}`"
+                :data-table-name="table.name"
                 class="schema-table cursor-move absolute shadow-lg p-4 rounded-lg bg-white dark:bg-slate-850 z-10"
                 style="min-width: 270px;"
                 :style="{
@@ -223,7 +247,7 @@
                         </span>
                         <span
                             class="text-xs text-slate-400 display:none flex items-center"
-                            >{{ column.type }}</span
+                            >{{ column.type }} <span class="ml-1 text-slate-300" v-if="column.hasOwnProperty('length')">({{ column.length }})</span></span
                         >
                         <span
                             :class="{'text-red-400': column.nullable, 'text-slate-200 dark:text-slate-700': !column.nullable}"
@@ -273,5 +297,13 @@
     svg.jtk-endpoint circle {
         fill:#9ca3af;
         z-index: 1;
+    }
+
+    .dark svg.connector path {
+        stroke:#334155;
+    }
+
+    .dark svg.jtk-endpoint circle {
+        fill:#334155;
     }
 </style>
