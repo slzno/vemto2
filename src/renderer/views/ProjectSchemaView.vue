@@ -11,6 +11,7 @@
     let project: Project = projectStore.project,
         tablesData: any = ref([]),
         tablesBaseData: any = ref([]),
+        interval: any = null,
         zoom = ref(1),
         isDragging = false,
         currentConnections: any = {},
@@ -26,21 +27,20 @@
     onMounted(() => {
         window.api.loadSchema(project.path)
 
-        // setInterval(() => {
-        //     if(isDragging) return
-        //     // if(jsPlumbInstance) jsPlumbInstance.setSuspendDrawing(true)
-        //     window.api.loadSchema(project.path)
-        // }, 500)
+        interval = setInterval(() => {
+            if(isDragging) return
+            window.api.loadSchema(project.path)
+        }, 500)
 
         window.api.onSchemaLoaded((data) => (tablesBaseData.value = data))
     })
 
     onUnmounted(() => {
         window.api.offSchemaLoaded()
+        if(interval) clearInterval(interval)
     })
 
     watch(tablesBaseData, (data) => {
-        console.log('loaded')
         if(isDragging) return
 
         let formatter = new FormatMigrationsTables(data)
