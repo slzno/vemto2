@@ -1,0 +1,4 @@
+{
+    "main": "index.php",
+    "output": "../../dist/schema-reader.phar"
+}
