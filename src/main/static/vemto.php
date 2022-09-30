@@ -7,10 +7,6 @@ $APP_DIRECTORY = getcwd();
 
 echo $APP_DIRECTORY . "\n";
 
-use Illuminate\Database\Migrations\Migrator;
-use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\View;
-
 define('LARAVEL_START', microtime(true));
 
 /*
@@ -54,6 +50,8 @@ $status = $kernel->handle(
     $input = new Symfony\Component\Console\Input\ArgvInput,
     new Symfony\Component\Console\Output\ConsoleOutput
 );
+
+use Illuminate\Database\Migrations\Migrator;
 
 class ExtendedMigrator extends Migrator
 {

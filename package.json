@@ -12,7 +12,8 @@
         "build:linux": "node scripts/build.js && electron-builder --linux",
         "lint": "eslint ./src --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
         "prettier": "npx prettier . --write",
-        "test": "lint"
+        "test": "lint",
+        "compile-php": "php ./src/php/compile.php"
     },
     "repository": "https://github.com/deluze/electron-vue-template",
     "author": {
