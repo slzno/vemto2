@@ -6,7 +6,7 @@ export default class ReadProjectSchema {
 
     static run(projectPath: string) {
         return new Promise((resolve, reject) => {
-            let apiFilePath = path.join(app.getAppPath(), "static", "vemto.php")
+            let apiFilePath = path.join(app.getAppPath(), "static", "schema-reader.phar")
     
             let command = `php ${apiFilePath}`
     

@@ -16,8 +16,8 @@ foreach ($apps as $app) {
     exec($command);
 
     // move compiled file to bin folder
-    $compiledFile = "$folder/dist/$app.phar";
-    $destinationFolder = __DIR__ . '/../../build/main/static';
+    $compiledFile = realpath(__DIR__ . "/dist/$app.phar");
+    $destinationFolder = realpath(__DIR__ . '/../../build/main/static');
     $destinationFile = "$destinationFolder/$app.phar";
     
     if (!file_exists($destinationFolder)) {
