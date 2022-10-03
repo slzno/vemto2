@@ -5,6 +5,10 @@
         "load.php"
     ],
     "directories": [
-        "classes"
+        "classes",
+        "common" 
+    ],
+    "blacklist": [
+        "./vendor"
     ]
 }

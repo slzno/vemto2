@@ -1,5 +1,9 @@
 {
-    "apps": [
-        "schema-reader"
-    ]
+    "apps": {
+        "schema-reader": {
+            "commonFiles": [
+                "Vemto.php"
+            ]
+        }
+    }
 }

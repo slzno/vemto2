@@ -3,6 +3,9 @@
 // Load the basic Laravel classes
 require_once 'load.php';
 
+// Load Vemto classes
+require_once 'common/Vemto.php';
+
 require_once 'classes/ExtendedKernel.php';
 require_once 'classes/ExtendedBuilder.php';
 require_once 'classes/TableRepository.php';
@@ -73,8 +76,7 @@ $tablesRepository = new TableRepository();
 $tablesRepository->buildTablesFromMigrations();
 
 $response = $tablesRepository->getTables();
-$jsonResponse = json_encode($response);
 
-echo "VEMTO_JSON_RESPONSE_INIT(" . $jsonResponse . ")VEMTO_JSON_RESPONSE_END";
+echo Vemto::jsonResponse($response);
 
 exit(0);

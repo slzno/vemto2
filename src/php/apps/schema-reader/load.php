@@ -2,8 +2,6 @@
 
 $APP_DIRECTORY = getcwd();
 
-echo $APP_DIRECTORY . "\n";
-
 define('LARAVEL_START', microtime(true));
 
 require $APP_DIRECTORY . '/vendor/autoload.php';

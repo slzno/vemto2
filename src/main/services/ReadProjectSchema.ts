@@ -9,6 +9,8 @@ export default class ReadProjectSchema {
             let apiFilePath = path.join(app.getAppPath(), "static", "schema-reader.phar")
     
             let command = `php ${apiFilePath}`
+
+            console.log(`Executing: ${command}`)
     
             exec(command, {
                 cwd: path.join("", projectPath),
@@ -18,7 +20,6 @@ export default class ReadProjectSchema {
     
                 resolve(this.parseJsonData(stdout))
             })
-    
         })
     }
 

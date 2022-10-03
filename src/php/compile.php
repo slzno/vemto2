@@ -9,8 +9,16 @@
 $compilerSettings = json_decode(file_get_contents(__DIR__ . '/compiler.json'));
 $apps = $compilerSettings->apps;
 
-foreach ($apps as $app) {
+foreach ($apps as $app => $appSettings) {
     $folder = __DIR__ . "/apps/$app";
+
+    // Copy files from common to the app/common folder
+    $commonFolder = __DIR__ . "/common";
+    $commonFiles = $appSettings->commonFiles;
+
+    foreach ($commonFiles as $commonFile) {
+        copy($commonFolder . "/" . $commonFile, $folder . "/common/" . $commonFile);
+    }
 
     // set the working directory to the app folder
     chdir($folder);
