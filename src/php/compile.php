@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This is script compiles each application from compiler.json into a single file.
+ * This script compiles each application from compiler.json into a single PHAR file.
  * Created by Tiago Rodrigues, 2022-09-30
  */
 
@@ -17,7 +17,14 @@ foreach ($apps as $app => $appSettings) {
     $commonFiles = $appSettings->commonFiles;
 
     foreach ($commonFiles as $commonFile) {
-        copy($commonFolder . "/" . $commonFile, $folder . "/common/" . $commonFile);
+        // get the file content
+        $fileContent = file_get_contents("$commonFolder/$commonFile");
+        
+        // Add a comment to the top of the file, after the php tag
+        $fileContent = str_replace('<?php', "<?php // ATTENTION: Don't change this file. Instead, change the original file under src/php/common", $fileContent);
+
+        // Save the file
+        file_put_contents("$folder/common/$commonFile", $fileContent);
     }
 
     // set the working directory to the app folder

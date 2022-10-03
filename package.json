@@ -13,8 +13,8 @@
         "lint": "eslint ./src --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
         "prettier": "npx prettier . --write",
         "test": "lint",
-        "compile-php": "php ./src/php/compile.php",
-        "test-php": "php ./src/php/tests/vendor/bin/phpunit ./src/php/tests/src"
+        "php:compile": "php ./src/php/compile.php",
+        "php:test": "php ./src/php/tests/vendor/bin/phpunit ./src/php/tests/src --verbose"
     },
     "repository": "https://github.com/deluze/electron-vue-template",
     "author": {
