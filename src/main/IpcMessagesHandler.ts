@@ -6,6 +6,6 @@ export function IpcMessagesHandler() {
         ReadProjectSchema
             .run(path)
             .then(data => event.sender.send("data:project:schema", data))
-            .catch(error => console.error(error))
+            .catch(error => event.sender.send("error:default", error))
     })
 }

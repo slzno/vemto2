@@ -9,5 +9,8 @@ contextBridge.exposeInMainWorld("api", {
     },
     offSchemaLoaded: () => {
         ipcRenderer.removeAllListeners("data:project:schema")
-    }
+    },
+    onDefaultError: (callback: (error: any) => void) => { 
+        ipcRenderer.on("error:default", (event, error) => callback(error))
+    },
 })

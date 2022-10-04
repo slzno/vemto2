@@ -4,7 +4,8 @@
 export default interface ElectronApi {
     loadSchema: (path: string) => void,
     onSchemaLoaded: (callback: (data: any) => void) => void,
-    offSchemaLoaded: () => void
+    offSchemaLoaded: () => void,
+    onDefaultError: (callback: (error: any) => void) => void,
 }
 
 declare global {
