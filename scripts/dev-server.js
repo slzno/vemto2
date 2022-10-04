@@ -131,6 +131,33 @@ async function start() {
 
         restartElectron()
     })
+
+    // Whatch PHP files
+    const phpPath = Path.join(__dirname, "..", "src", "php"),
+        appsSettings = FileSystem.readFileSync(Path.join(phpPath, "compiler.json")),
+        apps = JSON.parse(appsSettings).apps
+
+    let appsIgnoredPaths = []
+    Object.keys(apps).forEach(app => { 
+        appsIgnoredPaths.push(Path.join(phpPath, "apps", app, "common"))
+    })
+
+    Chokidar.watch(phpPath, {
+        cwd: phpPath,
+        ignored: [
+            Path.join(phpPath, "dist"),
+            ...appsIgnoredPaths
+        ],
+    }).on("change", (path) => {
+        console.log(
+            Chalk.magentaBright(`[php] `) +
+                `Change in ${path}. Compiling PHP... 🚀`
+        )
+        
+        ChildProcess.exec("yarn php:compile", {
+            cwd: Path.join(__dirname, ".."),
+        })
+    })
 }
 
 start()
