@@ -10,8 +10,6 @@ export default class ReadProjectSchema {
     
             let command = `php ${apiFilePath}`
 
-            console.log(`Executing: ${command}`)
-    
             exec(command, {
                 cwd: path.join("", projectPath),
             }, (error, stdout, stderr) => {

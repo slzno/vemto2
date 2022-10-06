@@ -1,16 +1,16 @@
 <script setup lang="ts">
     import { defineProps, defineEmits, ref, onMounted } from "vue"
 
+    let localValue = ref("")
+
     const props = defineProps({
         modelValue: {
             type: String,
             required: true,
         },
     })
-
+    
     defineEmits(["update:modelValue"])
-
-    let localValue = ref("")
 
     onMounted((): void => {
         localValue.value = props.modelValue
