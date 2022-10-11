@@ -16,13 +16,14 @@
             "@Main/*": ["../main/*"],
             "@Renderer/*": ["./*"],
             "@Common/*": ["../common/*"]
-        }
+        },
     },
     "include": [
         "./**/*.ts",
         "./**/*.d.ts",
         "./**/*.tsx",
         "./**/*.vue",
-        "misc/mainExtensions.js"
+        "../common/**/*.d.ts",
+        "../common/**/*.ts",
     ]
 }

@@ -6,6 +6,8 @@ export default interface ElectronApi {
     onSchemaLoaded: (callback: (data: any) => void) => void,
     offSchemaLoaded: () => void,
     onDefaultError: (callback: (error: any) => void) => void,
+    loadProjectDatabase: (path: string) => void,
+    onProjectDatabaseLoaded: (callback: (data: any) => void) => void,
 }
 
 declare global {

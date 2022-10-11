@@ -8,4 +8,8 @@ export function IpcMessagesHandler() {
             .then(data => event.sender.send("data:project:schema", data))
             .catch(error => event.sender.send("error:default", error))
     })
+
+    ipcMain.handle("get:project:database", (event, path) => {
+        event.sender.send("data:project:database", {})
+    })
 }

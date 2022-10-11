@@ -6,9 +6,9 @@ export default class ReadProjectSchema {
 
     static run(projectPath: string) {
         return new Promise((resolve, reject) => {
-            let apiFilePath = path.join(app.getAppPath(), "static", "schema-reader.phar")
+            const apiFilePath = path.join(app.getAppPath(), "static", "schema-reader.phar")
     
-            let command = `php ${apiFilePath}`
+            const command = `php ${apiFilePath}`
 
             exec(command, {
                 cwd: path.join("", projectPath),
@@ -34,7 +34,7 @@ export default class ReadProjectSchema {
     }
 
     static parseJsonData(data: string): any {
-        let matches = data.match(/VEMTO_JSON_RESPONSE_START\((.*)\)VEMTO_JSON_RESPONSE_END/)
+        const matches = data.match(/VEMTO_JSON_RESPONSE_START\((.*)\)VEMTO_JSON_RESPONSE_END/)
         
         if (matches && matches[1]) {
             return JSON.parse(matches[1])
@@ -44,7 +44,7 @@ export default class ReadProjectSchema {
     }
 
     static parseErrorData(data: string): any {
-        let matches = data.match(/VEMTO_ERROR_START\((.*)\)VEMTO_ERROR_END/)
+        const matches = data.match(/VEMTO_ERROR_START\((.*)\)VEMTO_ERROR_END/)
         
         if (matches && matches[1]) {
             return matches[1]
