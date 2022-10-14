@@ -1,12 +1,11 @@
 <script setup lang="ts">
     import { ref, watch } from "vue"
     import { useRouter } from "vue-router"
-    import Table from "@Common/models/Table"
     import Project from "@Common/models/Project"
-    import RelaDB from "@tiago_silva_pereira/reladb"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
+    import HandleProjectDatabase from "@Renderer/services/HandleProjectDatabase"
 
     let projectPath = ref(localStorage.getItem("projectPath") || ""),
         initialDataLoaded = ref(false),
@@ -16,27 +15,11 @@
     const projectStore = useProjectStore()
 
     watch(initialDataLoaded, () => {
-        const database = new RelaDB.Database
-            
-        database.setDriver(RelaDB.RAMStorage)
+        HandleProjectDatabase.start(initialDatabaseData)
 
-        RelaDB.Resolver.setDatabase(database)
-        RelaDB.Resolver.db().driver.feedDatabaseData(initialDatabaseData)
-
-        RelaDB.Resolver.db().onDataChanged(() => {
-            const updatedData = RelaDB.Resolver.db().driver.getDatabaseData()
-            
-            window.api.databaseDataUpdated(updatedData)
-        })
-
-        // let project = null
         let project = Project.findOrCreate()
-        
-        let table = new Table
-        table.name = "teste"
-        table.projectId = project.id
 
-        table.save()
+        console.log(project)
 
         project.setPath(projectPath.value)
         
