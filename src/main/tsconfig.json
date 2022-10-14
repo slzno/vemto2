@@ -2,13 +2,15 @@
     "compilerOptions": {
         "target": "ES2015",
         "module": "commonjs",
-        "strict": true,
+        "strict": false,
         "esModuleInterop": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
-        "outDir": "../../build/main",
+        "outDir": "../../build",
         "allowJs": true,
         "noImplicitAny": false,
+        "strictNullChecks": false,
+        "strictPropertyInitialization": false,
         "sourceMap": true,
         "paths": {
             "@Main/*": ["./*"],
@@ -16,5 +18,11 @@
             "@Common/*": ["../common/*"]
         }
     },
-    "exclude": ["static"]
+    "exclude": ["static"],
+    "include": [
+        "./**/*.ts", 
+        "./**/*.js", 
+        "../common/**/*.d.ts",
+        "../common/**/*.ts",
+    ]
 }
