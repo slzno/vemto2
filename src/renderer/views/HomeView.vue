@@ -1,49 +1,58 @@
 <script setup lang="ts">
-    import { ref } from "vue"
-    // import { useRouter } from "vue-router"
+    import { ref, watch } from "vue"
+    import { useRouter } from "vue-router"
+    import Table from "@Common/models/Table"
     import Project from "@Common/models/Project"
+    import RelaDB from "@tiago_silva_pereira/reladb"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
-    import RelaDB from "@tiago_silva_pereira/reladb"
-    import Table from "@Renderer/../common/models/Table"
 
-    let projectPath = ref(localStorage.getItem("projectPath") || "")
+    let projectPath = ref(localStorage.getItem("projectPath") || ""),
+        initialDataLoaded = ref(false),
+        initialDatabaseData = {}
 
-    // const router = useRouter()
+    const router = useRouter()
     const projectStore = useProjectStore()
 
-    const openProject = async(): Promise<void> => {
+    watch(initialDataLoaded, () => {
+        const database = new RelaDB.Database
+            
+        database.setDriver(RelaDB.RAMStorage)
+
+        RelaDB.Resolver.setDatabase(database)
+        RelaDB.Resolver.db().driver.feedDatabaseData(initialDatabaseData)
+
+        RelaDB.Resolver.db().onDataChanged(() => {
+            const updatedData = RelaDB.Resolver.db().driver.getDatabaseData()
+            
+            window.api.databaseDataUpdated(updatedData)
+        })
+
+        // let project = null
+        let project = Project.findOrCreate()
+        
+        let table = new Table
+        table.name = "teste"
+        table.projectId = project.id
+
+        table.save()
+
+        project.setPath(projectPath.value)
+        
+        projectStore.setProject(project)
+        
+        router.push("/project/schema")
+    })
+
+    const openProject = async() => {
         localStorage.setItem("projectPath", projectPath.value)
 
         window.api.loadProjectDatabase(projectPath.value)
-
-        window.api.onProjectDatabaseLoaded((databaseData: any) => {
-            let database = new RelaDB.Database
-            
-            database.setDriver(RelaDB.RAMStorage)
-    
-            RelaDB.Resolver.setDatabase(database)
-            RelaDB.Resolver.db().driver.feedDatabaseData(databaseData)
-    
-            let project = Project.findOrCreate() as Project & TProject
-            
-            let table = new Table as Table & TTable
-            table.name = "teste"
-            table.projectId = project.id
-
-            table.save()
-    
-            project.setPath(projectPath.value)
-            
-            projectStore.setProject(project)
-
-            console.log('Project tables: ', project.tables)
-            console.log(RelaDB.Resolver.db().driver.getDatabaseData())
-            
-            // router.push("/project/schema")
+        window.api.onProjectDatabaseLoaded(data => { 
+            initialDatabaseData = data 
+            initialDataLoaded.value = true
         })
-
     }
 </script>
 

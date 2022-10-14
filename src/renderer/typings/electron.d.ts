@@ -8,6 +8,7 @@ export default interface ElectronApi {
     onDefaultError: (callback: (error: any) => void) => void,
     loadProjectDatabase: (path: string) => void,
     onProjectDatabaseLoaded: (callback: (data: any) => void) => void,
+    databaseDataUpdated: (data: any) => void
 }
 
 declare global {

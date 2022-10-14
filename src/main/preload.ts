@@ -19,4 +19,7 @@ contextBridge.exposeInMainWorld("api", {
     onProjectDatabaseLoaded: (callback: (data: any) => void) => {
         ipcRenderer.on("data:project:database", (event, data) => callback(data))
     },
+    databaseDataUpdated: (data: any) => {
+        ipcRenderer.invoke("database:data:updated", data)
+    }
 })

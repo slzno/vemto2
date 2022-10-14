@@ -1,10 +1,14 @@
 import { join } from "path"
-import { IpcMessagesHandler } from "./IpcMessagesHandler"
+import { HandleDatabase } from "./DatabaseHandler"
+import { HandleIpcMessages } from "./IpcMessagesHandler"
 import { app, BrowserWindow, session } from "electron"
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer"
 
 const isTesting = process.env.NODE_ENV === "test",
     isDevelopment = process.env.NODE_ENV === "development"
+
+HandleDatabase()
+HandleIpcMessages()
 
 function createWindow() {
     const mainWindow = new BrowserWindow({
@@ -61,5 +65,3 @@ app.whenReady().then(() => {
 app.on("window-all-closed", function () {
     if (process.platform !== "darwin") app.quit()
 })
-
-IpcMessagesHandler()
