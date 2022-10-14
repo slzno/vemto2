@@ -7,20 +7,21 @@
         newInstance,
         EVENT_DRAG_STOP,
         EVENT_DRAG_START,
+        BrowserJsPlumbInstance,
     } from "@jsplumb/browser-ui"
     import { BezierConnector } from "@jsplumb/connector-bezier"
 
     const projectStore = useProjectStore()
 
     let project: Project = projectStore.project,
-        tablesData: any = ref([]),
-        tablesBaseData: any = ref([]),
-        interval: any = null,
+        tablesData = ref([]),
+        tablesBaseData = ref([]),
+        interval = 0,
         zoom = ref(1),
         isDragging = false,
-        currentConnections: any = {},
-        jsPlumbInstance: any = null,
-        tablesPositions: any = {
+        currentConnections = {},
+        jsPlumbInstance: BrowserJsPlumbInstance = null,
+        tablesPositions = {
             users: { top: 80, left: 30 },
             failed_jobs: { top: 100, left: 900 },
             password_resets: { top: 500, left: 900 },

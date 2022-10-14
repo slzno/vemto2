@@ -2,7 +2,10 @@ import Table from './Table'
 import RelaDB from '@tiago_silva_pereira/reladb'
 
 export default class Project extends RelaDB.Model {
-    path: string = ""
+    id: string
+    path: string
+    name: string
+    tables: Table[]
 
     static identifier() {
         return 'Project'
@@ -15,7 +18,7 @@ export default class Project extends RelaDB.Model {
     }
 
     static findOrCreate(): Project {
-        let project: Nullable<Project> = Project.find(1)
+        let project = Project.find(1)
 
         if (project === null) {
             project = new Project()
