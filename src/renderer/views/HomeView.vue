@@ -19,8 +19,6 @@
 
         let project = Project.findOrCreate()
 
-        console.log(project)
-
         project.setPath(projectPath.value)
         
         projectStore.setProject(project)
