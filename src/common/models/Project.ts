@@ -35,4 +35,12 @@ export default class Project extends RelaDB.Model {
     getPath(): string {
         return this.path
     }
+
+    hasTable(tableName: string): boolean {
+        return this.tables.find((table) => table.name === tableName) !== undefined
+    }
+
+    doesNotHaveTable(tableName: string): boolean {
+        return !this.hasTable(tableName)
+    }
 }

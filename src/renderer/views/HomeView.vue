@@ -20,6 +20,7 @@
         let project = Project.findOrCreate()
 
         project.setPath(projectPath.value)
+        project.save()
         
         projectStore.setProject(project)
         
@@ -29,9 +30,8 @@
     const openProject = async() => {
         localStorage.setItem("projectPath", projectPath.value)
 
-        window.api.loadProjectDatabase(projectPath.value)
-        window.api.onProjectDatabaseLoaded(data => { 
-            initialDatabaseData = data 
+        window.api.loadProjectDatabase(projectPath.value).then((data) => {
+            initialDatabaseData = data
             initialDataLoaded.value = true
         })
     }

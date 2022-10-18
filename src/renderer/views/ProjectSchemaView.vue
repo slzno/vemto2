@@ -1,8 +1,8 @@
 <script setup lang="ts">
     import { nextTick, onMounted, onUnmounted, ref, watch } from "vue"
-    import Project from "@Renderer/../common/models/Project"
+    import Table from "@Common/models/Table"
+    import Project from "@Common/models/Project"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
-    import FormatMigrationsTables from "@Common/services/FormatMigrationsTables"
     import {
         newInstance,
         EVENT_DRAG_STOP,
@@ -10,6 +10,7 @@
         BrowserJsPlumbInstance,
     } from "@jsplumb/browser-ui"
     import { BezierConnector } from "@jsplumb/connector-bezier"
+    import tablesBuilder from "@Common/services/TablesFromMigrationsBuilder"
 
     const projectStore = useProjectStore()
 
@@ -30,30 +31,34 @@
         }
 
     onMounted(() => {
-        window.api.loadSchema(project.path)
+        loadSchema()
 
         interval = setInterval(() => {
             if (isDragging) return
-            window.api.loadSchema(project.path)
+            loadSchema()
         }, 500)
-
-        window.api.onSchemaLoaded((data) => (tablesBaseData.value = data))
     })
 
     onUnmounted(() => {
-        window.api.offSchemaLoaded()
         if (interval) clearInterval(interval)
     })
 
+    const loadSchema = async () => {
+        const schemaData = await window.api.loadSchema(project.path)
+        console.log(schemaData)
+        tablesBaseData.value = schemaData
+    }
+
+    /* eslint-disable */
     watch(tablesBaseData, (data) => {
         if (isDragging) return
 
-        let formatter = new FormatMigrationsTables(data)
+        tablesBuilder.setProject(project).setSchemaData(data).build()
 
-        tablesData.value = formatter.get()
+        tablesData.value = Table.get()
 
         nextTick(() => {
-            initSchema()
+            // initSchema()
         })
     })
 

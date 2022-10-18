@@ -8,7 +8,10 @@ export default class HandleProjectDatabase {
         database.setDriver(RelaDB.RAMStorage)
 
         RelaDB.Resolver.setDatabase(database)
-        RelaDB.Resolver.db().driver.feedDatabaseData(initialDatabaseData)
+
+        if(initialDatabaseData) {
+            RelaDB.Resolver.db().driver.feedDatabaseData(initialDatabaseData)
+        }
 
         RelaDB.Resolver.db().onDataChanged(() => {
             const updatedData = RelaDB.Resolver.db().driver.getDatabaseData()

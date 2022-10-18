@@ -1,24 +1,17 @@
 import { contextBridge, ipcRenderer } from "electron"
 
 contextBridge.exposeInMainWorld("api", {
-    // Common IPC messages
+    // Common messages
     loadSchema: (path: string) => { 
-        ipcRenderer.invoke("get:project:schema", path) 
-    },
-    onSchemaLoaded: (callback: (data: any) => void) => { 
-        ipcRenderer.on("data:project:schema", (event, data) => callback(data))
-    },
-    offSchemaLoaded: () => {
-        ipcRenderer.removeAllListeners("data:project:schema")
-    },
-    onDefaultError: (callback: (error: any) => void) => { 
-        ipcRenderer.on("error:default", (event, error) => callback(error))
+        return ipcRenderer.invoke("get:project:schema", path) 
     },
     loadProjectDatabase: (path: string) => { 
-        ipcRenderer.invoke("get:project:database", path) 
+        return ipcRenderer.invoke("get:project:database", path) 
     },
-    onProjectDatabaseLoaded: (callback: (data: any) => void) => {
-        ipcRenderer.on("data:project:database", (event, data) => callback(data))
+
+    // Error messages
+    onDefaultError: (callback: Callback) => { 
+        ipcRenderer.on("error:default", (event, error) => callback(error))
     },
 
     // Database messages

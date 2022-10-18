@@ -2,12 +2,9 @@
  * Should match main/preload.ts for typescript support in renderer
  */
 export default interface ElectronApi {
-    loadSchema: (path: string) => void,
-    onSchemaLoaded: (callback: (data: any) => void) => void,
-    offSchemaLoaded: () => void,
-    onDefaultError: (callback: (error: any) => void) => void,
-    loadProjectDatabase: (path: string) => void,
-    onProjectDatabaseLoaded: (callback: (data: any) => void) => void,
+    loadSchema: (path: string) => Promise<any>,
+    onDefaultError: (callback: Callback) => void,
+    loadProjectDatabase: (path: string) => Promise<any>,
     databaseDataUpdated: (data: any) => void
 }
 
