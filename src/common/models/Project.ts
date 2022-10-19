@@ -28,6 +28,10 @@ export default class Project extends RelaDB.Model {
         return project
     }
 
+    isEmtpy(): boolean {
+        return this.id === undefined
+    }
+
     setPath(path: string) {
         this.path = path
     }

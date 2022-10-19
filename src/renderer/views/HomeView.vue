@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref, watch } from "vue"
+    import { ref } from "vue"
     import { useRouter } from "vue-router"
     import Project from "@Common/models/Project"
     import UiText from "@Renderer/components/ui/UiText.vue"
@@ -7,15 +7,17 @@
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import HandleProjectDatabase from "@Renderer/services/HandleProjectDatabase"
 
-    let projectPath = ref(localStorage.getItem("projectPath") || ""),
-        initialDataLoaded = ref(false),
-        initialDatabaseData = {}
+    let projectPath = ref(localStorage.getItem("projectPath") || "")
 
     const router = useRouter()
     const projectStore = useProjectStore()
 
-    watch(initialDataLoaded, () => {
-        HandleProjectDatabase.start(initialDatabaseData)
+    const openProject = async() => {
+        localStorage.setItem("projectPath", projectPath.value)
+
+        const databaseData = await window.api.loadProjectDatabase(projectPath.value)
+
+        HandleProjectDatabase.start(databaseData)
 
         let project = Project.findOrCreate()
 
@@ -24,16 +26,9 @@
         
         projectStore.setProject(project)
         
+        window.localStorage.setItem("latest-project", projectPath.value)
+
         router.push("/project/schema")
-    })
-
-    const openProject = async() => {
-        localStorage.setItem("projectPath", projectPath.value)
-
-        window.api.loadProjectDatabase(projectPath.value).then((data) => {
-            initialDatabaseData = data
-            initialDataLoaded.value = true
-        })
     }
 </script>
 

@@ -27,15 +27,15 @@ class TablesFromMigrationsBuilder {
 
             if(this.project.doesNotHaveTable(tableName)) {
                 table = new Table
-                
-                table.name = tableData.name
                 table.projectId = this.project.id
-                table.save()
             } else {
                 table = Table.findByName(tableName)
             }
 
-            // this.readColumns(tableData, table)
+            table.name = tableData.name
+            table.save()
+
+            this.readColumns(tableData, table)
         })
     }
 
@@ -43,16 +43,14 @@ class TablesFromMigrationsBuilder {
         Object.keys(tableData.columns).forEach((columnName: any) => {
             let columnData = tableData.columns[columnName]
             
-            console.log(columnData)
-
-            // if(table.hasColumn(columnData.name)) return
+            if(table.hasColumn(columnData.name)) return
             
-            // let newColumn = new Column
+            let newColumn = new Column
 
-            // newColumn.name = columnData.name
-            // newColumn.tableId = table.id
-            // newColumn.typeDefinition = columnData.type
-            // newColumn.save()
+            newColumn.name = columnData.name
+            newColumn.tableId = table.id
+            newColumn.typeDefinition = columnData.type
+            newColumn.save()
         })
     }
 

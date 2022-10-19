@@ -11,12 +11,27 @@ export function HandleDatabase() {
     RelaDB.Resolver.setDatabase(database)
     RelaDB.Resolver.db().driver.feedDatabaseData({})
 
+    let needsToSave = false
+
     ipcMain.handle("database:data:updated", (event, data) => {
         RelaDB.Resolver.db().driver.feedDatabaseData(data)
+        needsToSave = true
+    })
+
+    setInterval(() => {
+        if (!needsToSave) return
+
+        console.log('Saving database data...')
 
         const project = Project.findOrFail(1)
 
         let databaseFilePath = path.join(project.getPath(), ".vemto", "data.json")
-        // FileSystem.writeJsonFile(databaseFilePath, data)
-    })
+        
+        FileSystem.writeJsonFile(
+            databaseFilePath, 
+            RelaDB.Resolver.db().driver.getDatabaseData()
+        )
+
+        needsToSave = false
+    }, 1000)
 }

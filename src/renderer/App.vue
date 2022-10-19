@@ -3,7 +3,10 @@
     import { RouterView } from "vue-router"
 
     onMounted(() => {
-        window.api.onDefaultError((error) => console.error(error))
+        window.api.onDefaultError((error) => { 
+            console.error(error.error)
+            console.error(error.stack)
+        })
     })
 </script>
 
