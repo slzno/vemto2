@@ -1,3 +1,4 @@
+import md5 from "crypto-js/md5"
 import Table from "../models/Table"
 import Column from "../models/Column"
 import Project from "../models/Project"
@@ -17,10 +18,24 @@ class TablesFromMigrationsBuilder {
     }
 
     build() {
+        let t0 = performance.now()
         this.readTables()
+        
+        let t1 = performance.now()
+        console.log(`\x1b[35m%s\x1b[0m`, `Total time read tables ${(t1 - t0).toFixed(2)} ms.`)
     }
 
     readTables() {
+        let schemaDataHash = md5(JSON.stringify(this.schemaData)).toString()
+
+        if (this.project.schemaDataHash === schemaDataHash) {
+            console.log('same schema hash')
+            return
+        }
+
+        this.project.schemaDataHash = schemaDataHash
+        this.project.save()
+
         Object.keys(this.schemaData).forEach((tableName) => {
             let tableData = this.schemaData[tableName],
                 table: Table = null
@@ -29,7 +44,7 @@ class TablesFromMigrationsBuilder {
                 table = new Table
                 table.projectId = this.project.id
             } else {
-                table = Table.findByName(tableName)
+                table = this.project.findTableByName(tableName)
             }
 
             table.name = tableData.name
@@ -41,16 +56,20 @@ class TablesFromMigrationsBuilder {
 
     readColumns(tableData: any, table: Table) {
         Object.keys(tableData.columns).forEach((columnName: any) => {
-            let columnData = tableData.columns[columnName]
+            let columnData = tableData.columns[columnName],
+                column: Column = null
             
-            if(table.hasColumn(columnData.name)) return
-            
-            let newColumn = new Column
+            if(table.doesNotHaveColumn(columnName)) {
+                column = new Column
+                column.tableId = table.id
+            } else {
+                column = table.findColumnByName(columnName)
+            }
 
-            newColumn.name = columnData.name
-            newColumn.tableId = table.id
-            newColumn.typeDefinition = columnData.type
-            newColumn.save()
+            column.name = columnData.name
+            column.tableId = table.id
+            column.typeDefinition = columnData.type
+            column.save()
         })
     }
 

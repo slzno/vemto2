@@ -27,7 +27,7 @@ export default class Table extends RelaDB.Model {
         return !this.hasColumn(columnName)
     }
 
-    static findByName(tableName: string): Table {
-        return Table.get().find((table) => table.name === tableName)
+    findColumnByName(columnName: string): Column {
+        return this.columns.find((column) => column.name === columnName)
     }
 }

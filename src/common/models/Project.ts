@@ -6,6 +6,7 @@ export default class Project extends RelaDB.Model {
     path: string
     name: string
     tables: Table[]
+    schemaDataHash: string
 
     static identifier() {
         return 'Project'
@@ -46,5 +47,9 @@ export default class Project extends RelaDB.Model {
 
     doesNotHaveTable(tableName: string): boolean {
         return !this.hasTable(tableName)
+    }
+
+    findTableByName(tableName: string): Table {
+        return this.tables.find((table) => table.name === tableName)
     }
 }

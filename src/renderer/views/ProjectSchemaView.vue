@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { nextTick, onMounted, onUnmounted, ref, watch } from "vue"
+    import { nextTick, onMounted, onUnmounted, ref } from "vue"
     import Table from "@Common/models/Table"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import {
@@ -14,7 +14,6 @@
     const projectStore = useProjectStore()
 
     let tablesData = ref([]),
-        tablesBaseData = ref([]),
         interval = 0,
         zoom = ref(1),
         isDragging = false,
@@ -41,28 +40,27 @@
         if (interval) clearInterval(interval)
     })
 
+    // REMOVA ISSO AQUI!!!!
+    /* eslint-disable */
     const loadSchema = async () => {
+        console.log('will load')
+        if (isDragging) return
         if(projectStore.projectIsEmpty) return
 
         const schemaData = await window.api.loadSchema(projectStore.project.path)
 
         if (!schemaData) return
-        
-        tablesBaseData.value = schemaData
-    }
-    
-    /* eslint-disable */
-    watch(tablesBaseData, (data) => {
-        if (isDragging) return
 
-        tablesBuilder.setProject(projectStore.project).setSchemaData(data).build()
+        // console.log(schemaData)
+        
+        tablesBuilder.setProject(projectStore.project).setSchemaData(schemaData).build()
 
         tablesData.value = Table.get()
 
         nextTick(() => {
             // initSchema()
         })
-    })
+    }
 
     const initSchema = () => {
         if (!jsPlumbInstance) {

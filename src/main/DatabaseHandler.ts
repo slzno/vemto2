@@ -14,8 +14,12 @@ export function HandleDatabase() {
     let needsToSave = false
 
     ipcMain.handle("database:data:updated", (event, data) => {
-        RelaDB.Resolver.db().driver.feedDatabaseData(data)
-        needsToSave = true
+        let oldData = RelaDB.Resolver.db().driver.getDatabaseData()
+
+        if (JSON.stringify(oldData) !== JSON.stringify(data)) {
+            RelaDB.Resolver.db().driver.feedDatabaseData(data)
+            needsToSave = true
+        }
     })
 
     setInterval(() => {
