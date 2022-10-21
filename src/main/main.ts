@@ -30,7 +30,8 @@ function createWindow() {
     if (isDevelopment) {
         const rendererPort = process.argv[2]
         mainWindow.loadURL(`http://localhost:${rendererPort}`)
-        installExtension(VUEJS3_DEVTOOLS)
+        
+        if (!process.env.VEMTO_NO_EXTENSIONS) installExtension(VUEJS3_DEVTOOLS)
 
         if (process.env.VEMTO_HIDE_MENU) mainWindow.setMenu(null)
     } else {

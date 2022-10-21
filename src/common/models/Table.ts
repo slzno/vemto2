@@ -5,6 +5,7 @@ import RelaDB from '@tiago_silva_pereira/reladb'
 export default class Table extends RelaDB.Model {
     id: string
     name: string
+    project: Project
     projectId: string
     columns: Column[]
 
@@ -19,6 +20,17 @@ export default class Table extends RelaDB.Model {
         }
     }
 
+    hadChanges(comparisonData: any): boolean {
+        return this.name !== comparisonData.name
+    }
+
+    applyChanges(data: any) {
+        if(!this.hadChanges(data)) return
+        
+        this.name = data.name
+        this.save()
+    }
+
     hasColumn(columnName: string): boolean {
         return this.columns.find((column) => column.name === columnName) !== undefined
     }
@@ -29,5 +41,16 @@ export default class Table extends RelaDB.Model {
 
     findColumnByName(columnName: string): Column {
         return this.columns.find((column) => column.name === columnName)
+    }
+
+    getColumnsNames(): string[] {
+        return this.columns.map((column) => column.name)
+    }
+
+    getAllColumnsKeyedByName(): { [key: string]: Column } {
+        return this.columns.reduce((columns, column) => {
+            columns[column.name] = column
+            return columns
+        }, {})
     }
 }

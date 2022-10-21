@@ -52,4 +52,18 @@ export default class Project extends RelaDB.Model {
     findTableByName(tableName: string): Table {
         return this.tables.find((table) => table.name === tableName)
     }
+
+    getTablesNames(): string[] {
+        return this.tables.map((table) => table.name)
+    }
+
+    getAllTablesKeyedByName(): { [key: string]: Table } {
+        let tables: { [key: string]: Table } = {}
+
+        this.tables.forEach((table) => {
+            tables[table.name] = table
+        })
+
+        return tables
+    }
 }

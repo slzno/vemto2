@@ -4,6 +4,8 @@ import Column from "../models/Column"
 import Project from "../models/Project"
 
 class TablesFromMigrationsBuilder {
+    static processing: boolean = false
+
     schemaData: any
     project: Project
 
@@ -18,58 +20,66 @@ class TablesFromMigrationsBuilder {
     }
 
     build() {
-        let t0 = performance.now()
-        this.readTables()
+        if(TablesFromMigrationsBuilder.processing) return
         
-        let t1 = performance.now()
-        console.log(`\x1b[35m%s\x1b[0m`, `Total time read tables ${(t1 - t0).toFixed(2)} ms.`)
+        this.readTables()
     }
 
     readTables() {
+        TablesFromMigrationsBuilder.processing = true
+
         let schemaDataHash = md5(JSON.stringify(this.schemaData)).toString()
 
         if (this.project.schemaDataHash === schemaDataHash) {
-            console.log('same schema hash')
+            TablesFromMigrationsBuilder.processing = false
             return
         }
 
         this.project.schemaDataHash = schemaDataHash
         this.project.save()
 
+        const tablesNames = this.project.getTablesNames(),
+            tablesKeyedByName = this.project.getAllTablesKeyedByName()
+
         Object.keys(this.schemaData).forEach((tableName) => {
             let tableData = this.schemaData[tableName],
                 table: Table = null
 
-            if(this.project.doesNotHaveTable(tableName)) {
+            if(!tablesNames.includes(tableName)) {
                 table = new Table
                 table.projectId = this.project.id
+
+                tablesKeyedByName[tableName] = table
             } else {
-                table = this.project.findTableByName(tableName)
+                table = tablesKeyedByName[tableName]
             }
 
-            table.name = tableData.name
-            table.save()
+            table.applyChanges(tableData)
 
             this.readColumns(tableData, table)
         })
+
+        TablesFromMigrationsBuilder.processing = false
     }
 
     readColumns(tableData: any, table: Table) {
+        const columnsNames = table.getColumnsNames(),
+            columnsKeyedByName = table.getAllColumnsKeyedByName()
+
         Object.keys(tableData.columns).forEach((columnName: any) => {
             let columnData = tableData.columns[columnName],
                 column: Column = null
             
-            if(table.doesNotHaveColumn(columnName)) {
+            if(!columnsNames.includes(columnName)) {
                 column = new Column
                 column.tableId = table.id
+
+                columnsKeyedByName[columnName] = column
             } else {
-                column = table.findColumnByName(columnName)
+                column = columnsKeyedByName[columnName]
             }
 
-            column.name = columnData.name
-            column.tableId = table.id
-            column.typeDefinition = columnData.type
-            column.save()
+            column.applyChanges(columnData)
         })
     }
 

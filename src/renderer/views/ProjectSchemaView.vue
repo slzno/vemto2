@@ -43,7 +43,6 @@
     // REMOVA ISSO AQUI!!!!
     /* eslint-disable */
     const loadSchema = async () => {
-        console.log('will load')
         if (isDragging) return
         if(projectStore.projectIsEmpty) return
 

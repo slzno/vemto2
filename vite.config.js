@@ -7,7 +7,7 @@ import { fileURLToPath, URL } from "node:url"
 
 let plugins = [vuePlugin()]
 
-if (process.env.NODE_ENV === "development") {
+if (process.env.NODE_ENV === "development" && !process.env.VEMTO_NO_CHECKERS) {
     // Will execute only inside ./src/renderer
     plugins.push(
         checker({
