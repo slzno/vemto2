@@ -1,8 +1,8 @@
 Arguments: 
-  C:\Program Files\nodejs\node.exe C:\Users\tiago\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add @jsplumb/bundle
+  C:\Program Files\nodejs\node.exe C:\Users\tiago\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add lodash
 
 PATH: 
-  C:\Program Files\Oculus\Support\oculus-runtime;C:\Python310\Scripts\;C:\Python310\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\dotnet\;C:\ProgramData\chocolatey\bin;C:\ProgramData\ComposerSetup\bin;C:\Program Files\nodejs\;C:\Program Files\PuTTY\;C:\Program Files\Git LFS;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\Program Files\Git\cmd;C:\laragon\bin\php\php-8.1.0-nts-Win32-vs16-x64;C:\laragon\bin\php\php-7.4.19-Win32-vc15-x64;C:\Users\tiago\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\tiago\.dotnet\tools;C:\Users\tiago\AppData\Roaming\Composer\vendor\bin;C:\Users\tiago\AppData\Roaming\npm;C:\Program Files\Inkscape\bin;C:\Users\tiago\AppData\Local\GitHubDesktop\bin;C:\ngrok;C:\stripe;
+  C:\Program Files\Oculus\Support\oculus-runtime;C:\Python310\Scripts\;C:\Python310\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\dotnet\;C:\ProgramData\chocolatey\bin;C:\ProgramData\ComposerSetup\bin;C:\Program Files\nodejs\;C:\Program Files\PuTTY\;C:\Program Files\Git LFS;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\Program Files\Git\cmd;C:\laragon\bin\php\php-8.1.0-nts-Win32-vs16-x64;C:\laragon\bin\php\php-7.4.19-Win32-vc15-x64;C:\Users\tiago\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\tiago\.dotnet\tools;C:\Users\tiago\AppData\Roaming\Composer\vendor\bin;C:\Users\tiago\AppData\Roaming\npm;C:\Program Files\Inkscape\bin;C:\Users\tiago\AppData\Local\GitHubDesktop\bin;C:\MyPrograms\ngrok;C:\MyPrograms\stripe;C:\MyPrograms\php-box
 
 Yarn version: 
   1.22.19
@@ -14,17 +14,8 @@ Platform:
   win32 x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/@jsplumb%2fbundle: Not found
-      at Request.params.callback [as _callback] (C:\Users\tiago\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:66145:18)
-      at Request.self.callback (C:\Users\tiago\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:140890:22)
-      at Request.emit (node:events:390:28)
-      at Request.<anonymous> (C:\Users\tiago\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:141862:10)
-      at Request.emit (node:events:390:28)
-      at IncomingMessage.<anonymous> (C:\Users\tiago\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:141784:12)
-      at Object.onceWrapper (node:events:509:28)
-      at IncomingMessage.emit (node:events:402:35)
-      at endReadableNT (node:internal/streams/readable:1343:12)
-      at processTicksAndRejections (node:internal/process/task_queues:83:21)
+  Error: connect EHOSTUNREACH 104.16.20.35:443
+      at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1161:16)
 
 npm manifest: 
   {
@@ -34,6 +25,7 @@ npm manifest:
       "main": "build/main/main.js",
       "scripts": {
           "dev": "node scripts/dev-server.js",
+          "dev:fast": "set VEMTO_NO_CHECKERS=1 && set VEMTO_NO_EXTENSIONS=1 && node scripts/dev-server.js",
           "no-menu": "set VEMTO_HIDE_MENU=1 && node scripts/dev-server.js",
           "build": "node scripts/build.js && electron-builder",
           "build:win": "node scripts/build.js && electron-builder --win",
@@ -41,7 +33,9 @@ npm manifest:
           "build:linux": "node scripts/build.js && electron-builder --linux",
           "lint": "eslint ./src --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
           "prettier": "npx prettier . --write",
-          "test": "lint"
+          "test": "lint",
+          "php:compile": "php ./src/php/compile.php",
+          "php:test": "php ./src/php/tests/vendor/bin/phpunit ./src/php/tests/src --verbose"
       },
       "repository": "https://github.com/deluze/electron-vue-template",
       "author": {
@@ -62,6 +56,7 @@ npm manifest:
           "eslint": "^8.23.1",
           "eslint-plugin-vue": "^9.5.1",
           "postcss": "^8.4.16",
+          "tailwind-scrollbar": "^2.0.1",
           "tailwindcss": "^3.1.8",
           "typescript": "^4.8.2",
           "vite": "^3.0.9",
@@ -70,6 +65,9 @@ npm manifest:
       },
       "dependencies": {
           "@heroicons/vue": "^2.0.11",
+          "@jsplumb/browser-ui": "^5.12.0",
+          "@jsplumb/connector-bezier": "^5.12.0",
+          "crypto-js": "^4.1.1",
           "pinia": "^2.0.22",
           "prettier": "^2.7.1",
           "vue": "^3.2.36",
@@ -1359,6 +1357,39 @@ Lockfile:
     dependencies:
       "@jridgewell/resolve-uri" "^3.0.3"
       "@jridgewell/sourcemap-codec" "^1.4.10"
+  
+  "@jsplumb/browser-ui@^5.12.0":
+    version "5.12.0"
+    resolved "https://registry.yarnpkg.com/@jsplumb/browser-ui/-/browser-ui-5.12.0.tgz#671e7a11f0ea9d907c3ae7904c4623d14c7edc38"
+    integrity sha512-LIHYQh0Jc+s1zxR0jG2t907mEZedyL3bjA233++y9GN+bYA8k9k+xraZV1lrkR7oAqLnT++Vr/YmULEOPZRoaA==
+    dependencies:
+      "@jsplumb/core" "5.12.0"
+  
+  "@jsplumb/common@5.12.0":
+    version "5.12.0"
+    resolved "https://registry.yarnpkg.com/@jsplumb/common/-/common-5.12.0.tgz#78ff7c014a946a33fe3ce3721dad6f02e545e0c7"
+    integrity sha512-srpPl9uSt91U1igscCdqbnx5PMZQqdMeWnP3cqcPCvw3SJkB9bllXQiNp3ju8gtUVo/aiXkoo00dnhgjQ76acg==
+    dependencies:
+      "@jsplumb/util" "5.12.0"
+  
+  "@jsplumb/connector-bezier@^5.12.0":
+    version "5.12.0"
+    resolved "https://registry.yarnpkg.com/@jsplumb/connector-bezier/-/connector-bezier-5.12.0.tgz#a5a55ad80d39dd49caa0f5c4aadc91db9d733c38"
+    integrity sha512-qLJRqo7V8MQw+v2KlGdjw8LYPtHW1IwDQ4rRslE027y04DKL8BrDD+KQkv3nnEKF8fM2GDVfHFjVtWwt3hIyDw==
+    dependencies:
+      "@jsplumb/core" "5.12.0"
+  
+  "@jsplumb/core@5.12.0":
+    version "5.12.0"
+    resolved "https://registry.yarnpkg.com/@jsplumb/core/-/core-5.12.0.tgz#6793d0dacdce2835ae225c7676288b22823e0e8c"
+    integrity sha512-0GPNoVcWMrxQ5483QIe/0R+f4jiKVrTS7/2muyiFXWHajO/TDe+O4PCml01MbERsPgcM3CT+33VmgyzMEYp/gg==
+    dependencies:
+      "@jsplumb/common" "5.12.0"
+  
+  "@jsplumb/util@5.12.0":
+    version "5.12.0"
+    resolved "https://registry.yarnpkg.com/@jsplumb/util/-/util-5.12.0.tgz#c38c4d3f5e7970e6e7e7caee21fd5bcb8032fcc9"
+    integrity sha512-vxnmHKXkIqdlGyFnQONGWh9dXtxvIRcE4M+hh0dJW9ITvqLbNbQn/ZFuczGXNPoNjYmD7RjfipJt3Fy/hdtSDg==
   
   "@malept/cross-spawn-promise@^1.1.0":
     version "1.1.1"
@@ -3148,6 +3179,11 @@ Lockfile:
       path-key "^3.1.0"
       shebang-command "^2.0.0"
       which "^2.0.1"
+  
+  crypto-js@^4.1.1:
+    version "4.1.1"
+    resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-4.1.1.tgz#9e485bcf03521041bd85844786b83fb7619736cf"
+    integrity sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==
   
   crypto-random-string@^2.0.0:
     version "2.0.0"
@@ -7224,6 +7260,11 @@ Lockfile:
     version "1.2.0"
     resolved "https://registry.yarnpkg.com/symbol-observable/-/symbol-observable-1.2.0.tgz#c22688aed4eab3cdc2dfeacbb561660560a00804"
     integrity sha512-e900nM8RRtGhlV36KGEU9k65K3mPb1WV70OdjfxlG2EAuM1noi/E/BaW/uMhL7bPEssK8QV57vN3esixjUvcXQ==
+  
+  tailwind-scrollbar@^2.0.1:
+    version "2.0.1"
+    resolved "https://registry.yarnpkg.com/tailwind-scrollbar/-/tailwind-scrollbar-2.0.1.tgz#f08721173d513f1406a44601640b79726e3f9728"
+    integrity sha512-OcR7qHBbux4k+k6bWqnEQFYFooLK/F4dhkBz6nvswIoaA9ancZ5h20e0tyV7ifSWLDCUBtpG+1NHRA8HMRH/wg==
   
   tailwindcss@^3.1.8:
     version "3.1.8"

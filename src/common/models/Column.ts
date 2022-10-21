@@ -8,6 +8,8 @@ export default class Column extends RelaDB.Model {
     length: number
     tableId: string
     nullable: boolean
+    unsigned: boolean
+    autoIncrement: boolean
     typeDefinition: string
 
     static identifier() {
@@ -24,14 +26,20 @@ export default class Column extends RelaDB.Model {
         return this.name !== comparisonData.name ||
             this.length !== comparisonData.length ||
             this.nullable !== comparisonData.nullable ||
-            this.typeDefinition !== comparisonData.type
+            this.typeDefinition !== comparisonData.type ||
+            this.autoIncrement !== comparisonData.autoIncrement ||
+            this.unsigned !== comparisonData.unsigned
     }
 
     applyChanges(data: any) {
         if(!this.hadChanges(data)) return
-        
+
         this.name = data.name
+        this.nullable = data.nullable
+        this.unsigned = data.unsigned
         this.typeDefinition = data.type
+        this.autoIncrement = data.autoIncrement
+
         this.save()
     }
 

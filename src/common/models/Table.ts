@@ -8,6 +8,8 @@ export default class Table extends RelaDB.Model {
     project: Project
     projectId: string
     columns: Column[]
+    positionX: number
+    positionY: number
 
     static identifier() {
         return 'Table'
@@ -18,6 +20,13 @@ export default class Table extends RelaDB.Model {
             project: () => this.belongsTo(Project),
             columns: () => this.hasMany(Column).cascadeDelete(),
         }
+    }
+
+    static creating(tableData: any) {
+        tableData.positionX = 0
+        tableData.positionY = 0
+        
+        return tableData
     }
 
     hadChanges(comparisonData: any): boolean {
@@ -52,5 +61,9 @@ export default class Table extends RelaDB.Model {
             columns[column.name] = column
             return columns
         }, {})
+    }
+
+    hasRelatedTables(): boolean {
+        return false
     }
 }

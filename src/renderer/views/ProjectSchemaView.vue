@@ -18,17 +18,14 @@
         zoom = ref(1),
         isDragging = false,
         currentConnections = {},
-        jsPlumbInstance: BrowserJsPlumbInstance = null,
-        tablesPositions = {
-            users: { top: 80, left: 30 },
-            failed_jobs: { top: 100, left: 900 },
-            password_resets: { top: 500, left: 900 },
-            personal_access_tokens: { top: 400, left: 30 },
-            posts: { top: 250, left: 400 },
-        }
+        jsPlumbInstance: BrowserJsPlumbInstance = null
 
     onMounted(() => {
-        loadSchema()
+        tablesData.value = Table.get()
+        
+        nextTick(() => {
+            initSchema()
+        })
 
         interval = setInterval(() => {
             if (isDragging) return
@@ -40,8 +37,6 @@
         if (interval) clearInterval(interval)
     })
 
-    // REMOVA ISSO AQUI!!!!
-    /* eslint-disable */
     const loadSchema = async () => {
         if (isDragging) return
         if(projectStore.projectIsEmpty) return
@@ -50,14 +45,19 @@
 
         if (!schemaData) return
 
-        // console.log(schemaData)
-        
-        tablesBuilder.setProject(projectStore.project).setSchemaData(schemaData).build()
+        tablesBuilder
+            .setProject(projectStore.project)
+            .setSchemaData(schemaData)
+            .checkSchemaChanges()
+
+        if(tablesBuilder.doesNotHaveSchemaChanges()) return
+
+        tablesBuilder.build()
 
         tablesData.value = Table.get()
 
         nextTick(() => {
-            // initSchema()
+            initSchema()
         })
     }
 
@@ -77,16 +77,16 @@
             jsPlumbInstance.bind(EVENT_DRAG_START, () => {
                 isDragging = true
             })
-
+            
             jsPlumbInstance.bind(EVENT_DRAG_STOP, (p: any) => {
                 isDragging = false
 
-                let tableName = p.el.getAttribute("data-table-name")
+                const tableId = parseInt(p.el.getAttribute("data-table-id")),
+                    table: Table = tablesData.value.find((table) => table.id === tableId)
 
-                tablesPositions[tableName] = {
-                    top: p.el.style.top.replace("px", ""),
-                    left: p.el.style.left.replace("px", ""),
-                }
+                table.positionX = p.el.style.left.replace("px", "")
+                table.positionY = p.el.style.top.replace("px", "")
+                table.save()
             })
 
             if (table.hasRelatedTables()) {
@@ -118,14 +118,10 @@
         })
     }
 
-    const getTablePosition = (tableName: string) => {
-        if (tablesPositions[tableName]) {
-            return tablesPositions[tableName]
-        }
-
+    const getTablePosition = (table: Table) => {
         return {
-            top: Math.floor(Math.random() * 500),
-            left: Math.floor(Math.random() * 500),
+            left: (table.positionX || 0) + 'px',
+            top: (table.positionY || 0) + 'px',
         }
     }
 
@@ -314,12 +310,12 @@
             <div
                 :id="`table_${table.name}`"
                 :ref="`table_${table.name}`"
-                :data-table-name="table.name"
+                :data-table-id="table.id"
                 class="schema-table cursor-move absolute shadow-lg p-4 rounded-lg bg-white dark:bg-slate-850 z-10"
                 style="min-width: 270px"
                 :style="{
-                    top: getTablePosition(table.name).top + 'px',
-                    left: getTablePosition(table.name).left + 'px',
+                    top: getTablePosition(table).top,
+                    left: getTablePosition(table).left,
                 }"
                 v-for="table in tablesData"
                 :key="table.name"

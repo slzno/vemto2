@@ -8,6 +8,15 @@ class TablesFromMigrationsBuilder {
 
     schemaData: any
     project: Project
+    hasChanges: boolean
+    schemaDataHash: string
+
+    reset() {
+        this.project = null
+        this.schemaData = null
+        this.hasChanges = false
+        this.schemaDataHash = ''
+    }
 
     setProject(project: Project) {
         this.project = project
@@ -21,23 +30,36 @@ class TablesFromMigrationsBuilder {
 
     build() {
         if(TablesFromMigrationsBuilder.processing) return
-        
-        this.readTables()
+
+        this.processTables()
     }
 
-    readTables() {
-        TablesFromMigrationsBuilder.processing = true
-
-        let schemaDataHash = md5(JSON.stringify(this.schemaData)).toString()
-
-        if (this.project.schemaDataHash === schemaDataHash) {
-            TablesFromMigrationsBuilder.processing = false
+    checkSchemaChanges() {
+        this.schemaDataHash = md5(JSON.stringify(this.schemaData)).toString()
+        
+        if (this.project.schemaDataHash === this.schemaDataHash) {
             return
         }
 
-        this.project.schemaDataHash = schemaDataHash
-        this.project.save()
+        this.hasChanges = true
 
+        this.project.schemaDataHash = this.schemaDataHash
+        this.project.save()
+    }
+
+    processTables() {
+        if(!this.hasChanges) return
+
+        TablesFromMigrationsBuilder.processing = true
+
+        this.readTables()
+
+        this.reset()
+
+        TablesFromMigrationsBuilder.processing = false
+    }
+
+    readTables() {
         const tablesNames = this.project.getTablesNames(),
             tablesKeyedByName = this.project.getAllTablesKeyedByName()
 
@@ -58,8 +80,14 @@ class TablesFromMigrationsBuilder {
 
             this.readColumns(tableData, table)
         })
+    }
 
-        TablesFromMigrationsBuilder.processing = false
+    hasSchemaChanges() {
+        return this.hasChanges
+    }
+    
+    doesNotHaveSchemaChanges() {
+        return !this.hasChanges
     }
 
     readColumns(tableData: any, table: Table) {
