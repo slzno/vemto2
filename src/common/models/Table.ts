@@ -64,6 +64,16 @@ export default class Table extends RelaDB.Model {
     }
 
     hasRelatedTables(): boolean {
-        return false
+        return true
+    }
+
+    getRelatedTables(): Table[] {
+        let relatedMap = {
+            'users': [5, 6]
+        }
+
+        let tableMap = relatedMap[this.name] || []
+
+        return tableMap.map(relatedTableId => Table.find(relatedTableId))
     }
 }

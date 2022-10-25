@@ -35,6 +35,7 @@ export default class Column extends RelaDB.Model {
         if(!this.hadChanges(data)) return
 
         this.name = data.name
+        this.length = data.length
         this.nullable = data.nullable
         this.unsigned = data.unsigned
         this.typeDefinition = data.type
@@ -48,6 +49,6 @@ export default class Column extends RelaDB.Model {
     }
 
     isUnique(): boolean {
-        return false
+        return this.name === 'password'
     }
 }

@@ -6,7 +6,11 @@ module.exports = {
     darkMode: 'class',
     content: ["./src/renderer/**/*.{vue,js,ts,jsx,tsx}"],
     theme: {
-        extend: {},
+        extend: {
+            blur: {
+                'xs': '1px',
+            }
+        },
         colors: {
             transparent: 'transparent',
             current: 'currentColor',
@@ -47,5 +51,6 @@ module.exports = {
     },
     plugins: [
         require('tailwind-scrollbar'),
+        require('@tailwindcss/forms'),
     ],
 }

@@ -48,8 +48,8 @@ app.whenReady().then(() => {
             responseHeaders: {
                 ...details.responseHeaders,
                 "Content-Security-Policy": isDevelopment
-                    ? ["default-src 'self' http: https: 'unsafe-inline'"]
-                    : ["script-src 'self'"],
+                    ? ["default-src 'self' http: https: 'unsafe-inline'; img-src 'self' data:"]
+                    : ["script-src 'self'; img-src 'self' data:"],
             },
         })
     })

@@ -9,3 +9,8 @@
 .titlebar {
     -webkit-app-region: drag;
 }
+
+.dark [type="checkbox"]:checked,
+.dark [type="radio"]:checked {
+  background-color: currentColor;
+}

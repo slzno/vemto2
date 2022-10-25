@@ -10,6 +10,7 @@
     } from "@jsplumb/browser-ui"
     import { BezierConnector } from "@jsplumb/connector-bezier"
     import tablesBuilder from "@Common/services/TablesFromMigrationsBuilder"
+import { Bars3Icon, ChevronDownIcon, XMarkIcon } from "@heroicons/vue/24/outline"
 
     const projectStore = useProjectStore()
 
@@ -21,11 +22,13 @@
         jsPlumbInstance: BrowserJsPlumbInstance = null
 
     onMounted(() => {
-        tablesData.value = Table.get()
-        
-        nextTick(() => {
-            initSchema()
-        })
+        setTimeout(() => {
+            tablesData.value = Table.get()
+            
+            nextTick(() => {
+                initSchema()
+            })
+        }, 300)
 
         interval = setInterval(() => {
             if (isDragging) return
@@ -64,13 +67,12 @@
     const initSchema = () => {
         if (!jsPlumbInstance) {
             jsPlumbInstance = newInstance({
-                container: document.getElementById("tablesContainer")!,
-                // elementsDraggable: true,
+                container: document.getElementById("tablesContainer")!
             })
         }
 
         tablesData.value.forEach((table: any) => {
-            let node = document.getElementById("table_" + table.name)!
+            let node = document.getElementById("table_" + table.id)!
 
             jsPlumbInstance.manage(node)
 
@@ -90,11 +92,11 @@
             })
 
             if (table.hasRelatedTables()) {
-                let relatedTables = table.relatedTables
+                let relatedTables = table.getRelatedTables()
 
                 relatedTables.forEach((relatedTable: any) => {
                     let relatedNode = document.getElementById(
-                            "table_" + relatedTable.name
+                            "table_" + relatedTable.id
                         ),
                         connectionName = table.name + "_" + relatedTable.name,
                         connectionNameReverse =
@@ -142,11 +144,495 @@
 
 <template>
     <div
-        class="bg-slate-100 dark:bg-slate-900 w-full h-full relative text-slate-700 overflow-hidden"
+        class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-hidden"
     >
         <!-- <div class="absolute top-0 right-0 p-4 z-20">
             
         </div> -->
+
+        <div class="absolute right-0 top-0 h-full pt-10 px-4 z-50 text-slate-200" style="width: 38rem">
+            <div class="relative rounded-t-lg bg-slate-850 w-full h-full shadow-2xl border-t border-l border-r border-slate-600">
+                <div class="flex justify-between bg-slate-800 p-4 rounded-t-lg">
+                    <div class="flex flex-col">
+                        <span class="font-semibold">Table Options</span>
+                        <small class="text-red-400">users</small>
+                    </div>
+                </div>
+
+                <button class="cursor-pointer flex absolute top-2 right-2">
+                    <XMarkIcon class="w-3 h-3 stroke-2" />
+                </button>
+                
+                <ul class="bg-slate-800 flex space-x-2 text-xs text-slate-500 px-1 border-b border-slate-700">
+                    <li class="rounded-t px-2 py-1 -mb-px cursor-pointer text-slate-200 bg-slate-850 border-l border-t border-r border-slate-700">Columns</li>
+                    <li class="rounded-t px-2 py-1 -mb-px cursor-pointer hover:text-slate-200">Models</li>
+                    <li class="rounded-t px-2 py-1 -mb-px cursor-pointer hover:text-slate-200">Indexes</li>
+                    <li class="rounded-t px-2 py-1 -mb-px cursor-pointer hover:text-slate-200">Settings</li>
+                </ul>
+
+                <!-- <div class="p-4 space-y-4">
+                    <div class="flex flex-col">
+                        <label class="text-xs mb-1 text-slate-400">Name</label>
+                        <input
+                            type="text"
+                            class="border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg"
+                            placeholder="Name"
+                            value="users"
+                        />
+                    </div>
+
+                    <div class="flex flex-col">
+                        <label class="text-xs mb-1 text-slate-400">Item Noun</label>
+                        <input
+                            type="text"
+                            class="border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg"
+                            placeholder="Name"
+                            value="user"
+                        />
+                    </div>
+                </div> -->
+                
+                <div class="p-2 space-y-2">
+
+                    <div class="relative flex-col bg-slate-800 border-l-4 border-yellow-400 p-2 rounded-xl shadow">
+                        <div class="flex space-x-2 items-center">
+                            <div class="px-2">
+                                <Bars3Icon class="w-4 h-4 text-slate-400 hover:text-red-500 cursor-move"/>
+                            </div>
+
+                            <div class="flex flex-grow space-x-2">
+                                <div class="flex flex-col flex-grow">
+                                    <input
+                                        type="text"
+                                        class="border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg"
+                                        placeholder="Name"
+                                        value="id"
+                                    />
+                                </div>
+        
+                                <div class="flex flex-col w-36">
+                                    <select class="border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg">
+                                        <option value="">Uns. Big Int</option>
+                                    </select>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <label class="flex items-center space-x-1">
+                                        <input
+                                            type="checkbox"
+                                            class="rounded bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300"
+                                            placeholder=""
+                                            value=""
+                                        />
+                                        <span class="text-xs text-slate-400">Nullable</span>
+                                    </label>
+
+                                </div>
+                            </div>
+
+                            <div class="px-2">
+                                <ChevronDownIcon class="w-4 h-4 text-slate-400 hover:text-red-500 cursor-pointer"/>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                    <div class="relative flex-col bg-slate-800 border-l-4 border-slate-700 p-2 rounded-xl shadow">
+                        <div class="flex space-x-2 items-center">
+                            <div class="px-2">
+                                <Bars3Icon class="w-4 h-4 text-slate-400 hover:text-red-500 cursor-move"/>
+                            </div>
+
+                            <div class="flex flex-grow space-x-2">
+                                <div class="flex flex-col flex-grow">
+                                    <input
+                                        type="text"
+                                        class="border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg"
+                                        placeholder="Name"
+                                        value="name"
+                                    />
+                                </div>
+        
+                                <div class="flex flex-col w-36">
+                                    <select class="border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg">
+                                        <option value="">String</option>
+                                    </select>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <label class="flex items-center space-x-1">
+                                        <input
+                                            type="checkbox"
+                                            class="rounded bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300"
+                                            placeholder=""
+                                            value=""
+                                        />
+                                        <span class="text-xs text-slate-400">Nullable</span>
+                                    </label>
+
+                                </div>
+                            </div>
+
+                            <div class="px-2">
+                                <ChevronDownIcon class="w-4 h-4 text-slate-400 hover:text-red-500 cursor-pointer"/>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                    <div class="relative flex-col bg-slate-800 border-l-4 border-slate-700 p-2 rounded-xl shadow">
+                        <div class="flex space-x-2 items-center">
+                            <div class="px-2">
+                                <Bars3Icon class="w-4 h-4 text-slate-400 hover:text-red-500 cursor-move"/>
+                            </div>
+
+                            <div class="flex flex-grow space-x-2">
+                                <div class="flex flex-col flex-grow">
+                                    <input
+                                        type="text"
+                                        class="border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg"
+                                        placeholder="Name"
+                                        value="nickname"
+                                    />
+                                </div>
+        
+                                <div class="flex flex-col w-36">
+                                    <select class="border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg">
+                                        <option value="">String</option>
+                                    </select>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <label class="flex items-center space-x-1">
+                                        <input
+                                            type="checkbox"
+                                            class="rounded bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300"
+                                            placeholder=""
+                                            value=""
+                                            checked
+                                        />
+                                        <span class="text-xs text-slate-400">Nullable</span>
+                                    </label>
+
+                                </div>
+                            </div>
+
+                            <div class="px-2">
+                                <ChevronDownIcon class="w-4 h-4 text-slate-400 hover:text-red-500 cursor-pointer"/>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                    <div class="relative flex-col bg-slate-800 border-l-4 border-slate-700 p-2 rounded-xl shadow">
+                        <div class="flex space-x-2 items-center">
+                            <div class="px-2">
+                                <Bars3Icon class="w-4 h-4 text-slate-400 hover:text-red-500 cursor-move"/>
+                            </div>
+
+                            <div class="flex flex-grow space-x-2">
+                                <div class="flex flex-col flex-grow">
+                                    <input
+                                        type="text"
+                                        class="border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg"
+                                        placeholder="Name"
+                                        value="email"
+                                    />
+                                </div>
+        
+                                <div class="flex flex-col w-36">
+                                    <select class="border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg">
+                                        <option value="">String</option>
+                                    </select>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <label class="flex items-center space-x-1">
+                                        <input
+                                            type="checkbox"
+                                            class="rounded bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300"
+                                            placeholder=""
+                                            value=""
+                                        />
+                                        <span class="text-xs text-slate-400">Nullable</span>
+                                    </label>
+
+                                </div>
+                            </div>
+
+                            <div class="px-2">
+                                <ChevronDownIcon class="w-4 h-4 text-slate-400 hover:text-red-500 cursor-pointer"/>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                    <div class="relative flex-col bg-slate-800 border-l-4 border-slate-700 p-2 rounded-xl shadow">
+                        <div class="flex space-x-2 items-center">
+                            <div class="px-2">
+                                <Bars3Icon class="w-4 h-4 text-slate-400 hover:text-red-500 cursor-move"/>
+                            </div>
+
+                            <div class="flex flex-grow space-x-2">
+                                <div class="flex flex-col flex-grow">
+                                    <input
+                                        type="text"
+                                        class="border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg"
+                                        placeholder="Name"
+                                        value="email_verified_at"
+                                    />
+                                </div>
+        
+                                <div class="flex flex-col w-36">
+                                    <select class="border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg">
+                                        <option value="">Timestamp</option>
+                                    </select>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <label class="flex items-center space-x-1">
+                                        <input
+                                            type="checkbox"
+                                            class="rounded bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300"
+                                            placeholder=""
+                                            value=""
+                                            checked
+                                        />
+                                        <span class="text-xs text-slate-400">Nullable</span>
+                                    </label>
+
+                                </div>
+                            </div>
+
+                            <div class="px-2">
+                                <ChevronDownIcon class="w-4 h-4 text-slate-400 hover:text-red-500 cursor-pointer"/>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                    <div class="relative flex-col bg-slate-800 border-l-4 border-orange-500 p-2 rounded-xl shadow">
+                        <div class="flex space-x-2 items-center">
+                            <div class="px-2">
+                                <Bars3Icon class="w-4 h-4 text-slate-400 hover:text-red-500 cursor-move"/>
+                            </div>
+
+                            <div class="flex flex-grow space-x-2">
+                                <div class="flex flex-col flex-grow">
+                                    <input
+                                        type="text"
+                                        class="border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg"
+                                        placeholder="Name"
+                                        value="password"
+                                    />
+                                </div>
+        
+                                <div class="flex flex-col w-36">
+                                    <select class="border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg">
+                                        <option value="">String</option>
+                                    </select>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <label class="flex items-center space-x-1">
+                                        <input
+                                            type="checkbox"
+                                            class="rounded bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300"
+                                            placeholder=""
+                                            value=""
+                                        />
+                                        <span class="text-xs text-slate-400">Nullable</span>
+                                    </label>
+
+                                </div>
+                            </div>
+
+                            <div class="px-2">
+                                <ChevronDownIcon class="w-4 h-4 text-slate-400 hover:text-red-500 cursor-pointer"/>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                    <div class="relative flex-col bg-slate-800 border-l-4 border-slate-700 p-2 rounded-xl shadow">
+                        <div class="flex space-x-2 items-center">
+                            <div class="px-2">
+                                <Bars3Icon class="w-4 h-4 text-slate-400 hover:text-red-500 cursor-move"/>
+                            </div>
+
+                            <div class="flex flex-grow space-x-2">
+                                <div class="flex flex-col flex-grow">
+                                    <input
+                                        type="text"
+                                        class="border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg"
+                                        placeholder="Name"
+                                        value="created_at"
+                                    />
+                                </div>
+        
+                                <div class="flex flex-col w-36">
+                                    <select class="border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg">
+                                        <option value="">Timestamp</option>
+                                    </select>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <label class="flex items-center space-x-1">
+                                        <input
+                                            type="checkbox"
+                                            class="rounded bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300"
+                                            placeholder=""
+                                            value=""
+                                            checked
+                                        />
+                                        <span class="text-xs text-slate-400">Nullable</span>
+                                    </label>
+
+                                </div>
+                            </div>
+
+                            <div class="px-2">
+                                <ChevronDownIcon class="w-4 h-4 text-slate-400 hover:text-red-500 cursor-pointer"/>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                    <div class="relative flex-col bg-slate-800 border-l-4 border-slate-700 p-2 rounded-xl shadow">
+                        <div class="flex space-x-2 items-center">
+                            <div class="px-2">
+                                <Bars3Icon class="w-4 h-4 text-slate-400 hover:text-red-500 cursor-move"/>
+                            </div>
+
+                            <div class="flex flex-grow space-x-2">
+                                <div class="flex flex-col flex-grow">
+                                    <input
+                                        type="text"
+                                        class="border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg"
+                                        placeholder="Name"
+                                        value="updated_at"
+                                    />
+                                </div>
+        
+                                <div class="flex flex-col w-36">
+                                    <select class="border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg">
+                                        <option value="">Timestamp</option>
+                                    </select>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <label class="flex items-center space-x-1">
+                                        <input
+                                            type="checkbox"
+                                            class="rounded bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300"
+                                            placeholder=""
+                                            value=""
+                                            checked
+                                        />
+                                        <span class="text-xs text-slate-400">Nullable</span>
+                                    </label>
+
+                                </div>
+                            </div>
+
+                            <div class="px-2">
+                                <ChevronDownIcon class="w-4 h-4 text-slate-400 hover:text-red-500 cursor-pointer"/>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                    <div class="relative flex-col bg-slate-800 border-l-4 border-slate-700 p-2 rounded-xl shadow">
+                        <div class="flex space-x-2 items-center">
+                            <div class="px-2">
+                                <Bars3Icon class="w-4 h-4 text-slate-400 hover:text-red-500 cursor-move"/>
+                            </div>
+
+                            <div class="flex flex-grow space-x-2">
+                                <div class="flex flex-col flex-grow">
+                                    <input
+                                        type="text"
+                                        class="border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg"
+                                        placeholder="Name"
+                                        value="avatar"
+                                    />
+                                </div>
+        
+                                <div class="flex flex-col w-36">
+                                    <select class="border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg">
+                                        <option value="">String</option>
+                                    </select>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <label class="flex items-center space-x-1">
+                                        <input
+                                            type="checkbox"
+                                            class="rounded bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300"
+                                            placeholder=""
+                                            value=""
+                                            checked
+                                        />
+                                        <span class="text-xs text-slate-400">Nullable</span>
+                                    </label>
+
+                                </div>
+                            </div>
+
+                            <div class="px-2">
+                                <ChevronDownIcon class="w-4 h-4 text-slate-400 hover:text-red-500 cursor-pointer"/>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                    <div class="relative flex-col bg-slate-800 border-l-4 border-slate-700 p-2 rounded-xl shadow">
+                        <div class="flex space-x-2 items-center">
+                            <div class="px-2">
+                                <Bars3Icon class="w-4 h-4 text-slate-400 hover:text-red-500 cursor-move"/>
+                            </div>
+
+                            <div class="flex flex-grow space-x-2">
+                                <div class="flex flex-col flex-grow">
+                                    <input
+                                        type="text"
+                                        class="border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg"
+                                        placeholder="Name"
+                                        value="remember_token"
+                                    />
+                                </div>
+        
+                                <div class="flex flex-col w-36">
+                                    <select class="border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg">
+                                        <option value="">String</option>
+                                    </select>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <label class="flex items-center space-x-1">
+                                        <input
+                                            type="checkbox"
+                                            class="rounded bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300"
+                                            placeholder=""
+                                            value=""
+                                            checked
+                                        />
+                                        <span class="text-xs text-slate-400">Nullable</span>
+                                    </label>
+
+                                </div>
+                            </div>
+
+                            <div class="px-2">
+                                <ChevronDownIcon class="w-4 h-4 text-slate-400 hover:text-red-500 cursor-pointer"/>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
 
         <div class="absolute flex top-0 left-0 p-4 space-x-2 text-sm z-20">
             <div
@@ -201,7 +687,7 @@
                 <div class="flex items-center mr-1 ml-8">
                     <input
                         type="text"
-                        class="bg-slate-100 dark:bg-slate-950 px-4 py-1 rounded-full"
+                        class="border-0 bg-slate-100 dark:bg-slate-950 px-4 py-1 rounded-full"
                         placeholder="Search"
                     />
                 </div>
@@ -211,7 +697,7 @@
                 class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow"
             >
                 <div
-                    class="px-5 cursor-pointer text-red-500 hover:text-red-500"
+                    class="px-5 cursor-pointer text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-500"
                 >
                     Main
                 </div>
@@ -308,10 +794,11 @@
             class="relative block w-full h-full overflow-auto scrollbar-thin scrollbar-thumb-slate-400 scrollbar-track-slate-300 dark:scrollbar-thumb-black dark:scrollbar-track-slate-900"
         >
             <div
-                :id="`table_${table.name}`"
-                :ref="`table_${table.name}`"
+                :id="`table_${table.id}`"
+                :ref="`table_${table.id}`"
                 :data-table-id="table.id"
-                class="schema-table cursor-move absolute shadow-lg p-4 rounded-lg bg-white dark:bg-slate-850 z-10"
+                :class="{'border border-slate-500': table.name === 'users'}"
+                class="schema-table cursor-move absolute shadow-lg rounded-lg bg-white dark:bg-slate-850 z-10 space-y-4 pb-4"
                 style="min-width: 270px"
                 :style="{
                     top: getTablePosition(table).top,
@@ -320,12 +807,14 @@
                 v-for="table in tablesData"
                 :key="table.name"
             >
-                <span
-                    class="title w-full font-bold text-lg dark:text-slate-300"
-                    >{{ table.name }}</span
-                >
+                <div class="w-full bg-slate-800 hover:bg-slate-700 rounded-t-lg px-4 pt-2 pb-2">
+                    <span
+                        class="title w-full font-bold text-lg dark:text-slate-300"
+                        >{{ table.name }}</span
+                    >
+                </div>
 
-                <div class="mt-4 font-mono">
+                <div class="font-mono px-4">
                     <div
                         class="w-full flex items-center text-slate-700 dark:text-slate-400"
                         v-for="column in table.columns"
@@ -359,7 +848,7 @@
                         </span>
                         <span
                             class="text-xs text-slate-400 display:none flex items-center"
-                            >{{ column.type }}
+                            >{{ column.typeDefinition }}
                             <span
                                 class="ml-1 text-slate-300"
                                 v-if="column.hasOwnProperty('length')"
@@ -377,23 +866,85 @@
                         >
                     </div>
                 </div>
-            </div>
 
-            <!-- <div
-                id="table1"
-                class="absolute w-32 h-32 bg-white shadow p-8"
-                style="top: 20px; left: 20px"
-            >
-                Test 1
-            </div>
+                
+                <div class="font-mono px-4" v-if="table.name == 'users'">
+                    
+                    <!-- <div class="w-full border-t-2 border-slate-800 my-4"></div> -->
+                    <!-- <h4 class="text-slate-400 text-sm font-semibold text-right">Models</h4> -->
+                    
+                    <div class="text-slate-300 space-y-2">
+                        <div class="rounded bg-slate-900 px-2 py-1">
+                            <span class="font-semibold text-sm">User.php</span>
 
-            <div
-                id="table2"
-                class="absolute w-32 h-32 bg-white shadow p-8"
-                style="top: 20px; left: 500px"
-            >
-                Test 1
-            </div> -->
+                            <div class="px-2 my-1">
+                                <div class="w-full flex items-center">
+                                    <span class="flex-grow pr-8 flex items-center text-slate-400">
+                                        <!-- <div class="w-2 h-2 mr-2 rounded-full bg-slate-700"></div> -->
+                                        <span class="font-normal text-red-400 text-sm">hasMany:</span>
+                                        <span class="font-normal ml-1 text-slate-300 text-sm">Post</span>
+                                    </span>
+                                    <!-- <span class="text-xs text-slate-500 display:none flex items-center">Rel</span> -->
+                                </div>
+                                <div class="w-full flex items-center">
+                                    <span class="flex-grow pr-8 flex items-center text-slate-400">
+                                        <!-- <div class="w-2 h-2 mr-2 rounded-full bg-slate-700"></div> -->
+                                        <span class="font-normal text-red-400 text-sm">hasMany:</span>
+                                        <span class="font-normal ml-1 text-slate-300 text-sm">Video</span>
+                                    </span>
+                                    <!-- <span class="text-xs text-slate-500 display:none flex items-center">Rel</span> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="font-mono px-4" v-if="table.name == 'posts'">
+                    
+                    <!-- <div class="w-full border-t-2 border-slate-800 my-4"></div> -->
+                    <!-- <h4 class="text-slate-400 text-sm font-semibold text-right">Models</h4> -->
+                    
+                    <div class="text-slate-300 space-y-2">
+                        <div class="rounded bg-slate-900 px-2 py-1">
+                            <span class="font-semibold text-sm">Post.php</span>
+
+                            <div class="px-2 my-1">
+                                <div class="w-full flex items-center">
+                                    <span class="flex-grow pr-8 flex items-center text-slate-400">
+                                        <!-- <div class="w-2 h-2 mr-2 rounded-full bg-slate-700"></div> -->
+                                        <span class="font-normal text-red-400 text-sm">belongsTo:</span>
+                                        <span class="font-normal ml-1 text-slate-300 text-sm">User</span>
+                                    </span>
+                                    <!-- <span class="text-xs text-slate-500 display:none flex items-center">Rel</span> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="font-mono px-4" v-if="table.name == 'videos'">
+                    
+                    <!-- <div class="w-full border-t-2 border-slate-800 my-4"></div> -->
+                    <!-- <h4 class="text-slate-400 text-sm font-semibold text-right">Models</h4> -->
+                    
+                    <div class="text-slate-300 space-y-2">
+                        <div class="rounded bg-slate-900 px-2 py-1">
+                            <span class="font-semibold text-sm">Video.php</span>
+
+                            <div class="px-2 my-1">
+                                <div class="w-full flex items-center">
+                                    <span class="flex-grow pr-8 flex items-center text-slate-400">
+                                        <!-- <div class="w-2 h-2 mr-2 rounded-full bg-slate-700"></div> -->
+                                        <span class="font-normal text-red-400 text-sm">belongsTo:</span>
+                                        <span class="font-normal ml-1 text-slate-300 text-sm">User</span>
+                                    </span>
+                                    <!-- <span class="text-xs text-slate-500 display:none flex items-center">Rel</span> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
