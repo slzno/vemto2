@@ -1,7 +1,10 @@
 <script setup lang="ts">
-    import { Bars3Icon, ChevronDownIcon } from "@heroicons/vue/24/outline"
-    import Column from "@Renderer/../common/models/Column"
     import { PropType, toRef } from "vue"
+    import Column from "@Common/models/Column"
+    import UiText from "@Renderer/components/ui/UiText.vue"
+    import { Bars3Icon, ChevronDownIcon } from "@heroicons/vue/24/outline"
+    import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
+    import UiSelect from "@Renderer/components/ui/UiSelect.vue"
 
     const props = defineProps({
         column: {
@@ -31,35 +34,21 @@
 
             <div class="flex flex-grow space-x-2">
                 <div class="flex flex-col flex-grow">
-                    <input
-                        type="text"
-                        class="border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg"
-                        placeholder="Name"
-                        v-model="column.name"
-                    />
+                    <UiText placeholder="Name" v-model="column.name" />
                 </div>
 
                 <div class="flex flex-col w-36">
-                    <select
-                        class="border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg"
-                    >
-                        <option calue="bigInteger">Big Integer</option>
-                        <option calue="string">String</option>
-                        <option calue="timestamp">Timestamp</option>
-                    </select>
+                    <UiSelect v-model="column.typeDefinition">
+                        <option value="bigInteger">Big Integer</option>
+                        <option value="string">String</option>
+                        <option value="timestamp">Timestamp</option>
+                        <option value="text">Text</option>
+                        <option value="longText">Long Text</option>
+                    </UiSelect>
                 </div>
 
                 <div class="flex items-center justify-between">
-                    <label class="flex items-center space-x-1">
-                        <input
-                            type="checkbox"
-                            class="rounded bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300"
-                            placeholder=""
-                            value=""
-                            v-model="column.nullable"
-                        />
-                        <span class="text-xs text-slate-400">Nullable</span>
-                    </label>
+                    <UiCheckbox v-model="column.nullable" label="Nullable" />
                 </div>
             </div>
 

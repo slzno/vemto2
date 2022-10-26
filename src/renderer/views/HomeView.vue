@@ -33,7 +33,7 @@
 </script>
 
 <template>
-    <section class="p-4 space-y-4">
+    <section class="p-4 space-y-4 dark:bg-slate-900 h-screen">
         <p>
             <UiText v-model="projectPath" />
         </p>
