@@ -76,4 +76,29 @@ export default class Table extends RelaDB.Model {
 
         return tableMap.map(relatedTableId => Table.find(relatedTableId))
     }
+
+    getModels(): any[] {
+        let modelsMap = {
+            'users': [{
+                name: 'User.php',
+                relationships: [
+                    {type: 'hasMany', model: 'Post'}
+                ]
+            }],
+            'posts': [{
+                name: 'Post.php',
+                relationships: [
+                    {type: 'belongsTo', model: 'User'}
+                ]
+            }],
+            'videos': [{
+                name: 'Video.php',
+                relationships: [
+                    {type: 'belongsTo', model: 'User'}
+                ]
+            }]
+        }
+
+        return modelsMap[this.name] || []
+    }
 }

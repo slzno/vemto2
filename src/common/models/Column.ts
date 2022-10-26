@@ -45,7 +45,7 @@ export default class Column extends RelaDB.Model {
     }
 
     isForeign(): boolean {
-        return false
+        return this.name === 'user_id'
     }
 
     isUnique(): boolean {

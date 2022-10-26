@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import { RouterView } from "vue-router"
-    import ProjectNavbar from "@Renderer/components/ProjectNavbar.vue"
+    import ProjectNavbar from "@Renderer/views/components/ProjectNavbar.vue"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import { onMounted } from "vue"
     import Project from "@Renderer/../common/models/Project"

@@ -2,7 +2,7 @@ import { join } from "path"
 import { HandleDatabase } from "./DatabaseHandler"
 import { HandleIpcMessages } from "./IpcMessagesHandler"
 import { app, BrowserWindow, session } from "electron"
-import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer"
+import installExtension from "electron-devtools-installer"
 
 const isTesting = process.env.NODE_ENV === "test",
     isDevelopment = process.env.NODE_ENV === "development"
@@ -31,7 +31,7 @@ function createWindow() {
         const rendererPort = process.argv[2]
         mainWindow.loadURL(`http://localhost:${rendererPort}`)
         
-        if (!process.env.VEMTO_NO_EXTENSIONS) installExtension(VUEJS3_DEVTOOLS)
+        if (!process.env.VEMTO_NO_EXTENSIONS) installExtension("nhdogjmejiglipccpnnnanhbledajbpd")
 
         if (process.env.VEMTO_HIDE_MENU) mainWindow.setMenu(null)
     } else {
