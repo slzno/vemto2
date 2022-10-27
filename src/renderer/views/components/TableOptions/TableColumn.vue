@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { PropType, toRef } from "vue"
+    import { PropType, Ref, toRef, watch } from "vue"
     import Column from "@Common/models/Column"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import { Bars3Icon, ChevronDownIcon } from "@heroicons/vue/24/outline"
@@ -13,7 +13,11 @@
         },
     })
 
-    const column = toRef(props, "column")
+    const column = toRef(props, "column") as Ref<Column>
+
+    watch(() => column.value.name, () => {
+        column.value.save()
+    })
 </script>
 
 <template>

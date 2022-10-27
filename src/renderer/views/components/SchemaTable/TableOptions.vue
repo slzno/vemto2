@@ -34,7 +34,7 @@
                 <div class="flex justify-between bg-slate-800 p-4 rounded-t-lg">
                     <div class="flex flex-col">
                         <span class="font-semibold">Table Options</span>
-                        <small class="text-red-400">{{ table.name }}</small>
+                        <div class="text-red-400">{{ table.name }}</div>
                     </div>
                 </div>
 

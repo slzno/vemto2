@@ -33,5 +33,7 @@
         :placeholder="placeholder"
         v-model="localValue"
         @input="$emit('update:modelValue', localValue)"
+        spellcheck="false"
+        autocomplete="false"
     />
 </template>
