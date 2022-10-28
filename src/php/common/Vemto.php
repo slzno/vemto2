@@ -10,6 +10,18 @@ class Vemto {
         echo self::jsonResponse($data);
     }
 
+    public static function log(string $message = '')
+    {
+        $logFileath = realpath(__DIR__ . '/../../../out/');
+        $logFile = $logFileath . '/apps.log';
+
+        if(!file_exists($logFile)) {
+            file_put_contents($logFile, '');
+        }
+
+        file_put_contents($logFile, $message . PHP_EOL, FILE_APPEND);
+    }
+
     public static function jsonResponse($data) {
         $jsonResponse = json_encode($data);
 

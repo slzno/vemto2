@@ -12,9 +12,9 @@ $apps = $compilerSettings->apps;
 foreach ($apps as $app => $appSettings) {
     
     $output = executeApp($app);
-    $output = parseResponse($output);
+    $vemtoOutput = parseResponse($output);
 
-    $jsonOutput = json_encode($output, JSON_PRETTY_PRINT);
+    $jsonOutput = json_encode($vemtoOutput, JSON_PRETTY_PRINT);
     
     // Save pretty json output to file
     $outputFile = __DIR__ . '/out/' . $app . '.json';
@@ -23,25 +23,27 @@ foreach ($apps as $app => $appSettings) {
 
 function executeApp(string $app = 'schema-reader', string $laravelApp = 'laravel9-basic')
 {
+    $output = '';
+
     chdir(realpath(__DIR__ . '/laravel-base/' . $laravelApp));
-    $executedSuccessfully = exec('php ' . __DIR__ . '/apps/' . $app . '/index.php', $output);
+    $output = exec('php ' . __DIR__ . '/apps/' . $app . '/index.php');
     chdir(__DIR__);
 
-    if (!$executedSuccessfully) {
-        // translate the output to a string
-        $output = implode(PHP_EOL, $output);
-        throw new \Exception($output);
-    }
-
-    return $output[0];
+    return $output;
 }
 
 function parseResponse($data)
 {
+    $data = getVemtoData($data);
+
+    return json_decode($data);
+}
+
+function getVemtoData($data) {
     // get text betweeen VEMTO_JSON_RESPONSE_START( and )VEMTO_JSON_RESPONSE_END
     $data = preg_replace('/.*VEMTO_JSON_RESPONSE_START\(/', '', $data);
     $data = preg_replace('/\)VEMTO_JSON_RESPONSE_END.*/', '', $data);
     $data = preg_replace('/\s+/', '', $data);
 
-    return json_decode($data);
+    return $data;
 }
