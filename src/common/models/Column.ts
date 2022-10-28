@@ -1,5 +1,6 @@
 import Table from './Table'
 import RelaDB from '@tiago_silva_pereira/reladb'
+import TableColumnChanged from '../events/TableColumnChanged'
 
 export default class Column extends RelaDB.Model {
     id: string
@@ -20,6 +21,10 @@ export default class Column extends RelaDB.Model {
         return {
             table: () => this.belongsTo(Table),
         }
+    }
+
+    static updated(column: Column) {
+        new TableColumnChanged(column).handle()
     }
 
     hadChanges(comparisonData: any): boolean {
@@ -50,5 +55,9 @@ export default class Column extends RelaDB.Model {
 
     isUnique(): boolean {
         return this.name === 'password'
+    }
+
+    isSpecialPrimaryKey(): boolean {
+        return false
     }
 }

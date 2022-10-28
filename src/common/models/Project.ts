@@ -7,6 +7,7 @@ export default class Project extends RelaDB.Model {
     name: string
     tables: Table[]
     schemaDataHash: string
+    laravelVersion: Number
 
     static identifier() {
         return 'Project'

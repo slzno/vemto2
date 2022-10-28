@@ -15,7 +15,8 @@
         "prettier": "npx prettier . --write",
         "test": "lint",
         "php:compile": "php ./src/php/compile.php",
-        "php:test": "php ./src/php/tests/vendor/bin/phpunit ./src/php/tests/src --verbose"
+        "php:test": "php ./src/php/tests/vendor/bin/phpunit ./src/php/tests/src --verbose",
+        "php:test-output": "php ./src/php/output.php"
     },
     "repository": "https://github.com/deluze/electron-vue-template",
     "author": {

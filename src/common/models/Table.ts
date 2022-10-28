@@ -101,4 +101,12 @@ export default class Table extends RelaDB.Model {
 
         return modelsMap[this.name] || []
     }
+
+    hasTimestamps(): boolean {
+        return true
+    }
+
+    hasSoftDeletes(): boolean {
+        return true
+    }
 }
