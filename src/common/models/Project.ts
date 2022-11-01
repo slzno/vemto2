@@ -75,9 +75,13 @@ export default class Project extends RelaDB.Model {
         return this.updatedTablesIds.length > 0
     }
 
+    getUpdatedTables(): Table[] {
+        return this.tables.filter((table) => this.updatedTablesIds.includes(table.id))
+    }
+
     markTableAsUpdated(table: Table) {
         if(!this.updatedTablesIds) this.updatedTablesIds = []
-        
+
         if (this.updatedTablesIds.indexOf(table.id) === -1) {
             this.updatedTablesIds.push(table.id)
         }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { toRef } from "vue"
+    import { toRef, useSlots } from "vue"
     import { XMarkIcon } from "@heroicons/vue/24/outline"
 
     const props = defineProps({
@@ -11,7 +11,8 @@
         },
     })
 
-    const show = toRef(props, "show")
+    const show = toRef(props, "show"),
+        slots = useSlots()
 </script>
 
 <template>
@@ -23,12 +24,12 @@
         leave-to-class="transition duration-300 opacity-0"
     >
         <div
-            class="fixed left-0 top-0 w-full h-full z-50 text-slate-200 flex items-center justify-center bg-slate-900 bg-opacity-90"
+            class="fixed left-0 top-0 w-full h-full z-50 text-slate-200 flex items-center justify-center bg-slate-900 bg-opacity-95"
             v-if="show"
         >
             <!-- Modal -->
             <div
-                class="relative rounded-lg bg-slate-850 shadow-2xl border border-slate-600"
+                class="relative rounded-lg bg-slate-850 shadow-2xl border border-slate-700"
                 :style="{ width: width }"
             >
                 <button
@@ -38,7 +39,7 @@
                     <XMarkIcon class="w-4 h-4 stroke-2 hover:text-red-500" />
                 </button>
 
-                <header class="flex justify-between bg-slate-800 p-4 rounded-t-lg">
+                <header class="flex justify-between bg-slate-800 p-2 rounded-t-lg border-b border-slate-700">
                     <div class="flex flex-col">
                         <span class="font-semibold">{{ title }}</span>
                     </div>
@@ -48,7 +49,7 @@
                 <slot></slot>
 
                 <!-- Modal Footer -->
-                <footer>
+                <footer v-if="slots.footer" class="bg-slate-800 rounded-b-lg border-t border-slate-700">
                     <slot name="footer"></slot>
                 </footer>
 
