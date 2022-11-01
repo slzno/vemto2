@@ -13,6 +13,12 @@ foreach ($apps as $app => $appSettings) {
     
     $output = executeApp($app);
     $vemtoOutput = parseResponse($output);
+    
+    echo $output . PHP_EOL;
+
+    if (hasError($output)) {
+        echo parseError($output) . PHP_EOL;
+    }
 
     $jsonOutput = json_encode($vemtoOutput, JSON_PRETTY_PRINT);
     
@@ -39,6 +45,11 @@ function parseResponse($data)
     return json_decode($data);
 }
 
+function parseError($data)
+{
+    return getVemtoError($data);
+}
+
 function getVemtoData($data) {
     // get text betweeen VEMTO_JSON_RESPONSE_START( and )VEMTO_JSON_RESPONSE_END
     $data = preg_replace('/.*VEMTO_JSON_RESPONSE_START\(/', '', $data);
@@ -46,4 +57,16 @@ function getVemtoData($data) {
     $data = preg_replace('/\s+/', '', $data);
 
     return $data;
+}
+
+function getVemtoError($data) {
+    // get text betweeen VEMTO_ERROR_START( and )VEMTO_ERROR_END
+    $data = preg_replace('/.*VEMTO_ERROR_START\(/', '', $data);
+    $data = preg_replace('/\)VEMTO_ERROR_END.*/', '', $data);
+
+    return $data;
+}
+
+function hasError($data) {
+    return strpos($data, 'VEMTO_ERROR_START') !== false;
 }

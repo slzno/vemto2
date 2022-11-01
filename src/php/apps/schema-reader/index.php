@@ -62,13 +62,12 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
     $app['db.schema'] = new ExtendedBuilder($app['db.connection']);
 
     foreach ($migrationsFiles as $migrationFile) {
-        
-        Vemto::log($migrationFile . PHP_EOL);
-        
         $migrationsRepository->newMigration($migrationFile);
         $migration = $migrator->resolveMigrationPath($migrationFile);
 
-        $decoder = new MigrationDecoder($migration);
+        $migrationPath = str_replace($APP_DIRECTORY, '', $migrationFile);
+
+        $decoder = new MigrationDecoder($migration, $migrationPath);
         $decoder->decode();
     }
 

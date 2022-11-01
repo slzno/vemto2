@@ -10,8 +10,15 @@ class Vemto {
         echo self::jsonResponse($data);
     }
 
-    public static function log(string $message = '')
+    public static function log($message, $type = 'info')
     {
+        $typeHeaders = [
+            "info" => "[INFO]",
+            "error" => "[ERROR]",
+            "warning" => "[WARNING]",
+            "success" => "[SUCCESS]",
+        ];
+
         $logFileath = realpath(__DIR__ . '/../../../out/');
         $logFile = $logFileath . '/apps.log';
 
@@ -19,7 +26,7 @@ class Vemto {
             file_put_contents($logFile, '');
         }
 
-        file_put_contents($logFile, $message . PHP_EOL, FILE_APPEND);
+        file_put_contents($logFile, $typeHeaders[$type] . PHP_EOL . $message . PHP_EOL . PHP_EOL, FILE_APPEND);
     }
 
     public static function jsonResponse($data) {
@@ -37,8 +44,10 @@ class Vemto {
 
             exit(static::SUCCESS);
         } catch (\Throwable $th) {
+            Vemto::log($th->getMessage(), 'error');
+            Vemto::log($th->getTraceAsString(), 'error');
+
             echo "VEMTO_ERROR_START({$appName} Error: " . $th->getMessage() . ")VEMTO_ERROR_END";
-            throw $th;
 
             exit(static::FAILURE);
         }

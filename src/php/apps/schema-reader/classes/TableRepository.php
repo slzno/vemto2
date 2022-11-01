@@ -2,6 +2,7 @@
 
 class TableRepository {
     protected $tables = [];
+    protected $currentMigration = '';
     protected $migrationsRepository;
 
     public function __construct()
@@ -14,6 +15,8 @@ class TableRepository {
         $migrations = $this->migrationsRepository->getMigrations();
 
         foreach ($migrations as $migration) {
+            $this->currentMigration = $migration;
+
             $this->processAddedColumns($migration['addedColumns']);
             $this->processChangedColumns($migration['changedColumns']);
             $this->processDroppedColumns($migration['droppedColumns']);
@@ -38,6 +41,8 @@ class TableRepository {
         }
 
         $this->tables[$tableName]['columns'][$columnName] = $column;
+
+        $this->registerTableMigration($tableName);
     }
 
     protected function processChangedColumns($changedColumns)
@@ -57,6 +62,8 @@ class TableRepository {
         }
 
         $this->tables[$tableName]['columns'][$columnName] = $column;
+
+        $this->registerTableMigration($tableName);
     }
 
     protected function processDroppedColumns($droppedColumns)
@@ -76,6 +83,8 @@ class TableRepository {
         }
 
         unset($this->tables[$tableName]['columns'][$columnName]);
+
+        $this->registerTableMigration($tableName);
     }
 
     protected function processCommands($commands)
@@ -115,6 +124,8 @@ class TableRepository {
         if (!isset($this->tables[$tableName]['indexes'][$indexName])) {
             $this->tables[$tableName]['indexes'][$indexName] = $command;
         }
+
+        $this->registerTableMigration($tableName);
     }
 
     protected function addUnique($command)
@@ -125,6 +136,8 @@ class TableRepository {
         if (!isset($this->tables[$tableName]['uniques'][$indexName])) {
             $this->tables[$tableName]['uniques'][$indexName] = $command;
         }
+
+        $this->registerTableMigration($tableName);
     }
 
     protected function addForeign($command)
@@ -135,6 +148,8 @@ class TableRepository {
         if (!isset($this->tables[$tableName]['foreigns'][$indexName])) {
             $this->tables[$tableName]['foreigns'][$indexName] = $command;
         }
+
+        $this->registerTableMigration($tableName);
     }
 
     protected function initTable($tableName)
@@ -144,7 +159,20 @@ class TableRepository {
             'indexes' => [],
             'uniques' => [],
             'foreigns' => [],
+            'migrations' => [],
         ];
+    }
+
+    protected function registerTableMigration(string $tableName)
+    {
+        $migrationRelativePath = $this->currentMigration['relativePath'];
+        $tableMigrations = $this->tables[$tableName]['migrations'] ?? [];
+
+        if(!isset($tableMigrations[$migrationRelativePath])) {
+            $tableMigrations[$migrationRelativePath] = $this->currentMigration;
+        }
+
+        $this->tables[$tableName]['migrations'] = $tableMigrations;
     }
 
     public function getTables()

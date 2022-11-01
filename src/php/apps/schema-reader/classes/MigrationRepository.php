@@ -10,6 +10,10 @@ class MigrationRepository {
 
         $this->migrations[$migration] = [
             'migration' => $migration,
+            'relativePath' => str_replace(getcwd(), '', $migration),
+            'migrationName' => str_replace('.php', '', basename($migration)),
+            'datePrefix' => substr(basename($migration), 0, 10),
+            'fullPrefix' => substr(basename($migration), 0, 17),
             'addedColumns' => [],
             'changedColumns' => [],
             'droppedColumns' => [],
