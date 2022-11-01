@@ -1,6 +1,6 @@
 import Column from "../models/Column";
 
-export default class TableColumnChanged {
+export default class TableColumnCreated {
 
     column: Column
 

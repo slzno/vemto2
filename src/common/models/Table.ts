@@ -109,4 +109,9 @@ export default class Table extends RelaDB.Model {
     hasSoftDeletes(): boolean {
         return true
     }
+
+    markAsUpdated() {
+        this.project.markTableAsUpdated(this)
+        return this
+    }
 }

@@ -13,7 +13,8 @@
     } from "@jsplumb/browser-ui"
 
     import { BezierConnector } from "@jsplumb/connector-bezier"
-import SchemaHeader from "./components/ProjectSchema/SchemaHeader.vue"
+    import SchemaHeader from "./components/ProjectSchema/SchemaHeader.vue"
+    import MigrationSaver from "./components/MigrationSaver/MigrationSaver.vue"
 
     const projectStore = useProjectStore()
 
@@ -28,7 +29,7 @@ import SchemaHeader from "./components/ProjectSchema/SchemaHeader.vue"
         setTimeout(() => {
             tablesData.value = Table.get()
             counter.value++
-            
+
             nextTick(() => {
                 initSchema()
             })
@@ -64,14 +65,13 @@ import SchemaHeader from "./components/ProjectSchema/SchemaHeader.vue"
         tablesBuilder.build()
 
         tablesData.value = Table.get()
-        
+
         nextTick(() => {
             initSchema()
         })
     }
 
     const initSchema = () => {
-        
         if (!jsPlumbInstance) {
             jsPlumbInstance = newInstance({
                 container: document.getElementById("tablesContainer")!,
@@ -133,10 +133,13 @@ import SchemaHeader from "./components/ProjectSchema/SchemaHeader.vue"
 <template>
     <div
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-hidden"
+        v-if="projectStore.projectIsReady"
     >
         <SchemaHeader />
 
         <SchemaTables :tables="tablesData" :counter="counter" />
+
+        <MigrationSaver />
 
         <!-- <SchemaFooter /> -->
     </div>

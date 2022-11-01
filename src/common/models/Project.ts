@@ -8,6 +8,7 @@ export default class Project extends RelaDB.Model {
     tables: Table[]
     schemaDataHash: string
     laravelVersion: Number
+    updatedTablesIds: string[]
 
     static identifier() {
         return 'Project'
@@ -66,5 +67,27 @@ export default class Project extends RelaDB.Model {
         })
 
         return tables
+    }
+
+    hasUpdatedTables(): boolean {
+        if(!this.updatedTablesIds) return false
+
+        return this.updatedTablesIds.length > 0
+    }
+
+    markTableAsUpdated(table: Table) {
+        if(!this.updatedTablesIds) this.updatedTablesIds = []
+        
+        if (this.updatedTablesIds.indexOf(table.id) === -1) {
+            this.updatedTablesIds.push(table.id)
+        }
+
+        this.save()
+    }
+
+    clearUpdatedTables() {
+        this.updatedTablesIds = []
+
+        this.save()
     }
 }

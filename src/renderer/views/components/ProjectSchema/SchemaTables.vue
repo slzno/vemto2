@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import { toRef } from "vue"
-    import SchemaTable from "./SchemaTable.vue"
+    import SchemaTable from "../SchemaTable/SchemaTable.vue"
 
     const props = defineProps(["tables"]),
         tables = toRef(props, "tables")

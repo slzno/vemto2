@@ -1,9 +1,9 @@
 <script setup lang="ts">
     import { ref, toRef } from "vue"
     import Table from "@Common/models/Table"
-    import TableModel from "../SchemaTable/TableModel.vue"
-    import TableColumn from "../SchemaTable/TableColumn.vue"
-    import TableOptions from "../SchemaTable/TableOptions.vue"
+    import TableModel from "./TableModel.vue"
+    import TableColumn from "./TableColumn.vue"
+    import TableOptions from "../TableOptions/TableOptions.vue"
 
     const props = defineProps(["table"]),
         table = toRef(props, "table"),

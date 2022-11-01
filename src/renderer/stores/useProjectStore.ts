@@ -13,8 +13,12 @@ export const useProjectStore = defineStore("project", {
     },
 
     getters: {
-        projectIsEmpty(state) {
+        projectIsEmpty(state): boolean {
             return state.project.id === undefined
-        }
+        },
+
+        projectIsReady(state): boolean {
+            return state.project.id !== undefined
+        },
     }
 })

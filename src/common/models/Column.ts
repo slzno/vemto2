@@ -1,6 +1,7 @@
 import Table from './Table'
 import RelaDB from '@tiago_silva_pereira/reladb'
 import TableColumnChanged from '../events/TableColumnChanged'
+import TableColumnCreated from '../events/TableColumnCreated'
 
 export default class Column extends RelaDB.Model {
     id: string
@@ -21,6 +22,10 @@ export default class Column extends RelaDB.Model {
         return {
             table: () => this.belongsTo(Table),
         }
+    }
+
+    static created(column: Column) {
+        new TableColumnCreated(column).handle()
     }
 
     static updated(column: Column) {
