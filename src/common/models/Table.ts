@@ -5,6 +5,7 @@ import RelaDB from '@tiago_silva_pereira/reladb'
 export default class Table extends RelaDB.Model {
     id: string
     name: string
+    migrations: any
     project: Project
     projectId: string
     columns: Column[]
@@ -30,13 +31,15 @@ export default class Table extends RelaDB.Model {
     }
 
     hadChanges(comparisonData: any): boolean {
-        return this.name !== comparisonData.name
+        return this.name !== comparisonData.name ||
+            this.migrations !== comparisonData.migrations
     }
 
     applyChanges(data: any) {
         if(!this.hadChanges(data)) return
         
         this.name = data.name
+        this.migrations = data.migrations
         this.save()
     }
 
@@ -110,8 +113,34 @@ export default class Table extends RelaDB.Model {
         return true
     }
 
-    markAsUpdated() {
-        this.project.markTableAsUpdated(this)
+    markAsChanged() {
+        this.project.markTableAsChanged(this)
         return this
+    }
+
+    hasMigrations(): boolean {
+        return this.migrations.length > 0
+    }
+
+    latestMigrationCreatedTable(): boolean {
+        let latestMigration = this.getLatestMigration()
+
+        return latestMigration && latestMigration.createdThisTable === true
+    }
+
+    getLatestMigration(): any {
+        return this.migrations[this.migrations.length - 1] || null
+    }
+
+    getCreationMigration(): any {
+        return this.migrations.find((migration) => migration.createdThisTable === true)
+    }
+
+    canUpdateLatestMigration(): boolean {
+        return this.hasMigrations()
+    }
+
+    canCreateNewMigration(): boolean {
+        return true
     }
 }

@@ -8,7 +8,7 @@ export default class Project extends RelaDB.Model {
     tables: Table[]
     schemaDataHash: string
     laravelVersion: Number
-    updatedTablesIds: string[]
+    changedTablesIds: string[]
 
     static identifier() {
         return 'Project'
@@ -55,6 +55,10 @@ export default class Project extends RelaDB.Model {
         return this.tables.find((table) => table.name === tableName)
     }
 
+    findTableById(tableId: string): Table {
+        return this.tables.find((table) => table.id === tableId)
+    }
+
     getTablesNames(): string[] {
         return this.tables.map((table) => table.name)
     }
@@ -69,28 +73,30 @@ export default class Project extends RelaDB.Model {
         return tables
     }
 
-    hasUpdatedTables(): boolean {
-        if(!this.updatedTablesIds) return false
+    hasChangedTables(): boolean {
+        if(!this.changedTablesIds) return false
 
-        return this.updatedTablesIds.length > 0
+        return this.changedTablesIds.length > 0
     }
 
-    getUpdatedTables(): Table[] {
-        return this.tables.filter((table) => this.updatedTablesIds.includes(table.id))
+    getChangedTables(): Table[] {
+        if(!this.hasChangedTables()) return []
+        
+        return this.tables.filter((table) => this.changedTablesIds.includes(table.id))
     }
 
-    markTableAsUpdated(table: Table) {
-        if(!this.updatedTablesIds) this.updatedTablesIds = []
+    markTableAsChanged(table: Table) {
+        if(!this.changedTablesIds) this.changedTablesIds = []
 
-        if (this.updatedTablesIds.indexOf(table.id) === -1) {
-            this.updatedTablesIds.push(table.id)
+        if (this.changedTablesIds.indexOf(table.id) === -1) {
+            this.changedTablesIds.push(table.id)
         }
 
         this.save()
     }
 
-    clearUpdatedTables() {
-        this.updatedTablesIds = []
+    clearChangedTables() {
+        this.changedTablesIds = []
 
         this.save()
     }

@@ -67,8 +67,8 @@
         "indexes": [],
         "uniques": [],
         "foreigns": [],
-        "migrations": {
-            "\/database\/migrations\/2014_10_12_000000_create_users_table.php": {
+        "migrations": [
+            {
                 "migration": "C:\\Users\\tiago\\code\\vemto2\\src\\php\\laravel-base\\laravel9-basic\/database\/migrations\/2014_10_12_000000_create_users_table.php",
                 "relativePath": "\/database\/migrations\/2014_10_12_000000_create_users_table.php",
                 "migrationName": "2014_10_12_000000_create_users_table",
@@ -148,7 +148,7 @@
                 ],
                 "createdThisTable": true
             }
-        },
+        ],
         "name": "users"
     },
     "password_resets": {
@@ -180,8 +180,8 @@
         "indexes": [],
         "uniques": [],
         "foreigns": [],
-        "migrations": {
-            "\/database\/migrations\/2014_10_12_100000_create_password_resets_table.php": {
+        "migrations": [
+            {
                 "migration": "C:\\Users\\tiago\\code\\vemto2\\src\\php\\laravel-base\\laravel9-basic\/database\/migrations\/2014_10_12_100000_create_password_resets_table.php",
                 "relativePath": "\/database\/migrations\/2014_10_12_100000_create_password_resets_table.php",
                 "migrationName": "2014_10_12_100000_create_password_resets_table",
@@ -222,7 +222,7 @@
                 ],
                 "createdThisTable": true
             }
-        },
+        ],
         "name": "password_resets"
     },
     "failed_jobs": {
@@ -279,8 +279,8 @@
         "indexes": [],
         "uniques": [],
         "foreigns": [],
-        "migrations": {
-            "\/database\/migrations\/2019_08_19_000000_create_failed_jobs_table.php": {
+        "migrations": [
+            {
                 "migration": "C:\\Users\\tiago\\code\\vemto2\\src\\php\\laravel-base\\laravel9-basic\/database\/migrations\/2019_08_19_000000_create_failed_jobs_table.php",
                 "relativePath": "\/database\/migrations\/2019_08_19_000000_create_failed_jobs_table.php",
                 "migrationName": "2019_08_19_000000_create_failed_jobs_table",
@@ -346,7 +346,7 @@
                 ],
                 "createdThisTable": true
             }
-        },
+        ],
         "name": "failed_jobs"
     },
     "personal_access_tokens": {
@@ -443,8 +443,8 @@
         },
         "uniques": [],
         "foreigns": [],
-        "migrations": {
-            "\/database\/migrations\/2019_12_14_000001_create_personal_access_tokens_table.php": {
+        "migrations": [
+            {
                 "migration": "C:\\Users\\tiago\\code\\vemto2\\src\\php\\laravel-base\\laravel9-basic\/database\/migrations\/2019_12_14_000001_create_personal_access_tokens_table.php",
                 "relativePath": "\/database\/migrations\/2019_12_14_000001_create_personal_access_tokens_table.php",
                 "migrationName": "2019_12_14_000001_create_personal_access_tokens_table",
@@ -549,7 +549,7 @@
                 ],
                 "createdThisTable": true
             }
-        },
+        ],
         "name": "personal_access_tokens"
     }
 }

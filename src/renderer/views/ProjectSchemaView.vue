@@ -45,7 +45,13 @@
         if (interval) clearInterval(interval)
     })
 
-    const loadSchema = async () => {
+    const forceReload = () => {
+        console.log("force reload")
+        const force = true
+        loadSchema(force)
+    }
+
+    const loadSchema = async (force = false) => {
         if (isDragging) return
         if (projectStore.projectIsEmpty) return
 
@@ -60,7 +66,11 @@
             .setSchemaData(schemaData)
             .checkSchemaChanges()
 
+        if(force) tablesBuilder.force()
+
         if (tablesBuilder.doesNotHaveSchemaChanges()) return
+
+        console.log(schemaData)
 
         tablesBuilder.build()
 
@@ -135,7 +145,7 @@
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-hidden"
         v-if="projectStore.projectIsReady"
     >
-        <SchemaHeader />
+        <SchemaHeader @forceReload="forceReload" />
 
         <SchemaTables :tables="tablesData" :counter="counter" />
 

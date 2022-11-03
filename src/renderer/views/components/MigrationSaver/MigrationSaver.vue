@@ -3,18 +3,62 @@
     import { ArrowDownTrayIcon } from "@heroicons/vue/24/outline"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import UiModal from "@Renderer/components/ui/UiModal.vue"
-    import { ref } from "vue"
+    import { onMounted, reactive, ref } from "vue"
 // import UiRadio from "@Renderer/components/ui/UiRadio.vue"
 
     const projectStore = useProjectStore(),
         showingModal = ref(true),
-        checked = ref("create")
+        tablesSettings = reactive({} as any)
+
+    onMounted(() => {
+        const changedTables = projectStore.project.getChangedTables()
+
+        changedTables.forEach((table) => {
+            tablesSettings[table.name] = {
+                id: table.id,
+                name: table.name,
+                latestMigration: table.getLatestMigration(),
+                canUpdateLatestMigration: table.canUpdateLatestMigration(),
+                canCreateNewMigration: table.canCreateNewMigration(),
+                
+                selectedOption: table.canUpdateLatestMigration()
+                    ? "update"
+                    : "create",
+            }
+        })
+    })
+
+    const saveMigrations = () => {
+        const tables = Object.values(tablesSettings)
+
+        tables.forEach((table: any) => {
+            if (table.selectedOption === "update") {
+                updateLatestMigration(table.id)
+            }
+        })
+
+        // projectStore.project.saveMigrations()
+        showingModal.value = false
+    }
+
+    const updateLatestMigration = (tableId: string) => {
+        const table = projectStore.project.findTableById(tableId),
+            latestMigration = table.getLatestMigration()
+        
+        // Aqui é onde o template será gerado
+        const fileContent = 'test'
+
+        // Agora, preciso chamar algum serviço que coloca o conteúdo
+        // do arquivo na fila para ser gerado no processo main
+
+        // Mostrar um toast de sucesso ou algo assim
+    }
 </script>
 
 <template>
     <div
         class="absolute bottom-0 left-0 p-4"
-        v-if="projectStore.project.hasUpdatedTables()"
+        v-if="projectStore.project.hasChangedTables()"
     >
         <UiButton class="flex items-center justify-between" @click="showingModal = true">
             <ArrowDownTrayIcon class="w-4 h-4 mr-2" />
@@ -24,20 +68,25 @@
         <UiModal title="Review Migrations" :show="showingModal" @close="showingModal = false">
             
             <section class="p-4 space-y-4">
-                <div class="bg-slate-800 rounded-lg" v-for="table in projectStore.project.getUpdatedTables()" :key="table.id">
+                <div class="bg-slate-800 rounded-lg" v-for="table in tablesSettings" :key="table.id">
                     <header class="p-4">
                         Table <span class="text-red-500 dark:text-red-400">{{ table.name }}</span>
                     </header>
 
                     <div class="p-4 space-y-4">
-                        <div>
-                            <!-- <UiRadio label="Create" value="create" v-model="checked" />
-                            <UiRadio label="Append to migration" value="append" v-model="checked" /> -->
-                            <input type="radio" id="one" value="One" v-model="checked" />
-                            <label for="one">Append to latest migration <span class="text-red-500 dark:text-red-400">/database/migrations/2014_10_12_000000_create_users_table.php</span></label>
-                            <br>
-                            <input type="radio" id="two" value="Two" v-model="checked" />
-                            <label for="two">Create new migration</label>
+                        <div v-if="table.canUpdateLatestMigration">
+                            <input class="rounded-full bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300 mr-2" type="radio" value="update" v-model="table.selectedOption" />
+                            <label>Update latest migration 
+                                <span 
+                                    :title="table.latestMigration.relativePath"
+                                    class="text-green-500 py-1 px-2 ml-0.5 bg-slate-900 rounded"
+                                >{{ table.latestMigration.migrationName }}</span>
+                            </label>
+                        </div>
+
+                        <div v-if="table.canCreateNewMigration">
+                            <input class="rounded-full bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300 mr-2" type="radio" value="create" v-model="table.selectedOption" />
+                            <label>Create new migration</label>
                         </div>
                     </div>
                 </div>
@@ -46,7 +95,7 @@
             <template #footer>
                 <div class="flex justify-end p-4">
                     <UiButton
-                        @click="showingModal = false"
+                        @click="saveMigrations"
                         >Save</UiButton
                     >
                 </div>

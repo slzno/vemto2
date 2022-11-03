@@ -47,6 +47,12 @@ class TablesFromMigrationsBuilder {
         this.project.save()
     }
 
+    force() {
+        this.hasChanges = true
+        
+        return this
+    }
+
     processTables() {
         if(!this.hasChanges) return
 

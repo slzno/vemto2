@@ -44,8 +44,10 @@ class Vemto {
 
             exit(static::SUCCESS);
         } catch (\Throwable $th) {
-            Vemto::log($th->getMessage(), 'error');
-            Vemto::log($th->getTraceAsString(), 'error');
+            if(getenv('VEMTO_DEBUG')) {
+                Vemto::log($th->getMessage(), 'error');
+                Vemto::log($th->getTraceAsString(), 'error');
+            }
 
             echo "VEMTO_ERROR_START({$appName} Error: " . $th->getMessage() . ")VEMTO_ERROR_END";
 

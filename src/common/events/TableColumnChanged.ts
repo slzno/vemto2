@@ -9,7 +9,7 @@ export default class TableColumnChanged {
     }
 
     handle() {
-        this.column.table.markAsUpdated()
+        this.column.table.markAsChanged()
     }
 
 }

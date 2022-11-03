@@ -168,7 +168,9 @@ class TableRepository {
         $migrationRelativePath = $this->currentMigration['relativePath'];
         $tableMigrations = $this->tables[$tableName]['migrations'] ?? [];
 
-        if(!isset($tableMigrations[$migrationRelativePath])) {
+        $tableMigrations = collect($tableMigrations);
+
+        if(!$tableMigrations->where('relativePath', $migrationRelativePath)->count()) {
             $migrationData = $this->currentMigration;
             
             $migrationCommands = collect($this->currentMigration['commands']);
@@ -178,7 +180,7 @@ class TableRepository {
                 ->where('table', $tableName)
                 ->count() > 0;
             
-            $tableMigrations[$migrationRelativePath] = $migrationData;
+            $tableMigrations->push($migrationData);
         }
 
         $this->tables[$tableName]['migrations'] = $tableMigrations;

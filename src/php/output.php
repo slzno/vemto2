@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This script runs each PHP application from compiler.json and saves its content under /out.
+ * This script runs each PHP application from compiler.json and saves its response under /out.
  * Created by Tiago Rodrigues, 2022-10-28
  */
 
