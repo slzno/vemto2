@@ -53,6 +53,7 @@
         "crypto-js": "^4.1.1",
         "pinia": "^2.0.22",
         "prettier": "^2.7.1",
+        "shelljs": "^0.8.5",
         "vue": "^3.2.36",
         "vue-router": "^4.0.13"
     }

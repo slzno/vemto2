@@ -1,4 +1,4 @@
-import Table from "../models/Table"
+import Table from "../../../common/models/Table"
 
 export default class GenerateMigration {
     table: Table

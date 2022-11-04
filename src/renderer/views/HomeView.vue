@@ -15,6 +15,8 @@
     const openProject = async() => {
         localStorage.setItem("projectPath", projectPath.value)
 
+        await window.api.prepareProject(projectPath.value)
+        
         const databaseData = await window.api.loadProjectDatabase(projectPath.value)
 
         HandleProjectDatabase.start(databaseData)

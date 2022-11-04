@@ -4,6 +4,7 @@
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import UiModal from "@Renderer/components/ui/UiModal.vue"
     import { onMounted, reactive, ref } from "vue"
+import Table from "@Renderer/../common/models/Table"
 // import UiRadio from "@Renderer/components/ui/UiRadio.vue"
 
     const projectStore = useProjectStore(),
@@ -45,17 +46,50 @@
         const table = projectStore.project.findTableById(tableId),
             latestMigration = table.getLatestMigration()
         
-        // Aqui é onde o template será gerado, de forma assíncrona
-        const fileContent = 'test'
+        const fileContent = await generateLatestMigrationUpdate(table)
 
-        // Agora, preciso chamar algum serviço que coloca o conteúdo
-        // do arquivo na fila para ser gerado no processo main
-        // O serviço deve ser executado de forma assíncrona no renderer
+        console.log(fileContent)
 
         window.api.addFileToGenerationQueue(latestMigration.relativePath + 'a', fileContent)
 
-        // Mostrar um toast de sucesso ou algo assim
-        console.log('updated')
+        console.log('UPDATED')
+
+        // projectStore.project.removeTableFromChangedTables(table)
+    }
+
+    const generateLatestMigrationUpdate = async (table: Table) => {
+        const latestMigration = table.getLatestMigration(),
+            latestMigrationContent = await window.api.readProjectFile(latestMigration.relativePath)
+
+        // Verifica se é uma migration de criação... se for, simplesmente gera todo o seu conteúdo novamente
+        // Caso contrário, verifica se é uma migration de alteração... se for, gera apenas o conteúdo de alteração e faz um 
+        // append no final do Schema::table
+
+        if(table.latestMigrationCreatedTable()) {
+            // Obtém o conteúdo do template
+            const templateContent = await window.api.readTemplateFile('CreationMigration.vemtl')
+            console.log(templateContent)
+
+            // Roda o template com os dados da tabela
+
+            // Retorna o conteúdo gerado
+        } else {
+            // Obtém o conteúdo do template apenas dos campos alterados
+            const templateContent = 'migration de alteração'
+            console.log(templateContent)
+
+            // Roda o template com os dados da tabela
+
+            // Retorna o conteúdo gerado
+
+            // Obtém o conteúdo do Schema::table
+
+            // Faz um append do conteúdo gerado no final do Schema::table
+
+            // Retorna o conteúdo gerado
+        }
+        
+        return latestMigrationContent
     }
 </script>
 

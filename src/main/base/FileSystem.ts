@@ -1,10 +1,20 @@
 import fs from "fs"
 import path from "path"
+import shell from "shelljs"
+import { app } from "electron"
 
 class FileSystem {
 
     fileExists(filePath: string) {
         return fs.existsSync(filePath)
+    }
+
+    folderExists(folderPath: string) {
+        return fs.existsSync(folderPath)
+    }
+
+    folderDoesNotExist(folderPath: string) {
+        return !this.folderExists(folderPath)
     }
 
     isFolder(path: string) {
@@ -38,8 +48,10 @@ class FileSystem {
     }
 
     copyStaticFile(filePath: string, destFilePath: string, manipulationCallback: any = null) {
-        // let localFilePath = path.join(__static, filePath)
-        // this.copyFile(localFilePath, destFilePath, manipulationCallback)
+        const staticPath = path.join(app.getAppPath(), 'static'),
+            localFilePath = path.join(staticPath, filePath)
+
+        this.copyFile(localFilePath, destFilePath, manipulationCallback)
     }
 
     copyFile(filePath: string, destFilePath: string, manipulationCallback: any = null): FileSystem {
@@ -83,9 +95,16 @@ class FileSystem {
     /**
      * Makes a folder based on a folder template (copy the folder)
      */
-    makeFolderFromTemplate(destinationFolder: string, templateFolder: string): boolean {
-        // return shell.cp('-R', templateFolder, destinationFolder)
-        return true
+    makeFolderFromTemplate(destinationFolder: string, templateFolder: string) {
+        if(this.folderDoesNotExist(destinationFolder)) {
+            this.copyFolder(destinationFolder, templateFolder)
+        }
+    }
+
+
+    copyFolder(destinationFolder: string, templateFolder: string): boolean {
+        console.log('Copying Folder: ' + templateFolder + ' to ' + destinationFolder)
+        return shell.cp('-R', templateFolder, destinationFolder)
     }
 
     deleteFile(destFilePath: string, log = true): FileSystem {
