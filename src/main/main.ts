@@ -1,13 +1,15 @@
 import { join } from "path"
 import { HandleDatabase } from "./DatabaseHandler"
-import { HandleIpcMessages } from "./IpcMessagesHandler"
+import { HandleFileQueue } from "./FileQueueHandler"
 import { app, BrowserWindow, session } from "electron"
+import { HandleIpcMessages } from "./IpcMessagesHandler"
 import installExtension from "electron-devtools-installer"
 
 const isTesting = process.env.NODE_ENV === "test",
     isDevelopment = process.env.NODE_ENV === "development"
 
 HandleDatabase()
+HandleFileQueue()
 HandleIpcMessages()
 
 function createWindow() {

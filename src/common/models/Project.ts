@@ -100,4 +100,15 @@ export default class Project extends RelaDB.Model {
 
         this.save()
     }
+
+    removeTableFromChangedTables(table: Table) {
+        if(!this.changedTablesIds) return
+
+        const index = this.changedTablesIds.indexOf(table.id)
+        if (index > -1) {
+            this.changedTablesIds.splice(index, 1)
+        }
+
+        this.save()
+    }
 }

@@ -41,17 +41,21 @@
         showingModal.value = false
     }
 
-    const updateLatestMigration = (tableId: string) => {
+    const updateLatestMigration = async (tableId: string) => {
         const table = projectStore.project.findTableById(tableId),
             latestMigration = table.getLatestMigration()
         
-        // Aqui é onde o template será gerado
+        // Aqui é onde o template será gerado, de forma assíncrona
         const fileContent = 'test'
 
         // Agora, preciso chamar algum serviço que coloca o conteúdo
         // do arquivo na fila para ser gerado no processo main
+        // O serviço deve ser executado de forma assíncrona no renderer
+
+        window.api.addFileToGenerationQueue(latestMigration.relativePath + 'a', fileContent)
 
         // Mostrar um toast de sucesso ou algo assim
+        console.log('updated')
     }
 </script>
 

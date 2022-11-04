@@ -16,6 +16,11 @@ contextBridge.exposeInMainWorld("api", {
 
     // Database messages
     databaseDataUpdated: (data: any) => {
-        ipcRenderer.invoke("database:data:updated", data)
-    }
+            return ipcRenderer.invoke("database:data:updated", data)
+    },
+
+    // Files Queue
+    addFileToGenerationQueue: (filePath: string, content: string) => {
+        return ipcRenderer.invoke("file-queue:add", filePath, content)
+    },
 })
