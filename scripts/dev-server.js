@@ -119,6 +119,9 @@ async function start() {
     const path = Path.join(__dirname, "..", "src", "main")
     Chokidar.watch(path, {
         cwd: path,
+        ignored: [
+            Path.join(path, "static"),
+        ],
     }).on("change", (path) => {
         console.log(
             Chalk.blueBright(`[electron] `) +
@@ -130,6 +133,19 @@ async function start() {
         }
 
         restartElectron()
+    })
+
+    // Watch for static files
+    const staticPath = Path.join(__dirname, "..", "src", "main", "static")
+    Chokidar.watch(staticPath, {
+        cwd: staticPath,
+    }).on("change", (path) => {
+        console.log(
+            Chalk.blueBright(`[electron] `) +
+                `Change in ${path}. Copying static files... 🚀`
+        )
+
+        copyStaticFiles()
     })
 
     // Whatch PHP files
