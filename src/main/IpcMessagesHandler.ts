@@ -43,11 +43,11 @@ export function HandleIpcMessages() {
         if(!project) return null
 
         return handleError(event, () => {
-            // const completePath = path.join(project.getPath(), ".vemto", "templates", filePath)
+            const completePath = path.join(project.getPath(), ".vemto", "templates", filePath)
 
-            // if(FileSystem.fileExists(completePath)) {
-            //     return FileSystem.readFile(completePath)
-            // }
+            if(FileSystem.fileExists(completePath)) {
+                return FileSystem.readFile(completePath)
+            }
 
             // If the file does not exist in the project, we try to read it from the static folder
             return FileSystem.readFile(path.join(app.getAppPath(), "static", "templates", filePath))
