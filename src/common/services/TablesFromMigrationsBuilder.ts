@@ -69,6 +69,14 @@ class TablesFromMigrationsBuilder {
         const tablesNames = this.project.getTablesNames(),
             tablesKeyedByName = this.project.getAllTablesKeyedByName()
 
+        // Delete tables that no longer exist
+        tablesNames.forEach((tableName) => {
+            if (!this.schemaData[tableName]) {
+                const table = tablesKeyedByName[tableName]
+                table.delete()
+            }
+        })
+
         Object.keys(this.schemaData).forEach((tableName) => {
             let tableData = this.schemaData[tableName],
                 table: Table = null
@@ -99,6 +107,13 @@ class TablesFromMigrationsBuilder {
     readColumns(tableData: any, table: Table) {
         const columnsNames = table.getColumnsNames(),
             columnsKeyedByName = table.getAllColumnsKeyedByName()
+
+        // Delete columns that no longer exist
+        columnsNames.forEach((columnName) => {
+            if(!tableData.columns[columnName]) {
+                columnsKeyedByName[columnName].delete()
+            }
+        })
 
         Object.keys(tableData.columns).forEach((columnName: any) => {
             let columnData = tableData.columns[columnName],

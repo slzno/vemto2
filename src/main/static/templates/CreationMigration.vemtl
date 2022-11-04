@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-<% if(laravelVersion >= 9) { %>
+<% if (laravelVersion >= 9) { %>
 return new class extends Migration
 <% } else { %>
 class Create<$ this.table.name $>Table extends Migration
@@ -24,8 +24,8 @@ class Create<$ this.table.name $>Table extends Migration
         Schema::create('<$ this.table.name $>', function (Blueprint $table) {
             
             <# Table columns #>
-            <% for (let column of this.entity.columns) { %>
-            $table-><$ column.type $>('<$ column.name $>'
+            <% for (let column of this.table.columns) { %>
+            $table-><$ column.typeDefinition $>('<$ column.name $>'
             <up if (column.length) { up>
             , <$ column.length $>
             <up } up>
@@ -46,31 +46,31 @@ class Create<$ this.table.name $>Table extends Migration
             ->default(<$ column.getDefaultForTemplate() $>)
             <up } up>
             <# --- #>
-            <up if(column.nullable) { up>
+            <up if (column.nullable) { up>
             ->nullable()
             <up } up>
             <# --- #>
-            <up if(column.isSpecialPrimaryKey()) { up>
+            <up if (column.isSpecialPrimaryKey()) { up>
             ->primary()
             <up } up>
             <# --- #>
-            <up if(column.isUnique()) { up>
+            <up if (column.isUnique()) { up>
             ->unique()
             <up } up>;
             <% } %>
 
             <# Table index columns #>
-            <% for (let column of this.entity.indexFields()) { %>
-            $table->index('<$ column.name $>');
-            <% } %>
+            <# <% for (let column of this.table.indexFields()) { %> #>
+            <# $table->index('<$ column.name $>'); #>
+            <# <% } %> #>
 
-            <% if(this.entity.hasTimestamps()) { %>
-            $table->timestamps();
-            <% } %>
+            <# <% if(this.table.hasTimestamps()) { %> #>
+            <# $table->timestamps(); #>
+            <# <% } %> #>
             <# --- #>
-            <% if(this.entity.softDeletes) { %>
-            $table->softDeletes();
-            <% } %>
+            <# <% if(this.table.hasSoftDeletes()) { %> #>
+            <# $table->softDeletes(); #>
+            <# <% } %> #>
 
         });
     }
@@ -84,4 +84,4 @@ class Create<$ this.table.name $>Table extends Migration
     {
         Schema::dropIfExists('<$ this.table.name $>');
     }
-}
+}<% if (laravelVersion >= 9) { %>;<% } %>

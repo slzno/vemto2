@@ -76,6 +76,8 @@
 
         tablesData.value = Table.get()
 
+        if(force) projectStore.project.clearChangedTables()
+
         nextTick(() => {
             initSchema()
         })

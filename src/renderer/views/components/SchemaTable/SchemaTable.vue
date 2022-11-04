@@ -9,11 +9,29 @@
         table = toRef(props, "table"),
         showingOptions = ref(false)
 
+    let clickedQuickly = false
+
     const getTablePosition = (table: Table) => {
         return {
             left: (table.positionX || 0) + "px",
             top: (table.positionY || 0) + "px",
         }
+    }
+
+    const startClick = () => {
+        clickedQuickly = true
+
+        setTimeout(() => {
+            clickedQuickly = false
+        }, 200)
+    }
+
+    const endClick = () => {
+        if (!clickedQuickly) {
+            return
+        }
+
+        showingOptions.value = true
     }
 </script>
 
@@ -21,7 +39,8 @@
     <TableOptions ref="tableOptionsWindow" :table="table" :show="showingOptions" @close="showingOptions = false" />
 
     <div
-        @click="showingOptions = true"
+        @mousedown="startClick()"
+        @mouseup="endClick()"
         :id="`table_${table.id}`"
         :ref="`table_${table.id}`"
         :data-table-id="table.id"

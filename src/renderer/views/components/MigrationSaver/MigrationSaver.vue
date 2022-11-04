@@ -6,13 +6,14 @@
     import { onMounted, reactive, ref } from "vue"
 import Table from "@Renderer/../common/models/Table"
 // import UiRadio from "@Renderer/components/ui/UiRadio.vue"
+    import TemplateCompiler from "@Renderer/codegen/templates/base/TemplateCompiler"
 
     const projectStore = useProjectStore(),
         showingModal = ref(true),
         tablesSettings = reactive({} as any)
 
     onMounted(() => {
-        const changedTables = projectStore.project.getChangedTables()
+        let changedTables = projectStore.project.getChangedTables()
 
         changedTables.forEach((table) => {
             tablesSettings[table.name] = {
@@ -50,7 +51,7 @@ import Table from "@Renderer/../common/models/Table"
 
         console.log(fileContent)
 
-        window.api.addFileToGenerationQueue(latestMigration.relativePath + 'a', fileContent)
+        window.api.addFileToGenerationQueue(latestMigration.relativePath.replace('.php', '.phpa'), fileContent)
 
         console.log('UPDATED')
 
@@ -68,26 +69,34 @@ import Table from "@Renderer/../common/models/Table"
         if(table.latestMigrationCreatedTable()) {
             // Obtém o conteúdo do template
             const templateContent = await window.api.readTemplateFile('CreationMigration.vemtl')
-            console.log(templateContent)
 
             // Roda o template com os dados da tabela
+            TemplateCompiler
+                .setContent(templateContent)
+                .setData({table})
+
+            const compiledTemplate = TemplateCompiler.compile()
 
             // Retorna o conteúdo gerado
-        } else {
-            // Obtém o conteúdo do template apenas dos campos alterados
-            const templateContent = 'migration de alteração'
-            console.log(templateContent)
+            console.log(compiledTemplate)
 
-            // Roda o template com os dados da tabela
+            return compiledTemplate
+        } 
+        
+        // Obtém o conteúdo do template apenas dos campos alterados
+        const templateContent = 'migration de alteração'
+        console.log(templateContent)
 
-            // Retorna o conteúdo gerado
+        // Roda o template com os dados da tabela
 
-            // Obtém o conteúdo do Schema::table
+        // Retorna o conteúdo gerado
 
-            // Faz um append do conteúdo gerado no final do Schema::table
+        // Obtém o conteúdo do Schema::table
 
-            // Retorna o conteúdo gerado
-        }
+        // Faz um append do conteúdo gerado no final do Schema::table
+
+        // Retorna o conteúdo gerado
+        
         
         return latestMigrationContent
     }

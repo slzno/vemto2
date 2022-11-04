@@ -49,7 +49,6 @@
         "@heroicons/vue": "^2.0.11",
         "@jsplumb/browser-ui": "^5.12.0",
         "@jsplumb/connector-bezier": "^5.12.0",
-        "@tiago_silva_pereira/vemto-template-engine": "^3.5.2",
         "crypto-js": "^4.1.1",
         "pinia": "^2.0.22",
         "prettier": "^2.7.1",
