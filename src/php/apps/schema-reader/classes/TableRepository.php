@@ -171,16 +171,7 @@ class TableRepository {
         $tableMigrations = collect($tableMigrations);
 
         if(!$tableMigrations->where('relativePath', $migrationRelativePath)->count()) {
-            $migrationData = $this->currentMigration;
-            
-            $migrationCommands = collect($this->currentMigration['commands']);
-            
-            $migrationData['createdThisTable'] = $migrationCommands
-                ->where('name', 'create')
-                ->where('table', $tableName)
-                ->count() > 0;
-            
-            $tableMigrations->push($migrationData);
+            $tableMigrations->push($this->currentMigration);
         }
 
         $this->tables[$tableName]['migrations'] = $tableMigrations;

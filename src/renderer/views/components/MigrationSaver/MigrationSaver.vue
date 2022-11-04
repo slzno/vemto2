@@ -66,6 +66,8 @@ import Table from "@Renderer/../common/models/Table"
         // Caso contrário, verifica se é uma migration de alteração... se for, gera apenas o conteúdo de alteração e faz um 
         // append no final do Schema::table
 
+        console.log(latestMigration)
+
         if(table.latestMigrationCreatedTable()) {
             // Obtém o conteúdo do template
             const templateContent = await window.api.readTemplateFile('CreationMigration.vemtl')

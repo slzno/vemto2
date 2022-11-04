@@ -18,6 +18,9 @@ class MigrationRepository {
             'changedColumns' => [],
             'droppedColumns' => [],
             'commands' => [],
+
+            // TODO: FIX IT
+            'createdThisTable' => false,
         ];
     }
 
