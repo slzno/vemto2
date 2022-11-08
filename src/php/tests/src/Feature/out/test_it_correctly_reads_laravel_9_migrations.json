@@ -146,7 +146,9 @@
                         "table": "users"
                     }
                 ],
-                "createdThisTable": true
+                "createdTables": [
+                    "users"
+                ]
             }
         ],
         "name": "users"
@@ -220,7 +222,9 @@
                         "table": "password_resets"
                     }
                 ],
-                "createdThisTable": true
+                "createdTables": [
+                    "password_resets"
+                ]
             }
         ],
         "name": "password_resets"
@@ -344,7 +348,9 @@
                         "table": "failed_jobs"
                     }
                 ],
-                "createdThisTable": true
+                "createdTables": [
+                    "failed_jobs"
+                ]
             }
         ],
         "name": "failed_jobs"
@@ -547,7 +553,9 @@
                         "table": "personal_access_tokens"
                     }
                 ],
-                "createdThisTable": true
+                "createdTables": [
+                    "personal_access_tokens"
+                ]
             }
         ],
         "name": "personal_access_tokens"

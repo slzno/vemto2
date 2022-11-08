@@ -3,6 +3,7 @@ import TemplateEngine from "@tiago_silva_pereira/vemto-template-engine"
 export default new class TemplateCompiler {
 
     private data: any
+    private imports: any
     private content: string
     private templateEngine: TemplateEngine
 
@@ -30,8 +31,16 @@ export default new class TemplateCompiler {
         return this.data
     }
 
-    compile(customOptions: any = {}) {
-        this.startEngine(customOptions)
+    importTemplate(template: string, content: string) {
+        if (!this.imports) this.imports = {}
+
+        this.imports[template] = content
+
+        return this
+    }
+
+    compile() {
+        this.startEngine()
 
         try {
             return this.templateEngine
@@ -46,17 +55,17 @@ export default new class TemplateCompiler {
         }
     }
 
-    getTemplateContent(customOptions: any = {}) {
-        this.startEngine(customOptions)
+    getTemplateContent() {
+        this.startEngine()
         
         return this.templateEngine.getTemplate()
     }
 
-    startEngine(customOptions: any = {}) {
+    startEngine() {
         this.templateEngine = new TemplateEngine(this.content, {
             logger: null,
             onBrowser: true,
-            imports: customOptions.imports,
+            imports: this.imports,
         })
 
         return this 

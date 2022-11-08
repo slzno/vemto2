@@ -91,4 +91,10 @@ export default class Column extends RelaDB.Model {
             typeDefinition: this.typeDefinition,
         }
     }
+
+    columnWasRenamed(): boolean {
+        if(!this.schemaState) return false
+        
+        return this.schemaState.name !== this.name
+    }
 }

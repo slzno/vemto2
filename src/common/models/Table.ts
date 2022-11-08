@@ -125,7 +125,7 @@ export default class Table extends RelaDB.Model {
     latestMigrationCreatedTable(): boolean {
         let latestMigration = this.getLatestMigration()
 
-        return latestMigration && latestMigration.createdThisTable === true
+        return latestMigration && latestMigration.createdTables.includes(this.name)
     }
 
     getLatestMigration(): any {
@@ -133,7 +133,7 @@ export default class Table extends RelaDB.Model {
     }
 
     getCreationMigration(): any {
-        return this.migrations.find((migration) => migration.createdThisTable === true)
+        return this.migrations.find((migration) => migration.createdTables.includes(this.name))
     }
 
     canUpdateLatestMigration(): boolean {

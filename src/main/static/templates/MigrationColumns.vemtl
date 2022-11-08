@@ -1,0 +1,35 @@
+<# Table columns #>
+<% for (let column of this.table.columns) { %>
+$table-><$ column.typeDefinition $>('<$ column.name $>'
+<up if (column.length) { up>
+, <$ column.length $>
+<up } up>
+<# --- #>
+<up if (column.precision) { up>
+, <$ column.precision $>
+<up } up>
+<# --- #>
+<up if (column.scale) { up>
+, <$ column.scale $>
+<up } up>
+<# --- #>
+<up if (column.options) { up>
+, <$ JSON.stringify(column.options).replace(/"/g, '\'') $>
+<up } up>)
+<# --- #>
+<up if (column.defaultValue) { up>
+->default(<$ column.getDefaultForTemplate() $>)
+<up } up>
+<# --- #>
+<up if (column.nullable) { up>
+->nullable()
+<up } up>
+<# --- #>
+<up if (column.isSpecialPrimaryKey()) { up>
+->primary()
+<up } up>
+<# --- #>
+<up if (column.isUnique()) { up>
+->unique()
+<up } up>;
+<% } %>

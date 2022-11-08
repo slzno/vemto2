@@ -19,9 +19,16 @@ class MigrationRepository {
             'droppedColumns' => [],
             'commands' => [],
 
-            // TODO: FIX IT
-            'createdThisTable' => false,
+            // TODO: FIX IT - melhor criar um campo createdTables<Array> e marcar todas as tabelas criadas
+            'createdTables' => [],
         ];
+    }
+
+    public function addCreatedTableName(string $tableName)
+    {
+        if (!in_array($tableName, $this->migrations[$this->currentMigration]['createdTables'])) {
+            $this->migrations[$this->currentMigration]['createdTables'][] = $tableName;
+        }
     }
 
     public function addColumn($column)

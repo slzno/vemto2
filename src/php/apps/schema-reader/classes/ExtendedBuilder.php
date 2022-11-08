@@ -20,6 +20,8 @@ class ExtendedBuilder extends Builder
 
             $callback($blueprint);
             
+            $this->migrationsRepository->addCreatedTableName($table);
+
             $this->processTable($table, $blueprint);
         });
     }
