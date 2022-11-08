@@ -9,6 +9,7 @@ export default class Column extends RelaDB.Model {
     table: Table
     length: number
     tableId: string
+    schemaState: any
     nullable: boolean
     unsigned: boolean
     autoIncrement: boolean
@@ -32,7 +33,21 @@ export default class Column extends RelaDB.Model {
         new TableColumnChanged(column).handle()
     }
 
+    isForeign(): boolean {
+        return this.name === 'user_id'
+    }
+
+    isUnique(): boolean {
+        return this.name === 'password'
+    }
+
+    isSpecialPrimaryKey(): boolean {
+        return false
+    }
+
     hadChanges(comparisonData: any): boolean {
+        if(!this.schemaState) return true 
+
         return this.name !== comparisonData.name ||
             this.length !== comparisonData.length ||
             this.nullable !== comparisonData.nullable ||
@@ -51,18 +66,29 @@ export default class Column extends RelaDB.Model {
         this.typeDefinition = data.type
         this.autoIncrement = data.autoIncrement
 
+        this.fillSchemaState()
+
         this.save()
     }
 
-    isForeign(): boolean {
-        return this.name === 'user_id'
+    saveSchemaState() {
+        this.fillSchemaState()
+
+        this.save()
     }
 
-    isUnique(): boolean {
-        return this.name === 'password'
+    fillSchemaState() {
+        this.schemaState = this.buildSchemaState()
     }
 
-    isSpecialPrimaryKey(): boolean {
-        return false
+    buildSchemaState() {
+        return {
+            name: this.name,
+            length: this.length,
+            nullable: this.nullable,
+            unsigned: this.unsigned,
+            autoIncrement: this.autoIncrement,
+            typeDefinition: this.typeDefinition,
+        }
     }
 }
