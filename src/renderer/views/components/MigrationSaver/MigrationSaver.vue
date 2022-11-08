@@ -71,8 +71,6 @@
         // Caso contrário, verifica se é uma migration de alteração... se for, gera apenas o conteúdo de alteração e faz um
         // append no final do Schema::table
 
-        console.log(latestMigration)
-
         if (table.latestMigrationCreatedTable()) {
             // Obtém o conteúdo do template
             const columnsTemplate = await window.api.readTemplateFile('MigrationColumns.vemtl'),
@@ -87,22 +85,37 @@
             const compiledTemplate = TemplateCompiler.compile()
 
             // Retorna o conteúdo gerado
-            console.log(compiledTemplate)
+            // console.log(compiledTemplate)
 
             return compiledTemplate
         }
 
+        console.log('latest migration', latestMigrationContent)
+
         // Obtém o conteúdo do template apenas dos campos alterados
-        const templateContent = "migration de alteração"
-        console.log(templateContent)
+        const columnsTemplate = await window.api.readTemplateFile('MigrationColumns.vemtl')
 
         // Roda o template com os dados da tabela
+        TemplateCompiler
+                .setContent(columnsTemplate)
+                .setData({ table })
 
         // Retorna o conteúdo gerado
+        const compiledTemplate = TemplateCompiler.compile()
 
-        // Obtém o conteúdo do Schema::table
+        // Obtém o conteúdo do Schema::table('nome da tabela', function (Blueprint $table) { ... })
+        const tableSchemaContent = latestMigrationContent.match(/Schema::table\('(.*)', function \(Blueprint \$table\) \{(.*)\}\)/s)[2]
+
+        console.log('schema table content', tableSchemaContent)
+
 
         // Faz um append do conteúdo gerado no final do Schema::table
+        const updatedTableSchemaContent = tableSchemaContent + compiledTemplate
+
+        // Substitui o conteúdo do Schema::table no conteúdo da migration
+        const updatedMigrationContent = latestMigrationContent.replace(tableSchemaContent, updatedTableSchemaContent)
+
+        console.log('updated migration', updatedMigrationContent)
 
         // Retorna o conteúdo gerado
 

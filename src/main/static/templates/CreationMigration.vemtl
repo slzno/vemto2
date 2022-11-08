@@ -1,6 +1,6 @@
 <?php
-<# TEMPLATE DATA #>
-<% const pascalCase = TemplateRequire('pascalCase') %>
+<# TEMPLATE VARIABLES #>
+<# const pascalCase = TemplateRequire('pascalCase') #>
 <% const laravelVersion = 9 %>
 <####>
 
