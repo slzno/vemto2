@@ -4,11 +4,7 @@
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import UiModal from "@Renderer/components/ui/UiModal.vue"
     import { onMounted, reactive, ref } from "vue"
-    import Table from "@Renderer/../common/models/Table"
-    import MigrationEditor from "@Renderer/codegen/editors/MigrationEditor"
-    import PhpFormatter from "@Renderer/codegen/formatters/PhpFormatter"
-    // import UiRadio from "@Renderer/components/ui/UiRadio.vue"
-    import TemplateCompiler from "@Renderer/codegen/templates/base/TemplateCompiler"
+    import UpdateExistingMigration from "@Renderer/codegen/generators/UpdateExistingMigration"
 
     const projectStore = useProjectStore(),
         showingModal = ref(true),
@@ -19,8 +15,7 @@
 
         changedTables.forEach((table) => {
             tablesSettings[table.name] = {
-                id: table.id,
-                name: table.name,
+                instance: table,
                 latestMigration: table.getLatestMigration(),
                 canUpdateLatestMigration: table.canUpdateLatestMigration(),
                 canCreateNewMigration: table.canCreateNewMigration(),
@@ -37,78 +32,15 @@
 
         tables.forEach((table: any) => {
             if (table.selectedOption === "update") {
-                updateLatestMigration(table.id)
+                UpdateExistingMigration
+                    .setTable(table.instance)
+                    .setProject(projectStore.project)
+                    .run()
             }
         })
 
         // projectStore.project.saveMigrations()
         showingModal.value = false
-    }
-
-    const updateLatestMigration = async (tableId: string) => {
-        const table = projectStore.project.findTableById(tableId),
-            latestMigration = table.getLatestMigration()
-
-        const fileContent = await generateLatestMigrationUpdate(table)
-
-        window.api.addFileToGenerationQueue(
-            latestMigration.relativePath.replace(".php", ".phpa"),
-            fileContent
-        )
-
-        // projectStore.project.removeTableFromChangedTables(table)
-    }
-
-    const generateLatestMigrationUpdate = async (table: Table) => {
-        const latestMigration = table.getLatestMigration(),
-            latestMigrationContent = await window.api.readProjectFile(
-                latestMigration.relativePath
-            )
-
-        // Verifica se é uma migration de criação... se for, simplesmente gera todo o seu conteúdo novamente
-        // Caso contrário, verifica se é uma migration de alteração... se for, gera apenas o conteúdo de alteração e faz um
-        // append no final do Schema::table
-
-        if (table.latestMigrationCreatedTable()) {
-            // Obtém o conteúdo do template
-            const columnsTemplate = await window.api.readTemplateFile('MigrationColumns.vemtl'),
-                templateContent = await window.api.readTemplateFile("CreationMigration.vemtl")
-
-            // Roda o template com os dados da tabela
-            TemplateCompiler
-                .setContent(templateContent)
-                .setData({ table })
-                .importTemplate('MigrationColumns.vemtl', columnsTemplate)
-
-            const compiledTemplate = TemplateCompiler.compile()
-
-            // Retorna o conteúdo gerado
-            // console.log(compiledTemplate)
-
-            return compiledTemplate
-        }
-
-        const columnsTemplate = await window.api.readTemplateFile('UpdaterMigrationColumns.vemtl')
-
-        TemplateCompiler
-                .setContent(columnsTemplate)
-                .setData({ table })
-
-        const compiledTemplate = TemplateCompiler.compile()
-
-        const migrationEditor = new MigrationEditor(latestMigrationContent)
-
-        const updatedTableSchemaContent = migrationEditor.addContentToSchemaTableOnUpMethod(table.name, compiledTemplate)
-
-        console.log('updated', updatedTableSchemaContent)
-
-        const updatedMigrationContent = migrationEditor.getMigrationContent()
-
-        const formattedMigration = PhpFormatter.setContent(updatedMigrationContent).format()
-
-        console.log('updated migration', formattedMigration)
-
-        return formattedMigration
     }
 </script>
 

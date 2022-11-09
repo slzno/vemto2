@@ -1,0 +1,79 @@
+import Table from "../../../common/models/Table"
+import Project from "../../../common/models/Project"
+import PhpFormatter from "../formatters/PhpFormatter"
+import MigrationEditor from "../editors/MigrationEditor"
+import TemplateCompiler from "../templates/base/TemplateCompiler"
+
+export default new class UpdateExistingMigration {
+    table: Table
+    project: Project
+
+    setTable(table: Table) {
+        this.table = table
+        
+        return this
+    }
+
+    setProject(project: Project) {
+        this.project = project
+
+        return this
+    }
+
+    run() {
+        return this.updateLatestMigration()
+    }
+
+    async updateLatestMigration() {
+        const latestMigration = this.table.getLatestMigration()
+
+        const fileContent = await this.generateLatestMigrationUpdate()
+
+        window.api.addFileToGenerationQueue(
+            latestMigration.relativePath,
+            fileContent
+        )
+
+        this.project.removeTableFromChangedTables(this.table)
+    }
+
+    async generateLatestMigrationUpdate() {
+        if (this.table.latestMigrationCreatedTable()) {
+            return this.changeCreationMigration()
+        }
+
+        return this.changeUpdaterMigration()
+    }
+
+    async changeCreationMigration() {
+        const columnsTemplate = await window.api.readTemplateFile('MigrationColumns.vemtl'),
+            templateContent = await window.api.readTemplateFile("CreationMigration.vemtl")
+
+        TemplateCompiler
+            .setContent(templateContent)
+            .setData({ table: this.table })
+            .importTemplate('MigrationColumns.vemtl', columnsTemplate)
+
+        return TemplateCompiler.compile()
+    }
+
+    async changeUpdaterMigration() {
+        const latestMigration = this.table.getLatestMigration(),
+            latestMigrationContent = await window.api.readProjectFile(latestMigration.relativePath),
+            columnsTemplate = await window.api.readTemplateFile('UpdaterMigrationColumns.vemtl')
+
+        TemplateCompiler
+                .setContent(columnsTemplate)
+                .setData({ table: this.table })
+
+        const compiledTemplate = TemplateCompiler.compile()
+
+        const migrationEditor = new MigrationEditor(latestMigrationContent)
+
+        migrationEditor.addContentToSchemaTableOnUpMethod(this.table.name, compiledTemplate)
+
+        return PhpFormatter.setContent(
+            migrationEditor.getMigrationContent()
+        ).format()
+    }
+}
