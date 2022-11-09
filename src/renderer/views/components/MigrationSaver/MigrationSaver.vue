@@ -4,6 +4,7 @@
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import UiModal from "@Renderer/components/ui/UiModal.vue"
     import { onMounted, reactive, ref } from "vue"
+    import GenerateNewMigration from "@Renderer/codegen/generators/GenerateNewMigration"
     import UpdateExistingMigration from "@Renderer/codegen/generators/UpdateExistingMigration"
 
     const projectStore = useProjectStore(),
@@ -33,6 +34,10 @@
         tables.forEach((table: any) => {
             if (table.selectedOption === "update") {
                 UpdateExistingMigration.setTable(table.instance).run()
+            }
+
+            if (table.selectedOption === "create") {
+                GenerateNewMigration.setTable(table.instance).run()
             }
         })
 
