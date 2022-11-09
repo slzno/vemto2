@@ -10,13 +10,8 @@ export default new class UpdateExistingMigration {
 
     setTable(table: Table) {
         this.table = table
+        this.project = table.project
         
-        return this
-    }
-
-    setProject(project: Project) {
-        this.project = project
-
         return this
     }
 

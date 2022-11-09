@@ -32,10 +32,7 @@
 
         tables.forEach((table: any) => {
             if (table.selectedOption === "update") {
-                UpdateExistingMigration
-                    .setTable(table.instance)
-                    .setProject(projectStore.project)
-                    .run()
+                UpdateExistingMigration.setTable(table.instance).run()
             }
         })
 
