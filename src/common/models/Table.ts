@@ -67,7 +67,7 @@ export default class Table extends RelaDB.Model {
     }
 
     hasRelatedTables(): boolean {
-        return true
+        return false
     }
 
     getRelatedTables(): Table[] {

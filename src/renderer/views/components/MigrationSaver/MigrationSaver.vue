@@ -5,6 +5,7 @@
     import UiModal from "@Renderer/components/ui/UiModal.vue"
     import { onMounted, reactive, ref } from "vue"
     import Table from "@Renderer/../common/models/Table"
+    import MigrationEditor from "@Renderer/codegen/editors/MigrationEditor"
     // import UiRadio from "@Renderer/components/ui/UiRadio.vue"
     import TemplateCompiler from "@Renderer/codegen/templates/base/TemplateCompiler"
 
@@ -49,14 +50,10 @@
 
         const fileContent = await generateLatestMigrationUpdate(table)
 
-        console.log(fileContent)
-
         window.api.addFileToGenerationQueue(
             latestMigration.relativePath.replace(".php", ".phpa"),
             fileContent
         )
-
-        console.log("UPDATED")
 
         // projectStore.project.removeTableFromChangedTables(table)
     }
@@ -90,8 +87,6 @@
             return compiledTemplate
         }
 
-        console.log('latest migration', latestMigrationContent)
-
         // Obtém o conteúdo do template apenas dos campos alterados
         const columnsTemplate = await window.api.readTemplateFile('MigrationColumns.vemtl')
 
@@ -103,8 +98,11 @@
         // Retorna o conteúdo gerado
         const compiledTemplate = TemplateCompiler.compile()
 
-        // Obtém o conteúdo do Schema::table('nome da tabela', function (Blueprint $table) { ... })
-        const tableSchemaContent = latestMigrationContent.match(/Schema::table\('(.*)', function \(Blueprint \$table\) \{(.*)\}\)/s)[2]
+        // Obtém o conteúdo entre Schema::table('nome da tabela', function (Blueprint $table) { e } )
+
+        const migrationEditor = new MigrationEditor(latestMigrationContent)
+
+        const tableSchemaContent = migrationEditor.getSchemaContentOnUpMethod(table.name)
 
         console.log('schema table content', tableSchemaContent)
 
@@ -115,7 +113,7 @@
         // Substitui o conteúdo do Schema::table no conteúdo da migration
         const updatedMigrationContent = latestMigrationContent.replace(tableSchemaContent, updatedTableSchemaContent)
 
-        console.log('updated migration', updatedMigrationContent)
+        // console.log('updated migration', updatedMigrationContent)
 
         // Retorna o conteúdo gerado
 

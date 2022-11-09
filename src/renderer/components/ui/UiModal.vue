@@ -29,7 +29,7 @@
         >
             <!-- Modal -->
             <div
-                class="relative rounded-lg bg-slate-850 shadow-2xl border border-slate-700"
+                class="relative rounded-lg bg-slate-850 shadow-2xl border border-slate-700 max-h-screen"
                 :style="{ width: width }"
             >
                 <button
