@@ -6,6 +6,7 @@
     import { onMounted, reactive, ref } from "vue"
     import Table from "@Renderer/../common/models/Table"
     import MigrationEditor from "@Renderer/codegen/editors/MigrationEditor"
+    import PhpFormatter from "@Renderer/codegen/formatters/PhpFormatter"
     // import UiRadio from "@Renderer/components/ui/UiRadio.vue"
     import TemplateCompiler from "@Renderer/codegen/templates/base/TemplateCompiler"
 
@@ -87,37 +88,27 @@
             return compiledTemplate
         }
 
-        // Obtém o conteúdo do template apenas dos campos alterados
-        const columnsTemplate = await window.api.readTemplateFile('MigrationColumns.vemtl')
+        const columnsTemplate = await window.api.readTemplateFile('UpdaterMigrationColumns.vemtl')
 
-        // Roda o template com os dados da tabela
         TemplateCompiler
                 .setContent(columnsTemplate)
                 .setData({ table })
 
-        // Retorna o conteúdo gerado
         const compiledTemplate = TemplateCompiler.compile()
-
-        // Obtém o conteúdo entre Schema::table('nome da tabela', function (Blueprint $table) { e } )
 
         const migrationEditor = new MigrationEditor(latestMigrationContent)
 
-        const tableSchemaContent = migrationEditor.getSchemaContentOnUpMethod(table.name)
+        const updatedTableSchemaContent = migrationEditor.addContentToSchemaTableOnUpMethod(table.name, compiledTemplate)
 
-        console.log('schema table content', tableSchemaContent)
+        console.log('updated', updatedTableSchemaContent)
 
+        const updatedMigrationContent = migrationEditor.getMigrationContent()
 
-        // Faz um append do conteúdo gerado no final do Schema::table
-        const updatedTableSchemaContent = tableSchemaContent + compiledTemplate
+        const formattedMigration = PhpFormatter.setContent(updatedMigrationContent).format()
 
-        // Substitui o conteúdo do Schema::table no conteúdo da migration
-        const updatedMigrationContent = latestMigrationContent.replace(tableSchemaContent, updatedTableSchemaContent)
+        console.log('updated migration', formattedMigration)
 
-        // console.log('updated migration', updatedMigrationContent)
-
-        // Retorna o conteúdo gerado
-
-        return latestMigrationContent
+        return formattedMigration
     }
 </script>
 

@@ -8,19 +8,37 @@ export default class MigrationEditor {
 
     setMigrationContent(content: string) {
         this.content = content
+
+        return this
     }
 
     getMigrationContent(): string {
         return this.content
     }
 
-    getSchemaBlockOnUpMethod(table: string): string {
+    resetMigrationContent() {
+        this.content = ''
+    
+        return this
+    }
+
+    addContentToSchemaTableOnUpMethod(table: string, content: string) {
+        const tableContent = this.getSchemaTableContentOnUpMethod(table),
+            newTableContent = tableContent + content
+        
+        this.content = this.content.replace(tableContent, newTableContent)
+
+        return newTableContent
+    }
+
+
+    getSchemaTableOnUpMethod(table: string): string {
         const regex = new RegExp(`(?<=up\\(\\)(.*))Schema::table\\(('|")${table}('|")(.*?)}\\);(?=(.*)})`, 's')
         
         return this.getRegexMatch(regex)
     }
 
-    getSchemaContentOnUpMethod(table: string): string {
+    getSchemaTableContentOnUpMethod(table: string): string {
         const regex = new RegExp(`(?<=up\\(\\)(.*)Schema::table\\(('|")${table}('|")(.*){)(.*?)(?=}\\);(.*)})`, 's')
         
         return this.getRegexMatch(regex)
@@ -28,8 +46,6 @@ export default class MigrationEditor {
 
     getRegexMatch(regex: RegExp): string {
         const matches = this.content.match(regex)
-
-        console.log(regex, matches)
 
         if (matches === null) {
             return ''

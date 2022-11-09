@@ -33,6 +33,12 @@ export default class Column extends RelaDB.Model {
         new TableColumnChanged(column).handle()
     }
 
+    getOldName(): string {
+        if(!this.schemaState) return this.name
+
+        return this.schemaState.name
+    }
+
     isForeign(): boolean {
         return this.name === 'user_id'
     }
@@ -92,7 +98,7 @@ export default class Column extends RelaDB.Model {
         }
     }
 
-    columnWasRenamed(): boolean {
+    wasRenamed(): boolean {
         if(!this.schemaState) return false
         
         return this.schemaState.name !== this.name

@@ -1,0 +1,5 @@
+<% for (let column of this.table.columns) { %>
+    <% if (column.wasRenamed()) { %>
+    $table->renameColumn('<$ column.getOldName() $>', '<$ column.name $>');
+    <% } %>
+<% } %>
