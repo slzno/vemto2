@@ -1,10 +1,15 @@
 import Table from "../../../common/models/Table"
+import Project from "../../../common/models/Project"
 
-export default class GenerateNewMigration {
+export default new class GenerateNewMigration {
     table: Table
+    project: Project
 
-    constructor(table: Table) {
+    setTable(table: Table) {
         this.table = table
+        this.project = table.project
+        
+        return this
     }
 
     run() {

@@ -39,6 +39,39 @@ export default new class TemplateCompiler {
         return this
     }
 
+    async compileWithImports() {
+        const templates = await this.getTemplates(this.content)
+
+        for(const template of templates) {
+            this.importTemplate(template, await window.api.readTemplateFile(template))
+        }
+
+        return this.compile()
+    }
+
+    async getTemplates(templateContent) {
+        const templateEngine = new TemplateEngine(templateContent, {
+            logger: null,
+            onBrowser: true,
+            disableImportsProcessing: true
+        })
+
+        let templates = []
+
+        const importedTemplates = templateEngine.getImportedTemplates()
+
+        if (importedTemplates.length) {
+            templates = templates.concat(importedTemplates)
+
+            for(const templateName of importedTemplates) {
+                const templateContent = await window.api.readTemplateFile(templateName)
+                templates = templates.concat(await this.getTemplates(templateContent))
+            }
+        }
+
+        return templates
+    }
+
     compile() {
         this.startEngine()
 

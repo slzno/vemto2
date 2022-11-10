@@ -41,7 +41,6 @@
             }
         })
 
-        // projectStore.project.saveMigrations()
         showingModal.value = false
     }
 </script>
@@ -68,12 +67,12 @@
                 <div
                     class="bg-slate-800 rounded-lg"
                     v-for="table in tablesSettings"
-                    :key="table.id"
+                    :key="table.instance.id"
                 >
                     <header class="p-4">
                         Table
                         <span class="text-red-500 dark:text-red-400">{{
-                            table.name
+                            table.instance.name
                         }}</span>
                     </header>
 
@@ -105,6 +104,16 @@
                                 v-model="table.selectedOption"
                             />
                             <label>Create new migration</label>
+                        </div>
+
+                        <div>
+                            <input
+                                class="rounded-full bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300 mr-2"
+                                type="radio"
+                                value="skip"
+                                v-model="table.selectedOption"
+                            />
+                            <label>Don't generate migration</label>
                         </div>
                     </div>
                 </div>

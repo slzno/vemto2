@@ -41,15 +41,24 @@ export default new class UpdateExistingMigration {
     }
 
     async changeCreationMigration() {
-        const columnsTemplate = await window.api.readTemplateFile('MigrationColumns.vemtl'),
-            templateContent = await window.api.readTemplateFile("CreationMigration.vemtl")
+        const latestMigration = this.table.getLatestMigration(),
+            latestMigrationContent = await window.api.readProjectFile(latestMigration.relativePath),
+            creationSchemaTemplate = await window.api.readTemplateFile('CreationSchema.vemtl')
 
         TemplateCompiler
-            .setContent(templateContent)
+            .setContent(creationSchemaTemplate)
             .setData({ table: this.table })
-            .importTemplate('MigrationColumns.vemtl', columnsTemplate)
 
-        return TemplateCompiler.compile()
+        const compiledTemplate = await TemplateCompiler.compileWithImports(),
+            migrationEditor = new MigrationEditor(latestMigrationContent)
+
+        migrationEditor.replaceSchemaCreateOnUpMethod(this.table.name, compiledTemplate)
+
+        console.log(migrationEditor.getMigrationContent())
+
+        return PhpFormatter.setContent(
+            migrationEditor.getMigrationContent()
+        ).format()
     }
 
     async changeUpdaterMigration() {

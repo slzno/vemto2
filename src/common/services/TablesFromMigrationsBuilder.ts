@@ -115,6 +115,7 @@ class TablesFromMigrationsBuilder {
             }
         })
 
+        // Add or update columns
         Object.keys(tableData.columns).forEach((columnName: any) => {
             let columnData = tableData.columns[columnName],
                 column: Column = null

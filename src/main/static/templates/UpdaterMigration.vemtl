@@ -11,7 +11,7 @@ use Illuminate\Database\Migrations\Migration;
 <% if (laravelVersion >= 9) { %>
 return new class extends Migration
 <% } else { %>
-class <$ this.table.getCreationMigrationClassName() $> extends Migration
+class Update<$ this.table.name $>Table extends Migration
 <% } %>
 {
     /**
@@ -21,7 +21,9 @@ class <$ this.table.getCreationMigrationClassName() $> extends Migration
      */
     public function up()
     {
-        <import template="CreationSchema.vemtl">
+        Schema::create('<$ this.table.name $>', function (Blueprint $table) {
+            <import template="MigrationColumns.vemtl">
+        });
     }
 
     /**

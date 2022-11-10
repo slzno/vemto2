@@ -1,0 +1,3 @@
+Schema::create('<$ this.table.name $>', function (Blueprint $table) {
+    <import template="MigrationColumns.vemtl">
+});

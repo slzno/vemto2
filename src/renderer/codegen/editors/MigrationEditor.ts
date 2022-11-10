@@ -28,9 +28,33 @@ export default class MigrationEditor {
         
         this.content = this.content.replace(tableContent, newTableContent)
 
-        return newTableContent
+        return this
     }
 
+    addContentToSchemaCreateOnUpMethod(table: string, content: string) {
+        const tableContent = this.getSchemaCreateContentOnUpMethod(table),
+            newTableContent = tableContent + content
+
+        this.content = this.content.replace(tableContent, newTableContent)
+
+        return this
+    }
+
+    replaceSchemaTableOnUpMethod(table: string, content: string) {
+        const tableContent = this.getSchemaTableContentOnUpMethod(table)
+
+        this.content = this.content.replace(tableContent, content)
+
+        return this
+    }
+
+    replaceSchemaCreateOnUpMethod(table: string, content: string) {
+        const tableContent = this.getSchemaCreateOnUpMethod(table)
+
+        this.content = this.content.replace(tableContent, content)
+
+        return this
+    }
 
     getSchemaTableOnUpMethod(table: string): string {
         const regex = new RegExp(`(?<=up\\(\\)(.*))Schema::table\\(('|")${table}('|")(.*?)}\\);(?=(.*)})`, 's')
@@ -40,6 +64,18 @@ export default class MigrationEditor {
 
     getSchemaTableContentOnUpMethod(table: string): string {
         const regex = new RegExp(`(?<=up\\(\\)(.*)Schema::table\\(('|")${table}('|")(.*){)(.*?)(?=}\\);(.*)})`, 's')
+        
+        return this.getRegexMatch(regex)
+    }
+
+    getSchemaCreateOnUpMethod(table: string): string {
+        const regex = new RegExp(`(?<=up\\(\\)(.*))Schema::create\\(('|")${table}('|")(.*?)}\\);(?=(.*)})`, 's')
+        
+        return this.getRegexMatch(regex)
+    }
+
+    getSchemaCreateContentOnUpMethod(table: string): string {
+        const regex = new RegExp(`(?<=up\\(\\)(.*)Schema::create\\(('|")${table}('|")(.*){)(.*?)(?=}\\);(.*)})`, 's')
         
         return this.getRegexMatch(regex)
     }
