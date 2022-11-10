@@ -37,8 +37,10 @@ export default new class GenerateNewMigration {
             .setContent(templateContent)
             .setData({ table: this.table })
 
+        const compiledTemplate = await TemplateCompiler.compileWithImports()
+
         return PhpFormatter.setContent(
-            TemplateCompiler.compileWithImports()
+            compiledTemplate
         ).format()
     }
 }

@@ -3,7 +3,7 @@
     import { ArrowDownTrayIcon } from "@heroicons/vue/24/outline"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import UiModal from "@Renderer/components/ui/UiModal.vue"
-    import { onMounted, reactive, ref } from "vue"
+    import { onMounted, reactive, ref, watch } from "vue"
     import GenerateNewMigration from "@Renderer/codegen/generators/GenerateNewMigration"
     import UpdateExistingMigration from "@Renderer/codegen/generators/UpdateExistingMigration"
 
@@ -12,6 +12,16 @@
         tablesSettings = reactive({} as any)
 
     onMounted(() => {
+        buildTablesSettings()
+    })
+
+    watch(showingModal, (willShowModal) => {
+        if(!willShowModal) return
+
+        buildTablesSettings()
+    })
+
+    const buildTablesSettings = () => {
         let changedTables = projectStore.project.getChangedTables()
 
         changedTables.forEach((table) => {
@@ -26,7 +36,7 @@
                     : "create",
             }
         })
-    })
+    }
 
     const saveMigrations = () => {
         const tables = Object.values(tablesSettings)
@@ -37,7 +47,6 @@
             }
 
             if (table.selectedOption === "create") {
-                console.log('here')
                 GenerateNewMigration.setTable(table.instance).run()
             }
         })

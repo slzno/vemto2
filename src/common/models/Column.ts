@@ -25,12 +25,20 @@ export default class Column extends RelaDB.Model {
         }
     }
 
-    static created(column: Column) {
-        new TableColumnCreated(column).handle()
-    }
+    saveFromInterface() {
+        let creating = false
 
-    static updated(column: Column) {
-        new TableColumnChanged(column).handle()
+        if(!this.isSaved()) creating = true
+
+        this.save()
+
+        if(creating) {
+            new TableColumnCreated(this).handle()
+        } else {
+            new TableColumnChanged(this).handle()
+        }
+
+        return this
     }
 
     getOldName(): string {

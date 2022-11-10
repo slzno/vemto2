@@ -16,7 +16,7 @@
     const column = toRef(props, "column") as Ref<Column>
 
     watch(() => column.value.name, () => {
-        column.value.save()
+        column.value.saveFromInterface()
     })
 </script>
 
