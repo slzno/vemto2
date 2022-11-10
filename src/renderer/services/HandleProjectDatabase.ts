@@ -1,3 +1,4 @@
+import Main from "./wrappers/Main"
 import RelaDB from "@tiago_silva_pereira/reladb"
 
 export default class HandleProjectDatabase {
@@ -16,7 +17,7 @@ export default class HandleProjectDatabase {
         RelaDB.Resolver.db().onDataChanged(() => {
             const updatedData = RelaDB.Resolver.db().driver.getDatabaseData()
             
-            window.api.databaseDataUpdated(updatedData)
+            Main.API.databaseDataUpdated(updatedData)
         })
 
         return database

@@ -5,6 +5,7 @@
     import { onMounted } from "vue"
     import Project from "@Renderer/../common/models/Project"
     import HandleProjectDatabase from "@Renderer/services/HandleProjectDatabase"
+    import Main from "@Renderer/services/wrappers/Main"
 
     const projectStore = useProjectStore()
 
@@ -12,10 +13,10 @@
         if (projectStore.projectIsEmpty) {
             const latestProjectPath = window.localStorage.getItem("latest-project")
 
-            const data = await window.api.loadProjectDatabase(latestProjectPath)
-            
+            const data = await Main.API.loadProjectDatabase(latestProjectPath)
+
             HandleProjectDatabase.start(data)
-            
+
             projectStore.setProject(Project.find(1))
         }
     })

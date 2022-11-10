@@ -1,9 +1,10 @@
 <script setup lang="ts">
     import { onMounted } from "vue"
     import { RouterView } from "vue-router"
+    import Main from "@Renderer/services/wrappers/Main"
 
     onMounted(() => {
-        window.api.onDefaultError((error) => { 
+        Main.API.onDefaultError((error) => { 
             console.error(error.error)
             console.error(error.stack)
         })

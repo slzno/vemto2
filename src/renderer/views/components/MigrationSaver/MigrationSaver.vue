@@ -8,7 +8,7 @@
     import UpdateExistingMigration from "@Renderer/codegen/generators/UpdateExistingMigration"
 
     const projectStore = useProjectStore(),
-        showingModal = ref(true),
+        showingModal = ref(false),
         tablesSettings = reactive({} as any)
 
     onMounted(() => {

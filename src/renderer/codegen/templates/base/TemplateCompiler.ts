@@ -1,3 +1,4 @@
+import Main from "@Renderer/services/wrappers/Main"
 import TemplateEngine from "@tiago_silva_pereira/vemto-template-engine"
 
 export default new class TemplateCompiler {
@@ -43,7 +44,7 @@ export default new class TemplateCompiler {
         const templates = await this.getTemplates(this.content)
 
         for(const template of templates) {
-            this.importTemplate(template, await window.api.readTemplateFile(template))
+            this.importTemplate(template, await Main.API.readTemplateFile(template))
         }
 
         return this.compile()
@@ -64,7 +65,7 @@ export default new class TemplateCompiler {
             templates = templates.concat(importedTemplates)
 
             for(const templateName of importedTemplates) {
-                const templateContent = await window.api.readTemplateFile(templateName)
+                const templateContent = await Main.API.readTemplateFile(templateName)
                 templates = templates.concat(await this.getTemplates(templateContent))
             }
         }

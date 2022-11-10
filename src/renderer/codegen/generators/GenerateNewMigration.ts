@@ -2,6 +2,7 @@ import Table from "../../../common/models/Table"
 import Project from "../../../common/models/Project"
 import PhpFormatter from "../formatters/PhpFormatter"
 import TemplateCompiler from "../templates/base/TemplateCompiler"
+import Main from "@Renderer/services/wrappers/Main"
 
 export default new class GenerateNewMigration {
     table: Table
@@ -21,7 +22,7 @@ export default new class GenerateNewMigration {
     async generateMigration() {
         const fileContent = await this.generateUpdaterMigration()
 
-        window.api.addFileToGenerationQueue(
+        Main.API.addFileToGenerationQueue(
             'database/migrations/new_migration.php',
             fileContent
         )
@@ -30,7 +31,7 @@ export default new class GenerateNewMigration {
     }
 
     async generateUpdaterMigration() {
-        const templateContent = await window.api.readTemplateFile("UpdaterMigration.vemtl")
+        const templateContent = await Main.API.readTemplateFile("UpdaterMigration.vemtl")
 
         TemplateCompiler
             .setContent(templateContent)

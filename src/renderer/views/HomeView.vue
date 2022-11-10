@@ -6,16 +6,19 @@
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import HandleProjectDatabase from "@Renderer/services/HandleProjectDatabase"
+    import Main from "@Renderer/services/wrappers/Main"
 
     let projectPath = ref(localStorage.getItem("projectPath") || "")
 
     const router = useRouter()
     const projectStore = useProjectStore()
 
-    const openProject = async() => {
+    const openProject = async () => {
         localStorage.setItem("projectPath", projectPath.value)
 
-        const databaseData = await window.api.loadProjectDatabase(projectPath.value)
+        const databaseData = await Main.API.loadProjectDatabase(
+            projectPath.value
+        )
 
         HandleProjectDatabase.start(databaseData)
 
@@ -23,9 +26,9 @@
 
         project.setPath(projectPath.value)
         project.save()
-        
+
         projectStore.setProject(project)
-        
+
         window.localStorage.setItem("latest-project", projectPath.value)
 
         router.push("/project/schema")

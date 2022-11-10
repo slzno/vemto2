@@ -15,6 +15,7 @@
     import { BezierConnector } from "@jsplumb/connector-bezier"
     import SchemaHeader from "./components/ProjectSchema/SchemaHeader.vue"
     import MigrationSaver from "./components/MigrationSaver/MigrationSaver.vue"
+    import Main from "@Renderer/services/wrappers/Main"
 
     const projectStore = useProjectStore()
 
@@ -46,7 +47,6 @@
     })
 
     const forceReload = () => {
-        console.log("force reload")
         const force = true
         loadSchema(force)
     }
@@ -55,7 +55,7 @@
         if (isDragging) return
         if (projectStore.projectIsEmpty) return
 
-        const schemaData = await window.api.loadSchema(
+        const schemaData = await Main.API.loadSchema(
             projectStore.project.path
         )
 

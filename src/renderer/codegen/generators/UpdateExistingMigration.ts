@@ -3,6 +3,7 @@ import Project from "../../../common/models/Project"
 import PhpFormatter from "../formatters/PhpFormatter"
 import MigrationEditor from "../editors/MigrationEditor"
 import TemplateCompiler from "../templates/base/TemplateCompiler"
+import Main from "@Renderer/services/wrappers/Main"
 
 export default new class UpdateExistingMigration {
     table: Table
@@ -24,7 +25,7 @@ export default new class UpdateExistingMigration {
 
         const fileContent = await this.generateLatestMigrationUpdate()
 
-        window.api.addFileToGenerationQueue(
+        Main.API.addFileToGenerationQueue(
             latestMigration.relativePath,
             fileContent
         )
@@ -42,8 +43,8 @@ export default new class UpdateExistingMigration {
 
     async changeCreationMigration() {
         const latestMigration = this.table.getLatestMigration(),
-            latestMigrationContent = await window.api.readProjectFile(latestMigration.relativePath),
-            creationSchemaTemplate = await window.api.readTemplateFile('CreationSchema.vemtl')
+            latestMigrationContent = await Main.API.readProjectFile(latestMigration.relativePath),
+            creationSchemaTemplate = await Main.API.readTemplateFile('CreationSchema.vemtl')
 
         TemplateCompiler
             .setContent(creationSchemaTemplate)
@@ -61,8 +62,8 @@ export default new class UpdateExistingMigration {
 
     async changeUpdaterMigration() {
         const latestMigration = this.table.getLatestMigration(),
-            latestMigrationContent = await window.api.readProjectFile(latestMigration.relativePath),
-            columnsTemplate = await window.api.readTemplateFile('UpdaterMigrationColumns.vemtl')
+            latestMigrationContent = await Main.API.readProjectFile(latestMigration.relativePath),
+            columnsTemplate = await Main.API.readTemplateFile('UpdaterMigrationColumns.vemtl')
 
         TemplateCompiler
                 .setContent(columnsTemplate)
