@@ -20,6 +20,7 @@ class TableRepository {
             $this->processAddedColumns($migration['addedColumns']);
             $this->processChangedColumns($migration['changedColumns']);
             $this->processDroppedColumns($migration['droppedColumns']);
+            $this->processRenamedColumns($migration['renamedColumns']);
             $this->processCommands($migration['commands']);
         }
     }
@@ -83,6 +84,38 @@ class TableRepository {
         }
 
         unset($this->tables[$tableName]['columns'][$columnName]);
+
+        $this->registerTableMigration($tableName);
+    }
+
+    protected function processRenamedColumns($renamedColumns)
+    {
+        foreach ($renamedColumns as $column) {
+            $this->renameTableColumn($column);
+        }
+    }
+
+    protected function renameTableColumn($column)
+    {
+        $tableName = $column['table'];
+        $from = $column['from'];
+        $to = $column['to'];
+
+        if (!isset($this->tables[$tableName])) {
+            $this->initTable($tableName);
+        }
+
+        $this->tables[$tableName]['columns'][$to] = $this->tables[$tableName]['columns'][$from];
+        $this->tables[$tableName]['columns'][$to]['name'] = $to;
+
+        // Add the old name to past_names for future reference
+        if (!isset($this->tables[$tableName]['columns'][$to]['past_names'])) {
+            $this->tables[$tableName]['columns'][$to]['past_names'] = [];
+        }
+
+        $this->tables[$tableName]['columns'][$to]['past_names'][] = $from;
+
+        unset($this->tables[$tableName]['columns'][$from]);
 
         $this->registerTableMigration($tableName);
     }

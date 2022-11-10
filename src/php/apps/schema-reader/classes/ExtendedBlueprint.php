@@ -50,4 +50,11 @@ class ExtendedBlueprint extends Illuminate\Database\Schema\Blueprint
 
         return parent::dropColumn($columns);
     }
+
+    public function renameColumn($from, $to)
+    {
+        $this->migrationsRepository->renameColumn($this->getTable(), $from, $to);
+
+        return parent::renameColumn($from, $to);
+    }
 }

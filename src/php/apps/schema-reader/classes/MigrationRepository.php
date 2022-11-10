@@ -17,6 +17,7 @@ class MigrationRepository {
             'addedColumns' => [],
             'changedColumns' => [],
             'droppedColumns' => [],
+            'renamedColumns' => [],
             'commands' => [],
 
             // TODO: FIX IT - melhor criar um campo createdTables<Array> e marcar todas as tabelas criadas
@@ -55,6 +56,15 @@ class MigrationRepository {
         foreach ($columns as $column) {
             $this->migrations[$this->currentMigration]['droppedColumns'][] = $column;
         }
+    }
+
+    public function renameColumn(string $table, string $from, string $to) 
+    {
+        $this->migrations[$this->currentMigration]['renamedColumns'][] = [
+            'table' => $table,
+            'from' => $from,
+            'to' => $to,
+        ];
     }
 
     public function getMigrations()

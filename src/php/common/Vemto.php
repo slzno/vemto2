@@ -10,6 +10,13 @@ class Vemto {
         echo self::jsonResponse($data);
     }
 
+    public static function logArray(array $array)
+    {
+        $text = print_r($array, true);
+
+        self::log($text);
+    }
+
     public static function log($message, $type = 'info')
     {
         $typeHeaders = [

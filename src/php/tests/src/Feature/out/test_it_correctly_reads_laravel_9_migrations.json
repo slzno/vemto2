@@ -62,6 +62,17 @@
                 "table": "users",
                 "creatorMethod": "timestamps",
                 "nullable": true
+            },
+            "avatar_renamed": {
+                "type": "string",
+                "name": "avatar_renamed",
+                "length": 255,
+                "table": "users",
+                "creatorMethod": "string",
+                "nullable": true,
+                "past_names": [
+                    "avatar"
+                ]
             }
         },
         "indexes": [],
@@ -89,6 +100,14 @@
                         "length": 255,
                         "table": "users",
                         "creatorMethod": "string"
+                    },
+                    {
+                        "type": "string",
+                        "name": "avatar",
+                        "length": 255,
+                        "table": "users",
+                        "creatorMethod": "string",
+                        "nullable": true
                     },
                     {
                         "type": "string",
@@ -140,6 +159,7 @@
                 ],
                 "changedColumns": [],
                 "droppedColumns": [],
+                "renamedColumns": [],
                 "commands": [
                     {
                         "name": "create",
@@ -149,6 +169,36 @@
                 "createdTables": [
                     "users"
                 ]
+            },
+            {
+                "migration": "C:\\Users\\tiago\\code\\vemto2\\src\\php\\laravel-base\\laravel9-basic\/database\/migrations\/2019_12_14_000002_change_users_table.php",
+                "relativePath": "\/database\/migrations\/2019_12_14_000002_change_users_table.php",
+                "migrationName": "2019_12_14_000002_change_users_table",
+                "datePrefix": "2019_12_14",
+                "fullPrefix": "2019_12_14_000002",
+                "addedColumns": [],
+                "changedColumns": [],
+                "droppedColumns": [],
+                "renamedColumns": [
+                    {
+                        "table": "users",
+                        "from": "avatar",
+                        "to": "avatar_renamed"
+                    }
+                ],
+                "commands": [
+                    {
+                        "name": "create",
+                        "table": "users"
+                    },
+                    {
+                        "name": "renameColumn",
+                        "from": "avatar",
+                        "to": "avatar_renamed",
+                        "table": "users"
+                    }
+                ],
+                "createdTables": []
             }
         ],
         "name": "users"
@@ -216,6 +266,7 @@
                 ],
                 "changedColumns": [],
                 "droppedColumns": [],
+                "renamedColumns": [],
                 "commands": [
                     {
                         "name": "create",
@@ -342,6 +393,7 @@
                 ],
                 "changedColumns": [],
                 "droppedColumns": [],
+                "renamedColumns": [],
                 "commands": [
                     {
                         "name": "create",
@@ -537,6 +589,7 @@
                 ],
                 "changedColumns": [],
                 "droppedColumns": [],
+                "renamedColumns": [],
                 "commands": [
                     {
                         "name": "create",
