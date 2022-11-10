@@ -37,6 +37,7 @@
             }
 
             if (table.selectedOption === "create") {
+                console.log('here')
                 GenerateNewMigration.setTable(table.instance).run()
             }
         })

@@ -54,8 +54,6 @@ export default new class UpdateExistingMigration {
 
         migrationEditor.replaceSchemaCreateOnUpMethod(this.table.name, compiledTemplate)
 
-        console.log(migrationEditor.getMigrationContent())
-
         return PhpFormatter.setContent(
             migrationEditor.getMigrationContent()
         ).format()

@@ -21,8 +21,8 @@ class Update<$ this.table.name $>Table extends Migration
      */
     public function up()
     {
-        Schema::create('<$ this.table.name $>', function (Blueprint $table) {
-            <import template="MigrationColumns.vemtl">
+        Schema::table('<$ this.table.name $>', function (Blueprint $table) {
+            <import template="UpdaterMigrationColumns.vemtl">
         });
     }
 
@@ -33,6 +33,6 @@ class Update<$ this.table.name $>Table extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('<$ this.table.name $>');
+        
     }
 }<% if (laravelVersion >= 9) { %>;<% } %>
