@@ -1,6 +1,7 @@
 <script setup lang="ts">
     import { PropType, Ref, toRef, watch } from "vue"
     import Column from "@Common/models/Column"
+    import debounce from "@Common/tools/debounce"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import { Bars3Icon, ChevronDownIcon } from "@heroicons/vue/24/outline"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
@@ -16,8 +17,13 @@
     const column = toRef(props, "column") as Ref<Column>
 
     watch(() => column.value.name, () => {
-        column.value.saveFromInterface()
+        saveColunm()
     })
+
+    // debounced
+    const saveColunm = debounce(() => {
+        column.value.saveFromInterface()
+    }, 500)
 </script>
 
 <template>

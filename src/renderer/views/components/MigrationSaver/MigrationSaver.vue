@@ -159,7 +159,7 @@
                         </div>
 
                         <div class="p-2 flex-grow space-y-2">
-                            <UiText v-model="table.migrationName" />
+                            <UiText v-model="table.migrationName" :disabled="table.selectedOption === 'update'" />
                             <!-- <textarea class="bg-slate-950 rounded-lg border-none w-full text-slate-200 text-lg font-mono" spellcheck="false" autocomplete="false" rows="16"></textarea> -->
                             <highlightjs language="php" :code="table.migrationContent" />
                         </div>

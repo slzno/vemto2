@@ -3,7 +3,7 @@ import BaseFormatter from "./BaseFormatter"
 import phpPlugin from "@prettier/plugin-php/standalone"
 
 class PhpFormatter extends BaseFormatter {
-
+    
     format() {
         this.formatWithPrettierPhpParser()
 
@@ -11,10 +11,12 @@ class PhpFormatter extends BaseFormatter {
     }
 
     formatWithPrettierPhpParser() {
-        this.content = prettier.format(this.content, {
+        const baseOptions = {
             parser: 'php',
-            plugins: [phpPlugin], 
-        })
+            plugins: [phpPlugin],
+        }
+        
+        this.content = prettier.format(this.content, {...baseOptions, ...this.getOptions()})
     }
 
 }

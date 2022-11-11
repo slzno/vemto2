@@ -29,7 +29,7 @@
         >
             <!-- Modal -->
             <div
-                class="relative rounded-lg bg-slate-850 shadow-2xl border border-slate-700"
+                class="flex flex-col relative rounded-lg bg-slate-850 shadow-2xl border border-slate-700"
                 style="max-height: calc(100vh - 5rem);"
                 :style="{ width: width }"
             >
@@ -47,7 +47,7 @@
                 </header>
 
                 <!-- Modal Body -->
-                <div class="w-full h-full overflow-y-auto">
+                <div class="w-full h-full overflow-y-auto scrollbar-thin scrollbar-thumb-slate-400 scrollbar-track-slate-300 dark:scrollbar-thumb-black dark:scrollbar-track-slate-900">
                     <slot></slot>
                 </div>
 

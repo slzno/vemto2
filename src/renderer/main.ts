@@ -2,7 +2,7 @@ import { createApp } from "vue"
 import { createPinia } from "pinia"
 
 
-import "highlight.js/styles/github-dark.css"
+import "highlight.js/styles/base16/monokai.css"
 import "./main.css"
  
 import App from "./App.vue"

@@ -16,6 +16,11 @@
         placeholder: {
             type: String,
         },
+
+        disabled: {
+            type: Boolean,
+            default: false,
+        },
     })
 
     defineEmits(["update:modelValue"])
@@ -32,12 +37,13 @@
 <template>
     <label v-if="label" class="text-xs text-slate-400">{{ label }}</label>
     <input
-        class="w-full dark:text-slate-200 border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg"
+        class="w-full dark:text-slate-200 border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
         type="text"
         :placeholder="placeholder"
         v-model="localValue"
         @input="$emit('update:modelValue', localValue)"
         spellcheck="false"
         autocomplete="false"
+        :disabled="disabled"
     />
 </template>

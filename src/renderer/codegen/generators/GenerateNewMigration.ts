@@ -30,7 +30,7 @@ export default new class GenerateNewMigration {
         // const datePrefix = new Date().toISOString().split('T')[0].replace(/-/g, '')
 
         // datePrefix = YYYY_MM_DD_HHMMSS
-        const datePrefix = new Date().toISOString().split('T')[0].replace(/-/g, '_') + '_' + new Date().toISOString().split('T')[1].replace(/:/g, '')
+        const datePrefix = new Date().toISOString().split('T')[0].replace(/-/g, '_')
 
         return `/database/migrations/${datePrefix}_000001_update_${this.table.name}_table.php`
     }
