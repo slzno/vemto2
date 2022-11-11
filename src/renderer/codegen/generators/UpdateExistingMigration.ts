@@ -20,6 +20,21 @@ export default new class UpdateExistingMigration {
         return this.updateLatestMigration()
     }
 
+    async getData() {
+        return {
+            name: await this.getName(),
+            content: await this.getContent(),
+        }
+    }
+
+    async getName() {
+        return this.table.getLatestMigration().relativePath
+    }
+
+    async getContent() {
+        return this.generateLatestMigrationUpdate()
+    }
+
     async updateLatestMigration() {
         const latestMigration = this.table.getLatestMigration()
 

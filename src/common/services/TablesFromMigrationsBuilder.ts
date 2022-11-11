@@ -109,6 +109,8 @@ class TablesFromMigrationsBuilder {
             columnsKeyedByName = table.getAllColumnsKeyedByName()
 
         // Delete columns that no longer exist
+        // This is correct, we need to use the column name, not the schemaState name
+        // because the schemaState name is the old name in this case
         columnsNames.forEach((columnName) => {
             if(!tableData.columns[columnName]) {
                 columnsKeyedByName[columnName].delete()

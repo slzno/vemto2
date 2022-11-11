@@ -29,7 +29,8 @@
         >
             <!-- Modal -->
             <div
-                class="relative rounded-lg bg-slate-850 shadow-2xl border border-slate-700 max-h-screen"
+                class="relative rounded-lg bg-slate-850 shadow-2xl border border-slate-700"
+                style="max-height: calc(100vh - 5rem);"
                 :style="{ width: width }"
             >
                 <button
@@ -46,7 +47,9 @@
                 </header>
 
                 <!-- Modal Body -->
-                <slot></slot>
+                <div class="w-full h-full overflow-y-auto">
+                    <slot></slot>
+                </div>
 
                 <!-- Modal Footer -->
                 <footer v-if="slots.footer" class="bg-slate-800 rounded-b-lg border-t border-slate-700">

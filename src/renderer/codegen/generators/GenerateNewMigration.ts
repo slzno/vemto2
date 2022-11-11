@@ -19,6 +19,26 @@ export default new class GenerateNewMigration {
         return this.generateMigration()
     }
 
+    async getData() {
+        return {
+            name: await this.getName(),
+            content: await this.getContent(),
+        }
+    }
+
+    async getName() {
+        // const datePrefix = new Date().toISOString().split('T')[0].replace(/-/g, '')
+
+        // datePrefix = YYYY_MM_DD_HHMMSS
+        const datePrefix = new Date().toISOString().split('T')[0].replace(/-/g, '_') + '_' + new Date().toISOString().split('T')[1].replace(/:/g, '')
+
+        return `/database/migrations/${datePrefix}_000001_update_${this.table.name}_table.php`
+    }
+
+    async getContent() {
+        return this.generateUpdaterMigration()
+    }
+
     async generateMigration() {
         const fileContent = await this.generateUpdaterMigration()
 

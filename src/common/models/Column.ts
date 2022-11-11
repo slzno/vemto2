@@ -62,12 +62,12 @@ export default class Column extends RelaDB.Model {
     hadChanges(comparisonData: any): boolean {
         if(!this.schemaState) return true 
 
-        return this.name !== comparisonData.name ||
-            this.length !== comparisonData.length ||
-            this.nullable !== comparisonData.nullable ||
-            this.typeDefinition !== comparisonData.type ||
-            this.autoIncrement !== comparisonData.autoIncrement ||
-            this.unsigned !== comparisonData.unsigned
+        return this.schemaState.name !== comparisonData.name ||
+            this.schemaState.length !== comparisonData.length ||
+            this.schemaState.nullable !== comparisonData.nullable ||
+            this.schemaState.typeDefinition !== comparisonData.type ||
+            this.schemaState.autoIncrement !== comparisonData.autoIncrement ||
+            this.schemaState.unsigned !== comparisonData.unsigned
     }
 
     applyChanges(data: any) {

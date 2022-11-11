@@ -14,3 +14,8 @@
 .dark [type="radio"]:checked {
   background-color: currentColor;
 }
+
+.hljs {
+  background: #091023;
+  border-radius: 0.5rem !important;
+}

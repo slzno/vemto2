@@ -1,5 +1,6 @@
 <script setup lang="ts">
     import UiButton from "@Renderer/components/ui/UiButton.vue"
+    import UiText from "@Renderer/components/ui/UiText.vue"
     import { ArrowDownTrayIcon } from "@heroicons/vue/24/outline"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import UiModal from "@Renderer/components/ui/UiModal.vue"
@@ -10,6 +11,7 @@
     const projectStore = useProjectStore(),
         showingModal = ref(false),
         tablesSettings = reactive({} as any)
+        // selectedTable = ref("")
 
     onMounted(() => {
         buildTablesSettings()
@@ -17,8 +19,9 @@
 
     watch(showingModal, (willShowModal) => {
         if(!willShowModal) return
-
+        
         buildTablesSettings()
+        loadFirstTableMigrationContent()
     })
 
     const buildTablesSettings = () => {
@@ -30,6 +33,8 @@
                 latestMigration: table.getLatestMigration(),
                 canUpdateLatestMigration: table.canUpdateLatestMigration(),
                 canCreateNewMigration: table.canCreateNewMigration(),
+                migrationName: "",
+                migrationContent: "",
 
                 selectedOption: table.canUpdateLatestMigration()
                     ? "update"
@@ -53,6 +58,28 @@
 
         showingModal.value = false
     }
+
+    const loadFirstTableMigrationContent = async () => {
+        const firstTable = Object.keys(tablesSettings)[0]
+
+        loadMigrationContent(firstTable)
+    }
+
+    const loadMigrationContent = async (tableName: any) => {
+        const table = tablesSettings[tableName]
+
+        if (table.selectedOption === "update") {
+            const migrationData = await UpdateExistingMigration.setTable(table.instance).getData()
+            table.migrationName = migrationData.name
+            table.migrationContent = migrationData.content
+        }
+
+        if (table.selectedOption === "create") {
+            const migrationData = await GenerateNewMigration.setTable(table.instance).getData()
+            table.migrationName = migrationData.name
+            table.migrationContent = migrationData.content
+        }
+    }
 </script>
 
 <template>
@@ -72,6 +99,7 @@
             title="Review Migrations"
             :show="showingModal"
             @close="showingModal = false"
+            width="1200px"
         >
             <section class="p-4 space-y-4">
                 <div
@@ -79,51 +107,61 @@
                     v-for="table in tablesSettings"
                     :key="table.instance.id"
                 >
-                    <header class="p-4">
+                    <header class="py-4 px-4">
                         Table
                         <span class="text-red-500 dark:text-red-400">{{
                             table.instance.name
                         }}</span>
                     </header>
 
-                    <div class="p-4 space-y-4">
-                        <div v-if="table.canUpdateLatestMigration">
-                            <input
-                                class="rounded-full bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300 mr-2"
-                                type="radio"
-                                value="update"
-                                v-model="table.selectedOption"
-                            />
-                            <label
-                                >Update latest migration
-                                <span
-                                    :title="table.latestMigration.relativePath"
-                                    class="text-green-500 py-1 px-2 ml-0.5 bg-slate-900 rounded"
-                                    >{{
-                                        table.latestMigration.migrationName
-                                    }}</span
-                                >
-                            </label>
+                    <div class="flex p-4">
+                        <div class="p-4 space-y-4">
+                            <div v-if="table.canUpdateLatestMigration">
+                                <input
+                                    class="rounded-full bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300 mr-2"
+                                    type="radio"
+                                    value="update"
+                                    v-model="table.selectedOption"
+                                    @change="loadMigrationContent(table.instance.name)"
+                                />
+                                <label
+                                    >Update latest migration
+                                    <!-- <span
+                                        :title="table.latestMigration.relativePath"
+                                        class="text-green-500 py-1 px-2 ml-0.5 bg-slate-900 rounded"
+                                        >{{
+                                            table.latestMigration.migrationName
+                                        }}</span
+                                    > -->
+                                </label>
+                            </div>
+    
+                            <div v-if="table.canCreateNewMigration">
+                                <input
+                                    class="rounded-full bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300 mr-2"
+                                    type="radio"
+                                    value="create"
+                                    v-model="table.selectedOption"
+                                    @change="loadMigrationContent(table.instance.name)"
+                                />
+                                <label>Create new migration</label>
+                            </div>
+    
+                            <div>
+                                <input
+                                    class="rounded-full bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300 mr-2"
+                                    type="radio"
+                                    value="skip"
+                                    v-model="table.selectedOption"
+                                />
+                                <label>Don't generate migration</label>
+                            </div>
                         </div>
 
-                        <div v-if="table.canCreateNewMigration">
-                            <input
-                                class="rounded-full bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300 mr-2"
-                                type="radio"
-                                value="create"
-                                v-model="table.selectedOption"
-                            />
-                            <label>Create new migration</label>
-                        </div>
-
-                        <div>
-                            <input
-                                class="rounded-full bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300 mr-2"
-                                type="radio"
-                                value="skip"
-                                v-model="table.selectedOption"
-                            />
-                            <label>Don't generate migration</label>
+                        <div class="p-2 flex-grow space-y-2">
+                            <UiText v-model="table.migrationName" />
+                            <!-- <textarea class="bg-slate-950 rounded-lg border-none w-full text-slate-200 text-lg font-mono" spellcheck="false" autocomplete="false" rows="16"></textarea> -->
+                            <highlightjs language="php" :code="table.migrationContent" />
                         </div>
                     </div>
                 </div>
