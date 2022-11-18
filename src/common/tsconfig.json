@@ -9,5 +9,11 @@
         "forceConsistentCasingInFileNames": true,
         "allowJs": true,
         "downlevelIteration": true,
+        "paths": {
+            "@Main/*": ["../main/*"],
+            "@Common/*": ["./*"],
+            "@Renderer/*": ["../renderer/*"],
+            "@Tests/*": ["../../tests/*"],
+        },
     }
 }

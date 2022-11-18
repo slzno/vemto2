@@ -16,7 +16,7 @@
             "@Main/*": ["./*"],
             "@Renderer/*": ["../renderer/*"],
             "@Common/*": ["../common/*"],
-            "@Tests/*": ["../tests/*"],
+            "@Tests/*": ["../../tests/*"],
         }
     },
     "exclude": ["static"],

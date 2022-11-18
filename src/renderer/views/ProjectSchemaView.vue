@@ -21,7 +21,7 @@
 
     let tablesData = ref([]),
         counter = ref(0),
-        interval = 0,
+        interval = null,
         isDragging = false,
         currentConnections = {},
         jsPlumbInstance: BrowserJsPlumbInstance = null

@@ -4,7 +4,7 @@ module.exports = {
         "node_modules"
     ],
     "transform": {
-        "^.+\\.js$": "babel-jest"
+        "^.+\\.(js|ts)$": "babel-jest"
     },
     "reporters": [
         "default",
@@ -13,7 +13,8 @@ module.exports = {
         {
             "displayName": "test-unit",
             "testMatch": [
-                "<rootDir>/src/**/*.test.js"
+                "<rootDir>/src/**/*.test.js",
+                "<rootDir>/src/**/*.test.ts",
             ]
         },
         {

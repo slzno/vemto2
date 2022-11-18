@@ -45,6 +45,8 @@ export default defineConfig({
             ),
 
             "@Common": fileURLToPath(new URL("./src/common", import.meta.url)),
+
+            "@Tests": fileURLToPath(new URL("./tests", import.meta.url)),
         },
     },
 })
