@@ -133,3 +133,39 @@ test('It can get the old column name after rename', () => {
 
     expect(column.getOldName()).toBe('name')
 })
+
+test('It can check if a column is a PK', () => {
+    const column = TestHelper.createColumnWithSchemaState()
+
+    column.name = 'id'
+    column.save()
+
+    expect(column.isPrimaryKey()).toBe(true)
+})
+
+test('It can check if a column is an FK', () => {
+    const column = TestHelper.createColumnWithSchemaState()
+
+    column.name = 'user_id'
+    column.save()
+
+    expect(column.isForeign()).toBe(true)
+})
+
+test('It can check if a column is unique', () => {
+    const column = TestHelper.createColumnWithSchemaState()
+
+    column.name = 'password'
+    column.save()
+
+    expect(column.isUnique()).toBe(true)
+})
+
+test('It can check if a column is a special PK', () => {
+    const column = TestHelper.createColumnWithSchemaState()
+
+    column.name = 'special_primary_key'
+    column.save()
+
+    expect(column.isSpecialPrimaryKey()).toBe(true)
+})

@@ -1,7 +1,7 @@
 import md5 from "crypto-js/md5"
-import Table from "../models/Table"
-import Column from "../models/Column"
-import Project from "../models/Project"
+import Table from "@Common/models/Table"
+import Column from "@Common/models/Column"
+import Project from "@Common/models/Project"
 
 class TablesFromMigrationsBuilder {
     static processing: boolean = false

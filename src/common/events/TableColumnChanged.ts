@@ -1,4 +1,4 @@
-import Column from "../models/Column";
+import Column from "@Common/models/Column";
 
 export default class TableColumnChanged {
 

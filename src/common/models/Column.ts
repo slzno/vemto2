@@ -1,7 +1,7 @@
 import Table from './Table'
 import RelaDB from '@tiago_silva_pereira/reladb'
-import TableColumnChanged from '../events/TableColumnChanged'
-import TableColumnCreated from '../events/TableColumnCreated'
+import TableColumnChanged from '@Common/events/TableColumnChanged'
+import TableColumnCreated from '@Common/events/TableColumnCreated'
 
 export default class Column extends RelaDB.Model {
     id: string
@@ -47,6 +47,10 @@ export default class Column extends RelaDB.Model {
         return this.schemaState.name
     }
 
+    isPrimaryKey(): boolean {
+        return this.name === 'id'
+    }
+
     isForeign(): boolean {
         return this.name === 'user_id'
     }
@@ -56,7 +60,7 @@ export default class Column extends RelaDB.Model {
     }
 
     isSpecialPrimaryKey(): boolean {
-        return false
+        return this.name === 'special_primary_key'
     }
 
     hadChanges(comparisonData: any): boolean {
