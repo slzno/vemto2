@@ -70,8 +70,8 @@ export default class Column extends RelaDB.Model {
             this.schemaState.unsigned !== comparisonData.unsigned
     }
 
-    applyChanges(data: any) {
-        if(!this.hadChanges(data)) return
+    applyChanges(data: any): boolean {
+        if(!this.hadChanges(data)) return false
 
         this.name = data.name
         this.length = data.length
@@ -83,6 +83,8 @@ export default class Column extends RelaDB.Model {
         this.fillSchemaState()
 
         this.save()
+
+        return true
     }
 
     saveSchemaState() {
