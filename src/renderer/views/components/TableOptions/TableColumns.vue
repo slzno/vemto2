@@ -2,6 +2,7 @@
     import { PropType, toRef } from "vue"
     import Column from "@Common/models/Column"
     import TableColumn from "./TableColumn.vue"
+    import { PlusCircleIcon } from "@heroicons/vue/24/outline"
 
     const props = defineProps({
         columns: {
@@ -23,6 +24,13 @@
             />
         </section>
 
-        <section></section>
+        <section
+            class="mt-4 flex w-full justify-center text-slate-400 hover:text-red-500 cursor-pointer text-lg"
+        >
+            <div class="flex items-center">
+                <PlusCircleIcon class="w-8 h-8" />
+                <span class="px-1.5">Add column</span>
+            </div>
+        </section>
     </div>
 </template>

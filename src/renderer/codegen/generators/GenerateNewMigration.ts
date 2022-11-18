@@ -21,15 +21,12 @@ export default new class GenerateNewMigration {
 
     async getData() {
         return {
-            name: await this.getName(),
+            name: this.getName(),
             content: await this.getContent(),
         }
     }
 
-    async getName() {
-        // const datePrefix = new Date().toISOString().split('T')[0].replace(/-/g, '')
-
-        // datePrefix = YYYY_MM_DD_HHMMSS
+    getName() {
         const datePrefix = new Date().toISOString().split('T')[0].replace(/-/g, '_')
 
         return `/database/migrations/${datePrefix}_000001_update_${this.table.name}_table.php`
@@ -43,7 +40,7 @@ export default new class GenerateNewMigration {
         const fileContent = await this.generateUpdaterMigration()
 
         Main.API.addFileToGenerationQueue(
-            'database/migrations/new_migration.php',
+            this.getName(),
             fileContent
         )
 

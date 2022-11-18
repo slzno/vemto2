@@ -22,12 +22,12 @@ export default new class UpdateExistingMigration {
 
     async getData() {
         return {
-            name: await this.getName(),
+            name: this.getName(),
             content: await this.getContent(),
         }
     }
 
-    async getName() {
+    getName() {
         return this.table.getLatestMigration().relativePath
     }
 
