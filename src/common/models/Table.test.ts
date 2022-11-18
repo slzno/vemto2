@@ -1,4 +1,4 @@
-import Column from './Column'
+import Table from './Table'
 import TestHelper from '@Tests/base/TestHelper'
 import MockDatabase from '@Tests/base/MockDatabase'
 import { test, expect, beforeAll } from '@jest/globals'
@@ -8,5 +8,5 @@ beforeAll(() => {
 })
 
 test('The column model identifier is correct', () => {
-    expect(Column.identifier()).toBe('Column')
+    expect(Table.identifier()).toBe('Table')
 })

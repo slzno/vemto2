@@ -3,16 +3,16 @@ import RelaDB from "@tiago_silva_pereira/reladb"
 
 export default class MockDatabase {
 
-    static start(initialDatabaseData) {
+    static start() {
         const database = new RelaDB.Database
             
         database.setDriver(RelaDB.RAMStorage)
 
         RelaDB.Resolver.setDatabase(database)
-
-        if(initialDatabaseData) {
-            RelaDB.Resolver.db().driver.feedDatabaseData(initialDatabaseData)
-        }
+        
+        RelaDB.Resolver.db().driver.feedDatabaseData(
+            RelaDB.Resolver.db().driver.storeBaseData()
+        )
 
         const project = new Project
         project.name = "Test Project"

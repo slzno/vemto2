@@ -7,7 +7,7 @@ beforeAll(() => {
     MockDatabase.start()
 })
 
-test('The column model identifier is correct', () => {
+test('The Column model identifier is correct', () => {
     expect(Column.identifier()).toBe('Column')
 })
 
@@ -168,4 +168,25 @@ test('It can check if a column is a special PK', () => {
     column.save()
 
     expect(column.isSpecialPrimaryKey()).toBe(true)
+})
+
+test('it fires TableColumnCreated when saving from interface', () => {
+    const project = TestHelper.getProject()
+
+    const column = new Column()
+    column.name = 'test_column'
+    column.tableId = project.tables[0].id
+    column.saveFromInterface()
+
+    expect(project.fresh().hasChangedTables()).toBe(true)
+})
+
+test('it fires TableColumnUpdated when saving from interface', () => {
+    const column = TestHelper.createColumnWithSchemaState(),
+        project = TestHelper.getProject()
+
+    column.name = 'special_primary_key'
+    column.saveFromInterface()
+
+    expect(project.fresh().hasChangedTables()).toBe(true)
 })
