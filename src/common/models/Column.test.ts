@@ -1,9 +1,9 @@
 import Column from './Column'
 import TestHelper from '@Tests/base/TestHelper'
 import MockDatabase from '@Tests/base/MockDatabase'
-import { test, expect, beforeAll } from '@jest/globals'
+import { test, expect, beforeEach } from '@jest/globals'
 
-beforeAll(() => {
+beforeEach(() => {
     MockDatabase.start()
 })
 
@@ -172,6 +172,8 @@ test('It can check if a column is a special PK', () => {
 
 test('it fires TableColumnCreated when saving from interface', () => {
     const project = TestHelper.getProject()
+
+    TestHelper.createTable()
 
     const column = new Column()
     column.name = 'test_column'

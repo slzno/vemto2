@@ -1,9 +1,9 @@
 import Table from './Table'
 import TestHelper from '@Tests/base/TestHelper'
 import MockDatabase from '@Tests/base/MockDatabase'
-import { test, expect, beforeAll } from '@jest/globals'
+import { test, expect, beforeEach } from '@jest/globals'
 
-beforeAll(() => {
+beforeEach(() => {
     MockDatabase.start()
 })
 
