@@ -96,3 +96,17 @@ test('It can get all the columns keyed by name', () => {
 
     expect(columns.test_column.name).toBe('test_column')
 })
+
+test('It can check if a table has related tables', () => {
+    const table = TestHelper.createTable()
+
+    expect(table.hasRelatedTables()).toBe(true)
+})
+
+test('It can get the related tables', () => {
+    const table = TestHelper.createTable({ name: 'users' })
+
+    const relatedTables = table.getRelatedTables()
+
+    expect(relatedTables.length).toBe(2)
+})
