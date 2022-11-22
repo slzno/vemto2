@@ -12,6 +12,7 @@
         "strictNullChecks": false,
         "strictPropertyInitialization": false,
         "sourceMap": true,
+        "resolveJsonModule": true,
         "paths": {
             "@Main/*": ["./*"],
             "@Renderer/*": ["../renderer/*"],

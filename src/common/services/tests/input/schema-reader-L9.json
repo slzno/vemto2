@@ -1,0 +1,616 @@
+{
+    "users": {
+        "columns": {
+            "id": {
+                "type": "bigInteger",
+                "name": "id",
+                "autoIncrement": true,
+                "unsigned": true,
+                "table": "users",
+                "creatorMethod": "id"
+            },
+            "name": {
+                "type": "string",
+                "name": "name",
+                "length": 255,
+                "table": "users",
+                "creatorMethod": "string"
+            },
+            "email": {
+                "type": "string",
+                "name": "email",
+                "length": 255,
+                "table": "users",
+                "creatorMethod": "string",
+                "unique": true
+            },
+            "email_verified_at": {
+                "type": "timestamp",
+                "name": "email_verified_at",
+                "precision": 0,
+                "table": "users",
+                "creatorMethod": "timestamp",
+                "nullable": true
+            },
+            "password": {
+                "type": "string",
+                "name": "password",
+                "length": 255,
+                "table": "users",
+                "creatorMethod": "string"
+            },
+            "remember_token": {
+                "type": "string",
+                "name": "remember_token",
+                "length": 100,
+                "table": "users",
+                "creatorMethod": "rememberToken",
+                "nullable": true
+            },
+            "created_at": {
+                "type": "timestamp",
+                "name": "created_at",
+                "precision": 0,
+                "table": "users",
+                "creatorMethod": "timestamps",
+                "nullable": true
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "name": "updated_at",
+                "precision": 0,
+                "table": "users",
+                "creatorMethod": "timestamps",
+                "nullable": true
+            },
+            "avatar_renamed": {
+                "type": "string",
+                "name": "avatar_renamed",
+                "length": 255,
+                "table": "users",
+                "creatorMethod": "string",
+                "nullable": true,
+                "past_names": [
+                    "avatar"
+                ]
+            }
+        },
+        "indexes": [],
+        "uniques": [],
+        "foreigns": [],
+        "migrations": [
+            {
+                "migration": "C:\\Users\\tiago\\code\\vemto2\\src\\php\\laravel-base\\laravel9-basic\/database\/migrations\/2014_10_12_000000_create_users_table.php",
+                "relativePath": "\/database\/migrations\/2014_10_12_000000_create_users_table.php",
+                "migrationName": "2014_10_12_000000_create_users_table",
+                "datePrefix": "2014_10_12",
+                "fullPrefix": "2014_10_12_000000",
+                "addedColumns": [
+                    {
+                        "type": "bigInteger",
+                        "name": "id",
+                        "autoIncrement": true,
+                        "unsigned": true,
+                        "table": "users",
+                        "creatorMethod": "id"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "length": 255,
+                        "table": "users",
+                        "creatorMethod": "string"
+                    },
+                    {
+                        "type": "string",
+                        "name": "avatar",
+                        "length": 255,
+                        "table": "users",
+                        "creatorMethod": "string",
+                        "nullable": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "email",
+                        "length": 255,
+                        "table": "users",
+                        "creatorMethod": "string",
+                        "unique": true
+                    },
+                    {
+                        "type": "timestamp",
+                        "name": "email_verified_at",
+                        "precision": 0,
+                        "table": "users",
+                        "creatorMethod": "timestamp",
+                        "nullable": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "password",
+                        "length": 255,
+                        "table": "users",
+                        "creatorMethod": "string"
+                    },
+                    {
+                        "type": "string",
+                        "name": "remember_token",
+                        "length": 100,
+                        "table": "users",
+                        "creatorMethod": "rememberToken",
+                        "nullable": true
+                    },
+                    {
+                        "type": "timestamp",
+                        "name": "created_at",
+                        "precision": 0,
+                        "table": "users",
+                        "creatorMethod": "timestamps",
+                        "nullable": true
+                    },
+                    {
+                        "type": "timestamp",
+                        "name": "updated_at",
+                        "precision": 0,
+                        "table": "users",
+                        "creatorMethod": "timestamps",
+                        "nullable": true
+                    }
+                ],
+                "changedColumns": [],
+                "droppedColumns": [],
+                "renamedColumns": [],
+                "commands": [
+                    {
+                        "name": "create",
+                        "table": "users"
+                    }
+                ],
+                "createdTables": [
+                    "users"
+                ]
+            },
+            {
+                "migration": "C:\\Users\\tiago\\code\\vemto2\\src\\php\\laravel-base\\laravel9-basic\/database\/migrations\/2019_12_14_000002_change_users_table.php",
+                "relativePath": "\/database\/migrations\/2019_12_14_000002_change_users_table.php",
+                "migrationName": "2019_12_14_000002_change_users_table",
+                "datePrefix": "2019_12_14",
+                "fullPrefix": "2019_12_14_000002",
+                "addedColumns": [],
+                "changedColumns": [],
+                "droppedColumns": [],
+                "renamedColumns": [
+                    {
+                        "table": "users",
+                        "from": "avatar",
+                        "to": "avatar_renamed"
+                    }
+                ],
+                "commands": [
+                    {
+                        "name": "create",
+                        "table": "users"
+                    },
+                    {
+                        "name": "renameColumn",
+                        "from": "avatar",
+                        "to": "avatar_renamed",
+                        "table": "users"
+                    }
+                ],
+                "createdTables": []
+            }
+        ],
+        "name": "users"
+    },
+    "password_resets": {
+        "columns": {
+            "email": {
+                "type": "string",
+                "name": "email",
+                "length": 255,
+                "table": "password_resets",
+                "creatorMethod": "string",
+                "index": true
+            },
+            "token": {
+                "type": "string",
+                "name": "token",
+                "length": 255,
+                "table": "password_resets",
+                "creatorMethod": "string"
+            },
+            "created_at": {
+                "type": "timestamp",
+                "name": "created_at",
+                "precision": 0,
+                "table": "password_resets",
+                "creatorMethod": "timestamp",
+                "nullable": true
+            }
+        },
+        "indexes": [],
+        "uniques": [],
+        "foreigns": [],
+        "migrations": [
+            {
+                "migration": "C:\\Users\\tiago\\code\\vemto2\\src\\php\\laravel-base\\laravel9-basic\/database\/migrations\/2014_10_12_100000_create_password_resets_table.php",
+                "relativePath": "\/database\/migrations\/2014_10_12_100000_create_password_resets_table.php",
+                "migrationName": "2014_10_12_100000_create_password_resets_table",
+                "datePrefix": "2014_10_12",
+                "fullPrefix": "2014_10_12_100000",
+                "addedColumns": [
+                    {
+                        "type": "string",
+                        "name": "email",
+                        "length": 255,
+                        "table": "password_resets",
+                        "creatorMethod": "string",
+                        "index": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "token",
+                        "length": 255,
+                        "table": "password_resets",
+                        "creatorMethod": "string"
+                    },
+                    {
+                        "type": "timestamp",
+                        "name": "created_at",
+                        "precision": 0,
+                        "table": "password_resets",
+                        "creatorMethod": "timestamp",
+                        "nullable": true
+                    }
+                ],
+                "changedColumns": [],
+                "droppedColumns": [],
+                "renamedColumns": [],
+                "commands": [
+                    {
+                        "name": "create",
+                        "table": "password_resets"
+                    }
+                ],
+                "createdTables": [
+                    "password_resets"
+                ]
+            }
+        ],
+        "name": "password_resets"
+    },
+    "failed_jobs": {
+        "columns": {
+            "id": {
+                "type": "bigInteger",
+                "name": "id",
+                "autoIncrement": true,
+                "unsigned": true,
+                "table": "failed_jobs",
+                "creatorMethod": "id"
+            },
+            "uuid": {
+                "type": "string",
+                "name": "uuid",
+                "length": 255,
+                "table": "failed_jobs",
+                "creatorMethod": "string",
+                "unique": true
+            },
+            "connection": {
+                "type": "text",
+                "name": "connection",
+                "table": "failed_jobs",
+                "creatorMethod": "text"
+            },
+            "queue": {
+                "type": "text",
+                "name": "queue",
+                "table": "failed_jobs",
+                "creatorMethod": "text"
+            },
+            "payload": {
+                "type": "longText",
+                "name": "payload",
+                "table": "failed_jobs",
+                "creatorMethod": "longText"
+            },
+            "exception": {
+                "type": "longText",
+                "name": "exception",
+                "table": "failed_jobs",
+                "creatorMethod": "longText"
+            },
+            "failed_at": {
+                "type": "timestamp",
+                "name": "failed_at",
+                "precision": 0,
+                "table": "failed_jobs",
+                "creatorMethod": "timestamp",
+                "useCurrent": true
+            }
+        },
+        "indexes": [],
+        "uniques": [],
+        "foreigns": [],
+        "migrations": [
+            {
+                "migration": "C:\\Users\\tiago\\code\\vemto2\\src\\php\\laravel-base\\laravel9-basic\/database\/migrations\/2019_08_19_000000_create_failed_jobs_table.php",
+                "relativePath": "\/database\/migrations\/2019_08_19_000000_create_failed_jobs_table.php",
+                "migrationName": "2019_08_19_000000_create_failed_jobs_table",
+                "datePrefix": "2019_08_19",
+                "fullPrefix": "2019_08_19_000000",
+                "addedColumns": [
+                    {
+                        "type": "bigInteger",
+                        "name": "id",
+                        "autoIncrement": true,
+                        "unsigned": true,
+                        "table": "failed_jobs",
+                        "creatorMethod": "id"
+                    },
+                    {
+                        "type": "string",
+                        "name": "uuid",
+                        "length": 255,
+                        "table": "failed_jobs",
+                        "creatorMethod": "string",
+                        "unique": true
+                    },
+                    {
+                        "type": "text",
+                        "name": "connection",
+                        "table": "failed_jobs",
+                        "creatorMethod": "text"
+                    },
+                    {
+                        "type": "text",
+                        "name": "queue",
+                        "table": "failed_jobs",
+                        "creatorMethod": "text"
+                    },
+                    {
+                        "type": "longText",
+                        "name": "payload",
+                        "table": "failed_jobs",
+                        "creatorMethod": "longText"
+                    },
+                    {
+                        "type": "longText",
+                        "name": "exception",
+                        "table": "failed_jobs",
+                        "creatorMethod": "longText"
+                    },
+                    {
+                        "type": "timestamp",
+                        "name": "failed_at",
+                        "precision": 0,
+                        "table": "failed_jobs",
+                        "creatorMethod": "timestamp",
+                        "useCurrent": true
+                    }
+                ],
+                "changedColumns": [],
+                "droppedColumns": [],
+                "renamedColumns": [],
+                "commands": [
+                    {
+                        "name": "create",
+                        "table": "failed_jobs"
+                    }
+                ],
+                "createdTables": [
+                    "failed_jobs"
+                ]
+            }
+        ],
+        "name": "failed_jobs"
+    },
+    "personal_access_tokens": {
+        "columns": {
+            "id": {
+                "type": "bigInteger",
+                "name": "id",
+                "autoIncrement": true,
+                "unsigned": true,
+                "table": "personal_access_tokens",
+                "creatorMethod": "id"
+            },
+            "tokenable_type": {
+                "type": "string",
+                "name": "tokenable_type",
+                "length": 255,
+                "table": "personal_access_tokens",
+                "creatorMethod": "morphs"
+            },
+            "tokenable_id": {
+                "type": "bigInteger",
+                "name": "tokenable_id",
+                "autoIncrement": false,
+                "unsigned": true,
+                "table": "personal_access_tokens",
+                "creatorMethod": "morphs"
+            },
+            "name": {
+                "type": "string",
+                "name": "name",
+                "length": 255,
+                "table": "personal_access_tokens",
+                "creatorMethod": "string"
+            },
+            "token": {
+                "type": "string",
+                "name": "token",
+                "length": 64,
+                "table": "personal_access_tokens",
+                "creatorMethod": "string",
+                "unique": true
+            },
+            "abilities": {
+                "type": "text",
+                "name": "abilities",
+                "table": "personal_access_tokens",
+                "creatorMethod": "text",
+                "nullable": true
+            },
+            "last_used_at": {
+                "type": "timestamp",
+                "name": "last_used_at",
+                "precision": 0,
+                "table": "personal_access_tokens",
+                "creatorMethod": "timestamp",
+                "nullable": true
+            },
+            "expires_at": {
+                "type": "timestamp",
+                "name": "expires_at",
+                "precision": 0,
+                "table": "personal_access_tokens",
+                "creatorMethod": "timestamp",
+                "nullable": true
+            },
+            "created_at": {
+                "type": "timestamp",
+                "name": "created_at",
+                "precision": 0,
+                "table": "personal_access_tokens",
+                "creatorMethod": "timestamps",
+                "nullable": true
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "name": "updated_at",
+                "precision": 0,
+                "table": "personal_access_tokens",
+                "creatorMethod": "timestamps",
+                "nullable": true
+            }
+        },
+        "indexes": {
+            "personal_access_tokens_tokenable_type_tokenable_id_index": {
+                "name": "index",
+                "index": "personal_access_tokens_tokenable_type_tokenable_id_index",
+                "columns": [
+                    "tokenable_type",
+                    "tokenable_id"
+                ],
+                "algorithm": null,
+                "table": "personal_access_tokens"
+            }
+        },
+        "uniques": [],
+        "foreigns": [],
+        "migrations": [
+            {
+                "migration": "C:\\Users\\tiago\\code\\vemto2\\src\\php\\laravel-base\\laravel9-basic\/database\/migrations\/2019_12_14_000001_create_personal_access_tokens_table.php",
+                "relativePath": "\/database\/migrations\/2019_12_14_000001_create_personal_access_tokens_table.php",
+                "migrationName": "2019_12_14_000001_create_personal_access_tokens_table",
+                "datePrefix": "2019_12_14",
+                "fullPrefix": "2019_12_14_000001",
+                "addedColumns": [
+                    {
+                        "type": "bigInteger",
+                        "name": "id",
+                        "autoIncrement": true,
+                        "unsigned": true,
+                        "table": "personal_access_tokens",
+                        "creatorMethod": "id"
+                    },
+                    {
+                        "type": "string",
+                        "name": "tokenable_type",
+                        "length": 255,
+                        "table": "personal_access_tokens",
+                        "creatorMethod": "morphs"
+                    },
+                    {
+                        "type": "bigInteger",
+                        "name": "tokenable_id",
+                        "autoIncrement": false,
+                        "unsigned": true,
+                        "table": "personal_access_tokens",
+                        "creatorMethod": "morphs"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "length": 255,
+                        "table": "personal_access_tokens",
+                        "creatorMethod": "string"
+                    },
+                    {
+                        "type": "string",
+                        "name": "token",
+                        "length": 64,
+                        "table": "personal_access_tokens",
+                        "creatorMethod": "string",
+                        "unique": true
+                    },
+                    {
+                        "type": "text",
+                        "name": "abilities",
+                        "table": "personal_access_tokens",
+                        "creatorMethod": "text",
+                        "nullable": true
+                    },
+                    {
+                        "type": "timestamp",
+                        "name": "last_used_at",
+                        "precision": 0,
+                        "table": "personal_access_tokens",
+                        "creatorMethod": "timestamp",
+                        "nullable": true
+                    },
+                    {
+                        "type": "timestamp",
+                        "name": "expires_at",
+                        "precision": 0,
+                        "table": "personal_access_tokens",
+                        "creatorMethod": "timestamp",
+                        "nullable": true
+                    },
+                    {
+                        "type": "timestamp",
+                        "name": "created_at",
+                        "precision": 0,
+                        "table": "personal_access_tokens",
+                        "creatorMethod": "timestamps",
+                        "nullable": true
+                    },
+                    {
+                        "type": "timestamp",
+                        "name": "updated_at",
+                        "precision": 0,
+                        "table": "personal_access_tokens",
+                        "creatorMethod": "timestamps",
+                        "nullable": true
+                    }
+                ],
+                "changedColumns": [],
+                "droppedColumns": [],
+                "renamedColumns": [],
+                "commands": [
+                    {
+                        "name": "create",
+                        "table": "personal_access_tokens"
+                    },
+                    {
+                        "name": "index",
+                        "index": "personal_access_tokens_tokenable_type_tokenable_id_index",
+                        "columns": [
+                            "tokenable_type",
+                            "tokenable_id"
+                        ],
+                        "algorithm": null,
+                        "table": "personal_access_tokens"
+                    }
+                ],
+                "createdTables": [
+                    "personal_access_tokens"
+                ]
+            }
+        ],
+        "name": "personal_access_tokens"
+    }
+}

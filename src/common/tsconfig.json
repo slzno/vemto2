@@ -9,6 +9,7 @@
         "forceConsistentCasingInFileNames": true,
         "allowJs": true,
         "downlevelIteration": true,
+        "resolveJsonModule": true,
         "paths": {
             "@Main/*": ["../main/*"],
             "@Common/*": ["./*"],

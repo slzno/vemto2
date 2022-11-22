@@ -26,7 +26,8 @@ module.exports = {
         {
             "displayName": "test-features",
             "testMatch": [
-                "<rootDir>/tests/jest/feature/**/*.test.js"
+                "<rootDir>/src/**/*.spec.js",
+                "<rootDir>/src/**/*.spec.ts",
             ]
         }
     ]
