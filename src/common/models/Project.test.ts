@@ -34,13 +34,20 @@ test('It can set the project path', () => {
 test('It can check if a project has a table', () => {
     const project = TestHelper.getProject()
 
+    expect(project.hasTable('users')).toBe(false)
+
     TestHelper.createTable({ name: 'users' })
 
     expect(project.hasTable('users')).toBe(true)
 })
 
 test('It can check if a project does not have a table', () => {
-    const project = TestHelper.getProject()
+    const project = TestHelper.getProject(),
+        table = TestHelper.createTable({ name: 'users' })
+
+    expect(project.doesNotHaveTable('users')).toBe(false)
+
+    table.delete()
 
     expect(project.doesNotHaveTable('users')).toBe(true)
 })
@@ -87,6 +94,8 @@ test('It can check if the project has changed tables', () => {
         table = TestHelper.createTable({ name: 'users' }),    
         column = TestHelper.createColumnWithSchemaState({ table })
 
+    expect(project.fresh().hasChangedTables()).toBe(false)
+    
     column.name = 'special_primary_key'
     column.saveFromInterface()
     
