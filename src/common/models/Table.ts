@@ -5,7 +5,7 @@ import RelaDB from '@tiago_silva_pereira/reladb'
 export default class Table extends RelaDB.Model {
     id: string
     name: string
-    migrations: any
+    migrations: any[]
     project: Project
     projectId: string
     columns: Column[]
@@ -106,11 +106,12 @@ export default class Table extends RelaDB.Model {
     }
 
     hasTimestamps(): boolean {
-        return true
+        return this.hasColumn('created_at') 
+            && this.hasColumn('updated_at')
     }
 
     hasSoftDeletes(): boolean {
-        return true
+        return this.hasColumn('deleted_at')
     }
 
     markAsChanged() {
@@ -119,16 +120,18 @@ export default class Table extends RelaDB.Model {
     }
 
     hasMigrations(): boolean {
-        return this.migrations.length > 0
+        return (!! this.migrations) && this.migrations.length > 0
     }
 
     latestMigrationCreatedTable(): boolean {
         let latestMigration = this.getLatestMigration()
 
-        return latestMigration && latestMigration.createdTables.includes(this.name)
+        return !! (latestMigration && latestMigration.createdTables.includes(this.name))
     }
 
     getLatestMigration(): any {
+        if(!this.hasMigrations()) return null
+
         return this.migrations[this.migrations.length - 1] || null
     }
 

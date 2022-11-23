@@ -45,6 +45,8 @@ class TablesFromMigrationsBuilder {
 
         this.project.schemaDataHash = this.schemaDataHash
         this.project.save()
+
+        return this
     }
 
     force() {

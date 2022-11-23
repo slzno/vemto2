@@ -110,3 +110,127 @@ test('It can get the related tables', () => {
 
     expect(relatedTables.length).toBe(2)
 })
+
+test('It can get the table models', () => {
+    const table = TestHelper.createTable({ name: 'users' })
+
+    const models = table.getModels()
+
+    expect(models.length).toBe(1)
+
+    expect(models[0].name).toBe('User.php')
+    expect(models[0].relationships.length).toBe(1)
+    expect(models[0].relationships[0].type).toBe('hasMany')
+    expect(models[0].relationships[0].model).toBe('Post')
+})
+
+test('It can check if a table has timestamps', () => {
+    const table = TestHelper.createTable({ name: 'users' })
+
+    const createdAtColumn = TestHelper.createColumn({ name: 'created_at', table }),
+        updatedAtColumn = TestHelper.createColumn({ name: 'updated_at', table })
+
+    expect(table.hasTimestamps()).toBe(true)
+
+    createdAtColumn.delete()
+    
+    expect(table.hasTimestamps()).toBe(false)
+
+    updatedAtColumn.delete()
+
+    expect(table.hasTimestamps()).toBe(false)
+})
+
+test('It can check if a table has soft deletes', () => {
+    const table = TestHelper.createTable({ name: 'users' })
+
+    const deletedAtColumn = TestHelper.createColumn({ name: 'deleted_at', table })
+
+    expect(table.hasSoftDeletes()).toBe(true)
+
+    deletedAtColumn.delete()
+
+    expect(table.hasSoftDeletes()).toBe(false)
+})
+
+test('It can mark a table as changed', () => {
+    const project = TestHelper.getProject(), 
+        table = TestHelper.createTable({ name: 'users' })
+
+    table.markAsChanged()
+
+    expect(project.fresh().hasChangedTables()).toBe(true)
+})
+
+test('It can check if a table has migrations data', () => {
+    const table = TestHelper.createTable({ name: 'users' })
+
+    expect(table.hasMigrations()).toBe(false)
+
+    table.migrations = [{
+        migration: '2020_01_01_000000_create_users_table',
+    }]
+    table.save()
+
+    expect(table.hasMigrations()).toBe(true)
+})
+
+test('It can check if latest migration created the table', () => {
+    const table = TestHelper.createTable({ name: 'users' })
+
+    expect(table.latestMigrationCreatedTable()).toBe(false)
+
+    table.migrations = [{
+        migration: '2020_01_01_000000_create_users_table',
+        createdTables: ['users'],
+    }]
+
+    table.save()
+
+    expect(table.latestMigrationCreatedTable()).toBe(true)
+})
+
+test('It can get the latest migration', () => {
+    const table = TestHelper.createTable({ name: 'users' })
+
+    table.migrations = [{
+        migration: '2020_01_01_000000_create_users_table',
+    }]
+
+    table.save()
+
+    expect(table.getLatestMigration().migration).toBe('2020_01_01_000000_create_users_table')
+})
+
+test('It can get the creation migration', () => {
+    const table = TestHelper.createTable({ name: 'users' })
+
+    table.migrations = [{
+        migration: '2020_01_01_000000_create_users_table',
+        createdTables: ['users'],
+    }]
+
+    table.save()
+
+    expect(table.getCreationMigration().migration).toBe('2020_01_01_000000_create_users_table')
+})
+
+test('It can can check if updating latest migration is possible', () => {
+    const table = TestHelper.createTable({ name: 'users' })
+
+    expect(table.canUpdateLatestMigration()).toBe(false)
+
+    table.migrations = [{
+        migration: '2020_01_01_000000_create_users_table',
+    }]
+
+    table.save()
+
+    expect(table.canUpdateLatestMigration()).toBe(true)
+})
+
+test('It can can check if creating a new migration is possible', () => {
+    const table = TestHelper.createTable({ name: 'users' })
+
+    expect(table.canCreateNewMigration()).toBe(true)
+})
