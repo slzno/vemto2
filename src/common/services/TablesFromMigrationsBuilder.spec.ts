@@ -8,14 +8,18 @@ beforeEach(() => {
     MockDatabase.start()
 })
 
-test('It creates new tables', () => {
-    const project = TestHelper.createProject()
-
+const processSchemaData = (project) => {
     TablesFromMigrationsBuilder
         .setProject(project)
         .setSchemaData(schemaData)
         .checkSchemaChanges()
         .build()
+}
+
+test('It creates new tables', () => {
+    const project = TestHelper.getProject()
+
+    processSchemaData(project)
 
     const tables = project.tables
 
@@ -29,22 +33,39 @@ test('It creates new tables', () => {
     expect(tablesNames.includes('personal_access_tokens')).toBe(true)
 })
 
-test('It creates new columns', () => {
-    const project = TestHelper.createProject()
+test('It deletes removed tables', () => {
+    const project = TestHelper.getProject()
 
-    TablesFromMigrationsBuilder
-        .setProject(project)
-        .setSchemaData(schemaData)
-        .checkSchemaChanges()
-        .build()
+    TestHelper.createTable({ name: 'test' })
+
+    expect(project.fresh().tables.length).toBe(1)
+
+    processSchemaData(project)
+
+    expect(project.tables.length).toBe(4)
+})
+
+test('It updates existing tables', () => {
+    const project = TestHelper.getProject(),
+        table = TestHelper.createTable({ name: 'users' })
+
+    expect(table.hasMigrations()).toBe(false)
+
+    processSchemaData(project)
+
+    expect(table.fresh().hasMigrations()).toBe(true)
+})
+
+test('It creates new columns', () => {
+    const project = TestHelper.getProject()
+
+    processSchemaData(project)
 
     const usersTable = project.findTableByName('users')
 
     expect(usersTable.columns.length).toBe(9)
 
     const columnsNames = usersTable.columns.map(column => column.name)
-
-    console.log(columnsNames)
 
     expect(columnsNames.includes('id')).toBe(true)
     expect(columnsNames.includes('name')).toBe(true)
@@ -54,33 +75,44 @@ test('It creates new columns', () => {
     expect(columnsNames.includes('remember_token')).toBe(true)
     expect(columnsNames.includes('created_at')).toBe(true)
     expect(columnsNames.includes('updated_at')).toBe(true)
-
 })
 
-// test('It updates existing tables', () => {
-//     const project = TestHelper.createProject()
-
-//     TablesFromMigrationsBuilder
-//         .setProject(project)
-//         .setSchemaData(schemaData)
-//         .checkSchemaChanges()
-//         .build()
-// })
-
-// test('It updates existing columns', () => {
-//     const project = TestHelper.createProject()
-
-//     TablesFromMigrationsBuilder
-//         .setProject(project)
-//         .setSchemaData(schemaData)
-//         .checkSchemaChanges()
-//         .build()
-// })
-
 test('It deletes removed columns', () => {
-    expect(true).toBe(true)
+    const project = TestHelper.getProject(),
+        usersTable = TestHelper.createTable({ name: 'users' })
+
+    TestHelper.createColumn({ name: 'test', table: usersTable })
+
+    expect(usersTable.fresh().columns.length).toBe(1)
+
+    processSchemaData(project)
+
+    expect(usersTable.columns.length).toBe(9)
+})
+
+test('It updates existing columns', () => {
+    const project = TestHelper.getProject(),
+        usersTable = TestHelper.createTable({ name: 'users' })
+
+    TestHelper.createColumn({ 
+        name: 'name', 
+        length: 64,
+        table: usersTable 
+    })
+
+    expect(usersTable.fresh().findColumnByName('name').length).toBe(64)
+
+    processSchemaData(project)
+
+    expect(usersTable.findColumnByName('name').fresh().length).toBe(255)
 })
 
 test('It can force reading the data', () => {
-    expect(true).toBe(true)
+    const project = TestHelper.getProject()
+
+    processSchemaData(project)
+
+    const tables = project.tables
+
+    expect(tables.length).toBe(4)
 })
