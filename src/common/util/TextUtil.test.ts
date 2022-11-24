@@ -28,8 +28,6 @@ Line 6`,
 
     const result = TextUtil.getSurroundingLinesFromContent(content, fromLine, extraLines)
 
-    console.log(result)
-
     expect(result).toEqual([
         { number: 2, content: 'Line 2' },
         { number: 3, content: 'Line 3' },

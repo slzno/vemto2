@@ -59,4 +59,11 @@ export default new class TestHelper {
         return column
     }
 
+    compareCode(code1, code2) {
+        return this.removeSpacesAndTabs(code1) === this.removeSpacesAndTabs(code2)
+    }
+
+    removeSpacesAndTabs(code) {
+        return code.replace(/\s/g, "")
+    }
 }
