@@ -1,3 +1,5 @@
+import fs from "fs"
+import path from "path"
 import Table from "@Common/models/Table"
 import Column from "@Common/models/Column"
 import Project from "@Common/models/Project"
@@ -65,5 +67,9 @@ export default new class TestHelper {
 
     removeSpacesAndTabs(code) {
         return code.replace(/\s/g, "")
+    }
+
+    readInputFile(basePath, name) {
+        return fs.readFileSync(path.join(basePath, `tests/input/${name}`), 'utf8')
     }
 }

@@ -5,7 +5,7 @@ import MigrationEditor from './MigrationEditor'
 import TestHelper from '@Renderer/../../tests/base/TestHelper'
 
 test('It can add content to schema create on up method', () => {
-    const migrationContent = fs.readFileSync(path.join(__dirname, 'tests/input/creation-migration.php'), 'utf8')
+    const migrationContent = TestHelper.readInputFile(__dirname, 'creation-migration.php')
 
     const migrationEditor = new MigrationEditor(migrationContent)
 
@@ -17,7 +17,7 @@ test('It can add content to schema create on up method', () => {
 })
 
 test('It can add content to schema table on up method', () => {
-    const migrationContent = fs.readFileSync(path.join(__dirname, 'tests/input/updater-migration.php'), 'utf8')
+    const migrationContent = TestHelper.readInputFile(__dirname, 'updater-migration.php')
 
     const migrationEditor = new MigrationEditor(migrationContent)
 
@@ -29,7 +29,7 @@ test('It can add content to schema table on up method', () => {
 })
 
 test('It can replace schema create on up method', () => {
-    const migrationContent = fs.readFileSync(path.join(__dirname, 'tests/input/creation-migration.php'), 'utf8')
+    const migrationContent = TestHelper.readInputFile(__dirname, 'creation-migration.php')
 
     const migrationEditor = new MigrationEditor(migrationContent)
 
@@ -41,7 +41,7 @@ test('It can replace schema create on up method', () => {
 })
 
 test('It can replace schema table on up method', () => {
-    const migrationContent = fs.readFileSync(path.join(__dirname, 'tests/input/updater-migration.php'), 'utf8')
+    const migrationContent = TestHelper.readInputFile(__dirname, 'updater-migration.php')
 
     const migrationEditor = new MigrationEditor(migrationContent)
 
@@ -53,7 +53,7 @@ test('It can replace schema table on up method', () => {
 })
 
 test('It can get schema create on up method', () => {
-    const migrationContent = fs.readFileSync(path.join(__dirname, 'tests/input/creation-migration.php'), 'utf8'),
+    const migrationContent = TestHelper.readInputFile(__dirname, 'creation-migration.php'),
         migrationEditor = new MigrationEditor(migrationContent)
 
     const contentIsEqual = TestHelper.compareCode(migrationEditor.getSchemaCreateOnUpMethod('users'), `Schema::create('users', function (Blueprint $table) {
@@ -71,7 +71,7 @@ test('It can get schema create on up method', () => {
 })
 
 test('It can get schema table on up method', () => {
-    const migrationContent = fs.readFileSync(path.join(__dirname, 'tests/input/updater-migration.php'), 'utf8'),
+    const migrationContent = TestHelper.readInputFile(__dirname, 'updater-migration.php'),
         migrationEditor = new MigrationEditor(migrationContent)
 
     const contentIsEqual = TestHelper.compareCode(migrationEditor.getSchemaTableOnUpMethod('users'), `Schema::table('users', function (Blueprint $table) {
