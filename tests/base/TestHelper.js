@@ -1,10 +1,14 @@
 import fs from "fs"
 import path from "path"
+import { v4 as uuid } from "uuid"
 import Table from "@Common/models/Table"
 import Column from "@Common/models/Column"
 import Project from "@Common/models/Project"
+import FileSystem from "@Main/base/FileSystem"
 
 export default new class TestHelper {
+
+    static latestFilePath = null
 
     getProject() {
         let project = Project.find(1)
@@ -71,5 +75,90 @@ export default new class TestHelper {
 
     readInputFile(basePath, name) {
         return fs.readFileSync(path.join(basePath, `tests/input/${name}`), 'utf8')
+    }
+
+    matchesFile(filePath, code, strict = false) {
+        let fileCode = this.readOrCreateFile(filePath, code)
+
+        if(strict) {
+            return fileCode === code
+        }
+
+        return this.compareCode(fileCode, code) 
+    }
+
+    readOrCreateTemplate(templatePath, contentForCreation) {
+        return this.readOrCreateFile(templatePath, contentForCreation)
+    }
+
+    readOrCreateFile(filePath, contentForCreation) {
+        this.constructor.latestFilePath = filePath
+
+        if(!FileSystem.fileExists(filePath)) {
+            console.log('\x1b[33m%s\x1b[0m', `CREATING FILE: ${filePath}`)
+
+            FileSystem.writeFile(filePath, contentForCreation, false)
+        }
+
+        return FileSystem.readFile(filePath)
+    }
+
+    filesRelevantContentIsEqual(firstFile, secondFile, strict = false) {
+        let isEqual = false
+
+        if(strict) {
+            isEqual = firstFile === secondFile
+        } else {
+            const firstFileLines = this.convertFileToArray(firstFile),
+                secondFileLines = this.convertFileToArray(secondFile)
+    
+            isEqual = this.arraysAreEqual(firstFileLines, secondFileLines)
+        }
+
+        if(!isEqual) {
+            const testId = uuid(),
+                basePath = path.join(__dirname, 'templates', 'outputs')
+
+            const testData = {
+                templatePath: this.constructor.latestFilePath,
+                templateName: this.constructor.latestFilePath.split(/\/|\\/).pop(),
+                testName: arguments,
+            }
+
+            console.log(testData)
+
+            FileSystem.writeFile(path.join(basePath, `${testId}_data.json`), JSON.stringify(testData))
+            FileSystem.writeFile(path.join(basePath, `${testId}_firstFile.txt`), firstFile)
+            FileSystem.writeFile(path.join(basePath, `${testId}_secondFile.txt`), secondFile)
+
+            throw new Error(`Templates are different: \n\n TestDiff(${testId})`)
+        }
+
+        return isEqual
+    }
+
+    convertFileToArray(fileContent) {
+        return fileContent.split('\n')
+            .map(line => line.trim())
+    }
+
+    arraysAreEqual(firstArray, secondArray) {
+        if (!firstArray || !secondArray) return false
+    
+        if (firstArray.length != secondArray.length) return false
+    
+        for (let i = 0, l = firstArray.length; i < l; i++) {
+            // Check if we have nested arrays
+            if (firstArray[i] instanceof Array && secondArray[i] instanceof Array) {
+                // recurse into the nested arrays
+                if (!this.arraysAreEqual(firstArray[i], secondArray[i])) return false     
+            }           
+            else if (firstArray[i] != secondArray[i]) { 
+                // Warning - two different object instances will never be equal: {x:20} != {x:20}
+                return false  
+            }           
+        }     
+
+        return true
     }
 }

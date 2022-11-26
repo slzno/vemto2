@@ -17,7 +17,7 @@
         "php:test": "php ./src/php/tests/vendor/bin/phpunit ./src/php/tests/src --verbose",
         "php:test-output": "set VEMTO_DEBUG=1 && php ./src/php/output.php",
         "test": "jest --runInBand",
-        "test:watch": "jest --watch",
+        "test:watch": "jest --watchAll",
         "test:features": "npm run test -- --selectProjects test-features",
         "test:templates": "npm run test -- --selectProjects test-templates",
         "test:unit": "npm run test -- --selectProjects test-unit"
@@ -64,6 +64,7 @@
         "pinia": "^2.0.22",
         "prettier": "^2.7.1",
         "shelljs": "^0.8.5",
+        "uuid": "^9.0.0",
         "vue": "^3.2.36",
         "vue-router": "^4.0.13"
     }
