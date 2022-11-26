@@ -4,16 +4,14 @@ import { test, expect } from '@jest/globals'
 import TestHelper from '@Renderer/../../tests/base/TestHelper'
 
 test('It can format a PHP file', () => {
-    const unformattedMigration = TestHelper.readInputFile(__dirname, 'unformatted-migration.php')
+    const unformattedFile = TestHelper.readInputFile(__dirname, 'unformatted-migration.php')
 
-    console.log(expect.getState().currentTestName)
-
-    PhpFormatter.setContent(unformattedMigration)
+    PhpFormatter.setContent(unformattedFile)
 
     const formattedContent = PhpFormatter.format(),
-        formattedMigration = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/input/formatted-migration.php'), formattedContent)
+        formattedFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/input/formatted-migration.php'), formattedContent)
 
-    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(formattedContent, formattedMigration, true)
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(formattedFile, formattedContent, true)
 
     expect(contentIsEqual).toBe(true)
 })

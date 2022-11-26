@@ -14,6 +14,7 @@ class PhpFormatter extends BaseFormatter {
         const baseOptions = {
             parser: 'php',
             plugins: [phpPlugin],
+            singleQuote: true,
         }
         
         this.content = prettier.format(this.content, {...baseOptions, ...this.getOptions()})

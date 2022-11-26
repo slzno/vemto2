@@ -8,6 +8,7 @@ module.exports = {
     },
     "reporters": [
         "default",
+        "<rootDir>/tests/base/DiffReporter.js"
     ],
     "projects": [
         {

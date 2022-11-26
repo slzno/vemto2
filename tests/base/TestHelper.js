@@ -1,6 +1,7 @@
 import fs from "fs"
 import path from "path"
 import { v4 as uuid } from "uuid"
+import { expect } from "@jest/globals"
 import Table from "@Common/models/Table"
 import Column from "@Common/models/Column"
 import Project from "@Common/models/Project"
@@ -9,6 +10,16 @@ import FileSystem from "@Main/base/FileSystem"
 export default new class TestHelper {
 
     static latestFilePath = null
+    static currentTestName = null
+    static currentTestFile = null
+
+    setCurrentTestName(name) {
+        TestHelper.currentTestName = name
+    }
+
+    setCurrentTestFile(file) {
+        TestHelper.currentTestFile = file
+    }
 
     getProject() {
         let project = Project.find(1)
@@ -92,7 +103,7 @@ export default new class TestHelper {
     }
 
     readOrCreateFile(filePath, contentForCreation) {
-        this.constructor.latestFilePath = filePath
+        TestHelper.latestFilePath = filePath
 
         if(!FileSystem.fileExists(filePath)) {
             console.log('\x1b[33m%s\x1b[0m', `CREATING FILE: ${filePath}`)
@@ -104,6 +115,9 @@ export default new class TestHelper {
     }
 
     filesRelevantContentIsEqual(firstFile, secondFile, strict = false) {
+        this.setCurrentTestFile(expect.getState().testPath)
+        this.setCurrentTestName(expect.getState().currentTestName)
+
         let isEqual = false
 
         if(strict) {
@@ -120,9 +134,10 @@ export default new class TestHelper {
                 basePath = path.join(__dirname, 'templates', 'outputs')
 
             const testData = {
-                templatePath: this.constructor.latestFilePath,
-                templateName: this.constructor.latestFilePath.split(/\/|\\/).pop(),
-                testName: arguments,
+                templatePath: TestHelper.latestFilePath,
+                templateName: TestHelper.latestFilePath.split(/\/|\\/).pop(),
+                testName: TestHelper.currentTestName,
+                testPath: TestHelper.currentTestFile,
             }
 
             console.log(testData)
