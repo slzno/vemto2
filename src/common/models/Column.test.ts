@@ -101,6 +101,17 @@ test('It does not apply changes when unnecessary', () => {
     expect(changesWereApplied).toBe(false)
 })
 
+test('A column was not considered renamed when schema state is empty', () => {
+    const column = TestHelper.createColumn()
+
+    column.name = 'renamed'
+    column.save()
+
+    const wasRenamed = column.wasRenamed()
+
+    expect(wasRenamed).toBe(false)
+})
+
 test('It can check if a column was renamed from interface', () => {
     const column = TestHelper.createColumn()
 
