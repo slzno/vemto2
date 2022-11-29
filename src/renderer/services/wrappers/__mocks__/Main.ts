@@ -10,6 +10,10 @@ export default new class Main {
                 return fs.readFileSync(path.join(__dirname, `../../../../main/static/templates/${filePath}`), 'utf8')
             },
 
+            readProjectFile: (filePath: string) => {
+                return fs.readFileSync(filePath, 'utf8')
+            },
+
             addFileToGenerationQueue: (name: string, content: string) => {
                 return true
             },

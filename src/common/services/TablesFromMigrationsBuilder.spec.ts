@@ -9,9 +9,12 @@ beforeEach(() => {
 })
 
 const processSchemaData = (project) => {
+    // Clone data to avoid mutation (as data is being manipulated in the RAM)
+    const schemaDataClone = JSON.parse(JSON.stringify(schemaData))
+
     TablesFromMigrationsBuilder
         .setProject(project)
-        .setSchemaData(schemaData)
+        .setSchemaData(schemaDataClone)
         .checkSchemaChanges()
         .build()
 }

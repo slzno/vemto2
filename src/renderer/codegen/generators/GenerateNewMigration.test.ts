@@ -44,7 +44,7 @@ test('It can generate a migration to rename a table column', async () => {
     GenerateNewMigration.setTable(table)
 
     const renderedTemplateContent = await GenerateNewMigration.generateUpdaterMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/input/new-migration-renaming-column.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/new-migration-renaming-column.php'), renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 

@@ -1,9 +1,9 @@
 import Table from "../../../common/models/Table"
+import Main from "@Renderer/services/wrappers/Main"
 import Project from "../../../common/models/Project"
 import PhpFormatter from "../formatters/PhpFormatter"
 import MigrationEditor from "../editors/MigrationEditor"
 import TemplateCompiler from "../templates/base/TemplateCompiler"
-import Main from "@Renderer/services/wrappers/Main"
 
 export default new class UpdateExistingMigration {
     table: Table
@@ -81,8 +81,8 @@ export default new class UpdateExistingMigration {
             columnsTemplate = await Main.API.readTemplateFile('UpdaterMigrationColumns.vemtl')
 
         TemplateCompiler
-                .setContent(columnsTemplate)
-                .setData({ table: this.table })
+            .setContent(columnsTemplate)
+            .setData({ table: this.table })
 
         const compiledTemplate = TemplateCompiler.compile(),
             migrationEditor = new MigrationEditor(latestMigrationContent)
