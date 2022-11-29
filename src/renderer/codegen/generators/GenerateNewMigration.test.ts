@@ -1,10 +1,8 @@
 import path from 'path'
 import MockDatabase from '@Tests/base/MockDatabase'
-import { test, expect, beforeEach, jest } from '@jest/globals'
 import GenerateNewMigration from './GenerateNewMigration'
+import { test, expect, beforeEach, jest } from '@jest/globals'
 import TestHelper from '@Renderer/../../tests/base/TestHelper'
-
-import Main from "@Renderer/services/wrappers/Main"
 
 jest.mock('@Renderer/services/wrappers/Main')
 
@@ -23,7 +21,20 @@ test('It can get the migration name', () => {
     expect(GenerateNewMigration.getName()).toBe('/database/migrations/2022_11_29_000001_update_posts_table.php')
 })
 
-test('It generates a migration to rename a table column', async () => {
+test('It can add the migration to the generation queue and remove the table from changed tables', async () => {
+    const table = TestHelper.createTable({ name: 'posts' })
+    table.markAsChanged()
+
+    GenerateNewMigration.setTable(table)
+
+    expect(table.project.hasChangedTables()).toBe(true)
+
+    await GenerateNewMigration.run()
+
+    expect(table.project.hasChangedTables()).toBe(false)
+})
+
+test('It can generate a migration to rename a table column', async () => {
     const table = TestHelper.createTable({ name: 'posts' }),
         column = TestHelper.createColumnWithSchemaState({ name: 'name', table })
 
