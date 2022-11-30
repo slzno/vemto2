@@ -27,9 +27,10 @@ export default new class GenerateNewMigration {
     }
 
     getName() {
-        const datePrefix = new Date().toISOString().split('T')[0].replace(/-/g, '_')
+        const datePrefix = new Date().toISOString().split('T')[0].replace(/-/g, '_'),
+            timePrefix = new Date().toISOString().split('T')[1].split('.')[0].replace(/:/g, '')
 
-        return `/database/migrations/${datePrefix}_000001_update_${this.table.name}_table.php`
+        return `/database/migrations/${datePrefix}_${timePrefix}_update_${this.table.name}_table.php`
     }
 
     async getContent() {

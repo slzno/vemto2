@@ -6,6 +6,9 @@ import TestHelper from '@Renderer/../../tests/base/TestHelper'
 
 jest.mock('@Renderer/services/wrappers/Main')
 
+jest.useFakeTimers()
+    .setSystemTime(new Date('2022-01-01T00:00:00.000Z'))
+
 beforeEach(() => {
     MockDatabase.start()
 })
@@ -18,7 +21,7 @@ test('It can get the migration name', () => {
 
     GenerateNewMigration.setTable(table)
 
-    expect(GenerateNewMigration.getName()).toBe('/database/migrations/2022_11_29_000001_update_posts_table.php')
+    expect(GenerateNewMigration.getName()).toBe('/database/migrations/2022_01_01_000000_update_posts_table.php')
 })
 
 test('It can add the migration to the generation queue and remove the table from changed tables', async () => {
