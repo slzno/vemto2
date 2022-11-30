@@ -72,7 +72,8 @@ test('It can change a creation migration', async () => {
     const table = project.findTableByName('password_resets'),
         column = table.findColumnByName('email')
 
-    column.applyChanges({ name: 'email_renamed' })
+    column.name = 'email_renamed'
+    column.saveFromInterface()
 
     UpdateExistingMigration.setTable(table)
 
