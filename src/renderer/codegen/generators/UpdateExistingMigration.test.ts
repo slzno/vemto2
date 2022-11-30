@@ -97,8 +97,6 @@ test('It can change an updater migration', async () => {
     column.name = 'email_renamed'
     column.saveFromInterface()
 
-    console.log(column.wasRenamed())
-
     UpdateExistingMigration.setTable(table)
 
     const renderedTemplateContent = await UpdateExistingMigration.changeUpdaterMigration(),

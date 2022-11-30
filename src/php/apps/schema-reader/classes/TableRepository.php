@@ -4,6 +4,7 @@ class TableRepository {
     protected $tables = [];
     protected $currentMigration = '';
     protected $migrationsRepository;
+    protected $tableColumnsCreationIncrement = [];
 
     public function __construct()
     {
@@ -37,13 +38,39 @@ class TableRepository {
         $tableName = $column['table'];
         $columnName = $column['name'];
 
+        $column = $this->calculateColumnAfter($tableName, $column);
+
         if (!isset($this->tables[$tableName])) {
             $this->initTable($tableName);
         }
 
+        $column['creationOrder'] = ++$this->tableColumnsCreationIncrement[$tableName];
+
         $this->tables[$tableName]['columns'][$columnName] = $column;
 
         $this->registerTableMigration($tableName);
+    }
+
+    protected function calculateColumnAfter($tableName, $column)
+    {
+        if(isset($column['after'])) {
+            return $column;
+        }
+
+        $columns = $this->tables[$tableName]['columns'] ?? [];
+
+        if (count($columns) == 0) {
+            return $column;
+        }
+
+        $lastColumn = array_values(array_slice($columns, -1))[0];
+
+        $column['after'] = $lastColumn['name'];
+
+        // TODO: Needs to update subsequent columns
+        
+
+        return $column;
     }
 
     protected function processChangedColumns($changedColumns)
@@ -108,12 +135,12 @@ class TableRepository {
         $this->tables[$tableName]['columns'][$to] = $this->tables[$tableName]['columns'][$from];
         $this->tables[$tableName]['columns'][$to]['name'] = $to;
 
-        // Add the old name to past_names for future reference
-        if (!isset($this->tables[$tableName]['columns'][$to]['past_names'])) {
-            $this->tables[$tableName]['columns'][$to]['past_names'] = [];
+        // Add the old name to pastNames for future reference
+        if (!isset($this->tables[$tableName]['columns'][$to]['pastNames'])) {
+            $this->tables[$tableName]['columns'][$to]['pastNames'] = [];
         }
 
-        $this->tables[$tableName]['columns'][$to]['past_names'][] = $from;
+        $this->tables[$tableName]['columns'][$to]['pastNames'][] = $from;
 
         unset($this->tables[$tableName]['columns'][$from]);
 
@@ -187,6 +214,8 @@ class TableRepository {
 
     protected function initTable($tableName)
     {
+        $this->tableColumnsCreationIncrement[$tableName] = 0;
+
         $this->tables[$tableName] = [
             'columns' => [],
             'indexes' => [],

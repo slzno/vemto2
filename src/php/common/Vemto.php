@@ -10,9 +10,9 @@ class Vemto {
         echo self::jsonResponse($data);
     }
 
-    public static function logArray(array $array)
+    public static function dump(mixed $data)
     {
-        $text = print_r($array, true);
+        $text = print_r($data, true);
 
         self::log($text);
     }
