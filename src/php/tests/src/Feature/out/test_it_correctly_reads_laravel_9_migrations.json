@@ -7,61 +7,28 @@
                 "autoIncrement": true,
                 "unsigned": true,
                 "table": "users",
-                "creatorMethod": "id"
+                "creatorMethod": "id",
+                "order": 0,
+                "creationOrder": 1
             },
             "name": {
                 "type": "string",
                 "name": "name",
                 "length": 255,
                 "table": "users",
-                "creatorMethod": "string"
+                "creatorMethod": "string",
+                "order": 1,
+                "creationOrder": 2
             },
-            "email": {
+            "last_name": {
                 "type": "string",
-                "name": "email",
+                "name": "last_name",
                 "length": 255,
                 "table": "users",
                 "creatorMethod": "string",
-                "unique": true
-            },
-            "email_verified_at": {
-                "type": "timestamp",
-                "name": "email_verified_at",
-                "precision": 0,
-                "table": "users",
-                "creatorMethod": "timestamp",
-                "nullable": true
-            },
-            "password": {
-                "type": "string",
-                "name": "password",
-                "length": 255,
-                "table": "users",
-                "creatorMethod": "string"
-            },
-            "remember_token": {
-                "type": "string",
-                "name": "remember_token",
-                "length": 100,
-                "table": "users",
-                "creatorMethod": "rememberToken",
-                "nullable": true
-            },
-            "created_at": {
-                "type": "timestamp",
-                "name": "created_at",
-                "precision": 0,
-                "table": "users",
-                "creatorMethod": "timestamps",
-                "nullable": true
-            },
-            "updated_at": {
-                "type": "timestamp",
-                "name": "updated_at",
-                "precision": 0,
-                "table": "users",
-                "creatorMethod": "timestamps",
-                "nullable": true
+                "after": "name",
+                "order": 2,
+                "creationOrder": 10
             },
             "avatar_renamed": {
                 "type": "string",
@@ -70,9 +37,70 @@
                 "table": "users",
                 "creatorMethod": "string",
                 "nullable": true,
-                "past_names": [
+                "order": 3,
+                "creationOrder": 3,
+                "pastNames": [
                     "avatar"
                 ]
+            },
+            "email": {
+                "type": "string",
+                "name": "email",
+                "length": 255,
+                "table": "users",
+                "creatorMethod": "string",
+                "unique": true,
+                "order": 4,
+                "creationOrder": 4
+            },
+            "email_verified_at": {
+                "type": "timestamp",
+                "name": "email_verified_at",
+                "precision": 0,
+                "table": "users",
+                "creatorMethod": "timestamp",
+                "nullable": true,
+                "order": 5,
+                "creationOrder": 5
+            },
+            "password": {
+                "type": "string",
+                "name": "password",
+                "length": 255,
+                "table": "users",
+                "creatorMethod": "string",
+                "order": 6,
+                "creationOrder": 6
+            },
+            "remember_token": {
+                "type": "string",
+                "name": "remember_token",
+                "length": 100,
+                "table": "users",
+                "creatorMethod": "rememberToken",
+                "nullable": true,
+                "order": 7,
+                "creationOrder": 7
+            },
+            "created_at": {
+                "type": "timestamp",
+                "name": "created_at",
+                "precision": 0,
+                "table": "users",
+                "creatorMethod": "timestamps",
+                "nullable": true,
+                "order": 8,
+                "creationOrder": 8
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "name": "updated_at",
+                "precision": 0,
+                "table": "users",
+                "creatorMethod": "timestamps",
+                "nullable": true,
+                "order": 9,
+                "creationOrder": 9
             }
         },
         "indexes": [],
@@ -176,7 +204,16 @@
                 "migrationName": "2019_12_14_000002_change_users_table",
                 "datePrefix": "2019_12_14",
                 "fullPrefix": "2019_12_14_000002",
-                "addedColumns": [],
+                "addedColumns": [
+                    {
+                        "type": "string",
+                        "name": "last_name",
+                        "length": 255,
+                        "table": "users",
+                        "creatorMethod": "string",
+                        "after": "name"
+                    }
+                ],
                 "changedColumns": [],
                 "droppedColumns": [],
                 "renamedColumns": [
@@ -211,14 +248,18 @@
                 "length": 255,
                 "table": "password_resets",
                 "creatorMethod": "string",
-                "index": true
+                "index": true,
+                "order": 0,
+                "creationOrder": 1
             },
             "token": {
                 "type": "string",
                 "name": "token",
                 "length": 255,
                 "table": "password_resets",
-                "creatorMethod": "string"
+                "creatorMethod": "string",
+                "order": 1,
+                "creationOrder": 2
             },
             "created_at": {
                 "type": "timestamp",
@@ -226,7 +267,9 @@
                 "precision": 0,
                 "table": "password_resets",
                 "creatorMethod": "timestamp",
-                "nullable": true
+                "nullable": true,
+                "order": 2,
+                "creationOrder": 3
             }
         },
         "indexes": [],
@@ -288,7 +331,9 @@
                 "autoIncrement": true,
                 "unsigned": true,
                 "table": "failed_jobs",
-                "creatorMethod": "id"
+                "creatorMethod": "id",
+                "order": 0,
+                "creationOrder": 1
             },
             "uuid": {
                 "type": "string",
@@ -296,31 +341,41 @@
                 "length": 255,
                 "table": "failed_jobs",
                 "creatorMethod": "string",
-                "unique": true
+                "unique": true,
+                "order": 1,
+                "creationOrder": 2
             },
             "connection": {
                 "type": "text",
                 "name": "connection",
                 "table": "failed_jobs",
-                "creatorMethod": "text"
+                "creatorMethod": "text",
+                "order": 2,
+                "creationOrder": 3
             },
             "queue": {
                 "type": "text",
                 "name": "queue",
                 "table": "failed_jobs",
-                "creatorMethod": "text"
+                "creatorMethod": "text",
+                "order": 3,
+                "creationOrder": 4
             },
             "payload": {
                 "type": "longText",
                 "name": "payload",
                 "table": "failed_jobs",
-                "creatorMethod": "longText"
+                "creatorMethod": "longText",
+                "order": 4,
+                "creationOrder": 5
             },
             "exception": {
                 "type": "longText",
                 "name": "exception",
                 "table": "failed_jobs",
-                "creatorMethod": "longText"
+                "creatorMethod": "longText",
+                "order": 5,
+                "creationOrder": 6
             },
             "failed_at": {
                 "type": "timestamp",
@@ -328,7 +383,9 @@
                 "precision": 0,
                 "table": "failed_jobs",
                 "creatorMethod": "timestamp",
-                "useCurrent": true
+                "useCurrent": true,
+                "order": 6,
+                "creationOrder": 7
             }
         },
         "indexes": [],
@@ -415,14 +472,18 @@
                 "autoIncrement": true,
                 "unsigned": true,
                 "table": "personal_access_tokens",
-                "creatorMethod": "id"
+                "creatorMethod": "id",
+                "order": 0,
+                "creationOrder": 1
             },
             "tokenable_type": {
                 "type": "string",
                 "name": "tokenable_type",
                 "length": 255,
                 "table": "personal_access_tokens",
-                "creatorMethod": "morphs"
+                "creatorMethod": "morphs",
+                "order": 1,
+                "creationOrder": 2
             },
             "tokenable_id": {
                 "type": "bigInteger",
@@ -430,14 +491,18 @@
                 "autoIncrement": false,
                 "unsigned": true,
                 "table": "personal_access_tokens",
-                "creatorMethod": "morphs"
+                "creatorMethod": "morphs",
+                "order": 2,
+                "creationOrder": 3
             },
             "name": {
                 "type": "string",
                 "name": "name",
                 "length": 255,
                 "table": "personal_access_tokens",
-                "creatorMethod": "string"
+                "creatorMethod": "string",
+                "order": 3,
+                "creationOrder": 4
             },
             "token": {
                 "type": "string",
@@ -445,14 +510,18 @@
                 "length": 64,
                 "table": "personal_access_tokens",
                 "creatorMethod": "string",
-                "unique": true
+                "unique": true,
+                "order": 4,
+                "creationOrder": 5
             },
             "abilities": {
                 "type": "text",
                 "name": "abilities",
                 "table": "personal_access_tokens",
                 "creatorMethod": "text",
-                "nullable": true
+                "nullable": true,
+                "order": 5,
+                "creationOrder": 6
             },
             "last_used_at": {
                 "type": "timestamp",
@@ -460,7 +529,9 @@
                 "precision": 0,
                 "table": "personal_access_tokens",
                 "creatorMethod": "timestamp",
-                "nullable": true
+                "nullable": true,
+                "order": 6,
+                "creationOrder": 7
             },
             "expires_at": {
                 "type": "timestamp",
@@ -468,7 +539,9 @@
                 "precision": 0,
                 "table": "personal_access_tokens",
                 "creatorMethod": "timestamp",
-                "nullable": true
+                "nullable": true,
+                "order": 7,
+                "creationOrder": 8
             },
             "created_at": {
                 "type": "timestamp",
@@ -476,7 +549,9 @@
                 "precision": 0,
                 "table": "personal_access_tokens",
                 "creatorMethod": "timestamps",
-                "nullable": true
+                "nullable": true,
+                "order": 8,
+                "creationOrder": 9
             },
             "updated_at": {
                 "type": "timestamp",
@@ -484,7 +559,9 @@
                 "precision": 0,
                 "table": "personal_access_tokens",
                 "creatorMethod": "timestamps",
-                "nullable": true
+                "nullable": true,
+                "order": 9,
+                "creationOrder": 10
             }
         },
         "indexes": {
