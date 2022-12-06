@@ -24,6 +24,8 @@ class TableRepository {
             $this->processRenamedColumns($migration['renamedColumns']);
             $this->processCommands($migration['commands']);
         }
+
+        $this->orderTablesColumns();
     }
 
     protected function processAddedColumns($addedColumns)
@@ -38,15 +40,13 @@ class TableRepository {
         $tableName = $column['table'];
         $columnName = $column['name'];
 
-        $column = $this->calculateColumnAfter($tableName, $column);
+        // $column = $this->calculateColumnAfter($tableName, $column);
 
         if (!isset($this->tables[$tableName])) {
             $this->initTable($tableName);
         }
 
-        $column['creationOrder'] = ++$this->tableColumnsCreationIncrement[$tableName];
-
-        $this->tables[$tableName]['columns'][$columnName] = $column;
+        $this->insertColumn($tableName, $column);
 
         $this->registerTableMigration($tableName);
     }
@@ -60,6 +60,7 @@ class TableRepository {
         $columns = $this->tables[$tableName]['columns'] ?? [];
 
         if (count($columns) == 0) {
+            $column['after'] = null;
             return $column;
         }
 
@@ -67,10 +68,37 @@ class TableRepository {
 
         $column['after'] = $lastColumn['name'];
 
-        // TODO: Needs to update subsequent columns
-        
-
         return $column;
+    }
+
+    protected function insertColumn($tableName, $column)
+    {
+        $columns = $this->tables[$tableName]['columns'] ?? [];
+        $latestColumn = end($this->tables[$tableName]['columns']) ?? null;
+        
+        $column['order'] = $latestColumn ? $latestColumn['order'] + 1 : 0;
+        $column['creationOrder'] = ++$this->tableColumnsCreationIncrement[$tableName];
+        
+        $after = isset($column['after']) ? $column['after'] : null;
+
+        if (!empty($after)) {
+            $previousColumn = $columns[$after] ?? null;
+            $newColumnOrder = $previousColumn ? $previousColumn['order'] + 1 : $column['order'];
+
+            $columns = array_map(function($column) use ($newColumnOrder) {
+                if ($column['order'] >= $newColumnOrder) {
+                    $column['order']++;
+                }
+
+                return $column;
+            }, $columns);
+
+            $column['order'] = $newColumnOrder;
+        }
+
+        $columns[$column['name']] = $column;
+
+        $this->tables[$tableName]['columns'] = $columns;
     }
 
     protected function processChangedColumns($changedColumns)
@@ -237,6 +265,15 @@ class TableRepository {
         }
 
         $this->tables[$tableName]['migrations'] = $tableMigrations;
+    }
+
+    protected function orderTablesColumns()
+    {
+        foreach ($this->tables as $tableName => $table) {
+            $columns = collect($table['columns'])->sortBy('order')->toArray();
+
+            $this->tables[$tableName]['columns'] = $columns;
+        }
     }
 
     public function getTables()
