@@ -127,24 +127,22 @@ test('It reads the columns order', () => {
 
     const readSchemaData = processSchemaData(project)
 
-    console.log(readSchemaData)
-
     const usersTable = project.findTableByName('users')
 
     expect(usersTable.columns[0].order).toBe(0)
     expect(usersTable.columns[0].name).toBe('id')
-    expect(readSchemaData.users.columns[0].order).toBe(0)
-    expect(readSchemaData.users.columns[0].creationOrder).toBe(1)
+    expect(readSchemaData.users.columns['id'].order).toBe(0)
+    expect(readSchemaData.users.columns['id'].creationOrder).toBe(1)
 
     expect(usersTable.columns[1].order).toBe(1)
     expect(usersTable.columns[1].name).toBe('name')
-    expect(readSchemaData.users.columns[1].order).toBe(1)
-    expect(readSchemaData.users.columns[1].creationOrder).toBe(2)
+    expect(readSchemaData.users.columns['name'].order).toBe(1)
+    expect(readSchemaData.users.columns['name'].creationOrder).toBe(2)
 
     // Creation order here is 10 because the column was created
     // by another migration, not the one that created the table
     expect(usersTable.columns[2].order).toBe(2)
     expect(usersTable.columns[2].name).toBe('last_name')
-    expect(readSchemaData.users.columns[2].order).toBe(2)
-    expect(readSchemaData.users.columns[2].creationOrder).toBe(10)
+    expect(readSchemaData.users.columns['last_name'].order).toBe(2)
+    expect(readSchemaData.users.columns['last_name'].creationOrder).toBe(10)
 })
