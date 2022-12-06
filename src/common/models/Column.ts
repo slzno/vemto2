@@ -7,6 +7,7 @@ export default class Column extends RelaDB.Model {
     id: string
     name: string
     table: Table
+    order: number
     length: number
     tableId: string
     schemaState: any
@@ -71,13 +72,15 @@ export default class Column extends RelaDB.Model {
             this.schemaState.nullable !== comparisonData.nullable ||
             this.schemaState.typeDefinition !== comparisonData.type ||
             this.schemaState.autoIncrement !== comparisonData.autoIncrement ||
-            this.schemaState.unsigned !== comparisonData.unsigned
+            this.schemaState.unsigned !== comparisonData.unsigned || 
+            this.schemaState.order !== comparisonData.order
     }
 
     applyChanges(data: any): boolean {
         if(!this.hadChanges(data)) return false
 
         this.name = data.name
+        this.order = data.order
         this.length = data.length
         this.nullable = data.nullable
         this.unsigned = data.unsigned

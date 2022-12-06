@@ -34,6 +34,7 @@ test('It can check if a column has changes', () => {
 
     const hadChanges = column.hadChanges({
         name: 'test_column',
+        order: 1,
         length: 255,
         type: 'string',
         autoIncrement: false,

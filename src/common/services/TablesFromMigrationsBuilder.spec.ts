@@ -17,6 +17,8 @@ const processSchemaData = (project) => {
         .setSchemaData(schemaDataClone)
         .checkSchemaChanges()
         .build()
+
+    return schemaDataClone
 }
 
 test('It creates new tables', () => {
@@ -66,7 +68,7 @@ test('It creates new columns', () => {
 
     const usersTable = project.findTableByName('users')
 
-    expect(usersTable.columns.length).toBe(9)
+    expect(usersTable.columns.length).toBe(10)
 
     const columnsNames = usersTable.columns.map(column => column.name)
 
@@ -90,7 +92,7 @@ test('It deletes removed columns', () => {
 
     processSchemaData(project)
 
-    expect(usersTable.columns.length).toBe(9)
+    expect(usersTable.columns.length).toBe(10)
 })
 
 test('It updates existing columns', () => {
@@ -118,4 +120,31 @@ test('It can force reading the data', () => {
     const tables = project.tables
 
     expect(tables.length).toBe(4)
+})
+
+test('It reads the columns order', () => {
+    const project = TestHelper.getProject()
+
+    const readSchemaData = processSchemaData(project)
+
+    console.log(readSchemaData)
+
+    const usersTable = project.findTableByName('users')
+
+    expect(usersTable.columns[0].order).toBe(0)
+    expect(usersTable.columns[0].name).toBe('id')
+    expect(readSchemaData.users.columns[0].order).toBe(0)
+    expect(readSchemaData.users.columns[0].creationOrder).toBe(1)
+
+    expect(usersTable.columns[1].order).toBe(1)
+    expect(usersTable.columns[1].name).toBe('name')
+    expect(readSchemaData.users.columns[1].order).toBe(1)
+    expect(readSchemaData.users.columns[1].creationOrder).toBe(2)
+
+    // Creation order here is 10 because the column was created
+    // by another migration, not the one that created the table
+    expect(usersTable.columns[2].order).toBe(2)
+    expect(usersTable.columns[2].name).toBe('last_name')
+    expect(readSchemaData.users.columns[2].order).toBe(2)
+    expect(readSchemaData.users.columns[2].creationOrder).toBe(10)
 })
