@@ -125,6 +125,17 @@ export default class Column extends RelaDB.Model {
         return this.schemaState.name !== this.name
     }
 
+    wasChanged(): boolean {
+        if(!this.schemaState) return false
+
+        return this.schemaState.name !== this.name ||
+            this.schemaState.length !== this.length ||
+            this.schemaState.nullable !== this.nullable ||
+            this.schemaState.unsigned !== this.unsigned ||
+            this.schemaState.autoIncrement !== this.autoIncrement ||
+            this.schemaState.typeDefinition !== this.typeDefinition
+    }
+
     getAfter(): string {
         if(!this.hasPreviousColumn()) return null
 

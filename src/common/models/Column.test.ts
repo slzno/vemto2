@@ -146,6 +146,83 @@ test('It can get the old column name after rename', () => {
     expect(column.getOldName()).toBe('name')
 })
 
+test('A column was not considered changed when schema state is empty', () => {
+    const column = TestHelper.createColumn()
+
+    column.length = 64
+    column.save()
+
+    const wasChanged = column.wasChanged()
+
+    expect(wasChanged).toBe(false)
+})
+
+test('It can check if a column was changed after renamed', () => {
+    const column = TestHelper.createColumnWithSchemaState()
+
+    expect(column.wasChanged()).toBe(false)
+
+    column.name = 'renamed'
+    column.save()
+
+    expect(column.wasChanged()).toBe(true)
+})
+
+test('It can check if a column was changed after changing the length attr', () => {
+    const column = TestHelper.createColumnWithSchemaState()
+
+    expect(column.wasChanged()).toBe(false)
+
+    column.length = 64
+    column.save()
+
+    expect(column.wasChanged()).toBe(true)
+})
+
+test('It can check if a column was changed after changing the nullable attr', () => {
+    const column = TestHelper.createColumnWithSchemaState()
+
+    expect(column.wasChanged()).toBe(false)
+
+    column.nullable = true
+    column.save()
+
+    expect(column.wasChanged()).toBe(true)
+})
+
+test('It can check if a column was changed after changing the unsigned attr', () => {
+    const column = TestHelper.createColumnWithSchemaState()
+
+    expect(column.wasChanged()).toBe(false)
+
+    column.unsigned = true
+    column.save()
+
+    expect(column.wasChanged()).toBe(true)
+})
+
+test('It can check if a column was changed after changing the autoIncrement attr', () => {
+    const column = TestHelper.createColumnWithSchemaState()
+
+    expect(column.wasChanged()).toBe(false)
+
+    column.autoIncrement = true
+    column.save()
+
+    expect(column.wasChanged()).toBe(true)
+})
+
+test('It can check if a column was changed after changing the typeDefinition attr', () => {
+    const column = TestHelper.createColumnWithSchemaState()
+
+    expect(column.wasChanged()).toBe(false)
+
+    column.typeDefinition = 'text'
+    column.save()
+
+    expect(column.wasChanged()).toBe(true)
+})
+
 test('It can check if a column is a PK', () => {
     const column = TestHelper.createColumnWithSchemaState()
 

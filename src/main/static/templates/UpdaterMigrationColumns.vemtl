@@ -8,7 +8,19 @@
 
 <% } %>
 
+<# Changed columns #>
+<% for (let column of this.table.getChangedColumns()) { %>
+    
+    <# Imported template data #>
+    <% const __enableColumnAfterUsage = false %>
+    
+    <import template="MigrationColumn.vemtl">
+
+<% } %>
+
 <# Renamed columns #>
 <% for (let column of this.table.getRenamedColumns()) { %>
+
     $table->renameColumn('<$ column.getOldName() $>', '<$ column.name $>');
+    
 <% } %>
