@@ -33,4 +33,8 @@ $table-><$ column.typeDefinition $>('<$ column.name $>'
 <% const columnAfter = column.getAfter() %>
 <up if (columnAfter && __enableColumnAfterUsage) { up>
 ->after('<$ columnAfter $>')
+<up } up>
+<# Adds the ->change() method if the column is being changed #>
+<up if (__addChangeMethod) { up>
+->change()
 <up } up>;

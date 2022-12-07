@@ -79,14 +79,10 @@ test('It can generate a migration to change an existing column', async () => {
 
     GenerateNewMigration.setTable(table)
 
-    const renderedTemplateContent = await GenerateNewMigration.generateUpdaterMigration()
-    
-    console.log(renderedTemplateContent)
+    const renderedTemplateContent = await GenerateNewMigration.generateUpdaterMigration(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/new-migration-changing-column.php'), renderedTemplateContent)
 
-    // const renderedTemplateContent = await GenerateNewMigration.generateUpdaterMigration(),
-    //     renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/new-migration-changing-column.php'), renderedTemplateContent)
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
-    // const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
-
-    // expect(contentIsEqual).toBe(true)
+    expect(contentIsEqual).toBe(true)
 })

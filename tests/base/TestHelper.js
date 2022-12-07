@@ -141,11 +141,9 @@ export default new class TestHelper {
                 testPath: TestHelper.currentTestFile,
             }
 
-            console.log(testData)
-
-            FileSystem.writeFile(path.join(basePath, `${testId}_data.json`), JSON.stringify(testData))
-            FileSystem.writeFile(path.join(basePath, `${testId}_firstFile.txt`), firstFile)
-            FileSystem.writeFile(path.join(basePath, `${testId}_secondFile.txt`), secondFile)
+            FileSystem.writeFile(path.join(basePath, `${testId}_data.json`), JSON.stringify(testData), false)
+            FileSystem.writeFile(path.join(basePath, `${testId}_firstFile.txt`), firstFile, false)
+            FileSystem.writeFile(path.join(basePath, `${testId}_secondFile.txt`), secondFile, false)
 
             throw new Error(`Templates are different: \n\n TestDiff(${testId})`)
         }

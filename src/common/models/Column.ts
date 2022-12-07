@@ -125,7 +125,7 @@ export default class Column extends RelaDB.Model {
         return this.schemaState.name !== this.name
     }
 
-    wasChanged(): boolean {
+    hasChanges(): boolean {
         if(!this.schemaState) return false
 
         return this.schemaState.name !== this.name ||
