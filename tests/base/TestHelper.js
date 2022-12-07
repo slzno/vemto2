@@ -56,7 +56,7 @@ export default new class TestHelper {
         }
 
         const column = new Column
-        column.order = data.order || 1
+        column.order = data.hasOwnProperty("order") ? data.order : 0
         column.name = data.name || "name"
         column.length = data.length || 255
         column.typeDefinition = data.type || "string"

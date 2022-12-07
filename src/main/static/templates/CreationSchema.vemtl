@@ -1,3 +1,7 @@
 Schema::create('<$ this.table.name $>', function (Blueprint $table) {
-    <import template="MigrationColumns.vemtl">
+    <# Table columns #>
+    <% for (let column of this.table.columns) { %>
+        <% const __enableColumnAfterUsage = false %>
+        <import template="MigrationColumn.vemtl">
+    <% } %>
 });

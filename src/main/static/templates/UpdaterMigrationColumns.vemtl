@@ -1,5 +1,14 @@
-<% for (let column of this.table.columns) { %>
-    <% if (column.wasRenamed()) { %>
+<# New columns #>
+<% for (let column of this.table.getNewColumns()) { %>
+    
+    <# Imported template data #>
+    <% const __enableColumnAfterUsage = true %>
+    
+    <import template="MigrationColumn.vemtl">
+
+<% } %>
+
+<# Renamed columns #>
+<% for (let column of this.table.getRenamedColumns()) { %>
     $table->renameColumn('<$ column.getOldName() $>', '<$ column.name $>');
-    <% } %>
 <% } %>

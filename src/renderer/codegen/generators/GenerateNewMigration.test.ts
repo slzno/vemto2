@@ -53,3 +53,36 @@ test('It can generate a migration to rename a table column', async () => {
 
     expect(contentIsEqual).toBe(true)
 })
+
+// test('It can generate a migration to change a column', async () => {
+//     const table = TestHelper.createTable({ name: 'posts' }),
+//         column = TestHelper.createColumnWithSchemaState({ name: 'name', table })
+
+//     column.name = 'title'
+//     column.saveFromInterface()
+
+//     GenerateNewMigration.setTable(table)
+
+//     const renderedTemplateContent = await GenerateNewMigration.generateUpdaterMigration(),
+//         renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/new-migration-renaming-column.php'), renderedTemplateContent)
+
+//     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+//     expect(contentIsEqual).toBe(true)
+// })
+
+test('It can generate a migration to add a new column', async () => {
+    const table = TestHelper.createTable({ name: 'posts' })
+    
+    TestHelper.createColumnWithSchemaState({ name: 'id', order: 0, table })
+    TestHelper.createColumn({ name: 'tag', order: 1, table })
+
+    GenerateNewMigration.setTable(table)
+
+    const renderedTemplateContent = await GenerateNewMigration.generateUpdaterMigration(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/new-migration-adding-column.php'), renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
+})

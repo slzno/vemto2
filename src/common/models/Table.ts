@@ -55,6 +55,14 @@ export default class Table extends RelaDB.Model {
         return this.columns.find((column) => column.name === columnName)
     }
 
+    getRenamedColumns(): Column[] {
+        return this.columns.filter((column) => column.wasRenamed())
+    }
+
+    getNewColumns(): Column[] {
+        return this.columns.filter((column) => column.isNew())
+    }
+
     getColumnsNames(): string[] {
         return this.columns.map((column) => column.name)
     }

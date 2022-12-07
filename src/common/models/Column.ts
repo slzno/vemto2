@@ -115,9 +115,27 @@ export default class Column extends RelaDB.Model {
         }
     }
 
+    isNew(): boolean {
+        return !this.schemaState
+    }
+
     wasRenamed(): boolean {
         if(!this.schemaState) return false
         
         return this.schemaState.name !== this.name
+    }
+
+    getAfter(): string {
+        if(!this.hasPreviousColumn()) return null
+
+        return this.getPreviousColumn().name
+    }
+
+    hasPreviousColumn(): boolean {
+        return !! this.getPreviousColumn()
+    }
+
+    getPreviousColumn(): Column {
+        return this.table.columns.find((column) => column.order === this.order - 1)
     }
 }
