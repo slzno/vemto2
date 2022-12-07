@@ -1,22 +1,14 @@
 <# New columns #>
 <% for (let column of this.table.getNewColumns()) { %>
     
-    <# Imported template data #>
-    <% const __addChangeMethod = false %>
-    <% const __enableColumnAfterUsage = true %>
-    
-    <import template="MigrationColumn.vemtl">
+    <import template="MigrationColumn.vemtl" enableColumnAfterUsage="true">
 
 <% } %>
 
 <# Changed columns #>
 <% for (let column of this.table.getNotRenamedChangedColumns()) { %>
     
-    <# Imported template data #>
-    <% const __addChangeMethod = true %>
-    <% const __enableColumnAfterUsage = false %>
-    
-    <import template="MigrationColumn.vemtl">
+    <import template="MigrationColumn.vemtl" addChangeMethod="true">
 
 <% } %>
 

@@ -31,10 +31,10 @@ $table-><$ column.typeDefinition $>('<$ column.name $>'
 ->unique()
 <up } up>
 <% const columnAfter = column.getAfter() %>
-<up if (columnAfter && __enableColumnAfterUsage) { up>
+<up if (columnAfter && this.templateParams.enableColumnAfterUsage) { up>
 ->after('<$ columnAfter $>')
 <up } up>
 <# Adds the ->change() method if the column is being changed #>
-<up if (__addChangeMethod) { up>
+<up if (this.templateParams.addChangeMethod) { up>
 ->change()
 <up } up>;
