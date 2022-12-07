@@ -84,7 +84,7 @@ export default new class UpdateExistingMigration {
             .setContent(columnsTemplate)
             .setData({ table: this.table })
 
-        const compiledTemplate = TemplateCompiler.compile(),
+        const compiledTemplate = await TemplateCompiler.compileWithImports(),
             migrationEditor = new MigrationEditor(latestMigrationContent)
 
         migrationEditor.addContentToSchemaTableOnUpMethod(this.table.name, compiledTemplate)
