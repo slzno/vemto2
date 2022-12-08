@@ -259,7 +259,7 @@ test('It can check if a column is a special PK', () => {
     expect(column.isSpecialPrimaryKey()).toBe(true)
 })
 
-test('it fires TableColumnCreated when saving from interface', () => {
+test('It fires TableColumnCreated when saving from interface', () => {
     const project = TestHelper.getProject()
 
     TestHelper.createTable()
@@ -272,7 +272,7 @@ test('it fires TableColumnCreated when saving from interface', () => {
     expect(project.fresh().hasChangedTables()).toBe(true)
 })
 
-test('it fires TableColumnUpdated when saving from interface', () => {
+test('It fires TableColumnUpdated when saving from interface', () => {
     const column = TestHelper.createColumnWithSchemaState(),
         project = TestHelper.getProject()
 
@@ -280,4 +280,14 @@ test('it fires TableColumnUpdated when saving from interface', () => {
     column.saveFromInterface()
 
     expect(project.fresh().hasChangedTables()).toBe(true)
+})
+
+test('It can mark a column as removed', () => {
+    const column = TestHelper.createColumnWithSchemaState()
+
+    expect(column.isRemoved()).toBe(false)
+
+    column.remove()
+
+    expect(column.isRemoved()).toBe(true)
 })

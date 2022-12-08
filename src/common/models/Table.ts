@@ -44,7 +44,7 @@ export default class Table extends RelaDB.Model {
     }
 
     hasColumn(columnName: string): boolean {
-        return this.columns.find((column) => column.name === columnName) !== undefined
+        return this.getColumns().find((column) => column.name === columnName) !== undefined
     }
 
     doesNotHaveColumn(columnName: string): boolean {
@@ -52,19 +52,23 @@ export default class Table extends RelaDB.Model {
     }
 
     findColumnByName(columnName: string): Column {
-        return this.columns.find((column) => column.name === columnName)
+        return this.getColumns().find((column) => column.name === columnName)
     }
 
     getRenamedColumns(): Column[] {
-        return this.columns.filter((column) => column.wasRenamed())
+        return this.getColumns().filter((column) => column.wasRenamed())
+    }
+
+    getRemovedColumns(): Column[] {
+        return this.columns.filter((column) => column.isRemoved())
     }
 
     getNewColumns(): Column[] {
-        return this.columns.filter((column) => column.isNew())
+        return this.getColumns().filter((column) => column.isNew())
     }
 
     getChangedColumns(): Column[] {
-        return this.columns.filter((column) => column.hasChanges())
+        return this.getColumns().filter((column) => column.hasChanges())
     }
 
     getNotRenamedChangedColumns(): Column[] {
@@ -72,14 +76,18 @@ export default class Table extends RelaDB.Model {
     }
 
     getColumnsNames(): string[] {
-        return this.columns.map((column) => column.name)
+        return this.getColumns().map((column) => column.name)
     }
 
     getAllColumnsKeyedByName(): { [key: string]: Column } {
-        return this.columns.reduce((columns, column) => {
+        return this.getColumns().reduce((columns, column) => {
             columns[column.name] = column
             return columns
         }, {})
+    }
+
+    getColumns(): Column[] {
+        return this.columns.filter((column) => !column.isRemoved())
     }
 
     hasRelatedTables(): boolean {

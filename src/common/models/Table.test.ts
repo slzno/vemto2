@@ -234,3 +234,45 @@ test('It can can check if creating a new migration is possible', () => {
 
     expect(table.canCreateNewMigration()).toBe(true)
 })
+
+test('It can can get all columns except removed ones', () => {
+    const table = TestHelper.createTable({ name: 'users' })
+
+    TestHelper.createColumn({ name: 'column0', table })
+    TestHelper.createColumn({ name: 'column1', table })
+
+    const columnToRemove = TestHelper.createColumn({ name: 'column2', table })
+
+    let columns = table.getColumns()
+
+    expect(columns[0].name).toBe('column0')
+    expect(columns[1].name).toBe('column1')
+    expect(columns[2].name).toBe('column2')
+
+    columnToRemove.remove()
+
+    columns = table.getColumns()
+
+    expect(columns[0].name).toBe('column0')
+    expect(columns[1].name).toBe('column1')
+    expect(columns[2]).toBe(undefined)
+})
+
+test('It can get all removed columns', () => {
+    const table = TestHelper.createTable({ name: 'users' })
+
+    TestHelper.createColumn({ name: 'column0', table })
+    TestHelper.createColumn({ name: 'column1', table })
+
+    const columnToRemove = TestHelper.createColumn({ name: 'column2', table })
+
+    let columns = table.getRemovedColumns()
+
+    expect(columns.length).toBe(0)
+
+    columnToRemove.remove()
+
+    columns = table.getRemovedColumns()
+
+    expect(columns[0].name).toBe('column2')
+})

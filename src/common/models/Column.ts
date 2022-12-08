@@ -13,6 +13,7 @@ export default class Column extends RelaDB.Model {
     schemaState: any
     nullable: boolean
     unsigned: boolean
+    removed: boolean
     autoIncrement: boolean
     typeDefinition: string
 
@@ -40,6 +41,12 @@ export default class Column extends RelaDB.Model {
         }
 
         return this
+    }
+
+    remove() {
+        this.removed = true
+
+        this.save()
     }
 
     getOldName(): string {
@@ -123,6 +130,10 @@ export default class Column extends RelaDB.Model {
         if(!this.schemaState) return false
         
         return this.schemaState.name !== this.name
+    }
+
+    isRemoved(): boolean {
+        return !! this.removed
     }
 
     hasChanges(): boolean {
