@@ -5,6 +5,7 @@ import { test, expect, beforeEach, jest } from '@jest/globals'
 import TestHelper from '@Renderer/../../tests/base/TestHelper'
 import schemaData from '@Common/services/tests/input/schema-reader-L9.json'
 import TablesFromMigrationsBuilder from '@Common/services/TablesFromMigrationsBuilder'
+import Column from '@Renderer/../common/models/Column'
 
 jest.mock('@Renderer/services/wrappers/Main')
 
@@ -63,7 +64,7 @@ test('It can add the migration to the generation queue and remove the table from
     expect(table.project.hasChangedTables()).toBe(false)
 })
 
-test('It can change a creation migration', async () => {
+test('It can change a creation migration when a column was renamed', async () => {
     const project = TestHelper.getProject()
     
     processSchemaData(project)
@@ -85,7 +86,55 @@ test('It can change a creation migration', async () => {
     expect(contentIsEqual).toBe(true)
 })
 
-test('It can change an updater migration', async () => {
+test('It can change a creation migration when a column was changed', async () => {
+    const project = TestHelper.getProject()
+
+    processSchemaData(project)
+
+    // Using password_resets table as it has a creation migration
+    const table = project.findTableByName('password_resets'),
+        column = table.findColumnByName('email')
+
+    column.length = null
+    column.typeDefinition = 'text'
+    column.saveFromInterface()
+
+    UpdateExistingMigration.setTable(table)
+
+    const renderedTemplateContent = await UpdateExistingMigration.changeCreationMigration(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-creation-migration-changing-column.php'), renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
+})
+
+test('It can change a creation migration when a column was added', async () => {
+    const project = TestHelper.getProject()
+
+    processSchemaData(project)
+
+    // Using password_resets table as it has a creation migration
+    const table = project.findTableByName('password_resets'),
+        column = new Column
+
+    column.name = 'new_column'
+    column.tableId = table.id
+    column.typeDefinition = 'string'
+    column.length = 255
+    column.saveFromInterface()
+
+    UpdateExistingMigration.setTable(table)
+
+    const renderedTemplateContent = await UpdateExistingMigration.changeCreationMigration(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-creation-migration-adding-column.php'), renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
+})
+
+test('It can change an updater migration when a column was renamed', async () => {
     const project = TestHelper.getProject()
     
     processSchemaData(project)
@@ -101,6 +150,54 @@ test('It can change an updater migration', async () => {
 
     const renderedTemplateContent = await UpdateExistingMigration.changeUpdaterMigration(),
         renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-updater-migration-renaming-column.php'), renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
+})
+
+test('It can change an updater migration when a column was changed', async () => {
+    const project = TestHelper.getProject()
+
+    processSchemaData(project)
+
+    // Using users table as it has an updater migration
+    const table = project.findTableByName('users'),
+        column = table.findColumnByName('email')
+
+    column.length = null
+    column.typeDefinition = 'text'
+    column.saveFromInterface()
+
+    UpdateExistingMigration.setTable(table)
+
+    const renderedTemplateContent = await UpdateExistingMigration.changeUpdaterMigration(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-updater-migration-changing-column.php'), renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
+})
+
+test('It can change an updater migration when a column was added', async () => {
+    const project = TestHelper.getProject()
+
+    processSchemaData(project)
+
+    // Using users table as it has an updater migration
+    const table = project.findTableByName('users'),
+        column = new Column
+
+    column.name = 'new_column'
+    column.tableId = table.id
+    column.typeDefinition = 'string'
+    column.length = 255
+    column.saveFromInterface()
+
+    UpdateExistingMigration.setTable(table)
+
+    const renderedTemplateContent = await UpdateExistingMigration.changeUpdaterMigration(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-updater-migration-adding-column.php'), renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
