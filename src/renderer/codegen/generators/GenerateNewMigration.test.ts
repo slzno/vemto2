@@ -86,3 +86,19 @@ test('It can generate a migration to change an existing column', async () => {
 
     expect(contentIsEqual).toBe(true)
 })
+
+test('It can generate a migration to remove a column', async () => {
+    const table = TestHelper.createTable({ name: 'posts' }),
+        column = TestHelper.createColumnWithSchemaState({ name: 'title', table })
+
+    column.remove()
+
+    GenerateNewMigration.setTable(table)
+
+    const renderedTemplateContent = await GenerateNewMigration.generateUpdaterMigration(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/new-migration-removing-column.php'), renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
+})

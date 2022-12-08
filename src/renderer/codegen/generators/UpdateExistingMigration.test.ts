@@ -134,6 +134,27 @@ test('It can change a creation migration when a column was added', async () => {
     expect(contentIsEqual).toBe(true)
 })
 
+test('It can change a creation migration when a column was removed', async () => {
+    const project = TestHelper.getProject()
+
+    processSchemaData(project)
+
+    // Using password_resets table as it has a creation migration
+    const table = project.findTableByName('password_resets'),
+        column = table.findColumnByName('email')
+
+    column.remove()
+
+    UpdateExistingMigration.setTable(table)
+
+    const renderedTemplateContent = await UpdateExistingMigration.changeCreationMigration(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-creation-migration-removing-column.php'), renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
+})
+
 test('It can change an updater migration when a column was renamed', async () => {
     const project = TestHelper.getProject()
     
@@ -198,6 +219,27 @@ test('It can change an updater migration when a column was added', async () => {
 
     const renderedTemplateContent = await UpdateExistingMigration.changeUpdaterMigration(),
         renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-updater-migration-adding-column.php'), renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
+})
+
+test('It can change an updater migration when a column was removed', async () => {
+    const project = TestHelper.getProject()
+
+    processSchemaData(project)
+
+    // Using users table as it has an updater migration
+    const table = project.findTableByName('users'),
+        column = table.findColumnByName('email')
+
+    column.remove()
+
+    UpdateExistingMigration.setTable(table)
+
+    const renderedTemplateContent = await UpdateExistingMigration.changeUpdaterMigration(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-updater-migration-removing-column.php'), renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
