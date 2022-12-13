@@ -185,8 +185,16 @@ class TableRepository {
             $this->addForeign($command);
         }
 
+        if ($commandName == 'fulltext') {
+            $this->addFulltext($command);
+        }
+
         if ($commandName == 'dropIndex') {
             $this->dropIndex($command);
+        }
+
+        if ($commandName == 'spatialIndex') {
+            $this->addSpatialIndex($command);
         }
 
         if ($commandName == 'dropUnique') {
@@ -233,6 +241,30 @@ class TableRepository {
 
         if (!isset($this->tables[$tableName]['uniques'][$indexName])) {
             $this->tables[$tableName]['uniques'][$indexName] = $command;
+        }
+
+        $this->registerTableMigration($tableName);
+    }
+
+    protected function addFulltext($command)
+    {
+        $tableName = $command['table'];
+        $indexName = $command['index'];
+
+        if (!isset($this->tables[$tableName]['fulltext'][$indexName])) {
+            $this->tables[$tableName]['fulltext'][$indexName] = $command;
+        }
+
+        $this->registerTableMigration($tableName);
+    }
+
+    protected function addSpatialIndex($command)
+    {
+        $tableName = $command['table'];
+        $indexName = $command['index'];
+
+        if (!isset($this->tables[$tableName]['spatialIndexes'][$indexName])) {
+            $this->tables[$tableName]['spatialIndexes'][$indexName] = $command;
         }
 
         $this->registerTableMigration($tableName);
