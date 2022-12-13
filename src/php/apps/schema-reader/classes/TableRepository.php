@@ -40,8 +40,6 @@ class TableRepository {
         $tableName = $column['table'];
         $columnName = $column['name'];
 
-        // $column = $this->calculateColumnAfter($tableName, $column);
-
         if (!isset($this->tables[$tableName])) {
             $this->initTable($tableName);
         }
@@ -49,26 +47,6 @@ class TableRepository {
         $this->insertColumn($tableName, $column);
 
         $this->registerTableMigration($tableName);
-    }
-
-    protected function calculateColumnAfter($tableName, $column)
-    {
-        if(isset($column['after'])) {
-            return $column;
-        }
-
-        $columns = $this->tables[$tableName]['columns'] ?? [];
-
-        if (count($columns) == 0) {
-            $column['after'] = null;
-            return $column;
-        }
-
-        $lastColumn = array_values(array_slice($columns, -1))[0];
-
-        $column['after'] = $lastColumn['name'];
-
-        return $column;
     }
 
     protected function insertColumn($tableName, $column)
@@ -187,6 +165,8 @@ class TableRepository {
         $tableName = $command['table'];
         $commandName = $command['name'];
 
+        Vemto::dump($command);
+
         if (!isset($this->tables[$tableName])) {
             $this->initTable($tableName);
         }
@@ -201,6 +181,22 @@ class TableRepository {
 
         if ($commandName == 'foreign') {
             $this->addForeign($command);
+        }
+
+        if ($commandName == 'dropIndex') {
+            $this->dropIndex($command);
+        }
+
+        if ($commandName == 'dropUnique') {
+            $this->dropUnique($command);
+        }
+
+        if ($commandName == 'dropForeign') {
+            $this->dropForeign($command);
+        }
+
+        if ($commandName == 'dropPrimary') {
+            $this->dropPrimary($command);
         }
     }
 
@@ -235,6 +231,53 @@ class TableRepository {
 
         if (!isset($this->tables[$tableName]['foreigns'][$indexName])) {
             $this->tables[$tableName]['foreigns'][$indexName] = $command;
+        }
+
+        $this->registerTableMigration($tableName);
+    }
+
+    protected function dropIndex($command)
+    {
+        $tableName = $command['table'];
+        $indexName = $command['index'];
+
+        if (isset($this->tables[$tableName]['indexes'][$indexName])) {
+            unset($this->tables[$tableName]['indexes'][$indexName]);
+        }
+
+        $this->registerTableMigration($tableName);
+    }
+
+    protected function dropUnique($command)
+    {
+        $tableName = $command['table'];
+        $indexName = $command['index'];
+
+        if (isset($this->tables[$tableName]['uniques'][$indexName])) {
+            unset($this->tables[$tableName]['uniques'][$indexName]);
+        }
+
+        $this->registerTableMigration($tableName);
+    }
+
+    protected function dropForeign($command)
+    {
+        $tableName = $command['table'];
+        $indexName = $command['index'];
+
+        if (isset($this->tables[$tableName]['foreigns'][$indexName])) {
+            unset($this->tables[$tableName]['foreigns'][$indexName]);
+        }
+
+        $this->registerTableMigration($tableName);
+    }
+
+    protected function dropPrimary($command)
+    {
+        $tableName = $command['table'];
+
+        if (isset($this->tables[$tableName]['primary'])) {
+            unset($this->tables[$tableName]['primary']);
         }
 
         $this->registerTableMigration($tableName);
