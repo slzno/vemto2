@@ -14,10 +14,18 @@ return new class extends Migration
     public function up()
     {
         Schema::create('videos', function (Blueprint $table) {
-            $table->id();
+            $table->unsignedBigInteger('id', true);
             $table->foreignId('user_id')->constrained();
             $table->string('title');
+            $table->string('slug');
+            $table->text('description');
+            $table->string('location');
             $table->timestamps();
+
+            $table->primary(['id']);
+            $table->unique(['user_id', 'slug']);
+            $table->fullText(['description']);
+            $table->spatialIndex(['location']);
         });
     }
 

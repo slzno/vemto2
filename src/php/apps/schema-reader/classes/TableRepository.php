@@ -165,14 +165,16 @@ class TableRepository {
         $tableName = $command['table'];
         $commandName = $command['name'];
 
-        Vemto::dump($command);
-
         if (!isset($this->tables[$tableName])) {
             $this->initTable($tableName);
         }
 
         if ($commandName == 'index') {
             $this->addIndex($command);
+        }
+
+        if ($commandName == 'primary') {
+            $this->addPrimary($command);
         }
 
         if ($commandName == 'unique') {
@@ -207,6 +209,18 @@ class TableRepository {
 
         if (!isset($this->tables[$tableName]['indexes'][$indexName])) {
             $this->tables[$tableName]['indexes'][$indexName] = $command;
+        }
+
+        $this->registerTableMigration($tableName);
+    }
+
+    protected function addPrimary($command)
+    {
+        $tableName = $command['table'];
+        $indexName = $command['index'];
+
+        if (!isset($this->tables[$tableName]['primary'][$indexName])) {
+            $this->tables[$tableName]['primary'][$indexName] = $command;
         }
 
         $this->registerTableMigration($tableName);
