@@ -20,7 +20,7 @@ test('It can save a new table', () => {
     expect(table.id).toBe(1)
 })
 
-test('It sets the Table position when creating', () => {
+test('It sets the table position when creating', () => {
     const table = TestHelper.createTable()
 
     expect(table.positionX).toBe(0)
@@ -95,6 +95,56 @@ test('It can get all the columns keyed by name', () => {
     const columns = table.getAllColumnsKeyedByName()
 
     expect(columns.test_column.name).toBe('test_column')
+})
+
+test('It can check if a table has a index', () => {
+    const table = TestHelper.createTable()
+
+    expect(table.hasIndex('test_index')).toBe(false)
+
+    TestHelper.createIndex({ name: 'test_index', table })
+
+    expect(table.hasIndex('test_index')).toBe(true)
+})
+
+test('It can check if a table does not have a index', () => {
+    const table = TestHelper.createTable()
+
+    expect(table.doesNotHaveIndex('test_index')).toBe(true)
+
+    TestHelper.createIndex({ name: 'test_index', table })
+
+    expect(table.doesNotHaveIndex('test_index')).toBe(false)
+})
+
+test('It can find a index by name', () => {
+    const table = TestHelper.createTable()
+
+    TestHelper.createIndex({ name: 'test_index', table })
+
+    const index = table.findIndexByName('test_index')
+
+    expect(index.name).toBe('test_index')
+})
+
+test('It can get all the indexes names', () => {
+    const table = TestHelper.createTable()
+
+    TestHelper.createIndex({ name: 'test_index', table })
+
+    const indexesNames = table.getIndexesNames()
+
+    expect(indexesNames).toEqual(['test_index'])
+})
+
+test('It can get all the indexes keyed by name', () => {
+    const table = TestHelper.createTable()
+
+    TestHelper.createIndex({ name: 'test_index', table })
+
+    const indexes = table.getAllIndexesKeyedByName()
+
+    expect(indexes.test_index.name).toBe('test_index')
 })
 
 test('It can check if a table has related tables', () => {

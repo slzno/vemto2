@@ -1,3 +1,4 @@
+import Index from './Index'
 import Column from './Column'
 import Project from './Project'
 import RelaDB from '@tiago_silva_pereira/reladb'
@@ -5,10 +6,11 @@ import RelaDB from '@tiago_silva_pereira/reladb'
 export default class Table extends RelaDB.Model {
     id: string
     name: string
-    migrations: any[]
+    indexes: Index[]
     project: Project
     projectId: string
     columns: Column[]
+    migrations: any[]
     positionX: number
     positionY: number
 
@@ -19,6 +21,7 @@ export default class Table extends RelaDB.Model {
     relationships() {
         return {
             project: () => this.belongsTo(Project),
+            indexes: () => this.hasMany(Index).cascadeDelete(),
             columns: () => this.hasMany(Column).cascadeDelete(),
         }
     }
@@ -86,8 +89,55 @@ export default class Table extends RelaDB.Model {
         }, {})
     }
 
+    hasIndex(indexName: string): boolean {
+        return this.getIndexes().find((index) => index.name === indexName) !== undefined
+    }
+
+    doesNotHaveIndex(indexName: string): boolean {
+        return !this.hasIndex(indexName)
+    }
+
+    findIndexByName(indexName: string): Index {
+        return this.getIndexes().find((index) => index.name === indexName)
+    }
+
+    getRenamedIndexes(): Index[] {
+        return this.getIndexes().filter((index) => index.wasRenamed())
+    }
+
+    getRemovedIndexes(): Index[] {
+        return this.indexes.filter((index) => index.isRemoved())
+    }
+
+    getNewIndexes(): Index[] {
+        return this.getIndexes().filter((index) => index.isNew())
+    }
+
+    getChangedIndexes(): Index[] {
+        return this.getIndexes().filter((index) => index.hasLocalChanges())
+    }
+
+    getNotRenamedChangedIndexes(): Index[] {
+        return this.getChangedIndexes().filter((index) => !index.wasRenamed())
+    }
+
+    getIndexesNames(): string[] {
+        return this.getIndexes().map((index) => index.name)
+    }
+
+    getAllIndexesKeyedByName(): { [key: string]: Index } {
+        return this.getIndexes().reduce((indexes, index) => {
+            indexes[index.name] = index
+            return indexes
+        }, {})
+    }
+
     getColumns(): Column[] {
         return this.columns.filter((column) => !column.isRemoved())
+    }
+
+    getIndexes(): Index[] {
+        return this.indexes.filter((index) => !index.isRemoved())
     }
 
     hasRelatedTables(): boolean {
