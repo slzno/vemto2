@@ -3,6 +3,7 @@ import path from "path"
 import { v4 as uuid } from "uuid"
 import { expect } from "@jest/globals"
 import Table from "@Common/models/Table"
+import Index from "@Common/models/Index"
 import Column from "@Common/models/Column"
 import Project from "@Common/models/Project"
 import FileSystem from "@Main/base/FileSystem"
@@ -59,7 +60,7 @@ export default new class TestHelper {
         column.order = data.hasOwnProperty("order") ? data.order : 0
         column.name = data.name || "name"
         column.length = data.length || 255
-        column.typeDefinition = data.type || "string"
+        column.type = data.type || "string"
         column.autoIncrement = data.autoIncrement || false
         column.nullable = data.nullable || false
         column.unsigned = data.unsigned || false
@@ -75,6 +76,30 @@ export default new class TestHelper {
         column.saveSchemaState()
 
         return column
+    }
+
+    createIndex(data = {}) {
+        if(!data.table) {
+            data.table = this.createTable()
+        }
+
+        const index = new Index
+        index.name = data.name || "index_name"
+        index.type = data.type || "index"
+        index.tableId = data.table.id
+        index.columns = data.columns || ['name']
+        index.algorithm = data.algorithm || "BTREE"
+        index.save()
+
+        return index
+    }
+
+    createIndexWithSchemaState(data = {}) {
+        const index = this.createIndex(data)
+
+        index.saveSchemaState()
+
+        return index
     }
 
     compareCode(code1, code2) {

@@ -1,4 +1,4 @@
-$table-><$ column.typeDefinition $>('<$ column.name $>'
+$table-><$ column.type $>('<$ column.name $>'
 <up if (column.length) { up>
 , <$ column.length $>
 <up } up>

@@ -1,7 +1,9 @@
 import Table from './Table'
+import { isEqual } from 'lodash'
 import RelaDB from '@tiago_silva_pereira/reladb'
 
 export default class Index extends RelaDB.Model {
+    id: string
     name: string
     type: string
     table: Table
@@ -45,6 +47,10 @@ export default class Index extends RelaDB.Model {
         return this.type === 'primary'
     }
 
+    isForeign(): boolean {
+        return this.type === 'foreign'
+    }
+
     isUnique(): boolean {
         return this.type === 'unique'
     }
@@ -58,13 +64,23 @@ export default class Index extends RelaDB.Model {
     }
 
     isSpatial(): boolean {
-        return this.type === 'spatial'
+        return this.type === 'spatialIndex'
     }
 
-    hasSchemaChanges(comparisonData: any): boolean {
+    hasLocalChanges(): boolean {
+        if(!this.schemaState) return false
+
+        return this.hasDataChanges(this)
+    }
+
+    hasSchemaChanges(schemaData: any): boolean {
         if(!this.schemaState) return true 
 
-        return this.schemaState.columns !== comparisonData.columns ||
+        return this.hasDataChanges(schemaData)
+    }
+
+    hasDataChanges(comparisonData: any): boolean {
+        return !isEqual(this.schemaState.columns, comparisonData.columns) ||
             this.schemaState.algorithm !== comparisonData.algorithm ||
             this.schemaState.type !== comparisonData.type
     }
@@ -114,30 +130,5 @@ export default class Index extends RelaDB.Model {
 
     isRemoved(): boolean {
         return !! this.removed
-    }
-
-    hasLocalChanges(): boolean {
-        if(!this.schemaState) return false
-
-        return this.schemaState.name !== this.name ||
-            this.schemaState.length !== this.length ||
-            this.schemaState.nullable !== this.nullable ||
-            this.schemaState.unsigned !== this.unsigned ||
-            this.schemaState.autoIncrement !== this.autoIncrement ||
-            this.schemaState.typeDefinition !== this.typeDefinition
-    }
-
-    getAfter(): string {
-        if(!this.hasPreviousColumn()) return null
-
-        return this.getPreviousColumn().name
-    }
-
-    hasPreviousColumn(): boolean {
-        return !! this.getPreviousColumn()
-    }
-
-    getPreviousColumn(): Column {
-        return this.table.columns.find((column) => column.order === this.order - 1)
     }
 }

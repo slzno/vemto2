@@ -137,6 +137,17 @@ test('A column can not be considered as renamed without schema state', () => {
     expect(column.wasRenamed()).toBe(false)
 })
 
+test('A column with the order changed cannot be considered as changed', () => {
+    const column = TestHelper.createColumnWithSchemaState()
+
+    expect(column.hasLocalChanges()).toBe(false)
+
+    column.order = 2
+    column.save()
+
+    expect(column.hasLocalChanges()).toBe(false)
+})
+
 test('It can get the old column name after rename', () => {
     const column = TestHelper.createColumnWithSchemaState()
 
@@ -212,12 +223,12 @@ test('It can check if a column was changed after changing the autoIncrement attr
     expect(column.hasLocalChanges()).toBe(true)
 })
 
-test('It can check if a column was changed after changing the typeDefinition attr', () => {
+test('It can check if a column was changed after changing the type attr', () => {
     const column = TestHelper.createColumnWithSchemaState()
 
     expect(column.hasLocalChanges()).toBe(false)
 
-    column.typeDefinition = 'text'
+    column.type = 'text'
     column.save()
 
     expect(column.hasLocalChanges()).toBe(true)

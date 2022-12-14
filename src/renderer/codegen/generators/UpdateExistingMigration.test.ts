@@ -96,7 +96,7 @@ test('It can change a creation migration when a column was changed', async () =>
         column = table.findColumnByName('email')
 
     column.length = null
-    column.typeDefinition = 'text'
+    column.type = 'text'
     column.saveFromInterface()
 
     UpdateExistingMigration.setTable(table)
@@ -120,7 +120,7 @@ test('It can change a creation migration when a column was added', async () => {
 
     column.name = 'new_column'
     column.tableId = table.id
-    column.typeDefinition = 'string'
+    column.type = 'string'
     column.length = 255
     column.saveFromInterface()
 
@@ -187,7 +187,7 @@ test('It can change an updater migration when a column was changed', async () =>
         column = table.findColumnByName('email')
 
     column.length = null
-    column.typeDefinition = 'text'
+    column.type = 'text'
     column.saveFromInterface()
 
     UpdateExistingMigration.setTable(table)
@@ -211,7 +211,7 @@ test('It can change an updater migration when a column was added', async () => {
 
     column.name = 'new_column'
     column.tableId = table.id
-    column.typeDefinition = 'string'
+    column.type = 'string'
     column.length = 255
     column.saveFromInterface()
 

@@ -48,7 +48,7 @@
                 </div>
 
                 <div class="flex flex-col w-36">
-                    <UiSelect v-model="column.typeDefinition">
+                    <UiSelect v-model="column.type">
                         <option value="bigInteger">Big Integer</option>
                         <option value="string">String</option>
                         <option value="timestamp">Timestamp</option>

@@ -6,6 +6,7 @@ import TableColumnCreated from '@Common/events/TableColumnCreated'
 export default class Column extends RelaDB.Model {
     id: string
     name: string
+    type: string
     table: Table
     order: number
     length: number
@@ -15,7 +16,6 @@ export default class Column extends RelaDB.Model {
     unsigned: boolean
     removed: boolean
     autoIncrement: boolean
-    typeDefinition: string
 
     static identifier() {
         return 'Column'
@@ -74,20 +74,21 @@ export default class Column extends RelaDB.Model {
     hasLocalChanges(): boolean {
         if(!this.schemaState) return false
 
-        return this.hasDataChanges(this) || 
-            this.schemaState.typeDefinition !== this.typeDefinition
+        return this.hasDataChanges(this)
     }
 
     hasSchemaChanges(schemaData: any): boolean {
         if(!this.schemaState) return true 
+        
+        // Order is only checked here because Laravel migrations don't support changing the order of columns
+        const orderWasChanged = this.schemaState.order !== schemaData.order
 
-        return this.hasDataChanges(schemaData) 
-            ||  this.schemaState.typeDefinition !== schemaData.type
-            ||  this.schemaState.order !== schemaData.order
+        return this.hasDataChanges(schemaData) || orderWasChanged
     }
 
     hasDataChanges(comparisonData: any): boolean {
         return this.schemaState.name !== comparisonData.name 
+            ||  this.schemaState.type !== comparisonData.type
             ||  this.schemaState.length !== comparisonData.length
             ||  this.schemaState.nullable !== comparisonData.nullable
             ||  this.schemaState.autoIncrement !== comparisonData.autoIncrement
@@ -102,7 +103,7 @@ export default class Column extends RelaDB.Model {
         this.length = data.length
         this.nullable = data.nullable
         this.unsigned = data.unsigned
-        this.typeDefinition = data.type
+        this.type = data.type
         this.autoIncrement = data.autoIncrement
 
         this.fillSchemaState()
@@ -129,7 +130,7 @@ export default class Column extends RelaDB.Model {
             nullable: this.nullable,
             unsigned: this.unsigned,
             autoIncrement: this.autoIncrement,
-            typeDefinition: this.typeDefinition,
+            type: this.type,
         }
     }
 

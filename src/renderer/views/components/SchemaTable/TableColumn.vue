@@ -30,7 +30,7 @@
             {{ column.name }}
         </span>
         <span class="text-xs text-slate-400 display:none flex items-center"
-            >{{ column.typeDefinition }}
+            >{{ column.type }}
             <span
                 class="ml-1 text-slate-300"
                 v-if="column.hasOwnProperty('length')"
