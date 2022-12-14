@@ -10,6 +10,19 @@
 <% } %>
 <#  #>
 <#  #>
+<# New indexes #>
+<% for (let index of this.table.getNewIndexes()) { %>
+    <import template="MigrationIndex.vemtl">
+<% } %>
+<#  #>
+<#  #>
+<# Changed indexes #>
+<% for (let index of this.table.getNotRenamedChangedIndexes()) { %>
+    <import template="MigrationDropIndex.vemtl">
+    <import template="MigrationIndex.vemtl">
+<% } %>
+<#  #>
+<#  #>
 <# Renamed columns #>
 <% for (let column of this.table.getRenamedColumns()) { %>
     $table->renameColumn('<$ column.getOldName() $>', '<$ column.name $>');

@@ -4,14 +4,17 @@ import RelaDB from '@tiago_silva_pereira/reladb'
 
 export default class Index extends RelaDB.Model {
     id: string
+    on: string
     name: string
     type: string
     table: Table
     tableId: string
+    language: string
     schemaState: any
     removed: boolean
     algorithm: string
     columns: string[]
+    references: string
 
     static identifier() {
         return 'Index'
@@ -55,16 +58,24 @@ export default class Index extends RelaDB.Model {
         return this.type === 'unique'
     }
 
-    isIndex(): boolean {
+    isCommon(): boolean {
         return this.type === 'index'
     }
 
-    isFulltext(): boolean {
+    isFullText(): boolean {
         return this.type === 'fulltext'
     }
 
     isSpatial(): boolean {
         return this.type === 'spatialIndex'
+    }
+
+    isSingleColumn(): boolean {
+        return this.columns && this.columns.length === 1
+    }
+
+    hasLanguage(): boolean {
+        return !! this.language
     }
 
     hasLocalChanges(): boolean {
@@ -80,17 +91,24 @@ export default class Index extends RelaDB.Model {
     }
 
     hasDataChanges(comparisonData: any): boolean {
-        return !isEqual(this.schemaState.columns, comparisonData.columns) ||
-            this.schemaState.algorithm !== comparisonData.algorithm ||
-            this.schemaState.type !== comparisonData.type
+        return !isEqual(this.schemaState.columns, comparisonData.columns)
+            || this.schemaState.algorithm !== comparisonData.algorithm
+            || this.schemaState.type !== comparisonData.type
+            || this.schemaState.references !== comparisonData.references
+            || this.schemaState.on !== comparisonData.on
+            || this.schemaState.language !== comparisonData.language
     }
 
     applyChanges(data: any): boolean {
         if(!this.hasSchemaChanges(data)) return false
 
+        this.name = data.name
         this.columns = data.columns
         this.algorithm = data.algorithm
         this.type = data.type
+        this.on = data.on
+        this.references = data.references
+        this.language = data.language
 
         this.fillSchemaState()
 

@@ -103,7 +103,17 @@
                 "creationOrder": 9
             }
         },
-        "indexes": [],
+        "indexes": {
+            "users_name_index": {
+                "name": "users_name_index",
+                "columns": [
+                    "name"
+                ],
+                "algorithm": null,
+                "table": "users",
+                "type": "index"
+            }
+        },
         "uniques": [],
         "foreigns": [],
         "migrations": [
@@ -192,6 +202,24 @@
                     {
                         "name": "create",
                         "table": "users"
+                    },
+                    {
+                        "name": "index",
+                        "index": "users_name_index",
+                        "columns": [
+                            "name"
+                        ],
+                        "algorithm": null,
+                        "table": "users"
+                    },
+                    {
+                        "name": "index",
+                        "index": "users_avatar_index",
+                        "columns": [
+                            "avatar"
+                        ],
+                        "algorithm": null,
+                        "table": "users"
                     }
                 ],
                 "createdTables": [
@@ -226,6 +254,15 @@
                 "commands": [
                     {
                         "name": "create",
+                        "table": "users"
+                    },
+                    {
+                        "name": "dropIndex",
+                        "index": "users_avatar_index",
+                        "columns": [
+                            "avatar"
+                        ],
+                        "algorithm": null,
                         "table": "users"
                     },
                     {
@@ -566,14 +603,14 @@
         },
         "indexes": {
             "personal_access_tokens_tokenable_type_tokenable_id_index": {
-                "name": "index",
-                "index": "personal_access_tokens_tokenable_type_tokenable_id_index",
+                "name": "personal_access_tokens_tokenable_type_tokenable_id_index",
                 "columns": [
                     "tokenable_type",
                     "tokenable_id"
                 ],
                 "algorithm": null,
-                "table": "personal_access_tokens"
+                "table": "personal_access_tokens",
+                "type": "index"
             }
         },
         "uniques": [],
@@ -689,5 +726,493 @@
             }
         ],
         "name": "personal_access_tokens"
+    },
+    "posts": {
+        "columns": {
+            "id": {
+                "type": "bigInteger",
+                "name": "id",
+                "autoIncrement": true,
+                "unsigned": true,
+                "table": "posts",
+                "creatorMethod": "id",
+                "order": 0,
+                "creationOrder": 1
+            },
+            "user_id": {
+                "type": "bigInteger",
+                "name": "user_id",
+                "autoIncrement": false,
+                "unsigned": true,
+                "table": "posts",
+                "creatorMethod": "foreignId",
+                "order": 1,
+                "creationOrder": 2
+            },
+            "title": {
+                "type": "string",
+                "name": "title",
+                "length": 255,
+                "table": "posts",
+                "creatorMethod": "string",
+                "order": 2,
+                "creationOrder": 3
+            },
+            "slug": {
+                "type": "string",
+                "name": "slug",
+                "length": 255,
+                "table": "posts",
+                "creatorMethod": "string",
+                "order": 3,
+                "creationOrder": 4
+            },
+            "body": {
+                "type": "text",
+                "name": "body",
+                "table": "posts",
+                "creatorMethod": "text",
+                "order": 4,
+                "creationOrder": 5
+            },
+            "created_at": {
+                "type": "timestamp",
+                "name": "created_at",
+                "precision": 0,
+                "table": "posts",
+                "creatorMethod": "timestamps",
+                "nullable": true,
+                "order": 5,
+                "creationOrder": 6
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "name": "updated_at",
+                "precision": 0,
+                "table": "posts",
+                "creatorMethod": "timestamps",
+                "nullable": true,
+                "order": 6,
+                "creationOrder": 7
+            }
+        },
+        "indexes": {
+            "posts_user_id_foreign": {
+                "name": "posts_user_id_foreign",
+                "columns": [
+                    "user_id"
+                ],
+                "algorithm": null,
+                "references": "id",
+                "on": "users",
+                "table": "posts",
+                "type": "foreign"
+            },
+            "posts_slug_unique": {
+                "name": "posts_slug_unique",
+                "columns": [
+                    "slug"
+                ],
+                "algorithm": null,
+                "table": "posts",
+                "type": "unique"
+            },
+            "posts_user_id_slug_index": {
+                "name": "posts_user_id_slug_index",
+                "columns": [
+                    "user_id",
+                    "slug"
+                ],
+                "algorithm": null,
+                "table": "posts",
+                "type": "index"
+            }
+        },
+        "uniques": [],
+        "foreigns": [],
+        "migrations": [
+            {
+                "migration": "C:\\Users\\tiago\\code\\vemto2\\src\\php\\laravel-base\\laravel9-basic\/database\/migrations\/2019_12_15_000000_create_posts_table.php",
+                "relativePath": "\/database\/migrations\/2019_12_15_000000_create_posts_table.php",
+                "migrationName": "2019_12_15_000000_create_posts_table",
+                "datePrefix": "2019_12_15",
+                "fullPrefix": "2019_12_15_000000",
+                "addedColumns": [
+                    {
+                        "type": "bigInteger",
+                        "name": "id",
+                        "autoIncrement": true,
+                        "unsigned": true,
+                        "table": "posts",
+                        "creatorMethod": "id"
+                    },
+                    {
+                        "type": "bigInteger",
+                        "name": "user_id",
+                        "autoIncrement": false,
+                        "unsigned": true,
+                        "table": "posts",
+                        "creatorMethod": "foreignId"
+                    },
+                    {
+                        "type": "string",
+                        "name": "title",
+                        "length": 255,
+                        "table": "posts",
+                        "creatorMethod": "string"
+                    },
+                    {
+                        "type": "string",
+                        "name": "slug",
+                        "length": 255,
+                        "table": "posts",
+                        "creatorMethod": "string"
+                    },
+                    {
+                        "type": "text",
+                        "name": "body",
+                        "table": "posts",
+                        "creatorMethod": "text"
+                    },
+                    {
+                        "type": "timestamp",
+                        "name": "created_at",
+                        "precision": 0,
+                        "table": "posts",
+                        "creatorMethod": "timestamps",
+                        "nullable": true
+                    },
+                    {
+                        "type": "timestamp",
+                        "name": "updated_at",
+                        "precision": 0,
+                        "table": "posts",
+                        "creatorMethod": "timestamps",
+                        "nullable": true
+                    }
+                ],
+                "changedColumns": [],
+                "droppedColumns": [],
+                "renamedColumns": [],
+                "commands": [
+                    {
+                        "name": "create",
+                        "table": "posts"
+                    },
+                    {
+                        "name": "foreign",
+                        "index": "posts_user_id_foreign",
+                        "columns": [
+                            "user_id"
+                        ],
+                        "algorithm": null,
+                        "references": "id",
+                        "on": "users",
+                        "table": "posts"
+                    },
+                    {
+                        "name": "unique",
+                        "index": "posts_slug_unique",
+                        "columns": [
+                            "slug"
+                        ],
+                        "algorithm": null,
+                        "table": "posts"
+                    },
+                    {
+                        "name": "index",
+                        "index": "posts_user_id_slug_index",
+                        "columns": [
+                            "user_id",
+                            "slug"
+                        ],
+                        "algorithm": null,
+                        "table": "posts"
+                    }
+                ],
+                "createdTables": [
+                    "posts"
+                ]
+            }
+        ],
+        "name": "posts"
+    },
+    "videos": {
+        "columns": {
+            "id": {
+                "type": "bigInteger",
+                "name": "id",
+                "autoIncrement": true,
+                "unsigned": true,
+                "table": "videos",
+                "creatorMethod": "unsignedBigInteger",
+                "order": 0,
+                "creationOrder": 1
+            },
+            "user_id": {
+                "type": "bigInteger",
+                "name": "user_id",
+                "autoIncrement": false,
+                "unsigned": true,
+                "table": "videos",
+                "creatorMethod": "foreignId",
+                "order": 1,
+                "creationOrder": 2
+            },
+            "title": {
+                "type": "string",
+                "name": "title",
+                "length": 255,
+                "table": "videos",
+                "creatorMethod": "string",
+                "order": 2,
+                "creationOrder": 3
+            },
+            "slug": {
+                "type": "string",
+                "name": "slug",
+                "length": 255,
+                "table": "videos",
+                "creatorMethod": "string",
+                "order": 3,
+                "creationOrder": 4
+            },
+            "description": {
+                "type": "text",
+                "name": "description",
+                "table": "videos",
+                "creatorMethod": "text",
+                "order": 4,
+                "creationOrder": 5
+            },
+            "location": {
+                "type": "string",
+                "name": "location",
+                "length": 255,
+                "table": "videos",
+                "creatorMethod": "string",
+                "order": 5,
+                "creationOrder": 6
+            },
+            "created_at": {
+                "type": "timestamp",
+                "name": "created_at",
+                "precision": 0,
+                "table": "videos",
+                "creatorMethod": "timestamps",
+                "nullable": true,
+                "order": 6,
+                "creationOrder": 7
+            },
+            "updated_at": {
+                "type": "timestamp",
+                "name": "updated_at",
+                "precision": 0,
+                "table": "videos",
+                "creatorMethod": "timestamps",
+                "nullable": true,
+                "order": 7,
+                "creationOrder": 8
+            }
+        },
+        "indexes": {
+            "videos_id_primary": {
+                "name": "videos_id_primary",
+                "columns": [
+                    "id"
+                ],
+                "algorithm": null,
+                "table": "videos",
+                "type": "primary"
+            },
+            "videos_user_id_slug_unique": {
+                "name": "videos_user_id_slug_unique",
+                "columns": [
+                    "user_id",
+                    "slug"
+                ],
+                "algorithm": null,
+                "table": "videos",
+                "type": "unique"
+            },
+            "videos_description_fulltext": {
+                "name": "videos_description_fulltext",
+                "columns": [
+                    "description"
+                ],
+                "algorithm": null,
+                "table": "videos",
+                "type": "fulltext"
+            },
+            "videos_location_spatialindex": {
+                "name": "videos_location_spatialindex",
+                "columns": [
+                    "location"
+                ],
+                "algorithm": null,
+                "table": "videos",
+                "type": "spatialIndex"
+            }
+        },
+        "uniques": [],
+        "foreigns": [],
+        "migrations": [
+            {
+                "migration": "C:\\Users\\tiago\\code\\vemto2\\src\\php\\laravel-base\\laravel9-basic\/database\/migrations\/2019_12_15_000001_create_videos_table.php",
+                "relativePath": "\/database\/migrations\/2019_12_15_000001_create_videos_table.php",
+                "migrationName": "2019_12_15_000001_create_videos_table",
+                "datePrefix": "2019_12_15",
+                "fullPrefix": "2019_12_15_000001",
+                "addedColumns": [
+                    {
+                        "type": "bigInteger",
+                        "name": "id",
+                        "autoIncrement": true,
+                        "unsigned": true,
+                        "table": "videos",
+                        "creatorMethod": "unsignedBigInteger"
+                    },
+                    {
+                        "type": "bigInteger",
+                        "name": "user_id",
+                        "autoIncrement": false,
+                        "unsigned": true,
+                        "table": "videos",
+                        "creatorMethod": "foreignId"
+                    },
+                    {
+                        "type": "string",
+                        "name": "title",
+                        "length": 255,
+                        "table": "videos",
+                        "creatorMethod": "string"
+                    },
+                    {
+                        "type": "string",
+                        "name": "slug",
+                        "length": 255,
+                        "table": "videos",
+                        "creatorMethod": "string"
+                    },
+                    {
+                        "type": "text",
+                        "name": "description",
+                        "table": "videos",
+                        "creatorMethod": "text"
+                    },
+                    {
+                        "type": "string",
+                        "name": "location",
+                        "length": 255,
+                        "table": "videos",
+                        "creatorMethod": "string"
+                    },
+                    {
+                        "type": "timestamp",
+                        "name": "created_at",
+                        "precision": 0,
+                        "table": "videos",
+                        "creatorMethod": "timestamps",
+                        "nullable": true
+                    },
+                    {
+                        "type": "timestamp",
+                        "name": "updated_at",
+                        "precision": 0,
+                        "table": "videos",
+                        "creatorMethod": "timestamps",
+                        "nullable": true
+                    }
+                ],
+                "changedColumns": [],
+                "droppedColumns": [],
+                "renamedColumns": [],
+                "commands": [
+                    {
+                        "name": "create",
+                        "table": "videos"
+                    },
+                    {
+                        "name": "foreign",
+                        "index": "videos_user_id_foreign",
+                        "columns": [
+                            "user_id"
+                        ],
+                        "algorithm": null,
+                        "references": "id",
+                        "on": "users",
+                        "table": "videos"
+                    },
+                    {
+                        "name": "primary",
+                        "index": "videos_id_primary",
+                        "columns": [
+                            "id"
+                        ],
+                        "algorithm": null,
+                        "table": "videos"
+                    },
+                    {
+                        "name": "unique",
+                        "index": "videos_user_id_slug_unique",
+                        "columns": [
+                            "user_id",
+                            "slug"
+                        ],
+                        "algorithm": null,
+                        "table": "videos"
+                    },
+                    {
+                        "name": "fulltext",
+                        "index": "videos_description_fulltext",
+                        "columns": [
+                            "description"
+                        ],
+                        "algorithm": null,
+                        "table": "videos"
+                    },
+                    {
+                        "name": "spatialIndex",
+                        "index": "videos_location_spatialindex",
+                        "columns": [
+                            "location"
+                        ],
+                        "algorithm": null,
+                        "table": "videos"
+                    }
+                ],
+                "createdTables": [
+                    "videos"
+                ]
+            },
+            {
+                "migration": "C:\\Users\\tiago\\code\\vemto2\\src\\php\\laravel-base\\laravel9-basic\/database\/migrations\/2019_12_15_000002_change_videos_table.php",
+                "relativePath": "\/database\/migrations\/2019_12_15_000002_change_videos_table.php",
+                "migrationName": "2019_12_15_000002_change_videos_table",
+                "datePrefix": "2019_12_15",
+                "fullPrefix": "2019_12_15_000002",
+                "addedColumns": [],
+                "changedColumns": [],
+                "droppedColumns": [],
+                "renamedColumns": [],
+                "commands": [
+                    {
+                        "name": "create",
+                        "table": "videos"
+                    },
+                    {
+                        "name": "dropForeign",
+                        "index": "videos_user_id_foreign",
+                        "columns": [
+                            "user_id"
+                        ],
+                        "algorithm": null,
+                        "table": "videos"
+                    }
+                ],
+                "createdTables": []
+            }
+        ],
+        "name": "videos"
     }
 }

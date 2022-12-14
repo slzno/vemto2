@@ -184,10 +184,43 @@ test('It can check if an index was changed after changing the algorithm attr', (
     expect(index.hasLocalChanges()).toBe(true)
 })
 
-test('It can check if an index type is index by default', () => {
+test('It can check if an index was changed after changing the references attr', () => {
     const index = TestHelper.createIndexWithSchemaState()
 
-    expect(index.isIndex()).toBe(true)
+    expect(index.hasLocalChanges()).toBe(false)
+
+    index.references = 'id'
+    index.save()
+
+    expect(index.hasLocalChanges()).toBe(true)
+})
+
+test('It can check if an index was changed after changing the on attr', () => {
+    const index = TestHelper.createIndexWithSchemaState()
+
+    expect(index.hasLocalChanges()).toBe(false)
+
+    index.on = 'users'
+    index.save()
+
+    expect(index.hasLocalChanges()).toBe(true)
+})
+
+test('It can check if an index was changed after changing the language attr', () => {
+    const index = TestHelper.createIndexWithSchemaState()
+
+    expect(index.hasLocalChanges()).toBe(false)
+
+    index.language = 'users'
+    index.save()
+
+    expect(index.hasLocalChanges()).toBe(true)
+})
+
+test('It can check if an index type is a common index', () => {
+    const index = TestHelper.createIndexWithSchemaState()
+
+    expect(index.isCommon()).toBe(true)
 })
 
 test('It can check if an index is a primary', () => {

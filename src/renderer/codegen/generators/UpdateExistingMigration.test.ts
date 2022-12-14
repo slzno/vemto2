@@ -6,6 +6,7 @@ import TestHelper from '@Renderer/../../tests/base/TestHelper'
 import schemaData from '@Common/services/tests/input/schema-reader-L9.json'
 import TablesFromMigrationsBuilder from '@Common/services/TablesFromMigrationsBuilder'
 import Column from '@Renderer/../common/models/Column'
+import Index from '@Renderer/../common/models/Index'
 
 jest.mock('@Renderer/services/wrappers/Main')
 
@@ -153,6 +154,36 @@ test('It can change a creation migration when a column was removed', async () =>
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
     expect(contentIsEqual).toBe(true)
+})
+
+test('It can change a creation migration when an index was added', async () => {
+    const project = TestHelper.getProject()
+
+    processSchemaData(project)
+
+    // Using password_resets table as it has a creation migration
+    const table = project.findTableByName('users'),
+        index = new Index
+
+    index.name = 'new_index'
+    index.tableId = table.id
+    index.columns = ['email']
+    index.type = 'index'
+    index.saveFromInterface()
+
+    UpdateExistingMigration.setTable(table)
+
+    // console.log(table.getIndexes())
+
+    const renderedTemplateContent = await UpdateExistingMigration.changeCreationMigration()
+    console.log(renderedTemplateContent)
+
+    // const renderedTemplateContent = await UpdateExistingMigration.changeCreationMigration(),
+    //     renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-creation-migration-adding-index.php'), renderedTemplateContent)
+
+    // const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    // expect(contentIsEqual).toBe(true)
 })
 
 test('It can change an updater migration when a column was renamed', async () => {

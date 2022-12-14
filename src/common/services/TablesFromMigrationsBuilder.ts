@@ -1,4 +1,5 @@
 import md5 from "crypto-js/md5"
+import Index from "@Common/models/Index"
 import Table from "@Common/models/Table"
 import Column from "@Common/models/Column"
 import Project from "@Common/models/Project"
@@ -95,6 +96,7 @@ class TablesFromMigrationsBuilder {
             table.applyChanges(tableData)
 
             this.readColumns(tableData, table)
+            this.readIndexes(tableData, table)
         })
     }
 
@@ -134,6 +136,37 @@ class TablesFromMigrationsBuilder {
             }
 
             column.applyChanges(columnData)
+        })
+    }
+
+    readIndexes(tableData: any, table: Table) {
+        const indexesNames = table.getIndexesNames(),
+            indexesKeyedByName = table.getAllIndexesKeyedByName()
+
+        // Delete indexes that no longer exist
+        // This is correct, we need to use the index name, not the schemaState name
+        // because the schemaState name is the old name in this case
+        indexesNames.forEach((indexName) => {
+            if(!tableData.indexes[indexName]) {
+                indexesKeyedByName[indexName].delete()
+            }
+        })
+
+        // Add or update indexes
+        Object.keys(tableData.indexes).forEach((indexName: any) => {
+            let indexData = tableData.indexes[indexName],
+                index: Index = null
+            
+            if(!indexesNames.includes(indexName)) {
+                index = new Index
+                index.tableId = table.id
+
+                indexesKeyedByName[indexName] = index
+            } else {
+                index = indexesKeyedByName[indexName]
+            }
+
+            index.applyChanges(indexData)
         })
     }
 

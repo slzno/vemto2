@@ -3,4 +3,9 @@ Schema::create('<$ this.table.name $>', function (Blueprint $table) {
     <% for (let column of this.table.getColumns()) { %>
         <import template="MigrationColumn.vemtl">
     <% } %>
+    
+    <# Indexes #>
+    <% for (let index of this.table.getIndexes()) { %>
+        <import template="MigrationIndex.vemtl">
+    <% } %>
 });

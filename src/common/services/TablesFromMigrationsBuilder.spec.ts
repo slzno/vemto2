@@ -21,6 +21,16 @@ const processSchemaData = (project) => {
     return schemaDataClone
 }
 
+test('It can force reading the data', () => {
+    const project = TestHelper.getProject()
+
+    processSchemaData(project)
+
+    const tables = project.tables
+
+    expect(tables.length).toBe(6)
+})
+
 test('It creates new tables', () => {
     const project = TestHelper.getProject()
 
@@ -28,7 +38,7 @@ test('It creates new tables', () => {
 
     const tables = project.tables
 
-    expect(tables.length).toBe(4)
+    expect(tables.length).toBe(6)
 
     const tablesNames = tables.map(table => table.name)
 
@@ -47,7 +57,7 @@ test('It deletes removed tables', () => {
 
     processSchemaData(project)
 
-    expect(project.tables.length).toBe(4)
+    expect(project.tables.length).toBe(6)
 })
 
 test('It updates existing tables', () => {
@@ -112,16 +122,6 @@ test('It updates existing columns', () => {
     expect(usersTable.findColumnByName('name').fresh().length).toBe(255)
 })
 
-test('It can force reading the data', () => {
-    const project = TestHelper.getProject()
-
-    processSchemaData(project)
-
-    const tables = project.tables
-
-    expect(tables.length).toBe(4)
-})
-
 test('It reads the columns order', () => {
     const project = TestHelper.getProject()
 
@@ -145,4 +145,67 @@ test('It reads the columns order', () => {
     expect(usersTable.columns[2].name).toBe('last_name')
     expect(readSchemaData.users.columns['last_name'].order).toBe(2)
     expect(readSchemaData.users.columns['last_name'].creationOrder).toBe(10)
+})
+
+test('It creates new indexes', () => {
+    const project = TestHelper.getProject()
+
+    processSchemaData(project)
+
+    const usersTable = project.findTableByName('videos')
+
+    expect(usersTable.indexes.length).toBe(4)
+
+    const indexesNames = usersTable.indexes.map(column => column.name)
+
+    expect(indexesNames.includes('videos_id_primary')).toBe(true)
+    expect(indexesNames.includes('videos_user_id_slug_unique')).toBe(true)
+    expect(indexesNames.includes('videos_description_fulltext')).toBe(true)
+    expect(indexesNames.includes('videos_location_spatialindex')).toBe(true)
+})
+
+test('It deletes removed indexes', () => {
+    const project = TestHelper.getProject(),
+        usersTable = TestHelper.createTable({ name: 'failed_jobs' })
+
+    TestHelper.createIndex({ name: 'test', table: usersTable })
+
+    expect(usersTable.fresh().indexes.length).toBe(1)
+
+    processSchemaData(project)
+
+    expect(usersTable.indexes.length).toBe(0)
+})
+
+test('It updates existing indexes', () => {
+    const project = TestHelper.getProject(),
+        usersTable = TestHelper.createTable({ name: 'videos' })
+
+    TestHelper.createIndex({ 
+        name: 'videos_description_fulltext', 
+        columns: ['description'],
+        algorithm: 'BTREE',
+        type: 'index',
+        table: usersTable
+    })
+
+    expect(usersTable.fresh().findIndexByName('videos_description_fulltext').type).toBe('index')
+
+    processSchemaData(project)
+
+    expect(usersTable.fresh().findIndexByName('videos_description_fulltext').type).toBe('fulltext')
+})
+
+test('It can correctly read foreign indexes', () => {
+    const project = TestHelper.getProject()
+
+    processSchemaData(project)
+
+    const usersTable = project.findTableByName('posts'),
+        foreignIndex = usersTable.fresh().findIndexByName('posts_user_id_foreign')
+
+    expect(foreignIndex.type).toBe('foreign')
+    expect(foreignIndex.columns).toEqual(['user_id'])
+    expect(foreignIndex.references).toBe('id')
+    expect(foreignIndex.on).toBe('users')
 })

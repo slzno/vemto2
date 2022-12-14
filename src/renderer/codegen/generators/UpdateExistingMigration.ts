@@ -57,8 +57,8 @@ export default new class UpdateExistingMigration {
     }
 
     async changeCreationMigration() {
-        const latestMigration = this.table.getLatestMigration(),
-            latestMigrationContent = await Main.API.readProjectFile(latestMigration.relativePath),
+        const creationMigration = this.table.getCreationMigration(),
+        creationMigrationContent = await Main.API.readProjectFile(creationMigration.relativePath),
             creationSchemaTemplate = await Main.API.readTemplateFile('CreationSchema.vemtl')
 
         TemplateCompiler
@@ -66,7 +66,7 @@ export default new class UpdateExistingMigration {
             .setData({ table: this.table })
 
         const compiledTemplate = await TemplateCompiler.compileWithImports(),
-            migrationEditor = new MigrationEditor(latestMigrationContent)
+            migrationEditor = new MigrationEditor(creationMigrationContent)
 
         migrationEditor.replaceSchemaCreateOnUpMethod(this.table.name, compiledTemplate)
 
