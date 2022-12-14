@@ -168,45 +168,21 @@ class TableRepository {
         if (!isset($this->tables[$tableName])) {
             $this->initTable($tableName);
         }
+        
+        $commandIsAddingIndex = in_array($commandName, 
+            ['index', 'primary', 'unique', 'foreign', 'fulltext', 'spatialIndex']
+        );
 
-        if ($commandName == 'index') {
+        if($commandIsAddingIndex) {
             $this->addIndex($command);
         }
 
-        if ($commandName == 'primary') {
-            $this->addPrimary($command);
-        }
+        $commandIsDroppingIndex = in_array($commandName, 
+            ['dropIndex', 'dropPrimary', 'dropUnique', 'dropForeign']
+        );
 
-        if ($commandName == 'unique') {
-            $this->addUnique($command);
-        }
-
-        if ($commandName == 'foreign') {
-            $this->addForeign($command);
-        }
-
-        if ($commandName == 'fulltext') {
-            $this->addFulltext($command);
-        }
-
-        if ($commandName == 'dropIndex') {
+        if ($commandIsDroppingIndex) {
             $this->dropIndex($command);
-        }
-
-        if ($commandName == 'spatialIndex') {
-            $this->addSpatialIndex($command);
-        }
-
-        if ($commandName == 'dropUnique') {
-            $this->dropUnique($command);
-        }
-
-        if ($commandName == 'dropForeign') {
-            $this->dropForeign($command);
-        }
-
-        if ($commandName == 'dropPrimary') {
-            $this->dropPrimary($command);
         }
     }
 
@@ -216,67 +192,10 @@ class TableRepository {
         $indexName = $command['index'];
 
         if (!isset($this->tables[$tableName]['indexes'][$indexName])) {
+            $command['type'] = $command['name'];
+            unset($command['name']);
+            
             $this->tables[$tableName]['indexes'][$indexName] = $command;
-        }
-
-        $this->registerTableMigration($tableName);
-    }
-
-    protected function addPrimary($command)
-    {
-        $tableName = $command['table'];
-        $indexName = $command['index'];
-
-        if (!isset($this->tables[$tableName]['primary'][$indexName])) {
-            $this->tables[$tableName]['primary'][$indexName] = $command;
-        }
-
-        $this->registerTableMigration($tableName);
-    }
-
-    protected function addUnique($command)
-    {
-        $tableName = $command['table'];
-        $indexName = $command['index'];
-
-        if (!isset($this->tables[$tableName]['uniques'][$indexName])) {
-            $this->tables[$tableName]['uniques'][$indexName] = $command;
-        }
-
-        $this->registerTableMigration($tableName);
-    }
-
-    protected function addFulltext($command)
-    {
-        $tableName = $command['table'];
-        $indexName = $command['index'];
-
-        if (!isset($this->tables[$tableName]['fulltext'][$indexName])) {
-            $this->tables[$tableName]['fulltext'][$indexName] = $command;
-        }
-
-        $this->registerTableMigration($tableName);
-    }
-
-    protected function addSpatialIndex($command)
-    {
-        $tableName = $command['table'];
-        $indexName = $command['index'];
-
-        if (!isset($this->tables[$tableName]['spatialIndexes'][$indexName])) {
-            $this->tables[$tableName]['spatialIndexes'][$indexName] = $command;
-        }
-
-        $this->registerTableMigration($tableName);
-    }
-
-    protected function addForeign($command)
-    {
-        $tableName = $command['table'];
-        $indexName = $command['index'];
-
-        if (!isset($this->tables[$tableName]['foreigns'][$indexName])) {
-            $this->tables[$tableName]['foreigns'][$indexName] = $command;
         }
 
         $this->registerTableMigration($tableName);
@@ -289,41 +208,6 @@ class TableRepository {
 
         if (isset($this->tables[$tableName]['indexes'][$indexName])) {
             unset($this->tables[$tableName]['indexes'][$indexName]);
-        }
-
-        $this->registerTableMigration($tableName);
-    }
-
-    protected function dropUnique($command)
-    {
-        $tableName = $command['table'];
-        $indexName = $command['index'];
-
-        if (isset($this->tables[$tableName]['uniques'][$indexName])) {
-            unset($this->tables[$tableName]['uniques'][$indexName]);
-        }
-
-        $this->registerTableMigration($tableName);
-    }
-
-    protected function dropForeign($command)
-    {
-        $tableName = $command['table'];
-        $indexName = $command['index'];
-
-        if (isset($this->tables[$tableName]['foreigns'][$indexName])) {
-            unset($this->tables[$tableName]['foreigns'][$indexName]);
-        }
-
-        $this->registerTableMigration($tableName);
-    }
-
-    protected function dropPrimary($command)
-    {
-        $tableName = $command['table'];
-
-        if (isset($this->tables[$tableName]['primary'])) {
-            unset($this->tables[$tableName]['primary']);
         }
 
         $this->registerTableMigration($tableName);
