@@ -71,20 +71,31 @@ export default class Column extends RelaDB.Model {
         return this.name === 'special_primary_key'
     }
 
-    hadChanges(comparisonData: any): boolean {
+    hasLocalChanges(): boolean {
+        if(!this.schemaState) return false
+
+        return this.hasDataChanges(this) || 
+            this.schemaState.typeDefinition !== this.typeDefinition
+    }
+
+    hasSchemaChanges(schemaData: any): boolean {
         if(!this.schemaState) return true 
 
-        return this.schemaState.name !== comparisonData.name ||
-            this.schemaState.length !== comparisonData.length ||
-            this.schemaState.nullable !== comparisonData.nullable ||
-            this.schemaState.typeDefinition !== comparisonData.type ||
-            this.schemaState.autoIncrement !== comparisonData.autoIncrement ||
-            this.schemaState.unsigned !== comparisonData.unsigned || 
-            this.schemaState.order !== comparisonData.order
+        return this.hasDataChanges(schemaData) 
+            ||  this.schemaState.typeDefinition !== schemaData.type
+            ||  this.schemaState.order !== schemaData.order
+    }
+
+    hasDataChanges(comparisonData: any): boolean {
+        return this.schemaState.name !== comparisonData.name 
+            ||  this.schemaState.length !== comparisonData.length
+            ||  this.schemaState.nullable !== comparisonData.nullable
+            ||  this.schemaState.autoIncrement !== comparisonData.autoIncrement
+            ||  this.schemaState.unsigned !== comparisonData.unsigned
     }
 
     applyChanges(data: any): boolean {
-        if(!this.hadChanges(data)) return false
+        if(!this.hasSchemaChanges(data)) return false
 
         this.name = data.name
         this.order = data.order
@@ -134,17 +145,6 @@ export default class Column extends RelaDB.Model {
 
     isRemoved(): boolean {
         return !! this.removed
-    }
-
-    hasChanges(): boolean {
-        if(!this.schemaState) return false
-
-        return this.schemaState.name !== this.name ||
-            this.schemaState.length !== this.length ||
-            this.schemaState.nullable !== this.nullable ||
-            this.schemaState.unsigned !== this.unsigned ||
-            this.schemaState.autoIncrement !== this.autoIncrement ||
-            this.schemaState.typeDefinition !== this.typeDefinition
     }
 
     getAfter(): string {

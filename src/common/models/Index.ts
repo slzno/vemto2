@@ -1,23 +1,18 @@
 import Table from './Table'
 import RelaDB from '@tiago_silva_pereira/reladb'
-import TableColumnChanged from '@Common/events/TableColumnChanged'
-import TableColumnCreated from '@Common/events/TableColumnCreated'
 
-export default class Column extends RelaDB.Model {
+export default class Index extends RelaDB.Model {
     name: string
+    type: string
     table: Table
-    order: number
-    length: number
     tableId: string
     schemaState: any
-    nullable: boolean
-    unsigned: boolean
     removed: boolean
-    autoIncrement: boolean
-    typeDefinition: string
+    algorithm: string
+    columns: string[]
 
     static identifier() {
-        return 'Column'
+        return 'Index'
     }
 
     relationships() {
@@ -27,17 +22,9 @@ export default class Column extends RelaDB.Model {
     }
 
     saveFromInterface() {
-        let creating = false
-
-        if(!this.isSaved()) creating = true
-
         this.save()
 
-        if(creating) {
-            new TableColumnCreated(this).handle()
-        } else {
-            new TableColumnChanged(this).handle()
-        }
+        this.table.markAsChanged()
 
         return this
     }
@@ -54,44 +41,40 @@ export default class Column extends RelaDB.Model {
         return this.schemaState.name
     }
 
-    isPrimaryKey(): boolean {
-        return this.name === 'id'
-    }
-
-    isForeign(): boolean {
-        return this.name === 'user_id'
+    isPrimary(): boolean {
+        return this.type === 'primary'
     }
 
     isUnique(): boolean {
-        return this.name === 'password'
+        return this.type === 'unique'
     }
 
-    isSpecialPrimaryKey(): boolean {
-        return this.name === 'special_primary_key'
+    isIndex(): boolean {
+        return this.type === 'index'
     }
 
-    hadChanges(comparisonData: any): boolean {
+    isFulltext(): boolean {
+        return this.type === 'fulltext'
+    }
+
+    isSpatial(): boolean {
+        return this.type === 'spatial'
+    }
+
+    hasSchemaChanges(comparisonData: any): boolean {
         if(!this.schemaState) return true 
 
-        return this.schemaState.name !== comparisonData.name ||
-            this.schemaState.length !== comparisonData.length ||
-            this.schemaState.nullable !== comparisonData.nullable ||
-            this.schemaState.typeDefinition !== comparisonData.type ||
-            this.schemaState.autoIncrement !== comparisonData.autoIncrement ||
-            this.schemaState.unsigned !== comparisonData.unsigned || 
-            this.schemaState.order !== comparisonData.order
+        return this.schemaState.columns !== comparisonData.columns ||
+            this.schemaState.algorithm !== comparisonData.algorithm ||
+            this.schemaState.type !== comparisonData.type
     }
 
     applyChanges(data: any): boolean {
-        if(!this.hadChanges(data)) return false
+        if(!this.hasSchemaChanges(data)) return false
 
-        this.name = data.name
-        this.order = data.order
-        this.length = data.length
-        this.nullable = data.nullable
-        this.unsigned = data.unsigned
-        this.typeDefinition = data.type
-        this.autoIncrement = data.autoIncrement
+        this.columns = data.columns
+        this.algorithm = data.algorithm
+        this.type = data.type
 
         this.fillSchemaState()
 
@@ -113,11 +96,9 @@ export default class Column extends RelaDB.Model {
     buildSchemaState() {
         return {
             name: this.name,
-            length: this.length,
-            nullable: this.nullable,
-            unsigned: this.unsigned,
-            autoIncrement: this.autoIncrement,
-            typeDefinition: this.typeDefinition,
+            columns: this.columns,
+            algorithm: this.algorithm,
+            type: this.type,
         }
     }
 
@@ -135,7 +116,7 @@ export default class Column extends RelaDB.Model {
         return !! this.removed
     }
 
-    hasChanges(): boolean {
+    hasLocalChanges(): boolean {
         if(!this.schemaState) return false
 
         return this.schemaState.name !== this.name ||

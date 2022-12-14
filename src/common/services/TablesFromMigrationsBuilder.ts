@@ -8,13 +8,13 @@ class TablesFromMigrationsBuilder {
 
     schemaData: any
     project: Project
-    hasChanges: boolean
+    hasLocalChanges: boolean
     schemaDataHash: string
 
     reset() {
         this.project = null
         this.schemaData = null
-        this.hasChanges = false
+        this.hasLocalChanges = false
         this.schemaDataHash = ''
     }
 
@@ -41,7 +41,7 @@ class TablesFromMigrationsBuilder {
             return
         }
 
-        this.hasChanges = true
+        this.hasLocalChanges = true
 
         this.project.schemaDataHash = this.schemaDataHash
         this.project.save()
@@ -50,13 +50,13 @@ class TablesFromMigrationsBuilder {
     }
 
     force() {
-        this.hasChanges = true
+        this.hasLocalChanges = true
         
         return this
     }
 
     processTables() {
-        if(!this.hasChanges) return
+        if(!this.hasLocalChanges) return
 
         TablesFromMigrationsBuilder.processing = true
 
@@ -99,11 +99,11 @@ class TablesFromMigrationsBuilder {
     }
 
     hasSchemaChanges() {
-        return this.hasChanges
+        return this.hasLocalChanges
     }
     
     doesNotHaveSchemaChanges() {
-        return !this.hasChanges
+        return !this.hasLocalChanges
     }
 
     readColumns(tableData: any, table: Table) {

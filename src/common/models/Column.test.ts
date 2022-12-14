@@ -26,13 +26,13 @@ test('A column has changes when schema state is empty', () => {
     column.name = 'test_column'
     column.save()
 
-    expect(column.hadChanges({})).toBe(true)
+    expect(column.hasSchemaChanges({})).toBe(true)
 })
 
 test('It can check if a column has changes', () => {
     const column = TestHelper.createColumnWithSchemaState()
 
-    const hadChanges = column.hadChanges({
+    const hasSchemaChanges = column.hasSchemaChanges({
         name: 'test_column',
         order: 1,
         length: 255,
@@ -42,13 +42,13 @@ test('It can check if a column has changes', () => {
         unsigned: false,
     })
 
-    expect(hadChanges).toBe(true)
+    expect(hasSchemaChanges).toBe(true)
 })
 
 test('It can check if a column does not have changes', () => {
     const column = TestHelper.createColumnWithSchemaState()
 
-    const hadChanges = column.hadChanges({
+    const hasSchemaChanges = column.hasSchemaChanges({
         name: 'name',
         length: 255,
         type: 'string',
@@ -57,7 +57,7 @@ test('It can check if a column does not have changes', () => {
         unsigned: false,
     })
 
-    expect(hadChanges).toBe(false)
+    expect(hasSchemaChanges).toBe(false)
 })
 
 test('It can apply column changes', () => {
@@ -152,75 +152,75 @@ test('A column was not considered changed when schema state is empty', () => {
     column.length = 64
     column.save()
 
-    const hasChanges = column.hasChanges()
+    const hasLocalChanges = column.hasLocalChanges()
 
-    expect(hasChanges).toBe(false)
+    expect(hasLocalChanges).toBe(false)
 })
 
 test('It can check if a column was changed after renamed', () => {
     const column = TestHelper.createColumnWithSchemaState()
 
-    expect(column.hasChanges()).toBe(false)
+    expect(column.hasLocalChanges()).toBe(false)
 
     column.name = 'renamed'
     column.save()
 
-    expect(column.hasChanges()).toBe(true)
+    expect(column.hasLocalChanges()).toBe(true)
 })
 
 test('It can check if a column was changed after changing the length attr', () => {
     const column = TestHelper.createColumnWithSchemaState()
 
-    expect(column.hasChanges()).toBe(false)
+    expect(column.hasLocalChanges()).toBe(false)
 
     column.length = 64
     column.save()
 
-    expect(column.hasChanges()).toBe(true)
+    expect(column.hasLocalChanges()).toBe(true)
 })
 
 test('It can check if a column was changed after changing the nullable attr', () => {
     const column = TestHelper.createColumnWithSchemaState()
 
-    expect(column.hasChanges()).toBe(false)
+    expect(column.hasLocalChanges()).toBe(false)
 
     column.nullable = true
     column.save()
 
-    expect(column.hasChanges()).toBe(true)
+    expect(column.hasLocalChanges()).toBe(true)
 })
 
 test('It can check if a column was changed after changing the unsigned attr', () => {
     const column = TestHelper.createColumnWithSchemaState()
 
-    expect(column.hasChanges()).toBe(false)
+    expect(column.hasLocalChanges()).toBe(false)
 
     column.unsigned = true
     column.save()
 
-    expect(column.hasChanges()).toBe(true)
+    expect(column.hasLocalChanges()).toBe(true)
 })
 
 test('It can check if a column was changed after changing the autoIncrement attr', () => {
     const column = TestHelper.createColumnWithSchemaState()
 
-    expect(column.hasChanges()).toBe(false)
+    expect(column.hasLocalChanges()).toBe(false)
 
     column.autoIncrement = true
     column.save()
 
-    expect(column.hasChanges()).toBe(true)
+    expect(column.hasLocalChanges()).toBe(true)
 })
 
 test('It can check if a column was changed after changing the typeDefinition attr', () => {
     const column = TestHelper.createColumnWithSchemaState()
 
-    expect(column.hasChanges()).toBe(false)
+    expect(column.hasLocalChanges()).toBe(false)
 
     column.typeDefinition = 'text'
     column.save()
 
-    expect(column.hasChanges()).toBe(true)
+    expect(column.hasLocalChanges()).toBe(true)
 })
 
 test('It can check if a column is a PK', () => {

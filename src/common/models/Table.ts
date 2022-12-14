@@ -30,13 +30,13 @@ export default class Table extends RelaDB.Model {
         return tableData
     }
 
-    hadChanges(comparisonData: any): boolean {
+    hasSchemaChanges(comparisonData: any): boolean {
         return this.name !== comparisonData.name ||
             this.migrations !== comparisonData.migrations
     }
 
     applyChanges(data: any) {
-        if(!this.hadChanges(data)) return
+        if(!this.hasSchemaChanges(data)) return
         
         this.name = data.name
         this.migrations = data.migrations
@@ -68,7 +68,7 @@ export default class Table extends RelaDB.Model {
     }
 
     getChangedColumns(): Column[] {
-        return this.getColumns().filter((column) => column.hasChanges())
+        return this.getColumns().filter((column) => column.hasLocalChanges())
     }
 
     getNotRenamedChangedColumns(): Column[] {

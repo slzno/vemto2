@@ -30,11 +30,11 @@ test('It sets the Table position when creating', () => {
 test('It can check if a table has changes', () => {
     const table = TestHelper.createTable()
 
-    const hadChanges = table.hadChanges({
+    const hasSchemaChanges = table.hasSchemaChanges({
         name: 'test_column',
     })
 
-    expect(hadChanges).toBe(true)
+    expect(hasSchemaChanges).toBe(true)
 })
 
 test('It can apply changes to a table', () => {
