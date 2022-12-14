@@ -193,7 +193,9 @@ class TableRepository {
 
         if (!isset($this->tables[$tableName]['indexes'][$indexName])) {
             $command['type'] = $command['name'];
-            unset($command['name']);
+            $command['name'] = $indexName;
+            
+            unset($command['index']);
             
             $this->tables[$tableName]['indexes'][$indexName] = $command;
         }
