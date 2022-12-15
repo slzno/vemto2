@@ -4,7 +4,7 @@
     <% } else { %>
         $table->index([
             <% for (let column of index.columns) { %>
-            <$ column $>,
+            '<$ column $>',
             <% } %>
         ]);
     <% } %>
@@ -16,7 +16,7 @@
     <% } else { %>
         $table->unique([
             <% for (let column of index.columns) { %>
-            <$ column $>,
+            '<$ column $>',
             <% } %>
         ]);
     <% } %>
@@ -28,7 +28,7 @@
     <% } else { %>
         $table->primary([
             <% for (let column of index.columns) { %>
-            <$ column $>,
+            '<$ column $>',
             <% } %>
         ]);
     <% } %>
@@ -44,7 +44,7 @@
     <% } else { %>
         $table->fullText([
             <% for (let column of index.columns) { %>
-            <$ column $>,
+            '<$ column $>',
             <% } %>
         ])
         <% if (index.hasLanguage()) { %>
@@ -59,7 +59,7 @@
     <% } else { %>
         $table->spatialIndex([
             <% for (let column of index.columns) { %>
-            <$ column $>,
+            '<$ column $>',
             <% } %>
         ]);
     <% } %>
