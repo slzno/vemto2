@@ -9,6 +9,7 @@ export default class Column extends RelaDB.Model {
     type: string
     table: Table
     order: number
+    index: boolean
     length: number
     tableId: string
     schemaState: any
@@ -71,6 +72,10 @@ export default class Column extends RelaDB.Model {
         return this.name === 'special_primary_key'
     }
 
+    hasImplicitIndex(): boolean {
+        return !! this.index
+    }
+
     hasLocalChanges(): boolean {
         if(!this.schemaState) return false
 
@@ -88,11 +93,12 @@ export default class Column extends RelaDB.Model {
 
     hasDataChanges(comparisonData: any): boolean {
         return this.schemaState.name !== comparisonData.name 
-            ||  this.schemaState.type !== comparisonData.type
-            ||  this.schemaState.length !== comparisonData.length
-            ||  this.schemaState.nullable !== comparisonData.nullable
-            ||  this.schemaState.autoIncrement !== comparisonData.autoIncrement
-            ||  this.schemaState.unsigned !== comparisonData.unsigned
+            || this.schemaState.type !== comparisonData.type
+            || this.schemaState.length !== comparisonData.length
+            || this.schemaState.nullable !== comparisonData.nullable
+            || this.schemaState.autoIncrement !== comparisonData.autoIncrement
+            || this.schemaState.unsigned !== comparisonData.unsigned
+            || this.schemaState.index !== comparisonData.index
     }
 
     applyChanges(data: any): boolean {
@@ -104,6 +110,7 @@ export default class Column extends RelaDB.Model {
         this.nullable = data.nullable
         this.unsigned = data.unsigned
         this.type = data.type
+        this.index = data.index
         this.autoIncrement = data.autoIncrement
 
         this.fillSchemaState()
@@ -131,6 +138,7 @@ export default class Column extends RelaDB.Model {
             unsigned: this.unsigned,
             autoIncrement: this.autoIncrement,
             type: this.type,
+            index: this.index,
         }
     }
 

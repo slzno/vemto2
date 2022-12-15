@@ -256,7 +256,7 @@ test('It can check if an index is fulltext', () => {
     index.type = 'fulltext'
     index.save()
 
-    expect(index.isFulltext()).toBe(true)
+    expect(index.isFullText()).toBe(true)
 })
 
 test('It can check if an index is spatial', () => {

@@ -234,6 +234,28 @@ test('It can check if a column was changed after changing the type attr', () => 
     expect(column.hasLocalChanges()).toBe(true)
 })
 
+test('It can check if a column was changed after changing the index attr', () => {
+    const column = TestHelper.createColumnWithSchemaState()
+
+    expect(column.hasLocalChanges()).toBe(false)
+
+    column.index = true
+    column.save()
+
+    expect(column.hasLocalChanges()).toBe(true)
+})
+
+test('It can check if a column has an implicit index', () => {
+    const column = TestHelper.createColumnWithSchemaState()
+
+    expect(column.hasImplicitIndex()).toBe(false)
+
+    column.index = true
+    column.save()
+
+    expect(column.hasImplicitIndex()).toBe(true)
+})
+
 test('It can check if a column is a PK', () => {
     const column = TestHelper.createColumnWithSchemaState()
 

@@ -9,7 +9,7 @@
         ]);
     <% } %>
 <% } %>
-
+<# #>
 <% if (index.isUnique()) { %>
     <% if (index.isSingleColumn()) { %>
         $table->unique('<$ index.columns[0] $>');
@@ -21,7 +21,7 @@
         ]);
     <% } %>
 <% } %>
-
+<# #>
 <% if (index.isPrimary()) { %>
     <% if (index.isSingleColumn()) { %>
         $table->primary('<$ index.columns[0] $>');
@@ -33,7 +33,7 @@
         ]);
     <% } %>
 <% } %>
-
+<# #>
 <% if (index.isFullText()) { %>
     <% if (index.isSingleColumn()) { %>
         $table->fullText('<$ index.columns[0] $>')
@@ -52,7 +52,7 @@
         <% } %>;
     <% } %>
 <% } %>
-
+<# #>
 <% if (index.isSpatial()) { %>
     <% if (index.isSingleColumn()) { %>
         $table->spatialIndex('<$ index.columns[0] $>');

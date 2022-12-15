@@ -162,12 +162,14 @@ test('It can change a creation migration when an index was added', async () => {
     processSchemaData(project)
 
     // Using password_resets table as it has a creation migration
-    const table = project.findTableByName('users'),
+    const table = project.findTableByName('password_resets'),
         index = new Index
+
+    console.log(table.getIndexes())
 
     index.name = 'new_index'
     index.tableId = table.id
-    index.columns = ['email']
+    index.columns = ['token']
     index.type = 'index'
     index.saveFromInterface()
 

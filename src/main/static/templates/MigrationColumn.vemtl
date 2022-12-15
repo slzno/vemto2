@@ -30,6 +30,9 @@ $table-><$ column.type $>('<$ column.name $>'
 <up if (column.isUnique()) { up>
 ->unique()
 <up } up>
+<up if (column.hasImplicitIndex()) { up>
+->index()
+<up } up>
 <% const columnAfter = column.getAfter() %>
 <up if (columnAfter && this.templateParams.enableColumnAfterUsage) { up>
 ->after('<$ columnAfter $>')
