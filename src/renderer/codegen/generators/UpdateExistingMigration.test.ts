@@ -181,6 +181,56 @@ test('It can change a creation migration when an index was added', async () => {
     expect(contentIsEqual).toBe(true)
 })
 
+test('It can change a creation migration when a multiple columns index was added', async () => {
+    const project = TestHelper.getProject()
+
+    processSchemaData(project)
+
+    // Using password_resets table as it has a creation migration
+    const table = project.findTableByName('password_resets'),
+        index = new Index
+
+    index.name = 'new_index'
+    index.tableId = table.id
+    index.columns = ['token', 'email']
+    index.type = 'index'
+    index.saveFromInterface()
+
+    UpdateExistingMigration.setTable(table)
+
+    const renderedTemplateContent = await UpdateExistingMigration.changeCreationMigration(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-creation-migration-adding-multiple-columns-index.php'), renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
+})
+
+test('It can change a creation migration when a primary index was added', async () => {
+    const project = TestHelper.getProject()
+
+    processSchemaData(project)
+
+    // Using password_resets table as it has a creation migration
+    const table = project.findTableByName('password_resets'),
+        index = new Index
+
+    index.name = 'new_index'
+    index.tableId = table.id
+    index.columns = ['token']
+    index.type = 'primary'
+    index.saveFromInterface()
+
+    UpdateExistingMigration.setTable(table)
+
+    const renderedTemplateContent = await UpdateExistingMigration.changeCreationMigration(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-creation-migration-adding-primary-index.php'), renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
+})
+
 test('It can change a creation migration when an unique index was added', async () => {
     const project = TestHelper.getProject()
 
@@ -200,6 +250,56 @@ test('It can change a creation migration when an unique index was added', async 
 
     const renderedTemplateContent = await UpdateExistingMigration.changeCreationMigration(),
         renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-creation-migration-adding-unique-index.php'), renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
+})
+
+test('It can change a creation migration when a fulltext index was added', async () => {
+    const project = TestHelper.getProject()
+
+    processSchemaData(project)
+
+    // Using password_resets table as it has a creation migration
+    const table = project.findTableByName('password_resets'),
+        index = new Index
+
+    index.name = 'new_index'
+    index.tableId = table.id
+    index.columns = ['token']
+    index.type = 'fulltext'
+    index.saveFromInterface()
+
+    UpdateExistingMigration.setTable(table)
+
+    const renderedTemplateContent = await UpdateExistingMigration.changeCreationMigration(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-creation-migration-adding-fulltext-index.php'), renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
+})
+
+test('It can change a creation migration when a spatial index was added', async () => {
+    const project = TestHelper.getProject()
+
+    processSchemaData(project)
+
+    // Using password_resets table as it has a creation migration
+    const table = project.findTableByName('password_resets'),
+        index = new Index
+
+    index.name = 'new_index'
+    index.tableId = table.id
+    index.columns = ['token']
+    index.type = 'spatialIndex'
+    index.saveFromInterface()
+
+    UpdateExistingMigration.setTable(table)
+
+    const renderedTemplateContent = await UpdateExistingMigration.changeCreationMigration(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-creation-migration-adding-spatial-index.php'), renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -316,6 +416,131 @@ test('It can change an updater migration when an index was added', async () => {
 
     const renderedTemplateContent = await UpdateExistingMigration.changeUpdaterMigration(),
         renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-updater-migration-adding-index.php'), renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
+})
+
+test('It can change an updater migration when a multiple columns index was added', async () => {
+    const project = TestHelper.getProject()
+
+    processSchemaData(project)
+
+    // Using users table as it has an updater migration
+    const table = project.findTableByName('users'),
+        index = new Index
+
+    index.name = 'new_index'
+    index.tableId = table.id
+    index.columns = ['token', 'email']
+    index.type = 'index'
+    index.saveFromInterface()
+
+    UpdateExistingMigration.setTable(table)
+
+    const renderedTemplateContent = await UpdateExistingMigration.changeUpdaterMigration(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-updater-migration-adding-multiple-columns-index.php'), renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
+})
+
+test('It can change an updater migration when a primary index was added', async () => {
+    const project = TestHelper.getProject()
+
+    processSchemaData(project)
+
+    // Using users table as it has an updater migration
+    const table = project.findTableByName('users'),
+        index = new Index
+
+    index.name = 'new_index'
+    index.tableId = table.id
+    index.columns = ['token']
+    index.type = 'primary'
+    index.saveFromInterface()
+
+    UpdateExistingMigration.setTable(table)
+
+    const renderedTemplateContent = await UpdateExistingMigration.changeUpdaterMigration(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-updater-migration-adding-primary-index.php'), renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
+})
+
+test('It can change an updater migration when a unique index was added', async () => {
+    const project = TestHelper.getProject()
+
+    processSchemaData(project)
+
+    // Using users table as it has an updater migration
+    const table = project.findTableByName('users'),
+        index = new Index
+
+    index.name = 'new_index'
+    index.tableId = table.id
+    index.columns = ['token']
+    index.type = 'unique'
+    index.saveFromInterface()
+
+    UpdateExistingMigration.setTable(table)
+
+    const renderedTemplateContent = await UpdateExistingMigration.changeUpdaterMigration(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-updater-migration-adding-unique-index.php'), renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
+})
+
+test('It can change an updater migration when a spatial index was added', async () => {
+    const project = TestHelper.getProject()
+
+    processSchemaData(project)
+
+    // Using users table as it has an updater migration
+    const table = project.findTableByName('users'),
+        index = new Index
+
+    index.name = 'new_index'
+    index.tableId = table.id
+    index.columns = ['token']
+    index.type = 'spatialIndex'
+    index.saveFromInterface()
+
+    UpdateExistingMigration.setTable(table)
+
+    const renderedTemplateContent = await UpdateExistingMigration.changeUpdaterMigration(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-updater-migration-adding-spatial-index.php'), renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
+})
+
+test('It can change an updater migration when a fulltext index was added', async () => {
+    const project = TestHelper.getProject()
+
+    processSchemaData(project)
+
+    // Using users table as it has an updater migration
+    const table = project.findTableByName('users'),
+        index = new Index
+
+    index.name = 'new_index'
+    index.tableId = table.id
+    index.columns = ['token']
+    index.type = 'fulltext'
+    index.saveFromInterface()
+
+    UpdateExistingMigration.setTable(table)
+
+    const renderedTemplateContent = await UpdateExistingMigration.changeUpdaterMigration(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-updater-migration-adding-fulltext-index.php'), renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
