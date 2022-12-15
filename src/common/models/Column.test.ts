@@ -245,6 +245,17 @@ test('It can check if a column was changed after changing the index attr', () =>
     expect(column.hasLocalChanges()).toBe(true)
 })
 
+test('It can check if a column was changed after changing the unique attr', () => {
+    const column = TestHelper.createColumnWithSchemaState()
+
+    expect(column.hasLocalChanges()).toBe(false)
+
+    column.unique = true
+    column.save()
+
+    expect(column.hasLocalChanges()).toBe(true)
+})
+
 test('It can check if a column has an implicit index', () => {
     const column = TestHelper.createColumnWithSchemaState()
 
@@ -254,6 +265,17 @@ test('It can check if a column has an implicit index', () => {
     column.save()
 
     expect(column.hasImplicitIndex()).toBe(true)
+})
+
+test('It can check if a column is implicitly unique', () => {
+    const column = TestHelper.createColumnWithSchemaState()
+
+    expect(column.isImplicitlyUnique()).toBe(false)
+
+    column.unique = true
+    column.save()
+
+    expect(column.isImplicitlyUnique()).toBe(true)
 })
 
 test('It can check if a column is a PK', () => {
@@ -278,6 +300,7 @@ test('It can check if a column is unique', () => {
     const column = TestHelper.createColumnWithSchemaState()
 
     column.name = 'password'
+    column.unique = true
     column.save()
 
     expect(column.isUnique()).toBe(true)

@@ -11,11 +11,12 @@ export default class Column extends RelaDB.Model {
     order: number
     index: boolean
     length: number
+    unique: boolean
     tableId: string
+    removed: boolean
     schemaState: any
     nullable: boolean
     unsigned: boolean
-    removed: boolean
     autoIncrement: boolean
 
     static identifier() {
@@ -65,7 +66,11 @@ export default class Column extends RelaDB.Model {
     }
 
     isUnique(): boolean {
-        return this.name === 'password'
+        return this.isImplicitlyUnique()
+    }
+
+    isImplicitlyUnique(): boolean {
+        return !! this.unique
     }
 
     isSpecialPrimaryKey(): boolean {
@@ -99,6 +104,7 @@ export default class Column extends RelaDB.Model {
             || this.schemaState.autoIncrement !== comparisonData.autoIncrement
             || this.schemaState.unsigned !== comparisonData.unsigned
             || this.schemaState.index !== comparisonData.index
+            || this.schemaState.unique !== comparisonData.unique
     }
 
     applyChanges(data: any): boolean {
@@ -111,6 +117,7 @@ export default class Column extends RelaDB.Model {
         this.unsigned = data.unsigned
         this.type = data.type
         this.index = data.index
+        this.unique = data.unique
         this.autoIncrement = data.autoIncrement
 
         this.fillSchemaState()
@@ -139,6 +146,7 @@ export default class Column extends RelaDB.Model {
             autoIncrement: this.autoIncrement,
             type: this.type,
             index: this.index,
+            unique: this.unique,
         }
     }
 

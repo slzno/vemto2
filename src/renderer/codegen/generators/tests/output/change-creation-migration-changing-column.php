@@ -13,7 +13,7 @@ return new class extends Migration {
     public function up()
     {
         Schema::create('password_resets', function (Blueprint $table) {
-            $table->text('email');
+            $table->text('email')->index();
             $table->string('token', 255);
             $table->timestamp('created_at')->nullable();
         });

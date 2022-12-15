@@ -165,8 +165,6 @@ test('It can change a creation migration when an index was added', async () => {
     const table = project.findTableByName('password_resets'),
         index = new Index
 
-    console.log(table.getIndexes())
-
     index.name = 'new_index'
     index.tableId = table.id
     index.columns = ['token']
@@ -175,17 +173,37 @@ test('It can change a creation migration when an index was added', async () => {
 
     UpdateExistingMigration.setTable(table)
 
-    // console.log(table.getIndexes())
+    const renderedTemplateContent = await UpdateExistingMigration.changeCreationMigration(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-creation-migration-adding-index.php'), renderedTemplateContent)
 
-    const renderedTemplateContent = await UpdateExistingMigration.changeCreationMigration()
-    console.log(renderedTemplateContent)
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
-    // const renderedTemplateContent = await UpdateExistingMigration.changeCreationMigration(),
-    //     renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-creation-migration-adding-index.php'), renderedTemplateContent)
+    expect(contentIsEqual).toBe(true)
+})
 
-    // const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+test('It can change a creation migration when an unique index was added', async () => {
+    const project = TestHelper.getProject()
 
-    // expect(contentIsEqual).toBe(true)
+    processSchemaData(project)
+
+    // Using password_resets table as it has a creation migration
+    const table = project.findTableByName('password_resets'),
+        index = new Index
+
+    index.name = 'new_index'
+    index.tableId = table.id
+    index.columns = ['token']
+    index.type = 'unique'
+    index.saveFromInterface()
+
+    UpdateExistingMigration.setTable(table)
+
+    const renderedTemplateContent = await UpdateExistingMigration.changeCreationMigration(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-creation-migration-adding-unique-index.php'), renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
 })
 
 test('It can change an updater migration when a column was renamed', async () => {
@@ -273,6 +291,31 @@ test('It can change an updater migration when a column was removed', async () =>
 
     const renderedTemplateContent = await UpdateExistingMigration.changeUpdaterMigration(),
         renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-updater-migration-removing-column.php'), renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
+})
+
+test('It can change an updater migration when an index was added', async () => {
+    const project = TestHelper.getProject()
+
+    processSchemaData(project)
+
+    // Using users table as it has an updater migration
+    const table = project.findTableByName('users'),
+        index = new Index
+
+    index.name = 'new_index'
+    index.tableId = table.id
+    index.columns = ['token']
+    index.type = 'index'
+    index.saveFromInterface()
+
+    UpdateExistingMigration.setTable(table)
+
+    const renderedTemplateContent = await UpdateExistingMigration.changeUpdaterMigration(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-updater-migration-adding-index.php'), renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 

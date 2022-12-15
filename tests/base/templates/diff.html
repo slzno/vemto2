@@ -41,7 +41,7 @@
         let fileContent = `{CONTENT INITIAL}`,
             generatedContent = `{CONTENT FINAL}`
     
-        let diff = Diff.createTwoFilesPatch('First Content', 'Second Content', generatedContent, fileContent)
+        let diff = Diff.createTwoFilesPatch('First Content', 'Second Content', fileContent, generatedContent)
     
         let html = Diff2Html.html(diff,
             {inputFormat: 'diff', showFiles: false, matching: 'lines', outputFormat: 'side-by-side'}
