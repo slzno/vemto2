@@ -3,6 +3,7 @@ import MockDatabase from '@Tests/base/MockDatabase'
 import GenerateNewMigration from './GenerateNewMigration'
 import { test, expect, beforeEach, jest } from '@jest/globals'
 import TestHelper from '@Renderer/../../tests/base/TestHelper'
+import Index from '@Renderer/../common/models/Index'
 
 jest.mock('@Renderer/services/wrappers/Main')
 
@@ -97,6 +98,46 @@ test('It can generate a migration to remove a column', async () => {
 
     const renderedTemplateContent = await GenerateNewMigration.generateUpdaterMigration(),
         renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/new-migration-removing-column.php'), renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
+})
+
+test('It can generate a migration to add an index', async () => {
+    const table = TestHelper.createTable({ name: 'posts' }),
+        index = new Index
+
+        index.name = 'new_index'
+        index.tableId = table.id
+        index.columns = ['token']
+        index.type = 'index'
+        index.saveFromInterface()
+
+    GenerateNewMigration.setTable(table)
+
+    const renderedTemplateContent = await GenerateNewMigration.generateUpdaterMigration(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/new-migration-adding-index.php'), renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
+})
+
+test('It can generate a migration to add a multiple columns index', async () => {
+    const table = TestHelper.createTable({ name: 'posts' }),
+        index = new Index
+
+        index.name = 'new_index'
+        index.tableId = table.id
+        index.columns = ['token', 'email']
+        index.type = 'index'
+        index.saveFromInterface()
+
+    GenerateNewMigration.setTable(table)
+
+    const renderedTemplateContent = await GenerateNewMigration.generateUpdaterMigration(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/new-migration-adding-multiple-columns-index.php'), renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
