@@ -16,6 +16,12 @@
 <% } %>
 <#  #>
 <#  #>
+<# Removed indexes #>
+<% for (let index of this.table.getRemovedIndexes()) { %>
+    <import template="MigrationDropIndex.vemtl">
+<% } %>
+<#  #>
+<#  #>
 <# Changed indexes #>
 <% for (let index of this.table.getNotRenamedChangedIndexes()) { %>
     <import template="MigrationDropIndex.vemtl">

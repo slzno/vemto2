@@ -143,3 +143,19 @@ test('It can generate a migration to add a multiple columns index', async () => 
 
     expect(contentIsEqual).toBe(true)
 })
+
+test('It can generate a migration to remove an index', async () => {
+    const table = TestHelper.createTable({ name: 'posts' }),
+        index = TestHelper.createIndexWithSchemaState({ name: 'new_index', table })
+
+    index.remove()
+
+    GenerateNewMigration.setTable(table)
+
+    const renderedTemplateContent = await GenerateNewMigration.generateUpdaterMigration(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/new-migration-removing-index.php'), renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
+})

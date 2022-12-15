@@ -1,1 +1,19 @@
-dropindex
+<% if (index.isCommon()) { %>
+    $table->dropIndex('<$ index.name $>');
+<% } %>
+<# #>
+<% if (index.isUnique()) { %>
+    $table->dropUnique('<$ index.name $>');
+<% } %>
+<# #>
+<% if (index.isPrimary()) { %>
+    $table->dropPrimary('<$ index.name $>');
+<% } %>
+<# #>
+<% if (index.isFullText()) { %>
+    $table->dropFullText('<$ index.name $>');
+<% } %>
+<# #>
+<% if (index.isSpatial()) { %>
+    $table->dropSpatialIndex('<$ index.name $>');
+<% } %>
