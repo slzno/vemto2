@@ -209,6 +209,16 @@ export default class Table extends RelaDB.Model {
         return this.migrations[this.migrations.length - 1] || null
     }
 
+    getLatestUpdaterMigration(): any {
+        const latestMigration = this.getLatestMigration()
+
+        if(!latestMigration) return null
+
+        if(latestMigration.createdTables.includes(this.name)) return null
+
+        return latestMigration
+    }
+
     getCreationMigration(): any {
         return this.migrations.find((migration) => migration.createdTables.includes(this.name))
     }

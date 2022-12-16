@@ -555,6 +555,33 @@ test('It can change an updater migration when a foreign index with cascades was 
     expect(contentIsEqual).toBe(true)
 })
 
+test('It can change an updater migration when a foreign index was removed', async () => {
+    const project = TestHelper.getProject()
+
+    processSchemaData(project)
+
+    // Using users table as it has an updater migration
+    const table = project.findTableByName('users')
+
+    const index = TestHelper.createIndexWithSchemaState({
+        table,
+        name: 'new_index',
+        columns: ['company_id'],
+        type: 'foreign',
+    })
+
+    index.remove()
+
+    UpdateExistingMigration.setTable(table)
+
+    const renderedTemplateContent = await UpdateExistingMigration.changeUpdaterMigration(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-updater-migration-removing-foreign-index.php'), renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
+})
+
 test('It can change an updater migration when a primary index was added', async () => {
     const project = TestHelper.getProject()
 

@@ -144,6 +144,28 @@ test('It can generate a migration to add a multiple columns index', async () => 
     expect(contentIsEqual).toBe(true)
 })
 
+test('It can generate a migration to add a foreign index', async () => {
+    const table = TestHelper.createTable({ name: 'posts' }),
+        index = new Index
+
+        index.name = 'new_index'
+        index.tableId = table.id
+        index.columns = ['user_id']
+        index.type = 'foreign'
+        index.references = 'users'
+        index.on = 'id'
+        index.saveFromInterface()
+
+    GenerateNewMigration.setTable(table)
+
+    const renderedTemplateContent = await GenerateNewMigration.generateUpdaterMigration(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/new-migration-adding-foreign-index.php'), renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
+})
+
 test('It can generate a migration to remove an index', async () => {
     const table = TestHelper.createTable({ name: 'posts' }),
         index = TestHelper.createIndexWithSchemaState({ name: 'new_index', table })

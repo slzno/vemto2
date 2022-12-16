@@ -76,7 +76,7 @@ export default new class UpdateExistingMigration {
     }
 
     async changeUpdaterMigration() {
-        const latestMigration = this.table.getLatestMigration(),
+        const latestMigration = this.table.getLatestUpdaterMigration(),
             latestMigrationContent = await Main.API.readProjectFile(latestMigration.relativePath),
             columnsTemplate = await Main.API.readTemplateFile('UpdaterMigrationColumns.vemtl')
 
