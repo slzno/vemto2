@@ -277,3 +277,13 @@ test('It can mark an index as removed', () => {
 
     expect(index.isRemoved()).toBe(true)
 })
+
+test('It deletes a new index when removing it', () => {
+    const index = TestHelper.createIndex()
+
+    expect(index.isRemoved()).toBe(false)
+
+    index.remove()
+
+    expect(index.id).toBe(undefined)
+})

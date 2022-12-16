@@ -347,3 +347,13 @@ test('It can mark a column as removed', () => {
 
     expect(column.isRemoved()).toBe(true)
 })
+
+test('It deletes a new column when removing it', () => {
+    const column = TestHelper.createColumn()
+
+    expect(column.isRemoved()).toBe(false)
+
+    column.remove()
+
+    expect(column.id).toBe(undefined)
+})

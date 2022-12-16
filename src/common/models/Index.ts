@@ -15,6 +15,8 @@ export default class Index extends RelaDB.Model {
     algorithm: string
     columns: string[]
     references: string
+    onUpdate: string
+    onDelete: string
 
     static identifier() {
         return 'Index'
@@ -35,6 +37,10 @@ export default class Index extends RelaDB.Model {
     }
 
     remove() {
+        if(this.isNew()) {
+            return this.delete()
+        }
+
         this.removed = true
 
         this.save()
@@ -78,6 +84,14 @@ export default class Index extends RelaDB.Model {
         return !! this.language
     }
 
+    hasOnUpdate(): boolean {
+        return !! this.onUpdate
+    }
+
+    hasOnDelete(): boolean {
+        return !! this.onDelete
+    }
+
     hasLocalChanges(): boolean {
         if(!this.schemaState) return false
 
@@ -97,6 +111,8 @@ export default class Index extends RelaDB.Model {
             || this.schemaState.references !== comparisonData.references
             || this.schemaState.on !== comparisonData.on
             || this.schemaState.language !== comparisonData.language
+            || this.schemaState.onUpdate !== comparisonData.onUpdate
+            || this.schemaState.onDelete !== comparisonData.onDelete
     }
 
     applyChanges(data: any): boolean {
@@ -109,6 +125,8 @@ export default class Index extends RelaDB.Model {
         this.on = data.on
         this.references = data.references
         this.language = data.language
+        this.onUpdate = data.onUpdate
+        this.onDelete = data.onDelete
 
         this.fillSchemaState()
 
@@ -133,6 +151,11 @@ export default class Index extends RelaDB.Model {
             columns: this.columns,
             algorithm: this.algorithm,
             type: this.type,
+            on: this.on,
+            references: this.references,
+            language: this.language,
+            onUpdate: this.onUpdate,
+            onDelete: this.onDelete,
         }
     }
 

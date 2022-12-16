@@ -10,6 +10,18 @@
     <% } %>
 <% } %>
 <# #>
+<% if (index.isForeign()) { %>
+    $table->foreign('<$ index.columns[0] $>')
+        ->references('<$ index.references $>')
+        ->on('<$ index.on $>')
+        <% if (index.hasOnDelete()) { %>
+        ->onDelete('<$ index.onDelete $>')
+        <% } %>
+        <% if (index.hasOnUpdate()) { %>
+        ->onUpdate('<$ index.onUpdate $>')
+        <% } %>;
+<% } %>
+<# #>
 <% if (index.isUnique()) { %>
     <% if (index.isSingleColumn()) { %>
         $table->unique('<$ index.columns[0] $>');

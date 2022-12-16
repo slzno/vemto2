@@ -805,6 +805,8 @@
                 "algorithm": null,
                 "references": "id",
                 "on": "users",
+                "onDelete": "cascade",
+                "onUpdate": "cascade",
                 "table": "posts",
                 "type": "foreign"
             },
@@ -908,6 +910,8 @@
                         "algorithm": null,
                         "references": "id",
                         "on": "users",
+                        "onDelete": "cascade",
+                        "onUpdate": "cascade",
                         "table": "posts"
                     },
                     {

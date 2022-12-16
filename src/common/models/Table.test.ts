@@ -314,7 +314,8 @@ test('It can get all removed columns', () => {
     TestHelper.createColumn({ name: 'column0', table })
     TestHelper.createColumn({ name: 'column1', table })
 
-    const columnToRemove = TestHelper.createColumn({ name: 'column2', table })
+    // Create a column with schema state because new columns are destroyed when removed
+    const columnToRemove = TestHelper.createColumnWithSchemaState({ name: 'column2', table })
 
     let columns = table.getRemovedColumns()
 

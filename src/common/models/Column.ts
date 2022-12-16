@@ -46,6 +46,10 @@ export default class Column extends RelaDB.Model {
     }
 
     remove() {
+        if(this.isNew()) {
+            return this.delete()
+        }
+        
         this.removed = true
 
         this.save()

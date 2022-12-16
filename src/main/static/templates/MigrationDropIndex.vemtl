@@ -2,6 +2,10 @@
     $table->dropIndex('<$ index.name $>');
 <% } %>
 <# #>
+<% if (index.isForeign()) { %>
+    $table->dropForeign('<$ index.name $>');
+<% } %>
+<# #>
 <% if (index.isUnique()) { %>
     $table->dropUnique('<$ index.name $>');
 <% } %>
