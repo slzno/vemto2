@@ -15,7 +15,10 @@ export default new class Main {
             },
 
             addFileToGenerationQueue: (name: string, content: string) => {
-                return true
+                return {
+                    name,
+                    content,
+                }
             },
         }
     }

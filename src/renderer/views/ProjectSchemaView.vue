@@ -70,8 +70,6 @@
 
         if (tablesBuilder.doesNotHaveSchemaChanges()) return
 
-        console.log(schemaData)
-
         tablesBuilder.build()
 
         tablesData.value = Table.get()

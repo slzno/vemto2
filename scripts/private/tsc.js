@@ -3,7 +3,7 @@ const Chalk = require("chalk")
 
 function compile(directory) {
     return new Promise((resolve, reject) => {
-        const tscProcess = ChildProcess.exec("tsc", {
+        const tscProcess = ChildProcess.exec("tsc --project tsconfig.json && tsc-alias -p tsconfig.json", {
             cwd: directory,
         })
 
@@ -13,10 +13,17 @@ function compile(directory) {
             )
         )
 
+        tscProcess.stderr.on("data", (data) =>
+            process.stderr.write(
+                Chalk.redBright(`[tsc] `) + Chalk.white(data.toString())
+            )
+        )
+
         tscProcess.on("exit", (exitCode) => {
             if (exitCode > 0) {
                 reject(exitCode)
             } else {
+                console.log("Exit code: " + exitCode + " - tsc success")
                 resolve()
             }
         })

@@ -15,12 +15,17 @@ let electronProcessLocker = false
 let rendererPort = 0
 
 async function startRenderer() {
-    viteServer = await Vite.createServer({
-        configFile: Path.join(__dirname, "..", "vite.config.js"),
-        mode: "development",
-    })
-
-    return viteServer.listen()
+    try {
+        viteServer = await Vite.createServer({
+            configFile: Path.join(__dirname, "..", "vite.config.js"),
+            mode: "development",
+        })
+    
+        return viteServer.listen()
+    } catch (error) {
+        console.log(Chalk.redBright(error))
+        process.exit(1)
+    }
 }
 
 async function startElectron() {
@@ -42,7 +47,7 @@ async function startElectron() {
     }
 
     const args = [
-        Path.join(__dirname, "..", "build", "main", "main.js"),
+        Path.join(__dirname, "..", "build", "src", "main", "main.js"),
         rendererPort,
     ]
     electronProcess = ChildProcess.spawn(Electron, args)
@@ -87,7 +92,7 @@ tsc does not copy static files, so copy them over manually for dev server.
 function copy(path) {
     FileSystem.cpSync(
         Path.join(__dirname, "..", "src", "main", path),
-        Path.join(__dirname, "..", "build", "main", path),
+        Path.join(__dirname, "..", "build", "src", "main", path),
         { recursive: true }
     )
 }

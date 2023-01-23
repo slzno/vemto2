@@ -10,26 +10,37 @@ export default class ReadProjectSchema {
     
             const command = `php ${apiFilePath}`
 
-            exec(command, {
-                cwd: path.join("", projectPath),
-            }, (error, stdout, stderr) => {
-                if (error) { 
-                    console.error(error)
-                    reject(error)
-                }
-                
-                if (stderr) {
-                    console.error(stderr)
-                    reject(stderr)
-                }
+            try {
+                exec(command, {
+                    cwd: path.join("", projectPath),
+                }, (error, stdout, stderr) => {
+                    if(stdout.includes("VEMTO_ERROR_START")) {
+                        console.error('(vemto error) FAILED to execute command: ' + command)
+                        console.error(stderr)
+                        reject(this.parseErrorData(stdout))
+                    }
+                    
+                    if (stderr) {
+                        console.error('(stderr) FAILED to execute command: ' + command)
+                        console.error(stderr)
+                        reject(stderr)
+                    }
 
-                if(stdout.includes("VEMTO_ERROR_START")) {
-                    console.error(stderr)
-                    reject(this.parseErrorData(stdout))
-                }
-    
-                resolve(this.parseJsonData(stdout))
-            })
+                    if (error) { 
+                        console.error('(error) FAILED to execute command: ' + command)
+                        console.log(stdout)
+                        console.error(error)
+                        reject(error)
+                    }
+        
+                    resolve(this.parseJsonData(stdout))
+                })
+            } catch (error) {
+                console.error('(execution error) FAILED to execute command: ' + command)
+                console.error(error)
+                reject(error)
+            }
+
         })
     }
 
