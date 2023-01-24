@@ -46,6 +46,11 @@ export default new class TestHelper {
 
         table.name = data.name || "users"
         table.projectId = project.id
+        
+        if(data.hasOwnProperty("needsMigration")) {
+            table.needsMigration = data.needsMigration
+        }
+
         table.save()
 
         return table
@@ -59,7 +64,11 @@ export default new class TestHelper {
         const column = new Column
         column.order = data.hasOwnProperty("order") ? data.order : 0
         column.name = data.name || "name"
-        column.length = data.length || 255
+
+        if(data.hasOwnProperty("length") || data.type === "string") {
+            column.length = data.length || 255
+        }
+        
         column.type = data.type || "string"
         column.autoIncrement = data.autoIncrement || false
         column.nullable = data.nullable || false
@@ -78,6 +87,22 @@ export default new class TestHelper {
         return column
     }
 
+    createPrimaryIndex(data = {}) {
+        return this.createIndex({
+            ...data,
+            type: "primary"
+        })
+    }
+
+    createForeignIndex(data = {}) {
+        return this.createIndex({
+            ...data,
+            type: "foreign",
+            references: data.references || "id",
+            on: data.on || "users"
+        })
+    }
+
     createIndex(data = {}) {
         if(!data.table) {
             data.table = this.createTable()
@@ -89,6 +114,15 @@ export default new class TestHelper {
         index.tableId = data.table.id
         index.columns = data.columns || ['name']
         index.algorithm = data.algorithm || "BTREE"
+
+        if(data.hasOwnProperty("references")) {
+            index.references = data.references
+        }
+
+        if(data.hasOwnProperty("on")) {
+            index.on = data.on
+        }
+
         index.save()
 
         return index

@@ -1,7 +1,7 @@
 Schema::create('<$ this.table.name $>', function (Blueprint $table) {
     <# Table columns #>
     <% for (let column of this.table.getColumns()) { %>
-        <import template="MigrationColumn.vemtl">
+        <import template="MigrationColumn.vemtl" enableColumnAfterUsage="false">
     <% } %>
     
     <# Indexes #>

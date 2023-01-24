@@ -13,6 +13,8 @@ export default class Table extends RelaDB.Model {
     migrations: any[]
     positionX: number
     positionY: number
+    needsMigration: boolean
+    createdFromInterface: boolean
 
     static identifier() {
         return 'Table'
@@ -33,6 +35,22 @@ export default class Table extends RelaDB.Model {
         return tableData
     }
 
+    saveFromInterface() {
+        let creating = false
+
+        if(!this.isSaved()) creating = true
+
+        this.createdFromInterface = creating
+        
+        if(creating) {
+            this.needsMigration = true
+        }
+
+        this.save()
+
+        return this
+    }
+
     hasSchemaChanges(comparisonData: any): boolean {
         return this.name !== comparisonData.name ||
             this.migrations !== comparisonData.migrations
@@ -43,6 +61,7 @@ export default class Table extends RelaDB.Model {
         
         this.name = data.name
         this.migrations = data.migrations
+        this.createdFromInterface = false
         this.save()
     }
 
@@ -132,6 +151,10 @@ export default class Table extends RelaDB.Model {
         }, {})
     }
 
+    hasPrimaryIndexForColumn(column: Column): boolean {
+        return this.getIndexes().find((index: Index) => index.isPrimary() && index.hasColumn(column.name)) !== undefined
+    }
+
     getColumns(): Column[] {
         return this.columns.filter((column) => !column.isRemoved())
     }
@@ -199,6 +222,10 @@ export default class Table extends RelaDB.Model {
         return (!! this.migrations) && this.migrations.length > 0
     }
 
+    hasCreationMigration(): boolean {
+        return !! this.getCreationMigration()
+    }
+
     latestMigrationCreatedTable(): boolean {
         let latestMigration = this.getLatestMigration()
 
@@ -227,6 +254,14 @@ export default class Table extends RelaDB.Model {
 
     canUpdateLatestMigration(): boolean {
         return this.hasMigrations()
+    }
+
+    needsCreationMigration(): boolean {
+        return !! this.needsMigration
+    }
+
+    wasCreatedFromInterface(): boolean {
+        return !! this.createdFromInterface
     }
 
     canCreateNewMigration(): boolean {

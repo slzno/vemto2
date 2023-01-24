@@ -50,7 +50,6 @@ test('It can check if a column does not have changes', () => {
 
     const hasSchemaChanges = column.hasSchemaChanges({
         name: 'name',
-        length: 255,
         type: 'string',
         autoIncrement: false,
         nullable: false,
@@ -282,7 +281,22 @@ test('It can check if a column is a PK', () => {
     const column = TestHelper.createColumnWithSchemaState()
 
     column.name = 'id'
+    column.autoIncrement = true
     column.save()
+
+    expect(column.isPrimaryKey()).toBe(true)
+})
+
+test('It can check if a column is a PK by index', () => {
+    const column = TestHelper.createColumnWithSchemaState()
+
+    column.name = 'id'
+    column.save()
+
+    TestHelper.createPrimaryIndex({
+        table: column.table,
+        columns: [column.name],
+    })
 
     expect(column.isPrimaryKey()).toBe(true)
 })
@@ -310,6 +324,7 @@ test('It can check if a column is a special PK', () => {
     const column = TestHelper.createColumnWithSchemaState()
 
     column.name = 'special_primary_key'
+    column.type = 'uuid'
     column.save()
 
     expect(column.isSpecialPrimaryKey()).toBe(true)

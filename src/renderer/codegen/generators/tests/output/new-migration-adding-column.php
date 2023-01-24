@@ -13,7 +13,7 @@ return new class extends Migration {
     public function up()
     {
         Schema::table('posts', function (Blueprint $table) {
-            $table->string('tag', 255)->after('id');
+            $table->string('tag')->after('id');
         });
     }
 

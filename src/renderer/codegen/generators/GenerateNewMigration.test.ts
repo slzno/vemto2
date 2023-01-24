@@ -181,3 +181,26 @@ test('It can generate a migration to remove an index', async () => {
 
     expect(contentIsEqual).toBe(true)
 })
+
+test('It can generate a migration to create a new table', async () => {
+    const table = TestHelper.createTable({ name: 'posts', needsMigration: true })
+
+    // add primary
+    TestHelper.createColumn({ name: 'id', type: 'unsignedBigInteger', order: 0, table, autoIncrement: true })
+    TestHelper.createColumn({ name: 'title', order: 1, table })
+    TestHelper.createColumn({ name: 'content', order: 2, table })
+    TestHelper.createColumn({ name: 'token', order: 3, table })
+    TestHelper.createColumn({ name: 'user_id', order: 4, table })
+
+    TestHelper.createIndex({ name: 'new_index', columns: ['token'], table })
+    TestHelper.createForeignIndex({ name: 'new_foreign_index', columns: ['user_id'], references: 'users', on: 'id', table })
+
+    GenerateNewMigration.setTable(table)
+
+    const renderedTemplateContent = await GenerateNewMigration.getContent(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/new-migration-creating-table.php'), renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
+})

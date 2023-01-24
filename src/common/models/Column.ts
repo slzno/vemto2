@@ -62,7 +62,11 @@ export default class Column extends RelaDB.Model {
     }
 
     isPrimaryKey(): boolean {
-        return this.name === 'id'
+        return this.isAutoIncrement() || this.table.hasPrimaryIndexForColumn(this)
+    }
+
+    isAutoIncrement(): boolean {
+        return !! this.autoIncrement
     }
 
     isForeign(): boolean {
@@ -78,7 +82,7 @@ export default class Column extends RelaDB.Model {
     }
 
     isSpecialPrimaryKey(): boolean {
-        return this.name === 'special_primary_key'
+        return this.type === 'uuid'
     }
 
     hasImplicitIndex(): boolean {

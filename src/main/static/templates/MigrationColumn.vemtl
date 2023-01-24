@@ -23,6 +23,10 @@ $table-><$ column.type $>('<$ column.name $>'
 ->nullable()
 <up } up>
 <# --- #>
+<up if (column.isAutoIncrement()) { up>
+->autoIncrement()
+<up } up>
+<# --- #>
 <up if (column.isSpecialPrimaryKey()) { up>
 ->primary()
 <up } up>
@@ -34,7 +38,7 @@ $table-><$ column.type $>('<$ column.name $>'
 ->index()
 <up } up>
 <% const columnAfter = column.getAfter() %>
-<up if (columnAfter && this.templateParams.enableColumnAfterUsage) { up>
+<up if (columnAfter && (this.templateParams.enableColumnAfterUsage)) { up>
 ->after('<$ columnAfter $>')
 <up } up>
 <# Adds the ->change() method if the column is being changed #>

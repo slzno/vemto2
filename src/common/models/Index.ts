@@ -172,4 +172,8 @@ export default class Index extends RelaDB.Model {
     isRemoved(): boolean {
         return !! this.removed
     }
+
+    hasColumn(column: string): boolean {
+        return this.columns.includes(column)
+    }
 }
