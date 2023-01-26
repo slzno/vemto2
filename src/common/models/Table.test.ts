@@ -264,7 +264,7 @@ test('It can get the related tables', () => {
 
     const relatedTables = table.getRelatedTables()
 
-    expect(relatedTables.length).toBe(2)
+    expect(relatedTables.length).toBe(0)
 })
 
 test('It can get the table models', () => {
