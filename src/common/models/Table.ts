@@ -8,6 +8,8 @@ export default class Table extends RelaDB.Model {
     name: string
     indexes: Index[]
     project: Project
+    removed: boolean
+    schemaState: any
     projectId: string
     columns: Column[]
     migrations: any[]
@@ -51,18 +53,55 @@ export default class Table extends RelaDB.Model {
         return this
     }
 
+    remove() {
+        if(this.isNew()) {
+            return this.delete()
+        }
+        
+        this.removed = true
+
+        this.save()
+    }
+
+    getOldName(): string {
+        if(!this.schemaState) return this.name
+
+        return this.schemaState.name
+    }
+
     hasSchemaChanges(comparisonData: any): boolean {
         return this.name !== comparisonData.name ||
             this.migrations !== comparisonData.migrations
     }
 
     applyChanges(data: any) {
-        if(!this.hasSchemaChanges(data)) return
+        if(!this.hasSchemaChanges(data)) return false
         
         this.name = data.name
         this.migrations = data.migrations
         this.createdFromInterface = false
+
+        this.fillSchemaState()
+
         this.save()
+
+        return true
+    }
+
+    saveSchemaState() {
+        this.fillSchemaState()
+
+        this.save()
+    }
+
+    fillSchemaState() {
+        this.schemaState = this.buildSchemaState()
+    }
+
+    buildSchemaState() {
+        return {
+            name: this.name,
+        }
     }
 
     hasColumn(columnName: string): boolean {
@@ -266,5 +305,19 @@ export default class Table extends RelaDB.Model {
 
     canCreateNewMigration(): boolean {
         return true
+    }
+
+    isNew(): boolean {
+        return !this.schemaState
+    }
+
+    wasRenamed(): boolean {
+        if(!this.schemaState) return false
+        
+        return this.schemaState.name !== this.name
+    }
+
+    isRemoved(): boolean {
+        return !! this.removed
     }
 }

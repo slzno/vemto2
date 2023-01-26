@@ -56,6 +56,14 @@ export default new class TestHelper {
         return table
     }
 
+    createTableWithSchemaState(data = {}) {
+        const table = this.createTable(data)
+
+        table.saveSchemaState()
+
+        return table
+    }
+
     createColumn(data = {}) {
         if(!data.table) {
             data.table = this.createTable()

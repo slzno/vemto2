@@ -20,6 +20,112 @@ test('It can save a new table', () => {
     expect(table.id).toBe(1)
 })
 
+test('A table has changes when schema state is empty', () => {
+    const table = new Table()
+    
+    table.name = 'test_table'
+    table.save()
+
+    expect(table.hasSchemaChanges({})).toBe(true)
+})
+
+test('It can check if a table has changes', () => {
+    const table = TestHelper.createTableWithSchemaState()
+
+    const hasSchemaChanges = table.hasSchemaChanges({
+        name: 'test_table',
+    })
+
+    expect(hasSchemaChanges).toBe(true)
+})
+
+test('It can check if a table does not have changes', () => {
+    const table = TestHelper.createTableWithSchemaState()
+
+    const hasSchemaChanges = table.hasSchemaChanges({
+        name: 'users',
+    })
+
+    expect(hasSchemaChanges).toBe(false)
+})
+
+test('It can apply table changes', () => {
+    const table = TestHelper.createTable()
+
+    table.applyChanges({ name: 'test_table_2' })
+
+    expect(table.name).toBe('test_table_2')
+    expect(table.schemaState.name).toBe('test_table_2')
+})
+
+test('It can save schema state separately', () => {
+    const table = TestHelper.createTable()
+
+    table.applyChanges({ name: 'renamed' })
+
+    expect(table.name).toBe('renamed')
+    expect(table.schemaState.name).toBe('renamed')
+
+    table.name = 'reverted'
+    table.save()
+
+    expect(table.fresh().name).toBe('reverted')
+    expect(table.fresh().schemaState.name).toBe('renamed')
+
+    table.saveSchemaState()
+
+    expect(table.fresh().name).toBe('reverted')
+    expect(table.fresh().schemaState.name).toBe('reverted')
+})
+
+test('It does not apply changes when unnecessary', () => {
+    const table = TestHelper.createTable()
+
+    let changesWereApplied = table.applyChanges({ name: 'renamed' })
+
+    expect(changesWereApplied).toBe(true)
+
+    // The changes were already applied, so they should not be applied again
+    changesWereApplied = table.applyChanges({ name: 'renamed' })
+
+    expect(changesWereApplied).toBe(false)
+})
+
+test('A table was not considered renamed when schema state is empty', () => {
+    const table = TestHelper.createTable()
+
+    table.name = 'renamed'
+    table.save()
+
+    const wasRenamed = table.wasRenamed()
+
+    expect(wasRenamed).toBe(false)
+})
+
+test('It can check if a table was renamed from interface', () => {
+    const table = TestHelper.createTable()
+
+    table.applyChanges({ name: 'renamed' })
+
+    expect(table.wasRenamed()).toBe(false)
+
+    table.name = 'reverted'
+    table.save()
+
+    expect(table.wasRenamed()).toBe(true)
+})
+
+test('A table can not be considered as renamed without schema state', () => {
+    const table = TestHelper.createTable()
+
+    expect(table.wasRenamed()).toBe(false)
+
+    table.name = 'reverted'
+    table.save()
+
+    expect(table.wasRenamed()).toBe(false)
+})
+
 test('It sets the table position when creating', () => {
     const table = TestHelper.createTable()
 

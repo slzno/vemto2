@@ -24,6 +24,7 @@
 <#  #>
 <# Changed indexes #>
 <% for (let index of this.table.getNotRenamedChangedIndexes()) { %>
+    <# It drops and recreates the index #>
     <import template="MigrationDropIndex.vemtl">
     <import template="MigrationIndex.vemtl">
 <% } %>
