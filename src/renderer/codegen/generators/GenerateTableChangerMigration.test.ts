@@ -45,7 +45,7 @@ test('It can get the migration name', () => {
 
     GenerateTableChangerMigration.setTable(table)
 
-    expect(GenerateTableChangerMigration.getName()).toBe('/database/migrations/2019_12_14_000002_change_users_table.php')
+    expect(GenerateTableChangerMigration.getName().includes('change_users_table.php')).toBe(true)
 })
 
 test('It can add the migration to the generation queue and remove the table from changed tables', async () => {

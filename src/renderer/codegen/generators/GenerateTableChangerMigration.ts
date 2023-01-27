@@ -30,7 +30,7 @@ export default new class GenerateTableChangerMigration {
         const datePrefix = new Date().toISOString().split('T')[0].replace(/-/g, '_'),
             timePrefix = new Date().toISOString().split('T')[1].split('.')[0].replace(/:/g, '')
 
-        return `/database/migrations/${datePrefix}_${timePrefix}_update_${this.table.name}_table.php`
+        return `/database/migrations/${datePrefix}_${timePrefix}_change_${this.table.name}_table.php`
     }
 
     async generateMigration() {
