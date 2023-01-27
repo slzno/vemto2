@@ -80,6 +80,64 @@ export default class MigrationEditor {
         return this.getRegexMatch(regex)
     }
 
+    addContentToSchemaTableOnDownMethod(table: string, content: string) {
+        const tableContent = this.getSchemaTableContentOnDownMethod(table),
+            newTableContent = tableContent + content
+        
+        this.content = this.content.replace(tableContent, newTableContent)
+
+        return this
+    }
+
+    addContentToSchemaCreateOnDownMethod(table: string, content: string) {
+        const tableContent = this.getSchemaCreateContentOnDownMethod(table),
+            newTableContent = tableContent + content
+
+        this.content = this.content.replace(tableContent, newTableContent)
+
+        return this
+    }
+
+    replaceSchemaTableOnDownMethod(table: string, content: string) {
+        const tableContent = this.getSchemaTableContentOnDownMethod(table)
+
+        this.content = this.content.replace(tableContent, content)
+
+        return this
+    }
+
+    replaceSchemaCreateOnDownMethod(table: string, content: string) {
+        const tableContent = this.getSchemaCreateOnDownMethod(table)
+
+        this.content = this.content.replace(tableContent, content)
+
+        return this
+    }
+
+    getSchemaTableOnDownMethod(table: string): string {
+        const regex = new RegExp(`(?<=down\\(\\)(.*))Schema::table\\(('|")${table}('|")(.*?)}\\);(?=(.*)})`, 's')
+        
+        return this.getRegexMatch(regex)
+    }
+
+    getSchemaTableContentOnDownMethod(table: string): string {
+        const regex = new RegExp(`(?<=down\\(\\)(.*)Schema::table\\(('|")${table}('|")(.*){)(.*?)(?=}\\);(.*)})`, 's')
+        
+        return this.getRegexMatch(regex)
+    }
+
+    getSchemaCreateOnDownMethod(table: string): string {
+        const regex = new RegExp(`(?<=down\\(\\)(.*))Schema::create\\(('|")${table}('|")(.*?)}\\);(?=(.*)})`, 's')
+        
+        return this.getRegexMatch(regex)
+    }
+
+    getSchemaCreateContentOnDownMethod(table: string): string {
+        const regex = new RegExp(`(?<=down\\(\\)(.*)Schema::create\\(('|")${table}('|")(.*){)(.*?)(?=}\\);(.*)})`, 's')
+        
+        return this.getRegexMatch(regex)
+    }
+
     getRegexMatch(regex: RegExp): string {
         const matches = this.content.match(regex)
 

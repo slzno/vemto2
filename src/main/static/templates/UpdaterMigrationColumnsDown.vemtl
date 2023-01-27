@@ -1,0 +1,47 @@
+<# This tempalte is used to revert changes on an updater migration (down method) #>
+<# New columns #>
+<% for (let column of this.table.getNewColumns()) { %>
+    $table->dropColumn('<$ column.name $>');
+<% } %>
+<#  #>
+<#  #>
+<# Changed columns #>
+<% for (let newColumn of this.table.getNotRenamedChangedColumns()) { %>
+    <# Gets old column data from new column #>
+    <% let column = newColumn.old() %>
+    <import template="MigrationColumn.vemtl" addChangeMethod="true">
+<% } %>
+<#  #>
+<#  #>
+<# New indexes #>
+<% for (let index of this.table.getNewIndexes()) { %>
+    <import template="MigrationDropIndex.vemtl">
+<% } %>
+<#  #>
+<#  #>
+<# Removed indexes #>
+<% for (let index of this.table.getRemovedIndexes()) { %>
+    <import template="MigrationIndex.vemtl">
+<% } %>
+<#  #>
+<#  #>
+<# Changed indexes #>
+<% for (let newIndex of this.table.getNotRenamedChangedIndexes()) { %>
+    <# Gets old index data from new index #>
+    <% let index = newIndex.old() %>
+    <# It drops and recreates the index #>
+    <import template="MigrationDropIndex.vemtl">
+    <import template="MigrationIndex.vemtl">
+<% } %>
+<#  #>
+<#  #>
+<# Renamed columns #>
+<% for (let column of this.table.getRenamedColumns()) { %>
+    $table->renameColumn('<$ column.name $>', '<$ column.getOldName() $>');
+<% } %>
+<#  #>
+<#  #>
+<# Removed columns #>
+<% for (let column of this.table.getRemovedColumns()) { %>
+    <import template="MigrationColumn.vemtl" enableColumnAfterUsage="true">
+<% } %>

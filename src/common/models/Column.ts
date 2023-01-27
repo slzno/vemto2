@@ -185,4 +185,12 @@ export default class Column extends RelaDB.Model {
     getPreviousColumn(): Column {
         return this.table.columns.find((column) => column.order === this.order - 1)
     }
+
+    old(): Column {
+        let oldColumn = new Column(this.schemaState)
+
+        oldColumn.tableId = this.tableId
+
+        return oldColumn
+    }
 }

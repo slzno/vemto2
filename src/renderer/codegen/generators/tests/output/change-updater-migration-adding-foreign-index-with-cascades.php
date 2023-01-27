@@ -32,6 +32,7 @@ return new class extends Migration {
     {
         Schema::table('users', function (Blueprint $table) {
             $table->renameColumn('avatar_renamed', 'avatar');
+            $table->dropForeign('new_index');
         });
     }
 };

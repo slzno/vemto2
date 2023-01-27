@@ -176,4 +176,12 @@ export default class Index extends RelaDB.Model {
     hasColumn(column: string): boolean {
         return this.columns.includes(column)
     }
+
+    old(): Index {
+        let oldIndex = new Index(this.schemaState)
+
+        oldIndex.tableId = this.tableId
+
+        return oldIndex
+    }
 }

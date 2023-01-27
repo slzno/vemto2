@@ -78,16 +78,25 @@ export default new class UpdateExistingMigration {
     async changeUpdaterMigration() {
         const latestMigration = this.table.getLatestUpdaterMigration(),
             latestMigrationContent = await Main.API.readProjectFile(latestMigration.relativePath),
-            columnsTemplate = await Main.API.readTemplateFile('UpdaterMigrationColumns.vemtl')
+            upColumnsTemplate = await Main.API.readTemplateFile('UpdaterMigrationColumns.vemtl'),
+            downColumnsTemplate = await Main.API.readTemplateFile('UpdaterMigrationColumnsDown.vemtl')
 
         TemplateCompiler
-            .setContent(columnsTemplate)
+            .setContent(upColumnsTemplate)
             .setData({ table: this.table })
 
-        const compiledTemplate = await TemplateCompiler.compileWithImports(),
+        let compiledTemplate = await TemplateCompiler.compileWithImports(),
             migrationEditor = new MigrationEditor(latestMigrationContent)
 
         migrationEditor.addContentToSchemaTableOnUpMethod(this.table.name, compiledTemplate)
+
+        TemplateCompiler
+            .setContent(downColumnsTemplate)
+            .setData({ table: this.table })
+
+        compiledTemplate = await TemplateCompiler.compileWithImports()
+
+        migrationEditor.addContentToSchemaTableOnDownMethod(this.table.name, compiledTemplate)
 
         return PhpFormatter.setContent(
             migrationEditor.getMigrationContent()
