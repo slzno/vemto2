@@ -24,5 +24,8 @@ return new class extends Migration {
      */
     public function down()
     {
+        Schema::table('posts', function (Blueprint $table) {
+            $table->dropIndex('new_index');
+        });
     }
 };

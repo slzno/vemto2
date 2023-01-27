@@ -31,6 +31,6 @@ class Update<$ this.table.name $>Table extends Migration
      */
     public function down()
     {
-        
+        <import template="UpdaterSchemaDown.vemtl">
     }
 }<% if (laravelVersion >= 9) { %>;<% } %>

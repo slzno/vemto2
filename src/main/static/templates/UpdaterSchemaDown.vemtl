@@ -1,0 +1,3 @@
+Schema::table('<$ this.table.name $>', function (Blueprint $table) {
+    <import template="UpdaterMigrationColumnsDown.vemtl">
+});
