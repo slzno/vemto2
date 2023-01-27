@@ -24,8 +24,8 @@ class DiffReporter {
                 diffFile = fs.readFileSync(path.join(__dirname, 'templates',  `diff.html`)).toString(),
                 diffContent = ''
 
-            diffContent = diffFile.replace('{TEST NAME}', dataContent.testName)
-            diffContent = diffContent.replace('{TEMPLATE NAME}', dataContent.templateName)
+            diffContent = diffFile.replace(new RegExp('{TEST NAME}', 'g'), dataContent.testName)
+            diffContent = diffContent.replace(new RegExp('{TEMPLATE NAME}', 'g'), dataContent.templateName)
             diffContent = diffContent.replace('{CONTENT INITIAL}', this.fixTemplateContent(initialContent))
             diffContent = diffContent.replace('{CONTENT FINAL}', this.fixTemplateContent(finalContent))
 
