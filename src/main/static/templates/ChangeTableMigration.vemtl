@@ -1,0 +1,43 @@
+<?php
+<# TEMPLATE VARIABLES #>
+<# const pascalCase = TemplateRequire('pascalCase') #>
+<% const laravelVersion = 9 %>
+<####>
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+<% if (laravelVersion >= 9) { %>
+return new class extends Migration
+<% } else { %>
+class ChangeTablesMigration extends Migration
+<% } %>
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        <% for (let table of this.project.getRenamedTables()) { %>
+            Schema::rename('<$ table.getOldName() $>', '<$ table.name $>');
+        <% } %>
+        <% for (let table of this.project.getRemovedTables()) { %>
+            Schema::dropIfExists('<$ table.name $>');
+        <% } %>
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        <% for (let table of this.project.getRenamedTables()) { %>
+            Schema::rename('<$ table.name $>', '<$ table.getOldName() $>');
+        <% } %>
+    }
+}<% if (laravelVersion >= 9) { %>;<% } %>

@@ -21,9 +21,7 @@ class Update<$ this.table.name $>Table extends Migration
      */
     public function up()
     {
-        Schema::table('<$ this.table.name $>', function (Blueprint $table) {
-            <import template="UpdaterMigrationColumns.vemtl">
-        });
+        <import template="UpdaterSchema.vemtl">
     }
 
     /**

@@ -50,6 +50,8 @@ export default class Table extends RelaDB.Model {
 
         this.save()
 
+        this.markAsChanged()
+
         return this
     }
 
@@ -61,6 +63,8 @@ export default class Table extends RelaDB.Model {
         this.removed = true
 
         this.save()
+
+        this.markAsChanged()
     }
 
     getOldName(): string {

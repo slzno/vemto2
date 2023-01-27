@@ -85,6 +85,22 @@ export default class Project extends RelaDB.Model {
         return this.tables.filter((table) => this.changedTablesIds.includes(table.id))
     }
 
+    getRenamedTables(): Table[] {
+        return this.getTables().filter((table) => table.wasRenamed())
+    }
+
+    getRemovedTables(): Table[] {
+        return this.tables.filter((table) => table.isRemoved())
+    }
+
+    getNewTables(): Table[] {
+        return this.getTables().filter((table) => table.isNew())
+    }
+
+    getTables(): Table[] {
+        return this.tables.filter((table) => !table.isRemoved())
+    }
+
     markTableAsChanged(table: Table) {
         if(!this.changedTablesIds) this.changedTablesIds = []
 
