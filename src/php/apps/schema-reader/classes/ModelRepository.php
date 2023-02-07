@@ -28,7 +28,6 @@ class ModelRepository {
 
             $relationships = [];
 
-            // get all the relationships (methods that return an instance of the Eloquent relationship - but we cant use the return type because old versions of PHP dont support it, so we need to use the method content)
             foreach ($classMethods as $method) {
                 $fileContent = file_get_contents($method->getFileName());
                 
@@ -43,9 +42,22 @@ class ModelRepository {
 
                 Vemto::dump($methodContent);
 
+                // get the type, but using the method content because return type is not available in older PHP versions. if the method has the string "$this->hasOne(Model::class)" it will return "hasOne"
+                $relationshipType = null;
+                if (preg_match('/return \$this->hasOne\(/', $methodContent)) {
+                    $relationshipType = 'hasOne';
+                } else if (preg_match('/return \$this->hasMany\(/', $methodContent)) {
+                    $relationshipType = 'hasMany';
+                } else if (preg_match('/return \$this->belongsTo\(/', $methodContent)) {
+                    $relationshipType = 'belongsTo';
+                } else if (preg_match('/return \$this->belongsToMany\(/', $methodContent)) {
+                    $relationshipType = 'belongsToMany';
+                }
+
                 if (preg_match('/return \$this->(hasOne|hasMany|belongsTo|belongsToMany)\(/', $methodContent)) {
                     $relationships[] = [
-                        'name' => $method->getName()
+                        'name' => $method->getName(),
+                        'type' => $relationshipType
                     ];
                 }
             }
