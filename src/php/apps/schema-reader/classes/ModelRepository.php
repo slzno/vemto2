@@ -31,9 +31,6 @@ class ModelRepository {
             foreach ($classMethods as $method) {
                 $fileContent = file_get_contents($method->getFileName());
                 
-                // $methodContent = substr($methodContent, $method->getStartLine(), $method->getEndLine() - $method->getStartLine());
-
-                // get method content using the start and end line
                 $methodContent = '';
                 $lines = preg_split("/\r\n|\n|\r/", $fileContent);
                 for ($i = $method->getStartLine() - 1; $i < $method->getEndLine(); $i++) {
@@ -42,19 +39,21 @@ class ModelRepository {
 
                 Vemto::dump($methodContent);
 
-                // get the type, but using the method content because return type is not available in older PHP versions. if the method has the string "$this->hasOne(Model::class)" it will return "hasOne"
-                $relationshipType = null;
-                if (preg_match('/return \$this->hasOne\(/', $methodContent)) {
-                    $relationshipType = 'hasOne';
-                } else if (preg_match('/return \$this->hasMany\(/', $methodContent)) {
-                    $relationshipType = 'hasMany';
-                } else if (preg_match('/return \$this->belongsTo\(/', $methodContent)) {
-                    $relationshipType = 'belongsTo';
-                } else if (preg_match('/return \$this->belongsToMany\(/', $methodContent)) {
-                    $relationshipType = 'belongsToMany';
-                }
+                if (preg_match('/return \$this->(hasOne|hasMany|belongsTo|belongsToMany|hasOneThrough|hasManyThrough|morphOne|morphTo|morphToMany)\(/', $methodContent)) {
+                    $relationshipType = null;
+                    
+                    if (preg_match('/return \$this->hasOne\(/', $methodContent)) {
+                        $relationshipType = 'hasOne';
+                    } else if (preg_match('/return \$this->hasMany\(/', $methodContent)) {
+                        $relationshipType = 'hasMany';
+                    } else if (preg_match('/return \$this->belongsTo\(/', $methodContent)) {
+                        $relationshipType = 'belongsTo';
+                    } else if (preg_match('/return \$this->belongsToMany\(/', $methodContent)) {
+                        $relationshipType = 'belongsToMany';
+                    }
 
-                if (preg_match('/return \$this->(hasOne|hasMany|belongsTo|belongsToMany)\(/', $methodContent)) {
+                    // TODO: add the rest of the relationship types
+
                     $relationships[] = [
                         'name' => $method->getName(),
                         'type' => $relationshipType
