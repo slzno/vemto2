@@ -114,6 +114,8 @@
                 let relatedTables = table.getRelatedTables()
 
                 relatedTables.forEach((relatedTable: any) => {
+                    if(!relatedTable || !relatedTable.id) return
+
                     let relatedNode = document.getElementById(
                             "table_" + relatedTable.id
                         ),

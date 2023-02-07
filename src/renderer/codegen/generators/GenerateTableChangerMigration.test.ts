@@ -5,8 +5,6 @@ import { test, expect, beforeEach, jest } from '@jest/globals'
 import TestHelper from '@Renderer/../../tests/base/TestHelper'
 import schemaData from '@Common/services/tests/input/schema-reader-L9.json'
 import TablesFromMigrationsBuilder from '@Common/services/TablesFromMigrationsBuilder'
-import Column from '@Renderer/../common/models/Column'
-import Index from '@Renderer/../common/models/Index'
 
 jest.mock('@Renderer/services/wrappers/Main')
 

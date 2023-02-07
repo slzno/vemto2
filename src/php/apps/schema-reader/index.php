@@ -9,6 +9,7 @@ require_once 'common/Vemto.php';
 require_once 'classes/ExtendedKernel.php';
 require_once 'classes/ExtendedBuilder.php';
 require_once 'classes/TableRepository.php';
+require_once 'classes/ModelRepository.php';
 require_once 'classes/MigrationDecoder.php';
 require_once 'classes/ExtendedMigrator.php';
 require_once 'classes/ExtendedBlueprint.php';
@@ -75,7 +76,13 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
     $tablesRepository = new TableRepository();
     $tablesRepository->buildTablesFromMigrations();
 
-    $response = $tablesRepository->getTables();
+    $tables = $tablesRepository->getTables();
 
-    Vemto::respondWith($response);
+    // $models = [];
+    $models = ModelRepository::getModelsFormatted();
+
+    Vemto::respondWith([
+        'tables' => $tables,
+        'models' => $models,
+    ]);
 });
