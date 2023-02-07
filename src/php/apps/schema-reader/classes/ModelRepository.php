@@ -21,19 +21,39 @@ class ModelRepository {
             $hidden = $properties['hidden'] ?? [];
             $appends = $properties['appends'] ?? [];
 
-            $relationships = [];
-            $methods = [];
-
             $allMethods = $reflection->getMethods();
             $classMethods = collect($allMethods)->filter(function ($method) use ($model) {
-                // Vemto::dump($method->getFileName());
-                // Vemto::dump($model);
-
                 return $method->getFileName() == $model['fullPath'];
             });
 
+            $relationships = [];
+
+            // get all the relationships (methods that return an instance of the Eloquent relationship - but we cant use the return type because old versions of PHP dont support it, so we need to use the method content)
+            foreach ($classMethods as $method) {
+                $fileContent = file_get_contents($method->getFileName());
+                
+                // $methodContent = substr($methodContent, $method->getStartLine(), $method->getEndLine() - $method->getStartLine());
+
+                // get method content using the start and end line
+                $methodContent = '';
+                $lines = preg_split("/\r\n|\n|\r/", $fileContent);
+                for ($i = $method->getStartLine() - 1; $i < $method->getEndLine(); $i++) {
+                    $methodContent .= $lines[$i] . PHP_EOL;
+                }
+
+                Vemto::dump($methodContent);
+
+                if (preg_match('/return \$this->(hasOne|hasMany|belongsTo|belongsToMany)\(/', $methodContent)) {
+                    $relationships[] = [
+                        'name' => $method->getName()
+                    ];
+                }
+            }
+
             $formattedModels[] = [
-                'name' => $model['class'],
+                'name' => $model['name'],
+                'class' => $model['class'],
+                'path' => $model['path'],
                 'fillable' => $fillable,
                 'casts' => $casts,
                 'dates' => $dates,
