@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\File;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class ModelRepository {
     protected $models = [];
@@ -11,7 +12,6 @@ class ModelRepository {
         $formattedModels = [];
 
         foreach ($models as $model) {
-            // use reflection to get the class properties
             $reflection = new \ReflectionClass($model['class']);
             $properties = $reflection->getDefaultProperties();
 
@@ -28,10 +28,6 @@ class ModelRepository {
 
             $relationships = [];
 
-            $modelInstance = new $model['class'];
-            Vemto::dump($modelInstance);
-            Vemto::dump($modelInstance->getRelations());
-
             foreach ($classMethods as $method) {
                 $fileContent = file_get_contents($method->getFileName());
                 
@@ -43,25 +39,24 @@ class ModelRepository {
 
                 Vemto::dump($methodContent);
 
-                if (preg_match('/return \$this->(hasOne|hasMany|belongsTo|belongsToMany|hasOneThrough|hasManyThrough|morphOne|morphTo|morphToMany)\(/', $methodContent)) {
-                    $relationshipType = null;
+                if (preg_match('/return \$this->(hasOne|hasMany|belongsTo|belongsToMany|hasOneThrough|hasManyThrough|morphOne|morphTo|morphToMany|through)/', $methodContent)) {
+                    $return = $method->invoke(new $model['class']);
                     
-                    if (preg_match('/return \$this->hasOne\(/', $methodContent)) {
-                        $relationshipType = 'hasOne';
-                    } else if (preg_match('/return \$this->hasMany\(/', $methodContent)) {
-                        $relationshipType = 'hasMany';
-                    } else if (preg_match('/return \$this->belongsTo\(/', $methodContent)) {
-                        $relationshipType = 'belongsTo';
-                    } else if (preg_match('/return \$this->belongsToMany\(/', $methodContent)) {
-                        $relationshipType = 'belongsToMany';
+                    if ($return instanceof Relation) {
+                        $relationships[] = [
+                            'name' => $method->getName(),
+                            'type' => (new ReflectionClass($return))->getShortName(),
+                            'relatedTable' => $return->getRelated()->getTable(),
+                            'relatedModel' => $return->getRelated()->getMorphClass(),
+                            'parentModel' => $return->getParent()->getMorphClass(),
+                            'foreignKey' => method_exists($return, 'getForeignKeyName') ? $return->getForeignKeyName() : null,
+                            'localKey' => method_exists($return, 'getLocalKeyName') ? $return->getLocalKeyName() : null,
+                            'ownerKey' => method_exists($return, 'getOwnerKeyName') ? $return->getOwnerKeyName() : null,
+                            'relatedKey' => method_exists($return, 'getRelatedKeyName') ? $return->getRelatedKeyName() : null,
+                            'morphType' => method_exists($return, 'getMorphType') ? $return->getMorphType() : null,
+                            'method' => $methodContent,
+                        ];
                     }
-
-                    // TODO: add the rest of the relationship types
-
-                    $relationships[] = [
-                        'name' => $method->getName(),
-                        'type' => $relationshipType
-                    ];
                 }
             }
 
@@ -75,9 +70,6 @@ class ModelRepository {
                 'hidden' => $hidden,
                 'appends' => $appends,
                 'relationships' => $relationships,
-                // 'scopes' => $scopes,
-                // 'accessors' => $accessors,
-                // 'mutators' => $mutators,
                 'methods' => $classMethods,
             ];
         }
