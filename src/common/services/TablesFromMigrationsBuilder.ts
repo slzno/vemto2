@@ -7,16 +7,16 @@ import Project from "@Common/models/Project"
 class TablesFromMigrationsBuilder {
     static processing: boolean = false
 
-    schemaData: any
     project: Project
+    schemaTablesData: any
     hasLocalChanges: boolean
-    schemaDataHash: string
+    schemaTablesDataHash: string
 
     reset() {
         this.project = null
-        this.schemaData = null
+        this.schemaTablesData = null
         this.hasLocalChanges = false
-        this.schemaDataHash = ''
+        this.schemaTablesDataHash = ''
     }
 
     setProject(project: Project) {
@@ -25,7 +25,7 @@ class TablesFromMigrationsBuilder {
     }
 
     setSchemaData(schemaData: any) {
-        this.schemaData = schemaData
+        this.schemaTablesData = schemaData.tables
         return this
     }
 
@@ -36,15 +36,15 @@ class TablesFromMigrationsBuilder {
     }
 
     checkSchemaChanges() {
-        this.schemaDataHash = md5(JSON.stringify(this.schemaData)).toString()
+        this.schemaTablesDataHash = md5(JSON.stringify(this.schemaTablesData)).toString()
         
-        if (this.project.schemaDataHash === this.schemaDataHash) {
+        if (this.project.schemaTablesDataHash === this.schemaTablesDataHash) {
             return
         }
 
         this.hasLocalChanges = true
 
-        this.project.schemaDataHash = this.schemaDataHash
+        this.project.schemaTablesDataHash = this.schemaTablesDataHash
         this.project.save()
 
         return this
@@ -74,14 +74,14 @@ class TablesFromMigrationsBuilder {
 
         // Delete tables that no longer exist
         tablesNames.forEach((tableName) => {
-            if (!this.schemaData[tableName]) {
+            if (!this.schemaTablesData[tableName]) {
                 const table = tablesKeyedByName[tableName]
                 table.delete()
             }
         })
 
-        Object.keys(this.schemaData).forEach((tableName) => {
-            let tableData = this.schemaData[tableName],
+        Object.keys(this.schemaTablesData).forEach((tableName) => {
+            let tableData = this.schemaTablesData[tableName],
                 table: Table = null
 
             if(!tablesNames.includes(tableName)) {

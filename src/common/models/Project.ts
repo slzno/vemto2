@@ -6,7 +6,8 @@ export default class Project extends RelaDB.Model {
     path: string
     name: string
     tables: Table[]
-    schemaDataHash: string
+    schemaTablesDataHash: string
+    schemaModelsDataHash: string
     laravelVersion: Number
     changedTablesIds: string[]
 
