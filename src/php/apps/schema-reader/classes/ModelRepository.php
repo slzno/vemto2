@@ -28,6 +28,10 @@ class ModelRepository {
 
             $relationships = [];
 
+            $modelInstance = new $model['class'];
+            Vemto::dump($modelInstance);
+            Vemto::dump($modelInstance->getRelations());
+
             foreach ($classMethods as $method) {
                 $fileContent = file_get_contents($method->getFileName());
                 
