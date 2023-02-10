@@ -37,8 +37,6 @@ class ModelRepository {
                     $methodContent .= $lines[$i] . PHP_EOL;
                 }
 
-                Vemto::dump($methodContent);
-
                 if (preg_match('/return \$this->(hasOne|hasMany|belongsTo|belongsToMany|hasOneThrough|hasManyThrough|morphOne|morphTo|morphToMany|through)/', $methodContent)) {
                     $return = $method->invoke(new $model['class']);
                     
@@ -46,13 +44,14 @@ class ModelRepository {
                         $relationships[] = [
                             'name' => $method->getName(),
                             'type' => (new ReflectionClass($return))->getShortName(),
-                            'relatedTable' => $return->getRelated()->getTable(),
-                            'relatedModel' => $return->getRelated()->getMorphClass(),
-                            'parentModel' => $return->getParent()->getMorphClass(),
-                            'foreignKey' => method_exists($return, 'getForeignKeyName') ? $return->getForeignKeyName() : null,
-                            'localKey' => method_exists($return, 'getLocalKeyName') ? $return->getLocalKeyName() : null,
-                            'ownerKey' => method_exists($return, 'getOwnerKeyName') ? $return->getOwnerKeyName() : null,
-                            'relatedKey' => method_exists($return, 'getRelatedKeyName') ? $return->getRelatedKeyName() : null,
+                            'relatedTableName' => $return->getRelated()->getTable(),
+                            'relatedModelName' => $return->getRelated()->getMorphClass(),
+                            'parentTableName' => $return->getParent()->getTable(),
+                            'parentModelName' => $return->getParent()->getMorphClass(),
+                            'foreignKeyName' => method_exists($return, 'getForeignKeyName') ? $return->getForeignKeyName() : null,
+                            'localKeyName' => method_exists($return, 'getLocalKeyName') ? $return->getLocalKeyName() : null,
+                            'ownerKeyName' => method_exists($return, 'getOwnerKeyName') ? $return->getOwnerKeyName() : null,
+                            'relatedKeyName' => method_exists($return, 'getRelatedKeyName') ? $return->getRelatedKeyName() : null,
                             'morphType' => method_exists($return, 'getMorphType') ? $return->getMorphType() : null,
                             'method' => $methodContent,
                         ];
@@ -61,7 +60,9 @@ class ModelRepository {
             }
 
             $formattedModels[] = [
-                'name' => $model['name'],
+                'fileName' => $model['fileName'],
+                'name' => str_replace('.php', '', $model['fileName']),
+                'tableName' => (new $model['class'])->getTable(),
                 'class' => $model['class'],
                 'path' => $model['path'],
                 'fillable' => $fillable,
@@ -100,7 +101,7 @@ class ModelRepository {
                         'class' => $class,
                         'path' => $path,
                         'fullPath' => $item->getPathname(),
-                        'name' => $item->getFilename(),
+                        'fileName' => $item->getFilename(),
                     ];
                 })
                 ->filter(function ($classData) {

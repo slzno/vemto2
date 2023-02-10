@@ -2,6 +2,7 @@
     import Table from "@Common/models/Table"
     import { nextTick, onMounted, onUnmounted, ref } from "vue"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
+    import modelsBuilder from "@Common/services/ModelsFromSchemaBuilder"
     import tablesBuilder from "@Common/services/TablesFromMigrationsBuilder"
     import SchemaTables from "@Renderer/views/components/ProjectSchema/SchemaTables.vue"
 
@@ -59,6 +60,15 @@
             projectStore.project.path
         )
 
+        await loadTables(schemaData, force)
+        await loadModels(schemaData, force)
+
+        nextTick(() => {
+            initSchema()
+        })
+    }
+
+    const loadTables = async (schemaData: any, force = false) => {
         if (!schemaData) return
 
         tablesBuilder
@@ -75,10 +85,21 @@
         tablesData.value = Table.get()
 
         if(force) projectStore.project.clearChangedTables()
+    }
 
-        nextTick(() => {
-            initSchema()
-        })
+    const loadModels = async (schemaData: any, force = false) => {
+        if (!schemaData) return
+
+        modelsBuilder
+            .setProject(projectStore.project)
+            .setSchemaData(schemaData)
+            .checkSchemaChanges()
+
+        if(force) modelsBuilder.force()
+
+        if (modelsBuilder.doesNotHaveSchemaChanges()) return
+
+        modelsBuilder.build()
     }
 
     const initSchema = () => {

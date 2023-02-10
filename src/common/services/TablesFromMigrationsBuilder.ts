@@ -24,6 +24,14 @@ class TablesFromMigrationsBuilder {
         return this
     }
 
+    hasSchemaChanges() {
+        return this.hasLocalChanges
+    }
+    
+    doesNotHaveSchemaChanges() {
+        return !this.hasLocalChanges
+    }
+
     setSchemaData(schemaData: any) {
         this.schemaTablesData = schemaData.tables
         return this
@@ -98,14 +106,6 @@ class TablesFromMigrationsBuilder {
             this.readColumns(tableData, table)
             this.readIndexes(tableData, table)
         })
-    }
-
-    hasSchemaChanges() {
-        return this.hasLocalChanges
-    }
-    
-    doesNotHaveSchemaChanges() {
-        return !this.hasLocalChanges
     }
 
     readColumns(tableData: any, table: Table) {

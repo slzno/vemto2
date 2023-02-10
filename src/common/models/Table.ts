@@ -1,4 +1,5 @@
 import Index from './Index'
+import Model from './Model'
 import Column from './Column'
 import Project from './Project'
 import RelaDB from '@tiago_silva_pereira/reladb'
@@ -7,6 +8,7 @@ export default class Table extends RelaDB.Model {
     id: string
     name: string
     indexes: Index[]
+    models: Model[]
     project: Project
     removed: boolean
     schemaState: any
@@ -25,6 +27,7 @@ export default class Table extends RelaDB.Model {
     relationships() {
         return {
             project: () => this.belongsTo(Project),
+            models: () => this.hasMany(Model).cascadeDelete(),
             indexes: () => this.hasMany(Index).cascadeDelete(),
             columns: () => this.hasMany(Column).cascadeDelete(),
         }
@@ -194,6 +197,10 @@ export default class Table extends RelaDB.Model {
         }, {})
     }
 
+    getForeignIndexes(): Index[] {
+        return this.getIndexes().filter((index) => index.isForeign())
+    }
+
     hasPrimaryIndexForColumn(column: Column): boolean {
         return this.getIndexes().find((index: Index) => index.isPrimary() && index.hasColumn(column.name)) !== undefined
     }
@@ -207,42 +214,32 @@ export default class Table extends RelaDB.Model {
     }
 
     hasRelatedTables(): boolean {
-        return true
+        return !! this.getRelatedTables().length
     }
 
     getRelatedTables(): Table[] {
-        let relatedMap = {
-            'users': [1, 2]
-        }
+        let relatedTables: Table[] = []
 
-        let tableMap = relatedMap[this.name] || []
+        this.getForeignIndexes().forEach((index) => {
+            const foreignTable = index.getForeignTable()
 
-        return tableMap.map(relatedTableId => Table.find(relatedTableId))
+            console.log(foreignTable)
+
+            if(!foreignTable) return
+
+            let relatedTable = this.project.findTableByName(foreignTable.name)
+
+            if(relatedTable) {
+                relatedTables.push(relatedTable)
+            }
+        })
+                
+
+        return relatedTables
     }
 
-    getModels(): any[] {
-        let modelsMap = {
-            'users': [{
-                name: 'User.php',
-                relationships: [
-                    {type: 'hasMany', model: 'Post'}
-                ]
-            }],
-            'posts': [{
-                name: 'Post.php',
-                relationships: [
-                    {type: 'belongsTo', model: 'User'}
-                ]
-            }],
-            'videos': [{
-                name: 'Video.php',
-                relationships: [
-                    {type: 'belongsTo', model: 'User'}
-                ]
-            }]
-        }
-
-        return modelsMap[this.name] || []
+    getModels(): Model[] {
+        return this.models
     }
 
     hasTimestamps(): boolean {

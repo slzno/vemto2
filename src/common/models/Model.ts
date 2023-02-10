@@ -1,16 +1,24 @@
+import Table from './Table'
 import Project from './Project'
 import RelaDB from '@tiago_silva_pereira/reladb'
+import Relationship from './Relationship'
 
 export default class Model extends RelaDB.Model {
     id: string
     name: string
-    class: string
     path: string
+    table: Table
+    class: string
+    tableId: string
+    fileName: string
     schemaState: any
     removed: boolean
     project: Project
+    tableName: string
     projectId: string
     createdFromInterface: boolean
+    ownRelationships: Relationship[]
+    relatedRelationships: Relationship[]
 
     /**
      * Laravel related properties
@@ -28,7 +36,10 @@ export default class Model extends RelaDB.Model {
 
     relationships() {
         return {
+            table: () => this.belongsTo(Table),
             project: () => this.belongsTo(Project),
+            ownRelationships: () => this.hasMany(Relationship).cascadeDelete(),
+            relatedRelationships: () => this.hasMany(Relationship, 'relatedModelId').cascadeDelete(),
         }
     }
 
@@ -66,6 +77,8 @@ export default class Model extends RelaDB.Model {
 
     hasSchemaChanges(comparisonData: any): boolean {
         return this.name !== comparisonData.name ||
+            this.fileName !== comparisonData.fileName ||
+            this.tableName !== comparisonData.tableName ||
             this.class !== comparisonData.class ||
             this.path !== comparisonData.path ||
             this.casts !== comparisonData.casts ||
@@ -78,9 +91,25 @@ export default class Model extends RelaDB.Model {
 
     applyChanges(data: any) {
         if(!this.hasSchemaChanges(data)) return false
-        
+
         this.name = data.name
+        this.fileName = data.fileName
+        this.tableName = data.tableName
+        this.class = data.class
+        this.path = data.path
+        this.casts = data.casts
+        this.fillable = data.fillable
+        this.dates = data.dates
+        this.hidden = data.hidden
+        this.appends = data.appends
+        this.methods = data.methods
         this.createdFromInterface = false
+
+        const table = this.project.findTableByName(data.tableName)
+        
+        if(table) {
+            this.tableId = table.id
+        }
 
         this.fillSchemaState()
 
@@ -102,6 +131,7 @@ export default class Model extends RelaDB.Model {
     buildSchemaState() {
         return {
             name: this.name,
+            tableName: this.tableName,
             class: this.class,
             path: this.path,
             casts: this.casts,
@@ -129,5 +159,19 @@ export default class Model extends RelaDB.Model {
 
     isRemoved(): boolean {
         return !! this.removed
+    }
+
+    getRelationshipsNames(): string[] {
+        return this.ownRelationships.map(relationship => relationship.name)
+    }
+
+    getAllRelationshipsKeyedByName(): { [key: string]: Relationship } {
+        const relationships = {}
+
+        this.ownRelationships.forEach(relationship => {
+            relationships[relationship.name] = relationship
+        })
+
+        return relationships
     }
 }

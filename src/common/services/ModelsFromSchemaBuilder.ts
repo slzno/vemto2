@@ -1,5 +1,7 @@
 import md5 from "crypto-js/md5"
+import Model from "@Common/models/Model"
 import Project from "@Common/models/Project"
+import Relationship from "@Common/models/Relationship"
 
 class ModelsFromSchemaBuilder {
     static processing: boolean = false
@@ -19,6 +21,14 @@ class ModelsFromSchemaBuilder {
     setProject(project: Project) {
         this.project = project
         return this
+    }
+
+    hasSchemaChanges() {
+        return this.hasLocalChanges
+    }
+    
+    doesNotHaveSchemaChanges() {
+        return !this.hasLocalChanges
     }
 
     setSchemaData(schemaData: any) {
@@ -68,13 +78,62 @@ class ModelsFromSchemaBuilder {
 
     readModels() {
         const modelsNames = this.project.getModelsNames(),
-            modelsKeyedByName = this.project.getModelsKeyedByName()
+            modelsKeyedByName = this.project.getAllModelsKeyedByName()
 
         // Delete models that no longer exist
         modelsNames.forEach((modelName: string) => {
             if(!this.schemaModelsData[modelName]) {
                 modelsKeyedByName[modelName].delete()
             }
+        })
+
+        // Create or update models
+        Object.keys(this.schemaModelsData).forEach((modelName: string) => {
+            let modelData = this.schemaModelsData[modelName],
+                model: Model = null
+
+            if(!modelsNames.includes(modelName)) {
+                model = new Model
+                model.projectId = this.project.id
+
+                modelsKeyedByName[modelName] = model
+            } else {
+                model = modelsKeyedByName[modelName]
+            }
+
+            model.applyChanges(modelData)
+
+            this.readRelationships(modelData, model)
+        })
+    }
+
+    readRelationships(modelData: any, model: Model) {
+        const relationshipsNames = model.getRelationshipsNames(),
+            relationshipsKeyedByName = model.getAllRelationshipsKeyedByName()
+
+        // Delete relationships that no longer exist
+        relationshipsNames.forEach((relationshipName: string) => {
+            if(!modelData.relationships[relationshipName]) {
+                relationshipsKeyedByName[relationshipName].delete()
+            }
+        })
+
+        // Create or update relationships
+        console.log(modelData)
+        Object.keys(modelData.relationships).forEach((relationshipName: string) => {
+            let relationshipData = modelData.relationships[relationshipName],
+                relationship: Relationship = null
+
+            if(!relationshipsNames.includes(relationshipName)) {
+                relationship = new Relationship
+                relationship.modelId = model.id
+
+                relationshipsKeyedByName[relationshipName] = relationship
+            } else {
+                relationship = relationshipsKeyedByName[relationshipName]
+            }
+
+            relationship.applyChanges(relationshipData)
         })
     }
 

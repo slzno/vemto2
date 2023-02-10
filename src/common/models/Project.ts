@@ -1,4 +1,5 @@
 import Table from './Table'
+import Model from './Model'
 import RelaDB from '@tiago_silva_pereira/reladb'
 
 export default class Project extends RelaDB.Model {
@@ -6,9 +7,10 @@ export default class Project extends RelaDB.Model {
     path: string
     name: string
     tables: Table[]
+    models: Model[]
+    laravelVersion: Number
     schemaTablesDataHash: string
     schemaModelsDataHash: string
-    laravelVersion: Number
     changedTablesIds: string[]
 
     static identifier() {
@@ -18,6 +20,7 @@ export default class Project extends RelaDB.Model {
     relationships() {
         return {
             tables: () => this.hasMany(Table).cascadeDelete(),
+            models: () => this.hasMany(Model).cascadeDelete(),
         }
     }
 
@@ -72,6 +75,20 @@ export default class Project extends RelaDB.Model {
         })
 
         return tables
+    }
+
+    getModelsNames(): string[] {
+        return this.models.map((model) => model.name)
+    }
+
+    getAllModelsKeyedByName(): { [key: string]: Model } {
+        let models: { [key: string]: Model } = {}
+
+        this.models.forEach((model) => {
+            models[model.name] = model
+        })
+
+        return models
     }
 
     hasChangedTables(): boolean {

@@ -26,8 +26,12 @@ class Vemto {
             "success" => "[SUCCESS]",
         ];
 
-        $logFileath = realpath(__DIR__ . '/../../../out/');
-        $logFile = $logFileath . '/apps.log';
+        if(getenv('VEMTO_DEBUG')) {
+            $logFilePath = realpath(__DIR__ . '/../../../out/');
+            $logFile = $logFilePath . '/apps.log';
+        } else {
+            $logFile = getcwd() . '/vemto.log';
+        }
 
         if(!file_exists($logFile)) {
             file_put_contents($logFile, '');
@@ -57,6 +61,7 @@ class Vemto {
             }
 
             echo "VEMTO_ERROR_START({$appName} Error: " . $th->getMessage() . ")VEMTO_ERROR_END";
+            echo "VEMTO_ERROR_TRACE_START({$appName} Error: " . $th->getTraceAsString() . ")VEMTO_ERROR_TRACE_END";
 
             exit(static::FAILURE);
         }

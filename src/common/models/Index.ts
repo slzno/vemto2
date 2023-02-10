@@ -177,6 +177,10 @@ export default class Index extends RelaDB.Model {
         return this.columns.includes(column)
     }
 
+    getForeignTable(): Table {
+        return this.table.project.findTableByName(this.on)
+    }
+
     old(): Index {
         let oldIndex = new Index(this.schemaState)
 

@@ -14,7 +14,7 @@
         "lint": "eslint ./src --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
         "prettier": "npx prettier . --write",
         "php:compile": "php ./src/php/compile.php",
-        "php:test": "php ./src/php/tests/vendor/bin/phpunit ./src/php/tests/src --verbose",
+        "php:test": "set VEMTO_DEBUG=1 && php ./src/php/tests/vendor/bin/phpunit ./src/php/tests/src --verbose",
         "php:test-output": "set VEMTO_DEBUG=1 && php ./src/php/output.php",
         "test:mock": "yarn php:test-output && php ./mock.php",
         "test": "jest --runInBand",

@@ -70,7 +70,8 @@ export default class Column extends RelaDB.Model {
     }
 
     isForeign(): boolean {
-        return this.name === 'user_id'
+        const foreignIndexes = this.table.getForeignIndexes()
+        return foreignIndexes.some(index => index.columns.includes(this.name))
     }
 
     isUnique(): boolean {
