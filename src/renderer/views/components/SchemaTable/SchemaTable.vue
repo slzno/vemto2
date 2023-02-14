@@ -53,7 +53,7 @@
         :data-table-id="table.id"
         :class="{
             'border border-transparent': !selected,
-            'border border-red-400 dark:border-red-500': selected,
+            'border dark:border-slate-500': selected,
         }"
         class="schema-table cursor-move absolute shadow-lg rounded-lg hover:border-slate-500 bg-white dark:bg-slate-850 z-10 space-y-4 pb-4"
         style="min-width: 270px"
