@@ -7,7 +7,8 @@
 
     const props = defineProps(["table"]),
         table = toRef(props, "table"),
-        showingOptions = ref(false)
+        showingOptions = ref(false),
+        selected = ref(false)
 
     let clickedQuickly = false
 
@@ -31,12 +32,18 @@
             return
         }
 
+        selected.value = true
         showingOptions.value = true
+    }
+
+    const tableOptionsClosed = () => {
+        selected.value = false
+        showingOptions.value = false
     }
 </script>
 
 <template>
-    <TableOptions ref="tableOptionsWindow" :table="table" :show="showingOptions" @close="showingOptions = false" />
+    <TableOptions ref="tableOptionsWindow" :table="table" :show="showingOptions" @close="tableOptionsClosed()" />
 
     <div
         @mousedown="startClick()"
@@ -45,8 +52,8 @@
         :ref="`table_${table.id}`"
         :data-table-id="table.id"
         :class="{
-            'border border-transparent': table.name !== 'selected',
-            'border border-slate-500': table.name === 'selected',
+            'border border-transparent': !selected,
+            'border border-red-400 dark:border-red-500': selected,
         }"
         class="schema-table cursor-move absolute shadow-lg rounded-lg hover:border-slate-500 bg-white dark:bg-slate-850 z-10 space-y-4 pb-4"
         style="min-width: 270px"
