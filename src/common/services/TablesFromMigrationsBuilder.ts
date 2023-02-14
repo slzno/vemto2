@@ -37,13 +37,13 @@ class TablesFromMigrationsBuilder {
         return this
     }
 
-    build() {
+    async build() {
         if(TablesFromMigrationsBuilder.processing) return
 
         this.processTables()
     }
 
-    checkSchemaChanges() {
+    async checkSchemaChanges() {
         this.schemaTablesDataHash = md5(JSON.stringify(this.schemaTablesData)).toString()
         
         if (this.project.schemaTablesDataHash === this.schemaTablesDataHash) {

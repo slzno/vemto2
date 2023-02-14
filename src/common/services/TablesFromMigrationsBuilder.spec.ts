@@ -16,7 +16,8 @@ const processSchemaData = (project) => {
         .setProject(project)
         .setSchemaData(schemaDataClone)
         .checkSchemaChanges()
-        .build()
+    
+    TablesFromMigrationsBuilder.build()
 
     return schemaDataClone
 }

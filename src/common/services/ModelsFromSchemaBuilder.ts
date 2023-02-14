@@ -36,13 +36,13 @@ class ModelsFromSchemaBuilder {
         return this
     }
 
-    build() {
+    async build() {
         if(ModelsFromSchemaBuilder.processing) return
 
         this.processModels()
     }
 
-    checkSchemaChanges() {
+    async checkSchemaChanges() {
         this.schemaModelsDataHash = md5(JSON.stringify(this.schemaModelsData)).toString()
         
         if (this.project.schemaModelsDataHash === this.schemaModelsDataHash) {

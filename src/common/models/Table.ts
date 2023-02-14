@@ -223,8 +223,6 @@ export default class Table extends RelaDB.Model {
         this.getForeignIndexes().forEach((index) => {
             const foreignTable = index.getForeignTable()
 
-            console.log(foreignTable)
-
             if(!foreignTable) return
 
             let relatedTable = this.project.findTableByName(foreignTable.name)

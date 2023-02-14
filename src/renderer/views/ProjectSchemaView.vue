@@ -25,6 +25,7 @@
         interval = null,
         isDragging = false,
         currentConnections = {},
+        currentNodes = {},
         jsPlumbInstance: BrowserJsPlumbInstance = null
 
     onMounted(() => {
@@ -40,7 +41,7 @@
         interval = setInterval(() => {
             if (isDragging) return
             loadSchema()
-        }, 500)
+        }, 1000)
     })
 
     onUnmounted(() => {
@@ -71,7 +72,7 @@
     const loadTables = async (schemaData: any, force = false) => {
         if (!schemaData) return
 
-        tablesBuilder
+        await tablesBuilder
             .setProject(projectStore.project)
             .setSchemaData(schemaData)
             .checkSchemaChanges()
@@ -80,7 +81,7 @@
 
         if (tablesBuilder.doesNotHaveSchemaChanges()) return
 
-        tablesBuilder.build()
+        await tablesBuilder.build()
 
         tablesData.value = Table.get()
 
@@ -90,7 +91,7 @@
     const loadModels = async (schemaData: any, force = false) => {
         if (!schemaData) return
 
-        modelsBuilder
+        await modelsBuilder
             .setProject(projectStore.project)
             .setSchemaData(schemaData)
             .checkSchemaChanges()
@@ -99,37 +100,22 @@
 
         if (modelsBuilder.doesNotHaveSchemaChanges()) return
 
-        modelsBuilder.build()
+        await modelsBuilder.build()
     }
 
     const initSchema = () => {
-        if (!jsPlumbInstance) {
-            jsPlumbInstance = newInstance({
-                container: document.getElementById("tablesContainer")!,
-            })
-        }
+        initJsPlumbIfNotExists()
 
         tablesData.value.forEach((table: any) => {
-            let node = document.getElementById("table_" + table.id)!
+            if(!table || !table.id) return
 
-            jsPlumbInstance.manage(node)
+            if(!currentNodes[table.id]) {
+                currentNodes[table.id] = document.getElementById("table_" + table.id)!
 
-            jsPlumbInstance.bind(EVENT_DRAG_START, () => {
-                isDragging = true
-            })
-
-            jsPlumbInstance.bind(EVENT_DRAG_STOP, (p: any) => {
-                isDragging = false
-
-                const tableId = parseInt(p.el.getAttribute("data-table-id")),
-                    table: Table = tablesData.value.find(
-                        (table) => table.id === tableId
-                    )
-
-                table.positionX = p.el.style.left.replace("px", "")
-                table.positionY = p.el.style.top.replace("px", "")
-                table.save()
-            })
+                jsPlumbInstance.manage(currentNodes[table.id])
+            }
+            
+            let node = currentNodes[table.id]
 
             if (table.hasRelatedTables()) {
                 let relatedTables = table.getRelatedTables()
@@ -159,6 +145,31 @@
                     }
                 })
             }
+        })
+    }
+
+    const initJsPlumbIfNotExists = () => {
+        if (jsPlumbInstance) return
+
+        jsPlumbInstance = newInstance({
+            container: document.getElementById("tablesContainer")!,
+        })
+
+        jsPlumbInstance.bind(EVENT_DRAG_START, () => {
+            isDragging = true
+        })
+
+        jsPlumbInstance.bind(EVENT_DRAG_STOP, (p: any) => {
+            isDragging = false
+
+            const tableId = parseInt(p.el.getAttribute("data-table-id")),
+                table: Table = tablesData.value.find(
+                    (table) => table.id === tableId
+                )
+
+            table.positionX = p.el.style.left.replace("px", "")
+            table.positionY = p.el.style.top.replace("px", "")
+            table.save()
         })
     }
 </script>

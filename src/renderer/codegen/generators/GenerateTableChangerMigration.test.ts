@@ -20,7 +20,8 @@ const processSchemaData = (project, mockMigrationsPaths = true) => {
         .setProject(project)
         .setSchemaData(schemaDataClone)
         .checkSchemaChanges()
-        .build()
+        
+    TablesFromMigrationsBuilder.build()
 
     // Mock paths to get migrations files from the tests directory
     // instead of the real project migrations directory
