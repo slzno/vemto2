@@ -9,7 +9,7 @@
     <div class="dark:text-slate-300 space-y-2">
         <div class="rounded bg-slate-50 dark:bg-slate-900 px-2 py-1 hover:bg-slate-100 dark:hover:bg-slate-950 hover:cursor-pointer">
             <div class="font-semibold text-sm flex justify-between">
-                {{ model.name }}
+                {{ model.class }}
                 <div class="text-xs text-slate-700">Model</div>
             </div>
 

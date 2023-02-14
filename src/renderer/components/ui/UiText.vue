@@ -23,7 +23,7 @@
         },
     })
 
-    defineEmits(["update:modelValue"])
+    defineEmits(["update:modelValue", "change"])
 
     watch(() => props.modelValue, (newValue) => {
         localValue.value = newValue
@@ -42,6 +42,7 @@
         :placeholder="placeholder"
         v-model="localValue"
         @input="$emit('update:modelValue', localValue)"
+        @change="$emit('change', localValue)"
         spellcheck="false"
         autocomplete="false"
         :disabled="disabled"

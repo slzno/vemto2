@@ -91,6 +91,20 @@ export default class Project extends RelaDB.Model {
         return models
     }
 
+    getModelsClasses(): string[] {
+        return this.models.map((model) => model.class)
+    }
+
+    getAllModelsKeyedByClass(): { [key: string]: Model } {
+        let models: { [key: string]: Model } = {}
+
+        this.models.forEach((model) => {
+            models[model.class] = model
+        })
+
+        return models
+    }
+
     hasChangedTables(): boolean {
         if(!this.changedTablesIds) return false
 

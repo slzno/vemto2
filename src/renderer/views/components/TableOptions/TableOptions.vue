@@ -2,6 +2,7 @@
     import { toRef, ref } from "vue"
     import Table from "@Common/models/Table"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
+    import TableModels from "../TableOptions/TableModels.vue"
     import TableColumns from "../TableOptions/TableColumns.vue"
 
     import {
@@ -60,6 +61,10 @@
 
                 <div class="p-4 space-y-2" v-if="selectedTab === 'columns'">
                     <TableColumns :columns="table.columns" />
+                </div>
+
+                <div class="p-4 space-y-2" v-if="selectedTab === 'models'">
+                    <TableModels :models="table.models" />
                 </div>
             </div>
         </div>

@@ -10,12 +10,14 @@ class ModelsFromSchemaBuilder {
     schemaModelsData: any
     hasLocalChanges: boolean
     schemaModelsDataHash: string
+    changedRelationships: Relationship[] = []
 
     reset() {
         this.project = null
         this.schemaModelsData = null
         this.hasLocalChanges = false
         this.schemaModelsDataHash = ''
+        this.changedRelationships = []
     }
 
     setProject(project: Project) {
@@ -70,6 +72,7 @@ class ModelsFromSchemaBuilder {
         ModelsFromSchemaBuilder.processing = true
 
         this.readModels()
+        this.setRelatedModels()
 
         this.reset()
 
@@ -77,68 +80,78 @@ class ModelsFromSchemaBuilder {
     }
 
     readModels() {
-        const modelsNames = this.project.getModelsNames(),
-            modelsKeyedByName = this.project.getAllModelsKeyedByName()
+        const modelsClasses = this.project.getModelsClasses(),
+            modelsKeyedByClass = this.project.getAllModelsKeyedByClass()
 
         // Delete models that no longer exist
-        modelsNames.forEach((modelName: string) => {
-            if(!this.schemaModelsData[modelName]) {
-                modelsKeyedByName[modelName].delete()
+        modelsClasses.forEach((modelClass: string) => {
+            if(!this.schemaModelsData.find(m => m.class === modelClass)) {
+                console.log('deleting model' + modelClass)
+                modelsKeyedByClass[modelClass].delete()
             }
         })
 
         // Create or update models
-        Object.keys(this.schemaModelsData).forEach((modelName: string) => {
-            let modelData = this.schemaModelsData[modelName],
-                model: Model = null
+        this.schemaModelsData.forEach((modelData: any) => {
+            let model: Model = null
 
-            if(!modelsNames.includes(modelName)) {
+            if(!modelsClasses.includes(modelData.class)) {
                 model = new Model
                 model.projectId = this.project.id
 
-                modelsKeyedByName[modelName] = model
+                modelsKeyedByClass[modelData.class] = model
             } else {
-                model = modelsKeyedByName[modelName]
+                model = modelsKeyedByClass[modelData.class]
             }
 
             model.applyChanges(modelData)
 
-            this.readRelationships(modelData, model, modelsKeyedByName)
+            this.readRelationships(modelData, model)
         })
     }
 
-    readRelationships(modelData: any, model: Model, modelsKeyedByName: any) {
+    readRelationships(modelData: any, model: Model) {
         const relationshipsNames = model.getRelationshipsNames(),
             relationshipsKeyedByName = model.getAllRelationshipsKeyedByName()
 
         // Delete relationships that no longer exist
         relationshipsNames.forEach((relationshipName: string) => {
-            if(!modelData.relationships[relationshipName]) {
+            if(!modelData.relationships.find(r => r.name === relationshipName)) {
+                console.log('deleting relationship' + relationshipName + ' from model ' + model.name)
                 relationshipsKeyedByName[relationshipName].delete()
             }
         })
 
         // Create or update relationships
-        Object.keys(modelData.relationships).forEach((relationshipName: string) => {
-            let relationshipData = modelData.relationships[relationshipName],
-                relationship: Relationship = null
+        modelData.relationships.forEach((relationshipData: any) => {
+            let relationship: Relationship = null
 
-            if(!relationshipsNames.includes(relationshipName)) {
+            if(!relationshipsNames.includes(relationshipData.name)) {
                 relationship = new Relationship
                 relationship.modelId = model.id
 
-                const relatedModel = modelsKeyedByName[relationshipData.relatedModelName]
-
-                if(relatedModel) {
-                    relationship.relatedModelId = relatedModel.id
-                }
-
-                relationshipsKeyedByName[relationshipName] = relationship
+                relationshipsKeyedByName[relationshipData.name] = relationship
             } else {
-                relationship = relationshipsKeyedByName[relationshipName]
+                relationship = relationshipsKeyedByName[relationshipData.name]
             }
 
             relationship.applyChanges(relationshipData)
+
+            this.changedRelationships.push(relationship)
+        })
+    }
+
+    setRelatedModels() {
+        const modelsKeyedByClass = this.project.getAllModelsKeyedByClass()
+
+        this.changedRelationships.forEach((relationship: Relationship) => {
+            const relatedModel = modelsKeyedByClass[relationship.relatedModelName]
+
+            if(relatedModel) {
+                relationship.relatedModelId = relatedModel.id
+            }
+
+            relationship.save()
         })
     }
 
