@@ -8,7 +8,10 @@
 <template>
     <div class="dark:text-slate-300 space-y-2">
         <div class="rounded bg-slate-50 dark:bg-slate-900 px-2 py-1">
-            <span class="font-semibold text-sm">{{ model.name }}</span>
+            <div class="font-semibold text-sm flex justify-between">
+                {{ model.name }}
+                <div class="text-xs text-slate-700">Model</div>
+            </div>
 
             <div class="px-2 my-1" v-for="relationship in model.ownRelationships" :key="relationship.id">
                 <div class="w-full flex items-center">
