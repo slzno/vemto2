@@ -1,0 +1,44 @@
+<script setup lang="ts">
+    import { ref, defineProps, defineEmits, onMounted } from 'vue'
+
+    let localValue = ref(null)
+
+    const props = defineProps({
+        modelValue: {
+            type: String,
+            required: true,
+        },
+
+        tabs: {
+            type: Array<{label: string, value: string}>,
+            required: true,
+        },
+    })
+
+    const emit = defineEmits(['update:modelValue'])
+
+    onMounted((): void => {
+        localValue.value = props.modelValue
+    })
+
+    const setTab = (value: string): void => {
+        localValue.value = value
+        emit('update:modelValue', value)
+    }
+</script>
+
+<template>
+    <ul
+        class="bg-slate-800 flex space-x-2 text-sm text-slate-500 px-1 border-b border-slate-700"
+    >
+        <li
+            v-for="tab in tabs"
+            :key="tab.value"
+            @click="setTab(tab.value)"
+            class="rounded-t px-2 py-1 -mb-px cursor-pointer hover:text-slate-200"
+            :class="{'text-slate-200 bg-slate-850 border-l border-t border-r border-slate-700': tab.value === localValue}"
+        >
+            {{ tab.label }}
+        </li>
+    </ul>
+</template>

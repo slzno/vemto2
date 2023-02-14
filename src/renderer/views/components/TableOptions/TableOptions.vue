@@ -1,10 +1,12 @@
 <script setup lang="ts">
+    import { toRef, ref } from "vue"
+    import Table from "@Common/models/Table"
+    import UiTabs from "@Renderer/components/ui/UiTabs.vue"
+    import TableColumns from "../TableOptions/TableColumns.vue"
+
     import {
         XMarkIcon,
     } from "@heroicons/vue/24/outline"
-    import Table from "@Common/models/Table"
-    import { toRef } from "vue"
-    import TableColumns from "../TableOptions/TableColumns.vue";
 
     const props = defineProps({
         show: Boolean,
@@ -13,6 +15,15 @@
 
     const show = toRef(props, "show"),
         table = toRef(props, "table")
+
+    const selectedTab = ref("columns")
+
+    const tabs = [
+        {label: "Columns", value: "columns"},
+        {label: "Models", value: "models"},
+        {label: "Indexes", value: "indexes"},
+        {label: "Settings", value: "settings"},
+    ]
 </script>
 
 <template>
@@ -45,54 +56,9 @@
                     <XMarkIcon class="w-4 h-4 stroke-2 hover:text-red-500" />
                 </button>
 
-                <ul
-                    class="bg-slate-800 flex space-x-2 text-sm text-slate-500 px-1 border-b border-slate-700"
-                >
-                    <li
-                        class="rounded-t px-2 py-1 -mb-px cursor-pointer text-slate-200 bg-slate-850 border-l border-t border-r border-slate-700"
-                    >
-                        Columns
-                    </li>
-                    <li
-                        class="rounded-t px-2 py-1 -mb-px cursor-pointer hover:text-slate-200"
-                    >
-                        Models
-                    </li>
-                    <li
-                        class="rounded-t px-2 py-1 -mb-px cursor-pointer hover:text-slate-200"
-                    >
-                        Indexes
-                    </li>
-                    <li
-                        class="rounded-t px-2 py-1 -mb-px cursor-pointer hover:text-slate-200"
-                    >
-                        Settings
-                    </li>
-                </ul>
+                <UiTabs :tabs="tabs" v-model="selectedTab" />
 
-                <!-- <div class="p-4 space-y-4">
-                        <div class="flex flex-col">
-                            <label class="text-xs mb-1 text-slate-400">Name</label>
-                            <input
-                                type="text"
-                                class="border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg"
-                                placeholder="Name"
-                                value="users"
-                            />
-                        </div>
-
-                        <div class="flex flex-col">
-                            <label class="text-xs mb-1 text-slate-400">Item Noun</label>
-                            <input
-                                type="text"
-                                class="border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg"
-                                placeholder="Name"
-                                value="user"
-                            />
-                        </div>
-                    </div> -->
-
-                <div class="p-4 space-y-2">
+                <div class="p-4 space-y-2" v-if="selectedTab === 'columns'">
                     <TableColumns :columns="table.columns" />
                 </div>
             </div>

@@ -56,6 +56,7 @@
         "vue-tsc": "^0.40.13"
     },
     "dependencies": {
+        "@headlessui/vue": "^1.7.9",
         "@heroicons/vue": "^2.0.11",
         "@highlightjs/vue-plugin": "^2.1.0",
         "@jsplumb/browser-ui": "^5.12.0",
