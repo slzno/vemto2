@@ -103,11 +103,11 @@ class ModelsFromSchemaBuilder {
 
             model.applyChanges(modelData)
 
-            this.readRelationships(modelData, model)
+            this.readRelationships(modelData, model, modelsKeyedByName)
         })
     }
 
-    readRelationships(modelData: any, model: Model) {
+    readRelationships(modelData: any, model: Model, modelsKeyedByName: any) {
         const relationshipsNames = model.getRelationshipsNames(),
             relationshipsKeyedByName = model.getAllRelationshipsKeyedByName()
 
@@ -119,7 +119,6 @@ class ModelsFromSchemaBuilder {
         })
 
         // Create or update relationships
-        console.log(modelData)
         Object.keys(modelData.relationships).forEach((relationshipName: string) => {
             let relationshipData = modelData.relationships[relationshipName],
                 relationship: Relationship = null
@@ -127,6 +126,12 @@ class ModelsFromSchemaBuilder {
             if(!relationshipsNames.includes(relationshipName)) {
                 relationship = new Relationship
                 relationship.modelId = model.id
+
+                const relatedModel = modelsKeyedByName[relationshipData.relatedModelName]
+
+                if(relatedModel) {
+                    relationship.relatedModelId = relatedModel.id
+                }
 
                 relationshipsKeyedByName[relationshipName] = relationship
             } else {
