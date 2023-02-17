@@ -37,7 +37,7 @@
     }, 500)
 
     const saveRelationship = debounce((relationship) => {
-        relationship.save()
+        relationship.saveFromInterface()
     }, 500)
 </script>
 

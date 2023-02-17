@@ -51,7 +51,7 @@ export default class Relationship extends RelaDB.Model {
 
         this.save()
 
-        // this.markAsChanged()
+        this.syncSourceCode()
 
         return this
     }
@@ -65,7 +65,7 @@ export default class Relationship extends RelaDB.Model {
 
         this.save()
 
-        // this.markAsChanged()
+        this.syncSourceCode()
     }
 
     getOldName(): string {
@@ -153,5 +153,10 @@ export default class Relationship extends RelaDB.Model {
 
     isRemoved(): boolean {
         return !! this.removed
+    }
+
+    syncSourceCode() {
+        this.model.syncSourceCode()
+        this.relatedModel.syncSourceCode()
     }
 }

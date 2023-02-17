@@ -5,6 +5,12 @@
         CodeBracketIcon,
         Cog8ToothIcon,
     } from "@heroicons/vue/24/outline"
+    
+    import { computed } from "vue"
+    import { useRoute } from "vue-router"
+
+    const route = useRoute(),
+        activeRoute = computed(() => route.path)
 </script>
 
 <template>
@@ -18,17 +24,29 @@
                 <HomeIcon class="w-5 h-5 stroke-2" />
             </RouterLink>
 
-            <li
-                class="w-full h-12 flex justify-center items-center py-10 text-red-500"
+            <RouterLink
+                :class="{
+                    'text-red-500': activeRoute === '/project/schema',
+                    'text-slate-400 dark:text-slate-600 hover:text-red-500': activeRoute !== '/project/schema',
+                }"
+                class="w-full h-12 flex justify-center items-center py-10"
+                as="li"
+                to="/project/schema"
             >
                 <CircleStackIcon class="w-9 h-9 stroke-2" />
-            </li>
+            </RouterLink>
 
-            <li
-                class="w-full h-12 flex justify-center items-center py-10 text-slate-400 dark:text-slate-600 hover:text-slate-800"
+            <RouterLink
+                :class="{
+                    'text-red-500': activeRoute === '/project/code-queue',
+                    'text-slate-400 dark:text-slate-600 hover:text-red-500': activeRoute !== '/project/code-queue',
+                }"
+                class="w-full h-12 flex justify-center items-center py-10"
+                as="li"
+                to="/project/code-queue"
             >
                 <CodeBracketIcon class="w-9 h-9 stroke-2" />
-            </li>
+            </RouterLink>
 
             <li
                 class="w-full h-12 flex justify-center items-center py-10 text-slate-400 dark:text-slate-600 hover:text-slate-800"

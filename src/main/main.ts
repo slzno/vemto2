@@ -4,6 +4,7 @@ import { HandleFileQueue } from "./FileQueueHandler"
 import { app, BrowserWindow, session } from "electron"
 import { HandleIpcMessages } from "./IpcMessagesHandler"
 import installExtension from "electron-devtools-installer"
+import { HandleRenderableFileQueue } from "./RenderableFileQueueHandler"
 
 const isTesting = process.env.NODE_ENV === "test",
     isDevelopment = process.env.NODE_ENV === "development"
@@ -11,6 +12,7 @@ const isTesting = process.env.NODE_ENV === "test",
 HandleDatabase()
 HandleFileQueue()
 HandleIpcMessages()
+HandleRenderableFileQueue()
 
 function createWindow() {
     const mainWindow = new BrowserWindow({

@@ -1,6 +1,7 @@
 import Table from './Table'
 import Model from './Model'
 import RelaDB from '@tiago_silva_pereira/reladb'
+import RenderableFile, { RenderableFileStatus } from './RenderableFile'
 
 export default class Project extends RelaDB.Model {
     id: string
@@ -12,6 +13,7 @@ export default class Project extends RelaDB.Model {
     schemaTablesDataHash: string
     schemaModelsDataHash: string
     changedTablesIds: string[]
+    renderableFiles: RenderableFile[]
 
     static identifier() {
         return 'Project'
@@ -21,6 +23,7 @@ export default class Project extends RelaDB.Model {
         return {
             tables: () => this.hasMany(Table).cascadeDelete(),
             models: () => this.hasMany(Model).cascadeDelete(),
+            renderableFiles: () => this.hasMany(RenderableFile).cascadeDelete(),
         }
     }
 
@@ -158,5 +161,18 @@ export default class Project extends RelaDB.Model {
         }
 
         this.save()
+    }
+
+    registerRenderableFile(path: string, name: string, template: string, data: any) {
+        const renderableFile = new RenderableFile
+        
+        renderableFile.path = path
+        renderableFile.name = name
+        renderableFile.template = template
+        renderableFile.projectId = this.id
+        renderableFile.data = data
+        renderableFile.status = RenderableFileStatus.PENDING
+
+        return renderableFile.save()
     }
 }

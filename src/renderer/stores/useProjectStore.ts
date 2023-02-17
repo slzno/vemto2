@@ -3,7 +3,7 @@ import Project from "@Common/models/Project"
 
 export const useProjectStore = defineStore("project", {
     state: () => ({ 
-        project: {} as Project,
+        project: {} as Project
     }),
 
     actions: {

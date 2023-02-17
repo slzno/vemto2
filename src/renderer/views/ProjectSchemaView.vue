@@ -48,9 +48,9 @@
         if (interval) clearInterval(interval)
     })
 
-    const forceReload = () => {
+    const forceReload = async () => {
         const force = true
-        loadSchema(force)
+        await loadSchema(force)
     }
 
     const loadSchema = async (force = false) => {
@@ -61,8 +61,10 @@
             projectStore.project.path
         )
 
-        await loadTables(schemaData, force)
-        await loadModels(schemaData, force)
+        const changedTables = await loadTables(schemaData, force),
+            changedModels = await loadModels(schemaData, force)
+
+        if(!changedTables && !changedModels) return
 
         nextTick(() => {
             initSchema()
@@ -79,13 +81,15 @@
 
         if(force) tablesBuilder.force()
 
-        if (tablesBuilder.doesNotHaveSchemaChanges()) return
+        if (tablesBuilder.doesNotHaveSchemaChanges()) return false
 
         await tablesBuilder.build()
 
         tablesData.value = Table.get()
 
         if(force) projectStore.project.clearChangedTables()
+
+        return true
     }
 
     const loadModels = async (schemaData: any, force = false) => {
@@ -98,9 +102,11 @@
 
         if(force) modelsBuilder.force()
 
-        if (modelsBuilder.doesNotHaveSchemaChanges()) return
+        if (modelsBuilder.doesNotHaveSchemaChanges()) return false
 
         await modelsBuilder.build()
+
+        return true
     }
 
     const initSchema = () => {

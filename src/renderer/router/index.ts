@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router"
 
 import HomeView from "../views/HomeView.vue"
-import ProjectMainViewVue from "../views/ProjectMainView.vue"
-import ProjectSchemaViewVue from "../views/ProjectSchemaView.vue"
+import ProjectMainView from "../views/ProjectMainView.vue"
+import ProjectSchemaView from "../views/ProjectSchemaView.vue"
+import ProjectCodeQueueView from "../views/ProjectCodeQueueView.vue"
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -16,12 +17,18 @@ const router = createRouter({
         {
             path: "/project",
             name: "project",
-            component: ProjectMainViewVue,
+            component: ProjectMainView,
             children: [
                 {
                     path: "schema",
                     name: "project-schema",
-                    component: ProjectSchemaViewVue,
+                    component: ProjectSchemaView,
+                },
+
+                {
+                    path: "code-queue",
+                    name: "project-code-queue",
+                    component: ProjectCodeQueueView,
                 },
             ],
         },

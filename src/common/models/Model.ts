@@ -1,7 +1,7 @@
 import Table from './Table'
 import Project from './Project'
-import RelaDB from '@tiago_silva_pereira/reladb'
 import Relationship from './Relationship'
+import RelaDB from '@tiago_silva_pereira/reladb'
 
 export default class Model extends RelaDB.Model {
     id: string
@@ -52,7 +52,7 @@ export default class Model extends RelaDB.Model {
 
         this.save()
 
-        // this.markAsChanged()
+        this.syncSourceCode()
 
         return this
     }
@@ -66,7 +66,7 @@ export default class Model extends RelaDB.Model {
 
         this.save()
 
-        // this.markAsChanged()
+        this.syncSourceCode()
     }
 
     getOldName(): string {
@@ -173,5 +173,16 @@ export default class Model extends RelaDB.Model {
         })
 
         return relationships
+    }
+
+    syncSourceCode() {
+        this.project.registerRenderableFile(
+            'app/Models', 
+            'MyModel.php', 
+            'models/Model.vemtl', 
+            {
+                modelId: this.id,
+            }
+        )
     }
 }

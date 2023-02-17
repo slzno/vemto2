@@ -17,6 +17,8 @@
         style="height: 30px; width: 200px"
     ></div>
     <div id="app" class="w-full h-screen dark">
-        <RouterView />
+        <div class="text-slate-900 dark:text-slate-300 h-full w-full">
+            <RouterView />
+        </div>
     </div>
 </template>
