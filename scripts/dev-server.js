@@ -130,12 +130,25 @@ async function start() {
     }).on("change", (path) => {
         console.log(
             Chalk.blueBright(`[electron] `) +
-                `Change in ${path}. reloading... 🚀`
+                `Change in ${path}. Reloading... 🚀`
         )
 
         if (path.startsWith(Path.join("static", "/"))) {
             copy(path)
         }
+
+        restartElectron()
+    })
+
+    // Watch for common models files
+    const modelsPath = Path.join(__dirname, "..", "src", "common", "models")
+    Chokidar.watch(modelsPath, {
+        cwd: modelsPath,
+    }).on("change", (path) => {
+        console.log(
+            Chalk.blueBright(`[electron] `) +
+                `Change in ${path}. Reloading... 🚀`
+        )
 
         restartElectron()
     })

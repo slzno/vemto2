@@ -1,7 +1,7 @@
 import Table from './Table'
 import Model from './Model'
 import RelaDB from '@tiago_silva_pereira/reladb'
-import RenderableFile, { RenderableFileStatus } from './RenderableFile'
+import RenderableFile, { RenderableFileStatus, RenderableFileType } from './RenderableFile'
 
 export default class Project extends RelaDB.Model {
     id: string
@@ -172,6 +172,7 @@ export default class Project extends RelaDB.Model {
         renderableFile.projectId = this.id
         renderableFile.data = data
         renderableFile.status = RenderableFileStatus.PENDING
+        renderableFile.type = RenderableFileType.PHP_CLASS
 
         return renderableFile.save()
     }

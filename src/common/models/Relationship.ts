@@ -159,4 +159,12 @@ export default class Relationship extends RelaDB.Model {
         this.model.syncSourceCode()
         this.relatedModel.syncSourceCode()
     }
+
+    hasDifferentForeignOrParentKey(): boolean {
+        return false
+    }
+
+    hasDifferentParentKey(): boolean {
+        return false
+    }
 }

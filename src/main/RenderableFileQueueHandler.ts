@@ -58,8 +58,12 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
                 compiledContent
             ).format()
 
-            const filePath = path.join(project.getPath(), file.path, file.name)
-            FileSystem.writeFile(filePath, formattedContent)
+            const relativeFilePath = path.join(file.path, file.name),
+                projectFilePath = path.join(project.getPath(), relativeFilePath),
+                vemtoFilePath = path.join(project.getPath(), ".vemto", "generated-files", relativeFilePath)
+
+            FileSystem.writeFile(projectFilePath, formattedContent)
+            FileSystem.writeFile(vemtoFilePath, formattedContent)
 
             mainWindow.webContents.send("model:data:updated", {
                 model: "RenderableFile",

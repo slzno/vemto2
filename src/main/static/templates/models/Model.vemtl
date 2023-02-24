@@ -1,5 +1,66 @@
 <?php
 
-class <$ this.model.name $>Test {
-    // this is an example model
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class <$ this.model.name $>Test extends Model 
+{
+    use HasFactory;
+    
+    <% if(this.model.ownRelationships.length) { %>
+        <# Relationships #>
+        <% for (let relationship of this.model.ownRelationships) { %>
+            <# Belongs To #>
+            <% if(relationship.type == "BelongsTo") { %>
+            public function <$ relationship.name $>() 
+            {
+                return $this->belongsTo(<$ relationship.model.name $>::class
+                <# Check if foreign key or parent key are different #>
+                <up if(relationship.hasDifferentForeignOrParentKey()) { up>
+                , '<$ relationship.foreignKeyName $>'
+                <up } up>
+                <# --- #>
+                <up if(relationship.hasDifferentParentKey()) { up>
+                , '<$ relationship.parentKeyName $>'
+                <up } up>);
+            }
+
+            <% } %>
+            <# Has Many #>
+            <% if(relationship.type == "HasMany") { %>
+            public function <$ relationship.name $>() 
+            {
+                return $this->hasMany(<$ relationship.model.name $>::class
+                <# Check if foreign key or parent key are different #>
+                <up if(relationship.hasDifferentForeignOrParentKey()) { up>
+                , '<$ relationship.foreignKeyName $>'
+                <up } up>
+                <# --- #>
+                <up if(relationship.hasDifferentParentKey()) { up>
+                , '<$ relationship.parentKeyName $>'
+                <up } up>);
+            }
+
+            <% } %>
+            <# Has One #>
+            <% if(relationship.type == "HasOne") { %>
+            public function <$ relationship.name $>() 
+            {
+                return $this->hasOne(<$ relationship.model.name $>::class
+                <# Check if foreign key or parent key are different #>
+                <up if(relationship.hasDifferentForeignOrParentKey()) { up>
+                , '<$ relationship.foreignKeyName $>'
+                <up } up>
+                <# --- #>
+                <up if(relationship.hasDifferentParentKey()) { up>
+                , '<$ relationship.parentKeyName $>'
+                <up } up>);
+            }
+
+            <% } %>
+
+        <% } %>
+    <% } %>
 }

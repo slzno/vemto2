@@ -2,6 +2,17 @@ import Model from './Model'
 import Project from './Project'
 import RelaDB from '@tiago_silva_pereira/reladb'
 
+export enum RenderableFileType {
+    PHP_CLASS = 'php-class',
+    HTML = 'html',
+    PHP = 'php',
+    JS = 'js',
+    CSS = 'css',
+    SCSS = 'scss',
+    JSON = 'json',
+    ENV = 'env',
+}
+
 export enum RenderableFileStatus {
     PENDING = 'pending',
     RENDERING = 'rendering',
@@ -20,6 +31,7 @@ export default class RenderableFile extends RelaDB.Model {
     project: Project
     projectId: string
     error: string
+    type: RenderableFileType
 
     static identifier() {
         return 'RenderableFile'
