@@ -2,6 +2,7 @@ import Table from './Table'
 import Project from './Project'
 import Relationship from './Relationship'
 import RelaDB from '@tiago_silva_pereira/reladb'
+import RenderableFile from './RenderableFile'
 
 export default class Model extends RelaDB.Model {
     id: string
@@ -176,12 +177,14 @@ export default class Model extends RelaDB.Model {
     }
 
     syncSourceCode() {
+        const fileName = this.name + 'Test.php'
+
         this.project.registerRenderableFile(
             'app/Models', 
-            'MyModel.php', 
+            fileName,
             'models/Model.vemtl', 
             {
-                modelId: this.id,
+                model: RenderableFile.dataAsDependency(this),
             }
         )
     }

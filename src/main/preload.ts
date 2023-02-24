@@ -17,9 +17,13 @@ contextBridge.exposeInMainWorld("api", {
         ipcRenderer.on("error:default", (event, error) => callback(error))
     },
 
+    onModelDataUpdated: (callback: Callback) => {
+        ipcRenderer.on("model:data:updated", (event, data) => callback(data))
+    },
+
     // Database messages
     databaseDataUpdated: (data: any) => {
-            return ipcRenderer.invoke("database:data:updated", data)
+        return ipcRenderer.invoke("database:data:updated", data)
     },
 
     // Files Queue

@@ -1,5 +1,6 @@
 <?php
 
-class <$ this.model.name $>Test {
+class Model
+{
     // this is an example model
 }

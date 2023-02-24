@@ -5,6 +5,7 @@ export default interface ElectronApi {
     prepareProject: (path: string) => Promise<string>,
     loadSchema: (path: string) => Promise<any>,
     onDefaultError: (callback: Callback) => void,
+    onModelDataUpdated: (callback: Callback) => void,
     loadProjectDatabase: (path: string) => Promise<any>,
     databaseDataUpdated: (data: any) => void,
     addFileToGenerationQueue: (filePath: string, content: string) => Promise<void>,

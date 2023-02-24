@@ -12,7 +12,6 @@ const isTesting = process.env.NODE_ENV === "test",
 HandleDatabase()
 HandleFileQueue()
 HandleIpcMessages()
-HandleRenderableFileQueue()
 
 function createWindow() {
     const mainWindow = new BrowserWindow({
@@ -42,6 +41,8 @@ function createWindow() {
         mainWindow.setMenu(null)
         mainWindow.loadFile(join(app.getAppPath(), "renderer", "index.html"))
     }
+
+    HandleRenderableFileQueue(mainWindow)
 }
 
 app.whenReady().then(() => {
