@@ -11,13 +11,18 @@
         <div
             v-for="file in projectStore.project.renderableFiles"
             :key="file.id"
-            class="flex flex-col bg-slate-200 dark:bg-slate-950 w-full rounded-lg mb-2 p-2"
+            class="flex flex-col bg-slate-200 dark:bg-slate-850 w-full rounded-lg mb-2 p-2"
         >
-            <div class="flex">
-                <div class="mr-2">{{ file.name }} - {{ file.status }}</div>
-                <button @click="file.regenerate()">
-                    Regenerate
-                </button>
+            <div class="flex italic">
+                <div>
+                    <button class="p-1 px-2 rounded bg-slate-900 mr-2" @click="file.regenerate()">
+                        Regenerate
+                    </button>
+                    <button class="p-1 px-2 rounded bg-slate-900 mr-2" @click="file.delete()">
+                        Delete
+                    </button>
+                </div>
+                <div class="mr-2">{{ file.getRelativeFilePath() }} - {{ file.status }}</div>
             </div>
 
             <div class="text-red-500" v-if="file.error">

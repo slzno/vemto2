@@ -62,6 +62,21 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
                 projectFilePath = path.join(project.getPath(), relativeFilePath),
                 vemtoFilePath = path.join(project.getPath(), ".vemto", "generated-files", relativeFilePath)
 
+            const currentFileContent = FileSystem.readFileIfExists(projectFilePath)
+
+            if(currentFileContent && currentFileContent !== formattedContent) {
+                mainWindow.webContents.send("model:data:updated", {
+                    model: "RenderableFile",
+                    id: file.id,
+                    data: {
+                        status: RenderableFileStatus.CONFLICT,
+                        error: null
+                    }
+                })
+
+                return false
+            }
+
             FileSystem.writeFile(projectFilePath, formattedContent)
             FileSystem.writeFile(vemtoFilePath, formattedContent)
 

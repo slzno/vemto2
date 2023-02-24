@@ -1,3 +1,4 @@
+import path from 'path'
 import Model from './Model'
 import Project from './Project'
 import RelaDB from '@tiago_silva_pereira/reladb'
@@ -46,6 +47,10 @@ export default class RenderableFile extends RelaDB.Model {
     regenerate() {
         this.status = RenderableFileStatus.PENDING
         this.save()
+    }
+
+    getRelativeFilePath(): string {
+        return this.path + '/' + this.name
     }
 
     getDataWithDependencies() {
