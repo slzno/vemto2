@@ -54,7 +54,7 @@ export default class RenderableFile extends RelaDB.Model {
     }
 
     getDataWithDependencies() {
-        let data = this.data
+        let data = JSON.parse(JSON.stringify(this.data))
 
         if(data.model) data.model = Model.find(data.model)
 

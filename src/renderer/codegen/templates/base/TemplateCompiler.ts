@@ -84,6 +84,7 @@ export default new class TemplateCompiler {
             const latestError = this.templateEngine.getLatestError()
             
             console.error('Error on template line ' + latestError.templateLine)
+            console.log('Data: ', this.data)
 
             throw error
         }

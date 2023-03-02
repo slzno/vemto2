@@ -7,7 +7,7 @@ function compile(directory, fast = false) {
     const fastParams = fast ? "--skipLibCheck" : ""
 
     return new Promise((resolve, reject) => {
-        const tscProcess = ChildProcess.exec(`tsc --incremental ${fastParams} --project tsconfig.json && tsc-alias -p tsconfig.json`, {
+        const tscProcess = ChildProcess.exec(`tsc ${fastParams} --project tsconfig.json && tsc-alias -p tsconfig.json`, {
             cwd: directory,
         })
 

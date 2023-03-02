@@ -3,9 +3,8 @@ import { exec } from "child_process"
 
 export default class CommandExecutor {
 
-    static executeOnPath(executionPath: string, command: string) {
+    static executeOnPath(executionPath: string, command: string): Promise<string> {
         return new Promise((resolve, reject) => {
-
             try {
                 exec(command, {
                     cwd: path.join("", executionPath),
