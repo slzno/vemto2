@@ -186,7 +186,7 @@ export default class Model extends RelaDB.Model {
     }
 
     syncSourceCode() {
-        const fileName = this.name + 'Test.php'
+        const fileName = this.name + '.php'
 
         this.project.registerRenderableFile(
             'app/Models', 
