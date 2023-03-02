@@ -1,0 +1,10 @@
+{
+    "output": "../../dist/php-merger.phar",
+    "files": [
+        "index.php",
+        "load.php"
+    ],
+    "directories": [
+        "common" 
+    ]
+}

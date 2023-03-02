@@ -4,6 +4,11 @@
             "commonFiles": [
                 "Vemto.php"
             ]
+        },
+        "php-merger": {
+            "commonFiles": [
+                "Vemto.php"
+            ]
         }
     }
 }

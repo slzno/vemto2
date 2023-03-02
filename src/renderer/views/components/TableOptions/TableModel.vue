@@ -31,6 +31,11 @@
         saveModel()
     })
 
+    const newRelationship = (): void => {
+        const relationship = model.value.newRelationship()
+        relationships.value.push(relationship)
+    }
+
     // debounced
     const saveModel = debounce(() => {
         model.value.saveFromInterface()
@@ -61,11 +66,14 @@
                     >
                         <UiText
                             v-model="relationship.name"
-                            placeholder="Model name"
+                            placeholder="Relationship name"
                             @change="saveRelationship(relationship)"
                         />
 
-                        <UiSelect v-model="relationship.type">
+                        <UiSelect 
+                            v-model="relationship.type" 
+                            @change="saveRelationship(relationship)"
+                        >
                             <option value="BelongsTo">Belongs To</option>
                             <option value="HasMany">Has Many</option>
                             <option value="HasOne">Has One</option>
@@ -77,7 +85,10 @@
                         </UiSelect>
 
                         <!-- ui select with models related to relationship.modelId -->
-                        <UiSelect v-model="relationship.relatedModelId">
+                        <UiSelect 
+                            v-model="relationship.relatedModelId"
+                            @change="saveRelationship(relationship)"
+                        >
                             <option
                                 v-for="model in models"
                                 :key="model.id"
@@ -87,6 +98,15 @@
                             </option>
                         </UiSelect>
                     </div>
+                </div>
+
+                <div>
+                    <button
+                        @click="newRelationship()"
+                        class="bg-slate-700 hover:bg-slate-600 text-slate-100 px-2 py-1 rounded-md"
+                    >
+                        + Add relationship
+                    </button>
                 </div>
             </div>
         </div>

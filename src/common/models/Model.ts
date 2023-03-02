@@ -176,6 +176,15 @@ export default class Model extends RelaDB.Model {
         return relationships
     }
 
+    newRelationship(): Relationship {
+        let relationship = new Relationship()
+        relationship.modelId = this.id
+        relationship.type = 'BelongsTo'
+        relationship.save()
+
+        return relationship
+    }
+
     syncSourceCode() {
         const fileName = this.name + 'Test.php'
 

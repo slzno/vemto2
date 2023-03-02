@@ -1,10 +1,11 @@
 import path from "path"
-import { app, BrowserWindow, ipcMain } from "electron"
+import { app, BrowserWindow } from "electron"
 import FileSystem from "./base/FileSystem"
 import Project from "../common/models/Project"
 import PhpFormatter from "@Renderer/codegen/formatters/PhpFormatter"
 import TemplateCompiler from "@Renderer/codegen/templates/base/TemplateCompiler"
-import RenderableFile, { RenderableFileStatus } from "../common/models/RenderableFile"
+import RenderableFile, { RenderableFileStatus, RenderableFileType } from "../common/models/RenderableFile"
+import CommandExecutor from "./base/CommandExecutor"
 
 export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
     let project = null,
@@ -64,6 +65,27 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
 
             const currentFileContent = FileSystem.readFileIfExists(projectFilePath)
 
+            if(file.type === RenderableFileType.PHP_CLASS) {
+                try {
+                    await mergeFiles(vemtoFilePath, projectFilePath)
+                    
+                    const mergedFileContent = FileSystem.readFileIfExists(
+                        path.join(project.getPath(), ".vemto", "processed-files", "php-merge-result.php")
+                    )
+    
+                    console.log(mergedFileContent)
+    
+                    // FileSystem.writeFile(projectFilePath, mergedFileContent)
+                    
+                    return true
+                } catch (error) {
+                    console.log('Tem erro')
+                    console.error(error.message)
+
+                    return false
+                }
+            }
+
             if(currentFileContent && currentFileContent !== formattedContent) {
                 mainWindow.webContents.send("model:data:updated", {
                     model: "RenderableFile",
@@ -100,5 +122,13 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
                 }
             })
         }
+    }
+
+    const mergeFiles = (newFilePath: string, currentFilePath: string) => {
+        const apiFilePath = path.join(app.getAppPath(), "static", "php-merger.phar")
+
+        const command = `php ${apiFilePath} ${newFilePath} ${currentFilePath}`
+        
+        return CommandExecutor.executeOnPath(project.getPath(), command)
     }
 }

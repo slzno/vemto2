@@ -14,11 +14,16 @@
         },
     })
 
-    defineEmits(["update:modelValue"])
+    const emit = defineEmits(["update:modelValue", "change"])
 
     onMounted((): void => {
         localValue.value = props.modelValue
     })
+
+    const valueChanged = (): void => {
+        emit("change", localValue.value)
+        emit("update:modelValue", localValue.value)
+    }
 </script>
 
 <template>
@@ -26,7 +31,7 @@
     <select
         class="border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg"
         v-model="localValue"
-        @change="$emit('update:modelValue', localValue)"
+        @change="valueChanged()"
     >
         <slot></slot>
     </select>
