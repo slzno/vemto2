@@ -57,36 +57,30 @@
             />
 
             <div class="mt-4">
-                <h2 class="text-red-400 mb-1">Relationships</h2>
+                <h2 class="text-slate-500 font-semibold mb-1">Relationships</h2>
 
                 <div>
                     <div
-                        class="mb-2"
+                        class="mb-2 bg-slate-850 p-2 rounded-md space-y-1"
                         v-for="relationship in relationships"
                         :key="relationship.id"
                     >
-                        <div class="mb-1">
-                            <UiText
-                                v-model="relationship.name"
-                                placeholder="Relationship name"
-                                @change="saveRelationship(relationship)"
-                            />
-                        </div>
-
-                        <div class="space-x-1">
-                            <UiSelect 
-                                v-model="relationship.type" 
-                                @change="saveRelationship(relationship)"
-                            >
-                                <option value="BelongsTo">Belongs To</option>
-                                <option value="HasMany">Has Many</option>
-                                <option value="HasOne">Has One</option>
-                                <option value="ManyToMany">Many To Many</option>
-                                <option value="MorphMany">Morph Many</option>
-                                <option value="MorphOne">Morph One</option>
-                                <option value="MorphTo">Morph To</option>
-                                <option value="MorphToMany">Morph To Many</option>
-                            </UiSelect>
+                    <div class="space-x-1">
+                            <div class="text-red-400 inline-block">
+                                <UiSelect 
+                                    v-model="relationship.type" 
+                                    @change="saveRelationship(relationship)"
+                                >
+                                    <option value="BelongsTo">Belongs To</option>
+                                    <option value="HasMany">Has Many</option>
+                                    <option value="HasOne">Has One</option>
+                                    <option value="ManyToMany">Many To Many</option>
+                                    <option value="MorphMany">Morph Many</option>
+                                    <option value="MorphOne">Morph One</option>
+                                    <option value="MorphTo">Morph To</option>
+                                    <option value="MorphToMany">Morph To Many</option>
+                                </UiSelect>
+                            </div>
     
                             <!-- ui select with models related to relationship.modelId -->
                             <UiSelect 
@@ -102,13 +96,21 @@
                                 </option>
                             </UiSelect>
                         </div>
+
+                        <div>
+                            <UiText
+                                v-model="relationship.name"
+                                placeholder="Relationship name"
+                                @change="saveRelationship(relationship)"
+                            />
+                        </div>
                     </div>
                 </div>
 
                 <div>
                     <button
                         @click="newRelationship()"
-                        class="bg-slate-700 hover:bg-slate-600 text-slate-100 px-2 py-1 rounded-md"
+                        class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-2 py-1 rounded-md"
                     >
                         + Add relationship
                     </button>
