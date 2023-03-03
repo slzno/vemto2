@@ -1,6 +1,8 @@
 import { contextBridge, ipcRenderer } from "electron"
 
 contextBridge.exposeInMainWorld("api", {
+    onDevelopment: () => { return process.env.NODE_ENV === "development" },
+
     // Common messages
     prepareProject: (path: string) => { 
         return ipcRenderer.invoke("prepare:project", path)
