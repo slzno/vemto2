@@ -57,46 +57,51 @@
             />
 
             <div class="mt-4">
-                <h2>Relationships</h2>
+                <h2 class="text-red-400 mb-1">Relationships</h2>
 
                 <div>
                     <div
+                        class="mb-2"
                         v-for="relationship in relationships"
                         :key="relationship.id"
                     >
-                        <UiText
-                            v-model="relationship.name"
-                            placeholder="Relationship name"
-                            @change="saveRelationship(relationship)"
-                        />
+                        <div class="mb-1">
+                            <UiText
+                                v-model="relationship.name"
+                                placeholder="Relationship name"
+                                @change="saveRelationship(relationship)"
+                            />
+                        </div>
 
-                        <UiSelect 
-                            v-model="relationship.type" 
-                            @change="saveRelationship(relationship)"
-                        >
-                            <option value="BelongsTo">Belongs To</option>
-                            <option value="HasMany">Has Many</option>
-                            <option value="HasOne">Has One</option>
-                            <option value="ManyToMany">Many To Many</option>
-                            <option value="MorphMany">Morph Many</option>
-                            <option value="MorphOne">Morph One</option>
-                            <option value="MorphTo">Morph To</option>
-                            <option value="MorphToMany">Morph To Many</option>
-                        </UiSelect>
-
-                        <!-- ui select with models related to relationship.modelId -->
-                        <UiSelect 
-                            v-model="relationship.relatedModelId"
-                            @change="saveRelationship(relationship)"
-                        >
-                            <option
-                                v-for="model in models"
-                                :key="model.id"
-                                :value="model.id"
+                        <div class="space-x-1">
+                            <UiSelect 
+                                v-model="relationship.type" 
+                                @change="saveRelationship(relationship)"
                             >
-                                {{ model.name }}
-                            </option>
-                        </UiSelect>
+                                <option value="BelongsTo">Belongs To</option>
+                                <option value="HasMany">Has Many</option>
+                                <option value="HasOne">Has One</option>
+                                <option value="ManyToMany">Many To Many</option>
+                                <option value="MorphMany">Morph Many</option>
+                                <option value="MorphOne">Morph One</option>
+                                <option value="MorphTo">Morph To</option>
+                                <option value="MorphToMany">Morph To Many</option>
+                            </UiSelect>
+    
+                            <!-- ui select with models related to relationship.modelId -->
+                            <UiSelect 
+                                v-model="relationship.relatedModelId"
+                                @change="saveRelationship(relationship)"
+                            >
+                                <option
+                                    v-for="model in models"
+                                    :key="model.id"
+                                    :value="model.id"
+                                >
+                                    {{ model.name }}
+                                </option>
+                            </UiSelect>
+                        </div>
                     </div>
                 </div>
 
