@@ -77,7 +77,7 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
 
                 const formattedMergedFileContent = PhpFormatter.setContent(
                     mergedFileContent
-                ).format()
+                ).addLineBreaksToParsedContent().format()
 
                 FileSystem.writeFile(projectFilePath, formattedMergedFileContent)
 
@@ -99,6 +99,7 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
             return true
         } catch (error) {
             console.log('Error processing file: ', file.name)
+            console.log(error)
 
             setFileStatus(file, RenderableFileStatus.ERROR)
         }

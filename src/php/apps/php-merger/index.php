@@ -183,7 +183,7 @@ Vemto::execute('php-merger', function () use ($argv) {
 
     // Write the modified AST back to the first file
     $resultFileFolder = getcwd() . '/.vemto/processed-files';
-    $resultFilePath = $resultFileFolder . '/' . Illuminate\Support\Str::random(32) . '.php';
+    $resultFilePath = $resultFileFolder . '/lastest-merged-file.php';
 
     $printer = new PhpParser\PrettyPrinter\Standard();
 
@@ -191,7 +191,9 @@ Vemto::execute('php-merger', function () use ($argv) {
         mkdir($resultFileFolder);
     }
 
-    file_put_contents($resultFilePath, $printer->prettyPrintFile($currentFileVisitor->getCurrentFileAst()));
+    $resultFileContent = $printer->prettyPrintFile($currentFileVisitor->getCurrentFileAst());
+
+    file_put_contents($resultFilePath, $resultFileContent);
 
     Vemto::respondWith($resultFilePath);
 });
