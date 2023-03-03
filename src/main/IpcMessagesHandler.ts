@@ -1,5 +1,5 @@
 import path from "path"
-import { app, ipcMain } from "electron"
+import { app, ipcMain, shell } from "electron"
 import FileSystem from "./base/FileSystem"
 import { handleError } from "./ErrorHandler"
 import Project from "../common/models/Project"
@@ -51,6 +51,18 @@ export function HandleIpcMessages() {
 
             // If the file does not exist in the project, we try to read it from the static folder
             return FileSystem.readFile(path.join(app.getAppPath(), "static", "templates", filePath))
+        })
+    })
+
+    ipcMain.handle("file:project:open", (event, fileRelativePath) => {
+        const project = Project.find(1)
+        if(!project) return null
+
+        return handleError(event, () => {
+            const completePath = path.join(project.getPath(), fileRelativePath)
+            
+            // Open the file in the default editor
+            shell.openPath(completePath)
         })
     })
 }

@@ -40,4 +40,7 @@ contextBridge.exposeInMainWorld("api", {
     readTemplateFile: (path: string) => {
         return ipcRenderer.invoke("file:template:read", path)
     },
+    openProjectFile: (path: string) => {
+        return ipcRenderer.invoke("file:project:open", path)
+    },
 })

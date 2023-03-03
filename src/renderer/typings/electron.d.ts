@@ -12,6 +12,7 @@ export default interface ElectronApi {
     addFileToGenerationQueue: (filePath: string, content: string) => Promise<void>,
     readProjectFile: (path: string) => Promise<string>,
     readTemplateFile: (path: string) => Promise<string>,
+    openProjectFile: (path: string) => Promise<void>,
 }
 
 declare global {
