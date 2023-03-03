@@ -1,13 +1,30 @@
 <script setup lang="ts">
-    import { onMounted } from "vue"
-    import { RouterView } from "vue-router"
+    import { onMounted, watch } from "vue"
+    import { RouterView, useRouter, useRoute } from "vue-router"
     import Main from "@Renderer/services/wrappers/Main"
+
+    const router = useRouter(),
+        currentRoute = useRoute()
 
     onMounted(() => {
         Main.API.onDefaultError((error) => { 
             console.error(error.error)
             console.error(error.stack)
         })
+
+        if(Main.API.onDevelopment()) {
+            const lastRoute = window.localStorage.getItem('lastDevelopmentRoute')
+
+            if(lastRoute) router.push(lastRoute)
+
+            localStorage.removeItem('lastDevelopmentRoute')
+        }
+    })
+
+    watch(currentRoute, (route) => {
+        if(Main.API.onDevelopment()) {
+            localStorage.setItem('lastDevelopmentRoute', route.path)
+        }
     })
 </script>
 
