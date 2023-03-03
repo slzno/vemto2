@@ -16,7 +16,7 @@ class <$ this.model.name $> extends Model
             <% if(relationship.type == "BelongsTo") { %>
             public function <$ relationship.name $>() 
             {
-                return $this->belongsTo(<$ relationship.model.name $>::class
+                return $this->belongsTo(<$ relationship.relatedModel.name $>::class
                 <# Check if foreign key or parent key are different #>
                 <up if(relationship.hasDifferentForeignOrParentKey()) { up>
                 , '<$ relationship.foreignKeyName $>'
@@ -32,7 +32,7 @@ class <$ this.model.name $> extends Model
             <% if(relationship.type == "HasMany") { %>
             public function <$ relationship.name $>() 
             {
-                return $this->hasMany(<$ relationship.model.name $>::class
+                return $this->hasMany(<$ relationship.relatedModel.name $>::class
                 <# Check if foreign key or parent key are different #>
                 <up if(relationship.hasDifferentForeignOrParentKey()) { up>
                 , '<$ relationship.foreignKeyName $>'
@@ -48,7 +48,7 @@ class <$ this.model.name $> extends Model
             <% if(relationship.type == "HasOne") { %>
             public function <$ relationship.name $>() 
             {
-                return $this->hasOne(<$ relationship.model.name $>::class
+                return $this->hasOne(<$ relationship.relatedModel.name $>::class
                 <# Check if foreign key or parent key are different #>
                 <up if(relationship.hasDifferentForeignOrParentKey()) { up>
                 , '<$ relationship.foreignKeyName $>'

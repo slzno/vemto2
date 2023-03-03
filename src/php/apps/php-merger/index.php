@@ -145,17 +145,33 @@ Vemto::execute('php-merger', function () use ($argv) {
                 }
 
                 if (!$methodExists) {
-                    $this->addMethodToClass($newMethod);
+                    $this->addMethod($newMethod);
+                } else {
+                    $this->updateMethod($newMethod);
                 }
             }
         }
 
-        protected function addMethodToClass(array $method)
+        protected function addMethod(array $method)
         {
             $class = $this->getClassByName($method['class']);
 
             if ($class) {
                 $class->stmts[] = $method['node'];
+            }
+        }
+
+        protected function updateMethod(array $method)
+        {
+            $class = $this->getClassByName($method['class']);
+
+            if ($class) {
+                foreach ($class->stmts as $key => $stmt) {
+                    if ($stmt instanceof PhpParser\Node\Stmt\ClassMethod && $stmt->name->name === $method['name']) {
+                        Vemto::log('found the same method: ' . $stmt->name->name);
+                        $class->stmts[$key] = $method['node'];
+                    }
+                }
             }
         }
 
@@ -183,7 +199,7 @@ Vemto::execute('php-merger', function () use ($argv) {
 
     // Write the modified AST back to the first file
     $resultFileFolder = getcwd() . '/.vemto/processed-files';
-    $resultFilePath = $resultFileFolder . '/lastest-merged-file.php';
+    $resultFilePath = $resultFileFolder . '/' . Illuminate\Support\Str::random(32) . '.php';
 
     $printer = new PhpParser\PrettyPrinter\Standard();
 

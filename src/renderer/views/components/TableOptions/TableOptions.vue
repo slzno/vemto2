@@ -21,8 +21,8 @@
 
     const tabs = [
         {label: "Columns", value: "columns"},
-        {label: "Indexes", value: "indexes"},
         {label: "Models", value: "models"},
+        {label: "Indexes", value: "indexes"},
         {label: "Settings", value: "settings"},
     ]
 </script>
