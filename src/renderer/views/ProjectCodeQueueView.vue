@@ -34,18 +34,18 @@
         >
             <div class="flex items-center justify-between">
                 <div 
-                    class="mx-2 italic cursor-pointer hover:text-red-500 dark:hover:text-red-400" 
+                    class="flex mx-2 cursor-pointer" 
                     @click="openFile(file)"
                 >
-                    {{ file.getRelativeFilePath() }}
-                </div>
-                <div class="flex items-center">
                     <div class="p-1 rounded-md bg-slate-800 mr-2">
                         <div class="flex items-center space-x-1 text-xs">
                             <div class="rounded-full w-3 h-3 bg-green-500"></div>
                             <div>{{ file.status }}</div>
                         </div>
                     </div>
+                    <div class="italic hover:text-red-500 dark:hover:text-red-400">{{ file.getRelativeFilePath() }}</div>
+                </div>
+                <div class="flex items-center">
                     <button class="p-1 px-2 rounded bg-slate-900 mr-2" @click="file.regenerate()">
                         Regenerate
                     </button>
