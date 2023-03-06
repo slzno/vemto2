@@ -61,7 +61,8 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
 
             const relativeFilePath = path.join(file.path, file.name),
                 projectFilePath = path.join(project.getPath(), relativeFilePath),
-                vemtoFilePath = path.join(project.getPath(), ".vemto", "generated-files", relativeFilePath)
+                vemtoFilePath = path.join(project.getPath(), ".vemto", "generated-files", relativeFilePath),
+                previousFilePath = path.join(project.getPath(), ".vemto", "previous-generated-files", relativeFilePath)
             
             // Write the Vemto version for future comparison or merge
             FileSystem.writeFile(vemtoFilePath, formattedContent)
@@ -69,9 +70,7 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
             const currentFileContent = FileSystem.readFileIfExists(projectFilePath)
 
             if(file.type === RenderableFileType.PHP_CLASS) {
-                const mergedFilePath = await mergeFiles(vemtoFilePath, projectFilePath)
-
-                console.log(mergedFilePath)
+                const mergedFilePath = await mergeFiles(vemtoFilePath, projectFilePath, previousFilePath)
                 
                 const mergedFileContent = FileSystem.readFileIfExists(mergedFilePath)
 
@@ -105,10 +104,10 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
         }
     }
 
-    const mergeFiles = async (newFilePath: string, currentFilePath: string): Promise<string> => {
+    const mergeFiles = async (newFilePath: string, currentFilePath: string, previousFilePath: string): Promise<string> => {
         const apiFilePath = path.join(app.getAppPath(), "static", "php-merger.phar")
 
-        const command = `php ${apiFilePath} ${newFilePath} ${currentFilePath}`
+        const command = `php ${apiFilePath} ${newFilePath} ${currentFilePath} ${previousFilePath}`
         
         return CommandExecutor.executeOnPath(project.getPath(), command)
     }
