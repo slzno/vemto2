@@ -1,13 +1,15 @@
 const ChildProcess = require("child_process")
 const Chalk = require("chalk")
 
-function compile(directory, fast = false) {
-    if(fast) console.log(Chalk.yellowBright("Fast mode enabled"))
+function compile(directory, fastMode = false) {
+    if(fastMode) console.log(Chalk.yellowBright("Fast mode enabled"))
 
-    const fastParams = fast ? "--skipLibCheck" : ""
+    const tscCommand = fastMode 
+        ? "etsc --project tsconfig.json --skipLibCheck --ignore-annotations" 
+        : "tsc --project tsconfig.json && tsc-alias -p tsconfig.json"
 
     return new Promise((resolve, reject) => {
-        const tscProcess = ChildProcess.exec(`tsc ${fastParams} --project tsconfig.json && tsc-alias -p tsconfig.json`, {
+        const tscProcess = ChildProcess.exec(tscCommand, {
             cwd: directory,
         })
 
