@@ -46,6 +46,34 @@ class Vemto {
         return "VEMTO_JSON_RESPONSE_START(" . $jsonResponse . ")VEMTO_JSON_RESPONSE_END";
     }
 
+    public static function writeProcessedFile($fileContent) {
+        $processedFilesFolder = getcwd() . '/.vemto/processed-files';
+        $processedFilePath = $processedFilesFolder . '/' . Illuminate\Support\Str::random(32) . '.php';
+
+        if(!file_exists($processedFilesFolder)) {
+            mkdir($processedFilesFolder);
+        }
+
+        file_put_contents($processedFilePath, $fileContent);
+
+        return $processedFilePath;
+    }
+
+    public static function writeConflictsFile($conflicts) {
+        $conflictsFileFolder = getcwd() . '/.vemto/conflicts';
+        $conflictsFilePath = $conflictsFileFolder . '/' . Illuminate\Support\Str::random(32) . '.json';
+
+        if(!file_exists($conflictsFileFolder)) {
+            mkdir($conflictsFileFolder);
+        }
+
+        $conflictsFileContent = json_encode($conflicts, JSON_PRETTY_PRINT);
+
+        file_put_contents($conflictsFilePath, $conflictsFileContent);
+
+        return $conflictsFilePath;
+    }
+
     public static function execute(string $appName, $callback = null)
     {
         try {

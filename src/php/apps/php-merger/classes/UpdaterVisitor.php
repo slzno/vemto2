@@ -17,6 +17,8 @@ class UpdaterVisitor extends NodeVisitorAbstract
     protected $newFileVisitor;
     protected $currentFileAst;
 
+    protected $conflicts = [];
+
     public function setNewFileVisitor(mixed $newFileVisitor)
     {
         $this->newFileVisitor = $newFileVisitor;
@@ -54,14 +56,14 @@ class UpdaterVisitor extends NodeVisitorAbstract
         if ($node instanceof ClassMethod) {
             $printer = new StandardPrinter();
 
+            $methodName = $node->name->name;
             $methodBody = $printer->prettyPrint([$node]);
 
-            $this->methods[] = [
+            $this->methods[$methodName] = [
                 'node' => $node,
-                'name' => $node->name->name,
+                'name' => $methodName,
                 'class' => $this->currentClass->name->name,
                 'body' => $methodBody,
-                'internalBody' => $node->stmts,
             ];
         }    
     }
@@ -91,30 +93,57 @@ class UpdaterVisitor extends NodeVisitorAbstract
         }
     }
 
-    protected function addMethod(array $method)
+    protected function addMethod(array $newMethod)
     {
-        $class = $this->getClassByName($method['class']);
+        $class = $this->getClassByName($newMethod['class']);
 
         if ($class) {
-            $class->stmts[] = $method['node'];
+            $class->stmts[] = $newMethod['node'];
         }
     }
 
-    protected function updateMethod(array $method)
+    protected function updateMethod(array $newMethod)
     {
-
-        // para saber se houve um conflito, primeiro eu preciso comparar a versão atual do método com a última vez que foi gerado
-        // se houver diferença, preciso registrar o conflito e gravar um arquivo de conflito
-
-        $class = $this->getClassByName($method['class']);
+        $class = $this->getClassByName($newMethod['class']);
 
         if ($class) {
-            foreach ($class->stmts as $key => $stmt) {
-                if ($stmt instanceof ClassMethod && $stmt->name->name === $method['name']) {
-                    $class->stmts[$key] = $method['node'];
+            foreach ($class->stmts as $key => $methodStatementsNode) {
+                $methodName = $methodStatementsNode->name->name ?? null;
+
+                if(!$methodName) continue;
+
+                if ($methodStatementsNode instanceof ClassMethod && $methodStatementsNode->name->name === $newMethod['name']) {
+                    $currentMethodBody = $this->methods[$methodName]['body'];
+
+                    $newMethodIsDifferentFromPrevious = $newMethod['previousBody'] !== $currentMethodBody;
+                    $newMethodIsDifferentFromCurrent = $newMethod['body'] !== $currentMethodBody;
+
+                    if($newMethodIsDifferentFromPrevious && $newMethodIsDifferentFromCurrent) {
+                        $this->registerConflict($currentMethodBody, $newMethod['body']);
+                    }
+
+                    $class->stmts[$key] = $newMethod['node'];
                 }
             }
         }
+    }
+
+    protected function registerConflict(string $currentContent, string $newContent)
+    {
+        $this->conflicts[] = [
+            'currentContent' => $currentContent,
+            'newContent' => $newContent,
+        ];
+    }
+
+    public function getConflicts()
+    {
+        return $this->conflicts;
+    }
+
+    public function hasConflicts()
+    {
+        return !empty($this->conflicts);
     }
 
     protected function getClassByName(string $name) {

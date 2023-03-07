@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import Main from '@Renderer/services/wrappers/Main'
-    import RenderableFile from '@Common/models/RenderableFile'
+    import RenderableFile, { RenderableFileStatus } from '@Common/models/RenderableFile'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
 
     const projectStore = useProjectStore()
@@ -39,7 +39,12 @@
                 >
                     <div class="p-1 rounded-md bg-slate-800 mr-2">
                         <div class="flex items-center space-x-1 text-xs">
-                            <div class="rounded-full w-3 h-3 bg-green-500"></div>
+                            <div class="rounded-full w-3 h-3" :class="{
+                                'bg-green-500': file.status === RenderableFileStatus.RENDERED,
+                                'bg-yellow-500': file.status === RenderableFileStatus.PENDING,
+                                'bg-red-500': file.status === RenderableFileStatus.ERROR,
+                                'bg-orange-500': file.status === RenderableFileStatus.CONFLICT,
+                            }"></div>
                             <div>{{ file.status }}</div>
                         </div>
                     </div>
