@@ -66,11 +66,11 @@ Vemto::execute('php-merger', function () use ($argv) {
     $hasConflicts = $currentFileVisitor->hasConflicts();
 
     if($hasConflicts) {
-        $conflicts = $currentFileVisitor->getConflicts();
+        $conflicts = [
+            'conflicts' => $currentFileVisitor->getConflicts(),
+        ];
 
-        $conflictsFileContent = json_encode($conflicts, JSON_PRETTY_PRINT);
-
-        $conflictsFilePath = Vemto::writeConflictsFile($conflictsFileContent);
+        $conflictsFilePath = Vemto::writeConflictsFile($conflicts);
     }
 
     $printer = new PhpParser\PrettyPrinter\Standard();

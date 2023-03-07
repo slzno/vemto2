@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import Main from '@Renderer/services/wrappers/Main'
-    import RenderableFile, { RenderableFileStatus } from '@Common/models/RenderableFile'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
+    import RenderableFile, { RenderableFileStatus } from '@Common/models/RenderableFile'
 
     const projectStore = useProjectStore()
 

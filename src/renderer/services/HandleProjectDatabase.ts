@@ -1,5 +1,8 @@
 import Main from "./wrappers/Main"
+import debounce from "@Common/tools/debounce"
+import RendererBridge from "./RendererBridge"
 import RelaDB from "@tiago_silva_pereira/reladb"
+import { useProjectStore } from "@Renderer/stores/useProjectStore"
 
 export default class HandleProjectDatabase {
 
@@ -15,10 +18,21 @@ export default class HandleProjectDatabase {
         }
 
         RelaDB.Resolver.db().onDataChanged(() => {
-            const updatedData = RelaDB.Resolver.db().driver.getDatabaseData()
-            
-            Main.API.databaseDataUpdated(updatedData)
+            updateDataDebounced()
         })
+
+        const updateDataDebounced = debounce(() => {
+            const updatedData = RelaDB.Resolver.db().driver.getDatabaseData(),
+                projectStore = useProjectStore()
+
+            Main.API.databaseDataUpdated(updatedData)
+
+            RendererBridge.dataUpdated()
+
+            projectStore.reloadProject()
+
+            console.log("Database data updated")
+        }, 300)
 
         return database
     }

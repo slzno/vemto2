@@ -10,6 +10,12 @@ export const useProjectStore = defineStore("project", {
         setProject(project: Project) {
             this.project = project
         },
+
+        reloadProject() {
+            if(!this.project.id) return
+
+            this.project = this.project.fresh()
+        }
     },
 
     getters: {
