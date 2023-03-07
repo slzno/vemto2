@@ -42,6 +42,7 @@ export default class RenderableFile extends RelaDB.Model {
     error: string
     type: RenderableFileType
     formatter: string
+    conflictFileName: string
 
     static identifier() {
         return 'RenderableFile'
@@ -55,6 +56,7 @@ export default class RenderableFile extends RelaDB.Model {
 
     regenerate() {
         this.status = RenderableFileStatus.PENDING
+        this.error = null
         this.save()
     }
 

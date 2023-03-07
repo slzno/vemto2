@@ -80,7 +80,7 @@ Vemto::execute('php-merger', function () use ($argv) {
 
     Vemto::respondWith([
         'status' => $hasConflicts ? 'conflict' : 'success',
-        'filePath' => $resultFilePath,
-        'conflictsFilePath' => $hasConflicts ? $conflictsFilePath : null,
+        'file' => $resultFilePath,
+        'conflictsFile' => $hasConflicts ? $conflictsFilePath : null,
     ]);
 });

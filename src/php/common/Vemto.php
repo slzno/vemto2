@@ -48,7 +48,8 @@ class Vemto {
 
     public static function writeProcessedFile($fileContent) {
         $processedFilesFolder = getcwd() . '/.vemto/processed-files';
-        $processedFilePath = $processedFilesFolder . '/' . Illuminate\Support\Str::random(32) . '.php';
+        $processedFileName = Illuminate\Support\Str::random(32) . '.php';
+        $processedFilePath = $processedFilesFolder . '/' . $processedFileName;
 
         if(!file_exists($processedFilesFolder)) {
             mkdir($processedFilesFolder);
@@ -56,12 +57,16 @@ class Vemto {
 
         file_put_contents($processedFilePath, $fileContent);
 
-        return $processedFilePath;
+        return [
+            'path' => $processedFilePath,
+            'name' => $processedFileName,
+        ];
     }
 
     public static function writeConflictsFile($conflicts) {
         $conflictsFileFolder = getcwd() . '/.vemto/conflicts';
-        $conflictsFilePath = $conflictsFileFolder . '/' . Illuminate\Support\Str::random(32) . '.json';
+        $conflictsFileName = Illuminate\Support\Str::random(32) . '.json';
+        $conflictsFilePath = $conflictsFileFolder . '/' . $conflictsFileName;
 
         if(!file_exists($conflictsFileFolder)) {
             mkdir($conflictsFileFolder);
@@ -71,7 +76,10 @@ class Vemto {
 
         file_put_contents($conflictsFilePath, $conflictsFileContent);
 
-        return $conflictsFilePath;
+        return [
+            'path' => $conflictsFilePath,
+            'name' => $conflictsFileName,
+        ];
     }
 
     public static function execute(string $appName, $callback = null)

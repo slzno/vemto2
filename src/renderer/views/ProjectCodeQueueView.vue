@@ -37,15 +37,17 @@
                     class="flex mx-2 cursor-pointer" 
                     @click="openFile(file)"
                 >
-                    <div class="p-1 rounded-md bg-slate-800 mr-2">
-                        <div class="flex items-center space-x-1 text-xs">
-                            <div class="rounded-full w-3 h-3" :class="{
-                                'bg-green-500': file.status === RenderableFileStatus.RENDERED,
-                                'bg-yellow-500': file.status === RenderableFileStatus.PENDING,
-                                'bg-red-500': file.status === RenderableFileStatus.ERROR,
-                                'bg-orange-500': file.status === RenderableFileStatus.CONFLICT,
-                            }"></div>
-                            <div>{{ file.status }}</div>
+                    <div class="w-24">
+                        <div class="inline-block p-1 rounded-md bg-slate-800 mr-2">
+                            <div class="flex items-center space-x-1 text-xs">
+                                <div class="rounded-full w-3 h-3" :class="{
+                                    'bg-green-500': file.status === RenderableFileStatus.RENDERED,
+                                    'bg-yellow-500': file.status === RenderableFileStatus.PENDING,
+                                    'bg-red-500': file.status === RenderableFileStatus.ERROR,
+                                    'bg-orange-500': file.status === RenderableFileStatus.CONFLICT,
+                                }"></div>
+                                <div>{{ file.status }}</div>
+                            </div>
                         </div>
                     </div>
                     <div class="italic hover:text-red-500 dark:hover:text-red-400">{{ file.getRelativeFilePath() }}</div>
@@ -60,8 +62,12 @@
                 </div>
             </div>
 
-            <div class="text-red-500" v-if="file.error">
+            <div class="text-red-400 px-2 text-sm" v-if="file.status === RenderableFileStatus.ERROR">
                 {{ file.error }}
+            </div>
+
+            <div class="text-slate-400 px-2 text-sm" v-if="file.status === RenderableFileStatus.CONFLICT">
+                {{ file.conflictFileName }}
             </div>
         </div>
     </div>

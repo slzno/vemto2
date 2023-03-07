@@ -7,8 +7,6 @@ export default class HandleModelDataUpdate {
     }
 
     static updateRenderableFile(data: any) {
-        console.log(data)
-        
         const file = RenderableFile.find(data.id)
 
         if (!file) return

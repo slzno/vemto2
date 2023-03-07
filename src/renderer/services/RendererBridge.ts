@@ -7,7 +7,6 @@ export default class RendererBridge {
     }
 
     static dataUpdated() {
-        console.log('here')
         if(!this.onDataUpdatedCallback) return
         
         this.onDataUpdatedCallback()
