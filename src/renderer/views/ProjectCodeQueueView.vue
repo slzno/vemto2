@@ -1,4 +1,5 @@
 <script setup lang="ts">
+    import TextUtil from '@Common/util/TextUtil'
     import Main from '@Renderer/services/wrappers/Main'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
     import RenderableFile, { RenderableFileStatus } from '@Common/models/RenderableFile'
@@ -46,13 +47,16 @@
                                     'bg-red-500': file.status === RenderableFileStatus.ERROR,
                                     'bg-orange-500': file.status === RenderableFileStatus.CONFLICT,
                                 }"></div>
-                                <div>{{ file.status }}</div>
+                                <div>{{ TextUtil.capitalize(file.status) }}</div>
                             </div>
                         </div>
                     </div>
                     <div class="italic hover:text-red-500 dark:hover:text-red-400">{{ file.getRelativeFilePath() }}</div>
                 </div>
                 <div class="flex items-center">
+                    <button class="p-1 px-2 rounded bg-slate-900 mr-2" v-if="file.status === RenderableFileStatus.CONFLICT">
+                        Handle Conflict
+                    </button>
                     <button class="p-1 px-2 rounded bg-slate-900 mr-2" @click="file.regenerate()">
                         Regenerate
                     </button>

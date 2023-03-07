@@ -1,4 +1,7 @@
 class TextUtil {
+    capitalize(str: string) {
+        return str.charAt(0).toUpperCase() + str.slice(1)
+    }
 
     textBetween(content: string, start: string, end: string) {
         return content.substring(
