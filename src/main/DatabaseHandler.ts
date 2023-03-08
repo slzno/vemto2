@@ -1,6 +1,7 @@
 import path from "path"
 import { ipcMain } from "electron"
 import FileSystem from "./base/FileSystem"
+import { handleError } from "./ErrorHandler"
 import RelaDB from "@tiago_silva_pereira/reladb"
 import Project from "../common/models/Project"
 
@@ -12,6 +13,19 @@ export function HandleDatabase() {
     RelaDB.Resolver.db().driver.feedDatabaseData({})
 
     let needsToSave = false
+
+    ipcMain.handle("get:project:database", (event, projectPath) => {
+        return handleError(event, () => {
+            let databaseFilePath = path.join(projectPath, ".vemto", "data.json")
+            let databaseData = FileSystem.readFileAsJsonIfExists(databaseFilePath)
+
+            console.log('Feeding database data from first read...')
+
+            RelaDB.Resolver.db().driver.feedDatabaseData(databaseData)
+            
+            return databaseData
+        })
+    })
 
     ipcMain.handle("database:data:updated", (event, data) => {
         let oldData = RelaDB.Resolver.db().driver.getDatabaseData()

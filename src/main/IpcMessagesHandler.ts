@@ -19,15 +19,6 @@ export function HandleIpcMessages() {
         })
     })
 
-    ipcMain.handle("get:project:database", (event, projectPath) => {
-        return handleError(event, () => {
-            let databaseFilePath = path.join(projectPath, ".vemto", "data.json")
-            let databaseData = FileSystem.readFileAsJsonIfExists(databaseFilePath)
-            
-            return databaseData
-        })
-    })
-
     ipcMain.handle("file:project:read", (event, filePath) => {
         const project = Project.find(1)
         if(!project) return null
