@@ -19,3 +19,26 @@
   background: #091023;
   border-radius: 0.5rem !important;
 }
+
+.d2h-file-header {
+  display: none;
+}
+.d2h-file-wrapper {
+  border: none;
+}
+.d2h-code-side-linenumber,
+.d2h-info,
+.d2h-emptyplaceholder,
+.d2h-code-side-emptyplaceholder {
+  background-color: #0f172a;
+  color: #d0d0d0;
+  border: none;
+}
+
+.d2h-del {
+  background-color: #dc2626;
+}
+
+.d2h-ins {
+  background-color: #748a74;
+}

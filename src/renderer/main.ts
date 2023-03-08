@@ -2,10 +2,8 @@ import { createApp } from "vue"
 import { createPinia } from "pinia"
 
 import "highlight.js/styles/base16/monokai.css"
-import "./main.css"
-
-// import diff2html css
 import "diff2html/bundles/css/diff2html.min.css"
+import "./main.css"
  
 import App from "./App.vue"
 import router from "./router"
