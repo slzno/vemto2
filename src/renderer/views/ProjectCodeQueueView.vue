@@ -3,6 +3,7 @@
     import Main from '@Renderer/services/wrappers/Main'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
     import RenderableFile, { RenderableFileStatus } from '@Common/models/RenderableFile'
+import SolveConflicts from './components/CodeQueue/SolveConflicts.vue';
 
     const projectStore = useProjectStore()
 
@@ -54,9 +55,8 @@
                     <div class="italic hover:text-red-500 dark:hover:text-red-400">{{ file.getRelativeFilePath() }}</div>
                 </div>
                 <div class="flex items-center">
-                    <button class="p-1 px-2 rounded bg-slate-900 mr-2" v-if="file.status === RenderableFileStatus.CONFLICT">
-                        Handle Conflict
-                    </button>
+                    <SolveConflicts v-if="file.status === RenderableFileStatus.CONFLICT" :file="file" />
+                    
                     <button class="p-1 px-2 rounded bg-slate-900 mr-2" @click="file.regenerate()">
                         Regenerate
                     </button>
@@ -68,10 +68,6 @@
 
             <div class="text-red-400 px-2 text-sm" v-if="file.status === RenderableFileStatus.ERROR">
                 {{ file.error }}
-            </div>
-
-            <div class="text-slate-400 px-2 text-sm" v-if="file.status === RenderableFileStatus.CONFLICT">
-                {{ file.conflictFileName }}
             </div>
         </div>
     </div>

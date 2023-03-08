@@ -1,4 +1,3 @@
-import path from 'path'
 import Model from './Model'
 import Project from './Project'
 import RelaDB from '@tiago_silva_pereira/reladb'
