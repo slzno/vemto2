@@ -17,6 +17,7 @@ export default class Column extends RelaDB.Model {
     schemaState: any
     nullable: boolean
     unsigned: boolean
+    default: string
     autoIncrement: boolean
 
     static identifier() {
@@ -114,6 +115,7 @@ export default class Column extends RelaDB.Model {
             || this.schemaState.unsigned !== comparisonData.unsigned
             || this.schemaState.index !== comparisonData.index
             || this.schemaState.unique !== comparisonData.unique
+            || this.schemaState.default !== comparisonData.default
     }
 
     applyChanges(data: any): boolean {
@@ -128,6 +130,7 @@ export default class Column extends RelaDB.Model {
         this.index = data.index
         this.unique = data.unique
         this.autoIncrement = data.autoIncrement
+        this.default = data.default
 
         this.fillSchemaState()
 
@@ -156,6 +159,7 @@ export default class Column extends RelaDB.Model {
             type: this.type,
             index: this.index,
             unique: this.unique,
+            default: this.default,
         }
     }
 
