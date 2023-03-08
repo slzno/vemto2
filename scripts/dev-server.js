@@ -8,6 +8,7 @@ const Chokidar = require("chokidar")
 const Electron = require("electron")
 const compileTs = require("./private/tsc")
 const FileSystem = require("fs")
+const { sync: rimrafSync } = require("rimraf")
 
 let viteServer = null
 let electronProcess = null
@@ -112,6 +113,10 @@ async function start() {
     console.log(
         `${Chalk.greenBright("=======================================")}`
     )
+
+    if(rimrafSync(Path.join(__dirname, "..", "build"))) {
+        console.log(Chalk.greenBright("Build folder deleted."))
+    }
 
     const devServer = await startRenderer()
     rendererPort = devServer.config.server.port
