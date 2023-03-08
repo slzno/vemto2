@@ -5,7 +5,7 @@ function compile(directory, fastMode = false) {
     if(fastMode) console.log(Chalk.yellowBright("Fast mode enabled"))
 
     const tscCommand = fastMode 
-        ? "etsc --project tsconfig.json --skipLibCheck --ignore-annotations" 
+        ? "etsc && tsc-alias -p tsconfig.json" 
         : "tsc --project tsconfig.json && tsc-alias -p tsconfig.json"
 
     return new Promise((resolve, reject) => {

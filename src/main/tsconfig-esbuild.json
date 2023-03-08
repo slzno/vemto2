@@ -1,0 +1,14 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "outDir": "../../build/src"
+    },
+    "include": [
+        "./**/*.ts", 
+        "./**/*.js", 
+        "../common/**/*.d.ts",
+        "../common/**/*.ts",
+        "../renderer/**/*.d.ts",
+        "../renderer/**/*.ts",
+    ]
+}
