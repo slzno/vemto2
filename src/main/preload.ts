@@ -43,4 +43,7 @@ contextBridge.exposeInMainWorld("api", {
     openProjectFile: (path: string) => {
         return ipcRenderer.invoke("file:project:open", path)
     },
+    readConflictsFile: (path: string) => {
+        return ipcRenderer.invoke("file:conflicts:read", path)
+    }
 })

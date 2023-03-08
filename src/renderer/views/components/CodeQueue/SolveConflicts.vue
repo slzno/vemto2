@@ -3,6 +3,7 @@
     import UiModal from '@Renderer/components/ui/UiModal.vue'
     import RenderableFile from '@Common/models/RenderableFile'
     import UiButton from '@Renderer/components/ui/UiButton.vue'
+import Main from '@Renderer/services/wrappers/Main';
 
     const showingModal = ref(false)
 
@@ -15,10 +16,18 @@
 
     const show = () => {
         showingModal.value = true
+
+        readConflicts()
     }
 
     const close = () => {
         showingModal.value = false
+    }
+
+    const readConflicts = async () => {
+        const conflicts = await Main.API.readConflictsFile(file.value.conflictFileName)
+
+        console.log(conflicts)
     }
 </script>
 

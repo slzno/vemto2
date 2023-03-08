@@ -65,4 +65,23 @@ export function HandleIpcMessages() {
             shell.openPath(completePath)
         })
     })
+
+    ipcMain.handle("file:conflicts:read", (event, filePath) => {
+        const project = Project.find(1)
+        if(!project) return null
+
+        console.log('here2')
+
+        return handleError(event, () => {
+            const completePath = path.join(project.getPath(), ".vemto", "conflicts", filePath)
+
+            console.log(completePath)
+
+            if(FileSystem.fileExists(completePath)) {
+                return FileSystem.readFile(completePath)
+            }
+            
+            return null
+        })
+    })
 }
