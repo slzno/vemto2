@@ -15,7 +15,7 @@ $table-><$ column.type $>('<$ column.name $>'
 , <$ JSON.stringify(column.options).replace(/"/g, '\'') $>
 <up } up>)
 <# --- #>
-<up if (column.defaultValue) { up>
+<up if (column.default) { up>
 ->default(<$ column.getDefaultForTemplate() $>)
 <up } up>
 <# --- #>
