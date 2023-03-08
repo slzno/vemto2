@@ -116,6 +116,22 @@ async function start() {
 
     if(rimrafSync(Path.join(__dirname, "..", "build"))) {
         console.log(Chalk.greenBright("Build folder deleted."))
+
+        ChildProcess.exec("yarn php:compile", {
+            cwd: Path.join(__dirname, ".."),
+        }, (error, stdout, stderr) => {
+            if (error) {
+                console.log(Chalk.redBright(error))
+                process.exit(1)
+            }
+    
+            if (stderr) {
+                console.log(Chalk.redBright(stderr))
+                process.exit(1)
+            }
+    
+            console.log(Chalk.greenBright(stdout))
+        })
     }
 
     const devServer = await startRenderer()
