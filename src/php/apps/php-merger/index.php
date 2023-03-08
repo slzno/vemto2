@@ -6,173 +6,55 @@ require_once 'load.php';
 // Load Vemto classes
 require_once 'common/Vemto.php';
 
-use PhpParser\PrettyPrinter\Standard as StandardPrinter;
+require_once 'classes/StaticVisitor.php';
+require_once 'classes/UpdaterVisitor.php';
 
 Vemto::execute('php-merger', function () use ($argv) {
     
     $newFilePath = $argv[1];
     $currentFilePath = $argv[2];
+    $previousFilePath = $argv[3] ?? null;
+
+    $newFileContent = file_get_contents($newFilePath);
+    $currentFileContent = file_get_contents($currentFilePath);
+    $previousFileContent = $previousFilePath ? file_get_contents($previousFilePath) : null;
+
+    // We need to process the previous file (the latest file version wrote to the disk from Vemto)
+    // to check for code conflicts
+    $previousFileAst = null;
+    if($previousFileContent) {
+        $previousFileAst = (new PhpParser\ParserFactory())
+            ->create(PhpParser\ParserFactory::PREFER_PHP7)
+            ->parse($previousFileContent);
+    }
 
     $newFileAst = (new PhpParser\ParserFactory())
         ->create(PhpParser\ParserFactory::PREFER_PHP7)
-        ->parse(file_get_contents($newFilePath));
+        ->parse($newFileContent);
 
-    // Parse the contents of the first and second files into ASTs
     $currentFileAst = (new PhpParser\ParserFactory())
         ->create(PhpParser\ParserFactory::PREFER_PHP7)
-        ->parse(file_get_contents($currentFilePath));
+        ->parse($currentFileContent);
 
-    // Traverse the AST of the second file and identify new/changed elements
-    $newFileVisitor = new class extends PhpParser\NodeVisitorAbstract
-    {
-        public $methods = [];
-        protected $currentClass = null;
+    // Traverse the AST of the previous file
+    $previousFileVisitor = new StaticVisitor();
+    
+    if($previousFileAst) {
+        $previousFileTraverser = new PhpParser\NodeTraverser();
+        $previousFileTraverser->addVisitor($previousFileVisitor);
+        $previousFileTraverser->traverse($previousFileAst);
+    }
 
-        private $stack;
-
-        public function beginTraverse()
-        {
-            $this->stack = [];
-        }
-
-        public function enterNode(PhpParser\Node $node)
-        {
-            // Use a stack to keep track of the current parent node
-            if(!empty($this->stack)) {
-                $node->setAttribute('parent', end($this->stack));
-            }
-
-            $this->stack[] = $node;
-
-            if($node instanceof PhpParser\Node\Stmt\Class_) {
-                $this->currentClass = $node;
-            }
-
-            if ($node instanceof PhpParser\Node\Stmt\ClassMethod) {
-                $printer = new StandardPrinter();
-
-                $methodBody = $printer->prettyPrint([$node]);
-
-                $this->methods[] = [
-                    'node' => $node,
-                    'name' => $node->name->name,
-                    'class' => $this->currentClass->name->name,
-                    'body' => $methodBody
-                ];
-            }
-        }
-    };
-
+    // Traverse the AST of the new file and identify new/changed elements
+    $newFileVisitor = new StaticVisitor();
+    $newFileVisitor->setPreviousFileVisitor($previousFileVisitor);
+    
     $newFileTraverser = new PhpParser\NodeTraverser();
     $newFileTraverser->addVisitor($newFileVisitor);
     $newFileTraverser->traverse($newFileAst);
 
-    // Traverse the AST of the first file and mark all unchanged elements
-    $currentFileVisitor = new class extends PhpParser\NodeVisitorAbstract
-    {
-        public $methods = [];
-
-        private $stack;
-        private $classes = [];
-        private $currentClass = null;
-
-        protected $newFileVisitor;
-        protected $currentFileAst;
-
-        public function setNewFileVisitor(mixed $newFileVisitor)
-        {
-            $this->newFileVisitor = $newFileVisitor;
-        }
-
-        public function setCurrentFileAst(mixed $currentFileAst)
-        {
-            $this->currentFileAst = $currentFileAst;
-        }
-
-        public function getCurrentFileAst()
-        {
-            return $this->currentFileAst;
-        }
-
-        public function beginTraverse()
-        {
-            $this->stack = [];
-        }
-
-        public function enterNode(PhpParser\Node $node)
-        {
-            if(!empty($this->stack)) {
-                $node->setAttribute('parent', end($this->stack));
-            }
-
-            $this->stack[] = $node;
-
-            if($node instanceof PhpParser\Node\Stmt\Class_) {
-                $this->currentClass = $node;
-
-                $this->classes[] = $node;
-            }
-
-            if ($node instanceof PhpParser\Node\Stmt\ClassMethod) {
-                $printer = new StandardPrinter();
-
-                $methodBody = $printer->prettyPrint([$node]);
-
-                $this->methods[] = [
-                    'node' => $node,
-                    'name' => $node->name->name,
-                    'class' => $this->currentClass->name->name,
-                    'body' => $methodBody
-                ];
-            }    
-        }
-
-        public function afterTraverse(array $nodes)
-        {
-            $this->addInexistentMethods();
-        }
-
-        protected function addInexistentMethods()
-        {
-            foreach ($this->newFileVisitor->methods as $newMethod) {
-
-                $methodExists = false;
-
-                foreach ($this->methods as $currentMethod) {
-                    if ($newMethod['name'] === $currentMethod['name'] && $newMethod['class'] === $currentMethod['class']) {
-                        $methodExists = true;
-                    }
-                }
-
-                if (!$methodExists) {
-                    $this->addMethodToClass($newMethod);
-                }
-            }
-        }
-
-        protected function addMethodToClass(array $method)
-        {
-            $class = $this->getClassByName($method['class']);
-
-            if ($class) {
-                $class->stmts[] = $method['node'];
-            }
-        }
-
-        protected function getClassByName(string $name) {
-            $class = null;
-
-            foreach ($this->classes as $currentClass) {
-                if ($currentClass->name->name === $name) {
-                    $class = $currentClass;
-                }
-            }
-
-            return $class;
-        }
-    };
-
-
+    // Traverse the AST of the current file and update it with the new/changed elements
+    $currentFileVisitor = new UpdaterVisitor();
     $currentFileVisitor->setNewFileVisitor($newFileVisitor);
     $currentFileVisitor->setCurrentFileAst($currentFileAst);
 
@@ -180,20 +62,25 @@ Vemto::execute('php-merger', function () use ($argv) {
     $currentFileTraverser->addVisitor($currentFileVisitor);
     $currentFileTraverser->traverse($currentFileAst);
 
-
     // Write the modified AST back to the first file
-    $resultFileFolder = getcwd() . '/.vemto/processed-files';
-    $resultFilePath = $resultFileFolder . '/lastest-merged-file.php';
+    $hasConflicts = $currentFileVisitor->hasConflicts();
 
-    $printer = new PhpParser\PrettyPrinter\Standard();
+    if($hasConflicts) {
+        $conflicts = [
+            'conflicts' => $currentFileVisitor->getConflicts(),
+        ];
 
-    if(!file_exists($resultFileFolder)) {
-        mkdir($resultFileFolder);
+        $conflictsFilePath = Vemto::writeConflictsFile($conflicts);
     }
 
+    $printer = new PhpParser\PrettyPrinter\Standard();
     $resultFileContent = $printer->prettyPrintFile($currentFileVisitor->getCurrentFileAst());
 
-    file_put_contents($resultFilePath, $resultFileContent);
+    $resultFilePath = Vemto::writeProcessedFile($resultFileContent);
 
-    Vemto::respondWith($resultFilePath);
+    Vemto::respondWith([
+        'status' => $hasConflicts ? 'conflict' : 'success',
+        'file' => $resultFilePath,
+        'conflictsFile' => $hasConflicts ? $conflictsFilePath : null,
+    ]);
 });

@@ -23,7 +23,10 @@
                         >
                         <span
                             class="font-normal ml-1 text-slate-700 dark:text-slate-300 text-sm"
-                            >{{ relationship.name }}</span
+                            >{{ relationship.relatedModel.name }}</span
+                        >
+                        <span class="font-semibold dark:font-normal text-slate-500 dark:text-slate-500 text-xs ml-1"
+                            >({{ relationship.name }})</span
                         >
                     </span>
                 </div>

@@ -5,6 +5,7 @@
         "load.php"
     ],
     "directories": [
+        "classes",
         "common" 
     ]
 }

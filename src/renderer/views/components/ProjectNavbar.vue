@@ -4,6 +4,9 @@
         CircleStackIcon,
         CodeBracketIcon,
         Cog8ToothIcon,
+        RectangleStackIcon,
+WrenchScrewdriverIcon,
+PuzzlePieceIcon,
     } from "@heroicons/vue/24/outline"
     
     import { computed } from "vue"
@@ -14,7 +17,7 @@
 </script>
 
 <template>
-    <nav class="w-20 h-full bg-white dark:bg-slate-900 border-r-2 border-slate-100 dark:border-slate-800">
+    <nav class="w-20 h-full flex flex-col items-center justify-between bg-white dark:bg-slate-900 border-r-2 border-slate-100 dark:border-slate-800">
         <ul>
             <RouterLink
                 class="w-full h-12 flex justify-center items-center py-10 text-slate-400 dark:text-slate-600"
@@ -36,6 +39,18 @@
                 <CircleStackIcon class="w-9 h-9 stroke-2" />
             </RouterLink>
 
+            <li
+                class="w-full h-12 flex justify-center items-center py-10 text-slate-400 dark:text-slate-600 hover:text-slate-800"
+            >
+                <RectangleStackIcon class="w-9 h-9 stroke-2" />
+            </li>
+
+            <li
+                class="w-full h-12 flex justify-center items-center py-10 text-slate-400 dark:text-slate-600 hover:text-slate-800"
+            >
+                <svg class="w-9 h-9" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke="currentColor" stroke-width="0.35" fill="currentColor" d="M14.754 15a2.249 2.249 0 0 1 2.249 2.249v.575c0 .895-.32 1.76-.901 2.439C14.532 22.096 12.145 23 9 23c-3.146 0-5.532-.905-7.098-2.74a3.75 3.75 0 0 1-.899-2.434v-.578A2.249 2.249 0 0 1 3.253 15h11.501Zm0 1.5H3.252a.749.749 0 0 0-.749.749v.578c0 .535.192 1.053.54 1.46C4.295 20.756 6.261 21.502 9 21.502s4.706-.746 5.962-2.214a2.25 2.25 0 0 0 .54-1.463v-.575a.749.749 0 0 0-.748-.749Zm4.3-15.096a.75.75 0 0 1 1.023.279A12.693 12.693 0 0 1 21.75 8c0 2.254-.586 4.424-1.684 6.336a.75.75 0 1 1-1.3-.746A11.195 11.195 0 0 0 20.25 8c0-1.983-.513-3.89-1.475-5.573a.75.75 0 0 1 .279-1.023ZM9 3.004a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm6.588.396a.75.75 0 0 1 1.023.28A8.712 8.712 0 0 1 17.75 8c0 1.538-.398 3.02-1.144 4.328a.75.75 0 1 1-1.303-.743A7.214 7.214 0 0 0 16.25 8a7.213 7.213 0 0 0-.943-3.578.75.75 0 0 1 .281-1.022ZM9 4.505a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z" /></svg>
+            </li>
+
             <RouterLink
                 :class="{
                     'text-red-500': activeRoute === '/project/code-queue',
@@ -47,11 +62,25 @@
             >
                 <CodeBracketIcon class="w-9 h-9 stroke-2" />
             </RouterLink>
+        </ul>
+
+        <ul>
+            <li
+                class="w-full h-12 flex justify-center items-center py-6 text-slate-500 dark:text-slate-700 hover:text-slate-800"
+            >
+                <PuzzlePieceIcon class="w-6 h-6 stroke-2" />
+            </li>
 
             <li
-                class="w-full h-12 flex justify-center items-center py-10 text-slate-400 dark:text-slate-600 hover:text-slate-800"
+                class="w-full h-12 flex justify-center items-center py-6 text-slate-500 dark:text-slate-700 hover:text-slate-800"
             >
-                <Cog8ToothIcon class="w-9 h-9 stroke-2" />
+                <WrenchScrewdriverIcon class="w-6 h-6 stroke-1.7" />
+            </li>
+
+            <li
+                class="w-full h-12 flex justify-center items-center py-6 mb-3 text-slate-500 dark:text-slate-700 hover:text-slate-800"
+            >
+                <Cog8ToothIcon class="w-6 h-6 stroke-2" />
             </li>
         </ul>
     </nav>

@@ -1,4 +1,3 @@
-import path from 'path'
 import Model from './Model'
 import Project from './Project'
 import RelaDB from '@tiago_silva_pereira/reladb'
@@ -22,6 +21,14 @@ export enum RenderableFileStatus {
     CONFLICT = 'conflict',
 }
 
+export enum RenderableFileFormatter {
+    NONE = 'none',
+    PHP = 'php',
+    HTML = 'html',
+    BLADE = 'blade',
+    JAVASCRIPT = 'javascript',
+}
+
 export default class RenderableFile extends RelaDB.Model {
     id: string
     path: string
@@ -33,6 +40,8 @@ export default class RenderableFile extends RelaDB.Model {
     projectId: string
     error: string
     type: RenderableFileType
+    formatter: string
+    conflictFileName: string
 
     static identifier() {
         return 'RenderableFile'
@@ -46,6 +55,7 @@ export default class RenderableFile extends RelaDB.Model {
 
     regenerate() {
         this.status = RenderableFileStatus.PENDING
+        this.error = null
         this.save()
     }
 

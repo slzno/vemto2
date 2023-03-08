@@ -3,10 +3,9 @@
     import Model from "@Common/models/Model"
     import debounce from "@Common/tools/debounce"
     import UiText from "@Renderer/components/ui/UiText.vue"
+    import UiButton from "@Renderer/components/ui/UiButton.vue"
     import UiSelect from "@Renderer/components/ui/UiSelect.vue"
-    // import { Bars3Icon, ChevronDownIcon } from "@heroicons/vue/24/outline"
-    // import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
-    // import UiSelect from "@Renderer/components/ui/UiSelect.vue"
+    import { EllipsisVerticalIcon, PlusIcon } from "@heroicons/vue/24/outline"
 
     const props = defineProps({
         model: {
@@ -57,61 +56,70 @@
             />
 
             <div class="mt-4">
-                <h2 class="text-red-400 mb-1">Relationships</h2>
+                <h2 class="text-slate-500 font-semibold mb-1">Relationships</h2>
 
                 <div>
                     <div
-                        class="mb-2"
+                        class="mb-2 bg-slate-850 p-2 rounded-md space-y-1"
                         v-for="relationship in relationships"
                         :key="relationship.id"
                     >
-                        <div class="mb-1">
+                        <div class="flex justify-between">
+                            <div class="space-x-1">
+                                <div class="text-red-400 inline-block">
+                                    <UiSelect 
+                                        v-model="relationship.type" 
+                                        @change="saveRelationship(relationship)"
+                                    >
+                                        <option value="BelongsTo">Belongs To</option>
+                                        <option value="HasMany">Has Many</option>
+                                        <option value="HasOne">Has One</option>
+                                        <option value="ManyToMany">Many To Many</option>
+                                        <option value="MorphMany">Morph Many</option>
+                                        <option value="MorphOne">Morph One</option>
+                                        <option value="MorphTo">Morph To</option>
+                                        <option value="MorphToMany">Morph To Many</option>
+                                    </UiSelect>
+                                </div>
+        
+                                <!-- ui select with models related to relationship.modelId -->
+                                <UiSelect 
+                                    v-model="relationship.relatedModelId"
+                                    @change="saveRelationship(relationship)"
+                                >
+                                    <option
+                                        v-for="model in models"
+                                        :key="model.id"
+                                        :value="model.id"
+                                    >
+                                        {{ model.name }}
+                                    </option>
+                                </UiSelect>
+                            </div>
+
+                            <span>
+                                <EllipsisVerticalIcon class="h-6 w-6 text-slate-400" />
+                            </span>
+                        </div>
+
+                        <div>
                             <UiText
                                 v-model="relationship.name"
                                 placeholder="Relationship name"
                                 @change="saveRelationship(relationship)"
                             />
                         </div>
-
-                        <div class="space-x-1">
-                            <UiSelect 
-                                v-model="relationship.type" 
-                                @change="saveRelationship(relationship)"
-                            >
-                                <option value="BelongsTo">Belongs To</option>
-                                <option value="HasMany">Has Many</option>
-                                <option value="HasOne">Has One</option>
-                                <option value="ManyToMany">Many To Many</option>
-                                <option value="MorphMany">Morph Many</option>
-                                <option value="MorphOne">Morph One</option>
-                                <option value="MorphTo">Morph To</option>
-                                <option value="MorphToMany">Morph To Many</option>
-                            </UiSelect>
-    
-                            <!-- ui select with models related to relationship.modelId -->
-                            <UiSelect 
-                                v-model="relationship.relatedModelId"
-                                @change="saveRelationship(relationship)"
-                            >
-                                <option
-                                    v-for="model in models"
-                                    :key="model.id"
-                                    :value="model.id"
-                                >
-                                    {{ model.name }}
-                                </option>
-                            </UiSelect>
-                        </div>
                     </div>
                 </div>
 
                 <div>
-                    <button
+                    <UiButton
                         @click="newRelationship()"
-                        class="bg-slate-700 hover:bg-slate-600 text-slate-100 px-2 py-1 rounded-md"
                     >
-                        + Add relationship
-                    </button>
+                        <span class="flex items-center">
+                            <PlusIcon class="h-4 w-4 mr-1" /> Add relationship
+                        </span>
+                    </UiButton>
                 </div>
             </div>
         </div>

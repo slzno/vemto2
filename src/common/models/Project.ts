@@ -1,7 +1,11 @@
-import Table from './Table'
-import Model from './Model'
-import RelaDB from '@tiago_silva_pereira/reladb'
-import RenderableFile, { RenderableFileStatus, RenderableFileType } from './RenderableFile'
+import Table from "./Table"
+import Model from "./Model"
+import RelaDB from "@tiago_silva_pereira/reladb"
+
+import RenderableFile, {
+    RenderableFileStatus,
+    RenderableFileType,
+} from "./RenderableFile"
 
 export default class Project extends RelaDB.Model {
     id: string
@@ -16,7 +20,7 @@ export default class Project extends RelaDB.Model {
     renderableFiles: RenderableFile[]
 
     static identifier() {
-        return 'Project'
+        return "Project"
     }
 
     relationships() {
@@ -51,7 +55,9 @@ export default class Project extends RelaDB.Model {
     }
 
     hasTable(tableName: string): boolean {
-        return this.tables.find((table) => table.name === tableName) !== undefined
+        return (
+            this.tables.find((table) => table.name === tableName) !== undefined
+        )
     }
 
     doesNotHaveTable(tableName: string): boolean {
@@ -109,15 +115,17 @@ export default class Project extends RelaDB.Model {
     }
 
     hasChangedTables(): boolean {
-        if(!this.changedTablesIds) return false
+        if (!this.changedTablesIds) return false
 
         return this.changedTablesIds.length > 0
     }
 
     getChangedTables(): Table[] {
-        if(!this.hasChangedTables()) return []
-        
-        return this.tables.filter((table) => this.changedTablesIds.includes(table.id))
+        if (!this.hasChangedTables()) return []
+
+        return this.tables.filter((table) =>
+            this.changedTablesIds.includes(table.id)
+        )
     }
 
     getRenamedTables(): Table[] {
@@ -137,7 +145,7 @@ export default class Project extends RelaDB.Model {
     }
 
     markTableAsChanged(table: Table) {
-        if(!this.changedTablesIds) this.changedTablesIds = []
+        if (!this.changedTablesIds) this.changedTablesIds = []
 
         if (this.changedTablesIds.indexOf(table.id) === -1) {
             this.changedTablesIds.push(table.id)
@@ -153,7 +161,7 @@ export default class Project extends RelaDB.Model {
     }
 
     removeTableFromChangedTables(table: Table) {
-        if(!this.changedTablesIds) return
+        if (!this.changedTablesIds) return
 
         const index = this.changedTablesIds.indexOf(table.id)
         if (index > -1) {
@@ -163,16 +171,32 @@ export default class Project extends RelaDB.Model {
         this.save()
     }
 
-    registerRenderableFile(path: string, name: string, template: string, data: any) {
-        const renderableFile = new RenderableFile
-        
-        renderableFile.path = path
-        renderableFile.name = name
-        renderableFile.template = template
-        renderableFile.projectId = this.id
-        renderableFile.data = data
+    registerRenderableFile(
+        path: string,
+        name: string,
+        template: string,
+        data: any
+    ) {
+        let renderableFile: RenderableFile = null
+
+        renderableFile = this.renderableFiles.find(
+            (renderableFile) =>
+                renderableFile.path === path &&
+                renderableFile.name === name &&
+                renderableFile.template === template
+        )
+
+        if (!renderableFile) {
+            renderableFile = new RenderableFile()
+            renderableFile.path = path
+            renderableFile.name = name
+            renderableFile.template = template
+            renderableFile.projectId = this.id
+            renderableFile.data = data
+            renderableFile.type = RenderableFileType.PHP_CLASS
+        }
+
         renderableFile.status = RenderableFileStatus.PENDING
-        renderableFile.type = RenderableFileType.PHP_CLASS
 
         return renderableFile.save()
     }

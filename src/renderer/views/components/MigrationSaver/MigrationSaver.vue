@@ -84,7 +84,7 @@
 
 <template>
     <div
-        class="absolute bottom-0 left-0 p-4"
+        class="absolute bottom-0 left-0 p-4 z-50"
         v-if="projectStore.project.hasChangedTables()"
     >
         <UiButton

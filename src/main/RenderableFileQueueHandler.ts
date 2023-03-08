@@ -61,7 +61,8 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
 
             const relativeFilePath = path.join(file.path, file.name),
                 projectFilePath = path.join(project.getPath(), relativeFilePath),
-                vemtoFilePath = path.join(project.getPath(), ".vemto", "generated-files", relativeFilePath)
+                vemtoFilePath = path.join(project.getPath(), ".vemto", "generated-files", relativeFilePath),
+                previousFilePath = path.join(project.getPath(), ".vemto", "previous-generated-files", relativeFilePath)
             
             // Write the Vemto version for future comparison or merge
             FileSystem.writeFile(vemtoFilePath, formattedContent)
@@ -69,11 +70,17 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
             const currentFileContent = FileSystem.readFileIfExists(projectFilePath)
 
             if(file.type === RenderableFileType.PHP_CLASS) {
-                const mergedFilePath = await mergeFiles(vemtoFilePath, projectFilePath)
+                let mergedFileData = await mergeFiles(vemtoFilePath, projectFilePath, previousFilePath)
 
-                console.log(mergedFilePath)
+                if(mergedFileData.status === 'conflict') {
+                    setFileStatus(file, RenderableFileStatus.CONFLICT, {
+                        conflictFileName: mergedFileData.conflictsFile.name
+                    })
+
+                    return false
+                }
                 
-                const mergedFileContent = FileSystem.readFileIfExists(mergedFilePath)
+                const mergedFileContent = FileSystem.readFileIfExists(mergedFileData.file.path)
 
                 const formattedMergedFileContent = PhpFormatter.setContent(
                     mergedFileContent
@@ -101,25 +108,27 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
             console.log('Error processing file: ', file.name)
             console.log(error)
 
-            setFileStatus(file, RenderableFileStatus.ERROR)
+            setFileStatus(file, RenderableFileStatus.ERROR, {
+                error: error.message
+            })
         }
     }
 
-    const mergeFiles = async (newFilePath: string, currentFilePath: string): Promise<string> => {
+    const mergeFiles = async (newFilePath: string, currentFilePath: string, previousFilePath: string): Promise<any> => {
         const apiFilePath = path.join(app.getAppPath(), "static", "php-merger.phar")
 
-        const command = `php ${apiFilePath} ${newFilePath} ${currentFilePath}`
+        const command = `php ${apiFilePath} ${newFilePath} ${currentFilePath} ${previousFilePath}`
         
-        return CommandExecutor.executeOnPath(project.getPath(), command)
+        return await CommandExecutor.executeOnPath(project.getPath(), command)
     }
 
-    const setFileStatus = (file: RenderableFile, status: RenderableFileStatus) => {
+    const setFileStatus = (file: RenderableFile, status: RenderableFileStatus, customData: any = {}) => {
         mainWindow.webContents.send("model:data:updated", {
             model: "RenderableFile",
             id: file.id,
             data: {
                 status: status,
-                error: null
+                ...customData
             }
         })
     }
