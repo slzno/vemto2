@@ -1,4 +1,4 @@
-import String from "./String";
+import String from "../String";
 
 export default class ColumnTypeList {
 
