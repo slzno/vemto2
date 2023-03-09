@@ -43,6 +43,7 @@
         v-model="localValue"
         @input="$emit('update:modelValue', localValue)"
         @change="$emit('change', localValue)"
+        @blur="$emit('blur', localValue)"
         spellcheck="false"
         autocomplete="false"
         :disabled="disabled"

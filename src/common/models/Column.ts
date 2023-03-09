@@ -198,4 +198,8 @@ export default class Column extends RelaDB.Model {
 
         return oldColumn
     }
+
+    onNameUpdated() {
+        console.log('coluna atualizada')
+    }
 }

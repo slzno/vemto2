@@ -17,11 +17,16 @@
     const column = toRef(props, "column") as Ref<Column>
 
     watch(() => column.value.name, () => {
-        saveColunm()
+        saveColumn()
     })
 
     // debounced
-    const saveColunm = debounce(() => {
+    const saveColumn = debounce(() => {
+        if(column.value.table.hasColumn(column.value.name)) {
+            console.log("Column already exists")
+            return
+        }
+
         column.value.saveFromInterface()
     }, 500)
 </script>
@@ -54,6 +59,7 @@
                         <option value="timestamp">Timestamp</option>
                         <option value="text">Text</option>
                         <option value="longText">Long Text</option>
+                        <option value="boolean">Boolean</option>
                     </UiSelect>
                 </div>
 

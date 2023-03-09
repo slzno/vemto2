@@ -60,7 +60,7 @@
                 <UiTabs :tabs="tabs" v-model="selectedTab" />
 
                 <div class="p-4 space-y-2" v-if="selectedTab === 'columns'">
-                    <TableColumns :columns="table.columns" />
+                    <TableColumns :table="table" />
                 </div>
 
                 <div class="p-4 space-y-2" v-if="selectedTab === 'models'">
