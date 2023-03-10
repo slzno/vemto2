@@ -21,6 +21,11 @@
             type: Boolean,
             default: false,
         },
+
+        id: {
+            type: String,
+            default: "",
+        }
     })
 
     defineEmits(["update:modelValue", "change"])
@@ -39,6 +44,7 @@
     <input
         class="w-full dark:text-slate-200 border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
         type="text"
+        :id="id"
         :placeholder="placeholder"
         v-model="localValue"
         @input="$emit('update:modelValue', localValue)"

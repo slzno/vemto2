@@ -49,7 +49,7 @@
 
             <div class="flex flex-grow space-x-2">
                 <div class="flex flex-col flex-grow">
-                    <UiText placeholder="Name" v-model="column.name" />
+                    <UiText placeholder="Name" :id="`table-column-${column.id}`" v-model="column.name" />
                 </div>
 
                 <div class="flex flex-col w-36">
