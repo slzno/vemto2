@@ -40,6 +40,8 @@ Vemto::execute('php-merger', function () use ($argv) {
     $previousFileVisitor = new StaticVisitor();
     
     if($previousFileAst) {
+        $previousFileVisitor->setFileContent($previousFileContent);
+        
         $previousFileTraverser = new PhpParser\NodeTraverser();
         $previousFileTraverser->addVisitor($previousFileVisitor);
         $previousFileTraverser->traverse($previousFileAst);
@@ -48,6 +50,7 @@ Vemto::execute('php-merger', function () use ($argv) {
     // Traverse the AST of the new file and identify new/changed elements
     $newFileVisitor = new StaticVisitor();
     $newFileVisitor->setPreviousFileVisitor($previousFileVisitor);
+    $newFileVisitor->setFileContent($newFileContent);
     
     $newFileTraverser = new PhpParser\NodeTraverser();
     $newFileTraverser->addVisitor($newFileVisitor);
@@ -55,6 +58,7 @@ Vemto::execute('php-merger', function () use ($argv) {
 
     // Traverse the AST of the current file and update it with the new/changed elements
     $currentFileVisitor = new UpdaterVisitor();
+    $currentFileVisitor->setFileContent($currentFileContent);
     $currentFileVisitor->setNewFileVisitor($newFileVisitor);
     $currentFileVisitor->setCurrentFileAst($currentFileAst);
 

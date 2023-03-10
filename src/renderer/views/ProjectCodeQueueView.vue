@@ -3,7 +3,9 @@
     import Main from '@Renderer/services/wrappers/Main'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
     import RenderableFile, { RenderableFileStatus } from '@Common/models/RenderableFile'
-import SolveConflicts from './components/CodeQueue/SolveConflicts.vue';
+import SolveConflicts from './components/CodeQueue/SolveConflicts.vue'
+import UiButton from '@Renderer/components/ui/UiButton.vue'
+import { ArrowPathIcon, TrashIcon } from '@heroicons/vue/24/outline'
 
     const projectStore = useProjectStore()
 
@@ -54,15 +56,18 @@ import SolveConflicts from './components/CodeQueue/SolveConflicts.vue';
                     </div>
                     <div class="italic hover:text-red-500 dark:hover:text-red-400">{{ file.getRelativeFilePath() }}</div>
                 </div>
-                <div class="flex items-center">
+                <div class="flex items-center space-x-2">
                     <SolveConflicts v-if="file.status === RenderableFileStatus.CONFLICT" :file="file" />
                     
-                    <button class="p-1 px-2 rounded bg-slate-900 mr-2" @click="file.regenerate()">
+                    <UiButton @click="file.regenerate()">
+                        <ArrowPathIcon class="w-4 h-4 mr-1 text-green-500" />
                         Regenerate
-                    </button>
-                    <button class="p-1 px-2 rounded bg-slate-900" @click="file.delete()">
-                        Delete
-                    </button>
+                    </UiButton>
+
+                    <UiButton @click="file.delete()">
+                        <TrashIcon class="w-4 h-4 mr-1 text-red-500" />
+                        Clear
+                    </UiButton>
                 </div>
             </div>
 

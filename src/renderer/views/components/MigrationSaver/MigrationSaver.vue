@@ -87,13 +87,20 @@
         class="absolute bottom-0 left-0 p-4 z-50"
         v-if="projectStore.project.hasChangedTables()"
     >
-        <UiButton
-            class="flex items-center justify-between"
-            @click="showingModal = true"
-        >
-            <ArrowDownTrayIcon class="w-4 h-4 mr-2" />
-            Save
-        </UiButton>
+        <div class="flex flex-col space-y-2 bg-slate-850 border border-slate-700 p-3 rounded-lg">
+            <div class="text-sm">
+                There are migrations changes
+            </div>
+            <div>
+                <UiButton
+                    class="flex items-center justify-between"
+                    @click="showingModal = true"
+                >
+                    <ArrowDownTrayIcon class="w-4 h-4 mr-2" />
+                    Save
+                </UiButton>
+            </div>
+        </div>
 
         <UiModal
             title="Review Migrations"

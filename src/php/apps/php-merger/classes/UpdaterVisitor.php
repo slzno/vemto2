@@ -10,14 +10,20 @@ class UpdaterVisitor extends NodeVisitorAbstract
 {
     public $methods = [];
 
-    private $stack;
-    private $classes = [];
-    private $currentClass = null;
+    protected $stack;
+    protected $classes = [];
+    protected $fileContent = '';
+    protected $currentClass = null;
 
     protected $newFileVisitor;
     protected $currentFileAst;
 
     protected $conflicts = [];
+
+    public function setFileContent(string $fileContent)
+    {
+        $this->fileContent = $fileContent;
+    }
 
     public function setNewFileVisitor(mixed $newFileVisitor)
     {
@@ -57,7 +63,9 @@ class UpdaterVisitor extends NodeVisitorAbstract
             $printer = new StandardPrinter();
 
             $methodName = $node->name->name;
-            $methodBody = $printer->prettyPrint([$node]);
+            // $methodBody = $printer->prettyPrint([$node]);
+
+            $methodBody = $this->extractMethodCode($node->name->name);
 
             $this->methods[$methodName] = [
                 'node' => $node,
@@ -66,6 +74,34 @@ class UpdaterVisitor extends NodeVisitorAbstract
                 'body' => $methodBody,
             ];
         }    
+    }
+
+    public function extractMethodCode($methodName)
+    {
+        $pattern = "/(public|private|protected)?\s*function\s+" . $methodName . "\s*\([^)]*\)\s*{((?>[^{}]+|\{(?>[^{}]+|(?-1))*\})*)}/ms";
+
+        preg_match($pattern, $this->fileContent, $matches);
+
+        if (count($matches) > 0) {
+            $methodCode = $matches[0];
+            // $indentation = $this->getIndentation($methodCode);
+            // $methodCode = str_replace("\n" . $indentation, "\n", $methodCode);
+            return $methodCode;
+        } else {
+            return '';
+        }
+    }
+
+    private function getIndentation($code)
+    {
+        $indentation = '';
+        $matches = array();
+
+        if (preg_match("/^(\s+)/m", $code, $matches)) {
+            $indentation = $matches[1];
+        }
+        
+        return $indentation;
     }
 
     public function afterTraverse(array $nodes)
@@ -131,6 +167,7 @@ class UpdaterVisitor extends NodeVisitorAbstract
     protected function registerConflict(string $currentContent, string $newContent)
     {
         $this->conflicts[] = [
+            'id' => uniqid(),
             'currentContent' => $currentContent,
             'newContent' => $newContent,
         ];

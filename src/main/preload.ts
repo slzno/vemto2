@@ -45,5 +45,8 @@ contextBridge.exposeInMainWorld("api", {
     },
     readConflictsFile: (path: string) => {
         return ipcRenderer.invoke("file:conflicts:read", path)
-    }
+    },
+    solveConflictReplacingCode: (fileId: string, conflictId: string, content: string) => {
+        return ipcRenderer.invoke("file:conflicts:solve:replace", fileId, conflictId, content)
+    },
 })

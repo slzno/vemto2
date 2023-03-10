@@ -5,15 +5,17 @@
         CodeBracketIcon,
         Cog8ToothIcon,
         RectangleStackIcon,
-WrenchScrewdriverIcon,
-PuzzlePieceIcon,
+        WrenchScrewdriverIcon,
+        PuzzlePieceIcon,
     } from "@heroicons/vue/24/outline"
+    import { useProjectStore } from "@Renderer/stores/useProjectStore"
     
     import { computed } from "vue"
     import { useRoute } from "vue-router"
 
     const route = useRoute(),
-        activeRoute = computed(() => route.path)
+        activeRoute = computed(() => route.path),
+        projectStore = useProjectStore()
 </script>
 
 <template>
@@ -56,10 +58,11 @@ PuzzlePieceIcon,
                     'text-red-500': activeRoute === '/project/code-queue',
                     'text-slate-400 dark:text-slate-600 hover:text-red-500': activeRoute !== '/project/code-queue',
                 }"
-                class="w-full h-12 flex justify-center items-center py-10"
+                class="w-full h-12 flex justify-center items-center py-10 relative"
                 as="li"
                 to="/project/code-queue"
             >
+                <div v-show="projectStore.project.hasRenderableFilesWithConflict()" class="absolute rounded-full w-3 h-3 bg-red-500 animate-pulse" style="left: 30px; bottom: 20px;"></div>
                 <CodeBracketIcon class="w-9 h-9 stroke-2" />
             </RouterLink>
         </ul>

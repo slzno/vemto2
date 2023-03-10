@@ -5,6 +5,7 @@ import { handleError } from "./ErrorHandler"
 import Project from "../common/models/Project"
 import PrepareProject from "./services/PrepareProject"
 import ReadProjectSchema from "./services/ReadProjectSchema"
+import RenderableFile from "../common/models/RenderableFile"
 
 export function HandleIpcMessages() {
     ipcMain.handle("prepare:project", async (event, projectPath) => {
@@ -61,18 +62,55 @@ export function HandleIpcMessages() {
         const project = Project.find(1)
         if(!project) return null
 
-        console.log('here2')
-
         return handleError(event, () => {
             const completePath = path.join(project.getPath(), ".vemto", "conflicts", filePath)
-
-            console.log(completePath)
 
             if(FileSystem.fileExists(completePath)) {
                 return FileSystem.readFile(completePath)
             }
             
             return null
+        })
+    })
+
+    ipcMain.handle("file:conflicts:solve:replace", (event, fileId, conflictId, content) => {
+        const project = Project.find(1)
+        if(!project) return null
+
+        return handleError(event, () => {
+            const renderableFile = RenderableFile.find(fileId)
+
+            if(!renderableFile) return null
+
+            const conflictsPath = path.join(project.getPath(), ".vemto", "conflicts", renderableFile.conflictFileName)
+
+            const conflictsFileContent = FileSystem.readFileIfExists(conflictsPath)
+
+            if(!conflictsFileContent) return null
+
+            const conflictsData = JSON.parse(conflictsFileContent)
+
+            const conflict = conflictsData.conflicts.find(c => c.id === conflictId)
+
+            if(!conflict) return null
+
+            const filePath = path.join(project.getPath(), renderableFile.getRelativeFilePath())
+            const fileContent = FileSystem.readFileIfExists(filePath)
+
+            if(!fileContent) return null
+
+            const newFileContent = fileContent.replace(conflict.currentContent, content)
+
+            FileSystem.writeFile(filePath, newFileContent)
+
+            // Remove the conflict from the conflicts file
+            const newConflicts = conflictsData.conflicts.filter(c => c.id !== conflictId)
+
+            conflictsData.conflicts = newConflicts
+
+            FileSystem.writeFile(conflictsPath, JSON.stringify(conflictsData, null, 4))
+
+            return true
         })
     })
 }
