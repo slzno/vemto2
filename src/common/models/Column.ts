@@ -3,6 +3,8 @@ import RelaDB from '@tiago_silva_pereira/reladb'
 import TableColumnChanged from '@Common/events/TableColumnChanged'
 import TableColumnCreated from '@Common/events/TableColumnCreated'
 import ColumnData from './data/ColumnData'
+import ColumnsDefaultData from './column-types/default/ColumnsDefaultData'
+import ColumnsDefaultDataInterface from './column-types/default/base/ColumnsDefaultDataInterface'
 
 export default class Column extends RelaDB.Model {
     id: string
@@ -216,5 +218,27 @@ export default class Column extends RelaDB.Model {
     
     isFloatingPointNumber(): boolean {
         return ['decimal', 'double', 'float'].includes(this.type)
+    }
+
+    getDefaultTypeByName(name?: string): ColumnsDefaultDataInterface {
+        if(!name) name = this.name
+
+        let defaultTypeData = ColumnsDefaultData.getTypeByColumnName(name)
+
+        if(!defaultTypeData) return null
+
+        return defaultTypeData
+    }
+
+    onNameUpdated(): Column {
+        let defaultTypeData = this.getDefaultTypeByName()
+
+        if(!defaultTypeData) return
+
+        this.type = defaultTypeData.type
+        this.length = defaultTypeData.length || this.length
+        this.nullable = defaultTypeData.nullable || this.nullable
+
+        return this
     }
 }

@@ -29,7 +29,8 @@
             return
         }
 
-        column.value.saveFromInterface()
+        column.value.onNameUpdated()
+            .saveFromInterface()
     }, 500)
 </script>
 
