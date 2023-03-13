@@ -2,6 +2,7 @@ import Table from './Table'
 import RelaDB from '@tiago_silva_pereira/reladb'
 import TableColumnChanged from '@Common/events/TableColumnChanged'
 import TableColumnCreated from '@Common/events/TableColumnCreated'
+import ColumnData from './data/ColumnData'
 
 export default class Column extends RelaDB.Model {
     id: string
@@ -18,7 +19,15 @@ export default class Column extends RelaDB.Model {
     nullable: boolean
     unsigned: boolean
     default: string
+    total: number
+    places: number
     autoIncrement: boolean
+
+    constructor(data: any = {}) {
+        const columnData = Object.assign(ColumnData.getDefault(), data)
+
+        super(columnData)
+    }
 
     static identifier() {
         return 'Column'
@@ -116,6 +125,8 @@ export default class Column extends RelaDB.Model {
             || this.schemaState.index !== comparisonData.index
             || this.schemaState.unique !== comparisonData.unique
             || this.schemaState.default !== comparisonData.default
+            || this.schemaState.total !== comparisonData.total
+            || this.schemaState.places !== comparisonData.places
     }
 
     applyChanges(data: any): boolean {
@@ -131,6 +142,8 @@ export default class Column extends RelaDB.Model {
         this.unique = data.unique
         this.autoIncrement = data.autoIncrement
         this.default = data.default
+        this.total = data.total
+        this.places = data.places
 
         this.fillSchemaState()
 
@@ -160,6 +173,8 @@ export default class Column extends RelaDB.Model {
             index: this.index,
             unique: this.unique,
             default: this.default,
+            total: this.total,
+            places: this.places,
         }
     }
 
@@ -197,5 +212,9 @@ export default class Column extends RelaDB.Model {
         oldColumn.tableId = this.tableId
 
         return oldColumn
+    }
+    
+    isFloatingPointNumber(): boolean {
+        return ['decimal', 'double', 'float'].includes(this.type)
     }
 }

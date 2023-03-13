@@ -3,7 +3,7 @@
 
     const props = defineProps({
         modelValue: {
-            type: String,
+            type: Number,
             required: true,
         },
 
@@ -23,6 +23,16 @@
         id: {
             type: String,
             default: "",
+        },
+
+        max: {
+            type: Number,
+            default: 0,
+        },
+
+        min: {
+            type: Number,
+            default: 0,
         }
     })
 
@@ -47,7 +57,9 @@
     <label v-if="label" class="text-xs text-slate-400">{{ label }}</label>
     <input
         class="w-full dark:text-slate-200 border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
-        type="text"
+        type="number"
+        :max="max"
+        :min="min"
         :id="id"
         :placeholder="placeholder"
         v-model="localValue"
