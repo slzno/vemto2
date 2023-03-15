@@ -235,7 +235,7 @@ export default class Column extends RelaDB.Model {
     getDefaultTypeByName(name?: string): ColumnsDefaultDataInterface {
         if(!name) name = this.name
 
-        let defaultTypeData = ColumnsDefaultData.getTypeByColumnName(name)
+        let defaultTypeData = ColumnsDefaultData.getSettingsByColumnName(name)
 
         if(!defaultTypeData) return null
 
