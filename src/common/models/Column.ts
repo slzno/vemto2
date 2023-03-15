@@ -4,7 +4,7 @@ import TableColumnChanged from '@Common/events/TableColumnChanged'
 import TableColumnCreated from '@Common/events/TableColumnCreated'
 import ColumnData from './data/ColumnData'
 import ColumnsDefaultData from './column-types/default/ColumnsDefaultData'
-import DefaultColumnType from './column-types/default/base/DefaultColumnType'
+import ColumnsDefaultDataInterface from './column-types/default/base/ColumnsDefaultDataInterface'
 
 export default class Column extends RelaDB.Model {
     id: string
@@ -232,7 +232,7 @@ export default class Column extends RelaDB.Model {
         return ['decimal', 'double', 'float'].includes(this.type)
     }
 
-    getDefaultTypeByName(name?: string): DefaultColumnType {
+    getDefaultTypeByName(name?: string): ColumnsDefaultDataInterface {
         if(!name) name = this.name
 
         let defaultTypeData = ColumnsDefaultData.getTypeByColumnName(name)
