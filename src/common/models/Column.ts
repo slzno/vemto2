@@ -42,8 +42,9 @@ export default class Column extends RelaDB.Model {
     }
 
     static created(column: Column) {
-        let nextOrder = 0,
-            tableColumns = column.table.getOrderedColumns()
+        let nextOrder = 0
+        
+        const tableColumns = column.table.getOrderedColumns()
 
         if(tableColumns.length > 0) {
             nextOrder = tableColumns[tableColumns.length - 1].order + 1
@@ -95,6 +96,7 @@ export default class Column extends RelaDB.Model {
 
     isForeign(): boolean {
         const foreignIndexes = this.table.getForeignIndexes()
+        
         return foreignIndexes.some(index => index.columns.includes(this.name))
     }
 
@@ -221,7 +223,7 @@ export default class Column extends RelaDB.Model {
     }
 
     old(): Column {
-        let oldColumn = new Column(this.schemaState)
+        const oldColumn = new Column(this.schemaState)
 
         oldColumn.tableId = this.tableId
 
@@ -229,13 +231,13 @@ export default class Column extends RelaDB.Model {
     }
     
     isFloatingPointNumber(): boolean {
-        return ['decimal', 'double', 'float'].includes(this.type)
+        return ['decimal', 'double', 'float', 'unsignedDecimal'].includes(this.type)
     }
 
     getDefaultTypeByName(name?: string): ColumnsDefaultDataInterface {
         if(!name) name = this.name
 
-        let defaultTypeData = ColumnsDefaultData.getSettingsByColumnName(name)
+        const defaultTypeData = ColumnsDefaultData.getSettingsByColumnName(name)
 
         if(!defaultTypeData) return null
 
@@ -248,15 +250,5 @@ export default class Column extends RelaDB.Model {
 
     isInvalid(): boolean {
         return ! this.isValid()
-    }
-
-    onNameUpdated(): void {
-        let defaultTypeData = this.getDefaultTypeByName()
-
-        if(!defaultTypeData) return
-
-        this.type = defaultTypeData.type
-        this.length = defaultTypeData.length || this.length
-        this.nullable = defaultTypeData.nullable || this.nullable
     }
 }

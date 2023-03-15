@@ -5,7 +5,7 @@ export default class ColumnData {
             type: '',
             order: 0,
             index: false,
-            length: 0,
+            length: null,
             unique: false,
             tableId: '',
             removed: false,

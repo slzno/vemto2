@@ -25,9 +25,22 @@
             return
         }
 
-        column.value.onNameUpdated()
+        if(!column.value.type) detectPossibleTypeByName()
+
         column.value.saveFromInterface()
     }, 500)
+
+    const detectPossibleTypeByName = () => {
+        if(!column.value) return
+
+        let defaultColumnTypeData = column.value.getDefaultTypeByName()
+            
+        if(!defaultColumnTypeData) return
+
+        column.value.type = defaultColumnTypeData.type
+        column.value.length = defaultColumnTypeData.length || column.value.length
+        column.value.nullable = defaultColumnTypeData.nullable || column.value.nullable
+    }
 
     const removeColumn = () => {
         if(!confirm("Are you sure you want to remove this column?")) return
