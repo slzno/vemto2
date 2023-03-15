@@ -1,10 +1,10 @@
 <script setup lang="ts">
-    import { PropType, Ref, toRef, watch, ref } from "vue"
+    import { PropType, Ref, toRef, ref } from "vue"
     import Column from "@Common/models/Column"
     import debounce from "@Common/tools/debounce"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiNumber from "@Renderer/components/ui/UiNumber.vue"
-    import { Bars3Icon, ChevronDownIcon, ChevronUpIcon } from "@heroicons/vue/24/outline"
+    import { Bars3Icon, ChevronDownIcon, ChevronUpIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import UiSelect from "@Renderer/components/ui/UiSelect.vue"
 
@@ -18,10 +18,6 @@
     const column = toRef(props, "column") as Ref<Column>,
         showingOptions = ref(false)
 
-    watch(() => column.value.name, () => {
-        saveColumn()
-    })
-
     // debounced
     const saveColumn = debounce(() => {
         if(column.value.table.hasColumn(column.value.name)) {
@@ -30,8 +26,14 @@
         }
 
         column.value.onNameUpdated()
-            .saveFromInterface()
+        column.value.saveFromInterface()
     }, 500)
+
+    const removeColumn = () => {
+        if(!confirm("Are you sure you want to delete this column?")) return
+
+        column.value.remove()
+    }
 </script>
 
 <template>
@@ -52,7 +54,7 @@
 
             <div class="flex flex-grow space-x-2">
                 <div class="flex flex-col flex-grow">
-                    <UiText placeholder="Name" :id="`table-column-${column.id}`" v-model="column.name" />
+                    <UiText placeholder="Name" :id="`table-column-${column.id}`" v-model="column.name" @change="saveColumn" />
                 </div>
 
                 <div class="flex flex-col w-36">
@@ -69,6 +71,10 @@
 
                 <div class="flex items-center justify-between">
                     <UiCheckbox v-model="column.nullable" label="Nullable" @change="column.saveFromInterface()" />
+                </div>
+
+                <div class="flex items-center justify-between" @click="removeColumn">
+                    <TrashIcon class="w-4 h-4 text-red-500 cursor-pointer" />
                 </div>
             </div>
 

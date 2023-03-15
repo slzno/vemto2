@@ -2,6 +2,7 @@
     import { toRef, ref, Ref, onMounted, nextTick } from "vue"
     import Column from "@Common/models/Column"
     import TableColumn from "./TableColumn.vue"
+    import Draggable from "vuedraggable"
     import { PlusCircleIcon } from "@heroicons/vue/24/outline"
 
     const props = defineProps(["table"]),
@@ -9,7 +10,7 @@
 
     const columns = ref([]) as Ref<Column[]>
 
-    function addColumn() {
+    const addColumn = () => {
         const newColumn = new Column({
             tableId: table.value.id
         }).saveFromInterface()
@@ -23,19 +24,31 @@
         })
     }
 
+    const saveColumnsOrder = () => {
+        columns.value.forEach((column, index) => {
+            column.order = index
+            column.saveFromInterface()
+        })
+    }
+
     onMounted(() => {
-        columns.value = table.value.getColumns()
+        columns.value = table.value.getOrderedColumns()
     })
 </script>
 
 <template>
     <div>
-        <section class="space-y-2">
-            <TableColumn
-                v-for="column in columns"
-                :key="column.id"
-                :column="column"
-            />
+        <section>
+            <Draggable
+                class="space-y-2"
+                :list="columns"
+                item-key="columns-draggable"
+                @end="saveColumnsOrder"
+            >
+                <template #item="{ element }">
+                    <TableColumn :column="element" />
+                </template>
+            </Draggable>
         </section>
 
         <section
@@ -49,3 +62,8 @@
         </section>
     </div>
 </template>
+<style scoped>
+.flip-list-move {
+  transition: transform 0.5s;
+}
+</style>

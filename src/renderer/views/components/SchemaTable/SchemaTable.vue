@@ -70,7 +70,7 @@
 
         <div class="font-mono px-4">
             <TableColumn
-                v-for="column in table.columns"
+                v-for="column in table.getOrderedColumns()"
                 :key="column.name"
                 :column="column"
             />

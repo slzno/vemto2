@@ -230,7 +230,7 @@ export default class Column extends RelaDB.Model {
         return defaultTypeData
     }
 
-    onNameUpdated(): Column {
+    onNameUpdated(): void {
         let defaultTypeData = this.getDefaultTypeByName()
 
         if(!defaultTypeData) return
@@ -238,7 +238,5 @@ export default class Column extends RelaDB.Model {
         this.type = defaultTypeData.type
         this.length = defaultTypeData.length || this.length
         this.nullable = defaultTypeData.nullable || this.nullable
-
-        return this
     }
 }

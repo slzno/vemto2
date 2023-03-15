@@ -209,6 +209,10 @@ export default class Table extends RelaDB.Model {
         return this.columns.filter((column) => !column.isRemoved())
     }
 
+    getOrderedColumns(): Column[] {
+        return this.getColumns().sort((a, b) => a.order - b.order)
+    }
+
     getIndexes(): Index[] {
         return this.indexes.filter((index) => !index.isRemoved())
     }
