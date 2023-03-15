@@ -4,7 +4,7 @@ import TableColumnChanged from '@Common/events/TableColumnChanged'
 import TableColumnCreated from '@Common/events/TableColumnCreated'
 import ColumnData from './data/ColumnData'
 import ColumnsDefaultData from './column-types/default/ColumnsDefaultData'
-import ColumnsDefaultDataInterface from './column-types/default/base/ColumnsDefaultDataInterface'
+import DefaultColumnType from './column-types/default/base/DefaultColumnType'
 
 export default class Column extends RelaDB.Model {
     id: string
@@ -39,6 +39,18 @@ export default class Column extends RelaDB.Model {
         return {
             table: () => this.belongsTo(Table),
         }
+    }
+
+    static created(column: Column) {
+        let nextOrder = 0,
+            tableColumns = column.table.getOrderedColumns()
+
+        if(tableColumns.length > 0) {
+            nextOrder = tableColumns[tableColumns.length - 1].order + 1
+        }
+
+        column.order = nextOrder
+        column.saveFromInterface()
     }
 
     saveFromInterface() {
@@ -220,7 +232,7 @@ export default class Column extends RelaDB.Model {
         return ['decimal', 'double', 'float'].includes(this.type)
     }
 
-    getDefaultTypeByName(name?: string): ColumnsDefaultDataInterface {
+    getDefaultTypeByName(name?: string): DefaultColumnType {
         if(!name) name = this.name
 
         let defaultTypeData = ColumnsDefaultData.getTypeByColumnName(name)
@@ -228,6 +240,14 @@ export default class Column extends RelaDB.Model {
         if(!defaultTypeData) return null
 
         return defaultTypeData
+    }
+
+    isValid(): boolean {
+        return !! (this.name && this.type)
+    }
+
+    isInvalid(): boolean {
+        return ! this.isValid()
     }
 
     onNameUpdated(): void {

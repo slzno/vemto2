@@ -36,7 +36,7 @@
         }
     })
 
-    const emit = defineEmits(["update:modelValue", "change"]),
+    const emit = defineEmits(["update:modelValue", "change", "blur"]),
         localValue = computed({
             get(): any {
                 return props.modelValue

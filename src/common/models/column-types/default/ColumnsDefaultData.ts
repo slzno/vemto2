@@ -1,12 +1,12 @@
-import ColumnsDefaultDataInterface from './base/ColumnsDefaultDataInterface'
+import DefaultColumnType from './base/DefaultColumnType'
 
 export default class ColumnsDefaultData {
-    static getTypeByColumnName(name: string): ColumnsDefaultDataInterface {
+    static getTypeByColumnName(name: string): DefaultColumnType {
         let column = this.get()[name]
 
         if(!column) return null
 
-        return column as ColumnsDefaultDataInterface
+        return column as DefaultColumnType
     }
 
     static get(): Object {

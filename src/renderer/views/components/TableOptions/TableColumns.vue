@@ -31,6 +31,14 @@
         })
     }
 
+    const clearInvalidColumns = () => {
+        columns.value = columns.value.filter(column => {
+            if(column.isInvalid()) column.remove()
+
+            return column.isValid()
+        })
+    }
+
     onMounted(() => {
         columns.value = table.value.getOrderedColumns()
     })
@@ -38,7 +46,7 @@
 
 <template>
     <div>
-        <section>
+        <section @keyup.esc="clearInvalidColumns">
             <Draggable
                 class="space-y-2"
                 :list="columns"

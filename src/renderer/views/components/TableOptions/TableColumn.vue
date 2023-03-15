@@ -30,7 +30,7 @@
     }, 500)
 
     const removeColumn = () => {
-        if(!confirm("Are you sure you want to delete this column?")) return
+        if(!confirm("Are you sure you want to remove this column?")) return
 
         column.value.remove()
     }
