@@ -7,6 +7,7 @@
     import { Bars3Icon, ChevronDownIcon, ChevronUpIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import UiSelect from "@Renderer/components/ui/UiSelect.vue"
+    import Alert from "@Renderer/components/utils/Alert"
 
     const props = defineProps({
         column: {
@@ -20,8 +21,8 @@
 
     // debounced
     const saveColumn = debounce(() => {
-        if(column.value.table.hasColumn(column.value.name)) {
-            console.log("Column already exists")
+        if(column.value.table.hasColumnExceptId(column.value.name, column.value.id)) {
+            Alert.error("Column already exists")
             return
         }
 
