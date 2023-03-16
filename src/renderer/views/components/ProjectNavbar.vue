@@ -62,7 +62,7 @@
                 as="li"
                 to="/project/code-queue"
             >
-                <div v-show="projectStore.project.hasRenderableFilesWithConflict()" class="absolute rounded-full w-3 h-3 bg-red-500 animate-pulse" style="left: 30px; bottom: 20px;"></div>
+                <div v-show="projectStore.hasRenderableFilesWithConflict" class="absolute rounded-full w-3 h-3 bg-red-500 animate-pulse" style="left: 30px; bottom: 20px;"></div>
                 <CodeBracketIcon class="w-9 h-9 stroke-2" />
             </RouterLink>
         </ul>

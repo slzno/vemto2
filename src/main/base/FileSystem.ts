@@ -68,6 +68,16 @@ class FileSystem {
         return this.writeFile(filePath, JSON.stringify(data, null, 4))
     }
 
+    writeProjectFile(projectPath: string, filePath: string, content: string, log = true): FileSystem {
+        const projectFilePath = path.join(projectPath, filePath),
+            previousGeneratedFilePath = path.join(projectPath, ".vemto", "previous-generated-files", filePath)
+
+        this.writeFile(projectFilePath, content)
+        this.writeFile(previousGeneratedFilePath, content)
+
+        return this
+    }
+
     writeFile(destFilePath: string, content: string, log = true): FileSystem {
         if(log) console.log('Writing File: ' + destFilePath)
 

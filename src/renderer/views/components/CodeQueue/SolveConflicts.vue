@@ -12,6 +12,7 @@
 
     const showingModal = ref(false),
         showingResultModal = ref(false),
+        showingManualModal = ref(false),
         calculatingMerge = ref(false),
         resultCode = ref('')
 
@@ -82,16 +83,17 @@
                     first_code: conflicts.value[0].currentContent,
                     second_code: conflicts.value[0].newContent,
                 }),
-            }).then(response => response.json())
+            }).then(response => response.json()).catch(error => calculatingMerge.value = false)
 
             resultCode.value = response.result
+
+            calculatingMerge.value = false
 
             showResultModal()
         } catch (error) {
             console.error(error)
+            calculatingMerge.value = false
         }
-
-        calculatingMerge.value = false
     }
 
     const solveConflict = async () => {
@@ -101,6 +103,7 @@
             await Main.API.solveConflictReplacingCode(file.value.id, conflictId, resultCode.value)
 
             closeResultModal()
+            closeManualModal()
             
             readConflicts()
         } catch (error) {
@@ -114,6 +117,20 @@
 
     const closeResultModal = () => {
         showingResultModal.value = false
+    }
+
+    const solveManually = () => {
+        resultCode.value = conflicts.value[0].newContent
+
+        showManualModal()
+    }
+
+    const showManualModal = () => {
+        showingManualModal.value = true
+    }
+
+    const closeManualModal = () => {
+        showingManualModal.value = false
     }
 </script>
 
@@ -133,11 +150,16 @@
         width="calc(100vw - 100px)"
     >
         <section class="p-4 space-y-4">
-            <div class="flex justify-end space-x-1.5">
+            <div class="flex justify-end space-x-2">
                 <UiButton @click="mergeCode()">
                     <UiLoading v-show="calculatingMerge" class="mr-1 scale-75"></UiLoading>
                     Merge with AI
                 </UiButton>
+
+                <UiButton @click="solveManually()">
+                    Solve manually
+                </UiButton>
+
                 <UiButton>Overwrite</UiButton>
             </div>
             
@@ -158,6 +180,21 @@
         width="750px"
     >
         <highlightjs language="php" :code="resultCode" />
+
+        <template #footer>
+            <div class="flex justify-end p-2">
+                <UiButton @click="solveConflict()">Save</UiButton>
+            </div>
+        </template>
+    </UiModal>
+
+    <UiModal
+        title="Resulting Code"
+        :show="showingManualModal"
+        @close="closeManualModal()"
+        width="750px"
+    >
+        <textarea class="w-full bg-slate-900 border-none h-36" v-model="resultCode" />
 
         <template #footer>
             <div class="flex justify-end p-2">

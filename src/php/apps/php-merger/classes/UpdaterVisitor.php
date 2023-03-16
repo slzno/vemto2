@@ -4,7 +4,6 @@ use PhpParser\Node;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\NodeVisitorAbstract;
 use PhpParser\Node\Stmt\ClassMethod;
-use PhpParser\PrettyPrinter\Standard as StandardPrinter;
 
 class UpdaterVisitor extends NodeVisitorAbstract
 {
@@ -60,10 +59,7 @@ class UpdaterVisitor extends NodeVisitorAbstract
         }
 
         if ($node instanceof ClassMethod) {
-            $printer = new StandardPrinter();
-
             $methodName = $node->name->name;
-            // $methodBody = $printer->prettyPrint([$node]);
 
             $methodBody = $this->extractMethodCode($node->name->name);
 
@@ -84,24 +80,10 @@ class UpdaterVisitor extends NodeVisitorAbstract
 
         if (count($matches) > 0) {
             $methodCode = $matches[0];
-            // $indentation = $this->getIndentation($methodCode);
-            // $methodCode = str_replace("\n" . $indentation, "\n", $methodCode);
             return $methodCode;
         } else {
             return '';
         }
-    }
-
-    private function getIndentation($code)
-    {
-        $indentation = '';
-        $matches = array();
-
-        if (preg_match("/^(\s+)/m", $code, $matches)) {
-            $indentation = $matches[1];
-        }
-        
-        return $indentation;
     }
 
     public function afterTraverse(array $nodes)
@@ -151,10 +133,9 @@ class UpdaterVisitor extends NodeVisitorAbstract
                 if ($methodStatementsNode instanceof ClassMethod && $methodStatementsNode->name->name === $newMethod['name']) {
                     $currentMethodBody = $this->methods[$methodName]['body'];
 
-                    $newMethodIsDifferentFromPrevious = $newMethod['previousBody'] !== $currentMethodBody;
                     $newMethodIsDifferentFromCurrent = $newMethod['body'] !== $currentMethodBody;
 
-                    if($newMethodIsDifferentFromPrevious && $newMethodIsDifferentFromCurrent) {
+                    if($newMethodIsDifferentFromCurrent) {
                         $this->registerConflict($currentMethodBody, $newMethod['body']);
                     }
 

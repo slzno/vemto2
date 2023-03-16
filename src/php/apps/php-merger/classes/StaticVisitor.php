@@ -4,7 +4,6 @@ use PhpParser\Node;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\NodeVisitorAbstract;
 use PhpParser\Node\Stmt\ClassMethod;
-use PhpParser\PrettyPrinter\Standard as StandardPrinter;
 
 class StaticVisitor extends NodeVisitorAbstract
 {
@@ -22,7 +21,6 @@ class StaticVisitor extends NodeVisitorAbstract
 
     public function setFileContent(string $fileContent)
     {
-        Vemto::dump($fileContent);
         $this->fileContent = $fileContent;
     }
 
@@ -45,13 +43,9 @@ class StaticVisitor extends NodeVisitorAbstract
         }
 
         if ($node instanceof ClassMethod) {
-            $printer = new StandardPrinter();
-
             $methodName = $node->name->name;
 
             $methodBody = $this->extractMethodCode($node->name->name);
-
-            Vemto::dump($methodBody);
 
             $this->methods[] = [
                 'node' => $node,
@@ -71,24 +65,10 @@ class StaticVisitor extends NodeVisitorAbstract
 
         if (count($matches) > 0) {
             $methodCode = $matches[0];
-            // $indentation = $this->getIndentation($methodCode);
-            // $methodCode = str_replace("\n" . $indentation, "\n", $methodCode);
             return $methodCode;
         } else {
             return '';
         }
-    }
-
-    private function getIndentation($code)
-    {
-        $indentation = '';
-        $matches = array();
-
-        if (preg_match("/^(\s+)/m", $code, $matches)) {
-            $indentation = $matches[1];
-        }
-        
-        return $indentation;
     }
 
     protected function getPreviousMethodBody(string $methodName)

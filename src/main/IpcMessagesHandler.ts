@@ -101,7 +101,7 @@ export function HandleIpcMessages() {
 
             const newFileContent = fileContent.replace(conflict.currentContent, content)
 
-            FileSystem.writeFile(filePath, newFileContent)
+            FileSystem.writeProjectFile(project.getPath(), renderableFile.getRelativeFilePath(), newFileContent)
 
             // Remove the conflict from the conflicts file
             const newConflicts = conflictsData.conflicts.filter(c => c.id !== conflictId)

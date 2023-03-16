@@ -86,7 +86,7 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
                     mergedFileContent
                 ).addLineBreaksToParsedContent().format()
 
-                FileSystem.writeFile(projectFilePath, formattedMergedFileContent)
+                writeProjectFile(relativeFilePath, formattedMergedFileContent)
 
                 setFileStatus(file, RenderableFileStatus.RENDERED)
 
@@ -99,7 +99,7 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
                 return false
             }
 
-            FileSystem.writeFile(projectFilePath, formattedContent)
+            writeProjectFile(relativeFilePath, formattedContent)
 
             setFileStatus(file, RenderableFileStatus.RENDERED)
 
@@ -112,6 +112,10 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
                 error: error.message
             })
         }
+    }
+
+    const writeProjectFile = (relativeFilePath: string, formattedContent: string) => {
+        return FileSystem.writeProjectFile(project.getPath(), relativeFilePath, formattedContent)
     }
 
     const mergeFiles = async (newFilePath: string, currentFilePath: string, previousFilePath: string): Promise<any> => {
