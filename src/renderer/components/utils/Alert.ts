@@ -6,6 +6,8 @@ export default class Alert {
     duration: number
     
     constructor() {
+        if(typeof window === 'undefined') return
+
         this.alert = new Notyf({
             duration: 4000,
             position: {
@@ -44,11 +46,15 @@ export default class Alert {
     }
 
     _success(message: string, duration?: number): NotyfNotification {
+        if(!this.alert) return
+
         return this.alert.success({ message, duration })
     }
 
     _warning(message: string, duration?: number): NotyfNotification {
-         return this.alert.open({
+        if(!this.alert) return
+
+        return this.alert.open({
             type: 'warning',
             message,
             duration
@@ -56,7 +62,9 @@ export default class Alert {
     }
 
     _info(message: string, duration?: number): NotyfNotification {
-         return this.alert.open({
+        if(!this.alert) return
+
+        return this.alert.open({
             type: 'info',
             message,
             duration
@@ -64,6 +72,8 @@ export default class Alert {
     }
 
     _error(message: string, duration?: number): NotyfNotification {
-         return this.alert.error({ message, duration })
+        if(!this.alert) return
+
+        return this.alert.error({ message, duration })
     }
 }

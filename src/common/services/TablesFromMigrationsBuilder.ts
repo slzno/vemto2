@@ -33,7 +33,7 @@ class TablesFromMigrationsBuilder {
     }
 
     setSchemaData(schemaData: any) {
-        this.schemaTablesData = schemaData
+        this.schemaTablesData = schemaData.tables
         return this
     }
 
