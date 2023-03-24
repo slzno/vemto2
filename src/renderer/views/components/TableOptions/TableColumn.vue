@@ -37,13 +37,28 @@
     const detectPossibleTypeByName = () => {
         if(!column.value) return
 
-        let defaultColumnTypeData = column.value.getDefaultTypeByName()
+        let defaultColumnTypeData = column.value.getDefaultTypeSettingsByName()
             
         if(!defaultColumnTypeData) return
 
         column.value.type = defaultColumnTypeData.type
         column.value.length = defaultColumnTypeData.length || column.value.length
         column.value.nullable = defaultColumnTypeData.nullable || column.value.nullable
+    }
+
+    const onUniqueChanged = () => {
+        let defaultFieldFaker = column.value.getDefaultFaker(),
+            defaultFieldUniqueFaker = column.value.getDefaultUniqueFaker()
+
+        if(column.value.faker == defaultFieldFaker && column.value.unique) {
+            column.value.faker = defaultFieldUniqueFaker
+        }
+
+        if(column.value.faker == defaultFieldUniqueFaker && !column.value.unique) {
+            column.value.faker = defaultFieldFaker
+        }
+
+        column.value.saveFromInterface()
     }
 
     const removeColumn = () => {
@@ -101,7 +116,7 @@
         <div class="flex m-2 flex-col" v-if="showingOptions">
             <div class="flex gap-3">
                 <div class="m-1">
-                    <UiCheckbox v-model="column.unique" label="Unique" @change="column.saveFromInterface()" />
+                    <UiCheckbox v-model="column.unique" label="Unique" @change="onUniqueChanged" />
                 </div>
                 <div class="m-1">
                     <UiCheckbox v-model="column.index" label="Index" @change="column.saveFromInterface()" />
@@ -124,6 +139,11 @@
                 </div>
                 <div class="m-1 flex-1">
                     <UiNumber label="Scale" v-model="column.places" @change="column.saveFromInterface()" />
+                </div>
+            </div>
+            <div class="flex gap-3">
+                <div class="m-1 flex-1" v-if="column.hasFaker()">
+                    <UiText label="Faker" v-model="column.getType().faker" :placeholder="column.getType().faker"  />
                 </div>
             </div>
         </div>

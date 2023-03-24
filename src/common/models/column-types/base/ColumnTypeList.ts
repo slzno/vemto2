@@ -29,6 +29,7 @@ import MultiPoint from "../MultiPoint";
 import MultiPolygon from "../MultiPolygon";
 import Point from "../Point";
 import Polygon from "../Polygon";
+import Set from "../Set";
 import SmallIncrements from "../SmallIncrements";
 import SmallInteger from "../SmallInteger";
 import String from "../String";
@@ -49,6 +50,10 @@ import Uuid from "../Uuid";
 import Year from "../Year";
 
 export default class ColumnTypeList {
+
+    static getByIdentifier(identifier: string): any {
+        return this.get()[identifier]
+    }
 
     static get() {
         return {
@@ -83,6 +88,7 @@ export default class ColumnTypeList {
             multiPolygon: MultiPolygon,
             point: Point,
             polygon: Polygon,
+            set: Set,
             smallIncrements: SmallIncrements,
             smallInteger: SmallInteger,
             string: String,

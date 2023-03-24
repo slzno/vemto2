@@ -5,6 +5,8 @@ import TableColumnCreated from '@Common/events/TableColumnCreated'
 import ColumnData from './data/ColumnData'
 import ColumnsDefaultData from './column-types/default/ColumnsDefaultData'
 import ColumnsDefaultDataInterface from './column-types/default/base/ColumnsDefaultDataInterface'
+import ColumnTypeList from './column-types/base/ColumnTypeList'
+import ColumnType from './column-types/base/ColumnType'
 
 export default class Column extends RelaDB.Model {
     id: string
@@ -24,6 +26,7 @@ export default class Column extends RelaDB.Model {
     total: number
     places: number
     autoIncrement: boolean
+    faker: string
 
     constructor(data: any = {}) {
         const columnData = Object.assign(ColumnData.getDefault(), data)
@@ -49,6 +52,8 @@ export default class Column extends RelaDB.Model {
         if(tableColumns.length > 0) {
             nextOrder = tableColumns[tableColumns.length - 1].order + 1
         }
+
+        column.faker = column.getDefaultFaker()
 
         column.order = nextOrder
         column.saveFromInterface()
@@ -234,7 +239,19 @@ export default class Column extends RelaDB.Model {
         return ['decimal', 'double', 'float', 'unsignedDecimal'].includes(this.type)
     }
 
-    getDefaultTypeByName(name?: string): ColumnsDefaultDataInterface {
+    isValid(): boolean {
+        return !! (this.name && this.type)
+    }
+
+    getDefaultFaker(): string {
+        let defaultTypeSettingsByName = this.getDefaultTypeSettingsByName()
+
+        if(defaultTypeSettingsByName && defaultTypeSettingsByName.faker != undefined) return defaultTypeSettingsByName.faker
+
+        return this.getFakerByType()
+    }
+
+    getDefaultTypeSettingsByName(name?: string): ColumnsDefaultDataInterface {
         if(!name) name = this.name
 
         const defaultTypeData = ColumnsDefaultData.getSettingsByColumnName(name)
@@ -244,8 +261,26 @@ export default class Column extends RelaDB.Model {
         return defaultTypeData
     }
 
-    isValid(): boolean {
-        return !! (this.name && this.type)
+    getFakerByType(): string {
+        let type = this.getType()
+
+        if(type && type.faker) return type.faker
+
+        return '$faker->word()'
+    }
+
+    getDefaultUniqueFaker() {
+        let defaultFaker = this.getDefaultFaker()
+
+        return defaultFaker.replace('$faker->', '$faker->unique->')
+    }
+
+    hasFaker() {
+        return this.getType() && this.getType().faker.length
+    }
+
+    getType(): any {
+        return ColumnTypeList.getByIdentifier(this.type)
     }
 
     isInvalid(): boolean {
