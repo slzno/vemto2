@@ -1,6 +1,7 @@
 <script setup lang="ts">
     import { PropType, Ref, toRef, ref } from "vue"
     import Column from "@Common/models/Column"
+    import ColumnTypeList from "@Common/models/column-types/base/ColumnTypeList"
     import debounce from "@Common/tools/debounce"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiNumber from "@Renderer/components/ui/UiNumber.vue"
@@ -18,6 +19,8 @@
 
     const column = toRef(props, "column") as Ref<Column>,
         showingOptions = ref(false)
+
+    const columnTypes = ColumnTypeList.get() 
 
     // debounced
     const saveColumn = debounce(() => {
@@ -73,13 +76,9 @@
 
                 <div class="flex flex-col w-36">
                     <UiSelect v-model="column.type" @change="column.saveFromInterface()">
-                        <option value="bigInteger">Big Integer</option>
-                        <option value="string">String</option>
-                        <option value="timestamp">Timestamp</option>
-                        <option value="text">Text</option>
-                        <option value="longText">Long Text</option>
-                        <option value="boolean">Boolean</option>
-                        <option value="decimal">Decimal</option>
+                        <option v-for="columnType in columnTypes" :key="columnType.identifier" :value="columnType.identifier">
+                            {{ columnType.label }}
+                        </option>
                     </UiSelect>
                 </div>
 
