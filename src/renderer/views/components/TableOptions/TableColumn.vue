@@ -20,7 +20,7 @@
     const column = toRef(props, "column") as Ref<Column>,
         showingOptions = ref(false)
 
-    const columnTypes = ColumnTypeList.get() 
+    const columnTypes = ColumnTypeList.get()
 
     // debounced
     const saveColumn = debounce(() => {
