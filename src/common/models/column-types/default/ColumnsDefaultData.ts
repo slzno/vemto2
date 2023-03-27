@@ -597,17 +597,17 @@ export default class ColumnsDefaultData {
 
             coordinates: {
                 type: 'geometry',
-                faker: '"{$faker->latitude},{$faker->longitude}"',
+                faker: '"{$faker->latitude()},{$faker->longitude()}"',
             },
 
             position: {
                 type: 'geometry',
-                faker: '"{$faker->latitude},{$faker->longitude}"',
+                faker: '"{$faker->latitude()},{$faker->longitude()}"',
             },
 
             positions: {
                 type: 'geometryCollection',
-                faker: '"{$faker->latitude},{$faker->longitude}"',
+                faker: '"{$faker->latitude()},{$faker->longitude()}"',
             },
 
             year: {
