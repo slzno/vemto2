@@ -39,7 +39,8 @@
         })
     }
     
-    const refreshColumns = () => { // temporary code
+    // temporary code
+    const refreshColumns = () => {
         columns.value = table.value.getOrderedColumns()
     }
 
