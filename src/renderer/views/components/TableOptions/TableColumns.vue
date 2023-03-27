@@ -38,6 +38,10 @@
             return column.isValid()
         })
     }
+    
+    const refreshColumns = () => { // temporary code
+        columns.value = table.value.getOrderedColumns()
+    }
 
     onMounted(() => {
         columns.value = table.value.getOrderedColumns()
@@ -54,7 +58,7 @@
                 @end="saveColumnsOrder"
             >
                 <template #item="{ element }">
-                    <TableColumn :column="element" />
+                    <TableColumn @refresh="refreshColumns" :column="element" />
                 </template>
             </Draggable>
         </section>

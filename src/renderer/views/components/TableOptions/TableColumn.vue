@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { PropType, Ref, toRef, ref } from "vue"
+    import { PropType, Ref, toRef, ref, defineEmits } from "vue"
     import Column from "@Common/models/Column"
     import ColumnTypeList from "@Common/models/column-types/base/ColumnTypeList"
     import debounce from "@Common/tools/debounce"
@@ -11,51 +11,60 @@
     import Alert from "@Renderer/components/utils/Alert"
 
     const props = defineProps({
-        column: {
-            type: Object as PropType<Column>,
-            required: true,
-        },
-    })
+            column: {
+                type: Object as PropType<Column>,
+                required: true,
+            },
+        }),
+        emit = defineEmits(["refresh"]) // temporary code
 
     const column = toRef(props, "column") as Ref<Column>,
-        showingOptions = ref(false)
+        showingOptions = ref(false),
+        columnTypes = ColumnTypeList.get()
 
-    const columnTypes = ColumnTypeList.get()
+    const onNameUpdated = () => {
+        const hasDuplicateColumnName = column.value.table.hasColumnExceptId(column.value.name, column.value.id)
 
-    // debounced
-    const saveColumn = debounce(() => {
-        if(column.value.table.hasColumnExceptId(column.value.name, column.value.id)) {
-            Alert.error("Column already exists")
+        if(hasDuplicateColumnName) {
+            onColumnNameDuplicated()
             return
         }
 
-        if(!column.value.type) detectPossibleTypeByName()
+        column.value.setDefaultSettingsByName()
+        saveColumn()
+    }
 
+    // debounced
+    const saveColumn = debounce(() => {
         column.value.saveFromInterface()
     }, 500)
 
-    const detectPossibleTypeByName = () => {
-        if(!column.value) return
+    const onColumnNameDuplicated = () => {
+        Alert.error(`Column <b class="underline underline-offset-4">${column.value.name}</b> already exists`)
 
-        let defaultColumnTypeData = column.value.getDefaultTypeSettingsByName()
-            
-        if(!defaultColumnTypeData) return
+        column.value.name = ''
+        column.value.saveFromInterface()
 
-        column.value.type = defaultColumnTypeData.type
-        column.value.length = defaultColumnTypeData.length || column.value.length
-        column.value.nullable = defaultColumnTypeData.nullable || column.value.nullable
+        document.getElementById(`table-column-${column.value.id}`)?.focus()
+    }
+
+    const onColumnBlur = () => {
+        if(column.value.isValid()) return
+        
+        column.value.remove()
+        emit('refresh') // temporary code
     }
 
     const onUniqueChanged = () => {
-        let defaultFieldFaker = column.value.getDefaultFaker(),
-            defaultFieldUniqueFaker = column.value.getDefaultUniqueFaker()
+        let defaultColumnFaker = column.value.getDefaultFaker(),
+            defaultColumnUniqueFaker = column.value.getDefaultUniqueFaker()
 
-        if(column.value.faker == defaultFieldFaker && column.value.unique) {
-            column.value.faker = defaultFieldUniqueFaker
+        if(column.value.faker == defaultColumnFaker && column.value.unique) {
+            column.value.faker = defaultColumnUniqueFaker
         }
 
-        if(column.value.faker == defaultFieldUniqueFaker && !column.value.unique) {
-            column.value.faker = defaultFieldFaker
+        if(column.value.faker == defaultColumnUniqueFaker && !column.value.unique) {
+            column.value.faker = defaultColumnFaker
         }
 
         column.value.saveFromInterface()
@@ -65,6 +74,7 @@
         if(!confirm("Are you sure you want to remove this column?")) return
 
         column.value.remove()
+        emit('refresh') // temporary code
     }
 </script>
 
@@ -86,7 +96,7 @@
 
             <div class="flex flex-grow space-x-2">
                 <div class="flex flex-col flex-grow">
-                    <UiText placeholder="Name" :id="`table-column-${column.id}`" v-model="column.name" @change="saveColumn" />
+                    <UiText placeholder="Name" :id="`table-column-${column.id}`" v-model="column.name" @change="onNameUpdated" @blur="onColumnBlur" />
                 </div>
 
                 <div class="flex flex-col w-36">
@@ -142,8 +152,8 @@
                 </div>
             </div>
             <div class="flex gap-3">
-                <div class="m-1 flex-1" v-if="column.hasFaker()">
-                    <UiText label="Faker" v-model="column.getType().faker" :placeholder="column.getType().faker"  />
+                <div class="m-1 flex-1">
+                    <UiText label="Faker" v-model="column.faker" :placeholder="column.faker"  />
                 </div>
             </div>
         </div>

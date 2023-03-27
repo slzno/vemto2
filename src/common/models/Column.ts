@@ -6,7 +6,6 @@ import ColumnData from './data/ColumnData'
 import ColumnsDefaultData from './column-types/default/ColumnsDefaultData'
 import ColumnsDefaultDataInterface from './column-types/default/base/ColumnsDefaultDataInterface'
 import ColumnTypeList from './column-types/base/ColumnTypeList'
-import ColumnType from './column-types/base/ColumnType'
 
 export default class Column extends RelaDB.Model {
     id: string
@@ -165,6 +164,7 @@ export default class Column extends RelaDB.Model {
         this.default = data.default
         this.total = data.total
         this.places = data.places
+        this.faker = data.faker || this.faker
 
         this.fillSchemaState()
 
@@ -196,6 +196,7 @@ export default class Column extends RelaDB.Model {
             default: this.default,
             total: this.total,
             places: this.places,
+            faker: this.faker
         }
     }
 
@@ -244,21 +245,21 @@ export default class Column extends RelaDB.Model {
     }
 
     getDefaultFaker(): string {
-        let defaultTypeSettingsByName = this.getDefaultTypeSettingsByName()
+        let defaultSettingsByName = this.getDefaultSettingsByName()
 
-        if(defaultTypeSettingsByName && defaultTypeSettingsByName.faker != undefined) return defaultTypeSettingsByName.faker
+        if(defaultSettingsByName && defaultSettingsByName.faker != 'undefined') return defaultSettingsByName.faker
 
         return this.getFakerByType()
     }
 
-    getDefaultTypeSettingsByName(name?: string): ColumnsDefaultDataInterface {
+    getDefaultSettingsByName(name?: string): ColumnsDefaultDataInterface {
         if(!name) name = this.name
 
-        const defaultTypeData = ColumnsDefaultData.getSettingsByColumnName(name)
+        const defaultData = ColumnsDefaultData.getSettingsByColumnName(name)
 
-        if(!defaultTypeData) return null
+        if(!defaultData) return null
 
-        return defaultTypeData
+        return defaultData
     }
 
     getFakerByType(): string {
@@ -275,15 +276,23 @@ export default class Column extends RelaDB.Model {
         return defaultFaker.replace('$faker->', '$faker->unique->')
     }
 
-    hasFaker() {
-        return this.getType() && this.getType().faker.length
-    }
-
     getType(): any {
         return ColumnTypeList.getByIdentifier(this.type)
     }
 
     isInvalid(): boolean {
         return ! this.isValid()
+    }
+
+    setDefaultSettingsByName() {
+        const defaultColumnData = this.getDefaultSettingsByName()
+
+        if(!defaultColumnData || this.type) return
+        
+        this.type = defaultColumnData.type
+
+        if(defaultColumnData.length) this.length = defaultColumnData.length
+        if(defaultColumnData.nullable) this.nullable = defaultColumnData.nullable
+        if(defaultColumnData.faker) this.faker = defaultColumnData.faker
     }
 }
