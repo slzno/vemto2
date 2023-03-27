@@ -12,7 +12,7 @@ export default class ColumnsDefaultData {
     static get(): Object {
         return {
             id: {
-                type: 'bigInteger'
+                type: 'bigInteger',
             },
 
             html: {
