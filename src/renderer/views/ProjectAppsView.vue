@@ -31,7 +31,7 @@ import { useProjectStore } from '@Renderer/stores/useProjectStore'
         </div>
 
         <div class="mt-4">
-            <div v-for="app in projectStore.project.modelSuites">
+            <div v-for="app in projectStore.project.modelSuites" :key="app.id">
                 {{ app.name }}
 
                 <UiButton @click="app.delete()">Delete</UiButton>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { defineProps, defineEmits, onMounted, computed } from "vue"
+    import { defineProps, defineEmits, computed } from "vue"
 
     const props = defineProps({
         modelValue: {
@@ -23,10 +23,6 @@
             emit('update:modelValue', value)
             emit('change', value)
         },
-    })
-
-    onMounted((): void => {
-        localValue.value = props.modelValue
     })
 </script>
 

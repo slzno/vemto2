@@ -1,5 +1,5 @@
 import path from "path"
-import { app, ipcMain, shell } from "electron"
+import { app, ipcMain, shell, dialog } from "electron"
 import FileSystem from "./base/FileSystem"
 import { handleError } from "./ErrorHandler"
 import Project from "../common/models/Project"
@@ -8,6 +8,19 @@ import ReadProjectSchema from "./services/ReadProjectSchema"
 import RenderableFile from "../common/models/RenderableFile"
 
 export function HandleIpcMessages() {
+    ipcMain.handle("confirm", (event, message: string) => {
+        const dialogResult = dialog.showMessageBoxSync(null, {
+            type: 'question',
+            message,
+            title: 'Confirm',
+            buttons: ['Yes', 'No'],
+            cancelId: 1,
+            defaultId: 0,
+        })
+
+        return dialogResult === 0
+    })
+
     ipcMain.handle("prepare:project", async (event, projectPath) => {
         return handleError(event, async () => {
             return await PrepareProject.run(projectPath)
