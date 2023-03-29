@@ -197,7 +197,7 @@ export default class Model extends RelaDB.Model {
             fileName,
             'models/Model.vemtl', 
             {
-                model: RenderableFile.dataAsDependency(this),
+                model: this,
             }
         )
     }
