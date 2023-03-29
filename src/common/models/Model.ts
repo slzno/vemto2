@@ -1,8 +1,10 @@
 import Table from './Table'
 import Project from './Project'
+import Factory from './Factory'
+import ModelSuite from './ModelSuite'
 import Relationship from './Relationship'
-import RelaDB from '@tiago_silva_pereira/reladb'
 import RenderableFile from './RenderableFile'
+import RelaDB from '@tiago_silva_pereira/reladb'
 
 export default class Model extends RelaDB.Model {
     id: string
@@ -17,6 +19,8 @@ export default class Model extends RelaDB.Model {
     project: Project
     tableName: string
     projectId: string
+    factories: Factory[]
+    modelSuites: ModelSuite[]
     createdFromInterface: boolean
     ownRelationships: Relationship[]
     relatedRelationships: Relationship[]

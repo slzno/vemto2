@@ -36,7 +36,7 @@
             nextTick(() => {
                 initSchema()
             })
-        }, 300)
+        }, 20)
 
         interval = setInterval(() => {
             if (isDragging) return

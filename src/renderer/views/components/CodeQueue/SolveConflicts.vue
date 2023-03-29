@@ -83,7 +83,7 @@
                     first_code: conflicts.value[0].currentContent,
                     second_code: conflicts.value[0].newContent,
                 }),
-            }).then(response => response.json()).catch(error => calculatingMerge.value = false)
+            }).then(response => response.json()).catch(() => calculatingMerge.value = false)
 
             resultCode.value = response.result
 
@@ -165,12 +165,6 @@
             
             <div class="border border-slate-700 rounded" ref="diffContainer"></div>
         </section>
-
-        <template #footer>
-            <div class="flex justify-end p-4">
-                <!-- <UiButton @click="saveMigrations">Save</UiButton> -->
-            </div>
-        </template>
     </UiModal>
 
     <UiModal

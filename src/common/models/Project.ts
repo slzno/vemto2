@@ -1,5 +1,7 @@
 import Table from "./Table"
 import Model from "./Model"
+import Factory from "./Factory"
+import ModelSuite from "./ModelSuite"
 import RelaDB from "@tiago_silva_pereira/reladb"
 
 import RenderableFile, {
@@ -13,6 +15,8 @@ export default class Project extends RelaDB.Model {
     name: string
     tables: Table[]
     models: Model[]
+    factories: Factory[]
+    modelSuites: ModelSuite[]
     laravelVersion: Number
     schemaTablesDataHash: string
     schemaModelsDataHash: string
@@ -27,6 +31,8 @@ export default class Project extends RelaDB.Model {
         return {
             tables: () => this.hasMany(Table).cascadeDelete(),
             models: () => this.hasMany(Model).cascadeDelete(),
+            factories: () => this.hasMany(Factory).cascadeDelete(),
+            modelSuites: () => this.hasMany(ModelSuite).cascadeDelete(),
             renderableFiles: () => this.hasMany(RenderableFile).cascadeDelete(),
         }
     }
@@ -70,6 +76,22 @@ export default class Project extends RelaDB.Model {
 
     findTableById(tableId: string): Table {
         return this.tables.find((table) => table.id === tableId)
+    }
+
+    findModelByName(modelName: string): Model {
+        return this.models.find((model) => model.name === modelName)
+    }
+
+    findModelByClass(modelClass: string): Model {
+        return this.models.find((model) => model.class === modelClass)
+    }
+
+    findModelById(modelId: string): Model {
+        return this.models.find((model) => model.id === modelId)
+    }
+
+    getApplications(): any[] {
+        return this.modelSuites
     }
 
     getTablesNames(): string[] {
@@ -175,7 +197,8 @@ export default class Project extends RelaDB.Model {
         path: string,
         name: string,
         template: string,
-        data: any
+        data: any,
+        type: RenderableFileType = RenderableFileType.PHP_CLASS
     ) {
         let renderableFile: RenderableFile = null
 
@@ -193,7 +216,7 @@ export default class Project extends RelaDB.Model {
             renderableFile.template = template
             renderableFile.projectId = this.id
             renderableFile.data = data
-            renderableFile.type = RenderableFileType.PHP_CLASS
+            renderableFile.type = type
         }
 
         renderableFile.status = RenderableFileStatus.PENDING
