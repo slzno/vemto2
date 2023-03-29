@@ -9,6 +9,7 @@
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import UiSelect from "@Renderer/components/ui/UiSelect.vue"
     import Alert from "@Renderer/components/utils/Alert"
+    import Main from "@Renderer/services/wrappers/Main"
 
     const props = defineProps({
             column: {
@@ -71,10 +72,12 @@
     }
 
     const removeColumn = () => {
-        if(!confirm("Are you sure you want to remove this column?")) return
+        Main.API.confirm("Are you sure you want to remove this column?").then((confirmed: boolean) => {
+            if(!confirmed) return
 
-        column.value.remove()
-        emit('refresh') // temporary code
+            column.value.remove()
+            emit('refresh') // temporary code
+        })
     }
 </script>
 

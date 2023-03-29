@@ -164,7 +164,6 @@ export default class Column extends RelaDB.Model {
         this.default = data.default
         this.total = data.total
         this.places = data.places
-        this.faker = data.faker || this.faker
 
         this.fillSchemaState()
 
@@ -195,8 +194,7 @@ export default class Column extends RelaDB.Model {
             unique: this.unique,
             default: this.default,
             total: this.total,
-            places: this.places,
-            faker: this.faker
+            places: this.places
         }
     }
 
@@ -272,6 +270,8 @@ export default class Column extends RelaDB.Model {
 
     getDefaultUniqueFaker() {
         let defaultFaker = this.getDefaultFaker()
+
+        if(!defaultFaker) return ''
 
         return defaultFaker.replace('$faker->', '$faker->unique->')
     }
