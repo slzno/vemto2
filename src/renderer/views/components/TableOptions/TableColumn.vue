@@ -72,7 +72,7 @@
     }
 
     const removeColumn = () => {
-        Main.API.confirmAction("Are you sure you want to remove this column?").then((confirmed: boolean) => {
+        Main.API.confirm("Are you sure you want to remove this column?").then((confirmed: boolean) => {
             if(!confirmed) return
 
             column.value.remove()

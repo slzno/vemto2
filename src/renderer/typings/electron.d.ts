@@ -3,7 +3,7 @@
  */
 export default interface ElectronApi {
     onDevelopment: () => boolean,
-    confirmAction: (message: string) => Promise<any>,
+    confirm: (message: string) => Promise<any>,
     prepareProject: (path: string) => Promise<string>,
     loadSchema: (path: string) => Promise<any>,
     onDefaultError: (callback: Callback) => void,
