@@ -1,5 +1,6 @@
 import Main from "@Renderer/services/wrappers/Main"
 import TemplateEngine from "@tiago_silva_pereira/vemto-template-engine"
+import Alert from "@Renderer/components/utils/Alert"
 
 export default new class TemplateCompiler {
 
@@ -82,7 +83,8 @@ export default new class TemplateCompiler {
                 .compileWithErrorTreatment()
         } catch (error) {
             const latestError = this.templateEngine.getLatestError()
-            
+
+            Alert.error('Error on template line ' + latestError.templateLine)
             console.error('Error on template line ' + latestError.templateLine)
             console.log('Data: ', this.data)
 

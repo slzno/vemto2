@@ -1,7 +1,5 @@
 <script setup lang="ts">
-    import { defineProps, defineEmits, ref, onMounted } from "vue"
-
-    let localValue = ref(false)
+    import { defineProps, defineEmits, onMounted, computed } from "vue"
 
     const props = defineProps({
         modelValue: {
@@ -15,7 +13,17 @@
         },
     })
 
-    defineEmits(["update:modelValue"])
+    const emit = defineEmits(["update:modelValue", "change"]),
+        localValue = computed({
+        get(): any {
+            return props.modelValue
+        },
+        
+        set(value: any): void {
+            emit('update:modelValue', value)
+            emit('change', value)
+        },
+    })
 
     onMounted((): void => {
         localValue.value = props.modelValue
@@ -28,7 +36,6 @@
             type="checkbox"
             class="rounded bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300"
             v-model="localValue"
-            @change="$emit('update:modelValue', localValue)"
         />
         <span class="text-xs text-slate-400" v-if="label">{{ label }}</span>
     </label>

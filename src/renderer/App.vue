@@ -2,12 +2,14 @@
     import { onMounted, watch } from "vue"
     import { RouterView, useRouter, useRoute } from "vue-router"
     import Main from "@Renderer/services/wrappers/Main"
+    import Alert from '@Renderer/components/utils/Alert'
 
     const router = useRouter(),
         currentRoute = useRoute()
 
     onMounted(() => {
         Main.API.onDefaultError((error) => { 
+            Alert.error(error.error)
             console.error(error.error)
             console.error(error.stack)
         })

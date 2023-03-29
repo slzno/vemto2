@@ -1,7 +1,5 @@
 <script setup lang="ts">
-    import { defineProps, defineEmits, ref, onMounted } from "vue"
-
-    let localValue = ref(null)
+import { defineProps, defineEmits, onMounted, computed } from "vue"
 
     const props = defineProps({
         modelValue: {
@@ -14,16 +12,21 @@
         },
     })
 
-    const emit = defineEmits(["update:modelValue", "change"])
+    const emit = defineEmits(["update:modelValue", "change"]),
+        localValue = computed({
+            get(): any {
+                return props.modelValue
+            },
+            
+            set(value: any): void {
+                emit('update:modelValue', value)
+                emit('change', value)
+            },
+        })
 
     onMounted((): void => {
         localValue.value = props.modelValue
     })
-
-    const valueChanged = (): void => {
-        emit("change", localValue.value)
-        emit("update:modelValue", localValue.value)
-    }
 </script>
 
 <template>
@@ -31,7 +34,6 @@
     <select
         class="border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg"
         v-model="localValue"
-        @change="valueChanged()"
     >
         <slot></slot>
     </select>

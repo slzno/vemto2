@@ -2,6 +2,10 @@ import Table from './Table'
 import RelaDB from '@tiago_silva_pereira/reladb'
 import TableColumnChanged from '@Common/events/TableColumnChanged'
 import TableColumnCreated from '@Common/events/TableColumnCreated'
+import ColumnData from './data/ColumnData'
+import ColumnsDefaultData from './column-types/default/ColumnsDefaultData'
+import ColumnsDefaultDataInterface from './column-types/default/base/ColumnsDefaultDataInterface'
+import ColumnTypeList from './column-types/base/ColumnTypeList'
 
 export default class Column extends RelaDB.Model {
     id: string
@@ -18,7 +22,16 @@ export default class Column extends RelaDB.Model {
     nullable: boolean
     unsigned: boolean
     default: string
+    total: number
+    places: number
     autoIncrement: boolean
+    faker: string
+
+    constructor(data: any = {}) {
+        const columnData = Object.assign(ColumnData.getDefault(), data)
+
+        super(columnData)
+    }
 
     static identifier() {
         return 'Column'
@@ -28,6 +41,21 @@ export default class Column extends RelaDB.Model {
         return {
             table: () => this.belongsTo(Table),
         }
+    }
+
+    static created(column: Column) {
+        let nextOrder = 0
+        
+        const tableColumns = column.table.getOrderedColumns()
+
+        if(tableColumns.length > 0) {
+            nextOrder = tableColumns[tableColumns.length - 1].order + 1
+        }
+
+        column.faker = column.getDefaultFaker()
+
+        column.order = nextOrder
+        column.saveFromInterface()
     }
 
     saveFromInterface() {
@@ -72,6 +100,7 @@ export default class Column extends RelaDB.Model {
 
     isForeign(): boolean {
         const foreignIndexes = this.table.getForeignIndexes()
+        
         return foreignIndexes.some(index => index.columns.includes(this.name))
     }
 
@@ -116,6 +145,8 @@ export default class Column extends RelaDB.Model {
             || this.schemaState.index !== comparisonData.index
             || this.schemaState.unique !== comparisonData.unique
             || this.schemaState.default !== comparisonData.default
+            || this.schemaState.total !== comparisonData.total
+            || this.schemaState.places !== comparisonData.places
     }
 
     applyChanges(data: any): boolean {
@@ -131,6 +162,9 @@ export default class Column extends RelaDB.Model {
         this.unique = data.unique
         this.autoIncrement = data.autoIncrement
         this.default = data.default
+        this.total = data.total
+        this.places = data.places
+        this.faker = data.faker || this.faker
 
         this.fillSchemaState()
 
@@ -160,6 +194,9 @@ export default class Column extends RelaDB.Model {
             index: this.index,
             unique: this.unique,
             default: this.default,
+            total: this.total,
+            places: this.places,
+            faker: this.faker
         }
     }
 
@@ -192,10 +229,70 @@ export default class Column extends RelaDB.Model {
     }
 
     old(): Column {
-        let oldColumn = new Column(this.schemaState)
+        const oldColumn = new Column(this.schemaState)
 
         oldColumn.tableId = this.tableId
 
         return oldColumn
+    }
+    
+    isFloatingPointNumber(): boolean {
+        return ['decimal', 'double', 'float', 'unsignedDecimal'].includes(this.type)
+    }
+
+    isValid(): boolean {
+        return !! (this.name && this.type)
+    }
+
+    getDefaultFaker(): string {
+        let defaultSettingsByName = this.getDefaultSettingsByName()
+
+        if(defaultSettingsByName && defaultSettingsByName.faker != 'undefined') return defaultSettingsByName.faker
+
+        return this.getFakerByType()
+    }
+
+    getDefaultSettingsByName(name?: string): ColumnsDefaultDataInterface {
+        if(!name) name = this.name
+
+        const defaultData = ColumnsDefaultData.getSettingsByColumnName(name)
+
+        if(!defaultData) return null
+
+        return defaultData
+    }
+
+    getFakerByType(): string {
+        let type = this.getType()
+
+        if(type && type.faker) return type.faker
+
+        return '$faker->word()'
+    }
+
+    getDefaultUniqueFaker() {
+        let defaultFaker = this.getDefaultFaker()
+
+        return defaultFaker.replace('$faker->', '$faker->unique->')
+    }
+
+    getType(): any {
+        return ColumnTypeList.getByIdentifier(this.type)
+    }
+
+    isInvalid(): boolean {
+        return ! this.isValid()
+    }
+
+    setDefaultSettingsByName() {
+        const defaultColumnData = this.getDefaultSettingsByName()
+
+        if(!defaultColumnData || this.type) return
+        
+        this.type = defaultColumnData.type
+
+        if(defaultColumnData.length) this.length = defaultColumnData.length
+        if(defaultColumnData.nullable) this.nullable = defaultColumnData.nullable
+        if(defaultColumnData.faker) this.faker = defaultColumnData.faker
     }
 }

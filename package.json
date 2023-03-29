@@ -70,11 +70,13 @@
         "diff2html": "^3.4.33",
         "highlight.js": "^11.6.0",
         "lodash": "^4.17.21",
+        "notyf": "^3.10.0",
         "pinia": "^2.0.22",
         "prettier": "^2.7.1",
         "shelljs": "^0.8.5",
         "uuid": "^9.0.0",
         "vue": "^3.2.36",
-        "vue-router": "^4.0.13"
+        "vue-router": "^4.0.13",
+        "vuedraggable": "^4.1.0"
     }
 }

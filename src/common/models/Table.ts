@@ -115,6 +115,10 @@ export default class Table extends RelaDB.Model {
         return this.getColumns().find((column) => column.name === columnName) !== undefined
     }
 
+    hasColumnExceptId(columnName: string, columnId: string): boolean {
+        return this.getColumns().find((column) => column.name === columnName && column.id != columnId) !== undefined
+    }
+
     doesNotHaveColumn(columnName: string): boolean {
         return !this.hasColumn(columnName)
     }
@@ -207,6 +211,10 @@ export default class Table extends RelaDB.Model {
 
     getColumns(): Column[] {
         return this.columns.filter((column) => !column.isRemoved())
+    }
+
+    getOrderedColumns(): Column[] {
+        return this.getColumns().sort((a, b) => a.order - b.order)
     }
 
     getIndexes(): Index[] {
