@@ -23,6 +23,10 @@ contextBridge.exposeInMainWorld("api", {
         ipcRenderer.on("model:data:updated", (event, data) => callback(data))
     },
 
+    confirmAction: (message: string) => {
+        return ipcRenderer.invoke("confirm", message)
+    },
+
     // Database messages
     databaseDataUpdated: (data: any) => {
         return ipcRenderer.invoke("database:data:updated", data)

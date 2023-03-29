@@ -273,6 +273,8 @@ export default class Column extends RelaDB.Model {
     getDefaultUniqueFaker() {
         let defaultFaker = this.getDefaultFaker()
 
+        if(!defaultFaker) return ''
+
         return defaultFaker.replace('$faker->', '$faker->unique->')
     }
 
