@@ -3,7 +3,6 @@ import Project from './Project'
 import Factory from './Factory'
 import ModelSuite from './ModelSuite'
 import Relationship from './Relationship'
-import RenderableFile from './RenderableFile'
 import RelaDB from '@tiago_silva_pereira/reladb'
 
 export default class Model extends RelaDB.Model {
@@ -178,6 +177,10 @@ export default class Model extends RelaDB.Model {
         })
 
         return relationships
+    }
+
+    getNamespace(): string {
+        return this.class.split('\\').slice(0, -1).join('\\')
     }
 
     newRelationship(): Relationship {

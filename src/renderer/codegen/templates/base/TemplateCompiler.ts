@@ -1,6 +1,7 @@
+import * as changeCase from "change-case"
 import Main from "@Renderer/services/wrappers/Main"
-import TemplateEngine from "@tiago_silva_pereira/vemto-template-engine"
 import Alert from "@Renderer/components/utils/Alert"
+import TemplateEngine from "@tiago_silva_pereira/vemto-template-engine"
 
 export default new class TemplateCompiler {
 
@@ -55,7 +56,8 @@ export default new class TemplateCompiler {
         const templateEngine = new TemplateEngine(templateContent, {
             logger: null,
             onBrowser: true,
-            disableImportsProcessing: true
+            disableImportsProcessing: true,
+            require: this.getRequireData(),
         })
 
         let templates = []
@@ -103,6 +105,7 @@ export default new class TemplateCompiler {
             logger: null,
             onBrowser: true,
             imports: this.imports,
+            require: this.getRequireData(),
         })
 
         return this 
@@ -120,5 +123,21 @@ export default new class TemplateCompiler {
         }
 
         return this.templateEngine.getPreCompiledCode()
+    }
+
+    getRequireData() {
+        return {
+            camelCase: changeCase.camelCase,
+            capitalCase: changeCase.capitalCase,
+            constantCase: changeCase.constantCase,
+            dotCase: changeCase.dotCase,
+            headerCase: changeCase.headerCase,
+            paramCase: changeCase.paramCase,
+            pascalCase: changeCase.pascalCase,
+            pathCase: changeCase.pathCase,
+            sentenceCase: changeCase.sentenceCase,
+            snakeCase: changeCase.snakeCase,
+            kebabCase: changeCase.paramCase,
+        }
     }
 }
