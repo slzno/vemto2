@@ -49,13 +49,6 @@
         document.getElementById(`table-column-${column.value.id}`)?.focus()
     }
 
-    const onColumnBlur = () => {
-        if(column.value.isValid()) return
-        
-        column.value.remove()
-        emit('refresh') // temporary code
-    }
-
     const onUniqueChanged = () => {
         let defaultColumnFaker = column.value.getDefaultFaker(),
             defaultColumnUniqueFaker = column.value.getDefaultUniqueFaker()
@@ -99,7 +92,7 @@
 
             <div class="flex flex-grow space-x-2">
                 <div class="flex flex-col flex-grow">
-                    <UiText placeholder="Name" :id="`table-column-${column.id}`" v-model="column.name" @change="onNameUpdated" @blur="onColumnBlur" />
+                    <UiText placeholder="Name" :id="`table-column-${column.id}`" v-model="column.name" @change="onNameUpdated" />
                 </div>
 
                 <div class="flex flex-col w-36">

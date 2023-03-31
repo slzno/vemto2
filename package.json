@@ -75,6 +75,7 @@
         "prettier": "^2.7.1",
         "shelljs": "^0.8.5",
         "uuid": "^9.0.0",
+        "validatorjs": "^3.22.1",
         "vue": "^3.2.36",
         "vue-router": "^4.0.13",
         "vuedraggable": "^4.1.0"

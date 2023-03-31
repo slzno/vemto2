@@ -1,22 +1,74 @@
 <script setup lang="ts">
-    import { ref } from 'vue'
+    import { ref, onMounted, nextTick } from 'vue'
     import Table from "@Common/models/Table"
     import { ArrowPathIcon } from "@heroicons/vue/24/outline"
     import UiModal from '@Renderer/components/ui/UiModal.vue'
+    import { useProjectStore } from '@Renderer/stores/useProjectStore'
+    import UiText from '@Renderer/components/ui/UiText.vue'
+    import UiButton from '@Renderer/components/ui/UiButton.vue'
+    import Validator from '@Common/util/Validator'
+    import Alert from '@Renderer/components/utils/Alert'
 
-    const showingCreateTableModal = ref(false)
+    const showingCreateTableModal = ref(false),
+        projectStore = useProjectStore(),
+        newTable = ref<Table>(null)
 
     const createTable = (): void => {
-        
+        validate().then(isValid => {
+            if(!isValid) return
+
+            newTable.value.saveFromInterface()
+            close()
+        })
     }
 
-    const show = () => {
+    const validate = async (): Promise<boolean> => {
+        const rules = {
+            name: 'required|string'
+        }
+
+        const validator = new Validator(newTable.value, rules),
+            hasErrors = await validator.fails()
+
+        if(hasErrors) {
+            Alert.error('Please enter a valid table name')
+            return false
+        }
+
+        const tableNameExists = projectStore.project.hasTable(newTable.value.name)
+
+        if(tableNameExists) {
+            Alert.error('This table name is already in use')
+            return false
+        }
+
+        return !tableNameExists && !hasErrors
+    }
+
+    const show = (): void => {
+        clear()
         showingCreateTableModal.value = true
+
+        nextTick(() => {
+            document.getElementById('new-table-name')?.focus()
+        })
     }
 
-    const close = () => {
+    const close = (): void => {
         showingCreateTableModal.value = false
     }
+
+    const clear = (): void => {
+        if(!newTable.value) return
+
+        newTable.value.name = ''
+    }
+
+    onMounted(() => {
+        newTable.value = new Table({
+            projectId: projectStore.project.id,
+        })
+    })
 </script>
 
 <template>
@@ -28,7 +80,7 @@
             <div class="flex">
                 <div
                     class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
-                    @click="createTable()"
+                    @click="show()"
                 >
                     <svg
                         class="w-7 h-7"
@@ -47,11 +99,19 @@
                 </div>
 
                 <UiModal
+                    width="25%"
                     title="Create Table"
                     :show="showingCreateTableModal"
                     @close="close()"
                 >
-                    Teste
+                    <div class="m-2">
+                        <div class="m-1" @keyup.enter="createTable()">
+                            <UiText v-model="newTable.name" id="new-table-name" placeholder="Table Name"></UiText>
+                        </div>
+                        <div class="m-1 flex justify-end">
+                            <UiButton @click="createTable()">Create</UiButton>
+                        </div>
+                    </div>
                 </UiModal>
 
                 <!-- <div class="p-2 cursor-pointer text-slate-600 hover:text-red-500">
