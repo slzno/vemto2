@@ -98,6 +98,10 @@ export default class Column extends RelaDB.Model {
         return !! this.autoIncrement
     }
 
+    isForeignKey(): boolean {
+        return this.isForeign()
+    }
+
     isForeign(): boolean {
         const foreignIndexes = this.table.getForeignIndexes()
         
@@ -114,6 +118,10 @@ export default class Column extends RelaDB.Model {
 
     isSpecialPrimaryKey(): boolean {
         return this.type === 'uuid'
+    }
+
+    hasFaker(): boolean {
+        return !! this.faker
     }
 
     hasImplicitIndex(): boolean {
@@ -294,5 +302,18 @@ export default class Column extends RelaDB.Model {
         if(defaultColumnData.length) this.length = defaultColumnData.length
         if(defaultColumnData.nullable) this.nullable = defaultColumnData.nullable
         if(defaultColumnData.faker) this.faker = defaultColumnData.faker
+    }
+
+    getFakerForTemplate() {
+        let faker: string = this.faker,
+            length = this.length || 255,
+            defaultOrFirst: string = this.default
+
+        faker = faker.replace('{LENGTH}', String(length))
+        faker = faker.replace('{DEFAULT_OR_FIRST}', defaultOrFirst)
+
+        faker = faker.replace(/\$faker/g, '$this->faker').replace(/(Str::)/g, '\\Str::')
+
+        return faker
     }
 }

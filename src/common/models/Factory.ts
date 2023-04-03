@@ -41,7 +41,7 @@ export default class Factory extends RelaDB.Model {
             this.getFileName(),
             'database/Factory.vemtl', 
             {
-                factory: RenderableFile.dataAsDependency(this),
+                factory: this,
             },
             RenderableFileType.PHP
         )

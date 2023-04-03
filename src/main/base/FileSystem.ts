@@ -64,10 +64,6 @@ class FileSystem {
         return this
     }
 
-    writeJsonFile(filePath: string, data: any): FileSystem {
-        return this.writeFile(filePath, JSON.stringify(data, null, 4))
-    }
-
     writeProjectFile(projectPath: string, filePath: string, content: string, log = true): FileSystem {
         const projectFilePath = path.join(projectPath, filePath),
             previousGeneratedFilePath = path.join(projectPath, ".vemto", "previous-generated-files", filePath)
@@ -76,6 +72,14 @@ class FileSystem {
         this.writeFile(previousGeneratedFilePath, content)
 
         return this
+    }
+
+    writeConflictsFile(filePath: string, conflicts: any): FileSystem {
+        return this.writeJsonFile(filePath, { conflicts })
+    }
+
+    writeJsonFile(filePath: string, data: any): FileSystem {
+        return this.writeFile(filePath, JSON.stringify(data, null, 4))
     }
 
     writeFile(destFilePath: string, content: string, log = true): FileSystem {

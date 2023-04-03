@@ -1,4 +1,5 @@
 import path from "path"
+import { v4 as uuid } from "uuid"
 import { app, BrowserWindow } from "electron"
 import FileSystem from "./base/FileSystem"
 import Project from "../common/models/Project"
@@ -6,6 +7,7 @@ import PhpFormatter from "@Renderer/codegen/formatters/PhpFormatter"
 import TemplateCompiler from "@Renderer/codegen/templates/base/TemplateCompiler"
 import RenderableFile, { RenderableFileStatus, RenderableFileType } from "../common/models/RenderableFile"
 import CommandExecutor from "./base/CommandExecutor"
+import TextUtil from "../common/util/TextUtil"
 
 export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
     let project = null,
@@ -94,7 +96,20 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
             }
 
             if(currentFileContent && currentFileContent !== formattedContent) {
-                setFileStatus(file, RenderableFileStatus.CONFLICT)
+                const conflictsFileName = TextUtil.random(32) + '.json',
+                    conflictsFilePath = path.join(project.getPath(), ".vemto", "conflicts", conflictsFileName)
+                
+                FileSystem.writeConflictsFile(conflictsFilePath, [
+                    {
+                        id: uuid(),
+                        currentContent: currentFileContent,
+                        newContent: formattedContent,
+                    }
+                ])
+
+                setFileStatus(file, RenderableFileStatus.CONFLICT, {
+                    conflictFileName: conflictsFileName
+                })
 
                 return false
             }
