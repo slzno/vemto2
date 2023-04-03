@@ -108,7 +108,7 @@
                         <div class="m-1" @keyup.enter="createTable()">
                             <UiText v-model="newTable.name" id="new-table-name" placeholder="Table Name"></UiText>
                         </div>
-                        <div class="m-1 flex justify-end">
+                        <div class="m-1 mt-2 flex justify-end">
                             <UiButton @click="createTable()">Create</UiButton>
                         </div>
                     </div>
