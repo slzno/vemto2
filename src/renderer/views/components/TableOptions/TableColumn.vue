@@ -156,7 +156,7 @@
             </div>
             <div class="flex gap-3">
                 <div class="m-1 flex-1">
-                    <UiText label="Faker" v-model="column.faker" :placeholder="column.faker"  />
+                    <UiText label="Faker" v-model="column.faker" :placeholder="column.faker" @change="column.saveFromInterface()"  />
                 </div>
             </div>
         </div>
