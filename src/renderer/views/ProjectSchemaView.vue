@@ -185,7 +185,7 @@
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-hidden"
         v-if="projectStore.projectIsReady"
     >
-        <SchemaHeader @forceReload="forceReload" />
+        <SchemaHeader @forceReload="forceReload" @reload="loadSchema()" />
 
         <SchemaTables :tables="tablesData" :counter="counter" />
 

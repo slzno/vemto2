@@ -1,5 +1,74 @@
 <script setup lang="ts">
+    import { ref, onMounted, nextTick } from 'vue'
+    import Table from "@Common/models/Table"
     import { ArrowPathIcon } from "@heroicons/vue/24/outline"
+    import UiModal from '@Renderer/components/ui/UiModal.vue'
+    import { useProjectStore } from '@Renderer/stores/useProjectStore'
+    import UiText from '@Renderer/components/ui/UiText.vue'
+    import UiButton from '@Renderer/components/ui/UiButton.vue'
+    import Validator from '@Common/util/Validator'
+    import Alert from '@Renderer/components/utils/Alert'
+
+    const showingCreateTableModal = ref(false),
+        projectStore = useProjectStore(),
+        newTable = ref<Table>(null)
+
+    const createTable = (): void => {
+        validate().then(isValid => {
+            if(!isValid) return
+
+            newTable.value.saveFromInterface()
+            close()
+        })
+    }
+
+    const validate = async (): Promise<boolean> => {
+        const rules = {
+            name: 'required|string'
+        }
+
+        const validator = new Validator(newTable.value, rules),
+            hasErrors = await validator.fails()
+
+        if(hasErrors) {
+            Alert.error('Please enter a valid table name')
+            return false
+        }
+
+        const tableNameExists = projectStore.project.hasTable(newTable.value.name)
+
+        if(tableNameExists) {
+            Alert.error('This table name is already in use')
+            return false
+        }
+
+        return !tableNameExists && !hasErrors
+    }
+
+    const show = (): void => {
+        clear()
+        showingCreateTableModal.value = true
+
+        nextTick(() => {
+            document.getElementById('new-table-name')?.focus()
+        })
+    }
+
+    const close = (): void => {
+        showingCreateTableModal.value = false
+    }
+
+    const clear = (): void => {
+        if(!newTable.value) return
+
+        newTable.value.name = ''
+    }
+
+    onMounted(() => {
+        newTable.value = new Table({
+            projectId: projectStore.project.id,
+        })
+    })
 </script>
 
 <template>
@@ -11,6 +80,7 @@
             <div class="flex">
                 <div
                     class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
+                    @click="show()"
                 >
                     <svg
                         class="w-7 h-7"
@@ -27,6 +97,22 @@
                         ></path>
                     </svg>
                 </div>
+
+                <UiModal
+                    width="25%"
+                    title="Create Table"
+                    :show="showingCreateTableModal"
+                    @close="close()"
+                >
+                    <div class="m-2">
+                        <div class="m-1" @keyup.enter="createTable()">
+                            <UiText v-model="newTable.name" id="new-table-name" placeholder="Table Name"></UiText>
+                        </div>
+                        <div class="m-1 mt-2 flex justify-end">
+                            <UiButton @click="createTable()">Create</UiButton>
+                        </div>
+                    </div>
+                </UiModal>
 
                 <!-- <div class="p-2 cursor-pointer text-slate-600 hover:text-red-500">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
