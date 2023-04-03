@@ -33,6 +33,11 @@
         min: {
             type: Number,
             default: 0,
+        },
+
+        step: {
+            type: Number,
+            default: 1
         }
     })
 
@@ -54,9 +59,10 @@
     <input
         class="w-full dark:text-slate-200 border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
         type="number"
-        :max="max"
+        :max="max > 0 ? max : null"
         :min="min"
         :id="id"
+        :step="step"
         :placeholder="placeholder"
         v-model="localValue"
         @blur="$emit('blur', localValue)"
