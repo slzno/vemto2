@@ -10,6 +10,9 @@
     import UiSelect from "@Renderer/components/ui/UiSelect.vue"
     import Alert from "@Renderer/components/utils/Alert"
     import Main from "@Renderer/services/wrappers/Main"
+    import UiButton from "@Renderer/components/ui/UiButton.vue"
+
+    const onDevelopment = Main.API.onDevelopment()
 
     const props = defineProps({
             column: {
@@ -152,6 +155,11 @@
                     <UiText label="Faker" v-model="column.faker" :placeholder="column.faker" @change="column.saveFromInterface()"  />
                 </div>
             </div>
+            
+            <div class="mt-4" v-if="onDevelopment">
+                <UiButton @click="column.logDataComparison()">Log data comparison</UiButton>
+            </div>
         </div>
+
     </div>
 </template>
