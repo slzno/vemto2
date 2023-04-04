@@ -42,6 +42,7 @@ export default class Model extends RelaDB.Model {
         return {
             table: () => this.belongsTo(Table),
             project: () => this.belongsTo(Project),
+            factories: () => this.hasMany(Factory).cascadeDelete(),
             ownRelationships: () => this.hasMany(Relationship).cascadeDelete(),
             relatedRelationships: () => this.hasMany(Relationship, 'relatedModelId').cascadeDelete(),
         }
@@ -203,5 +204,11 @@ export default class Model extends RelaDB.Model {
                 model: this,
             }
         )
+
+        this.syncRelationshipsSourceCode()
+    }
+
+    syncRelationshipsSourceCode() {
+        this.factories.forEach(factory => factory.syncSourceCode())
     }
 }

@@ -58,6 +58,10 @@ export default class Column extends RelaDB.Model {
         column.saveFromInterface()
     }
 
+    static updated(column: Column) {
+        column.syncSourceCode()
+    }
+
     saveFromInterface() {
         let creating = false
 
@@ -315,5 +319,30 @@ export default class Column extends RelaDB.Model {
         faker = faker.replace(/\$faker/g, '$this->faker').replace(/(Str::)/g, '\\Str::')
 
         return faker
+    }
+
+    syncSourceCode() {
+        this.table.syncSourceCode()
+    }
+
+    logDataComparison() {
+        if(!this.schemaState) return
+
+        console.log('Showing changes for column ' + this.name + ' on table ' + this.table.name)
+
+        const completeSchemaState = this.buildSchemaState()
+
+        let columns = []
+
+        for(let key in completeSchemaState) {
+            columns.push({
+                key: key,
+                schema: this.schemaState[key],
+                data: this[key],
+                areDifferent: this.schemaState[key] !== this[key]
+            })
+        }
+
+        console.table(columns)
     }
 }

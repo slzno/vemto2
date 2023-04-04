@@ -88,8 +88,9 @@
         v-if="projectStore.project.hasChangedTables()"
     >
         <div class="flex flex-col space-y-2 bg-slate-850 border border-slate-700 p-3 rounded-lg">
-            <div class="text-sm">
-                There are migrations changes
+            <div class="flex items-center space-x-1 text-sm">
+                <!-- <div class="rounded-full w-3 h-3 bg-red-500 animate-pulse"></div> -->
+                <div>There are tables changes</div>
             </div>
             <div>
                 <UiButton
