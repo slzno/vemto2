@@ -1,6 +1,7 @@
 <script setup lang="ts">
     import { ref, onMounted, nextTick } from 'vue'
     import Table from "@Common/models/Table"
+    import Column from "@Common/models/Column"
     import { ArrowPathIcon } from "@heroicons/vue/24/outline"
     import UiModal from '@Renderer/components/ui/UiModal.vue'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
@@ -18,8 +19,22 @@
             if(!isValid) return
 
             newTable.value.saveFromInterface()
+
+            createIdColumn()
             close()
         })
+    }
+
+    const createIdColumn = (): void => {
+        const idColumn = new Column({
+            tableId: newTable.value.id,
+            name: 'id',
+            type: 'bigInteger',
+            autoIncrement: true,
+            unsigned: true
+        })
+
+        idColumn.saveFromInterface()
     }
 
     const validate = async (): Promise<boolean> => {
