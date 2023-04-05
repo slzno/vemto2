@@ -77,6 +77,8 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
     }
 
     hasSchemaChanges(comparisonData: any): boolean {
+        if(!this.schemaState) return true
+        
         return this.hasDataChanges(comparisonData)
     }
 

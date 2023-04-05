@@ -1,10 +1,10 @@
 interface SchemaModel {
     schemaState: any
 
-    hasLocalChanges(): boolean
     hasSchemaChanges(comparisonData: any): boolean
     hasDataChanges(comparisonData: any): boolean
     dataComparisonMap(comparisonData: any): any
+    hasLocalChanges(): boolean
     applyChanges(data: any): boolean
     saveSchemaState(): void
     fillSchemaState(): void

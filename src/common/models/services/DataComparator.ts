@@ -1,3 +1,5 @@
+import { isEqual } from 'lodash'
+
 export default class DataComparator {
 
     static stringsAreDifferent(value1: string, value2: string): boolean {
@@ -13,17 +15,11 @@ export default class DataComparator {
     }
 
     static arraysAreDifferent(value1: any[], value2: any[]): boolean {
-        if(!value1 && !value2) return false
+        return !isEqual(value1, value2)
+    }
 
-        if(!value1 || !value2) return true
-
-        if(value1.length !== value2.length) return true
-
-        for(let i = 0; i < value1.length; i++) {
-            if(value1[i] !== value2[i]) return true
-        }
-
-        return false
+    static objectsAreDifferent(value1: any, value2: any): boolean {
+        return !isEqual(value1, value2)
     }
 
     static coalesceString(value: string): string {

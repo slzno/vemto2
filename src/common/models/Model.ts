@@ -83,6 +83,8 @@ export default class Model extends RelaDB.Model implements SchemaModel {
     }
 
     hasSchemaChanges(comparisonData: any): boolean {
+        if(!this.schemaState) return true
+
         return this.hasDataChanges(comparisonData)
     }
 
@@ -99,12 +101,12 @@ export default class Model extends RelaDB.Model implements SchemaModel {
             tableName: DataComparator.stringsAreDifferent(this.schemaState.tableName, comparisonData.tableName),
             class: DataComparator.stringsAreDifferent(this.schemaState.class, comparisonData.class),
             path: DataComparator.stringsAreDifferent(this.schemaState.path, comparisonData.path),
-            casts: this.schemaState.casts !== comparisonData.casts,
-            fillable: this.schemaState.fillable !== comparisonData.fillable,
-            dates: this.schemaState.dates !== comparisonData.dates,
-            hidden: this.schemaState.hidden !== comparisonData.hidden,
-            appends: this.schemaState.appends !== comparisonData.appends,
-            methods: this.schemaState.methods !== comparisonData.methods,
+            casts: DataComparator.objectsAreDifferent(this.schemaState.casts, comparisonData.casts),
+            fillable: DataComparator.arraysAreDifferent(this.schemaState.fillable, comparisonData.fillable),
+            dates: DataComparator.arraysAreDifferent(this.schemaState.dates, comparisonData.dates),
+            hidden: DataComparator.arraysAreDifferent(this.schemaState.hidden, comparisonData.hidden),
+            appends: DataComparator.arraysAreDifferent(this.schemaState.appends, comparisonData.appends),
+            methods: DataComparator.arraysAreDifferent(this.schemaState.methods, comparisonData.methods),
         }
     }
 

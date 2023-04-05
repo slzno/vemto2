@@ -1,8 +1,9 @@
 import Table from './Table'
-import { isEqual } from 'lodash'
 import RelaDB from '@tiago_silva_pereira/reladb'
+import DataComparator from './services/DataComparator'
+import DataComparisonLogger from './services/DataComparisonLogger'
 
-export default class Index extends RelaDB.Model {
+export default class Index extends RelaDB.Model implements SchemaModel {
     id: string
     on: string
     name: string
@@ -98,21 +99,35 @@ export default class Index extends RelaDB.Model {
         return this.hasDataChanges(this)
     }
 
-    hasSchemaChanges(schemaData: any): boolean {
+    hasSchemaChanges(comparisonData: any): boolean {
         if(!this.schemaState) return true 
 
-        return this.hasDataChanges(schemaData)
+        return this.hasDataChanges(comparisonData)
     }
 
     hasDataChanges(comparisonData: any): boolean {
-        return !isEqual(this.schemaState.columns, comparisonData.columns)
-            || this.schemaState.algorithm !== comparisonData.algorithm
-            || this.schemaState.type !== comparisonData.type
-            || this.schemaState.references !== comparisonData.references
-            || this.schemaState.on !== comparisonData.on
-            || this.schemaState.language !== comparisonData.language
-            || this.schemaState.onUpdate !== comparisonData.onUpdate
-            || this.schemaState.onDelete !== comparisonData.onDelete
+        const dataComparisonMap = this.dataComparisonMap(comparisonData)
+
+        return Object.keys(dataComparisonMap).some(key => dataComparisonMap[key])
+    }
+
+    dataComparisonMap(comparisonData: any) {
+        return {
+            columns: DataComparator.arraysAreDifferent(this.schemaState.columns, comparisonData.columns),
+            algorithm: DataComparator.stringsAreDifferent(this.schemaState.algorithm, comparisonData.algorithm),
+            type: DataComparator.stringsAreDifferent(this.schemaState.type, comparisonData.type),
+            references: DataComparator.stringsAreDifferent(this.schemaState.references, comparisonData.references),
+            on: DataComparator.stringsAreDifferent(this.schemaState.on, comparisonData.on),
+            language: DataComparator.stringsAreDifferent(this.schemaState.language, comparisonData.language),
+            onUpdate: DataComparator.stringsAreDifferent(this.schemaState.onUpdate, comparisonData.onUpdate),
+            onDelete: DataComparator.stringsAreDifferent(this.schemaState.onDelete, comparisonData.onDelete),
+        }
+    }
+
+    logDataComparison(): void {
+        console.log('Showing changes for index ' + this.id)
+
+        DataComparisonLogger.setInstance(this).log()
     }
 
     applyChanges(data: any): boolean {
