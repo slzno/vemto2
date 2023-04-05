@@ -4,8 +4,10 @@ import Factory from './Factory'
 import ModelSuite from './ModelSuite'
 import Relationship from './Relationship'
 import RelaDB from '@tiago_silva_pereira/reladb'
+import DataComparator from './services/DataComparator'
+import DataComparisonLogger from './services/DataComparisonLogger'
 
-export default class Model extends RelaDB.Model {
+export default class Model extends RelaDB.Model implements SchemaModel {
     id: string
     name: string
     path: string
@@ -81,17 +83,41 @@ export default class Model extends RelaDB.Model {
     }
 
     hasSchemaChanges(comparisonData: any): boolean {
-        return this.name !== comparisonData.name ||
-            this.fileName !== comparisonData.fileName ||
-            this.tableName !== comparisonData.tableName ||
-            this.class !== comparisonData.class ||
-            this.path !== comparisonData.path ||
-            this.casts !== comparisonData.casts ||
-            this.fillable !== comparisonData.fillable ||
-            this.dates !== comparisonData.dates ||
-            this.hidden !== comparisonData.hidden ||
-            this.appends !== comparisonData.appends ||
-            this.methods !== comparisonData.methods
+        return this.hasDataChanges(comparisonData)
+    }
+
+    hasDataChanges(comparisonData: any): boolean {
+        const dataComparisonMap = this.dataComparisonMap(comparisonData)
+
+        return Object.keys(dataComparisonMap).some(key => dataComparisonMap[key])
+    }
+
+    dataComparisonMap(comparisonData: any) {
+        return {
+            name: DataComparator.stringsAreDifferent(this.schemaState.name, comparisonData.name),
+            fileName: DataComparator.stringsAreDifferent(this.schemaState.fileName, comparisonData.fileName),
+            tableName: DataComparator.stringsAreDifferent(this.schemaState.tableName, comparisonData.tableName),
+            class: DataComparator.stringsAreDifferent(this.schemaState.class, comparisonData.class),
+            path: DataComparator.stringsAreDifferent(this.schemaState.path, comparisonData.path),
+            casts: this.schemaState.casts !== comparisonData.casts,
+            fillable: this.schemaState.fillable !== comparisonData.fillable,
+            dates: this.schemaState.dates !== comparisonData.dates,
+            hidden: this.schemaState.hidden !== comparisonData.hidden,
+            appends: this.schemaState.appends !== comparisonData.appends,
+            methods: this.schemaState.methods !== comparisonData.methods,
+        }
+    }
+
+    hasLocalChanges(): boolean {
+        if(!this.schemaState) return false
+
+        return this.hasDataChanges(this)
+    }
+
+    logDataComparison(): void {
+        console.log('Showing changes for model ' + this.name)
+
+        DataComparisonLogger.setInstance(this).log()
     }
 
     applyChanges(data: any) {
