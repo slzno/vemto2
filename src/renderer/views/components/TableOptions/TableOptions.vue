@@ -8,6 +8,7 @@
     import {
         XMarkIcon,
     } from "@heroicons/vue/24/outline"
+import UiButton from "@Renderer/components/ui/UiButton.vue"
 
     const props = defineProps({
         show: Boolean,
@@ -65,6 +66,14 @@
 
                 <div class="p-4 space-y-2" v-if="selectedTab === 'models'">
                     <TableModels :models="table.models" />
+                </div>
+
+                <div class="p-4 space-y-2" v-if="selectedTab === 'indexes'">
+                    <div class="text-red-400">Not implemented yet</div>
+                </div>
+
+                <div class="p-4 space-y-2" v-if="selectedTab === 'settings'">
+                    <UiButton @click="table.logDataComparison()">Log data comparison</UiButton>
                 </div>
             </div>
         </div>

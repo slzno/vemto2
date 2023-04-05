@@ -6,8 +6,10 @@ import ColumnData from './data/ColumnData'
 import ColumnsDefaultData from './column-types/default/ColumnsDefaultData'
 import ColumnsDefaultDataInterface from './column-types/default/base/ColumnsDefaultDataInterface'
 import ColumnTypeList from './column-types/base/ColumnTypeList'
+import DataComparisonLogger from './services/DataComparisonLogger'
+import DataComparator from './services/DataComparator'
 
-export default class Column extends RelaDB.Model {
+export default class Column extends RelaDB.Model implements SchemaModel {
     id: string
     name: string
     type: string
@@ -142,23 +144,31 @@ export default class Column extends RelaDB.Model {
         if(!this.schemaState) return true 
         
         // Order is only checked here because Laravel migrations don't support changing the order of columns
-        const orderWasChanged = this.schemaState.order !== schemaData.order
+        const orderWasChanged = DataComparator.numbersAreDifferent(this.schemaState.order, schemaData.order)
 
         return this.hasDataChanges(schemaData) || orderWasChanged
     }
 
     hasDataChanges(comparisonData: any): boolean {
-        return this.schemaState.name !== comparisonData.name 
-            || this.schemaState.type !== comparisonData.type
-            || this.schemaState.length !== comparisonData.length
-            || this.schemaState.nullable !== comparisonData.nullable
-            || this.schemaState.autoIncrement !== comparisonData.autoIncrement
-            || this.schemaState.unsigned !== comparisonData.unsigned
-            || this.schemaState.index !== comparisonData.index
-            || this.schemaState.unique !== comparisonData.unique
-            || this.schemaState.default !== comparisonData.default
-            || this.schemaState.total !== comparisonData.total
-            || this.schemaState.places !== comparisonData.places
+        const dataComparisonMap = this.dataComparisonMap(comparisonData)
+
+        return Object.keys(dataComparisonMap).some(key => dataComparisonMap[key])
+    }
+
+    dataComparisonMap(comparisonData: any): any {
+        return {
+            name: DataComparator.stringsAreDifferent(this.schemaState.name, comparisonData.name),
+            type: DataComparator.stringsAreDifferent(this.schemaState.type, comparisonData.type),
+            length: DataComparator.numbersAreDifferent(this.schemaState.length, comparisonData.length),
+            nullable: DataComparator.booleansAreDifferent(this.schemaState.nullable, comparisonData.nullable),
+            autoIncrement: DataComparator.booleansAreDifferent(this.schemaState.autoIncrement, comparisonData.autoIncrement),
+            unsigned: DataComparator.booleansAreDifferent(this.schemaState.unsigned, comparisonData.unsigned),
+            index: DataComparator.booleansAreDifferent(this.schemaState.index, comparisonData.index),
+            unique: DataComparator.booleansAreDifferent(this.schemaState.unique, comparisonData.unique),
+            default: DataComparator.stringsAreDifferent(this.schemaState.default, comparisonData.default),
+            total: DataComparator.numbersAreDifferent(this.schemaState.total, comparisonData.total),
+            places: DataComparator.numbersAreDifferent(this.schemaState.places, comparisonData.places),
+        }
     }
 
     applyChanges(data: any): boolean {
@@ -326,23 +336,8 @@ export default class Column extends RelaDB.Model {
     }
 
     logDataComparison() {
-        if(!this.schemaState) return
-
         console.log('Showing changes for column ' + this.name + ' on table ' + this.table.name)
 
-        const completeSchemaState = this.buildSchemaState()
-
-        let columns = []
-
-        for(let key in completeSchemaState) {
-            columns.push({
-                key: key,
-                schema: this.schemaState[key],
-                data: this[key],
-                areDifferent: this.schemaState[key] !== this[key]
-            })
-        }
-
-        console.table(columns)
+        DataComparisonLogger.setInstance(this).log()
     }
 }

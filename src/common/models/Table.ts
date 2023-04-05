@@ -3,8 +3,10 @@ import Model from './Model'
 import Column from './Column'
 import Project from './Project'
 import RelaDB from '@tiago_silva_pereira/reladb'
+import DataComparator from './services/DataComparator'
+import DataComparisonLogger from './services/DataComparisonLogger'
 
-export default class Table extends RelaDB.Model {
+export default class Table extends RelaDB.Model implements SchemaModel {
     id: string
     name: string
     indexes: Index[]
@@ -77,8 +79,20 @@ export default class Table extends RelaDB.Model {
     }
 
     hasSchemaChanges(comparisonData: any): boolean {
-        return this.name !== comparisonData.name ||
-            this.migrations !== comparisonData.migrations
+        return this.hasDataChanges(comparisonData)
+    }
+
+    hasDataChanges(data: any): boolean {
+        const dataComparisonMap = this.dataComparisonMap(data)
+
+        return Object.keys(dataComparisonMap).some(key => dataComparisonMap[key])
+    }
+
+    dataComparisonMap(comparisonData: any) {
+        return {
+            name: DataComparator.stringsAreDifferent(this.schemaState.name, comparisonData.name),
+            migrations: DataComparator.arraysAreDifferent(this.schemaState.migrations, comparisonData.migrations),
+        }
     }
 
     applyChanges(data: any) {
@@ -109,6 +123,18 @@ export default class Table extends RelaDB.Model {
         return {
             name: this.name,
         }
+    }
+
+    hasLocalChanges(): boolean {
+        if(!this.schemaState) return false
+
+        return this.hasDataChanges(this)
+    }
+
+    logDataComparison(): void {
+        console.log('Showing changes for table ' + this.name)
+
+        DataComparisonLogger.setInstance(this).log()
     }
 
     hasColumn(columnName: string): boolean {
