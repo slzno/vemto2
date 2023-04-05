@@ -3,6 +3,7 @@ interface SchemaModel {
 
     hasLocalChanges(): boolean
     hasSchemaChanges(comparisonData: any): boolean
+    hasDataChanges(comparisonData: any): boolean
     dataComparisonMap(comparisonData: any): any
     applyChanges(data: any): boolean
     saveSchemaState(): void
@@ -10,7 +11,4 @@ interface SchemaModel {
     buildSchemaState(): any
     isNew(): boolean    
     logDataComparison(): void
-
-    // Optional methods
-    hasDataChanges?(data: any): boolean
 }

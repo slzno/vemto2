@@ -64,6 +64,8 @@
                         v-for="relationship in relationships"
                         :key="relationship.id"
                     >
+                        <!-- <UiButton @click="relationship.logDataComparison()">Log data comparison</UiButton> -->
+                        
                         <div class="flex justify-between">
                             <div class="space-x-1">
                                 <div class="text-red-400 inline-block">

@@ -1,8 +1,10 @@
 import Model from './Model'
 import Project from './Project'
 import RelaDB from '@tiago_silva_pereira/reladb'
+import DataComparator from './services/DataComparator'
+import DataComparisonLogger from './services/DataComparisonLogger'
 
-export default class Relationship extends RelaDB.Model {
+export default class Relationship extends RelaDB.Model implements SchemaModel {
     id: string
     name: string
     type: string
@@ -75,17 +77,41 @@ export default class Relationship extends RelaDB.Model {
     }
 
     hasSchemaChanges(comparisonData: any): boolean {
-        return this.name !== comparisonData.name ||
-            this.type !== comparisonData.type ||
-            this.relatedTableName !== comparisonData.relatedTableName ||
-            this.relatedModelName !== comparisonData.relatedModelName ||
-            this.parentTableName !== comparisonData.parentTableName ||
-            this.parentModelName !== comparisonData.parentModelName ||
-            this.foreignKeyName !== comparisonData.foreignKeyName ||
-            this.localKeyName !== comparisonData.localKeyName ||
-            this.ownerKeyName !== comparisonData.ownerKeyName ||
-            this.relatedKeyName !== comparisonData.relatedKeyName ||
-            this.morphType !== comparisonData.morphType
+        return this.hasDataChanges(comparisonData)
+    }
+
+    hasDataChanges(comparisonData: any): boolean {
+        const dataComparisonMap = this.dataComparisonMap(comparisonData)
+
+        return Object.keys(dataComparisonMap).some(key => dataComparisonMap[key])
+    }
+
+    dataComparisonMap(comparisonData: any) {
+        return {
+            name: DataComparator.stringsAreDifferent(this.schemaState.name, comparisonData.name),
+            type: DataComparator.stringsAreDifferent(this.schemaState.type, comparisonData.type),
+            relatedTableName: DataComparator.stringsAreDifferent(this.schemaState.relatedTableName, comparisonData.relatedTableName),
+            relatedModelName: DataComparator.stringsAreDifferent(this.schemaState.relatedModelName, comparisonData.relatedModelName),
+            parentTableName: DataComparator.stringsAreDifferent(this.schemaState.parentTableName, comparisonData.parentTableName),
+            parentModelName: DataComparator.stringsAreDifferent(this.schemaState.parentModelName, comparisonData.parentModelName),
+            foreignKeyName: DataComparator.stringsAreDifferent(this.schemaState.foreignKeyName, comparisonData.foreignKeyName),
+            localKeyName: DataComparator.stringsAreDifferent(this.schemaState.localKeyName, comparisonData.localKeyName),
+            ownerKeyName: DataComparator.stringsAreDifferent(this.schemaState.ownerKeyName, comparisonData.ownerKeyName),
+            relatedKeyName: DataComparator.stringsAreDifferent(this.schemaState.relatedKeyName, comparisonData.relatedKeyName),
+            morphType: DataComparator.stringsAreDifferent(this.schemaState.morphType, comparisonData.morphType),
+        }
+    }
+
+    hasLocalChanges(): boolean {
+        if(!this.schemaState) return false
+
+        return this.hasDataChanges(this)
+    }
+    
+    logDataComparison(): void {
+        console.log('Showing changes for relationship ' + this.name)
+
+        DataComparisonLogger.setInstance(this).log()
     }
 
     applyChanges(data: any) {
