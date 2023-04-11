@@ -6,13 +6,17 @@ import Relationship from './Relationship'
 import RelaDB from '@tiago_silva_pereira/reladb'
 import DataComparator from './services/DataComparator'
 import DataComparisonLogger from './services/DataComparisonLogger'
+import TableNameExceptions from './static/TableNameExceptions'
+import WordManipulator from '@Common/util/WordManipulator'
 
 export default class Model extends RelaDB.Model implements SchemaModel {
     id: string
     name: string
+    plural: string
     path: string
     table: Table
     class: string
+    namespace: string
     tableId: string
     fileName: string
     schemaState: any
@@ -26,6 +30,8 @@ export default class Model extends RelaDB.Model implements SchemaModel {
     ownRelationships: Relationship[]
     relatedRelationships: Relationship[]
 
+    pluralAndSingularAreSame: boolean
+
     /**
      * Laravel related properties
      */
@@ -35,6 +41,10 @@ export default class Model extends RelaDB.Model implements SchemaModel {
     hidden: string[]
     appends: string[]
     methods: string[]
+
+    hasTimestamps: boolean
+    hasHidden: boolean
+    hasFillable: boolean
 
     static identifier() {
         return 'Model'
@@ -107,6 +117,9 @@ export default class Model extends RelaDB.Model implements SchemaModel {
             hidden: DataComparator.arraysAreDifferent(this.schemaState.hidden, comparisonData.hidden),
             appends: DataComparator.arraysAreDifferent(this.schemaState.appends, comparisonData.appends),
             methods: DataComparator.arraysAreDifferent(this.schemaState.methods, comparisonData.methods),
+            hasTimestamps: DataComparator.booleansAreDifferent(this.schemaState.hasTimestamps, comparisonData.hasTimestamps),
+            hasHidden: DataComparator.booleansAreDifferent(this.schemaState.hasHidden, comparisonData.hasHidden),
+            hasFillable: DataComparator.booleansAreDifferent(this.schemaState.hasFillable, comparisonData.hasFillable),
         }
     }
 
@@ -129,6 +142,7 @@ export default class Model extends RelaDB.Model implements SchemaModel {
         this.fileName = data.fileName
         this.tableName = data.tableName
         this.class = data.class
+        this.namespace = data.namespace
         this.path = data.path
         this.casts = data.casts
         this.fillable = data.fillable
@@ -137,6 +151,9 @@ export default class Model extends RelaDB.Model implements SchemaModel {
         this.appends = data.appends
         this.methods = data.methods
         this.createdFromInterface = false
+        this.hasTimestamps = data.hasTimestamps
+        this.hasHidden = data.hasHidden
+        this.hasFillable = data.hasFillable
 
         const table = this.project.findTableByName(data.tableName)
         
@@ -166,6 +183,7 @@ export default class Model extends RelaDB.Model implements SchemaModel {
             name: this.name,
             tableName: this.tableName,
             class: this.class,
+            namespace: this.namespace,
             path: this.path,
             casts: this.casts,
             fillable: this.fillable,
@@ -173,6 +191,9 @@ export default class Model extends RelaDB.Model implements SchemaModel {
             hidden: this.hidden,
             appends: this.appends,
             methods: this.methods,
+            hasTimestamps: this.hasTimestamps,
+            hasHidden: this.hasHidden,
+            hasFillable: this.hasFillable,
         }
     }
 
@@ -238,5 +259,30 @@ export default class Model extends RelaDB.Model implements SchemaModel {
 
     syncRelationshipsSourceCode() {
         this.factories.forEach(factory => factory.syncSourceCode())
+    }
+
+    calculateDataByName(): void {
+        if(!this.name || !this.name.length) return
+
+        const tableNameExceptions = TableNameExceptions.get()
+
+        if(this.name in tableNameExceptions) {
+            let tableNameException = tableNameExceptions[this.name]
+
+            this.plural = tableNameException.plural
+        }
+
+        const modelNamePlural = WordManipulator.pluralize(this.name)
+
+        if(this.name != modelNamePlural) {
+            this.plural = modelNamePlural
+            this.pluralAndSingularAreSame = false
+        } else {
+            this.plural = `All${modelNamePlural}`
+            this.pluralAndSingularAreSame = true
+        }
+
+        this.class = `${this.namespace}\\${this.name}`
+        this.fileName = `${this.name}.php`
     }
 }

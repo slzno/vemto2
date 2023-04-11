@@ -1,11 +1,12 @@
 <script setup lang="ts">
-    import { PropType, Ref, toRef, ref, watch, onMounted } from "vue"
+    import { PropType, Ref, toRef, ref, onMounted } from "vue"
     import Model from "@Common/models/Model"
     import debounce from "@Common/tools/debounce"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import UiSelect from "@Renderer/components/ui/UiSelect.vue"
     import { EllipsisVerticalIcon, PlusIcon } from "@heroicons/vue/24/outline"
+    import Relationship from "@Renderer/../common/models/Relationship"
 
     const props = defineProps({
         model: {
@@ -26,21 +27,20 @@
         relationships.value = model.value.ownRelationships
     })
 
-    watch(() => model.value.name, () => {
-        saveModel()
-    })
+    const saveModelData = debounce((isNameChange: boolean) => {
+        if(isNameChange) {
+            model.value.calculateDataByName()
+        }
+        
+        model.value.saveFromInterface()
+    }, 500)
 
     const newRelationship = (): void => {
         const relationship = model.value.newRelationship()
         relationships.value.push(relationship)
     }
 
-    // debounced
-    const saveModel = debounce(() => {
-        model.value.saveFromInterface()
-    }, 500)
-
-    const saveRelationship = debounce((relationship) => {
+    const saveRelationship = debounce((relationship: Relationship) => {
         relationship.saveFromInterface()
     }, 500)
 </script>
@@ -50,10 +50,25 @@
         class="relative flex-col bg-slate-800 border-l-4 border-slate-700 p-2 rounded-xl shadow"
     >
         <div>
-            <UiText
-                v-model="model.class"
-                placeholder="Model class name with namespace"
-            />
+            <div class="flex justify-between gap-2">
+                <UiText
+                    v-model="model.namespace"
+                    placeholder="Model namespace"
+                    @change="saveModelData()"
+                />
+                <UiText
+                    v-model="model.name"
+                    placeholder="Model name"
+                    @change="saveModelData(true)"
+                />
+            </div>
+            <div class="mt-2">
+                <UiText 
+                    v-model="model.plural"
+                    placeholder="Collection"
+                    @change="saveModelData()"
+                />
+            </div>
 
             <div class="mt-4">
                 <h2 class="text-slate-500 font-semibold mb-1">Relationships</h2>

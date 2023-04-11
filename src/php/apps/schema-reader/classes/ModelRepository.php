@@ -64,14 +64,18 @@ class ModelRepository {
                 'name' => str_replace('.php', '', $model['fileName']),
                 'tableName' => (new $model['class'])->getTable(),
                 'class' => $model['class'],
+                'namespace' => $reflection->getNamespaceName(),
                 'path' => $model['path'],
+                'hasFillable' => !empty($fillable),
                 'fillable' => $fillable,
                 'casts' => $casts,
                 'dates' => $dates,
+                'hasHidden' => !empty($hidden),
                 'hidden' => $hidden,
                 'appends' => $appends,
                 'relationships' => $relationships,
                 'methods' => $classMethods,
+                'hasTimestamps' => $properties['timestamps'] ?? true,
             ];
         }
 

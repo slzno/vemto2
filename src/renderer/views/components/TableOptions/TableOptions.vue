@@ -65,7 +65,7 @@ import UiButton from "@Renderer/components/ui/UiButton.vue"
                 </div>
 
                 <div class="p-4 space-y-2" v-if="selectedTab === 'models'">
-                    <TableModels :models="table.models" />
+                    <TableModels :table="table" />
                 </div>
 
                 <div class="p-4 space-y-2" v-if="selectedTab === 'indexes'">
