@@ -41,8 +41,9 @@ export default class Model extends RelaDB.Model implements SchemaModel {
     hidden: string[]
     appends: string[]
     methods: string[]
+    guarded: string[]
 
-    hasTimestamps: boolean
+    hasGuarded: boolean
     hasHidden: boolean
     hasFillable: boolean
 
@@ -110,14 +111,16 @@ export default class Model extends RelaDB.Model implements SchemaModel {
             fileName: DataComparator.stringsAreDifferent(this.schemaState.fileName, comparisonData.fileName),
             tableName: DataComparator.stringsAreDifferent(this.schemaState.tableName, comparisonData.tableName),
             class: DataComparator.stringsAreDifferent(this.schemaState.class, comparisonData.class),
+            namespace: DataComparator.stringsAreDifferent(this.schemaState.namespace, comparisonData.namespace),
             path: DataComparator.stringsAreDifferent(this.schemaState.path, comparisonData.path),
             casts: DataComparator.objectsAreDifferent(this.schemaState.casts, comparisonData.casts),
             fillable: DataComparator.arraysAreDifferent(this.schemaState.fillable, comparisonData.fillable),
             dates: DataComparator.arraysAreDifferent(this.schemaState.dates, comparisonData.dates),
             hidden: DataComparator.arraysAreDifferent(this.schemaState.hidden, comparisonData.hidden),
+            guarded: DataComparator.arraysAreDifferent(this.schemaState.guarded, comparisonData.guarded),
             appends: DataComparator.arraysAreDifferent(this.schemaState.appends, comparisonData.appends),
             methods: DataComparator.arraysAreDifferent(this.schemaState.methods, comparisonData.methods),
-            hasTimestamps: DataComparator.booleansAreDifferent(this.schemaState.hasTimestamps, comparisonData.hasTimestamps),
+            hasGuarded: DataComparator.booleansAreDifferent(this.schemaState.hasGuarded, comparisonData.hasGuarded),
             hasHidden: DataComparator.booleansAreDifferent(this.schemaState.hasHidden, comparisonData.hasHidden),
             hasFillable: DataComparator.booleansAreDifferent(this.schemaState.hasFillable, comparisonData.hasFillable),
         }
@@ -146,12 +149,13 @@ export default class Model extends RelaDB.Model implements SchemaModel {
         this.path = data.path
         this.casts = data.casts
         this.fillable = data.fillable
+        this.guarded = data.guarded
         this.dates = data.dates
         this.hidden = data.hidden
         this.appends = data.appends
         this.methods = data.methods
         this.createdFromInterface = false
-        this.hasTimestamps = data.hasTimestamps
+        this.hasGuarded = data.hasGuarded
         this.hasHidden = data.hasHidden
         this.hasFillable = data.hasFillable
 
@@ -187,11 +191,12 @@ export default class Model extends RelaDB.Model implements SchemaModel {
             path: this.path,
             casts: this.casts,
             fillable: this.fillable,
+            guarded: this.guarded,
             dates: this.dates,
             hidden: this.hidden,
             appends: this.appends,
             methods: this.methods,
-            hasTimestamps: this.hasTimestamps,
+            hasGuarded: this.hasGuarded,
             hasHidden: this.hasHidden,
             hasFillable: this.hasFillable,
         }
@@ -229,10 +234,6 @@ export default class Model extends RelaDB.Model implements SchemaModel {
         return relationships
     }
 
-    getNamespace(): string {
-        return this.class.split('\\').slice(0, -1).join('\\')
-    }
-
     newRelationship(): Relationship {
         let relationship = new Relationship()
         relationship.modelId = this.id
@@ -262,8 +263,6 @@ export default class Model extends RelaDB.Model implements SchemaModel {
     }
 
     calculateDataByName(): void {
-        if(!this.name || !this.name.length) return
-
         const tableNameExceptions = TableNameExceptions.get()
 
         if(this.name in tableNameExceptions) {

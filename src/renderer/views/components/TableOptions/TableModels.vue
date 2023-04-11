@@ -20,7 +20,9 @@
         const model = new Model({
             tableId: table.value.id,
             projectId: table.value.project.id,
-            namespace: "App\\Models"
+            namespace: "App\\Models",
+            hasGuarded: true,
+            guarded: []
         })
         
         const modelNameByTableName = WordManipulator.runMultiple(

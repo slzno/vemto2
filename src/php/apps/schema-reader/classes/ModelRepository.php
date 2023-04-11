@@ -20,6 +20,7 @@ class ModelRepository {
             $dates = $properties['dates'] ?? [];
             $hidden = $properties['hidden'] ?? [];
             $appends = $properties['appends'] ?? [];
+            $guarded = $properties['guarded'] ?? [];
 
             $allMethods = $reflection->getMethods();
             $classMethods = collect($allMethods)->filter(function ($method) use ($model) {
@@ -70,12 +71,13 @@ class ModelRepository {
                 'fillable' => $fillable,
                 'casts' => $casts,
                 'dates' => $dates,
+                'hasGuarded' => !empty($guarded),
+                'guarded' => $guarded,
                 'hasHidden' => !empty($hidden),
                 'hidden' => $hidden,
                 'appends' => $appends,
                 'relationships' => $relationships,
                 'methods' => $classMethods,
-                'hasTimestamps' => $properties['timestamps'] ?? true,
             ];
         }
 
