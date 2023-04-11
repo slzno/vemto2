@@ -3,7 +3,7 @@ import Project from './Project'
 import RelaDB from '@tiago_silva_pereira/reladb'
 import { RenderableFileType } from './RenderableFile'
 
-export default class Factory extends RelaDB.Model {
+export default class Controller extends RelaDB.Model {
     id: string
     name: string
     namespace: string
@@ -13,11 +13,11 @@ export default class Factory extends RelaDB.Model {
     projectId: string
 
     static identifier() {
-        return 'Factory'
+        return 'Controller'
     }
 
-    static created(factory: Factory) {
-        factory.syncSourceCode()
+    static created(controller: Controller) {
+        controller.syncSourceCode()
     }
 
     relationships() {
@@ -28,7 +28,7 @@ export default class Factory extends RelaDB.Model {
     }
 
     static getNameFromModel(model: Model) {
-        return model.name + 'Factory'
+        return model.name + 'Controller'
     }
 
     getFileName() {
@@ -37,11 +37,11 @@ export default class Factory extends RelaDB.Model {
 
     syncSourceCode() {
         this.project.registerRenderableFile(
-            'database/factories', 
+            'app/Http/Controllers', 
             this.getFileName(),
-            'database/Factory.vemtl', 
+            'controllers/Controller.vemtl', 
             {
-                factory: this,
+                controller: this,
             },
             RenderableFileType.PHP
         )

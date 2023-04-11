@@ -4,6 +4,7 @@ import Index from './Index'
 import Column from './Column'
 import Project from './Project'
 import Factory from './Factory'
+import Controller from './Controller'
 import ModelSuite from './ModelSuite'
 import FormRequest from './FormRequest'
 import Relationship from './Relationship'
@@ -113,6 +114,7 @@ export default class RenderableFile extends RelaDB.Model {
         if(modelIdentifier == 'Factory') return Factory.find(modelId)
         if(modelIdentifier == 'FormRequest') return FormRequest.find(modelId)
         if(modelIdentifier == 'ModelSuite') return ModelSuite.find(modelId)
+        if(modelIdentifier == 'Controller') return Controller.find(modelId)
 
         return null
     }

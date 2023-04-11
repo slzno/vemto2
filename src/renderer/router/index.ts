@@ -5,6 +5,7 @@ import ProjectMainView from "../views/ProjectMainView.vue"
 import ProjectSchemaView from "../views/ProjectSchemaView.vue"
 import ProjectCodeQueueView from "../views/ProjectCodeQueueView.vue"
 import ProjectAppsView from "../views/ProjectAppsView.vue"
+import ProjectPageView from "../views/ProjectPageView.vue"
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -30,6 +31,12 @@ const router = createRouter({
                     path: "apps",
                     name: "project-apps",
                     component: ProjectAppsView,
+                },
+
+                {
+                    path: "pages/:pageId",
+                    name: "project-page",
+                    component: ProjectPageView,
                 },
 
                 {
