@@ -108,7 +108,7 @@
                             <UiText
                                 v-model="relationship.name"
                                 placeholder="Relationship name"
-                                @change="saveRelationship(relationship)"
+                                @input="saveRelationship(relationship)"
                             />
                         </div>
                     </div>
