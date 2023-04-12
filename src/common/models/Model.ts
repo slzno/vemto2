@@ -6,13 +6,17 @@ import Relationship from './Relationship'
 import RelaDB from '@tiago_silva_pereira/reladb'
 import DataComparator from './services/DataComparator'
 import DataComparisonLogger from './services/DataComparisonLogger'
+import TableNameExceptions from './static/TableNameExceptions'
+import WordManipulator from '@Common/util/WordManipulator'
 
 export default class Model extends RelaDB.Model implements SchemaModel {
     id: string
     name: string
+    plural: string
     path: string
     table: Table
     class: string
+    namespace: string
     tableId: string
     fileName: string
     schemaState: any
@@ -26,6 +30,8 @@ export default class Model extends RelaDB.Model implements SchemaModel {
     ownRelationships: Relationship[]
     relatedRelationships: Relationship[]
 
+    pluralAndSingularAreSame: boolean
+
     /**
      * Laravel related properties
      */
@@ -35,6 +41,13 @@ export default class Model extends RelaDB.Model implements SchemaModel {
     hidden: string[]
     appends: string[]
     methods: string[]
+    guarded: string[]
+
+    hasGuarded: boolean
+    hasHidden: boolean
+    hasFillable: boolean
+    hasTimestamps: boolean
+    hasSoftDeletes: boolean
 
     static identifier() {
         return 'Model'
@@ -100,13 +113,20 @@ export default class Model extends RelaDB.Model implements SchemaModel {
             fileName: DataComparator.stringsAreDifferent(this.schemaState.fileName, comparisonData.fileName),
             tableName: DataComparator.stringsAreDifferent(this.schemaState.tableName, comparisonData.tableName),
             class: DataComparator.stringsAreDifferent(this.schemaState.class, comparisonData.class),
+            namespace: DataComparator.stringsAreDifferent(this.schemaState.namespace, comparisonData.namespace),
             path: DataComparator.stringsAreDifferent(this.schemaState.path, comparisonData.path),
             casts: DataComparator.objectsAreDifferent(this.schemaState.casts, comparisonData.casts),
             fillable: DataComparator.arraysAreDifferent(this.schemaState.fillable, comparisonData.fillable),
             dates: DataComparator.arraysAreDifferent(this.schemaState.dates, comparisonData.dates),
             hidden: DataComparator.arraysAreDifferent(this.schemaState.hidden, comparisonData.hidden),
+            guarded: DataComparator.arraysAreDifferent(this.schemaState.guarded, comparisonData.guarded),
             appends: DataComparator.arraysAreDifferent(this.schemaState.appends, comparisonData.appends),
             methods: DataComparator.arraysAreDifferent(this.schemaState.methods, comparisonData.methods),
+            hasGuarded: DataComparator.booleansAreDifferent(this.schemaState.hasGuarded, comparisonData.hasGuarded),
+            hasHidden: DataComparator.booleansAreDifferent(this.schemaState.hasHidden, comparisonData.hasHidden),
+            hasFillable: DataComparator.booleansAreDifferent(this.schemaState.hasFillable, comparisonData.hasFillable),
+            hasTimestamps: DataComparator.booleansAreDifferent(this.schemaState.hasTimestamps, comparisonData.hasTimestamps),
+            hasSoftDeletes: DataComparator.booleansAreDifferent(this.schemaState.hasSoftDeletes, comparisonData.hasSoftDeletes),
         }
     }
 
@@ -129,14 +149,21 @@ export default class Model extends RelaDB.Model implements SchemaModel {
         this.fileName = data.fileName
         this.tableName = data.tableName
         this.class = data.class
+        this.namespace = data.namespace
         this.path = data.path
         this.casts = data.casts
         this.fillable = data.fillable
+        this.guarded = data.guarded
         this.dates = data.dates
         this.hidden = data.hidden
         this.appends = data.appends
         this.methods = data.methods
         this.createdFromInterface = false
+        this.hasGuarded = data.hasGuarded
+        this.hasHidden = data.hasHidden
+        this.hasFillable = data.hasFillable
+        this.hasTimestamps = data.hasTimestamps
+        this.hasSoftDeletes = data.hasSoftDeletes
 
         const table = this.project.findTableByName(data.tableName)
         
@@ -166,13 +193,20 @@ export default class Model extends RelaDB.Model implements SchemaModel {
             name: this.name,
             tableName: this.tableName,
             class: this.class,
+            namespace: this.namespace,
             path: this.path,
             casts: this.casts,
             fillable: this.fillable,
+            guarded: this.guarded,
             dates: this.dates,
             hidden: this.hidden,
             appends: this.appends,
             methods: this.methods,
+            hasGuarded: this.hasGuarded,
+            hasHidden: this.hasHidden,
+            hasFillable: this.hasFillable,
+            hasTimestamps: this.hasTimestamps,
+            hasSoftDeletes: this.hasSoftDeletes,
         }
     }
 
@@ -208,10 +242,6 @@ export default class Model extends RelaDB.Model implements SchemaModel {
         return relationships
     }
 
-    getNamespace(): string {
-        return this.class.split('\\').slice(0, -1).join('\\')
-    }
-
     newRelationship(): Relationship {
         let relationship = new Relationship()
         relationship.modelId = this.id
@@ -238,5 +268,30 @@ export default class Model extends RelaDB.Model implements SchemaModel {
 
     syncRelationshipsSourceCode() {
         this.factories.forEach(factory => factory.syncSourceCode())
+    }
+
+    calculateDataByName(): void {
+        if(!this.name) return
+
+        const tableNameExceptions = TableNameExceptions.get()
+
+        if(this.name in tableNameExceptions) {
+            let tableNameException = tableNameExceptions[this.name]
+
+            this.plural = tableNameException.plural
+        }
+
+        const modelNamePlural = WordManipulator.pluralize(this.name)
+
+        if(this.name != modelNamePlural) {
+            this.plural = modelNamePlural
+            this.pluralAndSingularAreSame = false
+        } else {
+            this.plural = `All${modelNamePlural}`
+            this.pluralAndSingularAreSame = true
+        }
+
+        this.class = `${this.namespace}\\${this.name}`
+        this.fileName = `${this.name}.php`
     }
 }

@@ -7,6 +7,7 @@ import "highlight.js/styles/base16/monokai.css"
 import "diff2html/bundles/css/diff2html.min.css"
 import "./main.css"
 import 'notyf/notyf.min.css'
+import '@vueform/multiselect/themes/default.css'
  
 import App from "./App.vue"
 import router from "./router"

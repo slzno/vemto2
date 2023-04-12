@@ -1,11 +1,15 @@
 <script setup lang="ts">
-    import { PropType, Ref, toRef, ref, watch, onMounted } from "vue"
+    import { PropType, Ref, toRef, ref, onMounted } from "vue"
     import Model from "@Common/models/Model"
     import debounce from "@Common/tools/debounce"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import UiSelect from "@Renderer/components/ui/UiSelect.vue"
     import { EllipsisVerticalIcon, PlusIcon } from "@heroicons/vue/24/outline"
+    import Relationship from "@Renderer/../common/models/Relationship"
+    import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
+    import UiMultiSelect from "@Renderer/components/ui/UiMultiSelect.vue"
+    import Column from "@Renderer/../common/models/Column"
 
     const props = defineProps({
         model: {
@@ -26,21 +30,39 @@
         relationships.value = model.value.ownRelationships
     })
 
-    watch(() => model.value.name, () => {
-        saveModel()
-    })
+    const saveModelData = debounce((isNameChange: boolean) => {
+        if(isNameChange) {
+            model.value.calculateDataByName()
+        }
+        
+        model.value.saveFromInterface()
+    }, 500)
 
     const newRelationship = (): void => {
         const relationship = model.value.newRelationship()
         relationships.value.push(relationship)
     }
 
-    // debounced
-    const saveModel = debounce(() => {
-        model.value.saveFromInterface()
-    }, 500)
+    const getSelectDataForLayout = (property: Array<string>|Column[]): Array<Object> => {
+        return property.map((guarded: string|Column) => {
+            if(typeof guarded === "object") {
+                guarded = guarded.name
+            }
 
-    const saveRelationship = debounce((relationship) => {
+            return {
+                label: guarded,
+                value: guarded.toLowerCase(),
+            }
+        })
+    }
+
+    const saveModelPropertyFromSelect = (selectValue: Array<Object>, modelProperty: string): void => {
+        model.value[modelProperty] = selectValue.map((item: any) => item.value)
+
+        saveModelData()
+    }
+
+    const saveRelationship = debounce((relationship: Relationship) => {
         relationship.saveFromInterface()
     }, 500)
 </script>
@@ -50,10 +72,73 @@
         class="relative flex-col bg-slate-800 border-l-4 border-slate-700 p-2 rounded-xl shadow"
     >
         <div>
-            <UiText
-                v-model="model.class"
-                placeholder="Model class name with namespace"
-            />
+            <div class="flex justify-between gap-2">
+                <UiText
+                    v-model="model.namespace"
+                    placeholder="Model namespace"
+                    @change="saveModelData()"
+                />
+                <UiText
+                    v-model="model.name"
+                    placeholder="Model name"
+                    @change="saveModelData(true)"
+                />
+            </div>
+            <div class="mt-2">
+                <UiText 
+                    v-model="model.plural"
+                    placeholder="Collection"
+                    @change="saveModelData()"
+                />
+            </div>
+            <div class="mt-2 flex gap-3">
+                <UiCheckbox
+                    label="Has Timestamps"
+                    v-model="model.hasTimestamps"
+                    @change="saveModelData()"
+                />
+                <UiCheckbox
+                    label="Has SoftDeletes"
+                    v-model="model.hasSoftDeletes"
+                    @change="saveModelData()"
+                />
+            </div>
+
+            <div class="mt-4 bg-slate-850 rounded-md space-y-1 p-2 flex flex-col gap-1">
+                <div>
+                    <UiCheckbox
+                        label="Has Guarded"
+                        v-model="model.hasGuarded"
+                        @change="saveModelData()"
+                    />
+                </div>
+
+                <div v-if="model.hasGuarded">
+                    <UiMultiSelect
+                        inputLabel="Guarded"
+                        :default-value="getSelectDataForLayout(model.guarded)"
+                        @change="$event => saveModelPropertyFromSelect($event, 'guarded')"
+                        :options="getSelectDataForLayout(model.table.getColumns())" />
+                </div>
+            </div>
+
+            <div class="mt-4 bg-slate-850 rounded-md space-y-1 p-2 flex flex-col gap-1">
+                <div>
+                    <UiCheckbox
+                        label="Has Fillable"
+                        v-model="model.hasFillable"
+                        @change="saveModelData()"
+                    />
+                </div>
+
+                <div v-if="model.hasFillable">
+                    <UiMultiSelect
+                        inputLabel="Fillable"
+                        :default-value="getSelectDataForLayout(model.fillable)"
+                        @change="$event => saveModelPropertyFromSelect($event, 'fillable')"
+                        :options="getSelectDataForLayout(model.table.getColumns())" />
+                </div>
+            </div>
 
             <div class="mt-4">
                 <h2 class="text-slate-500 font-semibold mb-1">Relationships</h2>

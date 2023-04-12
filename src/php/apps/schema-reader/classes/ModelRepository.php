@@ -20,8 +20,10 @@ class ModelRepository {
             $dates = $properties['dates'] ?? [];
             $hidden = $properties['hidden'] ?? [];
             $appends = $properties['appends'] ?? [];
+            $guarded = $properties['guarded'] ?? [];
 
             $allMethods = $reflection->getMethods();
+            $allTraitNames = $reflection->getTraitNames();
             $classMethods = collect($allMethods)->filter(function ($method) use ($model) {
                 return $method->getFileName() == $model['fullPath'];
             });
@@ -64,14 +66,21 @@ class ModelRepository {
                 'name' => str_replace('.php', '', $model['fileName']),
                 'tableName' => (new $model['class'])->getTable(),
                 'class' => $model['class'],
+                'namespace' => $reflection->getNamespaceName(),
                 'path' => $model['path'],
+                'hasFillable' => !empty($fillable),
                 'fillable' => $fillable,
                 'casts' => $casts,
                 'dates' => $dates,
+                'hasGuarded' => !empty($guarded),
+                'guarded' => $guarded,
+                'hasHidden' => !empty($hidden),
                 'hidden' => $hidden,
                 'appends' => $appends,
                 'relationships' => $relationships,
                 'methods' => $classMethods,
+                'hasTimestamps' => $properties['timestamps'] ?? true,
+                'hasSoftDeletes' => in_array('Illuminate\Database\Eloquent\SoftDeletes', $allTraitNames),
             ];
         }
 

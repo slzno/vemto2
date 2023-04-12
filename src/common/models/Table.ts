@@ -273,7 +273,7 @@ export default class Table extends RelaDB.Model implements SchemaModel {
     }
 
     getModels(): Model[] {
-        return this.models
+        return this.models.filter((model) => !model.isRemoved())
     }
 
     hasTimestamps(): boolean {
