@@ -4,6 +4,8 @@
     import TableModel from "./TableModel.vue"
     import TableColumn from "./TableColumn.vue"
     import TableOptions from "../TableOptions/TableOptions.vue"
+    import { TrashIcon } from "@heroicons/vue/24/outline"
+    import Main from "@Renderer/services/wrappers/Main"
 
     const props = defineProps(["table"]),
         table = toRef(props, "table"),
@@ -11,6 +13,14 @@
         selected = ref(false)
 
     let clickedQuickly = false
+
+    const removeTable = (): void => {
+        Main.API.confirm("Are you sure you want to delete this table?").then((confirmed) => {
+            if (!confirmed) return
+
+            table.value.remove()
+        })
+    }
 
     const getTablePosition = (table: Table) => {
         return {
@@ -55,17 +65,20 @@
             'border border-transparent': !selected,
             'border dark:border-slate-500': selected,
         }"
-        class="schema-table cursor-move absolute shadow-lg rounded-lg hover:border-slate-500 bg-white dark:bg-slate-850 z-10 space-y-4 pb-4"
+        class="schema-table group cursor-move absolute shadow-lg rounded-lg hover:border-slate-500 bg-white dark:bg-slate-850 z-10 space-y-4 pb-4"
         style="min-width: 270px"
         :style="{
             top: getTablePosition(table).top,
             left: getTablePosition(table).left,
         }"
     >
-        <div class="w-full dark:bg-slate-800 rounded-t-lg px-4 pt-2 pb-2">
+        <div class="w-full dark:bg-slate-800 rounded-t-lg px-4 pt-2 pb-2 flex justify-between items-center">
             <span class="title w-full font-bold text-lg dark:text-slate-300">
                 {{ table.name }}
             </span>
+            <TrashIcon
+                class="w-5 h-5 group-hover:visible invisible cursor-pointer text-slate-400 hover:text-red-500"
+                @click.stop.prevent="removeTable()" />
         </div>
 
         <div class="font-mono px-4">

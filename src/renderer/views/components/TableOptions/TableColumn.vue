@@ -133,6 +133,9 @@
                 <div class="m-1">
                     <UiCheckbox v-model="column.unsigned" label="Unsigned" @change="column.saveFromInterface()" />
                 </div>
+                <div class="m-1">
+                    <UiCheckbox v-model="column.autoIncrement" label="Auto Increment" @change="column.saveFromInterface()" />
+                </div>
             </div>
             <div class="flex gap-3">
                 <div class="m-1 flex-1">
