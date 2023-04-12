@@ -26,7 +26,7 @@
         }
     })
 
-    const emit = defineEmits(["update:modelValue", "change", "blur"]),
+    const emit = defineEmits(["update:modelValue", "input", "blur"]),
         localValue = computed({
             get(): any {
                 return props.modelValue
@@ -34,7 +34,7 @@
             
             set(value: any): void {
                 emit('update:modelValue', value)
-                emit('change', value)
+                emit('input', value)
             },
         })
 </script>

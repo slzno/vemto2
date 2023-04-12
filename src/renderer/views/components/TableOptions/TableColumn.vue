@@ -95,7 +95,7 @@
 
             <div class="flex flex-grow space-x-2">
                 <div class="flex flex-col flex-grow">
-                    <UiText placeholder="Name" :id="`table-column-${column.id}`" v-model="column.name" @change="onNameUpdated" />
+                    <UiText placeholder="Name" :id="`table-column-${column.id}`" v-model="column.name" @input="onNameUpdated" />
                 </div>
 
                 <div class="flex flex-col w-36">
@@ -139,23 +139,23 @@
             </div>
             <div class="flex gap-3">
                 <div class="m-1 flex-1">
-                    <UiNumber label="Length" v-model="column.length" @change="column.saveFromInterface()" />
+                    <UiNumber label="Length" v-model="column.length" @input="column.saveFromInterface()" />
                 </div>
                 <div class="m-1 flex-1">
-                    <UiText label="Default Value" v-model="column.default" @change="column.saveFromInterface()" />
+                    <UiText label="Default Value" v-model="column.default" @input="column.saveFromInterface()" />
                 </div>
             </div>
             <div class="flex gap-3" v-if="column.isFloatingPointNumber()">
                 <div class="m-1 flex-1">
-                    <UiNumber label="Precision" v-model="column.total" @change="column.saveFromInterface()" />
+                    <UiNumber label="Precision" v-model="column.total" @input="column.saveFromInterface()" />
                 </div>
                 <div class="m-1 flex-1">
-                    <UiNumber label="Scale" v-model="column.places" @change="column.saveFromInterface()" />
+                    <UiNumber label="Scale" v-model="column.places" @input="column.saveFromInterface()" />
                 </div>
             </div>
             <div class="flex gap-3">
                 <div class="m-1 flex-1">
-                    <UiText label="Faker" v-model="column.faker" :placeholder="column.faker" @change="column.saveFromInterface()"  />
+                    <UiText label="Faker" v-model="column.faker" :placeholder="column.faker" @input="column.saveFromInterface()"  />
                 </div>
             </div>
             
