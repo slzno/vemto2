@@ -46,6 +46,8 @@ export default class Model extends RelaDB.Model implements SchemaModel {
     hasGuarded: boolean
     hasHidden: boolean
     hasFillable: boolean
+    hasTimestamps: boolean
+    hasSoftDeletes: boolean
 
     static identifier() {
         return 'Model'
@@ -123,6 +125,8 @@ export default class Model extends RelaDB.Model implements SchemaModel {
             hasGuarded: DataComparator.booleansAreDifferent(this.schemaState.hasGuarded, comparisonData.hasGuarded),
             hasHidden: DataComparator.booleansAreDifferent(this.schemaState.hasHidden, comparisonData.hasHidden),
             hasFillable: DataComparator.booleansAreDifferent(this.schemaState.hasFillable, comparisonData.hasFillable),
+            hasTimestamps: DataComparator.booleansAreDifferent(this.schemaState.hasTimestamps, comparisonData.hasTimestamps),
+            hasSoftDeletes: DataComparator.booleansAreDifferent(this.schemaState.hasSoftDeletes, comparisonData.hasSoftDeletes),
         }
     }
 
@@ -158,6 +162,8 @@ export default class Model extends RelaDB.Model implements SchemaModel {
         this.hasGuarded = data.hasGuarded
         this.hasHidden = data.hasHidden
         this.hasFillable = data.hasFillable
+        this.hasTimestamps = data.hasTimestamps
+        this.hasSoftDeletes = data.hasSoftDeletes
 
         const table = this.project.findTableByName(data.tableName)
         
@@ -199,6 +205,8 @@ export default class Model extends RelaDB.Model implements SchemaModel {
             hasGuarded: this.hasGuarded,
             hasHidden: this.hasHidden,
             hasFillable: this.hasFillable,
+            hasTimestamps: this.hasTimestamps,
+            hasSoftDeletes: this.hasSoftDeletes,
         }
     }
 
@@ -263,6 +271,8 @@ export default class Model extends RelaDB.Model implements SchemaModel {
     }
 
     calculateDataByName(): void {
+        if(!this.name) return
+
         const tableNameExceptions = TableNameExceptions.get()
 
         if(this.name in tableNameExceptions) {

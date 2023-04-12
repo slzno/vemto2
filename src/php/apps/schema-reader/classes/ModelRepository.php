@@ -23,6 +23,7 @@ class ModelRepository {
             $guarded = $properties['guarded'] ?? [];
 
             $allMethods = $reflection->getMethods();
+            $allTraitNames = $reflection->getTraitNames();
             $classMethods = collect($allMethods)->filter(function ($method) use ($model) {
                 return $method->getFileName() == $model['fullPath'];
             });
@@ -78,6 +79,8 @@ class ModelRepository {
                 'appends' => $appends,
                 'relationships' => $relationships,
                 'methods' => $classMethods,
+                'hasTimestamps' => $properties['timestamps'] ?? false,
+                'hasSoftDeletes' => in_array('Illuminate\Database\Eloquent\SoftDeletes', $allTraitNames),
             ];
         }
 

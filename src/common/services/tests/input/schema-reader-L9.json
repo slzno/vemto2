@@ -1390,13 +1390,20 @@
             "name": "Post",
             "tableName": "posts",
             "class": "App\\Models\\Post",
+            "namespace": "App\\Models",
             "path": "Models\\Post.php",
+            "hasFillable": true,
             "fillable": [
                 "title",
                 "body"
             ],
             "casts": [],
             "dates": [],
+            "hasGuarded": true,
+            "guarded": [
+                "*"
+            ],
+            "hasHidden": false,
             "hidden": [],
             "appends": [],
             "relationships": [
@@ -1420,14 +1427,18 @@
                     "name": "user",
                     "class": "App\\Models\\Post"
                 }
-            ]
+            ],
+            "hasTimestamps": true,
+            "hasSoftDeletes": true
         },
         {
             "fileName": "User.php",
             "name": "User",
             "tableName": "users",
             "class": "App\\Models\\User",
+            "namespace": "App\\Models",
             "path": "Models\\User.php",
+            "hasFillable": true,
             "fillable": [
                 "name",
                 "email",
@@ -1437,6 +1448,11 @@
                 "email_verified_at": "datetime"
             },
             "dates": [],
+            "hasGuarded": true,
+            "guarded": [
+                "*"
+            ],
+            "hasHidden": true,
             "hidden": [
                 "password",
                 "remember_token"
@@ -1463,7 +1479,9 @@
                     "name": "posts",
                     "class": "App\\Models\\User"
                 }
-            ]
+            ],
+            "hasTimestamps": true,
+            "hasSoftDeletes": false
         }
     ]
 }
