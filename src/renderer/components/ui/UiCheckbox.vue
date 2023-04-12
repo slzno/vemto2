@@ -15,15 +15,15 @@
 
     const emit = defineEmits(["update:modelValue", "change"]),
         localValue = computed({
-        get(): any {
-            return props.modelValue
-        },
-        
-        set(value: any): void {
-            emit('update:modelValue', value)
-            emit('change', value)
-        },
-    })
+            get(): any {
+                return props.modelValue
+            },
+            
+            set(value: any): void {
+                emit('update:modelValue', value)
+                emit('change', value)
+            },
+        })
 </script>
 
 <template>

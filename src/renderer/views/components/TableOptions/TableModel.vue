@@ -7,6 +7,9 @@
     import UiSelect from "@Renderer/components/ui/UiSelect.vue"
     import { EllipsisVerticalIcon, PlusIcon } from "@heroicons/vue/24/outline"
     import Relationship from "@Renderer/../common/models/Relationship"
+    import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
+    import UiMultiSelect from "@Renderer/components/ui/UiMultiSelect.vue"
+    import Column from "@Renderer/../common/models/Column"
 
     const props = defineProps({
         model: {
@@ -40,6 +43,25 @@
         relationships.value.push(relationship)
     }
 
+    const getSelectDataForLayout = (property: Array<string>|Column[]): Array<Object> => {
+        return property.map((guarded: string|Column) => {
+            if(typeof guarded === "object") {
+                guarded = guarded.name
+            }
+
+            return {
+                label: guarded,
+                value: guarded.toLowerCase(),
+            }
+        })
+    }
+
+    const saveModelPropertyFromSelect = (selectValue: Array<Object>, modelProperty: string): void => {
+        model.value[modelProperty] = selectValue.map((item: any) => item.value)
+
+        saveModelData()
+    }
+
     const saveRelationship = debounce((relationship: Relationship) => {
         relationship.saveFromInterface()
     }, 500)
@@ -68,6 +90,54 @@
                     placeholder="Collection"
                     @change="saveModelData()"
                 />
+            </div>
+            <div class="mt-2 flex gap-3">
+                <UiCheckbox
+                    label="Has Timestamps"
+                    v-model="model.hasTimestamps"
+                    @change="saveModelData()"
+                />
+                <UiCheckbox
+                    label="Has SoftDeletes"
+                    v-model="model.hasSoftDeletes"
+                    @change="saveModelData()"
+                />
+            </div>
+
+            <div class="mt-4 bg-slate-850 rounded-md space-y-1 p-2 flex flex-col gap-1">
+                <div>
+                    <UiCheckbox
+                        label="Has Guarded"
+                        v-model="model.hasGuarded"
+                        @change="saveModelData()"
+                    />
+                </div>
+
+                <div v-if="model.hasGuarded">
+                    <UiMultiSelect
+                        inputLabel="Guarded"
+                        :default-value="getSelectDataForLayout(model.guarded)"
+                        @change="$event => saveModelPropertyFromSelect($event, 'guarded')"
+                        :options="getSelectDataForLayout(model.table.getColumns())" />
+                </div>
+            </div>
+
+            <div class="mt-4 bg-slate-850 rounded-md space-y-1 p-2 flex flex-col gap-1">
+                <div>
+                    <UiCheckbox
+                        label="Has Fillable"
+                        v-model="model.hasFillable"
+                        @change="saveModelData()"
+                    />
+                </div>
+
+                <div v-if="model.hasFillable">
+                    <UiMultiSelect
+                        inputLabel="Fillable"
+                        :default-value="getSelectDataForLayout(model.fillable)"
+                        @change="$event => saveModelPropertyFromSelect($event, 'fillable')"
+                        :options="getSelectDataForLayout(model.table.getColumns())" />
+                </div>
             </div>
 
             <div class="mt-4">

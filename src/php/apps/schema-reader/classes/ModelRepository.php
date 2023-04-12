@@ -79,7 +79,7 @@ class ModelRepository {
                 'appends' => $appends,
                 'relationships' => $relationships,
                 'methods' => $classMethods,
-                'hasTimestamps' => $properties['timestamps'] ?? false,
+                'hasTimestamps' => $properties['timestamps'] ?? true,
                 'hasSoftDeletes' => in_array('Illuminate\Database\Eloquent\SoftDeletes', $allTraitNames),
             ];
         }
