@@ -22,7 +22,7 @@
     const model = toRef(props, "model") as Ref<Model>,
         relationships = ref([]),
         showModelOptions = ref(false),
-        emit = defineEmits(['refresh'])
+        emit = defineEmits(['removeModel'])
     
     let models: Ref<Array<Model>> = ref([])
 
@@ -76,7 +76,7 @@
             if(!confirmed) return
 
             model.value.remove()
-            emit('refresh')
+            emit('removeModel')
         })
     }
 </script>

@@ -40,8 +40,8 @@
     }
     
     // temporary code
-    const refreshColumns = () => {
-        columns.value = table.value.getOrderedColumns()
+    const removeColumn = (column: Column) => {
+        columns.value.splice(columns.value.indexOf(column), 1)
     }
 
     onMounted(() => {
@@ -59,7 +59,7 @@
                 @end="saveColumnsOrder"
             >
                 <template #item="{ element }">
-                    <TableColumn @refresh="refreshColumns" :column="element" />
+                    <TableColumn @removeColumn="removeColumn(element)" :column="element" />
                 </template>
             </Draggable>
         </section>

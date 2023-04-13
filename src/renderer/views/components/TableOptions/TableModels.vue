@@ -40,6 +40,10 @@
 
         allTableModels.push(model)
     }
+
+    const removeModel = (model: Model): void => {
+        allTableModels.splice(allTableModels.indexOf(model), 1)
+    }
 </script>
 
 <template>
@@ -47,6 +51,7 @@
         <section class="space-y-2">
             <TableModel
                 v-for="model in allTableModels"
+                @removeModel="removeModel(model)"
                 :key="model.id"
                 :model="model"
             />

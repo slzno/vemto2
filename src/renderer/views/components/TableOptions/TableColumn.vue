@@ -20,7 +20,7 @@
                 required: true,
             },
         }),
-        emit = defineEmits(["refresh"]) // temporary code
+        emit = defineEmits(["removeColumn"]) // temporary code
 
     const column = toRef(props, "column") as Ref<Column>,
         showingOptions = ref(false),
@@ -72,7 +72,7 @@
             if(!confirmed) return
 
             column.value.remove()
-            emit('refresh') // temporary code
+            emit('removeColumn')
         })
     }
 </script>
