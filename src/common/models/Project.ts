@@ -1,3 +1,4 @@
+import Crud from "./Crud"
 import Table from "./Table"
 import Model from "./Model"
 import Factory from "./Factory"
@@ -13,6 +14,7 @@ export default class Project extends RelaDB.Model {
     id: string
     path: string
     name: string
+    cruds: Crud[]
     tables: Table[]
     models: Model[]
     factories: Factory[]
@@ -29,6 +31,7 @@ export default class Project extends RelaDB.Model {
 
     relationships() {
         return {
+            cruds: () => this.hasMany(Crud).cascadeDelete(),
             tables: () => this.hasMany(Table).cascadeDelete(),
             models: () => this.hasMany(Model).cascadeDelete(),
             factories: () => this.hasMany(Factory).cascadeDelete(),

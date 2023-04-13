@@ -1,47 +1,38 @@
-import Model from './Model'
 import Project from './Project'
 import RelaDB from '@tiago_silva_pereira/reladb'
 import { RenderableFileType } from './RenderableFile'
 
-export default class Factory extends RelaDB.Model {
+export default class Page extends RelaDB.Model {
     id: string
     name: string
-    namespace: string
-    model: Model
-    modelId: string
     project: Project
     projectId: string
 
     static identifier() {
-        return 'Factory'
+        return 'Page'
     }
 
-    static created(factory: Factory) {
-        factory.syncSourceCode()
+    static created(page: Page) {
+        page.syncSourceCode()
     }
 
     relationships() {
         return {
-            model: () => this.belongsTo(Model),
             project: () => this.belongsTo(Project),
         }
     }
 
-    static getNameFromModel(model: Model) {
-        return model.name + 'Factory'
-    }
-
     getFileName() {
-        return this.name + '.php'
+        return this.name + '.blade.php'
     }
 
     syncSourceCode() {
         this.project.registerRenderableFile(
-            'database/factories', 
+            'app/Http/Pages', 
             this.getFileName(),
-            'database/Factory.vemtl', 
+            'pages/Page.vemtl', 
             {
-                factory: this,
+                page: this,
             },
             RenderableFileType.PHP
         )
