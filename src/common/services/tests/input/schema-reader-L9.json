@@ -1392,17 +1392,12 @@
             "class": "App\\Models\\Post",
             "namespace": "App\\Models",
             "path": "Models\\Post.php",
-            "hasFillable": true,
-            "fillable": [
-                "title",
-                "body"
-            ],
+            "hasFillable": false,
+            "fillable": [],
             "casts": [],
             "dates": [],
-            "hasGuarded": true,
-            "guarded": [
-                "*"
-            ],
+            "hasGuarded": false,
+            "guarded": [],
             "hasHidden": false,
             "hidden": [],
             "appends": [],
@@ -1438,25 +1433,14 @@
             "class": "App\\Models\\User",
             "namespace": "App\\Models",
             "path": "Models\\User.php",
-            "hasFillable": true,
-            "fillable": [
-                "name",
-                "email",
-                "password"
-            ],
-            "casts": {
-                "email_verified_at": "datetime"
-            },
+            "hasFillable": false,
+            "fillable": [],
+            "casts": [],
             "dates": [],
-            "hasGuarded": true,
-            "guarded": [
-                "*"
-            ],
-            "hasHidden": true,
-            "hidden": [
-                "password",
-                "remember_token"
-            ],
+            "hasGuarded": false,
+            "guarded": [],
+            "hasHidden": false,
+            "hidden": [],
             "appends": [],
             "relationships": [
                 {
