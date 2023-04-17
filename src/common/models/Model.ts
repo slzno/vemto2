@@ -251,25 +251,6 @@ export default class Model extends RelaDB.Model implements SchemaModel {
         return relationship
     }
 
-    syncSourceCode() {
-        const fileName = this.name + '.php'
-
-        this.project.registerRenderableFile(
-            'app/Models', 
-            fileName,
-            'models/Model.vemtl', 
-            {
-                model: this,
-            }
-        )
-
-        this.syncRelationshipsSourceCode()
-    }
-
-    syncRelationshipsSourceCode() {
-        this.factories.forEach(factory => factory.syncSourceCode())
-    }
-
     calculateDataByName(): void {
         if(!this.name) return
 
@@ -293,5 +274,26 @@ export default class Model extends RelaDB.Model implements SchemaModel {
 
         this.class = `${this.namespace}\\${this.name}`
         this.fileName = `${this.name}.php`
+    }
+
+    syncSourceCode() {
+        const fileName = this.name + '.php'
+
+        this.project.registerRenderableFile(
+            'app/Models', 
+            fileName,
+            'models/Model.vemtl', 
+            {
+                model: this,
+            }
+        )
+        
+        this.syncRelationshipsSourceCode()
+    }
+
+    syncRelationshipsSourceCode() {
+        // O ideal é que aqui já sejam criados as factories, seeders e policies, e ao invés de ser um relacionamento, já cria 
+        // os arquivos diretamente
+        this.factories.forEach(factory => factory.syncSourceCode())
     }
 }

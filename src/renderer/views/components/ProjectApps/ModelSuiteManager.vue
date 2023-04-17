@@ -54,7 +54,9 @@
 
 <template>
     <div>
-        <UiButton @click="show()">Add Model Suite</UiButton>
+        <UiButton @click="show()">Add Factory</UiButton>
+        <UiButton @click="show()">Add Seeder</UiButton>
+        <UiButton @click="show()">Add Policy</UiButton>
 
         <UiModal
             title="Add Model Suite"

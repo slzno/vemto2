@@ -8,7 +8,7 @@
     import {
         XMarkIcon,
     } from "@heroicons/vue/24/outline"
-import UiButton from "@Renderer/components/ui/UiButton.vue"
+    import UiButton from "@Renderer/components/ui/UiButton.vue"
 
     const props = defineProps({
         show: Boolean,
