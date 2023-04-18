@@ -5,6 +5,7 @@
     import { useRoute } from 'vue-router'
     import Crud from '@Common/models/crud/Crud'
     import UiButton from '@Renderer/components/ui/UiButton.vue'
+    import HandleProjectDatabase from '@Renderer/services/HandleProjectDatabase'
 
     // const projectStore = useProjectStore()
 
@@ -13,8 +14,10 @@
         crudId = route.params.crudId,
         crud = ref(null)
 
-    onMounted(() => {
-        crud.value = Crud.find(crudId)
+    onMounted(async () => {
+        await HandleProjectDatabase.populate(() => {
+            crud.value = Crud.find(crudId)
+        })
     })
 </script>
 
@@ -25,14 +28,26 @@
         <div v-if="crud">
             Crud editor: {{ crud.name }}
 
-            <div>
-                <UiButton>Add Section</UiButton>
-                <UiButton>Add Datatable</UiButton>
-                <UiButton>Add Text Input</UiButton>
-                <UiButton>Add Button</UiButton>
-                <UiButton>Add Hero</UiButton>
-                <UiButton>Add Title</UiButton>
-            </div>
+            <section class="">
+                <div>
+                    <UiButton>Add Section</UiButton>
+                    <UiButton>Add Datatable</UiButton>
+                    <UiButton>Add Text Input</UiButton>
+                    <UiButton>Add Button</UiButton>
+                    <UiButton>Add Hero</UiButton>
+                    <UiButton>Add Title</UiButton>
+                </div>
+
+                <div>
+                    <!-- crud.panels as panel div -->
+                    <div v-for="panel in crud.panels" :key="panel.id">
+                        Panel: {{ panel.name }}
+                        <div v-for="input in panel.inputs" :key="panel.id">
+                            
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
 </template>
