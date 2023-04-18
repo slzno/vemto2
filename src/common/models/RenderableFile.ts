@@ -2,11 +2,8 @@ import Model from './Model'
 import Table from './Table'
 import Index from './Index'
 import Column from './Column'
+import Crud from './crud/Crud'
 import Project from './Project'
-import Factory from './Factory'
-import Controller from './Controller'
-import ModelSuite from './ModelSuite'
-import FormRequest from './FormRequest'
 import Relationship from './Relationship'
 import RelaDB from '@tiago_silva_pereira/reladb'
 
@@ -111,12 +108,9 @@ export default class RenderableFile extends RelaDB.Model {
         if(modelIdentifier == 'Index') return Index.find(modelId)
         if(modelIdentifier == 'Relationship') return Relationship.find(modelId)
         if(modelIdentifier == 'Table') return Table.find(modelId)
-        if(modelIdentifier == 'Factory') return Factory.find(modelId)
-        if(modelIdentifier == 'FormRequest') return FormRequest.find(modelId)
-        if(modelIdentifier == 'ModelSuite') return ModelSuite.find(modelId)
-        if(modelIdentifier == 'Controller') return Controller.find(modelId)
+        if(modelIdentifier == 'Crud') return Crud.find(modelId)
 
-        return null
+        throw new Error(`Model ${modelIdentifier} not found`)
     }
                 
 

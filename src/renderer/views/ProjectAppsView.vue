@@ -1,7 +1,6 @@
 <script setup lang="ts">
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
-    import ModelSuiteManager from "@Renderer/views/components/ProjectApps/ModelSuiteManager.vue"
     import CrudManager from "./components/ProjectApps/CrudManager.vue"
     import { useRouter } from "vue-router"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
@@ -10,8 +9,8 @@
     const router = useRouter(),
         projectStore = useProjectStore()
 
-    const openPage = (pageId: string) => {
-        router.push({ name: "project-page", params: { pageId } })
+    const openCrud = (crudId: string) => {
+        router.push({ name: "project-crud", params: { crudId } })
     }
 
     const selectedTab = ref("applications")
@@ -47,42 +46,14 @@
     
     
             <div>
-                <ModelSuiteManager />
                 <CrudManager />
             </div>
     
             <div class="mt-4 space-y-2">
-                <div v-for="app in projectStore.project.modelSuites" :key="app.id">
+                <div v-for="app in projectStore.project.cruds" :key="app.id" @click="openCrud(app.id)">
                     <span class="font-semibold">{{ app.name }}</span>
     
                     <UiButton @click="app.delete()">Delete</UiButton>
-    
-                    <div class="px-4">
-                        <div v-if="app.factoryId">
-                            {{ app.factory.getFileName() }}
-                        </div>
-                    </div>
-                </div>
-    
-                <div v-for="app in projectStore.project.cruds" :key="app.id">
-                    <span class="font-semibold">{{ app.name }}</span>
-    
-                    <UiButton @click="app.delete()">Delete</UiButton>
-    
-                    <div class="px-4">
-                        <div v-if="app.controllerId">
-                            {{ app.controller.getFileName() }}
-                        </div>
-                    </div>
-                    <div class="px-4">
-                        <div
-                            class="cursor-pointer"
-                            v-if="app.indexPageId"
-                            @click="openPage(app.indexPageId)"
-                        >
-                            {{ app.indexPage.getFileName() }}
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

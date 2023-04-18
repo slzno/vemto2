@@ -1,7 +1,6 @@
-import Controller from './Controller'
-import Model from './Model'
-import Page from './Page'
-import Project from './Project'
+import CrudPanel from './CrudPanel'
+import Model from '@Common/models/Model'
+import Project from '@Common/models/Project'
 import RelaDB from '@tiago_silva_pereira/reladb'
 
 export enum CrudType {
@@ -18,12 +17,7 @@ export default class Crud extends RelaDB.Model {
     modelId: string
     project: Project
     projectId: string
-    controller: Controller
-    controllerId: string
-    indexPage: Page
-    indexPageId: string
-    viewPage: Page
-    viewPageId: string
+    panels: CrudPanel[]
 
     static identifier() {
         return 'Crud'
@@ -33,8 +27,7 @@ export default class Crud extends RelaDB.Model {
         return {
             model: () => this.belongsTo(Model),
             project: () => this.belongsTo(Project),
-            controller: () => this.belongsTo(Controller),
-            indexPage: () => this.belongsTo(Page, 'indexPageId'),
+            panels: () => this.hasMany(CrudPanel),
         }
     }
 }

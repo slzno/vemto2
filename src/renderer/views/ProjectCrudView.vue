@@ -3,18 +3,18 @@
 
     import { onMounted, ref } from 'vue'
     import { useRoute } from 'vue-router'
-    import Page from '@Common/models/Page'
-import UiButton from '@Renderer/components/ui/UiButton.vue';
+    import Crud from '@Common/models/crud/Crud'
+    import UiButton from '@Renderer/components/ui/UiButton.vue'
 
     // const projectStore = useProjectStore()
 
-    // get pageId from route params
+    // get crudId from route params
     const route = useRoute(),
-        pageId = route.params.pageId,
-        page = ref(null)
+        crudId = route.params.crudId,
+        crud = ref(null)
 
     onMounted(() => {
-        page.value = Page.find(pageId)
+        crud.value = Crud.find(crudId)
     })
 </script>
 
@@ -22,8 +22,8 @@ import UiButton from '@Renderer/components/ui/UiButton.vue';
     <div
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-hidden p-4"
     >
-        <div v-if="page">
-            Page editor: {{ page.getFileName() }}
+        <div v-if="crud">
+            Crud editor: {{ crud.name }}
 
             <div>
                 <UiButton>Add Section</UiButton>

@@ -1,11 +1,10 @@
 <script setup lang="ts">
     import { PropType, toRef } from "vue"
+    import Table from "@Common/models/Table"
     import Model from "@Common/models/Model"
     import TableModel from "./TableModel.vue"
     import { PlusCircleIcon } from "@heroicons/vue/24/outline"
-    import Table from "@Renderer/../common/models/Table"
-    import WordManipulator from "@Renderer/../common/util/WordManipulator"
-    import TableNameExceptions from "@Renderer/../common/models/static/TableNameExceptions"
+    import WordManipulator from "@Common/util/WordManipulator"
 
     const props = defineProps({
             table: {

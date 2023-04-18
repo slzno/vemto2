@@ -1,13 +1,12 @@
 import Table from './Table'
 import Project from './Project'
-import Factory from './Factory'
-import ModelSuite from './ModelSuite'
 import Relationship from './Relationship'
 import RelaDB from '@tiago_silva_pereira/reladb'
+import { RenderableFileType } from './RenderableFile'
 import DataComparator from './services/DataComparator'
-import DataComparisonLogger from './services/DataComparisonLogger'
-import TableNameExceptions from './static/TableNameExceptions'
 import WordManipulator from '@Common/util/WordManipulator'
+import TableNameExceptions from './static/TableNameExceptions'
+import DataComparisonLogger from './services/DataComparisonLogger'
 
 export default class Model extends RelaDB.Model implements SchemaModel {
     id: string
@@ -24,8 +23,6 @@ export default class Model extends RelaDB.Model implements SchemaModel {
     project: Project
     tableName: string
     projectId: string
-    factories: Factory[]
-    modelSuites: ModelSuite[]
     createdFromInterface: boolean
     ownRelationships: Relationship[]
     relatedRelationships: Relationship[]
@@ -57,7 +54,6 @@ export default class Model extends RelaDB.Model implements SchemaModel {
         return {
             table: () => this.belongsTo(Table),
             project: () => this.belongsTo(Project),
-            factories: () => this.hasMany(Factory).cascadeDelete(),
             ownRelationships: () => this.hasMany(Relationship).cascadeDelete(),
             relatedRelationships: () => this.hasMany(Relationship, 'relatedModelId').cascadeDelete(),
         }
@@ -288,12 +284,20 @@ export default class Model extends RelaDB.Model implements SchemaModel {
             }
         )
         
-        this.syncRelationshipsSourceCode()
+        this.syncFactoryCode()
     }
 
-    syncRelationshipsSourceCode() {
-        // O ideal é que aqui já sejam criados as factories, seeders e policies, e ao invés de ser um relacionamento, já cria 
-        // os arquivos diretamente
-        this.factories.forEach(factory => factory.syncSourceCode())
+    syncFactoryCode() {
+        const fileName = this.name + 'Factory.php'
+
+        this.project.registerRenderableFile(
+            'database/factories', 
+            fileName,
+            'database/Factory.vemtl', 
+            {
+                model: this,
+            },
+            RenderableFileType.PHP
+        )
     }
 }
