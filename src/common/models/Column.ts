@@ -126,6 +126,10 @@ export default class Column extends RelaDB.Model implements SchemaModel {
         return this.type === 'uuid'
     }
 
+    isDefaultLaravelTimestamp(): boolean {
+        return this.name === 'created_at' || this.name === 'updated_at'
+    }
+
     hasFaker(): boolean {
         return !! this.faker
     }

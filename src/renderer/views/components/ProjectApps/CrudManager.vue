@@ -29,12 +29,7 @@
     watch(selectedModelId, modelChanged)
 
     const save = () => {
-        const crud = new Crud()
-        crud.type = CrudType.DEFAULT
-        crud.name = selectedModel.value.name + ' CRUD'
-        crud.modelId = selectedModel.value.id
-        crud.projectId = projectStore.project.id
-        crud.save()
+        Crud.createFromModel(selectedModel.value)
 
         close()
     }

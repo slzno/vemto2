@@ -42,7 +42,7 @@ export default class Input extends RelaDB.Model {
     relationships() {
         return {
             crud: () => this.belongsTo(Crud),
-            panel: () => this.belongsTo(CrudPanel),
+            panel: () => this.belongsTo(CrudPanel, "panelId"),
         }
     }
 

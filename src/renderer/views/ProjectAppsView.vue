@@ -49,8 +49,8 @@
                 <CrudManager />
             </div>
     
-            <div class="mt-4 space-y-2">
-                <div v-for="app in projectStore.project.cruds" :key="app.id" @click="openCrud(app.id)">
+            <div class="mt-4 space-y-2 flex">
+                <div class="border border-slate-700 rounded-lg p-2 cursor-pointer hover:bg-slate-950" v-for="app in projectStore.project.cruds" :key="app.id" @click="openCrud(app.id)">
                     <span class="font-semibold">{{ app.name }}</span>
     
                     <UiButton @click="app.delete()">Delete</UiButton>

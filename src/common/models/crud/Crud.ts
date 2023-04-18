@@ -19,6 +19,7 @@ export default class Crud extends RelaDB.Model {
     project: Project
     projectId: string
     panels: CrudPanel[]
+    inputs: Input[]
 
     static identifier() {
         return "Crud"
@@ -28,11 +29,12 @@ export default class Crud extends RelaDB.Model {
         return {
             model: () => this.belongsTo(Model),
             project: () => this.belongsTo(Project),
-            panels: () => this.hasMany(CrudPanel),
+            panels: () => this.hasMany(CrudPanel).cascadeDelete(),
+            inputs: () => this.hasMany(Input).cascadeDelete(),
         }
     }
 
-    createFromModel(model: Model) {
+    static createFromModel(model: Model) {
         const crud = new Crud()
         crud.type = CrudType.DEFAULT
         crud.name = model.name + " CRUD"
@@ -44,12 +46,15 @@ export default class Crud extends RelaDB.Model {
     }
 
     addInputsFromModel(model: Model) {
-        model.table.columns.forEach((column, index) => {
-            const panel = new CrudPanel()
-            panel.title = column.name
-            panel.crudId = this.id
-            panel.order = index
-            panel.save()
+        const panel = new CrudPanel()
+        panel.title = 'Main'
+        panel.crudId = this.id
+        panel.order = 0
+        panel.save()
+
+        model.table.getColumns().forEach((column) => {
+            if(column.isPrimaryKey()) return
+            if(column.isDefaultLaravelTimestamp()) return
 
             const input = Input.createFromColumn(column)
             input.crudId = this.id

@@ -1,6 +1,6 @@
-import Crud from './Crud'
-import RelaDB from '@tiago_silva_pereira/reladb'
-import Input from './Input'
+import Crud from "./Crud"
+import Input from "./Input"
+import RelaDB from "@tiago_silva_pereira/reladb"
 
 export default class CrudPanel extends RelaDB.Model {
     id: string
@@ -11,13 +11,13 @@ export default class CrudPanel extends RelaDB.Model {
     inputs: Input[]
 
     static identifier() {
-        return 'CrudPanel'
+        return "CrudPanel"
     }
 
     relationships() {
         return {
             crud: () => this.belongsTo(Crud),
-            inputs: () => this.hasMany(Input).cascadeDelete(),
+            inputs: () => this.hasMany(Input, "panelId").cascadeDelete(),
         }
     }
 }
