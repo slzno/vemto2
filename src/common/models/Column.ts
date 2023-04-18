@@ -287,7 +287,7 @@ export default class Column extends RelaDB.Model implements SchemaModel {
 
         if(type && type.faker) return type.faker
 
-        return '$faker->word()'
+        return 'fake()->word()'
     }
 
     getDefaultUniqueFaker() {
@@ -295,7 +295,7 @@ export default class Column extends RelaDB.Model implements SchemaModel {
 
         if(!defaultFaker) return ''
 
-        return defaultFaker.replace('$faker->', '$faker->unique->')
+        return defaultFaker.replace('fake()->', 'fake()->unique->')
     }
 
     getType(): any {

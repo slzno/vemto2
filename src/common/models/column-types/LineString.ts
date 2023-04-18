@@ -3,5 +3,5 @@ import ColumnType from "./base/ColumnType"
 export default class LineString extends ColumnType {
     static label: string = 'LineString'
     static identifier: string = 'lineString'
-    static faker: string = '$faker->text()'
+    static faker: string = 'fake()->text()'
 }
