@@ -17,6 +17,7 @@
     import SchemaHeader from "./components/ProjectSchema/SchemaHeader.vue"
     import MigrationSaver from "./components/MigrationSaver/MigrationSaver.vue"
     import Main from "@Renderer/services/wrappers/Main"
+    import HandleProjectDatabase from "@Renderer/services/HandleProjectDatabase"
 
     const projectStore = useProjectStore()
 
@@ -28,15 +29,15 @@
         currentNodes = {},
         jsPlumbInstance: BrowserJsPlumbInstance = null
 
-    onMounted(() => {
-        setTimeout(() => {
+    onMounted(async () => {
+        await HandleProjectDatabase.populate(() => {
             tablesData.value = Table.get()
             counter.value++
 
             nextTick(() => {
                 initSchema()
             })
-        }, 20)
+        })
 
         interval = setInterval(() => {
             if (isDragging) return
