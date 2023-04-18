@@ -1,13 +1,15 @@
 <script lang="ts" setup>
-    import { defineProps, ref, onMounted, computed, nextTick, defineEmits } from 'vue'
+    import { ChevronDownIcon } from '@heroicons/vue/24/outline';
+    import { defineProps, ref, onMounted, computed, nextTick, defineEmits, watch } from 'vue'
 
     type Options = {
         key: string,
         label: string
+        description?: string
     }
 
     const props = defineProps({
-            value: {
+            modelValue: {
                 type: String,
                 required: true
             },
@@ -19,46 +21,46 @@
                 type: String,
                 required: false
             },
-            notSmall: {
+            small: {
                 type: Boolean,
                 required: false
             }
         }),
-        emit = defineEmits(['input', 'change'])
+        emit = defineEmits(['input', 'change', 'update:modelValue'])
 
     const search = ref(''),
         showing = ref(false),
         selected = ref(null),
         selectCandidate = ref(null),
         recentlyFocused = ref(false),
-        hasNormalInputSize = ref(false),
         selectCandidateOption = ref(null),
         selectButton = ref(null),
+        searchInput = ref(null),
         selectedOption = ref(null),
         dropdownList = ref(null),
         filteredOptions = computed(() => {
             if(search.value) {
-                return props.options.filter(option => option.label.toLowerCase().includes(search.value))
+                return props.options.filter(option => option.label.toLowerCase().includes(search.value.toLowerCase()))
             }
 
             return props.options
         })
 
     const getInitiallySelected = () => {
-        if(props.value) {
-            return props.options.find(option => option.key == props.value)
+        if(props.modelValue) {
+            return props.options.find(option => option.key == props.modelValue)
         }
 
         return null
     }
 
-    const keyPressed = (event): void => {
+    const keyPressed = (event: any): void => {
         const selectedIndex: number = getSelectedIndex()
 
-        let nextItem = null
+        let nextItem: Options = null
 
         if (event.keyCode == 38) {
-            let itemIndex = selectedIndex - 1
+            var itemIndex: number = selectedIndex - 1
 
             if(itemIndex < 0) itemIndex = filteredOptions.value.length - 1
 
@@ -66,7 +68,7 @@
         }
 
         if (event.keyCode == 40) {
-            let itemIndex = selectedIndex + 1
+            var itemIndex: number = selectedIndex + 1
 
             if(itemIndex >= filteredOptions.value.length) itemIndex = 0
 
@@ -81,11 +83,11 @@
 
     const getSelectedIndex = (): number => {
         if(selectCandidate.value) {
-            return filteredOptions.value.indexOf(selectCandidate.value)
+            return filteredOptions.value.findIndex(option => option.key == selectCandidate.value.key)
         }
 
         if(selected.value) {
-            return filteredOptions.value.indexOf(selected.value)
+            return filteredOptions.value.findIndex(option => option.key == selected.value.key)
         }
 
         return -1
@@ -98,7 +100,7 @@
             return scrollToSelectedItem()
         }
 
-        dropdownList.value.scrollTop = selected.offsetTop - (selected.clientHeight + 60)
+        dropdownList.value.scrollTop = selected[0].offsetTop - (selected[0].clientHeight + 60)
     }
 
     const scrollToSelectedItem = (): void => {
@@ -106,20 +108,20 @@
 
         if(!selected || !showing.value) return
 
-        dropdownList.value.scrollTop = selected.offsetTop - (selected.clientHeight + 60)
+        dropdownList.value.scrollTop = selected[0].offsetTop - (selected[0].clientHeight + 60)
     }
 
-    const isSelected = (option: string): boolean => {
+    const isSelected = (option: Options): boolean => {
         if(selected.value) {
-            return selected.value == option
+            return selected.value.key == option.key
         }
 
         return false
     }
 
-    const isSelectCandidate = (option: string): boolean => {
+    const isSelectCandidate = (option: Options): boolean => {
         if(selectCandidate.value) {
-            return selectCandidate.value == option
+            return selectCandidate.value.key == option.key
         }
 
         return false
@@ -131,10 +133,11 @@
         }
     }
 
-    const select = (option): void => {
+    const select = (option: Options): void => {
         selected.value = option
         close()
 
+        emit('update:modelValue', selected.value.key)
         emit('input', selected.value.key)
         emit('change')
     }
@@ -171,7 +174,7 @@
         nextTick(() => scrollToSelectedItem())
     }
 
-    const optionReference = (option: string): string => {
+    const optionReference = (option: Options): string => {
         if(isSelected(option)) {
             return 'selectedOption'
         }
@@ -190,13 +193,81 @@
         recentlyFocused.value = false
     }
 
+    watch(showing, () => {
+        nextTick(() => {
+            searchInput.value.focus()
+        })
+    })
+
+    watch(() => props.modelValue, () => {
+        selected.value = getInitiallySelected()
+    })
+
+    watch(() => props.options, () => {
+        selected.value = getInitiallySelected()
+    })
+
+    watch(search, (newValue: string) => {
+        let itemBySearch = props.options.find(opt => opt.label.toLowerCase() === newValue.toLowerCase())
+
+        selectCandidate.value = itemBySearch
+    })
+
     onMounted(() => {
         selected.value = getInitiallySelected()
-        hasNormalInputSize.value = props.notSmall
     })
 </script>
 <template>
-    <div class="relative text-gray-600 dark:text-white" @keyup="keyPressed" @keyup.esc="close()">
+    <div class="relative text-gray-600 dark:text-white"
+        @keyup="keyPressed"
+        @keyup.esc="close()"
+        @keyup.enter="selectCurrentCandidate()"
+        v-click-outside="close"
+    >
+        <button
+            ref="selectButton"
+            class="flex items-center justify-between bg-gray-200 dark:bg-slate-950 appearance-none rounded-lg leading-tight text-gray-600 dark:text-gray-300 py-1 px-1 w-full border-2 border-transparent outline-none"
+            :class="{ 'active': showing, 'p-2 text-sm': !small }"
+            :title="selected ? selected.label : placeholder"
+            @focus="focusFiredOnce()"
+            @click="focusFired()"
+        >
+            <div class="text-left w-10/12 overflow-hidden whitespace-nowrap">
+                <span v-if="selected">{{ selected.label }}</span>
+                <span class="text-gray-500" v-else>{{ placeholder }}</span>
+            </div>
+            <div class="flex justify-end">
+                <ChevronDownIcon class="w-4 h-4 ml-1" />
+            </div>
+        </button>
         
+        <div
+            v-show="showing"
+            class="bg-white dark:bg-slate-950 rounded-lg shadow-lg my-2 right-0 absolute overflow-hidden"
+            style="min-width: 225px; width: 100%; max-height: 300px; z-index: 999"
+        >
+            <div class="relative">
+                <div class="p-2" style="height: 60px">
+                    <input ref="searchInput" class="appearance-none rounded leading-tight bg-gray-200 dark:bg-slate-800 text-gray-600 dark:text-gray-300 py-1 px-1 w-full border-2 border-transparent outline-none" placeholder="Search..." v-model="search">
+                </div>
+                <ul ref="dropdownList" class="list-reset h-full overflow-y-auto" style="max-height: 240px;">
+                    <li :ref="optionReference(option)" v-for="(option, index) in filteredOptions" :key="index">
+                        <p
+                            class="p-2 flex items-center justify-between hover:bg-gray-200 dark:hover:bg-gray-800 cursor-pointer"
+                            :class="{ 'bg-gray-200 dark:bg-gray-800': isSelected(option), 'bg-gray-200 dark:bg-gray-600 border border-gray-300': isSelectCandidate(option) }"
+                            @click="select(option)"
+                        >
+                            <span>
+                                <span class="block">{{ option.label }}</span>
+                                <span class="block text-sm text-gray-500" v-if="option.description">{{ option.description }}</span>
+                            </span>
+                            <span v-if="isSelected(option)">
+                                <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" class="w-4 h-4"><path d="M5 13l4 4L19 7"></path></svg>
+                            </span>
+                        </p>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 </template>

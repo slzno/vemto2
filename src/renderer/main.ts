@@ -17,6 +17,7 @@ import HljsVuePlugin from "@highlightjs/vue-plugin"
 import PhpLang from "highlight.js/lib/languages/php"
 import JavascriptLang from "highlight.js/lib/languages/javascript"
 import HandleModelDataUpdate from "./services/HandleModelDataUpdate"
+import vClickOutside from 'click-outside-vue3'
 
 Hljs.registerLanguage("php", PhpLang)
 Hljs.registerLanguage("javascript", JavascriptLang)
@@ -27,6 +28,7 @@ const app = createApp(App)
 app.use(router)
 app.use(pinia)
 app.use(HljsVuePlugin)
+app.use(vClickOutside)
 
 app.mount("#app")
 
