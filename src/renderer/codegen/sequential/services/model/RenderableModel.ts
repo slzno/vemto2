@@ -1,14 +1,13 @@
 import Model from "@Common/models/Model"
+import Renderable from "../foundation/Renderable"
 
-export default class RenderableModel {
+export default class RenderableModel extends Renderable {
     model: Model
 
     constructor(model: Model) {
-        this.model = model
-    }
+        super()
 
-    async render() {
-        console.log('Rendering model...')
+        this.model = model
     }
 
     getTemplateFile() {
@@ -21,6 +20,10 @@ export default class RenderableModel {
 
     getFilename() {
         return this.model.name + ".php"
+    }
+
+    getFormatter() {
+        return "php"
     }
 
     getData() {

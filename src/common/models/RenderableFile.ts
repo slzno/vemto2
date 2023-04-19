@@ -47,6 +47,7 @@ export default class RenderableFile extends RelaDB.Model {
     type: RenderableFileType
     formatter: string
     conflictFileName: string
+    content: string
 
     static identifier() {
         return 'RenderableFile'
