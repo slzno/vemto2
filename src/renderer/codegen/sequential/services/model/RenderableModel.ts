@@ -1,5 +1,6 @@
 import Model from "@Common/models/Model"
 import Renderable from "../foundation/Renderable"
+import { RenderableFileFormatter, RenderableFileType } from "@Common/models/RenderableFile"
 
 export default class RenderableModel extends Renderable {
     model: Model
@@ -10,20 +11,24 @@ export default class RenderableModel extends Renderable {
         this.model = model
     }
 
-    getTemplateFile() {
+    getType(): RenderableFileType {
+        return RenderableFileType.PHP_CLASS
+    }
+
+    getTemplateFile(): string {
         return "models/Model.vemtl"
     }
 
-    getPath() {
+    getPath(): string {
         return "app/Models"
     }
 
-    getFilename() {
-        return this.model.name + ".php"
+    getFilename(): string {
+        return `${this.model.name}.php`
     }
 
-    getFormatter() {
-        return "php"
+    getFormatter(): RenderableFileFormatter {
+        return RenderableFileFormatter.PHP
     }
 
     getData() {

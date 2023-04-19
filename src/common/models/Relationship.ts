@@ -33,7 +33,7 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
     createdFromInterface: boolean
 
     static identifier() {
-        return 'Model'
+        return 'Relationship'
     }
 
     relationships() {

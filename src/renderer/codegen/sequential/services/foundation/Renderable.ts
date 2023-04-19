@@ -2,6 +2,7 @@ import Project from "@Common/models/Project"
 import Main from "@Renderer/services/wrappers/Main"
 import PhpFormatter from "@Renderer/codegen/formatters/PhpFormatter"
 import TemplateCompiler from "@Renderer/codegen/templates/base/TemplateCompiler"
+import { RenderableFileFormatter, RenderableFileType } from "@Common/models/RenderableFile"
 
 export default abstract class Renderable {
     project: Project
@@ -12,14 +13,31 @@ export default abstract class Renderable {
         this.setProject(project)
     }
 
+    abstract getType(): RenderableFileType
     abstract getTemplateFile(): string
     abstract getPath(): string
     abstract getFilename(): string
-    abstract getFormatter(): string
+    abstract getFormatter(): RenderableFileFormatter
     abstract getData(): any
 
     async render() {
-        console.log('Rendering template...')
+        console.log(`Rendering ${this.getTemplateFile()} as ${this.getFilename()}...`)
+
+        const file = this.project.registerRenderableFile(
+            this.getPath(), 
+            this.getFilename(),
+            this.getTemplateFile(), 
+            this.getData(),
+            this.getType(),
+        )
+        
+        try {
+            const compiledTemplate = await this.compile()
+            
+            file.setContent(compiledTemplate)
+        } catch (error: any) {
+            file.setError(error.message)
+        }
     }
 
     async compile() {
@@ -27,7 +45,8 @@ export default abstract class Renderable {
             throw new Error(`Renderable for ${this.getTemplateFile()} doesn't has the project associated. Please set it with setProject() before calling render().`)
         }
 
-        const templateContent = await Main.API.readTemplateFile("CreationMigration.vemtl")
+        const templateFile = this.getTemplateFile(), 
+            templateContent = await Main.API.readTemplateFile(templateFile)
 
         TemplateCompiler
             .setContent(templateContent)
@@ -44,8 +63,8 @@ export default abstract class Renderable {
         return this
     }
 
-    formatCompiledTemplate(compiledTemplate: string) {
-        if(this.getFormatter() === 'php') {
+    async formatCompiledTemplate(compiledTemplate: string) {
+        if(this.getFormatter() === RenderableFileFormatter.PHP) {
             return PhpFormatter.setContent(
                 compiledTemplate
             ).format()

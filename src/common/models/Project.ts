@@ -192,7 +192,7 @@ export default class Project extends RelaDB.Model {
         template: string,
         data: any,
         type: RenderableFileType = RenderableFileType.PHP_CLASS
-    ) {
+    ) : RenderableFile {
         let renderableFile: RenderableFile = null
 
         renderableFile = this.renderableFiles.find(
@@ -212,9 +212,11 @@ export default class Project extends RelaDB.Model {
             renderableFile.type = type
         }
 
-        renderableFile.status = RenderableFileStatus.PENDING
+        renderableFile.status = RenderableFileStatus.PREPARING
 
-        return renderableFile.save()
+        renderableFile.save()
+
+        return renderableFile
     }
 
     hasRenderableFilesWithConflict(): boolean {
