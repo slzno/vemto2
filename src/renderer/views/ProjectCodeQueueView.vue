@@ -6,8 +6,13 @@
     import SolveConflicts from './components/CodeQueue/SolveConflicts.vue'
     import UiButton from '@Renderer/components/ui/UiButton.vue'
     import { ArrowPathIcon, TrashIcon } from '@heroicons/vue/24/outline'
+    import SequentialGenerator from '@Renderer/codegen/sequential/SequentialGenerator'
 
     const projectStore = useProjectStore()
+
+    const runSequentialGenerator = async () => {
+        await (new SequentialGenerator()).run()
+    }
 
     const openFile = (file: RenderableFile): void => {
         Main.API.openProjectFile(file.getRelativeFilePath())
@@ -30,7 +35,7 @@
             </div>
         </div>
 
-        <UiButton>Generate</UiButton>
+        <UiButton @click="runSequentialGenerator()">Generate</UiButton>
     </div>
         <div
             v-for="file in projectStore.project.renderableFiles"
