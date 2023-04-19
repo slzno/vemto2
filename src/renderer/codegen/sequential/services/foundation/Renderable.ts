@@ -35,8 +35,6 @@ export default abstract class Renderable {
 
         console.log(`Rendering ${this.getTemplateFile()} as ${this.getFullFilePath()}...`)
 
-        console.log(this.getFullData())
-
         const file = this.project.registerRenderableFile(
             this.getPath(), 
             this.getFilename(),

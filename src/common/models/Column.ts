@@ -60,10 +60,6 @@ export default class Column extends RelaDB.Model implements SchemaModel {
         column.saveFromInterface()
     }
 
-    static updated(column: Column) {
-        column.syncSourceCode()
-    }
-
     saveFromInterface() {
         let creating = false
 
@@ -333,10 +329,6 @@ export default class Column extends RelaDB.Model implements SchemaModel {
         faker = faker.replace(/\$faker/g, '$this->faker').replace(/(Str::)/g, '\\Str::')
 
         return faker
-    }
-
-    syncSourceCode() {
-        this.table.syncSourceCode()
     }
 
     logDataComparison() {

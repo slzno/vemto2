@@ -69,8 +69,6 @@ export default class Model extends RelaDB.Model implements SchemaModel {
 
         this.save()
 
-        this.syncSourceCode()
-
         return this
     }
 
@@ -82,8 +80,6 @@ export default class Model extends RelaDB.Model implements SchemaModel {
         this.removed = true
 
         this.save()
-
-        this.syncSourceCode()
     }
 
     getOldName(): string {
@@ -327,34 +323,5 @@ export default class Model extends RelaDB.Model implements SchemaModel {
 
         this.class = `${this.namespace}\\${this.name}`
         this.fileName = `${this.name}.php`
-    }
-
-    syncSourceCode() {
-        const fileName = this.name + ".php"
-
-        this.project.registerRenderableFile(
-            "app/Models",
-            fileName,
-            "models/Model.vemtl",
-            {
-                model: this,
-            }
-        )
-
-        this.syncFactoryCode()
-    }
-
-    syncFactoryCode() {
-        const fileName = this.name + "Factory.php"
-
-        this.project.registerRenderableFile(
-            "database/factories",
-            fileName,
-            "database/Factory.vemtl",
-            {
-                model: this,
-            },
-            RenderableFileType.PHP
-        )
     }
 }

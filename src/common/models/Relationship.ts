@@ -53,8 +53,6 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
 
         this.save()
 
-        this.syncSourceCode()
-
         return this
     }
 
@@ -66,8 +64,6 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
         this.removed = true
 
         this.save()
-
-        this.syncSourceCode()
     }
 
     getOldName(): string {
@@ -181,11 +177,6 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
 
     isRemoved(): boolean {
         return !! this.removed
-    }
-
-    syncSourceCode() {
-        this.model.syncSourceCode()
-        this.relatedModel.syncSourceCode()
     }
 
     hasDifferentForeignOrParentKey(): boolean {
