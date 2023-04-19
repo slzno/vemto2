@@ -3,9 +3,9 @@
     import Main from '@Renderer/services/wrappers/Main'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
     import RenderableFile, { RenderableFileStatus } from '@Common/models/RenderableFile'
-import SolveConflicts from './components/CodeQueue/SolveConflicts.vue'
-import UiButton from '@Renderer/components/ui/UiButton.vue'
-import { ArrowPathIcon, TrashIcon } from '@heroicons/vue/24/outline'
+    import SolveConflicts from './components/CodeQueue/SolveConflicts.vue'
+    import UiButton from '@Renderer/components/ui/UiButton.vue'
+    import { ArrowPathIcon, TrashIcon } from '@heroicons/vue/24/outline'
 
     const projectStore = useProjectStore()
 
@@ -30,6 +30,7 @@ import { ArrowPathIcon, TrashIcon } from '@heroicons/vue/24/outline'
             </div>
         </div>
 
+        <UiButton>Generate</UiButton>
     </div>
         <div
             v-for="file in projectStore.project.renderableFiles"

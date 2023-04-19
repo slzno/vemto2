@@ -41,10 +41,10 @@
                         <h1 class="font-bold text-lg text-slate-500 mb-4">{{ panel.title }}</h1>
 
                         <div class="space-y-1">
-                            <div class="p-1 border border-dotted rounded border-transparent hover:border-slate-700" v-for="input in panel.inputs" :key="panel.id">
+                            <div class="p-1 border border-dotted rounded border-transparent hover:border-slate-700 cursor-pointer" v-for="input in panel.inputs" :key="panel.id">
                                 {{ input.label }}
                                 <input
-                                    class="w-full dark:text-slate-200 border-0 bg-slate-100 dark:bg-slate-850 px-2 py-1 rounded-lg cursor-pointer"
+                                    class="w-full dark:text-slate-200 border-0 bg-slate-100 dark:bg-slate-850 px-2 py-1 rounded-lg"
                                     disabled
                                 />
                             </div>
