@@ -190,7 +190,6 @@ export default class Project extends RelaDB.Model {
         path: string,
         name: string,
         template: string,
-        data: any,
         type: RenderableFileType = RenderableFileType.PHP_CLASS
     ) : RenderableFile {
         let renderableFile: RenderableFile = null
@@ -208,7 +207,6 @@ export default class Project extends RelaDB.Model {
             renderableFile.name = name
             renderableFile.template = template
             renderableFile.projectId = this.id
-            renderableFile.data = data
             renderableFile.type = type
         }
 

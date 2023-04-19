@@ -64,11 +64,6 @@
                 </div>
                 <div class="flex items-center space-x-2">
                     <SolveConflicts v-if="file.status === RenderableFileStatus.CONFLICT" :file="file" />
-                    
-                    <UiButton @click="file.regenerate()">
-                        <ArrowPathIcon class="w-4 h-4 mr-1 text-green-500" />
-                        Regenerate
-                    </UiButton>
 
                     <UiButton @click="file.delete()">
                         <TrashIcon class="w-4 h-4 mr-1 text-red-500" />

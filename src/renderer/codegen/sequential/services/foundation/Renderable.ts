@@ -19,15 +19,28 @@ export default abstract class Renderable {
     abstract getFilename(): string
     abstract getFormatter(): RenderableFileFormatter
     abstract getData(): any
+    abstract canRender(): boolean
+
+    setProject(project: Project) {
+        this.project = project
+
+        return this
+    }
 
     async render() {
-        console.log(`Rendering ${this.getTemplateFile()} as ${this.getFilename()}...`)
+        if(!this.canRender()) {
+            console.log(`Skipping ${this.getTemplateFile()} for file ${this.getFullFilePath()}...`)
+            return
+        }
+
+        console.log(`Rendering ${this.getTemplateFile()} as ${this.getFullFilePath()}...`)
+
+        console.log(this.getFullData())
 
         const file = this.project.registerRenderableFile(
             this.getPath(), 
             this.getFilename(),
             this.getTemplateFile(), 
-            this.getData(),
             this.getType(),
         )
         
@@ -37,6 +50,21 @@ export default abstract class Renderable {
             file.setContent(compiledTemplate)
         } catch (error: any) {
             file.setError(error.message)
+        }
+    }
+
+    getFullFilePath() {
+        return `${this.getPath()}/${this.getFilename()}`
+    }
+
+    getFilenameWithoutExtension() {
+        return this.getFilename().replace(/\.[^/.]+$/, "")
+    }
+
+    getFullData() {
+        return {
+            ...this.getData(),
+            filenameWithoutExtension: this.getFilenameWithoutExtension(),
         }
     }
 
@@ -50,17 +78,11 @@ export default abstract class Renderable {
 
         TemplateCompiler
             .setContent(templateContent)
-            .setData(this.getData())
+            .setData(this.getFullData())
 
         const compiledTemplate = await TemplateCompiler.compileWithImports()
 
         return this.formatCompiledTemplate(compiledTemplate)
-    }
-
-    setProject(project: Project) {
-        this.project = project
-
-        return this
     }
 
     async formatCompiledTemplate(compiledTemplate: string) {

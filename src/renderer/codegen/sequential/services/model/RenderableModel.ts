@@ -11,6 +11,10 @@ export default class RenderableModel extends Renderable {
         this.model = model
     }
 
+    canRender(): boolean {
+        return true
+    }
+
     getType(): RenderableFileType {
         return RenderableFileType.PHP_CLASS
     }

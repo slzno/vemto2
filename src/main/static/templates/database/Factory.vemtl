@@ -3,7 +3,7 @@
 <% const pascalCase = this.require('pascalCase') %>
 <####>
 <# TEMPLATE VARIABLES #>
-<% const model = this.factory.model %>
+<% const model = this.model %>
 <####>
 
 namespace Database\Factories;
@@ -12,7 +12,7 @@ use <$ model.class $>;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
-class <$ this.factory.name $> extends Factory
+class <$ this.filenameWithoutExtension $> extends Factory
 {
     /**
      * The name of the factory's corresponding model.

@@ -34,7 +34,6 @@ export default class RenderableFile extends RelaDB.Model {
     path: string
     name: string
     template: string
-    data: any
     status: RenderableFileStatus
     project: Project
     projectId: string
@@ -72,12 +71,6 @@ export default class RenderableFile extends RelaDB.Model {
         this.save()
 
         return this
-    }
-
-    regenerate() {
-        this.status = RenderableFileStatus.PENDING
-        this.error = null
-        this.save()
     }
 
     getRelativeFilePath(): string {
