@@ -4,11 +4,8 @@
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import TableModels from "../TableOptions/TableModels.vue"
     import TableColumns from "../TableOptions/TableColumns.vue"
-
-    import {
-        XMarkIcon,
-    } from "@heroicons/vue/24/outline"
-import UiButton from "@Renderer/components/ui/UiButton.vue"
+    import { XMarkIcon } from "@heroicons/vue/24/outline"
+    import TableSettings from "./TableSettings.vue"
 
     const props = defineProps({
         show: Boolean,
@@ -73,7 +70,7 @@ import UiButton from "@Renderer/components/ui/UiButton.vue"
                 </div>
 
                 <div class="p-4 space-y-2" v-if="selectedTab === 'settings'">
-                    <UiButton @click="table.logDataComparison()">Log data comparison</UiButton>
+                    <TableSettings :table="table" />
                 </div>
             </div>
         </div>
