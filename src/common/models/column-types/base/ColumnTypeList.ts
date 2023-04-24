@@ -4,7 +4,7 @@ import Binary from "../Binary";
 import Boolean from "../Boolean";
 import Char from "../Char";
 import Date from "../Date";
-import DateTime from "../Boolean";
+import DateTime from "../DateTime";
 import DateTimeTz from "../DateTimeTz";
 import Decimal from "../Decimal";
 import Double from "../Double";
@@ -53,6 +53,10 @@ export default class ColumnTypeList {
 
     static getByIdentifier(identifier: string): any {
         return this.get()[identifier]
+    }
+
+    static getArray(): any[] {
+        return Object.values(this.get())
     }
 
     static get() {

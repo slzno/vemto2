@@ -11,6 +11,7 @@
     import Alert from "@Renderer/components/utils/Alert"
     import Main from "@Renderer/services/wrappers/Main"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
+    import UiDropdownSelect from "@Renderer/components/ui/UiDropdownSelect.vue"
 
     const onDevelopment = Main.API.onDevelopment()
 
@@ -24,7 +25,7 @@
 
     const column = toRef(props, "column") as Ref<Column>,
         showingOptions = ref(false),
-        columnTypes = ColumnTypeList.get()
+        columnTypes = ColumnTypeList.getArray()
 
     const onNameUpdated = () => {
         const hasDuplicateColumnName = column.value.table.hasColumnExceptId(column.value.name, column.value.id)
@@ -67,6 +68,16 @@
         column.value.saveFromInterface()
     }
 
+    const getColumnTypes = () => {
+        return columnTypes.map((columnType: any) => {
+            return {
+                key: columnType.identifier,
+                label: columnType.label,
+                description: columnType.help
+            }
+        })
+    }
+
     const removeColumn = () => {
         Main.API.confirm("Are you sure you want to remove this column?").then((confirmed: boolean) => {
             if(!confirmed) return
@@ -99,11 +110,7 @@
                 </div>
 
                 <div class="flex flex-col w-36">
-                    <UiSelect v-model="column.type" @change="column.saveFromInterface()">
-                        <option v-for="columnType in columnTypes" :key="columnType.identifier" :value="columnType.identifier">
-                            {{ columnType.label }}
-                        </option>
-                    </UiSelect>
+                    <UiDropdownSelect v-model="column.type" placeholder="Select type" :options="getColumnTypes()" @change="column.saveFromInterface()" />
                 </div>
 
                 <div class="flex items-center justify-between">
