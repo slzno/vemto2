@@ -1,9 +1,14 @@
 <script setup lang="ts">
     import { toRef } from "vue"
+    import Table from "@Renderer/../common/models/Table"
     import SchemaTable from "../SchemaTable/SchemaTable.vue"
 
     const props = defineProps(["tables"]),
         tables = toRef(props, "tables")
+
+    const tableRemoved = (table: Table): void => {
+        tables.value.splice(tables.value.indexOf(table), 1)
+    }
 </script>
 
 <template>
@@ -11,6 +16,11 @@
         id="tablesContainer"
         class="relative block w-full h-full overflow-auto scrollbar-thin scrollbar-thumb-slate-400 scrollbar-track-slate-300 dark:scrollbar-thumb-black dark:scrollbar-track-slate-900"
     >
-        <SchemaTable v-for="table in tables" :key="table.id" :table="table" />
+        <SchemaTable
+            v-for="table in tables"
+            :key="table.id"
+            :table="table"
+            @table-removed="tableRemoved(table)"
+        />
     </div>
 </template>

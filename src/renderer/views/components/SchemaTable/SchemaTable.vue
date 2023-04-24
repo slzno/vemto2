@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref, toRef } from "vue"
+    import { nextTick, ref, toRef, defineEmits } from "vue"
     import Table from "@Common/models/Table"
     import TableModel from "./TableModel.vue"
     import TableColumn from "./TableColumn.vue"
@@ -10,7 +10,8 @@
     const props = defineProps(["table"]),
         table = toRef(props, "table"),
         showingOptions = ref(false),
-        selected = ref(false)
+        selected = ref(false),
+        emit = defineEmits(['tableRemoved'])
 
     let clickedQuickly = false
 
@@ -18,7 +19,13 @@
         Main.API.confirm("Are you sure you want to delete this table?").then((confirmed) => {
             if (!confirmed) return
 
-            table.value.remove()
+            showingOptions.value = false
+            selected.value = false
+
+            nextTick(() => {
+                table.value.remove()
+                emit('tableRemoved')
+            })
         })
     }
 
@@ -53,7 +60,7 @@
 </script>
 
 <template>
-    <TableOptions ref="tableOptionsWindow" :table="table" :show="showingOptions" @close="tableOptionsClosed()" />
+    <TableOptions ref="tableOptionsWindow" :table="table" :show="showingOptions && table" @close="tableOptionsClosed()" />
 
     <div
         @mousedown="startClick()"
