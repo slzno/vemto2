@@ -226,7 +226,7 @@
     >
         <button
             ref="selectButton"
-            class="flex focus:border-red-500 border border-transparent items-center justify-between bg-gray-200 dark:bg-slate-950 appearance-none rounded-lg leading-tight text-gray-600 dark:text-gray-300 py-1.5 px-1 w-full outline-none"
+            class="flex focus:border-red-500 border border-transparent items-center justify-between bg-white dark:bg-slate-950 appearance-none rounded-lg leading-tight text-gray-600 dark:text-gray-300 py-1.5 px-1 w-full outline-none"
             :class="{ 'active': showing, 'p-2': !small }"
             :title="selected ? selected.label : placeholder"
             @focus="focusFiredOnce()"
