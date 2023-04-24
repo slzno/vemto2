@@ -226,7 +226,7 @@
     >
         <button
             ref="selectButton"
-            class="flex items-center justify-between bg-gray-200 dark:bg-slate-950 appearance-none rounded-lg leading-tight text-gray-600 dark:text-gray-300 py-1 px-1 w-full border-2 border-transparent outline-none"
+            class="flex focus:border focus:border-red-500 items-center justify-between bg-gray-200 dark:bg-slate-950 appearance-none rounded-lg leading-tight text-gray-600 dark:text-gray-300 py-1.5 px-1 w-full border-2 border-transparent outline-none"
             :class="{ 'active': showing, 'p-2 text-sm': !small }"
             :title="selected ? selected.label : placeholder"
             @focus="focusFiredOnce()"
@@ -248,7 +248,7 @@
         >
             <div class="relative">
                 <div class="p-2" style="height: 60px">
-                    <input ref="searchInput" class="appearance-none rounded leading-tight bg-gray-200 dark:bg-slate-800 text-gray-600 dark:text-gray-300 py-1 px-1 w-full border-2 border-transparent outline-none" placeholder="Search..." v-model="search">
+                    <input ref="searchInput" class="focus:border focus:border-red-500 rounded leading-tight bg-gray-200 dark:bg-slate-800 text-gray-600 dark:text-gray-300 py-1 px-1 w-full border-2 border-transparent outline-none" placeholder="Search..." v-model="search">
                 </div>
                 <ul ref="dropdownList" class="list-reset h-full overflow-y-auto" style="max-height: 240px;">
                     <li :ref="optionReference(option)" v-for="(option, index) in filteredOptions" :key="index">
