@@ -61,6 +61,22 @@ class ModelRepository {
                 }
             }
 
+            $hasProperty = function($visibility, $name) use ($model) {
+                if(! File::exists($model['fullPath'])) return false;
+
+                $fileContent = file_get_contents($model['fullPath']);
+
+                if(empty($fileContent)) return false;
+
+                preg_match(
+                    '/^((?:\/\*(?:[^*]|\*(?!\/))*\*\/|\/\/.*|#.*)*\s*' . $visibility . '\s+\$' . $name . '\s*=\s*[^;]+;)/sm',
+                    $fileContent,
+                    $matches
+                );
+
+                return !empty($matches);
+            };
+
             $formattedModels[] = [
                 'fileName' => $model['fileName'],
                 'name' => str_replace('.php', '', $model['fileName']),
@@ -68,13 +84,13 @@ class ModelRepository {
                 'class' => $model['class'],
                 'namespace' => $reflection->getNamespaceName(),
                 'path' => $model['path'],
-                'hasFillable' => !empty($fillable),
+                'hasFillable' => $hasProperty('protected', 'fillable'),
                 'fillable' => $fillable,
                 'casts' => $casts,
                 'dates' => $dates,
-                'hasGuarded' => !empty($guarded),
+                'hasGuarded' => $hasProperty('protected', 'guarded'),
                 'guarded' => $guarded,
-                'hasHidden' => !empty($hidden),
+                'hasHidden' => $hasProperty('protected', 'hidden'),
                 'hidden' => $hidden,
                 'appends' => $appends,
                 'relationships' => $relationships,

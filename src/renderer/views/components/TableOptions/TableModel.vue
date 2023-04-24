@@ -1,14 +1,15 @@
 <script setup lang="ts">
-    import { PropType, Ref, toRef, ref, onMounted } from "vue"
+    import { PropType, Ref, toRef, ref, onMounted, defineEmits } from "vue"
     import Model from "@Common/models/Model"
     import debounce from "@Common/tools/debounce"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import UiSelect from "@Renderer/components/ui/UiSelect.vue"
-    import { EllipsisVerticalIcon, PlusIcon } from "@heroicons/vue/24/outline"
+    import { EllipsisVerticalIcon, PlusIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import Relationship from "@Renderer/../common/models/Relationship"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import UiMultiSelect from "@Renderer/components/ui/UiMultiSelect.vue"
+    import Main from "@Renderer/services/wrappers/Main"
     import Column from "@Renderer/../common/models/Column"
 
     const props = defineProps({
@@ -19,7 +20,9 @@
     })
 
     const model = toRef(props, "model") as Ref<Model>,
-        relationships = ref([])
+        relationships = ref([]),
+        showModelOptions = ref(false),
+        emit = defineEmits(['removeModel'])
     
     let models: Ref<Array<Model>> = ref([])
 
@@ -44,6 +47,8 @@
     }
 
     const getSelectDataForLayout = (property: Array<string>|Column[]): Array<Object> => {
+        if(!property || !Array.isArray(property)) return []
+
         return property.map((guarded: string|Column) => {
             if(typeof guarded === "object") {
                 guarded = guarded.name
@@ -65,6 +70,15 @@
     const saveRelationship = debounce((relationship: Relationship) => {
         relationship.saveFromInterface()
     }, 500)
+
+    const deleteModel = (): void => {
+        Main.API.confirm("Are you sure you want to remove this model?").then((confirmed: boolean) => {
+            if(!confirmed) return
+
+            model.value.remove()
+            emit('removeModel')
+        })
+    }
 </script>
 
 <template>
@@ -83,6 +97,17 @@
                     placeholder="Model name"
                     @change="saveModelData(true)"
                 />
+                <div class="p-1 relative">
+                    <EllipsisVerticalIcon class="h-6 w-6 text-slate-400 cursor-pointer" @click="showModelOptions = !showModelOptions" />
+                    <div class="bg-slate-950 w-auto rounded absolute p-1 right-0 top-8 border border-gray-700" v-if="showModelOptions">
+                        <ul>
+                            <li class="flex items-center justify-start text-md p-1 cursor-pointer" @click="deleteModel()">
+                                <TrashIcon class="h-5 w-5 mr-1 text-red-400" />
+                                Delete
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
             <div class="mt-2">
                 <UiText 

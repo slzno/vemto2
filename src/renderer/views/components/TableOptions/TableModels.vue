@@ -1,11 +1,10 @@
 <script setup lang="ts">
-    import { PropType, toRef } from "vue"
+    import { PropType, toRef, reactive } from "vue"
     import Model from "@Common/models/Model"
     import TableModel from "./TableModel.vue"
     import { PlusCircleIcon } from "@heroicons/vue/24/outline"
     import Table from "@Renderer/../common/models/Table"
     import WordManipulator from "@Renderer/../common/util/WordManipulator"
-    import TableNameExceptions from "@Renderer/../common/models/static/TableNameExceptions"
 
     const props = defineProps({
             table: {
@@ -14,7 +13,8 @@
             },
         })
 
-    const table = toRef(props, "table")
+    const table = toRef(props, "table"),
+        allTableModels = reactive(table.value.getModels())
 
     const addModel = (): void => {
         const model = new Model({
@@ -38,7 +38,11 @@
         model.calculateDataByName()
         model.saveFromInterface()
 
-        table.value.models.push(model)
+        allTableModels.push(model)
+    }
+
+    const removeModel = (model: Model): void => {
+        allTableModels.splice(allTableModels.indexOf(model), 1)
     }
 </script>
 
@@ -46,7 +50,8 @@
     <div>
         <section class="space-y-2">
             <TableModel
-                v-for="model in table.getModels()"
+                v-for="model in allTableModels"
+                @removeModel="removeModel(model)"
                 :key="model.id"
                 :model="model"
             />
