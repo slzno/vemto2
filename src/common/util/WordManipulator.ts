@@ -22,6 +22,14 @@ export default class WordManipulator {
         return changeCase.pascalCase(word)
     }
 
+    static camelCase(word: string): string {
+        return changeCase.camelCase(word)
+    }
+    
+    static snakeCase(word: string): string {
+        return changeCase.snakeCase(word)
+    }
+
     static runMultiple(manipulators: Array<string>, word: string): string {
         let result = word
 

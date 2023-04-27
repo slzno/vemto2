@@ -3,9 +3,12 @@ import Project from './Project'
 import RelaDB from '@tiago_silva_pereira/reladb'
 import DataComparator from './services/DataComparator'
 import DataComparisonLogger from './services/DataComparisonLogger'
+import WordManipulator from '@Common/util/WordManipulator'
 
 export default class Relationship extends RelaDB.Model implements SchemaModel {
     id: string
+    defaultName: string
+    usingFirstDefaultName: boolean
     name: string
     type: string
     relatedTableName: string
@@ -74,6 +77,125 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
         if(!this.schemaState) return this.name
 
         return this.schemaState.name
+    }
+
+    hasRelatedModel(): boolean {
+        return !! this.relatedModelId
+    }
+
+    hasType(): boolean {
+        return !! this.type
+    }
+
+    calculateDefaultData(): void {
+        this.calculateName()
+        this.calculateParentKey()
+        this.calculateForeignName()
+    }
+
+    calculateName(): string {
+        const finalName = this.getFinalDefaultName()
+
+        this.defaultName = finalName
+        this.usingFirstDefaultName = finalName === this.getDefaultName()
+
+        if(this.name) return
+
+        this.name = finalName
+
+        return this.name
+    }
+
+    calculateParentKey() {
+        const keys = this.getDefaultKeys()
+
+        this.relatedKeyName = this.relatedKeyName || keys.parentKey.id
+    }
+
+    getDefaultKeys() {
+        let keys = {} as any,
+            foreignName = this.getOriginalForeignName()
+
+        if(['BelongsTo'].includes(this.type)) {
+            keys.parentKey = this.relatedModel.getPrimaryKey()
+            keys.foreignKey = this.model.getColumnByName(foreignName)
+        }
+        
+        if(['HasMany', 'HasOne'].includes(this.type)) {
+            keys.parentKey = this.model.getPrimaryKey()
+            keys.foreignKey = this.relatedModel.getColumnByName(foreignName)
+        }
+
+        return keys
+    }
+
+    getOriginalForeignName() {
+        return this.foreignKeyName || this.getDefaultForeignKeyName()
+    }
+
+    calculateForeignName() {
+        this.foreignKeyName = this.getDefaultForeignKeyName()
+    }
+
+    getDefaultForeignKeyName() {
+        return WordManipulator.snakeCase(this.getParentModel().name) + '_id'
+    }
+
+    getParentModel(): Model {
+        if(['BelongsTo'].includes(this.type)) {
+            return this.relatedModel
+        }
+        
+        if(['HasMany', 'HasOne'].includes(this.type)) {
+            return this.model
+        }
+    }
+
+    getFinalDefaultName() {
+        const name = this.getDefaultName(),
+            nameCount = this.countRelationshipsWithSameName(name),
+            hasSimilarNames = nameCount > 0
+
+        return hasSimilarNames ? `${name}${nameCount + 1}` : name
+    }
+
+    countRelationshipsWithSameName(name: string): number {
+        const allRelationships = this.model.ownRelationships,
+            nameRegex = new RegExp(`(${name})([0-9])*`)
+
+        const count = allRelationships
+            .filter(rel => nameRegex.test(rel.name))
+            .length
+
+        return count
+    }
+
+    getDefaultName(): string {
+        if(this.isSingular()) {
+            return WordManipulator.camelCase(this.relatedModel.name)
+        }
+        
+        if(this.isCollection()) {
+            return WordManipulator.camelCase(this.relatedModel.plural)
+        }
+
+        return ''
+    }
+
+    isSingular() {
+        return ['BelongsTo', 'HasOne', 'MorphOne'].includes(this.type)
+    }
+
+    isCollection() {
+        return ['HasMany', 'BelongsToMany', 'MorphMany', 'MorphToMany'].includes(this.type)
+    }
+
+    isThrough(): boolean {
+        return ['HasManyThrough'].includes(this.type)
+    }
+
+    isCommon(): boolean {
+        return ['BelongsTo', 'HasMany', 'HasOne'].includes(this.type)
     }
 
     hasSchemaChanges(comparisonData: any): boolean {

@@ -242,15 +242,6 @@ export default class Model extends RelaDB.Model implements SchemaModel {
         return relationships
     }
 
-    newRelationship(): Relationship {
-        let relationship = new Relationship()
-        relationship.modelId = this.id
-        relationship.type = 'BelongsTo'
-        relationship.save()
-
-        return relationship
-    }
-
     syncSourceCode() {
         const fileName = this.name + '.php'
 
@@ -264,6 +255,14 @@ export default class Model extends RelaDB.Model implements SchemaModel {
         )
 
         this.syncRelationshipsSourceCode()
+    }
+
+    getPrimaryKey() {
+        return this.table.columns.find(column => column.isPrimaryKey())
+    }
+
+    getColumnByName(columnName: string) {
+        return this.table.columns.find(column => column.name == columnName)
     }
 
     syncRelationshipsSourceCode() {

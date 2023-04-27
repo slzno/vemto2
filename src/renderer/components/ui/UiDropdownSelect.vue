@@ -13,6 +13,10 @@
                 type: String,
                 required: true
             },
+            mayOpen: {
+                type: Boolean,
+                required: false
+            },
             options: {
                 type: Array<Options>,
                 required: true
@@ -142,10 +146,6 @@
         emit('change')
     }
 
-    const focus = (): void => {
-        selectButton.value.focus()
-    }
-
     const focusFiredOnce = (): void => {
         if(selected.value) return
 
@@ -203,6 +203,14 @@
         selected.value = getInitiallySelected()
     })
 
+    watch(() => props.mayOpen, (value) => {
+        if(!value) return
+
+        setTimeout(() => {
+            open()
+        }, 100)
+    })
+
     watch(() => props.options, () => {
         selected.value = getInitiallySelected()
     })
@@ -215,6 +223,12 @@
 
     onMounted(() => {
         selected.value = getInitiallySelected()
+
+        if(props.mayOpen) {
+            nextTick(() => {
+                open()
+            })
+        }
     })
 </script>
 <template>
