@@ -77,12 +77,12 @@
                 <UiText
                     v-model="model.namespace"
                     placeholder="Model namespace"
-                    @change="saveModelData()"
+                    @input="saveModelData()"
                 />
                 <UiText
                     v-model="model.name"
                     placeholder="Model name"
-                    @change="saveModelData(true)"
+                    @input="saveModelData(true)"
                 />
                 <div class="p-1 relative">
                     <EllipsisVerticalIcon class="h-6 w-6 text-slate-400 cursor-pointer" @click="showModelOptions = !showModelOptions" />
@@ -100,7 +100,7 @@
                 <UiText 
                     v-model="model.plural"
                     placeholder="Collection"
-                    @change="saveModelData()"
+                    @input="saveModelData()"
                 />
             </div>
             <div class="mt-2 flex gap-3">

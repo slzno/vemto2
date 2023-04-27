@@ -17,67 +17,67 @@ export default class ColumnsDefaultData {
 
             html: {
                 type: 'text',
-                faker: '$faker->randomHtml()',
+                faker: 'fake()->randomHtml()',
             },
 
             name: {
                 type: 'string',
-                faker: '$faker->name()',
+                faker: 'fake()->name()',
             },
 
             first_name: {
                 type: 'string',
-                faker: '$faker->firstName()',
+                faker: 'fake()->firstName()',
             },
 
             firstname: {
                 type: 'string',
-                faker: '$faker->firstName()',
+                faker: 'fake()->firstName()',
             },
 
             last_name: {
                 type: 'string',
-                faker: '$faker->lastName()',
+                faker: 'fake()->lastName()',
             },
 
             lastname: {
                 type: 'string',
-                faker: '$faker->lastName()',
+                faker: 'fake()->lastName()',
             },
 
             surname: {
                 type: 'string',
-                faker: '$faker->lastName()',
+                faker: 'fake()->lastName()',
             },
 
             status: {
                 type: 'string',
-                faker: '$faker->word()',
+                faker: 'fake()->word()',
             },
 
             phone: {
                 type: 'string',
-                faker: '$faker->phoneNumber()',
+                faker: 'fake()->phoneNumber()',
             },
 
             phone_number: {
                 type: 'string',
-                faker: '$faker->phoneNumber()',
+                faker: 'fake()->phoneNumber()',
             },
 
             mobile: {
                 type: 'string',
-                faker: '$faker->phoneNumber()',
+                faker: 'fake()->phoneNumber()',
             },
 
             mobile_number: {
                 type: 'string',
-                faker: '$faker->phoneNumber()',
+                faker: 'fake()->phoneNumber()',
             },
 
             title: {
                 type: 'string',
-                faker: '$faker->sentence(10)',
+                faker: 'fake()->sentence(10)',
             },
 
             count: {
@@ -186,7 +186,7 @@ export default class ColumnsDefaultData {
 
             type: {
                 type: 'string',
-                faker: '$faker->word()',
+                faker: 'fake()->word()',
             },
 
             model_type: {
@@ -195,226 +195,226 @@ export default class ColumnsDefaultData {
 
             email: {
                 type: 'string',
-                faker: '$faker->email()',
+                faker: 'fake()->email()',
             },
 
             slug: {
                 type: 'string',
-                faker: '$faker->slug()',
+                faker: 'fake()->slug()',
             },
 
             password: {
                 type: 'string',
-                faker: '$faker->password()',
+                faker: 'fake()->password()',
             },
 
             login: {
                 type: 'string',
-                faker: '$faker->userName()',
+                faker: 'fake()->userName()',
             },
 
             identifier: {
                 type: 'string',
-                faker: '$faker->userName()',
+                faker: 'fake()->userName()',
             },
 
             address: {
                 type: 'string',
-                faker: '$faker->address()',
+                faker: 'fake()->address()',
             },
 
             city: {
                 type: 'string',
-                faker: '$faker->city()',
+                faker: 'fake()->city()',
             },
 
             street: {
                 type: 'string',
-                faker: '$faker->streetName()',
+                faker: 'fake()->streetName()',
             },
 
             postcode: {
                 type: 'string',
-                faker: '$faker->postcode()',
+                faker: 'fake()->postcode()',
             },
 
             cep: {
                 type: 'string',
-                faker: '$faker->postcode()',
+                faker: 'fake()->postcode()',
             },
 
             country: {
                 type: 'string',
-                faker: '$faker->country()',
+                faker: 'fake()->country()',
             },
 
             country_code: {
                 type: 'string',
                 length: 3,
-                faker: '$faker->countryCode()',
+                faker: 'fake()->countryCode()',
             },
 
             state: {
                 type: 'string',
-                faker: '$faker->state()',
+                faker: 'fake()->state()',
             },
 
             region: {
                 type: 'string',
-                faker: '$faker->region()',
+                faker: 'fake()->region()',
             },
 
             latitude: {
                 type: 'float',
-                faker: '$faker->latitude()',
+                faker: 'fake()->latitude()',
             },
 
             longitude: {
                 type: 'float',
-                faker: '$faker->longitude()',
+                faker: 'fake()->longitude()',
             },
 
             locale: {
                 type: 'string',
                 length: 8,
-                faker: '$faker->locale()',
+                faker: 'fake()->locale()',
             },
 
             currency: {
                 type: 'string',
                 length: 3,
-                faker: '$faker->currencyCode()',
+                faker: 'fake()->currencyCode()',
             },
 
             currency_code: {
                 type: 'string',
                 length: 3,
-                faker: '$faker->currencyCode()',
+                faker: 'fake()->currencyCode()',
             },
 
             emoji: {
                 type: 'string',
-                faker: '$faker->emoji()',
+                faker: 'fake()->emoji()',
             },
 
             description: {
                 type: 'text',
-                faker: '$faker->sentence(15)',
+                faker: 'fake()->sentence(15)',
             },
 
             biography: {
                 type: 'text',
-                faker: '$faker->sentence(15)',
+                faker: 'fake()->sentence(15)',
             },
 
             bio: {
                 type: 'text',
-                faker: '$faker->sentence(15)',
+                faker: 'fake()->sentence(15)',
             },
 
             observation: {
                 type: 'text',
-                faker: '$faker->sentence(15)',
+                faker: 'fake()->sentence(15)',
             },
 
             obs: {
                 type: 'text',
-                faker: '$faker->sentence(15)',
+                faker: 'fake()->sentence(15)',
             },
 
             label: {
                 type: 'string',
-                faker: '$faker->word()',
+                faker: 'fake()->word()',
             },
 
             comment: {
                 type: 'string',
-                faker: '$faker->text()',
+                faker: 'fake()->text()',
             },
 
             body: {
                 type: 'text',
-                faker: '$faker->text()',
+                faker: 'fake()->text()',
             },
 
             text: {
                 type: 'text',
-                faker: '$faker->text()',
+                faker: 'fake()->text()',
             },
 
             content: {
                 type: 'text',
-                faker: '$faker->text()',
+                faker: 'fake()->text()',
             },
 
             post: {
                 type: 'text',
-                faker: '$faker->text()',
+                faker: 'fake()->text()',
             },
 
             detail: {
                 type: 'text',
-                faker: '$faker->sentence(20)',
+                faker: 'fake()->sentence(20)',
             },
 
             details: {
                 type: 'text',
-                faker: '$faker->sentence(20)',
+                faker: 'fake()->sentence(20)',
             },
 
             message: {
                 type: 'text',
-                faker: '$faker->sentence(20)',
+                faker: 'fake()->sentence(20)',
             },
 
             payload: {
                 type: 'longText',
-                faker: '$faker->text()',
+                faker: 'fake()->text()',
             },
 
             meta: {
                 type: 'text',
-                faker: '$faker->text()',
+                faker: 'fake()->text()',
             },
 
             meta_description: {
                 type: 'text',
-                faker: '$faker->text()',
+                faker: 'fake()->text()',
             },
 
             date: {
                 type: 'date',
-                faker: '$faker->date()',
+                faker: 'fake()->date()',
             },
 
             birth: {
                 type: 'date',
-                faker: '$faker->date()',
+                faker: 'fake()->date()',
             },
 
             birthdate: {
                 type: 'date',
-                faker: '$faker->date()',
+                faker: 'fake()->date()',
             },
 
             birth_date: {
                 type: 'date',
-                faker: '$faker->date()',
+                faker: 'fake()->date()',
             },
 
             datetime: {
                 type: 'dateTime',
-                faker: '$faker->date()',
+                faker: 'fake()->date()',
             },
 
             date_time: {
                 type: 'dateTime',
-                faker: '$faker->date()',
+                faker: 'fake()->date()',
             },
 
             time: {
                 type: 'dateTime',
-                faker: '$faker->date()',
+                faker: 'fake()->date()',
             },
 
             gender: {
@@ -430,159 +430,159 @@ export default class ColumnsDefaultData {
             rg: {
                 type: 'string',
                 length: 9,
-                faker: '$faker->rg(false)',
+                faker: 'fake()->rg(false)',
             },
 
             cpf: {
                 type: 'string',
                 length: 11,
-                faker: '$faker->cpf(false)',
+                faker: 'fake()->cpf(false)',
             },
 
             cnpj: {
                 type: 'string',
                 length: 14,
-                faker: '$faker->cnpj(false)',
+                faker: 'fake()->cnpj(false)',
             },
 
             cpf_cnpj: {
                 type: 'string',
                 length: 14,
-                faker: '$faker->cpf(false)',
+                faker: 'fake()->cpf(false)',
             },
 
             cnpj_cpf: {
                 type: 'string',
                 length: 14,
-                faker: '$faker->cnpj(false)',
+                faker: 'fake()->cnpj(false)',
             },
 
             number: {
                 type: 'integer',
-                faker: '$faker->randomNumber()',
+                faker: 'fake()->randomNumber()',
             },
 
             quantity: {
                 type: 'integer',
-                faker: '$faker->randomNumber()',
+                faker: 'fake()->randomNumber()',
             },
 
             level: {
                 type: 'integer',
-                faker: '$faker->randomNumber()',
+                faker: 'fake()->randomNumber()',
             },
 
             color: {
                 type: 'string',
                 length: 9,
-                faker: '$faker->hexcolor()',
+                faker: 'fake()->hexcolor()',
             },
             
             hexcolor: {
                 type: 'string',
                 length: 9,
-                faker: '$faker->hexcolor()',
+                faker: 'fake()->hexcolor()',
             },
 
             hex_color: {
                 type: 'string',
                 length: 9,
-                faker: '$faker->hexcolor()',
+                faker: 'fake()->hexcolor()',
             },
             
             color_name: {
                 type: 'string',
-                faker: '$faker->colorName()',
+                faker: 'fake()->colorName()',
             },
 
             price: {
                 type: 'decimal',
-                faker: '$faker->randomFloat(2, 0, 9999)',
+                faker: 'fake()->randomFloat(2, 0, 9999)',
             },
 
             money: {
                 type: 'decimal',
-                faker: '$faker->randomFloat(2, 0, 9999)',
+                faker: 'fake()->randomFloat(2, 0, 9999)',
             },
 
             fundings: {
                 type: 'decimal',
-                faker: '$faker->randomFloat(2, 0, 9999)',
+                faker: 'fake()->randomFloat(2, 0, 9999)',
             },
 
             savings: {
                 type: 'decimal',
-                faker: '$faker->randomFloat(2, 0, 9999)',
+                faker: 'fake()->randomFloat(2, 0, 9999)',
             },
 
             discount: {
                 type: 'decimal',
-                faker: '$faker->randomFloat(2, 0, 9999)',
+                faker: 'fake()->randomFloat(2, 0, 9999)',
             },
 
             total: {
                 type: 'decimal',
-                faker: '$faker->randomFloat(2, 0, 9999)',
+                faker: 'fake()->randomFloat(2, 0, 9999)',
             },
 
             distance: {
                 type: 'decimal',
-                faker: '$faker->randomFloat(2, 0, 9999)',
+                faker: 'fake()->randomFloat(2, 0, 9999)',
             },
 
             size: {
                 type: 'decimal',
-                faker: '$faker->randomFloat(2, 0, 9999)',
+                faker: 'fake()->randomFloat(2, 0, 9999)',
             },
 
             width: {
                 type: 'decimal',
-                faker: '$faker->randomFloat(2, 0, 9999)',
+                faker: 'fake()->randomFloat(2, 0, 9999)',
             },
 
             height: {
                 type: 'decimal',
-                faker: '$faker->randomFloat(2, 0, 9999)',
+                faker: 'fake()->randomFloat(2, 0, 9999)',
             },
 
             weight: {
                 type: 'decimal',
-                faker: '$faker->randomFloat(2, 0, 9999)',
+                faker: 'fake()->randomFloat(2, 0, 9999)',
             },
 
             ip: {
                 type: 'ipAddress',
-                faker: '$faker->ipv4()',
+                faker: 'fake()->ipv4()',
             },
 
             ip_address: {
                 type: 'ipAddress',
-                faker: '$faker->ipv4()',
+                faker: 'fake()->ipv4()',
             },
 
             mac: {
                 type: 'macAddress',
-                faker: '$faker->macAddress()',
+                faker: 'fake()->macAddress()',
             },
 
             mac_address: {
                 type: 'macAddress',
-                faker: '$faker->macAddress()',
+                faker: 'fake()->macAddress()',
             },
 
             url: {
                 type: 'string',
-                faker: '$faker->url()',
+                faker: 'fake()->url()',
             },
 
             domain: {
                 type: 'string',
-                faker: '$faker->domainName()',
+                faker: 'fake()->domainName()',
             },
 
             user_agent: {
                 type: 'string',
-                faker: '$faker->userAgent()',
+                faker: 'fake()->userAgent()',
             },
 
             data: {
@@ -597,78 +597,78 @@ export default class ColumnsDefaultData {
 
             coordinates: {
                 type: 'geometry',
-                faker: '"{$faker->latitude()},{$faker->longitude()}"',
+                faker: '"{fake()->latitude()},{fake()->longitude()}"',
             },
 
             position: {
                 type: 'geometry',
-                faker: '"{$faker->latitude()},{$faker->longitude()}"',
+                faker: '"{fake()->latitude()},{fake()->longitude()}"',
             },
 
             positions: {
                 type: 'geometryCollection',
-                faker: '"{$faker->latitude()},{$faker->longitude()}"',
+                faker: '"{fake()->latitude()},{fake()->longitude()}"',
             },
 
             year: {
                 type: 'year',
-                faker: '$faker->year()',
+                faker: 'fake()->year()',
             },
 
             uuid: {
                 type: 'uuid',
-                faker: '$faker->uuid()',
+                faker: 'fake()->uuid()',
             },
 
             active: {
                 type: 'boolean',
-                faker: '$faker->boolean()',
+                faker: 'fake()->boolean()',
             },
 
             temperable: {
                 type: 'boolean',
-                faker: '$faker->boolean()',
+                faker: 'fake()->boolean()',
             },
 
             verified_at: {
                 type: 'timestamp',
-                faker: '$faker->dateTime()',
+                faker: 'fake()->dateTime()',
             },
 
             reported_at: {
                 type: 'timestamp',
-                faker: '$faker->dateTime()',
+                faker: 'fake()->dateTime()',
             },
 
             delivered_at: {
                 type: 'timestamp',
-                faker: '$faker->dateTime()',
+                faker: 'fake()->dateTime()',
             },
 
             created_at: {
                 type: 'timestamp',
-                faker: '$faker->dateTime()',
+                faker: 'fake()->dateTime()',
             },
 
             updated_at: {
                 type: 'timestamp',
-                faker: '$faker->dateTime()',
+                faker: 'fake()->dateTime()',
             },
 
             deleted_at: {
                 type: 'timestamp',
-                faker: '$faker->dateTime()',
+                faker: 'fake()->dateTime()',
             },
 
             weekday: {
                 type: 'string',
                 length: 32,
-                faker: '$faker->dayOfWeek()',
+                faker: 'fake()->dayOfWeek()',
             },
 
             month: {
                 type: 'enum',
-                faker: '$faker->monthName()',
+                faker: 'fake()->monthName()',
             },
         }
     }

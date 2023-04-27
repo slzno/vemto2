@@ -42,7 +42,7 @@
 <template>
     <label v-if="label" class="text-xs text-slate-400">{{ label }}</label>
     <input
-        class="w-full dark:text-slate-200 border-0 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
+        class="w-full focus:border focus:border-red-500 dark:text-slate-200 focus:ring-transparent border-transparent bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
         type="text"
         :id="id"
         :placeholder="placeholder"
