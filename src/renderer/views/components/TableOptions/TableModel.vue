@@ -3,14 +3,12 @@
     import Model from "@Common/models/Model"
     import debounce from "@Common/tools/debounce"
     import UiText from "@Renderer/components/ui/UiText.vue"
-    import UiButton from "@Renderer/components/ui/UiButton.vue"
-    import UiSelect from "@Renderer/components/ui/UiSelect.vue"
-    import { EllipsisVerticalIcon, PlusIcon, TrashIcon } from "@heroicons/vue/24/outline"
-    import Relationship from "@Renderer/../common/models/Relationship"
+    import { EllipsisVerticalIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import UiMultiSelect from "@Renderer/components/ui/UiMultiSelect.vue"
     import Main from "@Renderer/services/wrappers/Main"
     import Column from "@Renderer/../common/models/Column"
+    import TableModelRelationships from './TableModelRelationships.vue'
 
     const props = defineProps({
         model: {
@@ -20,7 +18,6 @@
     })
 
     const model = toRef(props, "model") as Ref<Model>,
-        relationships = ref([]),
         showModelOptions = ref(false),
         emit = defineEmits(['removeModel'])
     
@@ -30,7 +27,6 @@
         const project = model.value.project
         
         models.value = project.models
-        relationships.value = model.value.ownRelationships
     })
 
     const saveModelData = debounce((isNameChange: boolean) => {
@@ -40,11 +36,6 @@
         
         model.value.saveFromInterface()
     }, 500)
-
-    const newRelationship = (): void => {
-        const relationship = model.value.newRelationship()
-        relationships.value.push(relationship)
-    }
 
     const getSelectDataForLayout = (property: Array<string>|Column[]): Array<Object> => {
         if(!property || !Array.isArray(property)) return []
@@ -66,10 +57,6 @@
 
         saveModelData()
     }
-
-    const saveRelationship = debounce((relationship: Relationship) => {
-        relationship.saveFromInterface()
-    }, 500)
 
     const deleteModel = (): void => {
         Main.API.confirm("Are you sure you want to remove this model?").then((confirmed: boolean) => {
@@ -165,75 +152,10 @@
                 </div>
             </div>
 
-            <div class="mt-4">
-                <h2 class="text-slate-500 font-semibold mb-1">Relationships</h2>
-
-                <div>
-                    <div
-                        class="mb-2 bg-slate-850 p-2 rounded-md space-y-1"
-                        v-for="relationship in relationships"
-                        :key="relationship.id"
-                    >
-                        <!-- <UiButton @click="relationship.logDataComparison()">Log data comparison</UiButton> -->
-                        
-                        <div class="flex justify-between">
-                            <div class="space-x-1">
-                                <div class="text-red-400 inline-block">
-                                    <UiSelect 
-                                        v-model="relationship.type" 
-                                        @change="saveRelationship(relationship)"
-                                    >
-                                        <option value="BelongsTo">Belongs To</option>
-                                        <option value="HasMany">Has Many</option>
-                                        <option value="HasOne">Has One</option>
-                                        <option value="ManyToMany">Many To Many</option>
-                                        <option value="MorphMany">Morph Many</option>
-                                        <option value="MorphOne">Morph One</option>
-                                        <option value="MorphTo">Morph To</option>
-                                        <option value="MorphToMany">Morph To Many</option>
-                                    </UiSelect>
-                                </div>
-        
-                                <!-- ui select with models related to relationship.modelId -->
-                                <UiSelect 
-                                    v-model="relationship.relatedModelId"
-                                    @change="saveRelationship(relationship)"
-                                >
-                                    <option
-                                        v-for="model in models"
-                                        :key="model.id"
-                                        :value="model.id"
-                                    >
-                                        {{ model.name }}
-                                    </option>
-                                </UiSelect>
-                            </div>
-
-                            <span>
-                                <EllipsisVerticalIcon class="h-6 w-6 text-slate-400" />
-                            </span>
-                        </div>
-
-                        <div>
-                            <UiText
-                                v-model="relationship.name"
-                                placeholder="Relationship name"
-                                @input="saveRelationship(relationship)"
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <UiButton
-                        @click="newRelationship()"
-                    >
-                        <span class="flex items-center">
-                            <PlusIcon class="h-4 w-4 mr-1" /> Add relationship
-                        </span>
-                    </UiButton>
-                </div>
-            </div>
+            <TableModelRelationships
+                :model="model"
+                :models="models"
+            />
         </div>
     </div>
 </template>
