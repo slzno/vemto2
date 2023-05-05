@@ -18,13 +18,22 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
     relatedModelName: string
     parentTableName: string
     parentModelName: string
-    foreignKeyName: string
     localKeyName: string
-    ownerKeyName: string
     relatedKeyName: string
     morphType: string
-    pivotTableName: string
+    
+    /** Relationships Keys */
+    //-- BelongsTo, HasMany e HasOne
+    foreignKeyName: string
+    ownerKeyName: string
 
+    //-- BelongsToMany
+    foreignPivotKey: string
+    relatedPivotKey: string
+    parentKey: string
+    relatedKey: string
+    pivotTableName: string
+    
     model: Model
     modelId: string
     relatedModel: Model
@@ -142,6 +151,10 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
                 .calculateDefaultData()
             return
         }
+
+        if(this.isManyToMany()) {
+
+        }
     }
 
     processAndSave(createInverse: boolean = false): void {
@@ -149,6 +162,10 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
             CalculateCommonRelationshipsData.setRelationship(this)
                 .processAndSave(createInverse)
             return
+        }
+
+        if(this.isManyToMany()) {
+            // do something
         }
     }
 

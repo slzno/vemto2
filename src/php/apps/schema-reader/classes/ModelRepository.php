@@ -50,9 +50,19 @@ class ModelRepository {
                             'relatedModelName' => $return->getRelated()->getMorphClass(),
                             'parentTableName' => $return->getParent()->getTable(),
                             'parentModelName' => $return->getParent()->getMorphClass(),
-                            'foreignKeyName' => method_exists($return, 'getForeignKeyName') ? $return->getForeignKeyName() : null,
                             'localKeyName' => method_exists($return, 'getLocalKeyName') ? $return->getLocalKeyName() : null,
+
+                            // BelongsTo, HasMany e HasOne
+                            'foreignKeyName' => method_exists($return, 'getForeignKeyName') ? $return->getForeignKeyName() : null,
                             'ownerKeyName' => method_exists($return, 'getOwnerKeyName') ? $return->getOwnerKeyName() : null,
+
+                            // BelongsToMany
+                            'foreignPivotKey' => method_exists($return, 'getForeignPivotKeyName') ? $return->getForeignPivotKeyName() : null,
+                            'relatedPivotKey' => method_exists($return, 'getRelatedPivotKeyName') ? $return->getRelatedPivotKeyName() : null,
+                            'parentKey' => method_exists($return, 'getParentKeyName') ? $return->getParentKeyName() : null,
+                            'relatedKey' => method_exists($return, 'getRelatedKeyName') ? $return->getRelatedKeyName() : null,
+                            'pivotTableName' => method_exists($return, 'getTable') ? $return->getTable() : null,
+
                             'relatedKeyName' => method_exists($return, 'getRelatedKeyName') ? $return->getRelatedKeyName() : null,
                             'morphType' => method_exists($return, 'getMorphType') ? $return->getMorphType() : null,
                             'method' => $methodContent,

@@ -142,18 +142,6 @@ class CalculateCommonRelationshipsData extends RelationshipService {
     getDefaultForeignKeyName() {
         return WordManipulator.snakeCase(this.relationship.getParentModel().name) + '_id'
     }
-
-    getDefaultName(): string {
-        if(this.relationship.isSingular()) {
-            return WordManipulator.camelCase(this.relationship.relatedModel.name)
-        }
-        
-        if(this.relationship.isCollection()) {
-            return WordManipulator.camelCase(this.relationship.relatedModel.plural)
-        }
-
-        return ''
-    }
 }
 
 export default new CalculateCommonRelationshipsData

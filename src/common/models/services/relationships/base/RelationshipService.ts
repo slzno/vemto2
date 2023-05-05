@@ -1,8 +1,8 @@
 import Relationship from "@Common/models/Relationship"
+import WordManipulator from '@Common/util/WordManipulator'
 import RelationshipTypes from '@Common/models/static/RelationshipTypes'
 
 export default abstract class RelationshipService {
-    abstract getDefaultName(): string
     abstract get relationship(): Relationship
 
     calculateName(): string {
@@ -35,6 +35,18 @@ export default abstract class RelationshipService {
             .length
 
         return count
+    }
+
+    getDefaultName(): string {
+        if(this.relationship.isSingular()) {
+            return WordManipulator.camelCase(this.relationship.relatedModel.name)
+        }
+        
+        if(this.relationship.isCollection()) {
+            return WordManipulator.camelCase(this.relationship.relatedModel.plural)
+        }
+
+        return ''
     }
 
     checkTypeAndRelatedModel() {

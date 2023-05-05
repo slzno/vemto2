@@ -7,6 +7,7 @@
     import Model from "@Common/models/Model"
     import UiText from '@Renderer/components/ui/UiText.vue'
     import { EllipsisVerticalIcon, PlusIcon, TrashIcon } from "@heroicons/vue/24/outline"
+    import RelationshipTypes from '@Common/models/static/RelationshipTypes'
     import UiDropdownSelect from '@Renderer/components/ui/UiDropdownSelect.vue'
 
     const props = defineProps(['model', 'models']),
@@ -15,24 +16,8 @@
         relationshipIdOptions = ref(null),
         relationships = ref([])
 
-    const relationshipTypes = [
-        "BelongsTo",
-        "HasMany",
-        "HasOne",
-        "ManyToMany",
-        "MorphMany",
-        "MorphOne",
-        "MorphTo",
-        "MorphToMany",
-    ]
-
     const getRelationshipTypesForSelect = () => {
-        return relationshipTypes.map((relationshipType: any) => {
-            return {
-                key: relationshipType,
-                label: relationshipType
-            }
-        })
+        return RelationshipTypes.getForDropdown()
     }
 
     const getModelsForSelect = () => {
@@ -197,7 +182,40 @@
                     </template>
 
                     <template v-if="relationship.isManyToMany()">
-
+                        <div class="flex flex-col gap-1">
+                            <div class="flex-1 flex gap-1">
+                                <div>
+                                    <UiText
+                                        v-model="relationship.name"
+                                        placeholder="Relationship Name"
+                                        @input="saveRelationship(relationship)"
+                                    />
+                                </div>
+                                <div>
+                                    <UiText
+                                        v-model="relationship.pivotOriginalName"
+                                        placeholder="Pivot Table Name"
+                                        @input="saveRelationship(relationship)"
+                                    />
+                                </div>
+                            </div>
+                            <div class="flex-1 flex gap-1">
+                                <div>
+                                    <UiText
+                                        v-model="relationship.localModelKeyOriginalName"
+                                        placeholder="Local Model Key Name"
+                                        @input="saveRelationship(relationship)"
+                                    />
+                                </div>
+                                <div>
+                                    <UiText
+                                        v-model="relationship.modelKeyOriginalName"
+                                        placeholder="Joined Model Key Name"
+                                        @input="saveRelationship(relationship)"
+                                    />
+                                </div>
+                            </div>
+                        </div>
                     </template>
                     <template v-else>
 
