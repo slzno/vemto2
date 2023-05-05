@@ -4,7 +4,6 @@ import { app, BrowserWindow } from "electron"
 import FileSystem from "./base/FileSystem"
 import Project from "../common/models/Project"
 import PhpFormatter from "@Renderer/codegen/formatters/PhpFormatter"
-import TemplateCompiler from "@Renderer/codegen/templates/base/TemplateCompiler"
 import RenderableFile, { RenderableFileStatus, RenderableFileType } from "../common/models/RenderableFile"
 import CommandExecutor from "./base/CommandExecutor"
 import TextUtil from "../common/util/TextUtil"
@@ -51,23 +50,13 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
 
             templateContent = FileSystem.readFile(path.join(app.getAppPath(), "static", "templates", file.template))
 
-            TemplateCompiler
-                .setContent(templateContent)
-                .setData(file.getDataWithDependencies())
-
-            const compiledContent = await TemplateCompiler.compile()
-
-            const formattedContent = PhpFormatter.setContent(
-                compiledContent
-            ).format()
-
             const relativeFilePath = path.join(file.path, file.name),
                 projectFilePath = path.join(project.getPath(), relativeFilePath),
                 vemtoFilePath = path.join(project.getPath(), ".vemto", "generated-files", relativeFilePath),
                 previousFilePath = path.join(project.getPath(), ".vemto", "previous-generated-files", relativeFilePath)
             
             // Write the Vemto version for future comparison or merge
-            FileSystem.writeFile(vemtoFilePath, formattedContent)
+            FileSystem.writeFile(vemtoFilePath, file.content)
 
             const currentFileContent = FileSystem.readFileIfExists(projectFilePath)
 
@@ -95,7 +84,7 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
                 return true
             }
 
-            if(currentFileContent && currentFileContent !== formattedContent) {
+            if(currentFileContent && currentFileContent !== file.content) {
                 const conflictsFileName = TextUtil.random(32) + '.json',
                     conflictsFilePath = path.join(project.getPath(), ".vemto", "conflicts", conflictsFileName)
                 
@@ -103,7 +92,7 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
                     {
                         id: uuid(),
                         currentContent: currentFileContent,
-                        newContent: formattedContent,
+                        newContent: file.content,
                     }
                 ])
 
@@ -114,7 +103,7 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
                 return false
             }
 
-            writeProjectFile(relativeFilePath, formattedContent)
+            writeProjectFile(relativeFilePath, file.content)
 
             setFileStatus(file, RenderableFileStatus.RENDERED)
 

@@ -1,4 +1,5 @@
 import Main from "./wrappers/Main"
+import Project from "@Common/models/Project"
 import debounce from "@Common/tools/debounce"
 import RendererBridge from "./RendererBridge"
 import RelaDB from "@tiago_silva_pereira/reladb"
@@ -37,4 +38,21 @@ export default class HandleProjectDatabase {
         return database
     }
 
+    static async populate(callback?: Function) {
+        const projectStore = useProjectStore()
+
+        if (projectStore.projectIsEmpty) {
+            const latestProjectPath = window.localStorage.getItem("latest-project")
+
+            const data = await Main.API.loadProjectDatabase(latestProjectPath)
+
+            HandleProjectDatabase.start(data)
+
+            projectStore.setProject(Project.find(1))
+
+            if(callback) callback()
+        }
+
+        if(callback) callback()
+    }
 }

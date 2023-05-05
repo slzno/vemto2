@@ -353,8 +353,4 @@ export default class Table extends RelaDB.Model implements SchemaModel {
     isRemoved(): boolean {
         return !! this.removed
     }
-
-    syncSourceCode() {
-        this.models.forEach((model) => model.syncSourceCode())
-    }
 }

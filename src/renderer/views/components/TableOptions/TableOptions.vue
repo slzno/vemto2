@@ -1,11 +1,11 @@
 <script setup lang="ts">
     import { toRef, ref } from "vue"
     import Table from "@Common/models/Table"
+    import TableSettings from "./TableSettings.vue"
+    import { XMarkIcon } from "@heroicons/vue/24/outline"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import TableModels from "../TableOptions/TableModels.vue"
     import TableColumns from "../TableOptions/TableColumns.vue"
-    import { XMarkIcon } from "@heroicons/vue/24/outline"
-    import TableSettings from "./TableSettings.vue"
 
     const props = defineProps({
         show: Boolean,
@@ -18,10 +18,10 @@
     const selectedTab = ref("columns")
 
     const tabs = [
-        {label: "Columns", value: "columns"},
-        {label: "Models", value: "models"},
-        {label: "Indexes", value: "indexes"},
-        {label: "Settings", value: "settings"},
+        { label: "Columns", value: "columns" },
+        { label: "Models", value: "models" },
+        { label: "Indexes", value: "indexes" },
+        { label: "Settings", value: "settings" },
     ]
 </script>
 

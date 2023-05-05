@@ -5,7 +5,7 @@ import ProjectMainView from "../views/ProjectMainView.vue"
 import ProjectSchemaView from "../views/ProjectSchemaView.vue"
 import ProjectCodeQueueView from "../views/ProjectCodeQueueView.vue"
 import ProjectAppsView from "../views/ProjectAppsView.vue"
-import ProjectPageView from "../views/ProjectPageView.vue"
+import ProjectCrudView from "../views/ProjectCrudView.vue"
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,9 +34,9 @@ const router = createRouter({
                 },
 
                 {
-                    path: "pages/:pageId",
-                    name: "project-page",
-                    component: ProjectPageView,
+                    path: "cruds/:crudId",
+                    name: "project-crud",
+                    component: ProjectCrudView,
                 },
 
                 {

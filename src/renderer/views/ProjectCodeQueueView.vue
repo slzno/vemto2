@@ -3,11 +3,16 @@
     import Main from '@Renderer/services/wrappers/Main'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
     import RenderableFile, { RenderableFileStatus } from '@Common/models/RenderableFile'
-import SolveConflicts from './components/CodeQueue/SolveConflicts.vue'
-import UiButton from '@Renderer/components/ui/UiButton.vue'
-import { ArrowPathIcon, TrashIcon } from '@heroicons/vue/24/outline'
+    import SolveConflicts from './components/CodeQueue/SolveConflicts.vue'
+    import UiButton from '@Renderer/components/ui/UiButton.vue'
+    import { ArrowPathIcon, TrashIcon } from '@heroicons/vue/24/outline'
+    import SequentialGenerator from '@Renderer/codegen/sequential/SequentialGenerator'
 
     const projectStore = useProjectStore()
+
+    const runSequentialGenerator = async () => {
+        await (new SequentialGenerator()).run()
+    }
 
     const openFile = (file: RenderableFile): void => {
         Main.API.openProjectFile(file.getRelativeFilePath())
@@ -30,6 +35,7 @@ import { ArrowPathIcon, TrashIcon } from '@heroicons/vue/24/outline'
             </div>
         </div>
 
+        <UiButton @click="runSequentialGenerator()">Generate</UiButton>
     </div>
         <div
             v-for="file in projectStore.project.renderableFiles"
@@ -58,11 +64,6 @@ import { ArrowPathIcon, TrashIcon } from '@heroicons/vue/24/outline'
                 </div>
                 <div class="flex items-center space-x-2">
                     <SolveConflicts v-if="file.status === RenderableFileStatus.CONFLICT" :file="file" />
-                    
-                    <UiButton @click="file.regenerate()">
-                        <ArrowPathIcon class="w-4 h-4 mr-1 text-green-500" />
-                        Regenerate
-                    </UiButton>
 
                     <UiButton @click="file.delete()">
                         <TrashIcon class="w-4 h-4 mr-1 text-red-500" />
