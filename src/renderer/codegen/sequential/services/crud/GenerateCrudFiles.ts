@@ -1,12 +1,12 @@
 import Crud from "@Common/models/crud/Crud"
-import RenderableIndexPage from "./views/default/RenderableIndexPage"
+import RenderableLivewireIndexView from "./views/livewire/RenderableLivewireIndexView"
 
 export default class GenerateCrudFiles {
     async start() {
         const cruds = Crud.get()
 
         for (const crud of cruds) {
-            await new RenderableIndexPage(crud).render()
+            await new RenderableLivewireIndexView(crud).render()
         }
     }
 }

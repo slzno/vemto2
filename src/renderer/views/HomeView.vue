@@ -42,5 +42,6 @@
         </p>
 
         <UiButton @click="openProject">Open Project</UiButton>
+        <UiButton @click="openProject">Create Project</UiButton>
     </section>
 </template>
