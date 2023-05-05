@@ -25,6 +25,8 @@ export default class Project extends RelaDB.Model {
     changedTablesIds: string[]
     renderableFiles: RenderableFile[]
 
+    lastForeignAlias: number = 0;
+
     static identifier() {
         return "Project"
     }

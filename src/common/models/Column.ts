@@ -8,6 +8,8 @@ import ColumnsDefaultDataInterface from './column-types/default/base/ColumnsDefa
 import ColumnTypeList from './column-types/base/ColumnTypeList'
 import DataComparisonLogger from './services/DataComparisonLogger'
 import DataComparator from './services/DataComparator'
+import Model from './Model'
+import Foreign from './Foreign'
 
 export default class Column extends RelaDB.Model implements SchemaModel {
     id: string
@@ -29,6 +31,12 @@ export default class Column extends RelaDB.Model implements SchemaModel {
     autoIncrement: boolean
     faker: string
 
+    modelId: string
+    model: Model
+
+    foreignId: string
+    foreign: Foreign
+
     constructor(data: any = {}) {
         const columnData = Object.assign(ColumnData.getDefault(), data)
 
@@ -42,6 +50,8 @@ export default class Column extends RelaDB.Model implements SchemaModel {
     relationships() {
         return {
             table: () => this.belongsTo(Table),
+            model: () => this.belongsTo(Model),
+            foreign: () => this.hasOne(Foreign, 'columnId').cascadeDelete(),
         }
     }
 
@@ -339,5 +349,11 @@ export default class Column extends RelaDB.Model implements SchemaModel {
         console.log('Showing changes for column ' + this.name + ' on table ' + this.table.name)
 
         DataComparisonLogger.setInstance(this).log()
+    }
+
+    getForeignType(): string {
+        const type = this.getType()
+
+        return type.foreignType || this.type
     }
 }

@@ -74,6 +74,7 @@
         "highlight.js": "^11.6.0",
         "lodash": "^4.17.21",
         "notyf": "^3.10.0",
+        "pad": "^3.2.0",
         "pinia": "^2.0.22",
         "pluralize": "^8.0.0",
         "prettier": "^2.7.1",

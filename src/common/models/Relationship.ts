@@ -4,6 +4,9 @@ import RelaDB from '@tiago_silva_pereira/reladb'
 import DataComparator from './services/DataComparator'
 import DataComparisonLogger from './services/DataComparisonLogger'
 import WordManipulator from '@Common/util/WordManipulator'
+import RelationshipTypes from './static/RelationshipTypes'
+import Foreign from './Foreign'
+import Column from './Column'
 
 export default class Relationship extends RelaDB.Model implements SchemaModel {
     id: string
@@ -20,11 +23,21 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
     ownerKeyName: string
     relatedKeyName: string
     morphType: string
+    pivotTableName: string
 
     model: Model
     modelId: string
     relatedModel: Model
     relatedModelId: string
+
+    inverseId: string
+    inverse: Relationship
+
+    foreignKeyId: string
+    foreignKey: Column
+
+    parentKeyId: string
+    parentKey: Column
     
     /**
      * Default properties
@@ -43,7 +56,10 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
         return {
             model: () => this.belongsTo(Model),
             project: () => this.belongsTo(Project),
+            inverse: () => this.belongsTo(Relationship, 'inverseId').atMostOne(),
             relatedModel: () => this.belongsTo(Model, 'relatedModelId'),
+            foreignKey: () => this.belongsTo(Column, 'foreignKeyId'),
+            parentKey: () => this.belongsTo(Column, 'parentKeyId'),
         }
     }
 
@@ -73,6 +89,31 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
         this.syncSourceCode()
     }
 
+    static updated(relationship: Relationship) {
+        relationship.updateInverse()
+    }
+
+    static deleting(relationship: Relationship) {
+        if(relationship.foreignKey) {
+            relationship.foreignKey.delete()
+        }
+    }
+
+    updateInverse() {
+        let inverse = this.inverse
+
+        if(!inverse) return
+        
+        if(inverse.foreignKeyId === this.foreignKeyId 
+            && inverse.parentKeyId === this.parentKeyId) {
+            return
+        }
+
+        inverse.foreignKeyId = this.foreignKeyId
+        inverse.parentKeyId = this.parentKeyId
+        inverse.save()
+    }
+
     getOldName(): string {
         if(!this.schemaState) return this.name
 
@@ -83,8 +124,16 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
         return !! this.relatedModelId
     }
 
+    hasModel(): boolean {
+        return !! this.model
+    }
+
     hasType(): boolean {
         return !! this.type
+    }
+
+    hasTypeAndRelatedModel(): boolean {
+        return this.hasType() && this.hasRelatedModel()
     }
 
     calculateDefaultData(): void {
@@ -106,10 +155,90 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
         return this.name
     }
 
+    processAndSave(createInverse: boolean = false): void {
+        this.process(createInverse)
+        this.saveAndFinish()
+    }
+
+    saveAndFinish(): void {
+        this.saveFromInterface()
+        this.addToInverseRelation()
+    }
+
+    addToInverseRelation(): void {
+        let inverse = this.inverse.fresh()
+        
+        if(!inverse.inverseId) {
+            inverse.inverseId = this.id
+            inverse.save()
+        }
+    }
+
+    process(createInverse: boolean = false): void {
+        if(this.type !== 'BelongsTo' && createInverse) {
+            this.createInverseRelationship()
+        }
+
+        this.addForeign()
+
+        if(this.type === 'BelongsTo' && createInverse) {
+            this.createInverseRelationship()
+        }
+
+        this.calculateKeys()
+        this.calculateName()
+    }
+
+    calculateKeys() {
+        this.calculateParentKey()
+        this.calculateForeignKey()
+
+        return this
+    }
+
+    calculateForeignKey() {
+        let keys = this.getDefaultKeys()
+
+        this.foreignKeyId = this.foreignKeyId || keys.foreignKey.id
+    }
+
+    addForeign(): Foreign {
+        if(!(['BelongsTo'].includes(this.type))) return
+
+        let foreignName = this.getOriginalForeignName()
+
+        return this.model.addForeign(foreignName, this.relatedModel)
+    }
+
+    createInverseRelationship() {
+        if(this.inverseId) return
+        
+        const newRelationship = new Relationship({
+                modelId: this.relatedModelId,
+                projectId: this.projectId,
+                relatedModelId: this.modelId,
+                type: RelationshipTypes.get()[this.type].inverse,
+                foreignKeyName: this.foreignKeyName
+            })
+
+        newRelationship.process()
+
+        const freeSimilarRelationship = this.relatedModel.getFreeSimilarRelationship(newRelationship)
+        
+        if(!freeSimilarRelationship) {
+            newRelationship.save()
+            this.inverseId = newRelationship.id
+        } else {
+            this.inverseId = freeSimilarRelationship.id
+        }
+
+        return true
+    }
+
     calculateParentKey() {
         const keys = this.getDefaultKeys()
 
-        this.relatedKeyName = this.relatedKeyName || keys.parentKey.id
+        this.parentKeyId = this.parentKeyId || keys.parentKey.id
     }
 
     getDefaultKeys() {
@@ -192,6 +321,10 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
 
     isThrough(): boolean {
         return ['HasManyThrough'].includes(this.type)
+    }
+
+    isManyToMany() {
+        return this.type == 'BelongsToMany'
     }
 
     isCommon(): boolean {

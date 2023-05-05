@@ -3,7 +3,6 @@
     import debounce from "@Common/tools/debounce"
     import Main from "@Renderer/services/wrappers/Main"
     import Relationship from "@Renderer/../common/models/Relationship"
-    import UiSelect from '@Renderer/components/ui/UiSelect.vue'
     import UiButton from '@Renderer/components/ui/UiButton.vue'
     import Model from "@Common/models/Model"
     import UiText from '@Renderer/components/ui/UiText.vue'
@@ -46,12 +45,16 @@
     }
         
     const newRelationship = (): void => {
-        const relationship = new Relationship()
-
-        relationship.modelId = model.value.id
-        relationship.save()
+        const relationship = new Relationship({
+            modelId: model.value.id,
+            projectId: model.value.projectId
+        })
 
         relationships.value.push(relationship)
+    }
+
+    const finishRelationshipCreation = (relationship: Relationship): void => {
+        relationship.processAndSave(true)
     }
 
     const saveRelationship = debounce((relationship: Relationship) => {
@@ -60,7 +63,6 @@
         }
 
         relationship.saveFromInterface()
-        console.log(relationship)
     }, 500)
 
     const toggleRelationshipOptions = (relationship: Relationship): void => {
@@ -72,9 +74,17 @@
     }
 
     const onRelationshipRemoving = (relationship: Relationship, force: boolean = false): void => {
+        const removeRelationshipFromUI = (): void => {
+            relationships.value.splice(relationships.value.indexOf(relationship), 1)
+        }
+
+        if(!relationship.isSaved()) {
+            return removeRelationshipFromUI()
+        }
+
         const removeRelationship = (): void => {
             relationship.remove()
-            relationships.value.splice(relationships.value.indexOf(relationship), 1)
+            removeRelationshipFromUI()
         }
 
         if(force) {
@@ -137,14 +147,19 @@
                                 @change="saveRelationship(relationship)"
                             />
                         </div>
-                        <!-- ui select with models related to relationship.modelId -->
-                        <UiDropdownSelect
-                            v-model="relationship.relatedModelId"
-                            :may-open="relationship.isNew() && !relationship.hasRelatedModel() && relationship.hasType()"
-                            placeholder="Relationship Model"
-                            :options="getModelsForSelect()"
-                            @change="saveRelationship(relationship)"
-                        />
+
+                        <template v-if="!relationship.isThrough()">
+                            <UiDropdownSelect
+                                v-model="relationship.relatedModelId"
+                                :may-open="relationship.isNew() && !relationship.hasRelatedModel() && relationship.hasType()"
+                                placeholder="Relationship Model"
+                                :options="getModelsForSelect()"
+                                @change="saveRelationship(relationship)"
+                            />
+                        </template>
+                        <template v-else>
+                            <UiText placeholder="Relationship Name" v-model="relationship.name" />
+                        </template>
                     </div>
 
                     <span class="relative">
@@ -163,12 +178,39 @@
                     </span>
                 </div>
 
+                <div class="flex justify-between gap-2" v-if="relationship.hasTypeAndRelatedModel() && !relationship.isThrough()">
+                    <template v-if="relationship.isCommon()">
+                        <div class="w-1/2">
+                            <UiText
+                                v-model="relationship.name"
+                                placeholder="Relationship name"
+                                @input="saveRelationship(relationship)"
+                            />
+                        </div>
+                        <div class="w-1/2">
+                            <UiText
+                                v-model="relationship.foreignKeyName"
+                                placeholder="Foreign Key Name"
+                                @input="saveRelationship(relationship)"
+                            />
+                        </div>
+                    </template>
+
+                    <template v-if="relationship.isManyToMany()">
+
+                    </template>
+                    <template v-else>
+
+                    </template>
+                </div>
+
                 <div>
-                    <UiText
-                        v-model="relationship.name"
-                        placeholder="Relationship name"
-                        @input="saveRelationship(relationship)"
-                    />
+                    <UiButton
+                        v-if="relationship.hasTypeAndRelatedModel()"
+                        @click="finishRelationshipCreation(relationship)"
+                    >
+                        Save Relationship
+                    </UiButton>
                 </div>
             </div>
         </div>
