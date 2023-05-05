@@ -1,0 +1,49 @@
+import Relationship from "@Common/models/Relationship"
+import RelationshipTypes from '@Common/models/static/RelationshipTypes'
+
+export default abstract class RelationshipService {
+    abstract getDefaultName(): string
+    abstract get relationship(): Relationship
+
+    calculateName(): string {
+        const finalName = this.getFinalDefaultName()
+
+        this.relationship.defaultName = finalName
+        this.relationship.usingFirstDefaultName = finalName === this.getDefaultName()
+
+        if(this.relationship.name) return
+
+        this.relationship.name = finalName
+
+        return finalName
+    }
+
+    getFinalDefaultName(): string {
+        const name = this.getDefaultName(),
+            nameCount = this.countRelationshipsWithSameName(name),
+            hasSimilarNames = nameCount > 0
+
+        return hasSimilarNames ? `${name}${nameCount + 1}` : name
+    }
+
+    countRelationshipsWithSameName(name: string) {
+        const allRelationships = this.relationship.model.ownRelationships,
+            nameRegex = new RegExp(`(${name})([0-9])*`)
+
+        const count = allRelationships
+            .filter(rel => nameRegex.test(rel.name))
+            .length
+
+        return count
+    }
+
+    checkTypeAndRelatedModel() {
+        if(!this.relationship.hasTypeAndRelatedModel()) { 
+            throw new Error('Please specify a valid type and related model')
+        }
+    }
+
+    getInverseTypeKey(): string {
+        return RelationshipTypes.get()[this.relationship.type].inverse
+    }
+}
