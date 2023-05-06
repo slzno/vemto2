@@ -1,45 +1,34 @@
+<% const crud = this.crud %>
+<% const model = crud.model %>
+<% const table = model.table %>
+<% const modelName = crud.model.name %>
+<% const camelCase = this.require('camelCase') %>
+<% const paramCase = this.require('paramCase') %>
+<% const viewsFolderName = camelCase(crud.model.plural) %>
+<% const instanceVarName = camelCase(crud.model.plural) %>
+<% const collectionVarName = camelCase(crud.model.plural) %>
+
 <input type="text" placeholder="Search...">
 
 <table>
     <thead>
         <tr>
-            <th>Id</th>
-            <th>Name</th>
+            <% for (let column of table.columns) { %>
+                <th><$ column.name $></th>
+            <% } %>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
+        @foreach ($<$ collectionVarName $> as $<$ instanceVarName $>)
         <tr>
-            <td>1</td>
-            <td>John</td>
+            <% for (let column of table.columns) { %>
+                <td>{{ $<$ instanceVarName $>-><$ column.name $> }}</td>
+            <% } %>
             <td>
-                <a href="/edit/1">Edit</a>
-                <a href="/delete/1">Delete</a>
+                Edit
             </td>
         </tr>
-        <tr>
-            <td>2</td>
-            <td>Paul</td>
-            <td>
-                <a href="/edit/2">Edit</a>
-                <a href="/delete/2">Delete</a>
-            </td>
-        </tr>
-        <tr>
-            <td>3</td>
-            <td>George</td>
-            <td>
-                <a href="/edit/3">Edit</a>
-                <a href="/delete/3">Delete</a>
-            </td>
-        </tr>
-        <tr>
-            <td>4</td>
-            <td>Ringo</td>
-            <td>
-                <a href="/edit/4">Edit</a>
-                <a href="/delete/4">Delete</a>
-            </td>
-        </tr>
+        @endforeach
     </tbody>
 </table>

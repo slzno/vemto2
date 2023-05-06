@@ -1,5 +1,6 @@
 import Crud from "@Common/models/crud/Crud"
 import RenderableLivewireIndexView from "./views/livewire/RenderableLivewireIndexView"
+import RenderableLivewireIndexComponent from "./views/livewire/RenderableLivewireIndexComponent"
 
 export default class GenerateCrudFiles {
     async start() {
@@ -7,6 +8,7 @@ export default class GenerateCrudFiles {
 
         for (const crud of cruds) {
             await new RenderableLivewireIndexView(crud).render()
+            await new RenderableLivewireIndexComponent(crud).render()
         }
     }
 }

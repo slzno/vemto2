@@ -37,7 +37,7 @@ export default class Crud extends RelaDB.Model {
     static createFromModel(model: Model) {
         const crud = new Crud()
         crud.type = CrudType.LIVEWIRE
-        crud.name = model.name + " CRUD"
+        crud.name = model.plural
         crud.modelId = model.id
         crud.projectId = model.projectId
         crud.save()

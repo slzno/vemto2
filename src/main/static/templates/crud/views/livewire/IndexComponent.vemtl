@@ -1,1 +1,30 @@
+<% const crud = this.crud %>
+<% const modelName = crud.model.name %>
+<% const camelCase = this.require('camelCase') %>
+<% const paramCase = this.require('paramCase') %>
+<% const viewsFolderName = camelCase(crud.model.plural) %>
+<% const collectionVarName = camelCase(crud.model.plural) %>
 <?php
+
+namespace App\Http\Livewire;
+ 
+use Livewire\Component;
+use App\Models\<$ modelName $>;
+ 
+class <$ this.filenameWithoutExtension $> extends Component
+{
+    
+    public <$ modelName $> $<$ collectionVarName $>;
+
+    public function mount()
+    {
+        $this-><$ collectionVarName $> = <$ modelName $>::paginate(10);
+    }
+
+    public function render()
+    {
+        return view('livewire.<$ viewsFolderName $>.index', [
+            '<$ collectionVarName $>' => $this-><$ collectionVarName $>,
+        ]);
+    }
+}
