@@ -40,4 +40,8 @@ export default class RenderableModel extends Renderable {
             model: this.model,
         }
     }
+
+    protected afterRender(renderedContent: string): void {
+        console.log(renderedContent)
+    }
 }

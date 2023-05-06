@@ -20,6 +20,9 @@ export default abstract class Renderable {
     abstract getFormatter(): RenderableFileFormatter
     abstract getData(): any
     abstract canRender(): boolean
+    
+    protected beforeRender?(): void
+    protected afterRender?(renderedContent: string): void
 
     setProject(project: Project) {
         this.project = project
@@ -32,6 +35,8 @@ export default abstract class Renderable {
             console.log(`Skipping ${this.getTemplateFile()} for file ${this.getFullFilePath()}...`)
             return
         }
+
+        if(this.beforeRender) this.beforeRender()
 
         console.log(`Rendering ${this.getTemplateFile()} as ${this.getFullFilePath()}...`)
 
@@ -46,6 +51,8 @@ export default abstract class Renderable {
             const compiledTemplate = await this.compile()
             
             file.setContent(compiledTemplate)
+            
+            if(this.afterRender) this.afterRender(compiledTemplate)
         } catch (error: any) {
             file.setError(error.message)
         }

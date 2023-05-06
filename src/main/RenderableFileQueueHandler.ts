@@ -42,14 +42,6 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
         try {
             const completePath = path.join(project.getPath(), ".vemto", "templates", file.template)
 
-            let templateContent = ''
-
-            if(FileSystem.fileExists(completePath)) {
-                templateContent = FileSystem.readFile(completePath)
-            }
-
-            templateContent = FileSystem.readFile(path.join(app.getAppPath(), "static", "templates", file.template))
-
             const relativeFilePath = path.join(file.path, file.name),
                 projectFilePath = path.join(project.getPath(), relativeFilePath),
                 vemtoFilePath = path.join(project.getPath(), ".vemto", "generated-files", relativeFilePath),
@@ -72,6 +64,8 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
                 }
                 
                 const mergedFileContent = FileSystem.readFileIfExists(mergedFileData.file.path)
+
+                console.log(mergedFileContent)
 
                 const formattedMergedFileContent = PhpFormatter.setContent(
                     mergedFileContent

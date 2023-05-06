@@ -21,6 +21,7 @@
         { label: "Menu", value: "menu" },
         { label: "Domains", value: "domains" },
         { label: "Default Files", value: "default_files" },
+        { label: "Themes", value: "themes" },
     ]
 </script>
 
