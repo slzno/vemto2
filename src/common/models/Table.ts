@@ -5,6 +5,7 @@ import Project from './Project'
 import RelaDB from '@tiago_silva_pereira/reladb'
 import DataComparator from './services/DataComparator'
 import DataComparisonLogger from './services/DataComparisonLogger'
+import Relationship from './Relationship'
 
 export default class Table extends RelaDB.Model implements SchemaModel {
     id: string
@@ -254,7 +255,8 @@ export default class Table extends RelaDB.Model implements SchemaModel {
     }
 
     getRelatedTables(): Table[] {
-        let relatedTables: Table[] = []
+        let relatedTables: Table[] = [],
+            relatedTablesIds: string[] = []
 
         this.getForeignIndexes().forEach((index) => {
             const foreignTable = index.getForeignTable()
@@ -263,17 +265,37 @@ export default class Table extends RelaDB.Model implements SchemaModel {
 
             let relatedTable = this.project.findTableByName(foreignTable.name)
 
-            if(relatedTable) {
+            if(relatedTable && !relatedTablesIds.includes(relatedTable.id)) {
                 relatedTables.push(relatedTable)
+                relatedTablesIds.push(relatedTable.id)
             }
         })
-                
+        
+        this.getRelationships().forEach((relationship: Relationship) => {
+            let relatedTable = relationship.relatedModel.table
+
+            if(relatedTable && !relatedTablesIds.includes(relatedTable.id)) {
+                relatedTables.push(relatedTable)
+                relatedTablesIds.push(relatedTable.id)
+            }
+        })
 
         return relatedTables
     }
 
     getModels(): Model[] {
-        return this.models.filter((model) => !model.isRemoved())
+        return this.models.filter((model: Model) => !model.isRemoved())
+    }
+
+    getRelationships(): Relationship[] {
+        let relationships: Relationship[] = []
+
+        this.getModels().forEach((model: Model) => {
+            relationships = relationships
+                .concat(model.ownRelationships)
+        })
+
+        return relationships
     }
 
     hasTimestamps(): boolean {
