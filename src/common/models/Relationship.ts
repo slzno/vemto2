@@ -3,10 +3,10 @@ import Project from './Project'
 import RelaDB from '@tiago_silva_pereira/reladb'
 import DataComparator from './services/DataComparator'
 import DataComparisonLogger from './services/DataComparisonLogger'
-import WordManipulator from '@Common/util/WordManipulator'
-import Foreign from './Foreign'
 import Column from './Column'
 import CalculateCommonRelationshipsData from './services/relationships/CalculateCommonRelationshipsData'
+import CalculateManyToManyRelationshipsData from './services/relationships/CalculateManyToManyRelationshipsData'
+import Table from './Table'
 
 export default class Relationship extends RelaDB.Model implements SchemaModel {
     id: string
@@ -21,18 +21,19 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
     localKeyName: string
     relatedKeyName: string
     morphType: string
-    
-    /** Relationships Keys */
+
     //-- BelongsTo, HasMany e HasOne
     foreignKeyName: string
     ownerKeyName: string
 
     //-- BelongsToMany
-    foreignPivotKey: string
-    relatedPivotKey: string
-    parentKey: string
-    relatedKey: string
+    foreignPivotKeyName: string // id da classe atual na tabela pivot
+    relatedPivotKeyName: string // id da classe parent na tabela pivot
+    relatedKeyId: string // primary key da classe parent
     pivotTableName: string
+
+    pivotId: string
+    pivot: Model
     
     model: Model
     modelId: string
@@ -45,7 +46,7 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
     foreignKeyId: string
     foreignKey: Column
 
-    parentKeyId: string
+    parentKeyId: string // primary key da classe atual
     parentKey: Column
     
     /**
@@ -69,6 +70,7 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
             relatedModel: () => this.belongsTo(Model, 'relatedModelId'),
             foreignKey: () => this.belongsTo(Column, 'foreignKeyId'),
             parentKey: () => this.belongsTo(Column, 'parentKeyId'),
+            pivot: () => this.belongsTo(Model, 'pivotId')
         }
     }
 
@@ -153,7 +155,8 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
         }
 
         if(this.isManyToMany()) {
-
+            CalculateManyToManyRelationshipsData.setRelationship(this)
+                .calculateDefaultData()
         }
     }
 
@@ -165,7 +168,9 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
         }
 
         if(this.isManyToMany()) {
-            // do something
+            CalculateManyToManyRelationshipsData.setRelationship(this)
+                .processAndSave(createInverse)
+            return
         }
     }
 

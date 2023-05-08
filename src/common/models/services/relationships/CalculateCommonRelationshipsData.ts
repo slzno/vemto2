@@ -41,15 +41,6 @@ class CalculateCommonRelationshipsData extends RelationshipService {
         this.addToInverseRelation()
     }
 
-    addToInverseRelation(): void {
-        let inverse = this.relationship.inverse.fresh()
-        
-        if(!inverse.inverseId) {
-            inverse.inverseId = this.relationship.id
-            inverse.save()
-        }
-    }
-
     createInverseRelationship() {
         if(this.relationship.inverseId) return
         

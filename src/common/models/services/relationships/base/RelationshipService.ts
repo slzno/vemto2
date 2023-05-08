@@ -58,4 +58,13 @@ export default abstract class RelationshipService {
     getInverseTypeKey(): string {
         return RelationshipTypes.get()[this.relationship.type].inverse
     }
+
+    addToInverseRelation(): void {
+        let inverse = this.relationship.inverse.fresh()
+        
+        if(!inverse.inverseId) {
+            inverse.inverseId = this.relationship.id
+            inverse.save()
+        }
+    }
 }

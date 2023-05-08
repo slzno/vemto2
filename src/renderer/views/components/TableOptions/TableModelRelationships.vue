@@ -193,7 +193,7 @@
                                 </div>
                                 <div>
                                     <UiText
-                                        v-model="relationship.pivotOriginalName"
+                                        v-model="relationship.pivotTableName"
                                         placeholder="Pivot Table Name"
                                         @input="saveRelationship(relationship)"
                                     />
@@ -202,15 +202,15 @@
                             <div class="flex-1 flex gap-1">
                                 <div>
                                     <UiText
-                                        v-model="relationship.localModelKeyOriginalName"
-                                        placeholder="Local Model Key Name"
+                                        v-model="relationship.foreignPivotKeyName"
+                                        placeholder="Foreign Pivot Key Name"
                                         @input="saveRelationship(relationship)"
                                     />
                                 </div>
                                 <div>
                                     <UiText
-                                        v-model="relationship.modelKeyOriginalName"
-                                        placeholder="Joined Model Key Name"
+                                        v-model="relationship.relatedPivotKeyName"
+                                        placeholder="Related Pivot Key Name"
                                         @input="saveRelationship(relationship)"
                                     />
                                 </div>

@@ -57,10 +57,10 @@ class ModelRepository {
                             'ownerKeyName' => method_exists($return, 'getOwnerKeyName') ? $return->getOwnerKeyName() : null,
 
                             // BelongsToMany
-                            'foreignPivotKey' => method_exists($return, 'getForeignPivotKeyName') ? $return->getForeignPivotKeyName() : null,
-                            'relatedPivotKey' => method_exists($return, 'getRelatedPivotKeyName') ? $return->getRelatedPivotKeyName() : null,
-                            'parentKey' => method_exists($return, 'getParentKeyName') ? $return->getParentKeyName() : null,
-                            'relatedKey' => method_exists($return, 'getRelatedKeyName') ? $return->getRelatedKeyName() : null,
+                            'foreignPivotKeyName' => method_exists($return, 'getForeignPivotKeyName') ? $return->getForeignPivotKeyName() : null,
+                            'relatedPivotKeyName' => method_exists($return, 'getRelatedPivotKeyName') ? $return->getRelatedPivotKeyName() : null,
+                            'parentKeyName' => method_exists($return, 'getParentKeyName') ? $return->getParentKeyName() : null,
+                            'relatedKeyName' => method_exists($return, 'getRelatedKeyName') ? $return->getRelatedKeyName() : null,
                             'pivotTableName' => method_exists($return, 'getTable') ? $return->getTable() : null,
 
                             'relatedKeyName' => method_exists($return, 'getRelatedKeyName') ? $return->getRelatedKeyName() : null,
