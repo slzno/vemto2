@@ -30,7 +30,10 @@ class <$ this.filenameWithoutExtension $> extends Factory
     {
         return [
             <% for (let column of model.table.getColumns()) { %>
-                <% if(column.hasFaker() && !column.isPrimaryKey() && !column.isForeignKey()) { %>
+                <% let columnIsKey = column.isPrimaryKey() || column.isForeignKey() %>
+                <% let canAddColumn = !column.isDefaultLaravelTimestamp() && !columnIsKey %>
+                <# --- #>
+                <% if(canAddColumn && column.hasFaker()) { %>
                 '<$ column.name $>' => <$ column.getFakerForTemplate() $>,
                 <% } %>
             <% } %>

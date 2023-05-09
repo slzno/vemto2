@@ -19,25 +19,10 @@ class <$ this.filenameWithoutExtension $> extends Component
 
     public $search;
 
-    public function getRowsProperty()
-    {
-        $this->rowsQuery->paginate(10);
-    }
-
-    public function getRowsQueryProperty()
-    {
-        $query = <$ modelName $>::query()
-            ->where(function ($query) {
-                $query->where('title', 'like', '%' . $this->search . '%');
-            });
-
-        return $query;
-    }
-
     public function render()
     {
         return view('livewire.<$ viewsFolderName $>.index', [
-            '<$ collectionVarName $>' => $this->rows,
+            '<$ collectionVarName $>' => <$ modelName $>::paginate(10),
         ]);
     }
 }

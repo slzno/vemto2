@@ -8,27 +8,31 @@
 <% const instanceVarName = camelCase(crud.model.name) %>
 <% const collectionVarName = camelCase(crud.model.plural) %>
 
-<input type="text" placeholder="Search...">
+<div>
+    <input type="text" placeholder="Search...">
 
-<table>
-    <thead>
-        <tr>
-            <% for (let column of table.columns) { %>
-                <th><$ column.name $></th>
-            <% } %>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach ($<$ collectionVarName $> as $<$ instanceVarName $>)
-        <tr>
-            <% for (let column of table.columns) { %>
-                <td>{{ $<$ instanceVarNamee $>-><$ column.name $> }}</td>
-            <% } %>
-            <td>
-                Edit
-            </td>
-        </tr>
-        @endforeach
-    </tbody>
-</table>
+    <table>
+        <thead>
+            <tr>
+                <% for (let column of table.columns) { %>
+                    <th><$ column.name $></th>
+                <% } %>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($<$ collectionVarName $> as $<$ instanceVarName $>)
+            <tr>
+                <% for (let column of table.columns) { %>
+                    <td>{{ $<$ instanceVarName $>-><$ column.name $> }}</td>
+                <% } %>
+                <td>
+                    Edit
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    {{ $posts->links() }}
+</div>

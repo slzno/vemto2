@@ -46,17 +46,20 @@ import TextUtil from "@Renderer/../common/util/TextUtil"
     <div class="space-y-2" v-if="templateContent">
         <div class="bg-slate-100 dark:bg-slate-950 rounded-lg p-4">
             <div class="text-red-400">Error: {{ errorMessage }}</div>
-            <div class="text-slate-400">Error on line: {{ errorLine }} on template {{ template }}</div>
+            <div class="text-slate-300">On line <b>{{ errorLine }}</b> of template <span class="underline cursor-pointer hover:text-red-400">{{ template }}</span></div>
         </div>
         <div class="bg-slate-100 dark:bg-slate-950 rounded-lg p-4">
             <div
                 v-for="(line, index) in surroundingLines"
                 :key="index"
-                class="py-1 px-2"
-                :class="{ 'text-slate-400': line.number !== errorLine, 'text-red-400 bg-gray-800': line.number === errorLine  }"
+                class="py-1 px-2 flex items-center space-x-4"
+                :class="{ 'text-slate-500': line.number !== errorLine, 'text-red-400 bg-gray-800': line.number === errorLine  }"
             >
+                <div class="opacity-50 font-semibold">
+                    {{ line.number  }}
+                </div>
                 <div>
-                    {{ line.content }}<br>
+                    {{ line.content.split(" ").join("&nbsp;") }}<br>
                 </div>
             </div>
         </div>
