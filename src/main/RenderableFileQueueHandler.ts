@@ -40,8 +40,6 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
 
     const processFile = async (file: RenderableFile) => {
         try {
-            const completePath = path.join(project.getPath(), ".vemto", "templates", file.template)
-
             const relativeFilePath = path.join(file.path, file.name),
                 projectFilePath = path.join(project.getPath(), relativeFilePath),
                 vemtoFilePath = path.join(project.getPath(), ".vemto", "generated-files", relativeFilePath),
@@ -50,7 +48,8 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
             // Write the Vemto version for future comparison or merge
             FileSystem.writeFile(vemtoFilePath, file.content)
 
-            const currentFileContent = FileSystem.readFileIfExists(projectFilePath)
+            const currentFileContent = FileSystem.readFileIfExists(projectFilePath),
+                previousFileContent = FileSystem.readFileIfExists(previousFilePath) || ''
 
             if(file.type === RenderableFileType.PHP_CLASS) {
                 let mergedFileData = await mergeFiles(vemtoFilePath, projectFilePath, previousFilePath)
@@ -65,8 +64,6 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
                 
                 const mergedFileContent = FileSystem.readFileIfExists(mergedFileData.file.path)
 
-                console.log(mergedFileContent)
-
                 const formattedMergedFileContent = PhpFormatter.setContent(
                     mergedFileContent
                 ).addLineBreaksToParsedContent().format()
@@ -78,7 +75,7 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
                 return true
             }
 
-            if(currentFileContent && currentFileContent !== file.content) {
+            if(currentFileContent && currentFileContent.trim() !== previousFileContent.trim()) {
                 const conflictsFileName = TextUtil.random(32) + '.json',
                     conflictsFilePath = path.join(project.getPath(), ".vemto", "conflicts", conflictsFileName)
                 
