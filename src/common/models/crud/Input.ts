@@ -14,6 +14,8 @@ export default class Input extends RelaDB.Model {
     crud: Crud
     panelId: string
     panel: CrudPanel
+    columnId: string
+    column: Column
     name: string
     type: string
     label: string
@@ -42,12 +44,14 @@ export default class Input extends RelaDB.Model {
     relationships() {
         return {
             crud: () => this.belongsTo(Crud),
+            column: () => this.belongsTo(Column),
             panel: () => this.belongsTo(CrudPanel, "panelId"),
         }
     }
 
     static createFromColumn(column: Column) {
         const input = new Input()
+        input.columnId = column.id
         input.name = column.name
         input.type = InputType.TEXT
         input.label = changeCase.sentenceCase(column.name)

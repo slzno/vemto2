@@ -14,8 +14,8 @@
     <table>
         <thead>
             <tr>
-                <% for (let column of table.columns) { %>
-                    <th><$ column.name $></th>
+                <% for (let input of crud.inputs) { %>
+                    <th><$ input.column.name $></th>
                 <% } %>
                 <th>Actions</th>
             </tr>
@@ -23,8 +23,8 @@
         <tbody>
             @foreach ($<$ collectionVarName $> as $<$ instanceVarName $>)
             <tr>
-                <% for (let column of table.columns) { %>
-                    <td>{{ $<$ instanceVarName $>-><$ column.name $> }}</td>
+                <% for (let input of crud.inputs) { %>
+                    <td>{{ $<$ instanceVarName $>-><$ input.column.name $> }}</td>
                 <% } %>
                 <td>
                     Edit

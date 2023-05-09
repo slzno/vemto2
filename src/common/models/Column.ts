@@ -8,6 +8,7 @@ import ColumnsDefaultDataInterface from './column-types/default/base/ColumnsDefa
 import ColumnTypeList from './column-types/base/ColumnTypeList'
 import DataComparisonLogger from './services/DataComparisonLogger'
 import DataComparator from './services/DataComparator'
+import Input from './crud/Input'
 
 export default class Column extends RelaDB.Model implements SchemaModel {
     id: string
@@ -28,6 +29,7 @@ export default class Column extends RelaDB.Model implements SchemaModel {
     places: number
     autoIncrement: boolean
     faker: string
+    inputs: Input[]
 
     constructor(data: any = {}) {
         const columnData = Object.assign(ColumnData.getDefault(), data)
@@ -42,6 +44,7 @@ export default class Column extends RelaDB.Model implements SchemaModel {
     relationships() {
         return {
             table: () => this.belongsTo(Table),
+            inputs: () => this.hasMany(Input),
         }
     }
 
