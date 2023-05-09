@@ -38,6 +38,8 @@ export default class RenderableFile extends RelaDB.Model {
     project: Project
     projectId: string
     error: string
+    hasTemplateError: boolean
+    templateErrorLine: number
     type: RenderableFileType
     formatter: string
     conflictFileName: string

@@ -7,6 +7,7 @@
     import UiButton from '@Renderer/components/ui/UiButton.vue'
     import { ArrowPathIcon, TrashIcon } from '@heroicons/vue/24/outline'
     import SequentialGenerator from '@Renderer/codegen/sequential/SequentialGenerator'
+import TemplateErrorViewer from './components/Common/TemplateErrorViewer.vue'
 
     const projectStore = useProjectStore()
 
@@ -40,11 +41,11 @@
         <div
             v-for="file in projectStore.project.renderableFiles"
             :key="file.id"
-            class="flex flex-col bg-slate-200 dark:bg-slate-850 dark:hover:bg-slate-800 w-full rounded-lg mb-2 p-2 px-x"
+            class="flex flex-col bg-slate-200 dark:bg-slate-850 dark:hover:bg-slate-800 w-full rounded-lg mb-2 p-2 px-2"
         >
             <div class="flex items-center justify-between">
                 <div 
-                    class="flex mx-2 cursor-pointer" 
+                    class="flex cursor-pointer" 
                     @click="openFile(file)"
                 >
                     <div class="w-24">
@@ -72,8 +73,14 @@
                 </div>
             </div>
 
-            <div class="text-red-400 px-2 text-sm" v-if="file.status === RenderableFileStatus.ERROR">
-                {{ file.error }}
+            <div class="text-sm mt-2" v-if="file.status === RenderableFileStatus.ERROR">
+                <div v-if="file.hasTemplateError">
+                    <TemplateErrorViewer :errorMessage="file.error" :template="file.template" :errorLine="file.templateErrorLine" />
+                </div>
+
+                <div class="text-red-400 bg-slate-100 dark:bg-slate-950 rounded-lg p-4" v-else>
+                    {{ file.error }}
+                </div>
             </div>
         </div>
     </div>

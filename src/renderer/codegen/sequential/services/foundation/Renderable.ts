@@ -55,6 +55,12 @@ export default abstract class Renderable {
             if(this.afterRender) this.afterRender(compiledTemplate)
         } catch (error: any) {
             file.setError(error.message)
+
+            if(error.hasTemplateError) {
+                file.hasTemplateError = true
+                file.templateErrorLine = error.templateLine
+                file.save()
+            }
         }
     }
 
