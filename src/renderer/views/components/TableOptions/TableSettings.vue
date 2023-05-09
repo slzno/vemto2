@@ -10,6 +10,10 @@
     const saveTable = debounce(() => {
         table.value.saveFromInterface()
     }, 500)
+
+    const logTable = (table: any) => {
+        console.log(table)
+    }
 </script>
 <template>
     <div>
@@ -17,6 +21,7 @@
             <UiText v-model="table.name" placeholder="Table name" label="Table name" @change="saveTable()" />
     
             <UiButton @click="table.logDataComparison()">Log data comparison</UiButton>
+            <UiButton @click="logTable(table)">Log table data</UiButton>
         </section>
     </div>
 </template>

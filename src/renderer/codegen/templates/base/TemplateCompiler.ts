@@ -83,12 +83,17 @@ export default new class TemplateCompiler {
             return this.templateEngine
                 .setData(this.data)    
                 .compileWithErrorTreatment()
-        } catch (error) {
+        } catch (error: any) {
             const latestError = this.templateEngine.getLatestError()
 
-            Alert.error('Error on template line ' + latestError.templateLine)
-            console.error('Error on template line ' + latestError.templateLine)
-            console.log('Data: ', this.data)
+            if(latestError) {
+                Alert.error('Error on template line ' + latestError.templateLine)
+                console.error('Error on template line ' + latestError.templateLine)
+                console.log('Data: ', this.data)
+                
+                error.hasTemplateError = true
+                error.templateLine = latestError.templateLine
+            }
 
             throw error
         }

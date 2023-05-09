@@ -5,7 +5,7 @@
 <% const camelCase = this.require('camelCase') %>
 <% const paramCase = this.require('paramCase') %>
 <% const viewsFolderName = camelCase(crud.model.plural) %>
-<% const instanceVarName = camelCase(crud.model.plural) %>
+<% const instanceVarName = camelCase(crud.model.name) %>
 <% const collectionVarName = camelCase(crud.model.plural) %>
 
 <input type="text" placeholder="Search...">
@@ -23,7 +23,7 @@
         @foreach ($<$ collectionVarName $> as $<$ instanceVarName $>)
         <tr>
             <% for (let column of table.columns) { %>
-                <td>{{ $<$ instanceVarName $>-><$ column.name $> }}</td>
+                <td>{{ $<$ instanceVarNamee $>-><$ column.name $> }}</td>
             <% } %>
             <td>
                 Edit
