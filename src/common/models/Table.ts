@@ -316,10 +316,6 @@ export default class Table extends RelaDB.Model implements SchemaModel {
         return (!! this.migrations) && this.migrations.length > 0
     }
 
-    hasCreationMigration(): boolean {
-        return !! this.getCreationMigration()
-    }
-
     latestMigrationCreatedTable(): boolean {
         let latestMigration = this.getLatestMigration()
 
@@ -342,16 +338,20 @@ export default class Table extends RelaDB.Model implements SchemaModel {
         return latestMigration
     }
 
+    needsCreationMigration(): boolean {
+        return !this.hasCreationMigration()
+    }
+
+    hasCreationMigration(): boolean {
+        return !! this.getCreationMigration()
+    }
+
     getCreationMigration(): any {
         return this.migrations.find((migration) => migration.createdTables.includes(this.name))
     }
 
     canUpdateLatestMigration(): boolean {
         return this.hasMigrations()
-    }
-
-    needsCreationMigration(): boolean {
-        return !! this.needsMigration
     }
 
     wasCreatedFromInterface(): boolean {
