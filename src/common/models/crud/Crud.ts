@@ -1,6 +1,7 @@
 import Input from "./Input"
 import CrudPanel from "./CrudPanel"
 import Model from "@Common/models/Model"
+import { capitalCase } from "change-case"
 import Project from "@Common/models/Project"
 import RelaDB from "@tiago_silva_pereira/reladb"
 
@@ -8,6 +9,11 @@ export enum CrudType {
     DEFAULT = "Default",
     VUE = "Vue",
     LIVEWIRE = "Livewire",
+}
+
+export interface CrudSettings {
+    itemTitle: string
+    collectionTitle: string
 }
 
 export default class Crud extends RelaDB.Model {
@@ -20,6 +26,7 @@ export default class Crud extends RelaDB.Model {
     projectId: string
     panels: CrudPanel[]
     inputs: Input[]
+    settings: CrudSettings
 
     static identifier() {
         return "Crud"
@@ -37,9 +44,17 @@ export default class Crud extends RelaDB.Model {
     static createFromModel(model: Model) {
         const crud = new Crud()
         crud.type = CrudType.LIVEWIRE
-        crud.name = model.plural
+        crud.name = capitalCase(model.plural)
         crud.modelId = model.id
         crud.projectId = model.projectId
+
+        crud.settings = {
+            itemTitle: capitalCase(model.name),
+            collectionTitle: capitalCase(model.plural),
+        }
+
+        console.log()
+
         crud.save()
 
         crud.addInputsFromModel(model)

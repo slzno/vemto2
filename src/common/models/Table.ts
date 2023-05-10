@@ -20,6 +20,8 @@ export default class Table extends RelaDB.Model implements SchemaModel {
     migrations: any[]
     positionX: number
     positionY: number
+    labelColumn: Column
+    labelColumnId: string
     needsMigration: boolean
     createdFromInterface: boolean
 
@@ -30,6 +32,7 @@ export default class Table extends RelaDB.Model implements SchemaModel {
     relationships() {
         return {
             project: () => this.belongsTo(Project),
+            labelColumn: () => this.belongsTo(Column),
             models: () => this.hasMany(Model).cascadeDelete(),
             indexes: () => this.hasMany(Index).cascadeDelete(),
             columns: () => this.hasMany(Column).cascadeDelete().orderBy('order'),
@@ -146,6 +149,10 @@ export default class Table extends RelaDB.Model implements SchemaModel {
 
     hasColumnExceptId(columnName: string, columnId: string): boolean {
         return this.getColumns().find((column) => column.name === columnName && column.id != columnId) !== undefined
+    }
+
+    getPrimaryKey(): Column {
+        return this.getColumns().find((column) => column.isPrimaryKey())
     }
 
     doesNotHaveColumn(columnName: string): boolean {
@@ -374,5 +381,18 @@ export default class Table extends RelaDB.Model implements SchemaModel {
 
     isRemoved(): boolean {
         return !! this.removed
+    }
+
+    getLabelColumn(): Column {
+        if(this.labelColumn) return this.labelColumn
+
+        let nameField = this.columns.find(column => column.name == 'name' || column.name == 'title'),
+            firstStringField = this.columns.find(column => column.isTextual())
+
+        if(nameField) return nameField
+
+        if(firstStringField) return firstStringField
+
+        return this.getPrimaryKey()
     }
 }

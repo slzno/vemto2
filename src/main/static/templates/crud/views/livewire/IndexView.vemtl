@@ -2,14 +2,15 @@
 <% const model = crud.model %>
 <% const table = model.table %>
 <% const modelName = crud.model.name %>
+<% const colspanSize = crud.inputs.length + 1 %>
 <% const camelCase = this.require('camelCase') %>
 <% const paramCase = this.require('paramCase') %>
 <% const viewsFolderName = camelCase(crud.model.plural) %>
-<% const instanceVarName = camelCase(crud.model.name) %>
+<% const itemVarName = camelCase(crud.model.name) %>
 <% const collectionVarName = camelCase(crud.model.plural) %>
 
 <div>
-    <input type="text" placeholder="Search...">
+    <input wire:model="search" type="text" placeholder="Search <$ crud.settings.collectionTitle $>...">
 
     <table>
         <thead>
@@ -21,16 +22,20 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($<$ collectionVarName $> as $<$ instanceVarName $>)
-            <tr>
+            @forelse ($<$ collectionVarName $> as $<$ itemVarName $>)
+            <tr wire:loading.class.delay="opacity-75">
                 <% for (let input of crud.inputs) { %>
-                    <td>{{ $<$ instanceVarName $>-><$ input.column.name $> }}</td>
+                    <td>{{ $<$ itemVarName $>-><$ input.column.name $> }}</td>
                 <% } %>
                 <td>
                     Edit
                 </td>
             </tr>
-            @endforeach
+            @empty
+            <tr>
+                <td colspan="<$ colspanSize $>">No <$ crud.settings.collectionTitle $> found.</td>
+            </tr>
+            @endforelse
         </tbody>
     </table>
 
