@@ -354,6 +354,47 @@ export default class Table extends RelaDB.Model implements SchemaModel {
         return !! this.removed
     }
 
+    getColumnByName(columnName: string): Column {
+        return this.columns.find(column => column.name == columnName)
+    }
+
+    addForeign(name: string, relatedModel: Model): Index {
+        const column = this.getOrCreateForeignColumn(name, relatedModel)
+
+        if(column.isForeign()) return
+
+        new Index({
+            name: column.name,
+            columns: [column.name],
+            type: 'foreign'
+        }).save()
+    }
+
+    getOrCreateForeignColumn(name: string, relatedModel: Model): Column {
+        let column = this.getColumnByName(name),
+            primaryKey = relatedModel.getPrimaryKey()
+
+        if(!primaryKey) throw new Error('Related model has no primary key when trying to create foreign')
+
+        if(!column) {
+            column = new Column({
+                tableId: this.id,
+                modelId: this.id,
+                name: name,
+                type: primaryKey.getForeignType()
+            })
+        }
+
+        // If is related with the same model, the field needs to be nullable
+        if(this.id === relatedModel.id) {
+            column.nullable = true
+        }
+
+        column.save()
+
+        return column
+    }
+
     syncSourceCode() {
         this.models.forEach((model) => model.syncSourceCode())
     }

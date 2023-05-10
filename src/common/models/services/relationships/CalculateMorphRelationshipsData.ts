@@ -62,23 +62,14 @@ class CalculateMorphRelationshipsData extends RelationshipService {
     addPivotTable(): void {
         if(this.relationship.pivotId) return
 
-        let pivotName = WordManipulator.pluralize(this.relationship.morphTo),
-            pivot = this.relationship.project.findModelByName(pivotName)
+        const pivotName = WordManipulator.pluralize(this.relationship.morphTo)
+        
+        let pivot = this.relationship.project.findTableByName(pivotName)
 
         if(!pivot) {
-            const table = new Table({
+            pivot = new Table({
                 projectId: this.relationship.projectId,
                 name: pivotName,
-            })
-            
-            table.save()
-
-            pivot = new Model({
-                name: pivotName,
-                tableId: table.id,
-                projectId: this.relationship.project.id,
-                hasGuarded: true,
-                guarded: []
             })
             
             pivot.save()
@@ -90,12 +81,12 @@ class CalculateMorphRelationshipsData extends RelationshipService {
         this.relationship.save()
     }
 
-    createPivotFields(pivot: Model): void {
+    createPivotFields(pivot: Table): void {
         let modelKeyName = this.getDefaultModelKeyName()
         
         pivot.addForeign(modelKeyName, this.relationship.relatedModel)
 
-        this.addMorphableFieldsToModel(
+        this.addMorphableFieldsToPivot(
             pivot, 
             this.relationship.relatedModel.getPrimaryKey().getForeignType()
         )
@@ -106,26 +97,24 @@ class CalculateMorphRelationshipsData extends RelationshipService {
     }
 
     addMorphableFieldsToItself(): void {
-        this.addMorphableFieldsToModel(
-            this.relationship.relatedModel, 
+        this.addMorphableFieldsToPivot(
+            this.relationship.pivot, 
             this.relationship.relatedModel.getPrimaryKey().getForeignType()
         )
     }
 
-    addMorphableFieldsToModel(relatedModel: Model, idColumnType: string = 'unsignedBigInteger') {
+    addMorphableFieldsToPivot(pivot: Table, idColumnType: string = 'unsignedBigInteger') {
         const mophableIdName = this.relationship.morphTo + '_id',
             morphableTypeName = this.relationship.morphTo + '_type'
 
         let idColumn = new Column({
-                    tableId: relatedModel.table.id,
-                    modelId: relatedModel.id,
+                    tableId: pivot.id,
                     name: mophableIdName,
                     type: idColumnType,
                     index: true
                 }),
             typeField = new Column({
-                    tableId: relatedModel.table.id,
-                    modelId: relatedModel.id,
+                    tableId: pivot.id,
                     name: morphableTypeName,
                     type: 'string',
                     index: true

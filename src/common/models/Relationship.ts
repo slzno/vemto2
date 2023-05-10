@@ -1,5 +1,6 @@
 import Model from './Model'
 import Column from './Column'
+import Table from './Table'
 import Project from './Project'
 import RelaDB from '@tiago_silva_pereira/reladb'
 import DataComparator from './services/DataComparator'
@@ -48,7 +49,7 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
     throughKeyName: string
 
     pivotId: string
-    pivot: Model
+    pivot: Table
     
     model: Model
     modelId: string
@@ -87,7 +88,7 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
             parentKey: () => this.belongsTo(Column, 'parentKeyId'),
 
             // Used in BelongsToMany and MorphToMany
-            pivot: () => this.belongsTo(Model, 'pivotId'),
+            pivot: () => this.belongsTo(Table, 'pivotId'),
 
             // Morphs
             idColumn: () => this.belongsTo(Column, 'idColumnId'),

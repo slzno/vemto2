@@ -9,7 +9,6 @@ import ColumnTypeList from './column-types/base/ColumnTypeList'
 import DataComparisonLogger from './services/DataComparisonLogger'
 import DataComparator from './services/DataComparator'
 import Model from './Model'
-import Foreign from './Foreign'
 
 export default class Column extends RelaDB.Model implements SchemaModel {
     id: string
@@ -34,9 +33,6 @@ export default class Column extends RelaDB.Model implements SchemaModel {
     modelId: string
     model: Model
 
-    foreignId: string
-    foreign: Foreign
-
     constructor(data: any = {}) {
         const columnData = Object.assign(ColumnData.getDefault(), data)
 
@@ -50,8 +46,7 @@ export default class Column extends RelaDB.Model implements SchemaModel {
     relationships() {
         return {
             table: () => this.belongsTo(Table),
-            model: () => this.belongsTo(Model),
-            foreign: () => this.hasOne(Foreign, 'columnId').cascadeDelete(),
+            model: () => this.belongsTo(Model)
         }
     }
 

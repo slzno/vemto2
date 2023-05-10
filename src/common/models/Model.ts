@@ -8,7 +8,6 @@ import DataComparator from './services/DataComparator'
 import DataComparisonLogger from './services/DataComparisonLogger'
 import TableNameExceptions from './static/TableNameExceptions'
 import WordManipulator from '@Common/util/WordManipulator'
-import Foreign from './Foreign'
 import Column from './Column'
 
 export default class Model extends RelaDB.Model implements SchemaModel {
@@ -188,53 +187,6 @@ export default class Model extends RelaDB.Model implements SchemaModel {
         })
     }
 
-    addForeign(name: string, relatedModel: Model): Foreign {
-        let column = this.getOrCreateForeignColumn(name, relatedModel),
-            foreign = column.foreign
-
-        if(!foreign) {
-            foreign = new Foreign({
-                columnId: column.id
-            })
-        }
-
-        if(relatedModel) {
-            foreign.relatedModelId = relatedModel.id
-            foreign.relatedColumnId = relatedModel.getPrimaryKey().id
-
-            foreign.calculateDefaultIndexName()
-        }
-
-        foreign.save()
-
-        return column.fresh().foreign
-    }
-
-    getOrCreateForeignColumn(name: string, relatedModel: Model): Column {
-        let column = this.getColumnByName(name),
-            primaryKey = relatedModel.getPrimaryKey()
-
-        if(!primaryKey) throw new Error('Related model has no primary key when trying to create foreign')
-
-        if(!column) {
-            column = new Column({
-                tableId: this.table.id,
-                modelId: this.id,
-                name: name,
-                type: primaryKey.getForeignType()
-            })
-        }
-
-        // If is related with the same model, the field needs to be nullable
-        if(this.id === relatedModel.id) {
-            column.nullable = true
-        }
-
-        column.saveFromInterface()
-
-        return column
-    }
-
     saveSchemaState() {
         this.fillSchemaState()
 
@@ -318,8 +270,8 @@ export default class Model extends RelaDB.Model implements SchemaModel {
         return this.table.columns.find(column => column.isPrimaryKey())
     }
 
-    getColumnByName(columnName: string) {
-        return this.table.columns.find(column => column.name == columnName)
+    getColumnByName(columnName: string): Column {
+        return this.table.getColumnByName(columnName)
     }
 
     syncRelationshipsSourceCode() {

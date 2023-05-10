@@ -2,6 +2,7 @@ import Foreign from "@Common/models/Foreign"
 import Relationship from "@Common/models/Relationship"
 import WordManipulator from '@Common/util/WordManipulator'
 import RelationshipService from './base/RelationshipService'
+import Index from "@Common/models/Index"
 
 class CalculateCommonRelationshipsData extends RelationshipService {
     private _relationship: Relationship
@@ -67,12 +68,12 @@ class CalculateCommonRelationshipsData extends RelationshipService {
         return true
     }
 
-    addForeign(): Foreign {
+    addForeign(): Index {
         if(!(['BelongsTo'].includes(this.relationship.type))) return
 
         let foreignName = this.getOriginalForeignName()
 
-        return this.relationship.model.addForeign(
+        return this.relationship.model.table.addForeign(
             foreignName,
             this.relationship.relatedModel
         )

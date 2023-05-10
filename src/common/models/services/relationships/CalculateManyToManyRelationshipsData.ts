@@ -78,23 +78,12 @@ class CalculateManyToManyRelationshipsData extends RelationshipService {
         if(this.relationship.pivotId) return
 
         let pivotName = this.getDefaultPivotName(),
-            pivot = this.relationship.project.findModelByName(pivotName)
+            pivot = this.relationship.project.findTableByName(pivotName)
 
         if(!pivot) {
-            const table = new Table({
+            pivot = new Table({
                 projectId: this.relationship.projectId,
                 name: pivotName,
-            })
-            
-            table.save()
-
-            pivot = new Model({
-                name: WordManipulator.pascalCase(pivotName),
-                tableId: table.id,
-                projectId: this.relationship.project.id,
-                namespace: "App\\Models",
-                hasGuarded: true,
-                guarded: []
             })
             
             pivot.save()
@@ -106,7 +95,7 @@ class CalculateManyToManyRelationshipsData extends RelationshipService {
         this.relationship.save()
     }
 
-    createPivotFields(pivot: Model): void {
+    createPivotFields(pivot: Table): void {
         let modelKeyName = this.getOriginalModelKeyName(),
             localModelKeyName = this.getOriginalLocalModelKeyName()
         
@@ -138,8 +127,8 @@ class CalculateManyToManyRelationshipsData extends RelationshipService {
 
         let keys = {} as any
 
-        keys.relatedKey = this.relationship.pivot.table.findColumnByName(this.getOriginalModelKeyName())
-        keys.parentKey = this.relationship.pivot.table.findColumnByName(this.getOriginalLocalModelKeyName())
+        keys.relatedKey = this.relationship.pivot.findColumnByName(this.getOriginalModelKeyName())
+        keys.parentKey = this.relationship.pivot.findColumnByName(this.getOriginalLocalModelKeyName())
         
         return keys
     }
