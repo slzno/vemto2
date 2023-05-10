@@ -15,7 +15,7 @@
         <thead>
             <tr>
                 <% for (let input of crud.inputs) { %>
-                    <th><$ input.column.name $></th>
+                    <th><$ input.label $></th>
                 <% } %>
                 <th>Actions</th>
             </tr>
