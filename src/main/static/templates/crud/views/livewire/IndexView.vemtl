@@ -16,7 +16,7 @@
         <thead>
             <tr>
                 <% for (let input of crud.inputs) { %>
-                    <th><$ input.label $></th>
+                    <th wire:click="sortBy('<$ input.column.name $>')"><$ input.label $></th>
                 <% } %>
                 <th>Actions</th>
             </tr>

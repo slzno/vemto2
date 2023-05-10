@@ -18,12 +18,29 @@ class <$ this.filenameWithoutExtension $> extends Component
     use WithPagination;
 
     public $search;
+    <% if(crud.hasDefaultSearchColumn()) { %>
+    public $sortField = '<$ crud.defaultSearchColumn.name $>';
+    <% } else { %>
+    public $sortField;
+    <% } %>
+    public $sortDirection = 'asc';
 
-    public $queryString = ['search'];
+    public $queryString = ['search', 'sortField', 'sortDirection'];
 
     public function updatingSearch()
     {
         $this->resetPage();
+    }
+
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortDirection = 'asc';
+        }
+
+        $this->sortField = $field;
     }
 
     public function getRowsProperty()
@@ -34,7 +51,9 @@ class <$ this.filenameWithoutExtension $> extends Component
     public function getRowsQueryProperty()
     {
         <% if(crud.hasDefaultSearchColumn()) { %>
-        return <$ modelName $>::where('<$ crud.defaultSearchColumn.name $>', 'like', "%{$this->search}%");
+        return <$ modelName $>::query()
+            ->orderBy($this->sortField, $this->sortDirection)
+            ->where('<$ crud.defaultSearchColumn.name $>', 'like', "%{$this->search}%");
         <% } else { %>
         return <$ modelName $>::query();
         <% } %>
