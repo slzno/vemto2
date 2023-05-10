@@ -217,8 +217,21 @@
                             </div>
                         </div>
                     </template>
-                    <template v-else>
-
+                    <template v-if="relationship.isMorph()"> 
+                        <div class="w-1/2">
+                            <UiText
+                                v-model="relationship.name"
+                                placeholder="Relationship name"
+                                @input="saveRelationship(relationship)"
+                            />
+                        </div>
+                        <div class="w-1/2">
+                            <UiText
+                                v-model="relationship.morphTo"
+                                placeholder="Morph To"
+                                @input="saveRelationship(relationship)"
+                            />
+                        </div>
                     </template>
                 </div>
 

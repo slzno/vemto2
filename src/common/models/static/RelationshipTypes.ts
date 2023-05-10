@@ -20,7 +20,6 @@ export default class RelationshipTypes {
             HasManyThrough: {label: 'Has Many Through', inverse: null},
             MorphMany: {label: 'Morph Many', inverse: null},
             MorphOne: {label: 'Morph One', inverse: null},
-            MorphTo: {label: 'Morph To', inverse: null},
             MorphToMany: {label: 'Morph To Many', inverse: null},
         }
     }

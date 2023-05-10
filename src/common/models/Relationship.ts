@@ -1,12 +1,12 @@
 import Model from './Model'
+import Column from './Column'
 import Project from './Project'
 import RelaDB from '@tiago_silva_pereira/reladb'
 import DataComparator from './services/DataComparator'
 import DataComparisonLogger from './services/DataComparisonLogger'
-import Column from './Column'
 import CalculateCommonRelationshipsData from './services/relationships/CalculateCommonRelationshipsData'
 import CalculateManyToManyRelationshipsData from './services/relationships/CalculateManyToManyRelationshipsData'
-import Table from './Table'
+import CalculateMorphRelationshipsData from './services/relationships/CalculateMorphRelationshipsData'
 
 export default class Relationship extends RelaDB.Model implements SchemaModel {
     id: string
@@ -20,17 +20,24 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
     parentModelName: string
     localKeyName: string
     relatedKeyName: string
-    morphType: string
 
     //-- BelongsTo, HasMany e HasOne
     foreignKeyName: string
     ownerKeyName: string
 
     //-- BelongsToMany
-    foreignPivotKeyName: string // id da classe atual na tabela pivot
-    relatedPivotKeyName: string // id da classe parent na tabela pivot
-    relatedKeyId: string // primary key da classe parent
+    foreignPivotKeyName: string
+    relatedPivotKeyName: string
+    relatedKeyId: string
     pivotTableName: string
+
+    //-- Morph
+    idColumnId: string
+    idColumn: Column
+    typeFieldId: string
+    typeField: Column
+    morphType: string
+    morphTo: string
 
     pivotId: string
     pivot: Model
@@ -46,7 +53,7 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
     foreignKeyId: string
     foreignKey: Column
 
-    parentKeyId: string // primary key da classe atual
+    parentKeyId: string
     parentKey: Column
     
     /**
@@ -70,7 +77,9 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
             relatedModel: () => this.belongsTo(Model, 'relatedModelId'),
             foreignKey: () => this.belongsTo(Column, 'foreignKeyId'),
             parentKey: () => this.belongsTo(Column, 'parentKeyId'),
-            pivot: () => this.belongsTo(Model, 'pivotId')
+            pivot: () => this.belongsTo(Model, 'pivotId'),
+            idColumn: () => this.belongsTo(Column, 'idColumnId'),
+            typeColumn: () => this.belongsTo(Column, 'typeColumnId')
         }
     }
 
@@ -157,6 +166,12 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
         if(this.isManyToMany()) {
             CalculateManyToManyRelationshipsData.setRelationship(this)
                 .calculateDefaultData()
+            return
+        }
+
+        if(this.isMorph()) {
+            CalculateMorphRelationshipsData.setRelationship(this)
+                .calculateDefaultData()
         }
     }
 
@@ -171,6 +186,11 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
             CalculateManyToManyRelationshipsData.setRelationship(this)
                 .processAndSave(createInverse)
             return
+        }
+
+        if(this.isMorph()) {
+            CalculateMorphRelationshipsData.setRelationship(this)
+                .processAndSave()
         }
     }
 
@@ -202,6 +222,18 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
 
     isCommon(): boolean {
         return ['BelongsTo', 'HasMany', 'HasOne'].includes(this.type)
+    }
+
+    isCommonMorph() {
+        return ['MorphOne', 'MorphMany'].includes(this.type)
+    }
+
+    isManyToManyMorph() {
+        return ['MorphToMany'].includes(this.type)
+    }
+
+    isMorph() {
+        return this.isCommonMorph() || this.isManyToManyMorph()
     }
 
     hasSchemaChanges(comparisonData: any): boolean {

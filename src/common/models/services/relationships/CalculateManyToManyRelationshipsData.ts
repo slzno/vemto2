@@ -84,7 +84,9 @@ class CalculateManyToManyRelationshipsData extends RelationshipService {
             const table = new Table({
                 projectId: this.relationship.projectId,
                 name: pivotName,
-            }).saveFromInterface()
+            })
+            
+            table.save()
 
             pivot = new Model({
                 name: WordManipulator.pascalCase(pivotName),
@@ -93,13 +95,15 @@ class CalculateManyToManyRelationshipsData extends RelationshipService {
                 namespace: "App\\Models",
                 hasGuarded: true,
                 guarded: []
-            }).saveFromInterface()
+            })
+            
+            pivot.save()
         }
 
         this.createPivotFields(pivot)
 
         this.relationship.pivotId = pivot.id
-        this.relationship.saveFromInterface()
+        this.relationship.save()
     }
 
     createPivotFields(pivot: Model): void {

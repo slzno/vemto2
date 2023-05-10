@@ -46,4 +46,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Post::class);
     }
+
+    public function tags()
+    {
+        return $this->morphOne(Tag::class, 'taggeable', 'taggeable_type', 'taggeable_id', 'id');
+    }
 }

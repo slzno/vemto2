@@ -46,11 +46,6 @@ class ModelRepository {
                         $relationships[] = [
                             'name' => $method->getName(),
                             'type' => (new ReflectionClass($return))->getShortName(),
-                            'relatedTableName' => $return->getRelated()->getTable(),
-                            'relatedModelName' => $return->getRelated()->getMorphClass(),
-                            'parentTableName' => $return->getParent()->getTable(),
-                            'parentModelName' => $return->getParent()->getMorphClass(),
-                            'localKeyName' => method_exists($return, 'getLocalKeyName') ? $return->getLocalKeyName() : null,
 
                             // BelongsTo, HasMany e HasOne
                             'foreignKeyName' => method_exists($return, 'getForeignKeyName') ? $return->getForeignKeyName() : null,
@@ -63,8 +58,17 @@ class ModelRepository {
                             'relatedKeyName' => method_exists($return, 'getRelatedKeyName') ? $return->getRelatedKeyName() : null,
                             'pivotTableName' => method_exists($return, 'getTable') ? $return->getTable() : null,
 
-                            'relatedKeyName' => method_exists($return, 'getRelatedKeyName') ? $return->getRelatedKeyName() : null,
+                            // Morphs
                             'morphType' => method_exists($return, 'getMorphType') ? $return->getMorphType() : null,
+                            # foreignKeyName
+                            'localKeyName' => method_exists($return, 'getLocalKeyName') ? $return->getLocalKeyName() : null,
+
+                            'relatedTableName' => $return->getRelated()->getTable(),
+                            'relatedModelName' => $return->getRelated()->getMorphClass(),
+                            'parentTableName' => $return->getParent()->getTable(),
+                            'parentModelName' => $return->getParent()->getMorphClass(),
+
+                            'relatedKeyName' => method_exists($return, 'getRelatedKeyName') ? $return->getRelatedKeyName() : null,
                             'method' => $methodContent,
                         ];
                     }
