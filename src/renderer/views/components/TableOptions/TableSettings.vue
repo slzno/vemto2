@@ -3,7 +3,7 @@
     import UiText from '@Renderer/components/ui/UiText.vue'
     import { defineProps, toRef } from 'vue'
     import debounce from "@Renderer/../common/tools/debounce"
-import UiSelect from '@Renderer/components/ui/UiSelect.vue'
+    import UiSelect from '@Renderer/components/ui/UiSelect.vue'
 
     const props = defineProps(['table']),
         table = toRef(props, 'table')

@@ -32,9 +32,9 @@ export default class Table extends RelaDB.Model implements SchemaModel {
     relationships() {
         return {
             project: () => this.belongsTo(Project),
-            labelColumn: () => this.belongsTo(Column),
             models: () => this.hasMany(Model).cascadeDelete(),
             indexes: () => this.hasMany(Index).cascadeDelete(),
+            labelColumn: () => this.belongsTo(Column, "labelColumnId"),
             columns: () => this.hasMany(Column).cascadeDelete().orderBy('order'),
         }
     }

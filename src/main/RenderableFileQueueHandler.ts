@@ -75,7 +75,10 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
                 return true
             }
 
-            if(currentFileContent && currentFileContent.trim() !== previousFileContent.trim()) {
+            const userModifiedFile = currentFileContent && currentFileContent.trim() !== previousFileContent.trim(),
+                generatedFileIsEqual = file.content.trim() === currentFileContent.trim()
+
+            if(userModifiedFile && !generatedFileIsEqual) {
                 const conflictsFileName = TextUtil.random(32) + '.json',
                     conflictsFilePath = path.join(project.getPath(), ".vemto", "conflicts", conflictsFileName)
                 

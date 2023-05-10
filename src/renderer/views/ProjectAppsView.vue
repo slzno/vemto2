@@ -29,7 +29,9 @@
     <div
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-hidden"
     >
-        <UiTabs :tabs="tabs" v-model="selectedTab" />
+        <div class="mt-2">
+            <UiTabs :tabs="tabs" v-model="selectedTab" :external="true" />
+        </div>
         
         <div class="p-4">
             <div class="flex top-0 left-0 space-x-2 text-sm z-20 mb-4">

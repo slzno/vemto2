@@ -129,6 +129,10 @@ export default class Column extends RelaDB.Model implements SchemaModel {
         return this.name === 'created_at' || this.name === 'updated_at'
     }
 
+    isTextual(): boolean {
+        return ['string', 'text', 'char', 'date', 'datetime', 'timestamp'].includes(this.type)
+    }
+
     hasFaker(): boolean {
         return !! this.faker
     }

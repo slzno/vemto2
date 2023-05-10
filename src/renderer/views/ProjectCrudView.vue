@@ -6,6 +6,8 @@
     import Crud from '@Common/models/crud/Crud'
     import UiButton from '@Renderer/components/ui/UiButton.vue'
     import HandleProjectDatabase from '@Renderer/services/HandleProjectDatabase'
+    import UiTabs from '@Renderer/components/ui/UiTabs.vue'
+    import UiSelect from '@Renderer/components/ui/UiSelect.vue'
 
     // const projectStore = useProjectStore()
 
@@ -13,6 +15,14 @@
     const route = useRoute(),
         crudId = route.params.crudId,
         crud = ref(null)
+
+    const selectedTab = ref("form")
+
+    const tabs = [
+        { label: "Form", value: "form" },
+        { label: "Data Table", value: "datatable" },
+        { label: "Settings", value: "settings" },
+    ]
 
     onMounted(async () => {
         await HandleProjectDatabase.populate(() => {
@@ -25,12 +35,14 @@
 
 <template>
     <div
-        class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-hidden p-4"
+        class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-hidden"
     >
         <div v-if="crud">
-            <b>Crud editor: {{ crud.name }}</b>
+            <div class="p-2 font-bold">Edit {{ crud.name }} CRUD</div>
 
-            <section class="flex w-full h-screen space-x-4 mt-4">
+            <UiTabs :tabs="tabs" v-model="selectedTab" :external="true" />
+
+            <section class="flex w-full h-screen space-x-4 mt-2 px-2" v-if="selectedTab === 'form'">
                 <div class="space-y-2">
                     <UiButton class="w-full">Add Text Input</UiButton>
                 </div>
@@ -50,6 +62,15 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </section>
+
+            <section class="flex w-full h-screen space-x-4 mt-2 px-2" v-if="selectedTab === 'settings'">
+                <div>
+                    <UiSelect v-model="crud.defaultSearchColumnId" label="Default search column" @change="crud.save()" >
+                        <option :value="null" disabled>Select a column</option>
+                        <option v-for="column in crud.model.table.columns" :value="column.id" :key="column.id">{{ column.name }}</option>
+                    </UiSelect>
                 </div>
             </section>
         </div>

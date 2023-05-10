@@ -2,6 +2,7 @@ import Input from "./Input"
 import CrudPanel from "./CrudPanel"
 import Model from "@Common/models/Model"
 import { capitalCase } from "change-case"
+import Column from "@Common/models/Column"
 import Project from "@Common/models/Project"
 import RelaDB from "@tiago_silva_pereira/reladb"
 
@@ -27,6 +28,8 @@ export default class Crud extends RelaDB.Model {
     panels: CrudPanel[]
     inputs: Input[]
     settings: CrudSettings
+    defaultSearchColumn: Column
+    defaultSearchColumnId: string
 
     static identifier() {
         return "Crud"
@@ -36,12 +39,19 @@ export default class Crud extends RelaDB.Model {
         return {
             model: () => this.belongsTo(Model),
             project: () => this.belongsTo(Project),
-            panels: () => this.hasMany(CrudPanel).cascadeDelete(),
             inputs: () => this.hasMany(Input).cascadeDelete(),
+            panels: () => this.hasMany(CrudPanel).cascadeDelete(),
+            defaultSearchColumn: () => this.belongsTo(Column, "defaultSearchColumnId"),
         }
     }
 
+    hasDefaultSearchColumn(): boolean {
+        return !! this.defaultSearchColumn
+    }
+
     static createFromModel(model: Model) {
+        const defaultSearchColumn = model.table.getLabelColumn()
+
         const crud = new Crud()
         crud.type = CrudType.LIVEWIRE
         crud.name = capitalCase(model.plural)
@@ -53,7 +63,9 @@ export default class Crud extends RelaDB.Model {
             collectionTitle: capitalCase(model.plural),
         }
 
-        console.log()
+        if(defaultSearchColumn) {
+            crud.defaultSearchColumnId = defaultSearchColumn.id
+        }
 
         crud.save()
 
