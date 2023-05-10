@@ -163,72 +163,110 @@
                     </span>
                 </div>
 
-                <div class="flex justify-between gap-2" v-if="relationship.hasTypeAndRelatedModel() && !relationship.isThrough()">
-                    <template v-if="relationship.isCommon()">
-                        <div class="w-1/2">
-                            <UiText
-                                v-model="relationship.name"
-                                placeholder="Relationship name"
-                                @input="saveRelationship(relationship)"
-                            />
-                        </div>
-                        <div class="w-1/2">
-                            <UiText
-                                v-model="relationship.foreignKeyName"
-                                placeholder="Foreign Key Name"
-                                @input="saveRelationship(relationship)"
-                            />
-                        </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <template v-if="relationship.hasTypeAndRelatedModel() && !relationship.isThrough()">
+                        <template v-if="relationship.isCommon()">
+                            <div>
+                                <UiText
+                                    v-model="relationship.name"
+                                    placeholder="Relationship name"
+                                    @input="saveRelationship(relationship)"
+                                />
+                            </div>
+                            <div>
+                                <UiText
+                                    v-model="relationship.foreignKeyName"
+                                    placeholder="Foreign Key Name"
+                                    @input="saveRelationship(relationship)"
+                                />
+                            </div>
+                        </template>
+
+                        <template v-if="relationship.isManyToMany()">
+                            <div class="flex flex-col gap-1">
+                                <div class="flex-1 flex gap-1">
+                                    <div>
+                                        <UiText
+                                            v-model="relationship.name"
+                                            placeholder="Relationship Name"
+                                            @input="saveRelationship(relationship)"
+                                        />
+                                    </div>
+                                    <div>
+                                        <UiText
+                                            v-model="relationship.pivotTableName"
+                                            placeholder="Pivot Table Name"
+                                            @input="saveRelationship(relationship)"
+                                        />
+                                    </div>
+                                </div>
+                                <div class="flex-1 flex gap-1">
+                                    <div>
+                                        <UiText
+                                            v-model="relationship.foreignPivotKeyName"
+                                            placeholder="Foreign Pivot Key Name"
+                                            @input="saveRelationship(relationship)"
+                                        />
+                                    </div>
+                                    <div>
+                                        <UiText
+                                            v-model="relationship.relatedPivotKeyName"
+                                            placeholder="Related Pivot Key Name"
+                                            @input="saveRelationship(relationship)"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <template v-if="relationship.isMorph()"> 
+                            <div>
+                                <UiText
+                                    v-model="relationship.name"
+                                    placeholder="Relationship name"
+                                    @input="saveRelationship(relationship)"
+                                />
+                            </div>
+                            <div>
+                                <UiText
+                                    v-model="relationship.morphTo"
+                                    placeholder="Morph To"
+                                    @input="saveRelationship(relationship)"
+                                />
+                            </div>
+                        </template>
                     </template>
 
-                    <template v-if="relationship.isManyToMany()">
-                        <div class="flex flex-col gap-1">
-                            <div class="flex-1 flex gap-1">
-                                <div>
-                                    <UiText
-                                        v-model="relationship.name"
-                                        placeholder="Relationship Name"
-                                        @input="saveRelationship(relationship)"
-                                    />
-                                </div>
-                                <div>
-                                    <UiText
-                                        v-model="relationship.pivotTableName"
-                                        placeholder="Pivot Table Name"
-                                        @input="saveRelationship(relationship)"
-                                    />
-                                </div>
-                            </div>
-                            <div class="flex-1 flex gap-1">
-                                <div>
-                                    <UiText
-                                        v-model="relationship.foreignPivotKeyName"
-                                        placeholder="Foreign Pivot Key Name"
-                                        @input="saveRelationship(relationship)"
-                                    />
-                                </div>
-                                <div>
-                                    <UiText
-                                        v-model="relationship.relatedPivotKeyName"
-                                        placeholder="Related Pivot Key Name"
-                                        @input="saveRelationship(relationship)"
-                                    />
-                                </div>
-                            </div>
+                    <template v-if="relationship.isThrough()">
+                        <div>
+                            <UiDropdownSelect
+                                v-model="relationship.relatedModelId"
+                                :may-open="relationship.isNew() && !relationship.hasRelatedModel() && !relationship.throughId"
+                                placeholder="Related Model"
+                                :options="getModelsForSelect()"
+                                @change="saveRelationship(relationship)"
+                            />
                         </div>
-                    </template>
-                    <template v-if="relationship.isMorph()"> 
-                        <div class="w-1/2">
+                        <div>
+                            <UiDropdownSelect
+                                v-model="relationship.throughId"
+                                :may-open="relationship.isNew() && relationship.hasRelatedModel() && !relationship.throughId"
+                                placeholder="Through Model"
+                                :options="getModelsForSelect()"
+                                @change="saveRelationship(relationship)"
+                            />
+                        </div>
+                        <div>
                             <UiText
-                                v-model="relationship.name"
-                                placeholder="Relationship name"
+                                v-model="relationship.relatedKeyName"
+                                placeholder="Related Model Key Name"
                                 @input="saveRelationship(relationship)"
                             />
                         </div>
-                        <div class="w-1/2">
+                        <div>
                             <UiText
-                                v-model="relationship.morphTo"
-                                placeholder="Morph To"
+                                v-model="relationship.throughKeyName"
+                                placeholder="Through Model Key Name"
                                 @input="saveRelationship(relationship)"
                             />
                         </div>

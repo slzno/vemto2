@@ -4,9 +4,10 @@ import Project from './Project'
 import RelaDB from '@tiago_silva_pereira/reladb'
 import DataComparator from './services/DataComparator'
 import DataComparisonLogger from './services/DataComparisonLogger'
-import CalculateCommonRelationshipsData from './services/relationships/CalculateCommonRelationshipsData'
-import CalculateManyToManyRelationshipsData from './services/relationships/CalculateManyToManyRelationshipsData'
 import CalculateMorphRelationshipsData from './services/relationships/CalculateMorphRelationshipsData'
+import CalculateCommonRelationshipsData from './services/relationships/CalculateCommonRelationshipsData'
+import CalculateThroughRelationshipsData from './services/relationships/CalculateThroughRelationshipsData'
+import CalculateManyToManyRelationshipsData from './services/relationships/CalculateManyToManyRelationshipsData'
 
 export default class Relationship extends RelaDB.Model implements SchemaModel {
     id: string
@@ -34,10 +35,17 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
     //-- Morph
     idColumnId: string
     idColumn: Column
+    
     typeFieldId: string
     typeField: Column
+
     morphType: string
     morphTo: string
+
+    //-- Through
+    throughId: string
+    through: Model
+    throughKeyName: string
 
     pivotId: string
     pivot: Model
@@ -77,9 +85,16 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
             relatedModel: () => this.belongsTo(Model, 'relatedModelId'),
             foreignKey: () => this.belongsTo(Column, 'foreignKeyId'),
             parentKey: () => this.belongsTo(Column, 'parentKeyId'),
+
+            // Used in BelongsToMany and MorphToMany
             pivot: () => this.belongsTo(Model, 'pivotId'),
+
+            // Morphs
             idColumn: () => this.belongsTo(Column, 'idColumnId'),
-            typeColumn: () => this.belongsTo(Column, 'typeColumnId')
+            typeColumn: () => this.belongsTo(Column, 'typeColumnId'),
+
+            // HasManyThrough
+            through: () => this.belongsTo(Model, 'throughId')
         }
     }
 
@@ -172,6 +187,12 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
         if(this.isMorph()) {
             CalculateMorphRelationshipsData.setRelationship(this)
                 .calculateDefaultData()
+            return
+        }
+
+        if(this.isThrough()) {
+            CalculateThroughRelationshipsData.setRelationship(this)
+                .calculateDefaultData()
         }
     }
 
@@ -190,6 +211,12 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
 
         if(this.isMorph()) {
             CalculateMorphRelationshipsData.setRelationship(this)
+                .processAndSave()
+            return
+        }
+
+        if(this.isThrough()) {
+            CalculateThroughRelationshipsData.setRelationship(this)
                 .processAndSave()
         }
     }
