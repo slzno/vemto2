@@ -30,6 +30,9 @@ export default class Crud extends RelaDB.Model {
     settings: CrudSettings
     defaultSearchColumn: Column
     defaultSearchColumnId: string
+    defaultSortColumn: Column
+    defaultSortColumnId: string
+    defaultSortDirection: string
 
     static identifier() {
         return "Crud"
@@ -42,6 +45,7 @@ export default class Crud extends RelaDB.Model {
             inputs: () => this.hasMany(Input).cascadeDelete(),
             panels: () => this.hasMany(CrudPanel).cascadeDelete(),
             defaultSearchColumn: () => this.belongsTo(Column, "defaultSearchColumnId"),
+            defaultSortColumn: () => this.belongsTo(Column, "defaultSortColumnId"),
         }
     }
 
@@ -49,8 +53,17 @@ export default class Crud extends RelaDB.Model {
         return !! this.defaultSearchColumn
     }
 
+    hasDefaultSortColumn(): boolean {
+        return !! this.defaultSortColumn
+    }
+
     static createFromModel(model: Model) {
         const defaultSearchColumn = model.table.getLabelColumn()
+
+        const defaultSortColumn = model.table.getUpdatedAtColumn() 
+            || model.table.getCreatedAtColumn()
+            || model.table.getPrimaryKeyColumn()
+            || defaultSearchColumn
 
         const crud = new Crud()
         crud.type = CrudType.LIVEWIRE
@@ -63,9 +76,10 @@ export default class Crud extends RelaDB.Model {
             collectionTitle: capitalCase(model.plural),
         }
 
-        if(defaultSearchColumn) {
-            crud.defaultSearchColumnId = defaultSearchColumn.id
-        }
+        if(defaultSearchColumn) crud.defaultSearchColumnId = defaultSearchColumn.id
+        if(defaultSortColumn) crud.defaultSortColumnId = defaultSortColumn.id
+
+        crud.defaultSortDirection = "asc"
 
         crud.save()
 

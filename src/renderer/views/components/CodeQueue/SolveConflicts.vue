@@ -160,6 +160,8 @@
                     Solve manually
                 </UiButton>
 
+                <UiButton>Ignore</UiButton>
+                
                 <UiButton>Overwrite</UiButton>
             </div>
             

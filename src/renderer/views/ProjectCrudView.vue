@@ -65,11 +65,26 @@
                 </div>
             </section>
 
-            <section class="flex w-full h-screen space-x-4 mt-2 px-2" v-if="selectedTab === 'settings'">
+            <section class="flex flex-col w-full h-screen space-y-4 mt-2 px-2" v-if="selectedTab === 'settings'">
                 <div>
                     <UiSelect v-model="crud.defaultSearchColumnId" label="Default search column" @change="crud.save()" >
                         <option :value="null" disabled>Select a column</option>
                         <option v-for="column in crud.model.table.columns" :value="column.id" :key="column.id">{{ column.name }}</option>
+                    </UiSelect>
+                </div>
+
+                <div>
+                    <UiSelect v-model="crud.defaultSortColumnId" label="Default sort column" @change="crud.save()" >
+                        <option :value="null" disabled>Select a column</option>
+                        <option v-for="column in crud.model.table.columns" :value="column.id" :key="column.id">{{ column.name }}</option>
+                    </UiSelect>
+                </div>
+
+                <div>
+                    <UiSelect v-model="crud.defaultSortDirection" label="Default sort direction" @change="crud.save()" >
+                        <option :value="null" disabled>Select a direction</option>
+                        <option value="asc">Ascending</option>
+                        <option value="desc">Descending</option>
                     </UiSelect>
                 </div>
             </section>

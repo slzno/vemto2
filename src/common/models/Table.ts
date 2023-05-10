@@ -151,8 +151,26 @@ export default class Table extends RelaDB.Model implements SchemaModel {
         return this.getColumns().find((column) => column.name === columnName && column.id != columnId) !== undefined
     }
 
-    getPrimaryKey(): Column {
+    hasPrimaryKey(): boolean {
+        return this.getPrimaryKeyColumn() !== undefined
+    }
+
+    getPrimaryKeyColumn(): Column {
         return this.getColumns().find((column) => column.isPrimaryKey())
+    }
+
+    getPrimaryKeyName(): string {
+        if(!this.hasPrimaryKey()) return ''
+
+        return this.getPrimaryKeyColumn().name
+    }
+
+    getCreatedAtColumn(): Column {
+        return this.getColumns().find((column) => column.isCreatedAt())
+    }
+
+    getUpdatedAtColumn(): Column {
+        return this.getColumns().find((column) => column.isUpdatedAt())
     }
 
     doesNotHaveColumn(columnName: string): boolean {
@@ -393,6 +411,6 @@ export default class Table extends RelaDB.Model implements SchemaModel {
 
         if(firstStringField) return firstStringField
 
-        return this.getPrimaryKey()
+        return this.getPrimaryKeyColumn()
     }
 }

@@ -133,6 +133,14 @@ export default class Column extends RelaDB.Model implements SchemaModel {
         return ['string', 'text', 'char', 'date', 'datetime', 'timestamp'].includes(this.type)
     }
 
+    isCreatedAt(): boolean {
+        return this.name === 'created_at'
+    }
+
+    isUpdatedAt(): boolean {
+        return this.name === 'updated_at'
+    }
+
     hasFaker(): boolean {
         return !! this.faker
     }
