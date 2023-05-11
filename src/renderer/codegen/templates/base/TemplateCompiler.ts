@@ -86,6 +86,10 @@ export default new class TemplateCompiler {
         } catch (error: any) {
             const latestError = this.templateEngine.getLatestError()
 
+            console.error(error)
+            // console.log(this.getPreCompiledCode())
+            console.log('Here')
+            
             if(latestError) {
                 Alert.error('Error on template line ' + latestError.templateLine)
                 console.error('Error on template line ' + latestError.templateLine)

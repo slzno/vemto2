@@ -21,14 +21,14 @@ class <$ this.filenameWithoutExtension $> extends Component
     {
         return [
             <% for (let input of crud.inputs) { %>
-            '<$ input.column.name $>' => 'required',
-            <% }) %>
+            '<$ itemVarName $>.<$ input.column.name $>' => 'required',
+            <% } %>
         ];
     }
 
     public function mount(<$ modelName $> $<$ itemVarName $>)
     {
-        $this-><$ itemVarName $> = new <$ modelName $>();
+        $this-><$ itemVarName $> = $<$ itemVarName $>;
     }
 
     public function save()
