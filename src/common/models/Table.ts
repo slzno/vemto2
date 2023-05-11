@@ -372,7 +372,7 @@ export default class Table extends RelaDB.Model implements SchemaModel {
 
     getOrCreateForeignColumn(name: string, relatedModel: Model): Column {
         let column = this.getColumnByName(name),
-            primaryKey = relatedModel.getPrimaryKey()
+            primaryKey = relatedModel.getPrimaryKeyColumn()
 
         if(!primaryKey) throw new Error('Related model has no primary key when trying to create foreign')
 

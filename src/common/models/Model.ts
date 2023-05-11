@@ -266,7 +266,7 @@ export default class Model extends RelaDB.Model implements SchemaModel {
         this.syncRelationshipsSourceCode()
     }
 
-    getPrimaryKey() {
+    getPrimaryKeyColumn() {
         return this.table.columns.find(column => column.isPrimaryKey())
     }
 

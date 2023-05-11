@@ -115,12 +115,12 @@ class CalculateCommonRelationshipsData extends RelationshipService {
             foreignName = this.getOriginalForeignName()
 
         if(['BelongsTo'].includes(this.relationship.type)) {
-            keys.parentKey = this.relationship.relatedModel.getPrimaryKey()
+            keys.parentKey = this.relationship.relatedModel.getPrimaryKeyColumn()
             keys.foreignKey = this.relationship.model.getColumnByName(foreignName)
         }
         
         if(['HasMany', 'HasOne'].includes(this.relationship.type)) {
-            keys.parentKey = this.relationship.model.getPrimaryKey()
+            keys.parentKey = this.relationship.model.getPrimaryKeyColumn()
             keys.foreignKey = this.relationship.relatedModel.getColumnByName(foreignName)
         }
 
