@@ -44,11 +44,11 @@
             v-for="tab in tabs"
             :key="tab.value"
             @click="setTab(tab.value)"
-            class="rounded-t px-2 py-1 -mb-px cursor-pointer hover:text-slate-200"
+            class="rounded-t px-2 py-1 -mb-px cursor-pointer hover:text-slate-300"
             :class="{
                 'bg-slate-850': !external && tab.value === localValue,
                 'bg-slate-900': external && tab.value === localValue,
-                'text-slate-200 border-l border-t border-r border-slate-700': tab.value === localValue
+                'text-slate-300 border-l border-t border-r border-slate-700': tab.value === localValue
             }"
         >
             {{ tab.label }}

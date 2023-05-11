@@ -1,0 +1,47 @@
+<?php
+
+<% const crud = this.crud %>
+<% const modelName = crud.model.name %>
+<% const camelCase = this.require('camelCase') %>
+<% const paramCase = this.require('paramCase') %>
+<% const itemVarName = camelCase(crud.model.name) %>
+<% const viewsFolderName = camelCase(crud.model.plural) %>
+<% const collectionVarName = camelCase(crud.model.plural) %>
+
+namespace App\Http\Livewire;
+ 
+use Livewire\Component;
+use App\Models\<$ modelName $>;
+ 
+class <$ this.filenameWithoutExtension $> extends Component
+{
+    public <$ modelName $> $<$ itemVarName $>;
+
+    public function rules()
+    {
+        return [
+            <% for (let input of crud.inputs) { %>
+            '<$ input.column.name $>' => 'required',
+            <% }) %>
+        ];
+    }
+
+    public function mount(<$ modelName $> $<$ itemVarName $>)
+    {
+        $this-><$ itemVarName $> = new <$ modelName $>();
+    }
+
+    public function save()
+    {
+        $this->validate();
+
+        $this-><$ itemVarName $>->save();
+    }
+
+    public function render()
+    {
+        return view('livewire.<$ viewsFolderName $>.edit', [
+            '<$ itemVarName $>' => $this-><$ itemVarName $>,
+        ]);
+    }
+}

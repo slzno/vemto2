@@ -4,13 +4,16 @@
 <% const modelName = crud.model.name %>
 <% const colspanSize = crud.inputs.length + 1 %>
 <% const camelCase = this.require('camelCase') %>
-<% const paramCase = this.require('paramCase') %>
-<% const viewsFolderName = camelCase(crud.model.plural) %>
 <% const itemVarName = camelCase(crud.model.name) %>
+<% const viewsFolderName = camelCase(crud.model.plural) %>
 <% const collectionVarName = camelCase(crud.model.plural) %>
-
+<# --- #>
 <div>
-    <input wire:model="search" type="text" placeholder="Search <$ crud.settings.collectionTitle $>...">
+    <div>
+        <input wire:model="search" type="text" placeholder="Search <$ crud.settings.collectionTitle $>...">
+
+        <a href="{{ route('<$ collectionVarName $>.create') }}">+ New</button>
+    </div>
 
     <table>
         <thead>
@@ -28,7 +31,7 @@
                     <td>{{ $<$ itemVarName $>-><$ input.column.name $> }}</td>
                 <% } %>
                 <td>
-                    Edit
+                    <a href="{{ route('<$ collectionVarName $>.edit', $<$ itemVarName $>) }}">Edit</a>
                 </td>
             </tr>
             @empty
@@ -39,5 +42,5 @@
         </tbody>
     </table>
 
-    {{ $posts->links() }}
+    {{ $<$ collectionVarName $>->links() }}
 </div>
