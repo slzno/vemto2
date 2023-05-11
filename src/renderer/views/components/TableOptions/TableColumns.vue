@@ -50,30 +50,28 @@
 </script>
 
 <template>
-    <div>
-        <section @keyup.esc="clearInvalidColumns">
-            <Draggable
-                class="space-y-2"
-                :list="columns"
-                item-key="columns-draggable"
-                @end="saveColumnsOrder"
-            >
-                <template #item="{ element }">
-                    <TableColumn @removeColumn="removeColumn(element)" :column="element" />
-                </template>
-            </Draggable>
-        </section>
-
-        <section
-            class="mt-4 flex w-full justify-center text-slate-400 hover:text-red-500 cursor-pointer text-lg"
-            @click="addColumn"
+    <section @keyup.esc="clearInvalidColumns">
+        <Draggable
+            class="space-y-2"
+            :list="columns"
+            item-key="columns-draggable"
+            @end="saveColumnsOrder"
         >
-            <div class="flex items-center">
-                <PlusCircleIcon class="w-8 h-8" />
-                <span class="px-1.5">Add column</span>
-            </div>
-        </section>
-    </div>
+            <template #item="{ element }">
+                <TableColumn @removeColumn="removeColumn(element)" :column="element" />
+            </template>
+        </Draggable>
+    </section>
+
+    <section
+        class="mt-4 flex w-full justify-center text-slate-400 hover:text-red-500 cursor-pointer text-lg"
+        @click="addColumn"
+    >
+        <div class="flex items-center">
+            <PlusCircleIcon class="w-8 h-8" />
+            <span class="px-1.5">Add column</span>
+        </div>
+    </section>
 </template>
 <style scoped>
 .flip-list-move {
