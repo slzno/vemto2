@@ -1,6 +1,6 @@
 import Input from "@Common/models/crud/Input"
 import ColumnTypeList from "@Common/models/column-types/base/ColumnTypeList"
-import ColumnsDefaultData from "@Common/models/column-types/default/ColumnsDefaultData"
+import ColumnsDefaultData from "@Common/models/column-types/default/ColumnsDefaultDataList"
 import InputTypeList from "@Common/models/input-types/InputTypeList"
 import {
     InputValidationRule,
@@ -20,7 +20,8 @@ export default class GenerateInputValidation {
     }
 
     get(type: ValidationRuleType = ValidationRuleType.CREATION, fallback: boolean = true): InputValidationRule[] {
-        let baseValidationRules = this.getBaseValidationRules(type)
+        let baseValidationRules = this.getBaseValidationRules(type),
+            validationRules = []
 
         // If there is no update validation rules, fallback to creation validation rules if
         // fallback is enabled
@@ -28,7 +29,9 @@ export default class GenerateInputValidation {
             baseValidationRules = this.getBaseValidationRules(ValidationRuleType.CREATION)
         }
 
-        return baseValidationRules.map((rule) => {
+        validationRules = this.addLogicValidationToRules(baseValidationRules)
+
+        return validationRules.map((rule) => {
             return {
                 type: InputValidationRuleType.TEXTUAL,
                 value: rule,
@@ -54,5 +57,27 @@ export default class GenerateInputValidation {
         }
 
         return columnType[type] || []
+    }
+
+    addLogicValidationToRules(rules: string[]): string[] {
+        if(this.input.column.nullable) {
+            rules.push("nullable")
+        } else {
+            rules.push("required")
+        }
+
+        if(this.input.column.unique) {
+            rules.push(`unique:{TABLE},${this.input.column.name}`)
+        }
+
+        if(this.input.needsMaxValidation()) {
+            rules.push(`max:${this.input.max}`)
+        }
+
+        if(this.input.needsMinValidation()) {
+            rules.push(`min:${this.input.min}`)
+        }
+        
+        return [...new Set(rules)]
     }
 }

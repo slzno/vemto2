@@ -72,9 +72,15 @@ export default class InputTypeList {
             },
             "date": {
                 name: "Date",
+                validationRules: [
+                    'date',
+                ],
             },
             "datetime": {
                 name: "Date Time",
+                validationRules: [
+                    'date',
+                ],
             },
             "password": {
                 name: "Password",

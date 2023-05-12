@@ -7,6 +7,7 @@ import GenerateInputValidation, { ValidationRuleType } from "./services/Generate
 
 export enum InputType {
     TEXT = "text",
+    TEXTAREA = "textarea",
 }
 
 export enum InputValidationRuleType {
@@ -28,7 +29,7 @@ export default class Input extends RelaDB.Model {
     columnId: string
     column: Column
     name: string
-    type: string
+    type: InputType
     label: string
     placeholder: string
     order: number
@@ -84,6 +85,14 @@ export default class Input extends RelaDB.Model {
         input.generateValidationRules()
 
         return input
+    }
+
+    needsMaxValidation() {
+        return [InputType.TEXT, InputType.TEXTAREA].includes(this.type) && this.max
+    }
+
+    needsMinValidation() {
+        return [InputType.TEXT, InputType.TEXTAREA].includes(this.type) && this.min
     }
 
     generateValidationRules() {

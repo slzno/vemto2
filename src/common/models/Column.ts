@@ -1,14 +1,13 @@
 import Table from './Table'
+import Input from './crud/Input'
+import ColumnData from './data/ColumnData'
 import RelaDB from '@tiago_silva_pereira/reladb'
+import DataComparator from './services/DataComparator'
 import TableColumnChanged from '@Common/events/TableColumnChanged'
 import TableColumnCreated from '@Common/events/TableColumnCreated'
-import ColumnData from './data/ColumnData'
-import ColumnsDefaultData from './column-types/default/ColumnsDefaultData'
-import ColumnsDefaultDataInterface from './column-types/default/base/ColumnsDefaultDataInterface'
 import ColumnTypeList from './column-types/base/ColumnTypeList'
 import DataComparisonLogger from './services/DataComparisonLogger'
-import DataComparator from './services/DataComparator'
-import Input from './crud/Input'
+import ColumnsDefaultDataList, { ColumnDefaultData } from './column-types/default/ColumnsDefaultDataList'
 
 export default class Column extends RelaDB.Model implements SchemaModel {
     id: string
@@ -287,10 +286,10 @@ export default class Column extends RelaDB.Model implements SchemaModel {
         return this.getFakerByType()
     }
 
-    getDefaultSettingsByName(name?: string): ColumnsDefaultDataInterface {
+    getDefaultSettingsByName(name?: string): ColumnDefaultData {
         if(!name) name = this.name
 
-        const defaultData = ColumnsDefaultData.getSettingsByColumnName(name)
+        const defaultData = ColumnsDefaultDataList.getSettingsByColumnName(name)
 
         if(!defaultData) return null
 

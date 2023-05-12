@@ -1,4 +1,4 @@
-export default interface ColumnDefaultData {
+export interface ColumnDefaultData {
     help?: string
     label?: string
     identifier?: string
@@ -12,7 +12,7 @@ export default interface ColumnDefaultData {
     defaultValueTypeIsString?: boolean
 }
 
-export default class ColumnsDefaultData {
+export default class ColumnsDefaultDataList {
     static getSettingsByColumnName(name: string): ColumnDefaultData {
         let column = this.get()[name]
 
