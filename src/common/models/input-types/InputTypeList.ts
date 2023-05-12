@@ -26,10 +26,6 @@ export default class InputTypeList {
                 name: "Text",
                 disableMax: true,
                 disableMin: true,
-                validationRules: [
-                    'string',
-                    'churumino',
-                ],
             },
             "select": {
                 name: "Select",

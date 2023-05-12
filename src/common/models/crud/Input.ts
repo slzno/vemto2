@@ -92,4 +92,24 @@ export default class Input extends RelaDB.Model {
         this.creationRules = validationGenerator.get(ValidationRuleType.CREATION)
         this.updateRules = validationGenerator.get(ValidationRuleType.UPDATE)
     }
+
+    getCreationRulesForTemplate() {
+        return this.getRulesForTemplate(this.creationRules)
+    }
+
+    getUpdateRulesForTemplate() {
+        return this.getRulesForTemplate(this.updateRules)
+    }
+
+    getRulesForTemplate(rules: InputValidationRule[]) {
+        const templateRules = rules.map((rule) => {
+            if (rule.type === InputValidationRuleType.CODE) {
+                return rule.value
+            }
+
+            return `'${rule.value}'`
+        })
+
+        return `[${templateRules.join(", ")}]`
+    }
 }

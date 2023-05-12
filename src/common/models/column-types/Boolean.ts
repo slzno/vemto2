@@ -5,4 +5,5 @@ export default class Boolean extends ColumnType {
     static identifier: string = 'boolean'
     static faker: string = 'fake()->boolean()'
     static defaultValueTypeIsString: boolean = false
+    static validationRules: any[] = ['boolean']
 }

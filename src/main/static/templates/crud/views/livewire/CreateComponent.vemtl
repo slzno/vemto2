@@ -21,7 +21,7 @@ class <$ this.filenameWithoutExtension $> extends Component
     {
         return [
             <% for (let input of crud.inputs) { %>
-            '<$ itemVarName $>.<$ input.column.name $>' => 'required',
+            '<$ itemVarName $>.<$ input.column.name $>' => <$ input.getCreationRulesForTemplate() $>,
             <% } %>
         ];
     }
