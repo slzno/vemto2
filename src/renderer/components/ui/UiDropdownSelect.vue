@@ -61,10 +61,11 @@
     const keyPressed = (event: any): void => {
         const selectedIndex: number = getSelectedIndex()
 
-        let nextItem: Options = null
+        let nextItem: Options = null,
+            itemIndex: number = selectedIndex
 
         if (event.keyCode == 38) {
-            var itemIndex: number = selectedIndex - 1
+            itemIndex -= 1
 
             if(itemIndex < 0) itemIndex = filteredOptions.value.length - 1
 
@@ -72,7 +73,7 @@
         }
 
         if (event.keyCode == 40) {
-            var itemIndex: number = selectedIndex + 1
+            itemIndex += 1
 
             if(itemIndex >= filteredOptions.value.length) itemIndex = 0
 

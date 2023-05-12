@@ -187,6 +187,12 @@ export default class Model extends RelaDB.Model implements SchemaModel {
         })
     }
 
+    getRelationshipByInverseClassAndType(completeClass: string, type: string): Relationship {
+        return this.ownRelationships.find((relationship: Relationship) => {
+            return ''
+        })
+    }
+
     saveSchemaState() {
         this.fillSchemaState()
 

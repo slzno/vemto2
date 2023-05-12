@@ -1,8 +1,7 @@
+import Table from "@Common/models/Table"
 import Relationship from "@Common/models/Relationship"
-import RelationshipService from "./base/RelationshipService";
-import WordManipulator from "@Common/util/WordManipulator";
-import Table from "@Common/models/Table";
-import Model from "@Common/models/Model";
+import WordManipulator from "@Common/util/WordManipulator"
+import RelationshipService from "./base/RelationshipService"
 
 class CalculateManyToManyRelationshipsData extends RelationshipService {
     private _relationship: Relationship

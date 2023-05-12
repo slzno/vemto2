@@ -2,6 +2,7 @@ import md5 from "crypto-js/md5"
 import Model from "@Common/models/Model"
 import Project from "@Common/models/Project"
 import Relationship from "@Common/models/Relationship"
+import RelationshipTypes from "@Common/models/static/RelationshipTypes"
 
 class ModelsFromSchemaBuilder {
     static processing: boolean = false
@@ -108,6 +109,13 @@ class ModelsFromSchemaBuilder {
 
             this.readRelationships(modelData, model)
         })
+
+        this.schemaModelsData.forEach((modelData: any) => {
+            let model = modelsKeyedByClass[modelData.class]
+
+            console.log('estou aqui', 'sim estou aqui')
+            this.readInverseRelationship(modelData, model, this.schemaModelsData)
+        })
     }
 
     readRelationships(modelData: any, model: Model) {
@@ -138,6 +146,19 @@ class ModelsFromSchemaBuilder {
             relationship.applyChanges(relationshipData)
 
             this.changedRelationships.push(relationship)
+        })
+    }
+
+    readInverseRelationship(modelData: any, model: Model, schemaModelsData: any) {
+        modelData.relationships.forEach((relationshipData: any) => {
+            const relatedModelFromRelationshipData = this.project.models.find((model: Model) => model.class === relationshipData.relatedModelName),
+                inverseRelationshipType = RelationshipTypes.get()[relationshipData.type].inverse
+
+            if(!relatedModelFromRelationshipData || !inverseRelationshipType) return
+
+            // const inverseRelationshipFromRelatedModel = relatedModelFromRelationshipData.getRelationshipByInverseClassAndType(modelData.class, inverseRelationshipType)
+
+            console.log(relatedModelFromRelationshipData, inverseRelationshipType)
         })
     }
 

@@ -284,11 +284,15 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
             relatedModelName: DataComparator.stringsAreDifferent(this.schemaState.relatedModelName, comparisonData.relatedModelName),
             parentTableName: DataComparator.stringsAreDifferent(this.schemaState.parentTableName, comparisonData.parentTableName),
             parentModelName: DataComparator.stringsAreDifferent(this.schemaState.parentModelName, comparisonData.parentModelName),
-            foreignKeyName: DataComparator.stringsAreDifferent(this.schemaState.foreignKeyName, comparisonData.foreignKeyName),
-            localKeyName: DataComparator.stringsAreDifferent(this.schemaState.localKeyName, comparisonData.localKeyName),
-            ownerKeyName: DataComparator.stringsAreDifferent(this.schemaState.ownerKeyName, comparisonData.ownerKeyName),
             relatedKeyName: DataComparator.stringsAreDifferent(this.schemaState.relatedKeyName, comparisonData.relatedKeyName),
+            foreignKeyName: DataComparator.stringsAreDifferent(this.schemaState.foreignKeyName, comparisonData.foreignKeyName),
+            ownerKeyName: DataComparator.stringsAreDifferent(this.schemaState.ownerKeyName, comparisonData.ownerKeyName),
+            foreignPivotKeyName: DataComparator.stringsAreDifferent(this.schemaState.foreignPivotKeyName, comparisonData.foreignPivotKeyName),
+            relatedPivotKeyName: DataComparator.stringsAreDifferent(this.schemaState.relatedPivotKeyName, comparisonData.relatedPivotKeyName),
+            parentKeyName: DataComparator.stringsAreDifferent(this.schemaState.parentKeyName, comparisonData.parentKeyName),
+            pivotTableName: DataComparator.stringsAreDifferent(this.schemaState.pivotTableName, comparisonData.pivotTableName),
             morphType: DataComparator.stringsAreDifferent(this.schemaState.morphType, comparisonData.morphType),
+            localKeyName: DataComparator.stringsAreDifferent(this.schemaState.localKeyName, comparisonData.localKeyName),
         }
     }
 
@@ -320,6 +324,10 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
         this.morphType = data.morphType
         this.createdFromInterface = false
 
+        this.foreignPivotKeyName = data.foreignPivotKeyName
+        this.relatedPivotKeyName = data.relatedPivotKeyName
+        this.pivotTableName = data.pivotTableName
+
         this.fillSchemaState()
 
         this.save()
@@ -350,6 +358,9 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
             ownerKeyName: this.ownerKeyName,
             relatedKeyName: this.relatedKeyName,
             morphType: this.morphType,
+            foreignPivotKeyName: this.foreignPivotKeyName,
+            relatedPivotKeyName: this.relatedPivotKeyName,
+            pivotTableName: this.pivotTableName
         }
     }
 

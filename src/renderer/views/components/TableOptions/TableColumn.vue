@@ -7,7 +7,6 @@
     import UiNumber from "@Renderer/components/ui/UiNumber.vue"
     import { Bars3Icon, ChevronDownIcon, ChevronUpIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
-    import UiSelect from "@Renderer/components/ui/UiSelect.vue"
     import Alert from "@Renderer/components/utils/Alert"
     import Main from "@Renderer/services/wrappers/Main"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
