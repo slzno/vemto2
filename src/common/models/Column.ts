@@ -1,14 +1,14 @@
 import Table from './Table'
+import Input from './crud/Input'
+import ColumnData from './data/ColumnData'
 import RelaDB from '@tiago_silva_pereira/reladb'
+import DataComparator from './services/DataComparator'
 import TableColumnChanged from '@Common/events/TableColumnChanged'
 import TableColumnCreated from '@Common/events/TableColumnCreated'
-import ColumnData from './data/ColumnData'
-import ColumnsDefaultData from './column-types/default/ColumnsDefaultData'
-import ColumnsDefaultDataInterface from './column-types/default/base/ColumnsDefaultDataInterface'
 import ColumnTypeList from './column-types/base/ColumnTypeList'
 import DataComparisonLogger from './services/DataComparisonLogger'
-import DataComparator from './services/DataComparator'
 import Model from './Model'
+import ColumnsDefaultDataList, { ColumnDefaultData } from './column-types/default/ColumnsDefaultDataList'
 
 export default class Column extends RelaDB.Model implements SchemaModel {
     id: string
@@ -29,6 +29,7 @@ export default class Column extends RelaDB.Model implements SchemaModel {
     places: number
     autoIncrement: boolean
     faker: string
+    inputs: Input[]
 
     modelId: string
     model: Model
@@ -46,7 +47,8 @@ export default class Column extends RelaDB.Model implements SchemaModel {
     relationships() {
         return {
             table: () => this.belongsTo(Table),
-            model: () => this.belongsTo(Model)
+            model: () => this.belongsTo(Model),
+            inputs: () => this.hasMany(Input),
         }
     }
 
@@ -63,10 +65,6 @@ export default class Column extends RelaDB.Model implements SchemaModel {
 
         column.order = nextOrder
         column.saveFromInterface()
-    }
-
-    static updated(column: Column) {
-        column.syncSourceCode()
     }
 
     saveFromInterface() {
@@ -129,6 +127,22 @@ export default class Column extends RelaDB.Model implements SchemaModel {
 
     isSpecialPrimaryKey(): boolean {
         return this.type === 'uuid'
+    }
+
+    isDefaultLaravelTimestamp(): boolean {
+        return this.name === 'created_at' || this.name === 'updated_at'
+    }
+
+    isTextual(): boolean {
+        return ['string', 'text', 'char', 'date', 'datetime', 'timestamp'].includes(this.type)
+    }
+
+    isCreatedAt(): boolean {
+        return this.name === 'created_at'
+    }
+
+    isUpdatedAt(): boolean {
+        return this.name === 'updated_at'
     }
 
     hasFaker(): boolean {
@@ -277,10 +291,10 @@ export default class Column extends RelaDB.Model implements SchemaModel {
         return this.getFakerByType()
     }
 
-    getDefaultSettingsByName(name?: string): ColumnsDefaultDataInterface {
+    getDefaultSettingsByName(name?: string): ColumnDefaultData {
         if(!name) name = this.name
 
-        const defaultData = ColumnsDefaultData.getSettingsByColumnName(name)
+        const defaultData = ColumnsDefaultDataList.getSettingsByColumnName(name)
 
         if(!defaultData) return null
 
@@ -334,10 +348,6 @@ export default class Column extends RelaDB.Model implements SchemaModel {
         faker = faker.replace(/\$faker/g, '$this->faker').replace(/(Str::)/g, '\\Str::')
 
         return faker
-    }
-
-    syncSourceCode() {
-        this.table.syncSourceCode()
     }
 
     logDataComparison() {

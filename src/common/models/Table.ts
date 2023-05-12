@@ -5,6 +5,7 @@ import Project from './Project'
 import RelaDB from '@tiago_silva_pereira/reladb'
 import DataComparator from './services/DataComparator'
 import DataComparisonLogger from './services/DataComparisonLogger'
+import Relationship from './Relationship'
 
 export default class Table extends RelaDB.Model implements SchemaModel {
     id: string
@@ -19,6 +20,8 @@ export default class Table extends RelaDB.Model implements SchemaModel {
     migrations: any[]
     positionX: number
     positionY: number
+    labelColumn: Column
+    labelColumnId: string
     needsMigration: boolean
     createdFromInterface: boolean
 
@@ -31,6 +34,7 @@ export default class Table extends RelaDB.Model implements SchemaModel {
             project: () => this.belongsTo(Project),
             models: () => this.hasMany(Model).cascadeDelete(),
             indexes: () => this.hasMany(Index).cascadeDelete(),
+            labelColumn: () => this.belongsTo(Column, "labelColumnId"),
             columns: () => this.hasMany(Column).cascadeDelete().orderBy('order'),
         }
     }
@@ -147,6 +151,28 @@ export default class Table extends RelaDB.Model implements SchemaModel {
         return this.getColumns().find((column) => column.name === columnName && column.id != columnId) !== undefined
     }
 
+    hasPrimaryKey(): boolean {
+        return this.getPrimaryKeyColumn() !== undefined
+    }
+
+    getPrimaryKeyColumn(): Column {
+        return this.getColumns().find((column) => column.isPrimaryKey())
+    }
+
+    getPrimaryKeyName(): string {
+        if(!this.hasPrimaryKey()) return ''
+
+        return this.getPrimaryKeyColumn().name
+    }
+
+    getCreatedAtColumn(): Column {
+        return this.getColumns().find((column) => column.isCreatedAt())
+    }
+
+    getUpdatedAtColumn(): Column {
+        return this.getColumns().find((column) => column.isUpdatedAt())
+    }
+
     doesNotHaveColumn(columnName: string): boolean {
         return !this.hasColumn(columnName)
     }
@@ -254,7 +280,8 @@ export default class Table extends RelaDB.Model implements SchemaModel {
     }
 
     getRelatedTables(): Table[] {
-        let relatedTables: Table[] = []
+        let relatedTables: Table[] = [],
+            relatedTablesIds: string[] = []
 
         this.getForeignIndexes().forEach((index) => {
             const foreignTable = index.getForeignTable()
@@ -263,17 +290,37 @@ export default class Table extends RelaDB.Model implements SchemaModel {
 
             let relatedTable = this.project.findTableByName(foreignTable.name)
 
-            if(relatedTable) {
+            if(relatedTable && !relatedTablesIds.includes(relatedTable.id)) {
                 relatedTables.push(relatedTable)
+                relatedTablesIds.push(relatedTable.id)
             }
         })
-                
+        
+        this.getRelationships().forEach((relationship: Relationship) => {
+            let relatedTable = relationship.relatedModel.table
+
+            if(relatedTable && !relatedTablesIds.includes(relatedTable.id)) {
+                relatedTables.push(relatedTable)
+                relatedTablesIds.push(relatedTable.id)
+            }
+        })
 
         return relatedTables
     }
 
     getModels(): Model[] {
-        return this.models.filter((model) => !model.isRemoved())
+        return this.models.filter((model: Model) => !model.isRemoved())
+    }
+
+    getRelationships(): Relationship[] {
+        let relationships: Relationship[] = []
+
+        this.getModels().forEach((model: Model) => {
+            relationships = relationships
+                .concat(model.ownRelationships)
+        })
+
+        return relationships
     }
 
     hasTimestamps(): boolean {
@@ -292,10 +339,6 @@ export default class Table extends RelaDB.Model implements SchemaModel {
 
     hasMigrations(): boolean {
         return (!! this.migrations) && this.migrations.length > 0
-    }
-
-    hasCreationMigration(): boolean {
-        return !! this.getCreationMigration()
     }
 
     latestMigrationCreatedTable(): boolean {
@@ -320,16 +363,20 @@ export default class Table extends RelaDB.Model implements SchemaModel {
         return latestMigration
     }
 
+    needsCreationMigration(): boolean {
+        return !this.hasCreationMigration()
+    }
+
+    hasCreationMigration(): boolean {
+        return !! this.getCreationMigration()
+    }
+
     getCreationMigration(): any {
         return this.migrations.find((migration) => migration.createdTables.includes(this.name))
     }
 
     canUpdateLatestMigration(): boolean {
         return this.hasMigrations()
-    }
-
-    needsCreationMigration(): boolean {
-        return !! this.needsMigration
     }
 
     wasCreatedFromInterface(): boolean {
@@ -395,7 +442,16 @@ export default class Table extends RelaDB.Model implements SchemaModel {
         return column
     }
 
-    syncSourceCode() {
-        this.models.forEach((model) => model.syncSourceCode())
+    getLabelColumn(): Column {
+        if(this.labelColumn) return this.labelColumn
+
+        let nameField = this.columns.find(column => column.name == 'name' || column.name == 'title'),
+            firstStringField = this.columns.find(column => column.isTextual())
+
+        if(nameField) return nameField
+
+        if(firstStringField) return firstStringField
+
+        return this.getPrimaryKeyColumn()
     }
 }

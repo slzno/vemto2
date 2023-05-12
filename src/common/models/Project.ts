@@ -1,8 +1,6 @@
-import Crud from "./Crud"
+import Crud from "./crud/Crud"
 import Table from "./Table"
 import Model from "./Model"
-import Factory from "./Factory"
-import ModelSuite from "./ModelSuite"
 import RelaDB from "@tiago_silva_pereira/reladb"
 
 import RenderableFile, {
@@ -17,8 +15,6 @@ export default class Project extends RelaDB.Model {
     cruds: Crud[]
     tables: Table[]
     models: Model[]
-    factories: Factory[]
-    modelSuites: ModelSuite[]
     laravelVersion: Number
     schemaTablesDataHash: string
     schemaModelsDataHash: string
@@ -36,8 +32,6 @@ export default class Project extends RelaDB.Model {
             cruds: () => this.hasMany(Crud).cascadeDelete(),
             tables: () => this.hasMany(Table).cascadeDelete(),
             models: () => this.hasMany(Model).cascadeDelete(),
-            factories: () => this.hasMany(Factory).cascadeDelete(),
-            modelSuites: () => this.hasMany(ModelSuite).cascadeDelete(),
             renderableFiles: () => this.hasMany(RenderableFile).cascadeDelete(),
         }
     }
@@ -93,10 +87,6 @@ export default class Project extends RelaDB.Model {
 
     findModelById(modelId: string): Model {
         return this.models.find((model) => model.id === modelId)
-    }
-
-    getApplications(): any[] {
-        return this.modelSuites
     }
 
     getTablesNames(): string[] {
@@ -202,9 +192,8 @@ export default class Project extends RelaDB.Model {
         path: string,
         name: string,
         template: string,
-        data: any,
         type: RenderableFileType = RenderableFileType.PHP_CLASS
-    ) {
+    ) : RenderableFile {
         let renderableFile: RenderableFile = null
 
         renderableFile = this.renderableFiles.find(
@@ -220,13 +209,14 @@ export default class Project extends RelaDB.Model {
             renderableFile.name = name
             renderableFile.template = template
             renderableFile.projectId = this.id
-            renderableFile.data = data
             renderableFile.type = type
         }
 
-        renderableFile.status = RenderableFileStatus.PENDING
+        renderableFile.status = RenderableFileStatus.PREPARING
 
-        return renderableFile.save()
+        renderableFile.save()
+
+        return renderableFile
     }
 
     hasRenderableFilesWithConflict(): boolean {

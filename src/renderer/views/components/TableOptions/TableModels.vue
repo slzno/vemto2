@@ -1,9 +1,9 @@
 <script setup lang="ts">
-    import { PropType, toRef, reactive } from "vue"
     import Model from "@Common/models/Model"
     import TableModel from "./TableModel.vue"
-    import { PlusCircleIcon } from "@heroicons/vue/24/outline"
+    import { PropType, toRef, reactive } from "vue"
     import Table from "@Renderer/../common/models/Table"
+    import { PlusCircleIcon } from "@heroicons/vue/24/outline"
     import WordManipulator from "@Renderer/../common/util/WordManipulator"
 
     const props = defineProps({

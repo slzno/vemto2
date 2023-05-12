@@ -13,6 +13,11 @@
             type: Array<{label: string, value: string}>,
             required: true,
         },
+
+        external: {
+            type: Boolean,
+            default: false,
+        },
     })
 
     const emit = defineEmits(['update:modelValue'])
@@ -29,14 +34,22 @@
 
 <template>
     <ul
-        class="bg-slate-800 flex space-x-2 text-sm text-slate-500 px-1 border-b border-slate-700"
+        :class="{
+            'bg-slate-800': !external,
+            'bg-transparent': external,
+        }"
+        class="flex space-x-2 text-sm text-slate-500 px-1 border-b border-slate-700"
     >
         <li
             v-for="tab in tabs"
             :key="tab.value"
             @click="setTab(tab.value)"
-            class="rounded-t px-2 py-1 -mb-px cursor-pointer hover:text-slate-200"
-            :class="{'text-slate-200 bg-slate-850 border-l border-t border-r border-slate-700': tab.value === localValue}"
+            class="rounded-t px-2 py-1 -mb-px cursor-pointer hover:text-slate-300"
+            :class="{
+                'bg-slate-850': !external && tab.value === localValue,
+                'bg-slate-900': external && tab.value === localValue,
+                'text-slate-300 border-l border-t border-r border-slate-700': tab.value === localValue
+            }"
         >
             {{ tab.label }}
         </li>

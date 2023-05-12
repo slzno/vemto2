@@ -33,7 +33,7 @@
             >{{ column.type }}
             <span
                 class="ml-1 text-slate-300"
-                v-if="column.hasOwnProperty('length') && column.length !== null"
+                v-if="column.hasOwnProperty('length') && typeof column.length === 'number'"
                 >({{ column.length }})</span
             ></span
         >

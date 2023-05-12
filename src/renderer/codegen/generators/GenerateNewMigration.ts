@@ -1,8 +1,8 @@
 import Table from "../../../common/models/Table"
+import Main from "@Renderer/services/wrappers/Main"
 import Project from "../../../common/models/Project"
 import PhpFormatter from "../formatters/PhpFormatter"
 import TemplateCompiler from "../templates/base/TemplateCompiler"
-import Main from "@Renderer/services/wrappers/Main"
 
 export default new class GenerateNewMigration {
     table: Table

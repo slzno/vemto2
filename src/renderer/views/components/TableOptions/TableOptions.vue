@@ -1,11 +1,11 @@
 <script setup lang="ts">
     import { toRef, ref } from "vue"
     import Table from "@Common/models/Table"
+    import TableSettings from "./TableSettings.vue"
+    import { XMarkIcon } from "@heroicons/vue/24/outline"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import TableModels from "../TableOptions/TableModels.vue"
     import TableColumns from "../TableOptions/TableColumns.vue"
-    import { XMarkIcon } from "@heroicons/vue/24/outline"
-    import TableSettings from "./TableSettings.vue"
 
     const props = defineProps({
         show: Boolean,
@@ -18,10 +18,10 @@
     const selectedTab = ref("columns")
 
     const tabs = [
-        {label: "Columns", value: "columns"},
-        {label: "Models", value: "models"},
-        {label: "Indexes", value: "indexes"},
-        {label: "Settings", value: "settings"},
+        { label: "Columns", value: "columns" },
+        { label: "Models", value: "models" },
+        { label: "Indexes", value: "indexes" },
+        { label: "Settings", value: "settings" },
     ]
 </script>
 
@@ -34,43 +34,49 @@
         leave-to-class="transition duration-200 translate-y-full"
     >
         <div
-            class="absolute right-0 top-0 h-full pt-10 px-4 z-50 text-slate-200"
+            class="fixed right-0 bottom-0 h-screen pt-10 px-4 z-50 text-slate-200"
             style="width: 38rem"
             v-if="show"
         >
             <div
-                class="relative rounded-t-lg bg-slate-850 w-full h-full shadow-2xl border-t border-l border-r border-slate-600"
+                class="relative rounded-t-lg bg-slate-850 w-full shadow-2xl border-t border-l border-r border-slate-600 overflow-hidden h-full"
             >
-                <div class="flex justify-between bg-slate-800 p-4 rounded-t-lg">
-                    <div class="flex flex-col">
-                        <span class="font-semibold">Table Options</span>
-                        <div class="text-red-400">{{ table.name }}</div>
+                <div class="flex flex-col h-full">
+                    <div>
+                        <div class="flex justify-between bg-slate-800 p-4 rounded-t-lg">
+                            <div class="flex flex-col">
+                                <span class="font-semibold">Table Options</span>
+                                <div class="text-red-400">{{ table.name }}</div>
+                            </div>
+                        </div>
+        
+                        <button
+                            class="cursor-pointer flex absolute top-2 right-2"
+                            @click="$emit('close')"
+                        >
+                            <XMarkIcon class="w-4 h-4 stroke-2 hover:text-red-500" />
+                        </button>
+        
+                        <UiTabs :tabs="tabs" v-model="selectedTab" />
                     </div>
-                </div>
-
-                <button
-                    class="cursor-pointer flex absolute top-2 right-2"
-                    @click="$emit('close')"
-                >
-                    <XMarkIcon class="w-4 h-4 stroke-2 hover:text-red-500" />
-                </button>
-
-                <UiTabs :tabs="tabs" v-model="selectedTab" />
-
-                <div class="p-4 space-y-2" v-if="selectedTab === 'columns'">
-                    <TableColumns :table="table" />
-                </div>
-
-                <div class="p-4 space-y-2" v-if="selectedTab === 'models'">
-                    <TableModels :table="table" />
-                </div>
-
-                <div class="p-4 space-y-2" v-if="selectedTab === 'indexes'">
-                    <div class="text-red-400">Not implemented yet</div>
-                </div>
-
-                <div class="p-4 space-y-2" v-if="selectedTab === 'settings'">
-                    <TableSettings :table="table" />
+    
+                    <div class="flex-grow overflow-auto pb-40">
+                        <div class="p-4 space-y-2" v-if="selectedTab === 'columns'">
+                            <TableColumns :table="table" />
+                        </div>
+        
+                        <div class="p-4 space-y-2" v-if="selectedTab === 'models'">
+                            <TableModels :table="table" />
+                        </div>
+        
+                        <div class="p-4 space-y-2" v-if="selectedTab === 'indexes'">
+                            <div class="text-red-400">Not implemented yet</div>
+                        </div>
+        
+                        <div class="p-4 space-y-2" v-if="selectedTab === 'settings'">
+                            <TableSettings :table="table" />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

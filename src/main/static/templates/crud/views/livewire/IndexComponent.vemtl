@@ -1,0 +1,68 @@
+<?php
+
+<% const crud = this.crud %>
+<% const modelName = crud.model.name %>
+<% const camelCase = this.require('camelCase') %>
+<% const paramCase = this.require('paramCase') %>
+<% const viewsFolderName = camelCase(crud.model.plural) %>
+<% const collectionVarName = camelCase(crud.model.plural) %>
+
+namespace App\Http\Livewire;
+ 
+use Livewire\Component;
+use Livewire\WithPagination;
+use App\Models\<$ modelName $>;
+ 
+class <$ this.filenameWithoutExtension $> extends Component
+{
+    use WithPagination;
+
+    public $search;
+    <% if(crud.hasDefaultSortColumn()) { %>
+    public $sortField = '<$ crud.defaultSortColumn.name $>';
+    <% } else { %>
+    public $sortField;
+    <% } %>
+    public $sortDirection = '<$ crud.defaultSortDirection $>';
+
+    public $queryString = ['search', 'sortField', 'sortDirection'];
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortDirection = 'asc';
+        }
+
+        $this->sortField = $field;
+    }
+
+    public function getRowsProperty()
+    {
+        return $this->rowsQuery->paginate(10);
+    }
+
+    public function getRowsQueryProperty()
+    {
+        <% if(crud.hasDefaultSearchColumn()) { %>
+        return <$ modelName $>::query()
+            ->orderBy($this->sortField, $this->sortDirection)
+            ->where('<$ crud.defaultSearchColumn.name $>', 'like', "%{$this->search}%");
+        <% } else { %>
+        return <$ modelName $>::query();
+        <% } %>
+    }
+
+    public function render()
+    {
+        return view('livewire.<$ viewsFolderName $>.index', [
+            '<$ collectionVarName $>' => $this->rows,
+        ]);
+    }
+}

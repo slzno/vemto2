@@ -15,6 +15,22 @@ Vemto::execute('php-merger', function () use ($argv) {
     $currentFilePath = $argv[2];
     $previousFilePath = $argv[3] ?? null;
 
+    /**
+     * If the current file doesn't exist, it means that this is the first time
+     * we are processing this file. In this case, we just need to write the
+     * processed file to the disk and return it.
+     */
+    if(!file_exists($currentFilePath)) {
+        $resultFileContent = file_get_contents($newFilePath);
+        $resultFilePath = Vemto::writeProcessedFile($resultFileContent);
+
+        Vemto::respondWith([
+            'status' => 'success',
+            'file' => $resultFilePath,
+            'conflictsFile' => null,
+        ]);
+    }
+
     $newFileContent = file_get_contents($newFilePath);
     $currentFileContent = file_get_contents($currentFilePath);
     $previousFileContent = $previousFilePath ? file_get_contents($previousFilePath) : null;

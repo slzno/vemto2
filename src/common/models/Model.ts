@@ -1,13 +1,12 @@
-import Table from './Table'
-import Project from './Project'
-import Factory from './Factory'
-import ModelSuite from './ModelSuite'
-import Relationship from './Relationship'
-import RelaDB from '@tiago_silva_pereira/reladb'
-import DataComparator from './services/DataComparator'
-import DataComparisonLogger from './services/DataComparisonLogger'
-import TableNameExceptions from './static/TableNameExceptions'
-import WordManipulator from '@Common/util/WordManipulator'
+import Table from "./Table"
+import Project from "./Project"
+import Relationship from "./Relationship"
+import RelaDB from "@tiago_silva_pereira/reladb"
+import { RenderableFileType } from "./RenderableFile"
+import DataComparator from "./services/DataComparator"
+import WordManipulator from "@Common/util/WordManipulator"
+import TableNameExceptions from "./static/TableNameExceptions"
+import DataComparisonLogger from "./services/DataComparisonLogger"
 import Column from './Column'
 
 export default class Model extends RelaDB.Model implements SchemaModel {
@@ -25,8 +24,6 @@ export default class Model extends RelaDB.Model implements SchemaModel {
     project: Project
     tableName: string
     projectId: string
-    factories: Factory[]
-    modelSuites: ModelSuite[]
     createdFromInterface: boolean
     ownRelationships: Relationship[]
     relatedRelationships: Relationship[]
@@ -51,53 +48,49 @@ export default class Model extends RelaDB.Model implements SchemaModel {
     hasSoftDeletes: boolean
 
     static identifier() {
-        return 'Model'
+        return "Model"
     }
 
     relationships() {
         return {
             table: () => this.belongsTo(Table),
             project: () => this.belongsTo(Project),
-            factories: () => this.hasMany(Factory).cascadeDelete(),
             ownRelationships: () => this.hasMany(Relationship).cascadeDelete(),
-            relatedRelationships: () => this.hasMany(Relationship, 'relatedModelId').cascadeDelete(),
+            relatedRelationships: () =>
+                this.hasMany(Relationship, "relatedModelId").cascadeDelete(),
         }
     }
 
     saveFromInterface() {
         let creating = false
 
-        if(!this.isSaved()) creating = true
+        if (!this.isSaved()) creating = true
 
         this.createdFromInterface = creating
 
         this.save()
 
-        this.syncSourceCode()
-
         return this
     }
 
     remove() {
-        if(this.isNew()) {
+        if (this.isNew()) {
             return this.delete()
         }
-        
+
         this.removed = true
 
         this.save()
-
-        this.syncSourceCode()
     }
 
     getOldName(): string {
-        if(!this.schemaState) return this.name
+        if (!this.schemaState) return this.name
 
         return this.schemaState.name
     }
 
     hasSchemaChanges(comparisonData: any): boolean {
-        if(!this.schemaState) return true
+        if (!this.schemaState) return true
 
         return this.hasDataChanges(comparisonData)
     }
@@ -105,46 +98,102 @@ export default class Model extends RelaDB.Model implements SchemaModel {
     hasDataChanges(comparisonData: any): boolean {
         const dataComparisonMap = this.dataComparisonMap(comparisonData)
 
-        return Object.keys(dataComparisonMap).some(key => dataComparisonMap[key])
+        return Object.keys(dataComparisonMap).some(
+            (key) => dataComparisonMap[key]
+        )
     }
 
     dataComparisonMap(comparisonData: any) {
         return {
-            name: DataComparator.stringsAreDifferent(this.schemaState.name, comparisonData.name),
-            fileName: DataComparator.stringsAreDifferent(this.schemaState.fileName, comparisonData.fileName),
-            tableName: DataComparator.stringsAreDifferent(this.schemaState.tableName, comparisonData.tableName),
-            class: DataComparator.stringsAreDifferent(this.schemaState.class, comparisonData.class),
-            namespace: DataComparator.stringsAreDifferent(this.schemaState.namespace, comparisonData.namespace),
-            path: DataComparator.stringsAreDifferent(this.schemaState.path, comparisonData.path),
-            casts: DataComparator.objectsAreDifferent(this.schemaState.casts, comparisonData.casts),
-            fillable: DataComparator.arraysAreDifferent(this.schemaState.fillable, comparisonData.fillable),
-            dates: DataComparator.arraysAreDifferent(this.schemaState.dates, comparisonData.dates),
-            hidden: DataComparator.arraysAreDifferent(this.schemaState.hidden, comparisonData.hidden),
-            guarded: DataComparator.arraysAreDifferent(this.schemaState.guarded, comparisonData.guarded),
-            appends: DataComparator.arraysAreDifferent(this.schemaState.appends, comparisonData.appends),
-            methods: DataComparator.arraysAreDifferent(this.schemaState.methods, comparisonData.methods),
-            hasGuarded: DataComparator.booleansAreDifferent(this.schemaState.hasGuarded, comparisonData.hasGuarded),
-            hasHidden: DataComparator.booleansAreDifferent(this.schemaState.hasHidden, comparisonData.hasHidden),
-            hasFillable: DataComparator.booleansAreDifferent(this.schemaState.hasFillable, comparisonData.hasFillable),
-            hasTimestamps: DataComparator.booleansAreDifferent(this.schemaState.hasTimestamps, comparisonData.hasTimestamps),
-            hasSoftDeletes: DataComparator.booleansAreDifferent(this.schemaState.hasSoftDeletes, comparisonData.hasSoftDeletes),
+            name: DataComparator.stringsAreDifferent(
+                this.schemaState.name,
+                comparisonData.name
+            ),
+            fileName: DataComparator.stringsAreDifferent(
+                this.schemaState.fileName,
+                comparisonData.fileName
+            ),
+            tableName: DataComparator.stringsAreDifferent(
+                this.schemaState.tableName,
+                comparisonData.tableName
+            ),
+            class: DataComparator.stringsAreDifferent(
+                this.schemaState.class,
+                comparisonData.class
+            ),
+            namespace: DataComparator.stringsAreDifferent(
+                this.schemaState.namespace,
+                comparisonData.namespace
+            ),
+            path: DataComparator.stringsAreDifferent(
+                this.schemaState.path,
+                comparisonData.path
+            ),
+            casts: DataComparator.objectsAreDifferent(
+                this.schemaState.casts,
+                comparisonData.casts
+            ),
+            fillable: DataComparator.arraysAreDifferent(
+                this.schemaState.fillable,
+                comparisonData.fillable
+            ),
+            dates: DataComparator.arraysAreDifferent(
+                this.schemaState.dates,
+                comparisonData.dates
+            ),
+            hidden: DataComparator.arraysAreDifferent(
+                this.schemaState.hidden,
+                comparisonData.hidden
+            ),
+            guarded: DataComparator.arraysAreDifferent(
+                this.schemaState.guarded,
+                comparisonData.guarded
+            ),
+            appends: DataComparator.arraysAreDifferent(
+                this.schemaState.appends,
+                comparisonData.appends
+            ),
+            methods: DataComparator.arraysAreDifferent(
+                this.schemaState.methods,
+                comparisonData.methods
+            ),
+            hasGuarded: DataComparator.booleansAreDifferent(
+                this.schemaState.hasGuarded,
+                comparisonData.hasGuarded
+            ),
+            hasHidden: DataComparator.booleansAreDifferent(
+                this.schemaState.hasHidden,
+                comparisonData.hasHidden
+            ),
+            hasFillable: DataComparator.booleansAreDifferent(
+                this.schemaState.hasFillable,
+                comparisonData.hasFillable
+            ),
+            hasTimestamps: DataComparator.booleansAreDifferent(
+                this.schemaState.hasTimestamps,
+                comparisonData.hasTimestamps
+            ),
+            hasSoftDeletes: DataComparator.booleansAreDifferent(
+                this.schemaState.hasSoftDeletes,
+                comparisonData.hasSoftDeletes
+            ),
         }
     }
 
     hasLocalChanges(): boolean {
-        if(!this.schemaState) return false
+        if (!this.schemaState) return false
 
         return this.hasDataChanges(this)
     }
 
     logDataComparison(): void {
-        console.log('Showing changes for model ' + this.name)
+        console.log("Showing changes for model " + this.name)
 
         DataComparisonLogger.setInstance(this).log()
     }
 
     applyChanges(data: any) {
-        if(!this.hasSchemaChanges(data)) return false
+        if (!this.hasSchemaChanges(data)) return false
 
         this.name = data.name
         this.fileName = data.fileName
@@ -167,8 +216,8 @@ export default class Model extends RelaDB.Model implements SchemaModel {
         this.hasSoftDeletes = data.hasSoftDeletes
 
         const table = this.project.findTableByName(data.tableName)
-        
-        if(table) {
+
+        if (table) {
             this.tableId = table.id
         }
 
@@ -226,7 +275,7 @@ export default class Model extends RelaDB.Model implements SchemaModel {
     }
 
     wasCreatedFromInterface(): boolean {
-        return !! this.createdFromInterface
+        return !!this.createdFromInterface
     }
 
     isNew(): boolean {
@@ -234,42 +283,27 @@ export default class Model extends RelaDB.Model implements SchemaModel {
     }
 
     wasRenamed(): boolean {
-        if(!this.schemaState) return false
-        
+        if (!this.schemaState) return false
+
         return this.schemaState.name !== this.name
     }
 
     isRemoved(): boolean {
-        return !! this.removed
+        return !!this.removed
     }
 
     getRelationshipsNames(): string[] {
-        return this.ownRelationships.map(relationship => relationship.name)
+        return this.ownRelationships.map((relationship) => relationship.name)
     }
 
     getAllRelationshipsKeyedByName(): { [key: string]: Relationship } {
         const relationships = {}
 
-        this.ownRelationships.forEach(relationship => {
+        this.ownRelationships.forEach((relationship) => {
             relationships[relationship.name] = relationship
         })
 
         return relationships
-    }
-
-    syncSourceCode() {
-        const fileName = this.name + '.php'
-
-        this.project.registerRenderableFile(
-            'app/Models', 
-            fileName,
-            'models/Model.vemtl', 
-            {
-                model: this,
-            }
-        )
-
-        this.syncRelationshipsSourceCode()
     }
 
     getPrimaryKeyColumn() {
@@ -280,16 +314,12 @@ export default class Model extends RelaDB.Model implements SchemaModel {
         return this.table.getColumnByName(columnName)
     }
 
-    syncRelationshipsSourceCode() {
-        this.factories.forEach(factory => factory.syncSourceCode())
-    }
-
     calculateDataByName(): void {
-        if(!this.name) return
+        if (!this.name) return
 
         const tableNameExceptions = TableNameExceptions.get()
 
-        if(this.name in tableNameExceptions) {
+        if (this.name in tableNameExceptions) {
             let tableNameException = tableNameExceptions[this.name]
 
             this.plural = tableNameException.plural
@@ -297,7 +327,7 @@ export default class Model extends RelaDB.Model implements SchemaModel {
 
         const modelNamePlural = WordManipulator.pluralize(this.name)
 
-        if(this.name != modelNamePlural) {
+        if (this.name != modelNamePlural) {
             this.plural = modelNamePlural
             this.pluralAndSingularAreSame = false
         } else {

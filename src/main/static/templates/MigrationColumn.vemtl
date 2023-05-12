@@ -19,6 +19,10 @@ $table-><$ column.type $>('<$ column.name $>'
 ->default(<$ column.getDefaultForTemplate() $>)
 <up } up>
 <# --- #>
+<up if (column.unsigned) { up>
+->unsigned()
+<up } up>
+<# --- #>
 <up if (column.nullable) { up>
 ->nullable()
 <up } up>
