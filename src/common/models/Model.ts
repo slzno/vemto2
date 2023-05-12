@@ -311,17 +311,26 @@ export default class Model extends RelaDB.Model implements SchemaModel {
             this.plural = tableNameException.plural
         }
 
-        const modelNamePlural = WordManipulator.pluralize(this.name)
+        const modelNamePlural = Model.calculatePluralName(this)
+        this.plural = modelNamePlural
 
         if (this.name != modelNamePlural) {
-            this.plural = modelNamePlural
             this.pluralAndSingularAreSame = false
         } else {
-            this.plural = `All${modelNamePlural}`
             this.pluralAndSingularAreSame = true
         }
 
         this.class = `${this.namespace}\\${this.name}`
         this.fileName = `${this.name}.php`
+    }
+
+    static calculatePluralName(modelData: any): string {
+        const modelNamePlural = WordManipulator.pluralize(modelData.name)
+
+        if (modelData.name != modelNamePlural) {
+            return modelNamePlural
+        }
+
+        return `All${modelNamePlural}`
     }
 }
