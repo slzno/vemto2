@@ -67,6 +67,28 @@
                 </div>
             </section>
 
+            <section class="flex flex-col w-full h-screen space-y-4 mt-2 px-2" v-if="selectedTab === 'validation'">
+                <div>
+                    <table>
+                        <tr>
+                            <th></th>
+                            <th>Creation Validation</th>
+                            <th>Update Validation</th>
+                        </tr>
+
+                        <tr v-for="input in crud.inputs" :key="input.id">
+                            <td>{{ input.name }}</td>
+                            <td>
+                                {{ input.creationRules }}
+                            </td>
+                            <td>
+                                {{ input.updateRules }}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </section>
+
             <section class="flex flex-col w-full h-screen space-y-4 mt-2 px-2" v-if="selectedTab === 'settings'">
                 <div>
                     <UiSelect v-model="crud.defaultSearchColumnId" label="Default search column" @change="crud.save()" >

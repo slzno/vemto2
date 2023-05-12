@@ -3,9 +3,20 @@ import Column from "../Column"
 import CrudPanel from "./CrudPanel"
 import * as changeCase from "change-case"
 import RelaDB from "@tiago_silva_pereira/reladb"
+import GenerateInputValidation, { ValidationRuleType } from "./services/GenerateInputValidation"
 
 export enum InputType {
     TEXT = "text",
+}
+
+export enum InputValidationRuleType {
+    TEXTUAL = "textual",
+    CODE = "code",
+}
+
+export interface InputValidationRule {
+    type: InputValidationRuleType,
+    value: string,
 }
 
 export default class Input extends RelaDB.Model {
@@ -30,8 +41,8 @@ export default class Input extends RelaDB.Model {
     min: number
     step: number
     items: any[]
-    creationRules: any[]
-    updateRules: any[]
+    creationRules: InputValidationRule[]
+    updateRules: InputValidationRule[]
     showOnCreation: boolean
     showOnUpdate: boolean
     showOnDetails: boolean
@@ -65,13 +76,20 @@ export default class Input extends RelaDB.Model {
         input.min = 0
         input.step = 0
         input.items = []
-        input.creationRules = []
-        input.updateRules = []
         input.showOnCreation = true
         input.showOnUpdate = true
         input.showOnDetails = true
         input.showOnIndex = true
 
+        input.generateValidationRules()
+
         return input
+    }
+
+    generateValidationRules() {
+        const validationGenerator = new GenerateInputValidation(this)
+
+        this.creationRules = validationGenerator.get(ValidationRuleType.CREATION)
+        this.updateRules = validationGenerator.get(ValidationRuleType.UPDATE)
     }
 }
