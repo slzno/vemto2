@@ -28,6 +28,7 @@ export default class Column extends RelaDB.Model implements SchemaModel {
     places: number
     autoIncrement: boolean
     faker: string
+    options: any
     inputs: Input[]
 
     constructor(data: any = {}) {
