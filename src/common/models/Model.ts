@@ -236,12 +236,6 @@ export default class Model extends RelaDB.Model implements SchemaModel {
         })
     }
 
-    getRelationshipByInverseClassAndType(completeClass: string, type: string): Relationship {
-        return this.ownRelationships.find((relationship: Relationship) => {
-            return ''
-        })
-    }
-
     saveSchemaState() {
         this.fillSchemaState()
 
@@ -304,6 +298,12 @@ export default class Model extends RelaDB.Model implements SchemaModel {
         })
 
         return relationships
+    }
+
+    findRelationship(type: string, relatedModelName: string): Relationship {
+        return this.ownRelationships.find((relationship) => relationship.type == type 
+            && relationship.relatedModelName == relatedModelName
+        )
     }
 
     getPrimaryKeyColumn() {

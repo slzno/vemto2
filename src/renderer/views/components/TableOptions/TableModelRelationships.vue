@@ -28,6 +28,18 @@
             }
         })
     }
+
+    const getRelatedModelRelationshipsForSelect = (relationship: Relationship) => {
+        if(!relationship.relatedModelId) return []
+
+        return relationship.relatedModel
+            .ownRelationships.map((relatedModelRelationship: Relationship) => {
+                return {
+                    key: relatedModelRelationship.id,
+                    label: relatedModelRelationship.name
+                }
+            })
+    }
         
     const newRelationship = (): void => {
         const relationship = new Relationship({
@@ -183,39 +195,29 @@
                         </template>
 
                         <template v-if="relationship.isManyToMany()">
-                            <div class="flex flex-col gap-1">
-                                <div class="flex-1 flex gap-1">
-                                    <div>
-                                        <UiText
-                                            v-model="relationship.name"
-                                            placeholder="Relationship Name"
-                                            @input="saveRelationship(relationship)"
-                                        />
-                                    </div>
-                                    <div>
-                                        <UiText
-                                            v-model="relationship.pivotTableName"
-                                            placeholder="Pivot Table Name"
-                                            @input="saveRelationship(relationship)"
-                                        />
-                                    </div>
-                                </div>
-                                <div class="flex-1 flex gap-1">
-                                    <div>
-                                        <UiText
-                                            v-model="relationship.foreignPivotKeyName"
-                                            placeholder="Foreign Pivot Key Name"
-                                            @input="saveRelationship(relationship)"
-                                        />
-                                    </div>
-                                    <div>
-                                        <UiText
-                                            v-model="relationship.relatedPivotKeyName"
-                                            placeholder="Related Pivot Key Name"
-                                            @input="saveRelationship(relationship)"
-                                        />
-                                    </div>
-                                </div>
+                            <div class="gap-2 flex flex-col">
+                                <UiText
+                                    v-model="relationship.name"
+                                    placeholder="Relationship Name"
+                                    @input="saveRelationship(relationship)"
+                                />
+                                <UiText
+                                    v-model="relationship.pivotTableName"
+                                    placeholder="Pivot Table Name"
+                                    @input="saveRelationship(relationship)"
+                                />
+                            </div>
+                            <div class="gap-2 flex flex-col">
+                                <UiText
+                                    v-model="relationship.foreignPivotKeyName"
+                                    placeholder="Foreign Pivot Key Name"
+                                    @input="saveRelationship(relationship)"
+                                />
+                                <UiText
+                                    v-model="relationship.relatedPivotKeyName"
+                                    placeholder="Related Pivot Key Name"
+                                    @input="saveRelationship(relationship)"
+                                />
                             </div>
                         </template>
 
@@ -273,6 +275,15 @@
                     </template>
                 </div>
 
+                <template v-if="relationship.relatedModelId">
+                    <UiDropdownSelect
+                        v-model="relationship.inverseId"
+                        placeholder="Inverse Relationship"
+                        :options="getRelatedModelRelationshipsForSelect(relationship)"
+                        @change="saveRelationship(relationship)"
+                    />
+                </template>
+                
                 <div>
                     <UiButton
                         v-if="relationship.hasTypeAndRelatedModel()"

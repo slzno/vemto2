@@ -11,6 +11,14 @@ export default class RelationshipTypes {
         })
     }
 
+    static getInverse(type: string) {
+        const relationshipType = this.get()[type]
+
+        if(!relationshipType) return null
+
+        return relationshipType.inverse
+    }
+
     static get(): Object {
         return {
             BelongsTo: {label: 'Belongs To', inverse: 'HasMany'},

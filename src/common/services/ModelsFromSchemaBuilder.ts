@@ -3,6 +3,7 @@ import Model from "@Common/models/Model"
 import Project from "@Common/models/Project"
 import Relationship from "@Common/models/Relationship"
 import RelationshipTypes from "@Common/models/static/RelationshipTypes"
+import WordManipulator from "@Common/util/WordManipulator"
 
 class ModelsFromSchemaBuilder {
     static processing: boolean = false
@@ -74,6 +75,7 @@ class ModelsFromSchemaBuilder {
 
         this.readModels()
         this.setRelatedModels()
+        this.readInverseRelationships()
 
         this.reset()
 
@@ -109,13 +111,6 @@ class ModelsFromSchemaBuilder {
 
             this.readRelationships(modelData, model)
         })
-
-        this.schemaModelsData.forEach((modelData: any) => {
-            let model = modelsKeyedByClass[modelData.class]
-
-            console.log('estou aqui', 'sim estou aqui')
-            this.readInverseRelationship(modelData, model, this.schemaModelsData)
-        })
     }
 
     readRelationships(modelData: any, model: Model) {
@@ -149,16 +144,27 @@ class ModelsFromSchemaBuilder {
         })
     }
 
-    readInverseRelationship(modelData: any, model: Model, schemaModelsData: any) {
-        modelData.relationships.forEach((relationshipData: any) => {
-            const relatedModelFromRelationshipData = this.project.models.find((model: Model) => model.class === relationshipData.relatedModelName),
-                inverseRelationshipType = RelationshipTypes.get()[relationshipData.type].inverse
+    readInverseRelationships() {
+        const modelsKeyedByClass = this.project.getAllModelsKeyedByClass()
 
-            if(!relatedModelFromRelationshipData || !inverseRelationshipType) return
+        this.schemaModelsData.forEach((modelData: any) => {
+            let model = modelsKeyedByClass[modelData.class]
 
-            // const inverseRelationshipFromRelatedModel = relatedModelFromRelationshipData.getRelationshipByInverseClassAndType(modelData.class, inverseRelationshipType)
+            if(!model) return
 
-            console.log(relatedModelFromRelationshipData, inverseRelationshipType)
+            model.ownRelationships.forEach((relationship: Relationship) => {
+                const relatedModelInstance = this.project.findModelByClass(relationship.relatedModelName),
+                    inverseRelType = RelationshipTypes.getInverse(relationship.type)
+    
+                if(!relatedModelInstance || !inverseRelType) return
+    
+                const inverseRelationship = relatedModelInstance.findRelationship(inverseRelType, model.class)
+    
+                if(!(inverseRelationship instanceof Relationship)) return
+    
+                relationship.inverseId = inverseRelationship.id
+                relationship.save()
+            })
         })
     }
 
