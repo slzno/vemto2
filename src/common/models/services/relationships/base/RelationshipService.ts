@@ -56,7 +56,7 @@ export default abstract class RelationshipService {
     }
 
     getInverseTypeKey(): string {
-        return RelationshipTypes.get()[this.relationship.type].inverse
+        return RelationshipTypes.getInverse(this.relationship.type)
     }
 
     addToInverseRelation(): void {

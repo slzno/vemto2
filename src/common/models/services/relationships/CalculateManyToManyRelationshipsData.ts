@@ -4,16 +4,12 @@ import WordManipulator from "@Common/util/WordManipulator"
 import RelationshipService from "./base/RelationshipService"
 
 class CalculateManyToManyRelationshipsData extends RelationshipService {
-    private _relationship: Relationship
+    relationship: Relationship
 
     setRelationship(relationship: Relationship): CalculateManyToManyRelationshipsData {
-        this._relationship = relationship
+        this.relationship = relationship
 
         return this
-    }
-    
-    get relationship(): Relationship {
-        return this._relationship
     }
 
     calculateDefaultData(): CalculateManyToManyRelationshipsData {

@@ -3,16 +3,12 @@ import RelationshipService from "./base/RelationshipService";
 import WordManipulator from "@Common/util/WordManipulator";
 
 class CalculateThroughRelationshipsData extends RelationshipService {
-    private _relationship: Relationship
+    relationship: Relationship
 
     setRelationship(relationship: Relationship): CalculateThroughRelationshipsData {
-        this._relationship = relationship
+        this.relationship = relationship
 
         return this
-    }
-
-    get relationship(): Relationship {
-        return this._relationship
     }
 
     calculateDefaultData(): void {

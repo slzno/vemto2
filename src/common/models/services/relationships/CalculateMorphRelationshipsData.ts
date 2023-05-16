@@ -2,20 +2,15 @@ import Relationship from "@Common/models/Relationship"
 import RelationshipService from "./base/RelationshipService"
 import WordManipulator from "@Common/util/WordManipulator"
 import Column from "@Common/models/Column"
-import Model from "@Common/models/Model"
 import Table from "@Common/models/Table"
 
 class CalculateMorphRelationshipsData extends RelationshipService {
-    private _relationship: Relationship
+    relationship: Relationship
     
     setRelationship(relationship: Relationship): CalculateMorphRelationshipsData {
-        this._relationship = relationship
+        this.relationship = relationship
 
         return this
-    }
-
-    get relationship(): Relationship {
-        return this._relationship
     }
 
     calculateDefaultData(): void {
@@ -86,7 +81,7 @@ class CalculateMorphRelationshipsData extends RelationshipService {
         
         pivot.addForeign(modelKeyName, this.relationship.relatedModel)
 
-        this.addMorphableFieldsToPivot(
+        this.addMorphableFieldsToTable(
             pivot, 
             this.relationship.relatedModel.getPrimaryKeyColumn().getForeignType()
         )
@@ -97,24 +92,24 @@ class CalculateMorphRelationshipsData extends RelationshipService {
     }
 
     addMorphableFieldsToItself(): void {
-        this.addMorphableFieldsToPivot(
+        this.addMorphableFieldsToTable(
             this.relationship.pivot, 
             this.relationship.relatedModel.getPrimaryKeyColumn().getForeignType()
         )
     }
 
-    addMorphableFieldsToPivot(pivot: Table, idColumnType: string = 'unsignedBigInteger') {
+    addMorphableFieldsToTable(table: Table, idColumnType: string = 'unsignedBigInteger') {
         const mophableIdName = this.relationship.morphTo + '_id',
             morphableTypeName = this.relationship.morphTo + '_type'
 
         let idColumn = new Column({
-                    tableId: pivot.id,
+                    tableId: table.id,
                     name: mophableIdName,
                     type: idColumnType,
                     index: true
                 }),
             typeField = new Column({
-                    tableId: pivot.id,
+                    tableId: table.id,
                     name: morphableTypeName,
                     type: 'string',
                     index: true

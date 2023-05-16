@@ -292,7 +292,7 @@
                 <template v-if="relationship.relatedModelId">
                     <UiDropdownSelect
                         v-model="relationship.inverseId"
-                        placeholder="Inverse Relationship"
+                        placeholder="Inverse Relationship (optional)"
                         :options="getRelatedModelRelationshipsForSelect(relationship)"
                         @change="saveRelationship(relationship)"
                     />

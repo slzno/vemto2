@@ -2,10 +2,15 @@ import Table from './Table'
 import RelaDB from '@tiago_silva_pereira/reladb'
 import DataComparator from './services/DataComparator'
 import DataComparisonLogger from './services/DataComparisonLogger'
+import Column from './Column'
 
 export default class Index extends RelaDB.Model implements SchemaModel {
     id: string
+
     on: string
+    onTableId: string
+    onTable: Table
+
     name: string
     type: string
     table: Table
@@ -15,7 +20,11 @@ export default class Index extends RelaDB.Model implements SchemaModel {
     removed: boolean
     algorithm: string
     columns: string[]
+
     references: string
+    referencesColumnId: string
+    referencesColumn: Column
+
     onUpdate: string
     onDelete: string
 
@@ -26,7 +35,21 @@ export default class Index extends RelaDB.Model implements SchemaModel {
     relationships() {
         return {
             table: () => this.belongsTo(Table),
+            onTable: () => this.belongsTo(Table),
+            referencesColumn: () => this.belongsTo(Column),
         }
+    }
+
+    static updating(data: any): any {
+        const referenceColumn = Column.find(data.referenceColumnId)
+
+        if(referenceColumn.name == data.references) {
+            return data
+        }
+
+        data.references = referenceColumn.name
+
+        return data
     }
 
     saveFromInterface() {
