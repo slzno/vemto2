@@ -221,6 +221,10 @@ export default class Model extends RelaDB.Model implements SchemaModel {
             this.tableId = table.id
         }
 
+        if(!this.plural) {
+            this.calculateDataByName(false)
+        }
+
         this.fillSchemaState()
 
         this.save()
@@ -314,7 +318,7 @@ export default class Model extends RelaDB.Model implements SchemaModel {
         return this.table.getColumnByName(columnName)
     }
 
-    calculateDataByName(): void {
+    calculateDataByName(updateClassAndFileName: boolean = true): void {
         if (!this.name) return
 
         const tableNameExceptions = TableNameExceptions.get()
@@ -335,6 +339,8 @@ export default class Model extends RelaDB.Model implements SchemaModel {
             this.pluralAndSingularAreSame = true
         }
 
+        if(!updateClassAndFileName) return
+        
         this.class = `${this.namespace}\\${this.name}`
         this.fileName = `${this.name}.php`
     }

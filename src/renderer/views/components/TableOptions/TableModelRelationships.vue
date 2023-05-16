@@ -178,7 +178,7 @@
                             class="h-6 w-6 text-slate-400 cursor-pointer"
                             @click="toggleRelationshipOptions(relationship)"
                         />
-                        <div class="bg-slate-950 w-auto rounded absolute p-1 right-0 top-8 border border-gray-700" v-if="relationshipIdOptions === relationship.id">
+                        <div class="bg-slate-950 w-auto rounded absolute p-1 z-10 right-0 top-8 border border-gray-700" v-if="relationshipIdOptions === relationship.id">
                             <ul>
                                 <li class="flex items-center justify-start text-md p-1 cursor-pointer" @click="onRelationshipRemoving(relationship)">
                                     <TrashIcon class="h-5 w-5 mr-1 text-red-400" />

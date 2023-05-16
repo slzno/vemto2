@@ -50,7 +50,6 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
     //-- Through
     throughId: string
     through: Model
-    throughKeyName: string
 
     pivotId: string
     pivot: Table
