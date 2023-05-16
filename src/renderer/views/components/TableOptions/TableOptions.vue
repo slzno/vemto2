@@ -39,7 +39,7 @@
             v-if="show"
         >
             <div
-                class="relative rounded-t-lg bg-slate-850 w-full shadow-2xl border-t border-l border-r border-slate-600 overflow-hidden h-full"
+                class="relative rounded-t-lg bg-slate-850 w-full shadow-2xl border-t border-l border-r border-slate-600 h-full"
             >
                 <div class="flex flex-col h-full">
                     <div>

@@ -18,6 +18,11 @@ class Tag extends Model
         return $this->belongsToMany(Post::class);
     }
 
+    public function users()
+    {
+        return $this->hasManyThrough(User::class, Post::class);
+    }
+
     public function taggeable()
     {
         return $this->morphTo();

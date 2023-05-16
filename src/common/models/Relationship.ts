@@ -36,6 +36,10 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
     //-- Morph
     idColumnId: string
     idColumn: Column
+
+    //-- HasManyThrough
+    firstKeyName: string
+    secondKeyName: string
     
     typeFieldId: string
     typeField: Column
@@ -289,6 +293,8 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
             pivotTableName: DataComparator.stringsAreDifferent(this.schemaState.pivotTableName, comparisonData.pivotTableName),
             morphType: DataComparator.stringsAreDifferent(this.schemaState.morphType, comparisonData.morphType),
             localKeyName: DataComparator.stringsAreDifferent(this.schemaState.localKeyName, comparisonData.localKeyName),
+            firstKeyName: DataComparator.stringsAreDifferent(this.schemaState.firstKeyName, comparisonData.firstKeyName),
+            secondKeyName: DataComparator.stringsAreDifferent(this.schemaState.secondKeyName, comparisonData.secondKeyName),
         }
     }
 
@@ -324,6 +330,9 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
         this.relatedPivotKeyName = data.relatedPivotKeyName
         this.pivotTableName = data.pivotTableName
 
+        this.firstKeyName = data.firstKeyName
+        this.secondKeyName = data.secondKeyName
+
         this.fillSchemaState()
 
         this.save()
@@ -356,7 +365,9 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
             morphType: this.morphType,
             foreignPivotKeyName: this.foreignPivotKeyName,
             relatedPivotKeyName: this.relatedPivotKeyName,
-            pivotTableName: this.pivotTableName
+            pivotTableName: this.pivotTableName,
+            firstKeyName: this.firstKeyName,
+            secondKeyName: this.secondKeyName,
         }
     }
 

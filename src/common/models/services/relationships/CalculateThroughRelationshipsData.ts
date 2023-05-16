@@ -17,8 +17,8 @@ class CalculateThroughRelationshipsData extends RelationshipService {
 
     calculateDefaultData(): void {
         this.calculateName()
-        this.calculateRelatedKey()
-        this.calculateThroughKey()
+        this.calculateFirstKeyName()
+        this.calculateSecondKeyName()
     }
 
     processAndSave(): void {
@@ -31,16 +31,16 @@ class CalculateThroughRelationshipsData extends RelationshipService {
         this.relationship.name = WordManipulator.camelCase(this.relationship.relatedModel.plural)
     }
 
-    calculateRelatedKey(): void {
+    calculateFirstKeyName(): void {
         if(!this.relationship.model) return
 
-        this.relationship.relatedKeyName = this.getDefaultRelatedModelKey()
+        this.relationship.firstKeyName = this.getDefaultRelatedModelKey()
     }
 
-    calculateThroughKey(): void {
+    calculateSecondKeyName(): void {
         if(!this.relationship.through) return
 
-        this.relationship.throughKeyName = this.getDefaultThroughModelKey()
+        this.relationship.secondKeyName = this.getDefaultThroughModelKey()
     }
 
     getDefaultRelatedModelKey(): string {

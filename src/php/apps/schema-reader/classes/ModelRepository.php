@@ -63,6 +63,10 @@ class ModelRepository {
                             # foreignKeyName
                             'localKeyName' => method_exists($return, 'getLocalKeyName') ? $return->getLocalKeyName() : null,
 
+                            // Has Many Through
+                            'firstKeyName' => method_exists($return, 'getFirstKeyName') ? $return->getFirstKeyName() : null,
+                            'secondKeyName' => method_exists($return, 'getSecondKeyName') ? $return->getSecondKeyName() : null,
+
                             'relatedTableName' => $return->getRelated()->getTable(),
                             'relatedModelName' => $return->getRelated()->getMorphClass(),
                             'parentTableName' => $return->getParent()->getTable(),

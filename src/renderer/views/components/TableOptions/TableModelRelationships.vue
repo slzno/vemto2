@@ -80,7 +80,7 @@
         }
 
         const removeRelationship = (): void => {
-            relationship.remove()
+            relationship.delete()
             removeRelationshipFromUI()
         }
 
@@ -89,11 +89,25 @@
             return
         }
 
-        Main.API.confirm("Are you sure you want to remove this relationship?").then((confirmed: boolean) => {
-            if(!confirmed) return
+        const inverseRelationship = relationship.inverse
 
-            removeRelationship()
-        })
+        Main.API.confirm("Are you sure you want to remove this relationship?")
+            .then((confirmed: boolean) => {
+                if(!confirmed) return
+
+                removeRelationship()
+            })
+
+        if(!inverseRelationship) return
+
+        Main.API.confirm(`This relationship has an inverse relationship called ${inverseRelationship.name}. Do you want to remove it as well?`)
+            .then((confirmed: boolean) => {
+                if(!confirmed) return
+
+                console.log(inverseRelationship)
+
+                inverseRelationship.delete()
+            })
     }
 
     const checkRelationshipValidity = (): void => {
@@ -260,14 +274,14 @@
                         </div>
                         <div>
                             <UiText
-                                v-model="relationship.relatedKeyName"
+                                v-model="relationship.firstKeyName"
                                 placeholder="Related Model Key Name"
                                 @input="saveRelationship(relationship)"
                             />
                         </div>
                         <div>
                             <UiText
-                                v-model="relationship.throughKeyName"
+                                v-model="relationship.secondKeyName"
                                 placeholder="Through Model Key Name"
                                 @input="saveRelationship(relationship)"
                             />
