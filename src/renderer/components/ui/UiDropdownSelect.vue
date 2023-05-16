@@ -258,7 +258,7 @@
         
         <div
             v-show="showing"
-            class="bg-white dark:bg-slate-950 rounded-lg shadow-lg my-2 right-0 absolute overflow-hidden"
+            class="bg-white dark:bg-slate-950 rounded-lg shadow-lg my-2 left-0 absolute overflow-hidden"
             style="min-width: 225px; width: 100%; max-height: 300px; z-index: 999"
         >
             <div class="relative">
