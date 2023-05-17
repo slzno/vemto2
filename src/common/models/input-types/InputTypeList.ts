@@ -1,14 +1,14 @@
 export interface InputType {
-    name: string,
-    label: string,
-    disableDefault?: boolean,
-    disableMax?: boolean,
-    disableMin?: boolean,
-    disablePlaceholder?: boolean,
-    hasStep?: boolean,
-    allowsItems?: boolean,
-    validationRules?: string[],
-    updateValidationRules?: string[],
+    name: string
+    label: string
+    disableDefault?: boolean
+    disableMax?: boolean
+    disableMin?: boolean
+    disablePlaceholder?: boolean
+    hasStep?: boolean
+    allowsItems?: boolean
+    validationRules?: string[]
+    updateValidationRules?: string[]
 }
 
 export default class InputTypeList {
@@ -22,101 +22,93 @@ export default class InputTypeList {
 
     static get(): Object {
         return {
-            "text": {
+            text: {
                 name: "Text",
                 disableMax: true,
                 disableMin: true,
             },
-            "select": {
+            select: {
                 name: "Select",
                 allowsItems: true,
                 disableMax: true,
                 disableMin: true,
                 disablePlaceholder: true,
             },
-            "image": {
+            image: {
                 name: "Image",
                 disableDefault: true,
                 disableMax: true,
                 disableMin: true,
                 disablePlaceholder: true,
-                validationRules: [
-                    'image',
-                    'max:1024'
-                ],
+                validationRules: ["image", "max:1024"],
+                updateValidationRules: ["nullable", "image", "max:1024"],
             },
-            "file": {
+            file: {
                 name: "File",
                 disableDefault: true,
                 disableMax: true,
                 disableMin: true,
                 disablePlaceholder: true,
-                validationRules: [
-                    'file',
-                    'max:1024'
-                ],
+                validationRules: ["file", "max:1024"],
+                updateValidationRules: ["nullable", "file", "max:1024"],
             },
-            "number": {
+            number: {
                 name: "Number",
                 hasStep: true,
             },
-            "textarea": {
+            textarea: {
                 name: "Textarea",
                 disableMax: true,
                 disableMin: true,
             },
-            "email": {
+            email: {
                 name: "Email",
                 disableMax: true,
                 disableMin: true,
             },
-            "date": {
+            date: {
                 name: "Date",
-                validationRules: [
-                    'date',
-                ],
+                validationRules: ["date"],
             },
-            "datetime": {
+            datetime: {
                 name: "Date Time",
-                validationRules: [
-                    'date',
-                ],
+                validationRules: ["date"],
             },
-            "password": {
+            password: {
                 name: "Password",
                 disableMax: true,
                 disableMin: true,
+                validationRules: ["required", "string", "min:6"],
+                updateValidationRules: ["nullable", "string", "min:6"],
             },
-            "checkbox": {
+            checkbox: {
                 name: "Checkbox",
                 disableDefault: true,
                 disablePlaceholder: true,
                 disableMax: true,
                 disableMin: true,
             },
-            "radio": {
+            radio: {
                 name: "Radio",
                 disableDefault: true,
                 disablePlaceholder: true,
                 disableMax: true,
                 disableMin: true,
             },
-            "radioGroup": {
+            radioGroup: {
                 name: "Radio",
                 disableDefault: true,
                 disablePlaceholder: true,
                 disableMax: true,
                 disableMin: true,
             },
-            "url": {
+            url: {
                 name: "Url",
                 disableMax: true,
                 disableMin: true,
-                validationRules: [
-                    'url',
-                ],
+                validationRules: ["url"],
             },
-            "hidden": {
+            hidden: {
                 name: "Hidden",
                 disableMax: true,
                 disableMin: true,

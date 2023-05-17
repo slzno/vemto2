@@ -29,6 +29,8 @@ export default class GenerateInputValidation {
             baseValidationRules = this.getBaseValidationRules(ValidationRuleType.CREATION)
         }
 
+        console.log('baseValidationRules', baseValidationRules)
+
         validationRules = this.addLogicValidationToRules(baseValidationRules, type)
 
         return validationRules.map((rule) => {
@@ -60,7 +62,6 @@ export default class GenerateInputValidation {
     }
 
     addLogicValidationToRules(rules: string[], type: ValidationRuleType = ValidationRuleType.CREATION): string[] {
-        // VERIFICAR: por algum motivo está gerando required no crud de Users
         if(this.input.column.nullable) {
             rules.push("nullable")
         } else {
@@ -83,9 +84,14 @@ export default class GenerateInputValidation {
             rules = this.treatUpdateRules(rules)
         }
 
+        rules = [...new Set(rules)]
+
         rules = this.replacePlaceholders(rules)
+        rules = this.removeAntagonisticRules(rules)
+        rules = this.moveRequiredToStart(rules)
+        rules = this.moveNullableToStart(rules)
         
-        return [...new Set(rules)]
+        return rules
     }
 
     replacePlaceholders(rules: string[]): string[] {
@@ -109,6 +115,32 @@ export default class GenerateInputValidation {
             rules = rules.filter(rule => rule !== 'required')
 
             if(this.input.column.nullable) rules.push('nullable')
+        }
+
+        return rules
+    }
+
+    removeAntagonisticRules(rules: string[]): string[] {
+        if(rules.includes('nullable')) {
+            rules = rules.filter(rule => rule !== 'required')
+        }
+
+        return rules
+    }
+
+    moveRequiredToStart(rules: string[]): string[] {
+        if(rules.includes('required')) {
+            rules = rules.filter(rule => rule !== 'required')
+            rules.unshift('required')
+        }
+
+        return rules
+    }
+
+    moveNullableToStart(rules: string[]): string[] {
+        if(rules.includes('nullable')) {
+            rules = rules.filter(rule => rule !== 'nullable')
+            rules.unshift('nullable')
         }
 
         return rules

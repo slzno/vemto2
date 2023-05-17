@@ -31,7 +31,6 @@ export default class ColumnsDefaultDataList {
                 type: "text",
                 faker: "fake()->randomHtml()",
                 inputType: "html",
-                validationRules: ["string"],
             },
 
             name: {
@@ -108,28 +107,24 @@ export default class ColumnsDefaultDataList {
                 type: "string",
                 nullable: true,
                 inputType: "file",
-                validationRules: ["file"],
             },
 
             filename: {
                 type: "string",
                 nullable: true,
                 inputType: "file",
-                validationRules: ["file"],
             },
 
             file: {
                 type: "string",
                 nullable: true,
                 inputType: "file",
-                validationRules: ["file"],
             },
 
             document: {
                 type: "string",
                 nullable: true,
                 inputType: "file",
-                validationRules: ["file"],
             },
 
             original_name: {
@@ -150,84 +145,72 @@ export default class ColumnsDefaultDataList {
                 type: "string",
                 nullable: true,
                 inputType: 'image',
-                validationRules: ['image', 'max:1024'],
             },
 
             image_url: {
                 type: "string",
                 nullable: true,
                 inputType: 'image',
-                validationRules: ['image', 'max:1024'],
             },
 
             avatar: {
                 type: "string",
                 nullable: true,
                 inputType: 'image',
-                validationRules: ['image', 'max:1024'],
             },
 
             avatar_url: {
                 type: "string",
                 nullable: true,
                 inputType: 'image',
-                validationRules: ['image', 'max:1024'],
             },
 
             thumb: {
                 type: "string",
                 nullable: true,
                 inputType: 'image',
-                validationRules: ['image', 'max:1024'],
             },
 
             thumb_url: {
                 type: "string",
                 nullable: true,
                 inputType: 'image',
-                validationRules: ['image', 'max:1024'],
             },
 
             thumbnail: {
                 type: "string",
                 nullable: true,
                 inputType: 'image',
-                validationRules: ['image', 'max:1024'],
             },
 
             thumbnail_url: {
                 type: "string",
                 nullable: true,
                 inputType: 'image',
-                validationRules: ['image', 'max:1024'],
             },
 
             photo: {
                 type: "string",
                 nullable: true,
                 inputType: 'image',
-                validationRules: ['image', 'max:1024'],
             },
 
             photo_url: {
                 type: "string",
                 nullable: true,
                 inputType: 'image',
-                validationRules: ['image', 'max:1024'],
             },
 
             photography: {
                 type: "string",
                 nullable: true,
                 inputType: 'image',
-                validationRules: ['image', 'max:1024'],
             },
 
             photography_url: {
                 type: "string",
                 nullable: true,
                 inputType: 'image',
-                validationRules: ['image', 'max:1024'],
             },
 
             type: {
@@ -243,7 +226,6 @@ export default class ColumnsDefaultDataList {
                 type: "string",
                 faker: "fake()->email()",
                 inputType: "email",
-                validationRules: ["email"],
             },
 
             slug: {
@@ -255,6 +237,8 @@ export default class ColumnsDefaultDataList {
                 type: "string",
                 faker: "fake()->password()",
                 inputType: "password",
+                validationRules: ["required", "string", "min:6"],
+                updateValidationRules: ["nullable", "string", "min:6"],
             },
 
             login: {
@@ -639,7 +623,6 @@ export default class ColumnsDefaultDataList {
                 type: "string",
                 faker: "fake()->url()",
                 inputType: "url",
-                validationRules: ['url']
             },
 
             domain: {
