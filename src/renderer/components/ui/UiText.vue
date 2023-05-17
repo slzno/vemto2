@@ -48,6 +48,7 @@
         :placeholder="placeholder"
         v-model="localValue"
         @blur="$emit('blur', localValue)"
+        @focus="$emit('focus', localValue)"
         spellcheck="false"
         autocomplete="false"
         :disabled="disabled"

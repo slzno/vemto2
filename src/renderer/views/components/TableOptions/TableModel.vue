@@ -19,7 +19,8 @@
 
     const model = toRef(props, "model") as Ref<Model>,
         showModelOptions = ref(false),
-        emit = defineEmits(['removeModel'])
+        emit = defineEmits(['removeModel']),
+        modelPluralReference = ref(null)
     
     let models: Ref<Array<Model>> = ref([])
 
@@ -35,6 +36,16 @@
         }
         
         model.value.saveFromInterface()
+    }, 500)
+
+    const saveModelCollection = debounce(() => {
+        if(!model.value.plural || !model.value.plural.length) {
+            model.value.plural = modelPluralReference.value
+            return
+        }
+
+        modelPluralReference.value = null
+        saveModelData()
     }, 500)
 
     const getSelectDataForLayout = (property: Array<string>|Column[]): Array<Object> => {
@@ -100,7 +111,8 @@
                 <UiText 
                     v-model="model.plural"
                     placeholder="Collection"
-                    @input="saveModelData()"
+                    @blur="saveModelCollection()"
+                    @focus="modelPluralReference = $event"
                 />
             </div>
             <div class="mt-2 flex gap-3">

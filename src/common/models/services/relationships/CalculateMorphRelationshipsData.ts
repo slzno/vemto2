@@ -93,7 +93,7 @@ class CalculateMorphRelationshipsData extends RelationshipService {
 
     addMorphableFieldsToItself(): void {
         this.addMorphableFieldsToTable(
-            this.relationship.pivot, 
+            this.relationship.relatedModel.table, 
             this.relationship.relatedModel.getPrimaryKeyColumn().getForeignType()
         )
     }

@@ -408,13 +408,20 @@ export default class Table extends RelaDB.Model implements SchemaModel {
     addForeign(name: string, relatedModel: Model): Index {
         const column = this.getOrCreateForeignColumn(name, relatedModel)
 
-        if(column.isForeign()) return
+        if(column.isForeign()) {
+            return
+        }
 
-        new Index({
+        const foreign = new Index({
+            tableId: this.id,
             name: column.name,
             columns: [column.name],
             type: 'foreign'
-        }).save()
+        })
+        
+        foreign.save()
+
+        return foreign
     }
 
     getOrCreateForeignColumn(name: string, relatedModel: Model): Column {

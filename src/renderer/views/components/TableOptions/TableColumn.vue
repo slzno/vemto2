@@ -93,6 +93,7 @@
             'border-yellow-400': column.autoIncrement,
             'border-red-400': column.isForeign(),
             'border-orange-400': column.isUnique(),
+            'border-blue-400': column.index,
         }"
         class="relative flex-col bg-slate-800 border-l-4 border-slate-700 p-2 rounded-xl shadow"
     >

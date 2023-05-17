@@ -33,7 +33,7 @@ class CalculateCommonRelationshipsData extends RelationshipService {
     }
 
     saveAndFinish() {
-        this.relationship.saveFromInterface()
+        this.relationship.save()
         this.addToInverseRelation()
     }
 
@@ -48,8 +48,9 @@ class CalculateCommonRelationshipsData extends RelationshipService {
                 foreignKeyName: this.relationship.foreignKeyName
             })
 
-        this.setRelationship(inverseRelationship).process()
-        this.setRelationship(this.relationship)
+        new CalculateCommonRelationshipsData()
+            .setRelationship(inverseRelationship)
+            .process()
 
         const freeSimilarRelationship = this.relationship.relatedModel.getFreeSimilarRelationship(inverseRelationship)
         
@@ -66,7 +67,7 @@ class CalculateCommonRelationshipsData extends RelationshipService {
     addForeign(): Index {
         if(!(['BelongsTo'].includes(this.relationship.type))) return
 
-        let foreignName = this.getOriginalForeignName()
+        let foreignName = this.getForeignKeyName()
 
         return this.relationship.model.table.addForeign(
             foreignName,
@@ -90,7 +91,7 @@ class CalculateCommonRelationshipsData extends RelationshipService {
     calculateDefaultData(): void {
         this.calculateName()
         this.calculateParentKey()
-        this.calculateForeignName()
+        this.calculateForeignKeyName()
     }
 
     calculateParentKey() {
@@ -101,13 +102,13 @@ class CalculateCommonRelationshipsData extends RelationshipService {
         this.relationship.parentKeyId = this.relationship.parentKeyId || keys.parentKey.id
     }
 
-    calculateForeignName() {
+    calculateForeignKeyName() {
         this.relationship.foreignKeyName = this.getDefaultForeignKeyName()
     }
 
     getDefaultKeys() {
         let keys = {} as any,
-            foreignName = this.getOriginalForeignName()
+            foreignName = this.getForeignKeyName()
 
         if(['BelongsTo'].includes(this.relationship.type)) {
             keys.parentKey = this.relationship.relatedModel.getPrimaryKeyColumn()
@@ -122,7 +123,7 @@ class CalculateCommonRelationshipsData extends RelationshipService {
         return keys
     }
 
-    getOriginalForeignName() {
+    getForeignKeyName() {
         return this.relationship.foreignKeyName || this.getDefaultForeignKeyName()
     }
 

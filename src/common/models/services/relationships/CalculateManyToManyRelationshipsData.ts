@@ -153,11 +153,10 @@ class CalculateManyToManyRelationshipsData extends RelationshipService {
             }),
             freeSimilarRelationship = this.relationship.relatedModel.getFreeSimilarRelationship(inverseRelationship)
 
-        this.setRelationship(inverseRelationship)
+        new CalculateManyToManyRelationshipsData()
+            .setRelationship(inverseRelationship)
             .calculateDefaultData()
             .process()
-            
-        this.setRelationship(this.relationship)
         
         if(!freeSimilarRelationship) {
             inverseRelationship.save()
