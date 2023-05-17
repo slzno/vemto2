@@ -299,6 +299,15 @@ export default class Table extends RelaDB.Model implements SchemaModel {
         this.getRelationships().forEach((relationship: Relationship) => {
             let relatedTable = relationship.relatedModel.table
 
+            if(relationship.pivot) {
+                relatedTable = relationship.pivot
+
+                if(relatedTable && !relatedTablesIds.includes(relatedTable.id)) {
+                    relatedTables.push(relatedTable)
+                    relatedTablesIds.push(relatedTable.id)
+                }
+            }
+
             if(relatedTable && !relatedTablesIds.includes(relatedTable.id)) {
                 relatedTables.push(relatedTable)
                 relatedTablesIds.push(relatedTable.id)
@@ -416,7 +425,9 @@ export default class Table extends RelaDB.Model implements SchemaModel {
             tableId: this.id,
             name: column.name,
             columns: [column.name],
-            type: 'foreign'
+            type: 'foreign',
+            on: relatedModel.table.name,
+            references: relatedModel.getPrimaryKeyColumn().name
         })
         
         foreign.save()
