@@ -17,13 +17,9 @@ export default class Route extends RelaDB.Model {
     parentRouteId: string
     parentRoute: Route
 
-    static identifier() {
-        return "Route"
-    }
-
     relationships() {
         return {
-            routable: () => this.morphTo("routableId", "routableType"),
+            routable: () => this.morphTo("routable"),
             parentRoute: () => this.belongsTo(Route, "parentRouteId"),
             childrenRoutes: () => this.hasMany(Route, "parentRouteId"),
         }

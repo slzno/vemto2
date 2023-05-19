@@ -1,5 +1,6 @@
 import Project from "@Common/models/Project"
 import RelaDB from "@tiago_silva_pereira/reladb"
+import ModelRegistry from "@Common/ModelRegistry"
 
 export default class MockDatabase {
 
@@ -7,6 +8,8 @@ export default class MockDatabase {
         const database = new RelaDB.Database
             
         database.setDriver(RelaDB.RAMStorage)
+
+        ModelRegistry.registerModels()
 
         RelaDB.Resolver.setDatabase(database)
         

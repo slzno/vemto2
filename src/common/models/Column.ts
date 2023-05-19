@@ -37,10 +37,6 @@ export default class Column extends RelaDB.Model implements SchemaModel {
         super(columnData)
     }
 
-    static identifier() {
-        return 'Column'
-    }
-
     relationships() {
         return {
             table: () => this.belongsTo(Table),

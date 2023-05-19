@@ -34,10 +34,6 @@ export default class Crud extends RelaDB.Model {
     defaultSortColumnId: string
     defaultSortDirection: string
 
-    static identifier() {
-        return "Crud"
-    }
-
     relationships() {
         return {
             model: () => this.belongsTo(Model),

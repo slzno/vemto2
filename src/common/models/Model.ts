@@ -46,10 +46,6 @@ export default class Model extends RelaDB.Model implements SchemaModel {
     hasTimestamps: boolean
     hasSoftDeletes: boolean
 
-    static identifier() {
-        return "Model"
-    }
-
     relationships() {
         return {
             table: () => this.belongsTo(Table),

@@ -21,10 +21,6 @@ export default class Project extends RelaDB.Model {
     changedTablesIds: string[]
     renderableFiles: RenderableFile[]
 
-    static identifier() {
-        return "Project"
-    }
-
     relationships() {
         return {
             cruds: () => this.hasMany(Crud).cascadeDelete(),

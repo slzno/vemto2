@@ -19,10 +19,6 @@ export default class Index extends RelaDB.Model implements SchemaModel {
     onUpdate: string
     onDelete: string
 
-    static identifier() {
-        return 'Index'
-    }
-
     relationships() {
         return {
             table: () => this.belongsTo(Table),

@@ -52,10 +52,6 @@ export default class Input extends RelaDB.Model {
     showOnDetails: boolean
     showOnIndex: boolean
 
-    static identifier() {
-        return "Input"
-    }
-
     relationships() {
         return {
             crud: () => this.belongsTo(Crud),

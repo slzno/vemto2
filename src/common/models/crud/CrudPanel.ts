@@ -10,10 +10,6 @@ export default class CrudPanel extends RelaDB.Model {
     order: number
     inputs: Input[]
 
-    static identifier() {
-        return "CrudPanel"
-    }
-
     relationships() {
         return {
             crud: () => this.belongsTo(Crud),

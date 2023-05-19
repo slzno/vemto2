@@ -25,10 +25,6 @@ export default class Table extends RelaDB.Model implements SchemaModel {
     needsMigration: boolean
     createdFromInterface: boolean
 
-    static identifier() {
-        return 'Table'
-    }
-
     relationships() {
         return {
             project: () => this.belongsTo(Project),

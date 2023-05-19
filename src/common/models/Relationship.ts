@@ -32,10 +32,6 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
     projectId: string
     createdFromInterface: boolean
 
-    static identifier() {
-        return 'Relationship'
-    }
-
     relationships() {
         return {
             model: () => this.belongsTo(Model),

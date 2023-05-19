@@ -4,10 +4,13 @@ import FileSystem from "./base/FileSystem"
 import { handleError } from "./ErrorHandler"
 import RelaDB from "@tiago_silva_pereira/reladb"
 import Project from "../common/models/Project"
+import ModelRegistry from "../common/ModelRegistry"
 
 export function HandleDatabase() {
     const database = new RelaDB.Database
     database.setDriver(RelaDB.RAMStorage)
+
+    ModelRegistry.registerModels()
 
     RelaDB.Resolver.setDatabase(database)
     RelaDB.Resolver.db().driver.feedDatabaseData({})
