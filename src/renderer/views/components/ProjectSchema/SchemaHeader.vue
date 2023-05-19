@@ -1,13 +1,13 @@
 <script setup lang="ts">
     import { ref, onMounted, nextTick } from 'vue'
     import Table from "@Common/models/Table"
-    import Column from "@Common/models/Column"
     import { ArrowPathIcon } from "@heroicons/vue/24/outline"
     import UiModal from '@Renderer/components/ui/UiModal.vue'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
     import UiText from '@Renderer/components/ui/UiText.vue'
     import UiButton from '@Renderer/components/ui/UiButton.vue'
     import Validator from '@Common/util/Validator'
+    import CreateDefaultTableColumns from '@Common/models/services/tables/CreateDefaultTableColumns'
     import Alert from '@Renderer/components/utils/Alert'
 
     const showingCreateTableModal = ref(false),
@@ -20,21 +20,13 @@
 
             newTable.value.saveFromInterface()
 
-            createIdColumn()
+            createTableColumns()
             close()
         })
     }
 
-    const createIdColumn = (): void => {
-        const idColumn = new Column({
-            tableId: newTable.value.id,
-            name: 'id',
-            type: 'bigInteger',
-            autoIncrement: true,
-            unsigned: true
-        })
-
-        idColumn.saveFromInterface()
+    const createTableColumns = (): void => {
+        CreateDefaultTableColumns.setTable(newTable.value).create()
     }
 
     const validate = async (): Promise<boolean> => {

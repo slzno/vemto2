@@ -121,6 +121,8 @@ class TablesFromMigrationsBuilder {
             }
         })
 
+        const tableRawIndexes = Object.values(tableData.indexes)
+
         // Add or update columns
         Object.keys(tableData.columns).forEach((columnName: any) => {
             let columnData = tableData.columns[columnName],
@@ -134,6 +136,10 @@ class TablesFromMigrationsBuilder {
             } else {
                 column = columnsKeyedByName[columnName]
             }
+
+            const columnIsIndex = tableRawIndexes.some((index: any) => index.columns.includes(columnName))
+
+            if(columnIsIndex) columnData.index = true
 
             column.applyChanges(columnData)
         })
