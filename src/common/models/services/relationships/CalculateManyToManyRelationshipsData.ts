@@ -91,27 +91,27 @@ class CalculateManyToManyRelationshipsData extends RelationshipService {
     }
 
     createPivotFields(pivot: Table): void {
-        let modelKeyName = this.getOriginalModelKeyName(),
-            localModelKeyName = this.getOriginalLocalModelKeyName()
+        let relatedPivotKeyName = this.getRelatedPivotKeyName(),
+            foreignPivotKeyName = this.getForeignPivotKeyName()
         
-        pivot.addForeign(modelKeyName, this.relationship.relatedModel)
-        pivot.addForeign(localModelKeyName, this.relationship.model)
+        pivot.addForeign(relatedPivotKeyName, this.relationship.relatedModel)
+        pivot.addForeign(foreignPivotKeyName, this.relationship.model)
     }
 
     calculateKeys() {
-        this.calculateLocalModelKey()
-        this.calculateModelKey()
+        this.calculateParentKey()
+        this.calculateRelatedKey()
 
         return this
     }
 
-    calculateLocalModelKey() {
+    calculateParentKey() {
         let keys = this.getDefaultKeys()
 
         this.relationship.parentKeyId = this.relationship.parentKeyId || keys.parentKey.id
     }
 
-    calculateModelKey() {
+    calculateRelatedKey() {
         let keys = this.getDefaultKeys()
 
         this.relationship.relatedKeyId = this.relationship.relatedKeyId || keys.relatedKey.id
@@ -122,8 +122,8 @@ class CalculateManyToManyRelationshipsData extends RelationshipService {
 
         let keys = {} as any
 
-        keys.relatedKey = this.relationship.pivot.findColumnByName(this.getOriginalModelKeyName())
-        keys.parentKey = this.relationship.pivot.findColumnByName(this.getOriginalLocalModelKeyName())
+        keys.relatedKey = this.relationship.pivot.findColumnByName(this.getRelatedPivotKeyName())
+        keys.parentKey = this.relationship.pivot.findColumnByName(this.getForeignPivotKeyName())
         
         return keys
     }
@@ -132,11 +132,11 @@ class CalculateManyToManyRelationshipsData extends RelationshipService {
         return this.relationship.pivotTableName || this.getDefaultPivotName()
     }
 
-    getOriginalModelKeyName(): string {
+    getRelatedPivotKeyName(): string {
         return this.relationship.relatedPivotKeyName || this.getDefaultModelKeyName()
     }
 
-    getOriginalLocalModelKeyName(): string {
+    getForeignPivotKeyName(): string {
         return this.relationship.foreignPivotKeyName || this.getDefaultLocalModelKeyName()
     }
 
