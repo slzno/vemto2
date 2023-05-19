@@ -427,7 +427,9 @@ export default class Table extends RelaDB.Model implements SchemaModel {
             columns: [column.name],
             type: 'foreign',
             on: relatedModel.table.name,
-            references: relatedModel.getPrimaryKeyColumn().name
+            onTableId: relatedModel.table.id,
+            references: relatedModel.getPrimaryKeyColumn().name,
+            referencesColumnId: relatedModel.getPrimaryKeyColumn().id
         })
         
         foreign.save()

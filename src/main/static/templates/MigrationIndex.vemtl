@@ -12,8 +12,8 @@
 <# #>
 <% if (index.isForeign()) { %>
     $table->foreign('<$ index.columns[0] $>')
-        ->references('<$ index.references $>')
-        ->on('<$ index.on $>')
+        ->references('<$ index.referencesColumn.name $>')
+        ->on('<$ index.onTable.name $>')
         <% if (index.hasOnDelete()) { %>
         ->onDelete('<$ index.onDelete $>')
         <% } %>

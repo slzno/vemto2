@@ -1,8 +1,8 @@
-import Table from './Table'
-import RelaDB from '@tiago_silva_pereira/reladb'
-import DataComparator from './services/DataComparator'
-import DataComparisonLogger from './services/DataComparisonLogger'
-import Column from './Column'
+import Table from "./Table"
+import RelaDB from "@tiago_silva_pereira/reladb"
+import DataComparator from "./services/DataComparator"
+import DataComparisonLogger from "./services/DataComparisonLogger"
+import Column from "./Column"
 
 export default class Index extends RelaDB.Model implements SchemaModel {
     id: string
@@ -29,7 +29,7 @@ export default class Index extends RelaDB.Model implements SchemaModel {
     onDelete: string
 
     static identifier() {
-        return 'Index'
+        return "Index"
     }
 
     relationships() {
@@ -43,7 +43,9 @@ export default class Index extends RelaDB.Model implements SchemaModel {
     static updating(data: any): any {
         const referenceColumn = Column.find(data.referenceColumnId)
 
-        if(referenceColumn.name == data.references) {
+        if (!referenceColumn) return data
+
+        if (referenceColumn.name == data.references) {
             return data
         }
 
@@ -61,7 +63,7 @@ export default class Index extends RelaDB.Model implements SchemaModel {
     }
 
     remove() {
-        if(this.isNew()) {
+        if (this.isNew()) {
             return this.delete()
         }
 
@@ -71,33 +73,33 @@ export default class Index extends RelaDB.Model implements SchemaModel {
     }
 
     getOldName(): string {
-        if(!this.schemaState) return this.name
+        if (!this.schemaState) return this.name
 
         return this.schemaState.name
     }
 
     isPrimary(): boolean {
-        return this.type === 'primary'
+        return this.type === "primary"
     }
 
     isForeign(): boolean {
-        return this.type === 'foreign'
+        return this.type === "foreign"
     }
 
     isUnique(): boolean {
-        return this.type === 'unique'
+        return this.type === "unique"
     }
 
     isCommon(): boolean {
-        return this.type === 'index'
+        return this.type === "index"
     }
 
     isFullText(): boolean {
-        return this.type === 'fulltext'
+        return this.type === "fulltext"
     }
 
     isSpatial(): boolean {
-        return this.type === 'spatialIndex'
+        return this.type === "spatialIndex"
     }
 
     isSingleColumn(): boolean {
@@ -105,25 +107,25 @@ export default class Index extends RelaDB.Model implements SchemaModel {
     }
 
     hasLanguage(): boolean {
-        return !! this.language
+        return !!this.language
     }
 
     hasOnUpdate(): boolean {
-        return !! this.onUpdate
+        return !!this.onUpdate
     }
 
     hasOnDelete(): boolean {
-        return !! this.onDelete
+        return !!this.onDelete
     }
 
     hasLocalChanges(): boolean {
-        if(!this.schemaState) return false
+        if (!this.schemaState) return false
 
         return this.hasDataChanges(this)
     }
 
     hasSchemaChanges(comparisonData: any): boolean {
-        if(!this.schemaState) return true 
+        if (!this.schemaState) return true
 
         return this.hasDataChanges(comparisonData)
     }
@@ -131,30 +133,56 @@ export default class Index extends RelaDB.Model implements SchemaModel {
     hasDataChanges(comparisonData: any): boolean {
         const dataComparisonMap = this.dataComparisonMap(comparisonData)
 
-        return Object.keys(dataComparisonMap).some(key => dataComparisonMap[key])
+        return Object.keys(dataComparisonMap).some(
+            (key) => dataComparisonMap[key]
+        )
     }
 
     dataComparisonMap(comparisonData: any) {
         return {
-            columns: DataComparator.arraysAreDifferent(this.schemaState.columns, comparisonData.columns),
-            algorithm: DataComparator.stringsAreDifferent(this.schemaState.algorithm, comparisonData.algorithm),
-            type: DataComparator.stringsAreDifferent(this.schemaState.type, comparisonData.type),
-            references: DataComparator.stringsAreDifferent(this.schemaState.references, comparisonData.references),
-            on: DataComparator.stringsAreDifferent(this.schemaState.on, comparisonData.on),
-            language: DataComparator.stringsAreDifferent(this.schemaState.language, comparisonData.language),
-            onUpdate: DataComparator.stringsAreDifferent(this.schemaState.onUpdate, comparisonData.onUpdate),
-            onDelete: DataComparator.stringsAreDifferent(this.schemaState.onDelete, comparisonData.onDelete),
+            columns: DataComparator.arraysAreDifferent(
+                this.schemaState.columns,
+                comparisonData.columns
+            ),
+            algorithm: DataComparator.stringsAreDifferent(
+                this.schemaState.algorithm,
+                comparisonData.algorithm
+            ),
+            type: DataComparator.stringsAreDifferent(
+                this.schemaState.type,
+                comparisonData.type
+            ),
+            references: DataComparator.stringsAreDifferent(
+                this.schemaState.references,
+                comparisonData.references
+            ),
+            on: DataComparator.stringsAreDifferent(
+                this.schemaState.on,
+                comparisonData.on
+            ),
+            language: DataComparator.stringsAreDifferent(
+                this.schemaState.language,
+                comparisonData.language
+            ),
+            onUpdate: DataComparator.stringsAreDifferent(
+                this.schemaState.onUpdate,
+                comparisonData.onUpdate
+            ),
+            onDelete: DataComparator.stringsAreDifferent(
+                this.schemaState.onDelete,
+                comparisonData.onDelete
+            ),
         }
     }
 
     logDataComparison(): void {
-        console.log('Showing changes for index ' + this.id)
+        console.log("Showing changes for index " + this.id)
 
         DataComparisonLogger.setInstance(this).log()
     }
 
     applyChanges(data: any): boolean {
-        if(!this.hasSchemaChanges(data)) return false
+        if (!this.hasSchemaChanges(data)) return false
 
         this.name = data.name
         this.columns = data.columns
@@ -166,11 +194,22 @@ export default class Index extends RelaDB.Model implements SchemaModel {
         this.onUpdate = data.onUpdate
         this.onDelete = data.onDelete
 
+        this.fillIndexRelationships(data)
         this.fillSchemaState()
 
         this.save()
 
         return true
+    }
+
+    fillIndexRelationships(data: any): void {
+        if(!this.tableId) {
+            this.onTableId = this.table.project.findTableByName(data.on)?.id
+        }
+
+        if(!this.referencesColumnId) {
+            this.referencesColumnId = this.table.findColumnByName(data.references)?.id
+        }
     }
 
     saveSchemaState() {
@@ -202,13 +241,13 @@ export default class Index extends RelaDB.Model implements SchemaModel {
     }
 
     wasRenamed(): boolean {
-        if(!this.schemaState) return false
-        
+        if (!this.schemaState) return false
+
         return this.schemaState.name !== this.name
     }
 
     isRemoved(): boolean {
-        return !! this.removed
+        return !!this.removed
     }
 
     hasColumn(column: string): boolean {
