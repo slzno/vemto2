@@ -18,12 +18,12 @@ class <$ this.model.name $> extends Model
             {
                 return $this->belongsTo(<$ relationship.relatedModel.name $>::class
                 <# Check if foreign key or parent key are different #>
-                <up if(relationship.hasDifferentForeignOrParentKey()) { up>
+                <up if(relationship.getServiceFromType().hasDifferentForeignOrParentKey()) { up>
                 , '<$ relationship.foreignKeyName $>'
                 <up } up>
                 <# --- #>
-                <up if(relationship.hasDifferentParentKey()) { up>
-                , '<$ relationship.parentKeyName $>'
+                <up if(relationship.getServiceFromType().hasDifferentParentKey()) { up>
+                , '<$ relationship.parentKey.name $>'
                 <up } up>);
             }
 
@@ -34,12 +34,12 @@ class <$ this.model.name $> extends Model
             {
                 return $this->hasMany(<$ relationship.relatedModel.name $>::class
                 <# Check if foreign key or parent key are different #>
-                <up if(relationship.hasDifferentForeignOrParentKey()) { up>
+                <up if(relationship.getServiceFromType().hasDifferentForeignOrParentKey()) { up>
                 , '<$ relationship.foreignKeyName $>'
                 <up } up>
                 <# --- #>
-                <up if(relationship.hasDifferentParentKey()) { up>
-                , '<$ relationship.parentKeyName $>'
+                <up if(relationship.getServiceFromType().hasDifferentParentKey()) { up>
+                , '<$ relationship.parentKey.name $>'
                 <up } up>);
             }
 
@@ -50,17 +50,67 @@ class <$ this.model.name $> extends Model
             {
                 return $this->hasOne(<$ relationship.relatedModel.name $>::class
                 <# Check if foreign key or parent key are different #>
-                <up if(relationship.hasDifferentForeignOrParentKey()) { up>
+                <up if(relationship.getServiceFromType().hasDifferentForeignOrParentKey()) { up>
                 , '<$ relationship.foreignKeyName $>'
                 <up } up>
                 <# --- #>
-                <up if(relationship.hasDifferentParentKey()) { up>
-                , '<$ relationship.parentKeyName $>'
+                <up if(relationship.getServiceFromType().hasDifferentParentKey()) { up>
+                , '<$ relationship.parentKey.name $>'
                 <up } up>);
             }
 
             <% } %>
+            <# Many To Many #>
+            <% if(relationship.type == "ManyToMany") { %>
+                public function <$ relationship.name $>() 
+                {
+                    return $this->belongsToMany(<$ relationship.relatedModel.name $>::class
+                    <# Needs to add the pivot table if localKey or foreignKey are not default #>
+                    <up if(relationship.getServiceFromType().needsToAddPivotToModelTemplate()) { up>
+                    , '<$ relationship.pivot.table $>'
+                    <up } up>
+                    <# --- #>
+                    <up if(relationship.getServiceFromType().hasDifferentForeignOrRelatedPivotKeys()) { up>
+                    , '<$ relationship.foreignPivotKey.name $>'
+                    <up } up>
+                    <# --- #>
+                    <up if(relationship.getServiceFromType().hasDifferentRelatedPivot()) { up>
+                    , '<$ relationship.relatedPivotKey.name $>'
+                    <up } up>);
+                }
 
+            <% } %>
+            <# Morphs #>
+            <% if(relationship.isMorph()) { %>
+                public function <$ relationship.name $>() 
+                {
+                    return $this-><$ relationship.getTypeCamelCase() $>(<$ relationship.relatedModel.name $>::class, '<$ relationship.morphTo $>');
+                }
+
+            <% } %>
+            <# Has Many Through #>
+            <% if(relationship.isThrough()) { %>
+                public function <$ relationship.name $>() 
+                {
+                    return $this-><$ relationship.getTypeCamelCase() $>(<$ relationship.relatedModel.name $>::class, <$ relationship.through.name $>::class
+                    <up if(relationship.getServiceFromType().hasDifferentFirstKeyName()) { up>
+                    , '<$ relationship.firstKeyName $>'
+                    <up } up>
+                    <up if(relationship.getServiceFromType().hasDifferentSecondKeyName()) { up>
+                    , '<$ relationship.secondKeyName $>'
+                    <up } up>);
+                }
+
+            <% } %>
+
+        <% } %>
+        <# Basic Morph Inverse Relationships #>
+        <% for(let relationship of this.model.getCommonMorphInverseRelationships()) { %>
+            public function <$ relationship.morphTo $>() 
+            {
+                return $this->morphTo();
+            }
+            
         <% } %>
     <% } %>
 }

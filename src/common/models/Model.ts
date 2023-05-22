@@ -344,4 +344,23 @@ export default class Model extends RelaDB.Model implements SchemaModel {
         this.class = `${this.namespace}\\${this.name}`
         this.fileName = `${this.name}.php`
     }
+
+    getCommonMorphInverseRelationships(): Relationship[] {
+        const commonRelationships = this.getCommonMorphRelatedRelationships(),
+            groupedRelationships = [],
+            alreadyGroupedMorphs = []
+
+        commonRelationships.forEach(relationship => {
+            if(alreadyGroupedMorphs.includes(relationship.morphTo)) return
+
+            groupedRelationships.push(relationship)
+            alreadyGroupedMorphs.push(relationship.morphTo)
+        })
+        
+        return groupedRelationships
+    }
+
+    getCommonMorphRelatedRelationships(): Relationship[] {
+        return this.ownRelationships.filter((rel: Relationship) => rel.isCommonMorph())
+    }
 }

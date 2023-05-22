@@ -28,7 +28,7 @@ class CalculateThroughRelationshipsData extends RelationshipService {
     }
 
     calculateFirstKeyName(): void {
-        if(!this.relationship.model) return
+        if(!this.relationship.relatedModel) return
 
         this.relationship.firstKeyName = this.getDefaultRelatedModelKey()
     }
@@ -45,6 +45,14 @@ class CalculateThroughRelationshipsData extends RelationshipService {
 
     getDefaultThroughModelKey(): string {
         return WordManipulator.snakeCase(this.relationship.through.name) + '_id'
+    }
+
+    hasDifferentFirstKeyName() {
+        return this.relationship.firstKeyName != this.getDefaultRelatedModelKey()
+    }
+
+    hasDifferentSecondKeyName() {
+        return this.relationship.secondKeyName != this.getDefaultThroughModelKey()
     }
 }
 

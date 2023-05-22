@@ -37,6 +37,10 @@ export default abstract class RelationshipService {
         return count
     }
 
+    nameFollowsDefaultRule() {
+        return this.relationship.name === this.getDefaultName()
+    }
+
     getDefaultName(): string {
         if(this.relationship.isSingular()) {
             return WordManipulator.camelCase(this.relationship.relatedModel.name)

@@ -9,6 +9,7 @@ import CalculateMorphRelationshipsData from './services/relationships/CalculateM
 import CalculateCommonRelationshipsData from './services/relationships/CalculateCommonRelationshipsData'
 import CalculateThroughRelationshipsData from './services/relationships/CalculateThroughRelationshipsData'
 import CalculateManyToManyRelationshipsData from './services/relationships/CalculateManyToManyRelationshipsData'
+import WordManipulator from '@Common/util/WordManipulator'
 
 export default class Relationship extends RelaDB.Model implements SchemaModel {
     id: string
@@ -25,48 +26,58 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
 
     //-- BelongsTo, HasMany e HasOne
     foreignKeyName: string
+    foreignKeyId: string
+    foreignKey: Column
+
     ownerKeyName: string
+    ownerKeyId: string
+    ownerKey: Column
+
+    parentKeyId: string
+    parentKey: Column
 
     //-- BelongsToMany
     foreignPivotKeyName: string
+    foreignPivotKeyId: string
+    foreignPivotKey: Column
+
     relatedPivotKeyName: string
-    relatedKeyId: string
+    relatedPivotKeyId: string
+    relatedPivotKey: Column
+
     pivotTableName: string
+    pivotId: string
+    pivot: Table
 
     //-- Morph
     idColumnId: string
     idColumn: Column
 
-    //-- HasManyThrough
-    firstKeyName: string
-    secondKeyName: string
+    morphType: string
+    morphTo: string
     
     typeFieldId: string
     typeField: Column
 
-    morphType: string
-    morphTo: string
+    //-- HasManyThrough
+    firstKeyName: string // relatedModelId
 
-    //-- Through
+    secondKeyName: string
     throughId: string
     through: Model
 
-    pivotId: string
-    pivot: Table
+    //-- Relationship Models
     
     model: Model
     modelId: string
+
     relatedModel: Model
     relatedModelId: string
 
+    //-- Inverse Relationship
+
     inverseId: string
     inverse: Relationship
-
-    foreignKeyId: string
-    foreignKey: Column
-
-    parentKeyId: string
-    parentKey: Column
     
     /**
      * Default properties
@@ -83,15 +94,20 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
 
     relationships() {
         return {
+            inverse: () => this.belongsTo(Relationship, 'inverseId').atMostOne(),
+            
             model: () => this.belongsTo(Model),
             project: () => this.belongsTo(Project),
-            inverse: () => this.belongsTo(Relationship, 'inverseId').atMostOne(),
             relatedModel: () => this.belongsTo(Model, 'relatedModelId'),
+
+            // Used in BelongsTo, HasMany and HasOne
             foreignKey: () => this.belongsTo(Column, 'foreignKeyId'),
+            ownerKey: () => this.belongsTo(Column, 'ownerKeyId'),
             parentKey: () => this.belongsTo(Column, 'parentKeyId'),
 
             // Used in BelongsToMany and MorphToMany
             pivot: () => this.belongsTo(Table, 'pivotId'),
+            relatedPivotKey: () => this.belongsTo(Column, 'relatedPivotKeyId'),
 
             // Morphs
             idColumn: () => this.belongsTo(Column, 'idColumnId'),
@@ -134,18 +150,33 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
         }
     }
 
-    updateInverse() {
+    updateInverse(): void {
         let inverse = this.inverse
 
         if(!inverse) return
-        
-        if(inverse.foreignKeyId === this.foreignKeyId 
-            && inverse.parentKeyId === this.parentKeyId) {
-            return
+
+        if(this.isCommon()) {
+            return this.updateCommonInverse(inverse)
         }
+
+        if(this.isManyToMany()) {
+            return this.updateManyToManyInverse(inverse)
+        }
+    }
+
+    updateCommonInverse(inverse: Relationship): void {
+        if(inverse.foreignKeyId === this.foreignKeyId && inverse.parentKeyId === this.parentKeyId) return
 
         inverse.foreignKeyId = this.foreignKeyId
         inverse.parentKeyId = this.parentKeyId
+        inverse.save()
+    }
+
+    updateManyToManyInverse(inverse: Relationship): void {
+        if(inverse.relatedPivotKeyId === this.foreignPivotKeyId && inverse.foreignPivotKeyId === this.relatedPivotKeyId) return
+
+        inverse.relatedPivotKeyId = this.foreignPivotKeyId
+        inverse.foreignPivotKeyId = this.relatedPivotKeyId
         inverse.save()
     }
 
@@ -165,6 +196,10 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
 
     hasType(): boolean {
         return !! this.type
+    }
+
+    getTypeCamelCase(): string {
+        return WordManipulator.camelCase(this.type)
     }
 
     hasTypeAndRelatedModel(): boolean {
@@ -388,11 +423,23 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
         return !! this.removed
     }
 
-    hasDifferentForeignOrParentKey(): boolean {
-        return false
-    }
+    getServiceFromType() {
+        if(this.isCommon()) {
+            return CalculateCommonRelationshipsData.setRelationship(this)
+        }
 
-    hasDifferentParentKey(): boolean {
-        return false
+        if(this.isManyToMany()) {
+            return CalculateManyToManyRelationshipsData.setRelationship(this)
+        }
+
+        if(this.isMorph()) {
+            return CalculateMorphRelationshipsData.setRelationship(this)
+        }
+
+        if(this.isThrough()) {
+            return CalculateThroughRelationshipsData.setRelationship(this)
+        }
+
+        return null
     }
 }

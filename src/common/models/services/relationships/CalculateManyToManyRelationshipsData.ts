@@ -21,15 +21,15 @@ class CalculateManyToManyRelationshipsData extends RelationshipService {
     }
 
     calculateForeignsKeysNames(): void {
-        this.relationship.relatedPivotKeyName = this.getDefaultModelKeyName()
-        this.relationship.foreignPivotKeyName = this.getDefaultLocalModelKeyName()
+        this.relationship.relatedPivotKeyName = this.getDefaultRelatedPivotKeyName()
+        this.relationship.foreignPivotKeyName = this.getDefaultForeignPivotKeyName()
     }
 
-    getDefaultModelKeyName(): string {
+    getDefaultRelatedPivotKeyName(): string {
         return WordManipulator.snakeCase(this.relationship.relatedModel.name) + '_id'
     }
 
-    getDefaultLocalModelKeyName(): string {
+    getDefaultForeignPivotKeyName(): string {
         return WordManipulator.snakeCase(this.relationship.model.name) + '_id'
     }
 
@@ -84,13 +84,13 @@ class CalculateManyToManyRelationshipsData extends RelationshipService {
             pivot.save()
         }
 
-        this.createPivotFields(pivot)
+        this.createPivotData(pivot)
 
         this.relationship.pivotId = pivot.id
         this.relationship.save()
     }
 
-    createPivotFields(pivot: Table): void {
+    createPivotData(pivot: Table): void {
         let relatedPivotKeyName = this.getRelatedPivotKeyName(),
             foreignPivotKeyName = this.getForeignPivotKeyName()
         
@@ -99,22 +99,22 @@ class CalculateManyToManyRelationshipsData extends RelationshipService {
     }
 
     calculateKeys() {
-        this.calculateParentKey()
-        this.calculateRelatedKey()
+        this.calculateForeignPivotKey()
+        this.calculateRelatedPivotKey()
 
         return this
     }
 
-    calculateParentKey() {
+    calculateForeignPivotKey() {
         let keys = this.getDefaultKeys()
 
-        this.relationship.parentKeyId = this.relationship.parentKeyId || keys.parentKey.id
+        this.relationship.foreignPivotKeyId = this.relationship.foreignPivotKeyId || keys.foreignPivotKey.id
     }
 
-    calculateRelatedKey() {
+    calculateRelatedPivotKey() {
         let keys = this.getDefaultKeys()
 
-        this.relationship.relatedKeyId = this.relationship.relatedKeyId || keys.relatedKey.id
+        this.relationship.relatedPivotKeyId = this.relationship.relatedPivotKeyId || keys.relatedPivotKey.id
     }
 
     getDefaultKeys() {
@@ -122,8 +122,8 @@ class CalculateManyToManyRelationshipsData extends RelationshipService {
 
         let keys = {} as any
 
-        keys.relatedKey = this.relationship.pivot.findColumnByName(this.getRelatedPivotKeyName())
-        keys.parentKey = this.relationship.pivot.findColumnByName(this.getForeignPivotKeyName())
+        keys.relatedPivotKey = this.relationship.pivot.findColumnByName(this.getRelatedPivotKeyName())
+        keys.foreignPivotKey = this.relationship.pivot.findColumnByName(this.getForeignPivotKeyName())
         
         return keys
     }
@@ -133,11 +133,11 @@ class CalculateManyToManyRelationshipsData extends RelationshipService {
     }
 
     getRelatedPivotKeyName(): string {
-        return this.relationship.relatedPivotKeyName || this.getDefaultModelKeyName()
+        return this.relationship.relatedPivotKeyName || this.getDefaultRelatedPivotKeyName()
     }
 
     getForeignPivotKeyName(): string {
-        return this.relationship.foreignPivotKeyName || this.getDefaultLocalModelKeyName()
+        return this.relationship.foreignPivotKeyName || this.getDefaultForeignPivotKeyName()
     }
 
     createInverseRelationship(): boolean {
@@ -148,8 +148,8 @@ class CalculateManyToManyRelationshipsData extends RelationshipService {
                 relatedModelId: this.relationship.model.id,
                 type: this.getInverseTypeKey(),
                 pivotId: this.relationship.pivotId,
-                parentKeyId: this.relationship.relatedKeyId,
-                relatedKeyId: this.relationship.parentKeyId
+                foreignPivotKeyId: this.relationship.relatedPivotKeyId,
+                relatedPivotKeyId: this.relationship.foreignPivotKeyId
             }),
             freeSimilarRelationship = this.relationship.relatedModel.getFreeSimilarRelationship(inverseRelationship)
 
@@ -166,6 +166,28 @@ class CalculateManyToManyRelationshipsData extends RelationshipService {
         }
 
         return true
+    }
+
+    needsToAddPivotToModelTemplate() {
+        return this.hasDifferentPivot() 
+            || this.hasDifferentRelatedPivot() 
+            || this.hasDifferentForeignKey()
+    }
+
+    hasDifferentPivot(): boolean {
+        return this.relationship.pivot.name !== this.getDefaultPivotName()
+    }
+
+    hasDifferentRelatedPivot(): boolean {
+        return this.relationship.relatedPivotKey.name !== this.getRelatedPivotKeyName()
+    }
+
+    hasDifferentForeignKey(): boolean {
+        return this.relationship.foreignPivotKey.name !== this.getForeignPivotKeyName()
+    }
+
+    hasDifferentForeignOrRelatedPivotKeys() {
+        return this.hasDifferentForeignKey() || this.hasDifferentRelatedPivot()
     }
 }
 
