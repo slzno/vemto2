@@ -5,23 +5,19 @@
     import Relationship from "@Renderer/../common/models/Relationship"
     import UiButton from '@Renderer/components/ui/UiButton.vue'
     import Model from "@Common/models/Model"
-    import { PlusIcon } from "@heroicons/vue/24/outline"
-    import RelationshipTypes from '@Common/models/static/RelationshipTypes'
+    import { PlusIcon, EllipsisVerticalIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import UiDropdownSelect from '@Renderer/components/ui/UiDropdownSelect.vue'
     import CommonRelationship from './TableRelationships/CommonRelationship.vue'
     import ManyToManyRelationship from './TableRelationships/ManyToManyRelationship.vue'
     import MorphRelationship from './TableRelationships/MorphRelationship.vue'
     import ThroughRelationship from './TableRelationships/ThroughRelationship.vue'
+    import RelationshipTypes from '@Common/models/static/RelationshipTypes'
 
     const props = defineProps(['model', 'models']),
         models = toRef(props, 'models'),
         model = toRef(props, 'model'),
         relationshipIdOptions = ref(null),
         relationships = ref([])
-
-    const getRelationshipTypesForSelect = () => {
-        return RelationshipTypes.getForDropdown()
-    }
 
     const getForSelect = (
             collection: any,
@@ -152,55 +148,86 @@
                 :key="relationship.id"
                 @keyup.escape="onEscapePressed(relationship)"
             >
-                <!-- <UiButton @click="relationship.logDataComparison()">Log data comparison</UiButton> -->
 
-                <template v-if="relationship.isCommon()">
-                    <CommonRelationship
-                        :models="models"
-                        :relationship="relationship"
-                        :get-for-select="getForSelect"
-                        :relationship-id-options="relationshipIdOptions"
-                        @save="saveRelationship(relationship)"
-                        @toggle-relationship-options="toggleRelationshipOptions(relationship)"
-                        @delete-relatioship="onRelationshipRemoving(relationship)"
-                    />
-                </template>
+                <div class="flex flex-col gap-1">
+                    <div class="space-x-1 flex justify-between">
+                        <!-- <UiButton @click="relationship.logDataComparison()">Log data comparison</UiButton> -->
 
-                <template v-if="relationship.isManyToMany()">
-                    <ManyToManyRelationship
-                        :models="models"
-                        :relationship="relationship"
-                        :get-for-select="getForSelect"
-                        :relationship-id-options="relationshipIdOptions"
-                        @save="saveRelationship(relationship)"
-                        @toggle-relationship-options="toggleRelationshipOptions(relationship)"
-                        @delete-relatioship="onRelationshipRemoving(relationship)"
-                    />
-                </template>
+                        <div class="text-red-400 flex gap-1">
+                            <UiDropdownSelect
+                                v-model="relationship.type"
+                                :may-open="relationship.isNew() && !relationship.hasType()"
+                                placeholder="Relationship Type"
+                                :options="RelationshipTypes.getForDropdown()"
+                                @change="saveRelationship(relationship)"
+                            />
 
-                <template v-if="relationship.isMorph()">
-                    <MorphRelationship
-                        :models="models"
-                        :relationship="relationship"
-                        :get-for-select="getForSelect"
-                        :relationship-id-options="relationshipIdOptions"
-                        @save="saveRelationship(relationship)"
-                        @toggle-relationship-options="toggleRelationshipOptions(relationship)"
-                        @delete-relatioship="onRelationshipRemoving(relationship)"
-                    />
-                </template>
+                            <template v-if="! relationship.isThrough()">
+                                <UiDropdownSelect
+                                    v-model="relationship.relatedModelId"
+                                    :may-open="relationship.isNew() && !relationship.hasRelatedModel() && relationship.hasType()"
+                                    placeholder="Relationship Model"
+                                    :options="getForSelect(models)"
+                                    @change="saveRelationship(relationship)"
+                                />
+                            </template>
+                            
+                            <template v-else>
+                                <UiText
+                                    placeholder="Relationship Name"
+                                    v-model="relationship.name"
+                                    @input="saveRelationship(relationship)"
+                                />
+                            </template>
+                        </div>
 
-                <template v-if="relationship.isThrough()">
-                    <ThroughRelationship
-                        :models="models"
-                        :relationship="relationship"
-                        :get-for-select="getForSelect"
-                        :relationship-id-options="relationshipIdOptions"
-                        @save="saveRelationship(relationship)"
-                        @toggle-relationship-options="toggleRelationshipOptions(relationship)"
-                        @delete-relatioship="onRelationshipRemoving(relationship)"
-                    />
-                </template>
+                        <span class="relative">
+                            <EllipsisVerticalIcon
+                                class="h-6 w-6 text-slate-400 cursor-pointer"
+                                @click="toggleRelationshipOptions(relationship)"
+                            />
+                            <div class="bg-slate-950 w-auto rounded absolute p-1 z-10 right-0 top-8 border border-gray-700" v-if="relationshipIdOptions === relationship.id">
+                                <ul>
+                                    <li class="flex items-center justify-start text-md p-1 cursor-pointer" @click="onRelationshipRemoving(relationship)">
+                                        <TrashIcon class="h-5 w-5 mr-1 text-red-400" />
+                                        Delete
+                                    </li>
+                                </ul>
+                            </div>
+                        </span>
+                    </div>
+
+                    <template v-if="relationship.isCommon()">
+                        <CommonRelationship
+                            :relationship="relationship"
+                            :get-for-select="getForSelect"
+                            @save="saveRelationship(relationship)"
+                        />
+                    </template>
+
+                    <template v-if="relationship.isManyToMany()">
+                        <ManyToManyRelationship
+                            :relationship="relationship"
+                            @save="saveRelationship(relationship)"
+                        />
+                    </template>
+
+                    <template v-if="relationship.isMorph()">
+                        <MorphRelationship
+                            :relationship="relationship"
+                            @save="saveRelationship(relationship)"
+                        />
+                    </template>
+
+                    <template v-if="relationship.isThrough()">
+                        <ThroughRelationship
+                            :models="models"
+                            :relationship="relationship"
+                            :get-for-select="getForSelect"
+                            @save="saveRelationship(relationship)"
+                        />
+                    </template>
+                </div>
 
                 <template v-if="relationship.relatedModelId">
                     <UiDropdownSelect
