@@ -2,6 +2,7 @@ import Relationship from "@Common/models/Relationship"
 import WordManipulator from '@Common/util/WordManipulator'
 import RelationshipService from './base/RelationshipService'
 import Index from "@Common/models/Index"
+import Model from "@Common/models/Model"
 
 class CalculateCommonRelationshipsData extends RelationshipService {
     relationship: Relationship
@@ -143,6 +144,16 @@ class CalculateCommonRelationshipsData extends RelationshipService {
         return this.hasDifferentForeignKey()
             || this.hasDifferentParentKey()
             || ! this.nameFollowsDefaultRule()
+    }
+
+    getForeignModel(): Model {
+        if(['BelongsTo'].includes(this.relationship.type)) {
+            return this.relationship.model
+        }
+        
+        if(['HasMany', 'HasOne'].includes(this.relationship.type)) {
+            return this.relationship.relatedModel
+        }
     }
 }
 
