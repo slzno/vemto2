@@ -1,8 +1,8 @@
 import Relationship from "@Common/models/Relationship"
-import RelationshipService from "./base/RelationshipService";
+import CalculateRelationshipService from "../base/CalculateRelationshipService";
 import WordManipulator from "@Common/util/WordManipulator";
 
-class CalculateThroughRelationshipsData extends RelationshipService {
+class CalculateThroughRelationshipsData extends CalculateRelationshipService {
     relationship: Relationship
 
     setRelationship(relationship: Relationship): CalculateThroughRelationshipsData {

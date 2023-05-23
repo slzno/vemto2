@@ -5,10 +5,11 @@ import Project from './Project'
 import RelaDB from '@tiago_silva_pereira/reladb'
 import DataComparator from './services/DataComparator'
 import DataComparisonLogger from './services/DataComparisonLogger'
-import CalculateMorphRelationshipsData from './services/relationships/CalculateMorphRelationshipsData'
-import CalculateCommonRelationshipsData from './services/relationships/CalculateCommonRelationshipsData'
-import CalculateThroughRelationshipsData from './services/relationships/CalculateThroughRelationshipsData'
-import CalculateManyToManyRelationshipsData from './services/relationships/CalculateManyToManyRelationshipsData'
+import CalculateMorphRelationshipsData from './services/relationships/Calculators/CalculateMorphRelationshipsData'
+import CalculateCommonRelationshipsData from './services/relationships/Calculators/CalculateCommonRelationshipsData'
+import CalculateThroughRelationshipsData from './services/relationships/Calculators/CalculateThroughRelationshipsData'
+import CalculateManyToManyRelationshipsData from './services/relationships/Calculators/CalculateManyToManyRelationshipsData'
+import FillCommonRelationshipKeys from './services/relationships/Fillers/FillCommonRelationshipKeys'
 import WordManipulator from '@Common/util/WordManipulator'
 
 export default class Relationship extends RelaDB.Model implements SchemaModel {
@@ -423,7 +424,7 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
         return !! this.removed
     }
 
-    getServiceFromType() {
+    getServiceFromType(): any {
         if(this.isCommon()) {
             return CalculateCommonRelationshipsData.setRelationship(this)
         }
@@ -441,5 +442,11 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
         }
 
         return null
+    }
+
+    fillRelationshipKeys(): void {
+        if(this.isCommon()) {
+            return FillCommonRelationshipKeys.fillRelationship(this)
+        }
     }
 }

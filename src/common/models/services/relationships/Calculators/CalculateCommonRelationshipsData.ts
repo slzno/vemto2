@@ -1,10 +1,10 @@
 import Relationship from "@Common/models/Relationship"
 import WordManipulator from '@Common/util/WordManipulator'
-import RelationshipService from './base/RelationshipService'
+import CalculateRelationshipService from '../base/CalculateRelationshipService'
 import Index from "@Common/models/Index"
 import Model from "@Common/models/Model"
 
-class CalculateCommonRelationshipsData extends RelationshipService {
+class CalculateCommonRelationshipsData extends CalculateRelationshipService {
     relationship: Relationship
 
     setRelationship(relationship: Relationship): CalculateCommonRelationshipsData {
@@ -95,7 +95,7 @@ class CalculateCommonRelationshipsData extends RelationshipService {
         this.calculateForeignKeyName()
     }
 
-    calculateParentKey() {
+    calculateParentKey(): void {
         this.checkTypeAndRelatedModel()
         
         let keys = this.getDefaultKeys()

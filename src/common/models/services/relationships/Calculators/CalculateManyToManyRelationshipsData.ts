@@ -1,9 +1,9 @@
 import Table from "@Common/models/Table"
 import Relationship from "@Common/models/Relationship"
 import WordManipulator from "@Common/util/WordManipulator"
-import RelationshipService from "./base/RelationshipService"
+import CalculateRelationshipService from "../base/CalculateRelationshipService"
 
-class CalculateManyToManyRelationshipsData extends RelationshipService {
+class CalculateManyToManyRelationshipsData extends CalculateRelationshipService {
     relationship: Relationship
 
     setRelationship(relationship: Relationship): CalculateManyToManyRelationshipsData {

@@ -1,10 +1,10 @@
 import Relationship from "@Common/models/Relationship"
-import RelationshipService from "./base/RelationshipService"
+import CalculateRelationshipService from "../base/CalculateRelationshipService"
 import WordManipulator from "@Common/util/WordManipulator"
 import Column from "@Common/models/Column"
 import Table from "@Common/models/Table"
 
-class CalculateMorphRelationshipsData extends RelationshipService {
+class CalculateMorphRelationshipsData extends CalculateRelationshipService {
     relationship: Relationship
     
     setRelationship(relationship: Relationship): CalculateMorphRelationshipsData {

@@ -27,7 +27,7 @@
                 <UiDropdownSelect
                     v-model="relationship.foreignKeyId"
                     placeholder="Select the Foreign Key"
-                    :options="getForSelect(relationship.model.table.columns)"
+                    :options="getForSelect(relationship.getServiceFromType().getForeignModel().table.columns)"
                     @change="$emit('save')"
                 />
             </div>

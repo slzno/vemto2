@@ -139,6 +139,7 @@ class ModelsFromSchemaBuilder {
             }
 
             relationship.applyChanges(relationshipData)
+            relationship.fillRelationshipKeys()
 
             this.changedRelationships.push(relationship)
         })
