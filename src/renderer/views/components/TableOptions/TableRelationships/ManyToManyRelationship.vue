@@ -1,9 +1,12 @@
 <script setup lang="ts">
     import { defineProps, toRef } from 'vue'
     import UiText from '@Renderer/components/ui/UiText.vue'
-
-    const props = defineProps(['relationship']),
-        relationship = toRef(props, 'relationship')
+    import UiDropdownSelect from '@Renderer/components/ui/UiDropdownSelect.vue'
+    import { useProjectStore } from '@Renderer/stores/useProjectStore';
+    
+    const props = defineProps(['relationship', 'getForSelect']),
+        relationship = toRef(props, 'relationship'),
+        projectStore = useProjectStore()
 </script>
 <template>
     <div class="flex-1 grid grid-cols-2 gap-1">
@@ -14,23 +17,30 @@
                     placeholder="Relationship Name"
                     @input="$emit('save')"
                 />
-                <UiText
-                    v-model="relationship.pivotTableName"
-                    placeholder="Pivot Table Name"
+                <UiDropdownSelect
+                    v-model="relationship.pivotId"
+                    :options="getForSelect(projectStore.project.getTables())"
+                    placeholder="Pivot Table"
                     @input="$emit('save')"
                 />
             </div>
             <div class="gap-2 flex flex-col">
-                <UiText
-                    v-model="relationship.foreignPivotKeyName"
-                    placeholder="Foreign Pivot Key Name"
-                    @input="$emit('save')"
-                />
-                <UiText
-                    v-model="relationship.relatedPivotKeyName"
-                    placeholder="Related Pivot Key Name"
-                    @input="$emit('save')"
-                />
+                <template v-if="relationship.foreignPivotKeyId">
+                    <UiDropdownSelect
+                        v-model="relationship.foreignPivotKeyId"
+                        :options="getForSelect(relationship.pivot.columns)"
+                        placeholder="Foreign Pivot Id"
+                        @input="$emit('save')"
+                    />
+                </template>
+                <template v-if="relationship.foreignPivotKeyId">
+                    <UiDropdownSelect
+                        v-model="relationship.relatedPivotKeyId"
+                        :options="getForSelect(relationship.pivot.columns)"
+                        placeholder="Related Pivot Id"
+                        @input="$emit('save')"
+                    />
+                </template>
             </div>
         </template>
     </div>

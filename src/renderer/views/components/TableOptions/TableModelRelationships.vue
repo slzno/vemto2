@@ -208,6 +208,7 @@
                     <template v-if="relationship.isManyToMany()">
                         <ManyToManyRelationship
                             :relationship="relationship"
+                            :get-for-select="getForSelect"
                             @save="saveRelationship(relationship)"
                         />
                     </template>

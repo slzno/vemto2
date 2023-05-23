@@ -10,6 +10,7 @@ import CalculateCommonRelationshipsData from './services/relationships/Calculato
 import CalculateThroughRelationshipsData from './services/relationships/Calculators/CalculateThroughRelationshipsData'
 import CalculateManyToManyRelationshipsData from './services/relationships/Calculators/CalculateManyToManyRelationshipsData'
 import FillCommonRelationshipKeys from './services/relationships/Fillers/FillCommonRelationshipKeys'
+import FillManyToManyRelationshipKeys from './services/relationships/Fillers/FillManyToManyRelationshipKeys'
 import WordManipulator from '@Common/util/WordManipulator'
 
 export default class Relationship extends RelaDB.Model implements SchemaModel {
@@ -447,6 +448,10 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
     fillRelationshipKeys(): void {
         if(this.isCommon()) {
             return FillCommonRelationshipKeys.fillRelationship(this)
+        }
+
+        if(this.isManyToMany()) {
+            return FillManyToManyRelationshipKeys.fillRelationship(this)
         }
     }
 }

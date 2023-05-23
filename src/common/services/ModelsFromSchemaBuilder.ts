@@ -138,6 +138,7 @@ class ModelsFromSchemaBuilder {
                 relationship = relationshipsKeyedByName[relationshipData.name]
             }
 
+            console.log(relationshipData)
             relationship.applyChanges(relationshipData)
             relationship.fillRelationshipKeys()
 
