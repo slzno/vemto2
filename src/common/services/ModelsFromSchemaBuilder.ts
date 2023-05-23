@@ -137,8 +137,9 @@ class ModelsFromSchemaBuilder {
             } else {
                 relationship = relationshipsKeyedByName[relationshipData.name]
             }
+            
+            relationship.projectId = this.project.id
 
-            console.log(relationshipData)
             relationship.applyChanges(relationshipData)
             relationship.fillRelationshipKeys()
 

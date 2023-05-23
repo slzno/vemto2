@@ -61,7 +61,7 @@ class CalculateManyToManyRelationshipsData extends CalculateRelationshipService 
     }
 
     process(createInverse = false): void {
-        this.createPivot()
+        this.createOrUpdatePivot()
 
         this.calculateKeys()
         this.calculateName()
@@ -69,8 +69,8 @@ class CalculateManyToManyRelationshipsData extends CalculateRelationshipService 
         if(createInverse) this.createInverseRelationship()
     }
 
-    createPivot(): void {
-        if(this.relationship.pivotId) return
+    createOrUpdatePivot(forceUpdate: boolean = false): void {
+        if(this.relationship.pivotId && !forceUpdate) return
 
         let pivotName = this.getDefaultPivotName(),
             pivot = this.relationship.project.findTableByName(pivotName)

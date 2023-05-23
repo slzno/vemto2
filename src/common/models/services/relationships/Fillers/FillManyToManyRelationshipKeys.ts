@@ -20,6 +20,8 @@ class FillManyToManyRelationshipKeys {
         if(this.relationship.relatedModelId) {
             this.relationship.getServiceFromType().calculateKeys()
         }
+
+        this.relationship.getServiceFromType().createOrUpdatePivot(true)
     }
 
     calculateRelatedModel(): void {
