@@ -153,35 +153,39 @@
                     <div class="space-x-1 flex justify-between">
                         <!-- <UiButton @click="relationship.logDataComparison()">Log data comparison</UiButton> -->
 
-                        <div class="text-red-400 flex gap-1">
-                            <UiDropdownSelect
-                                v-model="relationship.type"
-                                :may-open="relationship.isNew() && !relationship.hasType()"
-                                placeholder="Relationship Type"
-                                :options="RelationshipTypes.getForDropdown()"
-                                @change="saveRelationship(relationship)"
-                            />
-
-                            <template v-if="! relationship.isThrough()">
+                        <div class="text-red-400 flex gap-1 flex-1">
+                            <div class="flex-1">
                                 <UiDropdownSelect
-                                    v-model="relationship.relatedModelId"
-                                    :may-open="relationship.isNew() && !relationship.hasRelatedModel() && relationship.hasType()"
-                                    placeholder="Relationship Model"
-                                    :options="getForSelect(models)"
+                                    v-model="relationship.type"
+                                    :may-open="relationship.isNew() && !relationship.hasType()"
+                                    placeholder="Relationship Type"
+                                    :options="RelationshipTypes.getForDropdown()"
                                     @change="saveRelationship(relationship)"
                                 />
-                            </template>
+                            </div>
+
+                            <div class="flex-1">
+                                <template v-if="! relationship.isThrough()">
+                                    <UiDropdownSelect
+                                        v-model="relationship.relatedModelId"
+                                        :may-open="relationship.isNew() && !relationship.hasRelatedModel() && relationship.hasType()"
+                                        placeholder="Relationship Model"
+                                        :options="getForSelect(models)"
+                                        @change="saveRelationship(relationship)"
+                                    />
+                                </template>
                             
-                            <template v-else>
-                                <UiText
-                                    placeholder="Relationship Name"
-                                    v-model="relationship.name"
-                                    @input="saveRelationship(relationship)"
-                                />
-                            </template>
+                                <template v-else>
+                                    <UiText
+                                        placeholder="Relationship Name"
+                                        v-model="relationship.name"
+                                        @input="saveRelationship(relationship)"
+                                    />
+                                </template>
+                            </div>
                         </div>
 
-                        <span class="relative">
+                        <span class="relative mt-1">
                             <EllipsisVerticalIcon
                                 class="h-6 w-6 text-slate-400 cursor-pointer"
                                 @click="toggleRelationshipOptions(relationship)"

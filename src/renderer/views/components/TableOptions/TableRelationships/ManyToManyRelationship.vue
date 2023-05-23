@@ -19,7 +19,7 @@
                 />
                 <UiDropdownSelect
                     v-model="relationship.pivotId"
-                    :options="getForSelect(projectStore.project.getTables())"
+                    :options="getForSelect(projectStore.project.tables)"
                     placeholder="Pivot Table"
                     @input="$emit('save')"
                 />
