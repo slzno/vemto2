@@ -48,7 +48,7 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
             // Write the Vemto version for future comparison or merge
             FileSystem.writeFile(vemtoFilePath, file.content)
 
-            const currentFileContent = FileSystem.readFileIfExists(projectFilePath),
+            const currentFileContent = FileSystem.readFileIfExists(projectFilePath) || '',
                 previousFileContent = FileSystem.readFileIfExists(previousFilePath) || ''
 
             if(file.type === RenderableFileType.PHP_CLASS) {

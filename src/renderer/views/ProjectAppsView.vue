@@ -33,7 +33,7 @@
             <UiTabs :tabs="tabs" v-model="selectedTab" :external="true" />
         </div>
         
-        <div class="p-4">
+        <div class="p-4" v-if="selectedTab === 'applications'">
             <div class="flex top-0 left-0 space-x-2 text-sm z-20 mb-4">
                 <div>
                     <!-- Search -->
@@ -57,6 +57,32 @@
                     <span class="font-semibold">{{ app.name }}</span>
     
                     <UiButton @click="app.delete()">Delete</UiButton>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-2 p-4" v-if="selectedTab === 'routes'">
+            <div class="space-y-2">
+                <div class="bg-slate-950 rounded-lg p-3 flex justify-between">
+                    <div>
+                        <div class="mt-2 space-x-1 font-mono">
+                            <span class="px-2 py-0.5 bg-orange-200 text-orange-700 rounded">Middleware</span> <span>'auth:sanctum', 'verified'</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-950 rounded-lg p-3 flex justify-between ml-10" v-for="route in projectStore.project.routes" :key="route.id">
+                    <div>
+                        <div class="mt-2 space-x-1 font-mono">
+                            <span class="px-2 py-0.5 bg-green-300 text-green-700 rounded">{{ route.method.toUpperCase() }}</span> <span>{{ route.path }}</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="rounded px-2 py-1 bg-slate-800 inline-block text-sm">
+                            {{ route.name }}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

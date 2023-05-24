@@ -1,0 +1,3 @@
+<% for(let route of this.routes) { %>
+Route::get('/posts', App\Http\Livewire\PostsIndex::class)->name('posts.index');
+<% } %>
