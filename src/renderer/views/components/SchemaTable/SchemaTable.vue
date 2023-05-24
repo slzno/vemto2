@@ -23,7 +23,7 @@
             selected.value = false
 
             nextTick(() => {
-                table.value.remove()
+                table.value.delete()
                 emit('tableRemoved')
             })
         })

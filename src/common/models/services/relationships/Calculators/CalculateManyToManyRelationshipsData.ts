@@ -72,7 +72,7 @@ class CalculateManyToManyRelationshipsData extends CalculateRelationshipService 
     createOrUpdatePivot(forceUpdate: boolean = false): void {
         if(this.relationship.pivotId && !forceUpdate) return
 
-        let pivotName = this.getDefaultPivotName(),
+        let pivotName = this.relationship.pivotTableName || this.getDefaultPivotName(),
             pivot = this.relationship.project.findTableByName(pivotName)
 
         if(!pivot) {

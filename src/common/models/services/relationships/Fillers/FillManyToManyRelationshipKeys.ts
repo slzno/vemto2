@@ -19,15 +19,15 @@ class FillManyToManyRelationshipKeys {
 
         if(! this.relationship.relatedModelId) return
 
-        this.relationship.getServiceFromType().calculateKeys()
         this.relationship.getServiceFromType().createOrUpdatePivot(true)
+        this.relationship.getServiceFromType().calculateKeys()
     }
 
     calculateRelatedModel(): void {
         if(this.relationship.relatedModelId) return
-        
+
         const relatedModel = this.relationship.project.findModelByClass(this.relationship.relatedModelName)
-        
+
         if(!relatedModel) return
 
         this.relationship.relatedModelId = relatedModel.id

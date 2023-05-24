@@ -70,16 +70,19 @@ class CalculateMorphRelationshipsData extends CalculateRelationshipService {
             pivot.save()
         }
 
-        this.createPivotFields(pivot)
-
         this.relationship.pivotId = pivot.id
         this.relationship.save()
+
+        this.createPivotData()
     }
 
-    createPivotFields(pivot: Table): void {
-        let modelKeyName = this.getDefaultModelKeyName()
+    createPivotData(addMorphableFields: boolean = true): void {
+        let modelKeyName = this.getDefaultModelKeyName(),
+            pivot = this.relationship.pivot
         
         pivot.addForeign(modelKeyName, this.relationship.relatedModel)
+
+        if(! addMorphableFields) return
 
         this.addMorphableFieldsToTable(
             pivot, 

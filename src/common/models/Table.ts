@@ -297,7 +297,7 @@ export default class Table extends RelaDB.Model implements SchemaModel {
         })
         
         this.getRelationships().forEach((relationship: Relationship) => {
-            let relatedTable = relationship.relatedModel.table
+            let relatedTable = relationship.relatedModel?.table
 
             if(relationship.pivot) {
                 relatedTable = relationship.pivot
