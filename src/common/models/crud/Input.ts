@@ -8,6 +8,9 @@ import GenerateInputValidation, { ValidationRuleType } from "./services/Generate
 export enum InputType {
     TEXT = "text",
     TEXTAREA = "textarea",
+    NUMBER = "number",
+    FILE = "file",
+    IMAGE = "image",
 }
 
 export enum InputValidationRuleType {
@@ -49,10 +52,6 @@ export default class Input extends RelaDB.Model {
     showOnDetails: boolean
     showOnIndex: boolean
 
-    static identifier() {
-        return "Input"
-    }
-
     relationships() {
         return {
             crud: () => this.belongsTo(Crud),
@@ -87,12 +86,20 @@ export default class Input extends RelaDB.Model {
         return input
     }
 
+    isPassword() {
+        return this.name === "password"
+    }
+
+    isFileOrImage() {
+        return [InputType.FILE, InputType.IMAGE].includes(this.type)
+    }
+
     needsMaxValidation() {
-        return [InputType.TEXT, InputType.TEXTAREA].includes(this.type) && this.max
+        return [InputType.TEXT, InputType.TEXTAREA, InputType.NUMBER, InputType.FILE, InputType.IMAGE].includes(this.type) && this.max
     }
 
     needsMinValidation() {
-        return [InputType.TEXT, InputType.TEXTAREA].includes(this.type) && this.min
+        return [InputType.NUMBER].includes(this.type) && this.min
     }
 
     generateValidationRules() {

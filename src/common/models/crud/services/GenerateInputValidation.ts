@@ -29,7 +29,9 @@ export default class GenerateInputValidation {
             baseValidationRules = this.getBaseValidationRules(ValidationRuleType.CREATION)
         }
 
-        validationRules = this.addLogicValidationToRules(baseValidationRules)
+        console.log('baseValidationRules', baseValidationRules)
+
+        validationRules = this.addLogicValidationToRules(baseValidationRules, type)
 
         return validationRules.map((rule) => {
             return {
@@ -59,7 +61,7 @@ export default class GenerateInputValidation {
         return columnType[type] || []
     }
 
-    addLogicValidationToRules(rules: string[]): string[] {
+    addLogicValidationToRules(rules: string[], type: ValidationRuleType = ValidationRuleType.CREATION): string[] {
         if(this.input.column.nullable) {
             rules.push("nullable")
         } else {
@@ -77,7 +79,70 @@ export default class GenerateInputValidation {
         if(this.input.needsMinValidation()) {
             rules.push(`min:${this.input.min}`)
         }
+
+        if(type === ValidationRuleType.UPDATE) {
+            rules = this.treatUpdateRules(rules)
+        }
+
+        rules = [...new Set(rules)]
+
+        rules = this.replacePlaceholders(rules)
+        rules = this.removeAntagonisticRules(rules)
+        rules = this.moveRequiredToStart(rules)
+        rules = this.moveNullableToStart(rules)
         
-        return [...new Set(rules)]
+        return rules
+    }
+
+    replacePlaceholders(rules: string[]): string[] {
+        rules = rules.map(rule => {
+            rule = rule.replace('{TABLE}', this.input.column.table.name)
+            
+            const columnOptions = this.input.column.options
+
+            if(columnOptions && Array.isArray(columnOptions)) {
+                rule = rule.replace('{IMPLODED_OPTIONS}', columnOptions.join(',').toLowerCase())
+            }
+
+            return rule
+        })
+
+        return rules
+    }
+
+    treatUpdateRules(rules: string[]) {
+        if(this.input.isPassword() || this.input.isFileOrImage()) {
+            rules = rules.filter(rule => rule !== 'required')
+
+            if(this.input.column.nullable) rules.push('nullable')
+        }
+
+        return rules
+    }
+
+    removeAntagonisticRules(rules: string[]): string[] {
+        if(rules.includes('nullable')) {
+            rules = rules.filter(rule => rule !== 'required')
+        }
+
+        return rules
+    }
+
+    moveRequiredToStart(rules: string[]): string[] {
+        if(rules.includes('required')) {
+            rules = rules.filter(rule => rule !== 'required')
+            rules.unshift('required')
+        }
+
+        return rules
+    }
+
+    moveNullableToStart(rules: string[]): string[] {
+        if(rules.includes('nullable')) {
+            rules = rules.filter(rule => rule !== 'nullable')
+            rules.unshift('nullable')
+        }
+
+        return rules
     }
 }

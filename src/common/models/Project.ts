@@ -23,10 +23,6 @@ export default class Project extends RelaDB.Model {
 
     lastForeignAlias: number = 0;
 
-    static identifier() {
-        return "Project"
-    }
-
     relationships() {
         return {
             cruds: () => this.hasMany(Crud).cascadeDelete(),

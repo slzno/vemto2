@@ -3,6 +3,7 @@ import Project from "@Common/models/Project"
 import debounce from "@Common/tools/debounce"
 import RendererBridge from "./RendererBridge"
 import RelaDB from "@tiago_silva_pereira/reladb"
+import ModelRegistry from "@Common/ModelRegistry"
 import { useProjectStore } from "@Renderer/stores/useProjectStore"
 
 export default class HandleProjectDatabase {
@@ -11,6 +12,8 @@ export default class HandleProjectDatabase {
         const database = new RelaDB.Database
             
         database.setDriver(RelaDB.RAMStorage)
+
+        ModelRegistry.registerModels()
 
         RelaDB.Resolver.setDatabase(database)
 

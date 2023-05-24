@@ -45,10 +45,6 @@ export default class RenderableFile extends RelaDB.Model {
     conflictFileName: string
     content: string
 
-    static identifier() {
-        return 'RenderableFile'
-    }
-
     relationships() {
         return {
             project: () => this.belongsTo(Project),

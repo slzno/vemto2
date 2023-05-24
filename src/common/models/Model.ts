@@ -47,10 +47,6 @@ export default class Model extends RelaDB.Model implements SchemaModel {
     hasTimestamps: boolean
     hasSoftDeletes: boolean
 
-    static identifier() {
-        return "Model"
-    }
-
     relationships() {
         return {
             table: () => this.belongsTo(Table),
@@ -329,13 +325,12 @@ export default class Model extends RelaDB.Model implements SchemaModel {
             this.plural = tableNameException.plural
         }
 
-        const modelNamePlural = WordManipulator.pluralize(this.name)
+        const modelNamePlural = Model.calculatePluralName(this)
+        this.plural = modelNamePlural
 
         if (this.name != modelNamePlural) {
-            this.plural = modelNamePlural
             this.pluralAndSingularAreSame = false
         } else {
-            this.plural = `All${modelNamePlural}`
             this.pluralAndSingularAreSame = true
         }
 
@@ -362,5 +357,15 @@ export default class Model extends RelaDB.Model implements SchemaModel {
 
     getCommonMorphRelatedRelationships(): Relationship[] {
         return this.ownRelationships.filter((rel: Relationship) => rel.isCommonMorph())
+    }
+    
+    static calculatePluralName(modelData: any): string {
+        const modelNamePlural = WordManipulator.pluralize(modelData.name)
+
+        if (modelData.name != modelNamePlural) {
+            return modelNamePlural
+        }
+
+        return `All${modelNamePlural}`
     }
 }

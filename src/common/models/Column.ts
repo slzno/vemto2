@@ -29,6 +29,7 @@ export default class Column extends RelaDB.Model implements SchemaModel {
     places: number
     autoIncrement: boolean
     faker: string
+    options: any
     inputs: Input[]
 
     modelId: string
@@ -38,10 +39,6 @@ export default class Column extends RelaDB.Model implements SchemaModel {
         const columnData = Object.assign(ColumnData.getDefault(), data)
 
         super(columnData)
-    }
-
-    static identifier() {
-        return 'Column'
     }
 
     relationships() {
