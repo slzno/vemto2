@@ -7,6 +7,7 @@ import RenderableFile, {
     RenderableFileStatus,
     RenderableFileType,
 } from "./RenderableFile"
+import Route from "./Route"
 
 export default class Project extends RelaDB.Model {
     id: string
@@ -15,6 +16,7 @@ export default class Project extends RelaDB.Model {
     cruds: Crud[]
     tables: Table[]
     models: Model[]
+    routes: Route[]
     laravelVersion: Number
     schemaTablesDataHash: string
     schemaModelsDataHash: string
@@ -28,6 +30,7 @@ export default class Project extends RelaDB.Model {
             cruds: () => this.hasMany(Crud).cascadeDelete(),
             tables: () => this.hasMany(Table).cascadeDelete(),
             models: () => this.hasMany(Model).cascadeDelete(),
+            routes: () => this.hasMany(Route).cascadeDelete(),
             renderableFiles: () => this.hasMany(RenderableFile).cascadeDelete(),
         }
     }

@@ -1,7 +1,8 @@
 import Input from "./Input"
 import CrudPanel from "./CrudPanel"
 import Model from "@Common/models/Model"
-import { capitalCase } from "change-case"
+import Route, { RouteType } from "@Common/models/Route"
+import { camelCase, capitalCase, paramCase } from "change-case"
 import Column from "@Common/models/Column"
 import Project from "@Common/models/Project"
 import RelaDB from "@tiago_silva_pereira/reladb"
@@ -33,6 +34,7 @@ export default class Crud extends RelaDB.Model {
     defaultSortColumn: Column
     defaultSortColumnId: string
     defaultSortDirection: string
+    routes: Route[]
 
     relationships() {
         return {
@@ -40,6 +42,7 @@ export default class Crud extends RelaDB.Model {
             project: () => this.belongsTo(Project),
             inputs: () => this.hasMany(Input).cascadeDelete(),
             panels: () => this.hasMany(CrudPanel).cascadeDelete(),
+            routes: () => this.morphMany(Route, "routable").cascadeDelete(),
             defaultSearchColumn: () => this.belongsTo(Column, "defaultSearchColumnId"),
             defaultSortColumn: () => this.belongsTo(Column, "defaultSortColumnId"),
         }
@@ -80,6 +83,7 @@ export default class Crud extends RelaDB.Model {
         crud.save()
 
         crud.addInputsFromModel(model)
+        crud.addRoutes()
     }
 
     addInputsFromModel(model: Model) {
@@ -97,6 +101,38 @@ export default class Crud extends RelaDB.Model {
             input.crudId = this.id
             input.panelId = panel.id
             input.save()
+        })
+    }
+
+    addRoutes() {
+        Route.create({
+            name: `${paramCase(this.model.plural)}.index`,
+            method: "get",
+            type: RouteType.ROUTE,
+            path: `/${paramCase(this.model.plural)}`,
+            routableId: this.id,
+            routableType: "Crud",
+            projectId: this.projectId,
+        })
+
+        Route.create({
+            name: `${paramCase(this.model.plural)}.create`,
+            method: "get",
+            type: RouteType.ROUTE,
+            path: `/${paramCase(this.model.plural)}/create`,
+            routableId: this.id,
+            routableType: "Crud",
+            projectId: this.projectId,
+        })
+
+        Route.create({
+            name: `${paramCase(this.model.plural)}.edit`,
+            method: "get",
+            type: RouteType.ROUTE,
+            path: `/${paramCase(this.model.plural)}/{${camelCase(this.model.name)}}`,
+            routableId: this.id,
+            routableType: "Crud",
+            projectId: this.projectId,
         })
     }
 }
