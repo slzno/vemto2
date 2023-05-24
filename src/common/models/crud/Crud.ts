@@ -21,6 +21,8 @@ export interface CrudSettings {
 export default class Crud extends RelaDB.Model {
     id: string
     name: string
+    plural: string
+    namespace: string
     type: CrudType
     model: Model
     modelId: string
@@ -35,6 +37,12 @@ export default class Crud extends RelaDB.Model {
     defaultSortColumnId: string
     defaultSortDirection: string
     routes: Route[]
+
+    // Livewire specific
+    livewireIndexComponentName: string
+    livewireShowComponentName: string
+    livewireCreateComponentName: string
+    livewireEditComponentName: string
 
     relationships() {
         return {
@@ -66,14 +74,13 @@ export default class Crud extends RelaDB.Model {
 
         const crud = new Crud()
         crud.type = CrudType.LIVEWIRE
-        crud.name = capitalCase(model.plural)
+        crud.name = capitalCase(model.name)
+        crud.plural = capitalCase(model.plural)
+        crud.namespace = crud.calculateNamespace()
         crud.modelId = model.id
         crud.projectId = model.projectId
 
-        crud.settings = {
-            itemTitle: capitalCase(model.name),
-            collectionTitle: capitalCase(model.plural),
-        }
+        crud.calculateLiveWireSpecificData()
 
         if(defaultSearchColumn) crud.defaultSearchColumnId = defaultSearchColumn.id
         if(defaultSortColumn) crud.defaultSortColumnId = defaultSortColumn.id
@@ -84,6 +91,17 @@ export default class Crud extends RelaDB.Model {
 
         crud.addInputsFromModel(model)
         crud.addRoutes()
+    }
+
+    calculateNamespace(): string {
+        return `App\\Http\\Livewire`
+    }
+
+    calculateLiveWireSpecificData() {
+        this.livewireIndexComponentName = `${this.name}Index`
+        this.livewireShowComponentName = `${this.name}Show`
+        this.livewireCreateComponentName = `${this.name}Create`
+        this.livewireEditComponentName = `${this.name}Edit`
     }
 
     addInputsFromModel(model: Model) {
@@ -106,30 +124,30 @@ export default class Crud extends RelaDB.Model {
 
     addRoutes() {
         Route.create({
-            name: `${paramCase(this.model.plural)}.index`,
+            name: `${paramCase(this.plural)}.index`,
             method: "get",
             type: RouteType.ROUTE,
-            path: `/${paramCase(this.model.plural)}`,
+            path: `/${paramCase(this.plural)}`,
             routableId: this.id,
             routableType: "Crud",
             projectId: this.projectId,
         })
 
         Route.create({
-            name: `${paramCase(this.model.plural)}.create`,
+            name: `${paramCase(this.plural)}.create`,
             method: "get",
             type: RouteType.ROUTE,
-            path: `/${paramCase(this.model.plural)}/create`,
+            path: `/${paramCase(this.plural)}/create`,
             routableId: this.id,
             routableType: "Crud",
             projectId: this.projectId,
         })
 
         Route.create({
-            name: `${paramCase(this.model.plural)}.edit`,
+            name: `${paramCase(this.plural)}.edit`,
             method: "get",
             type: RouteType.ROUTE,
-            path: `/${paramCase(this.model.plural)}/{${camelCase(this.model.name)}}`,
+            path: `/${paramCase(this.plural)}/{${camelCase(this.name)}}`,
             routableId: this.id,
             routableType: "Crud",
             projectId: this.projectId,

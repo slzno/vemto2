@@ -1,3 +1,14 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+<% let lastRoutable = null %>
+
 <% for(let route of this.routes) { %>
-Route::get('/posts', App\Http\Livewire\PostsIndex::class)->name('posts.index');
+<% if (!route.routableIs(lastRoutable)) { %>
+<% lastRoutable = route.routable %>
+// <$ lastRoutable.name $>
+
+<% } %>
+Route::<$ route.getLaravelMethod() $>('<$ route.path $>', App\Http\Livewire\PostsIndex::class)->name('<$ route.name $>');
 <% } %>

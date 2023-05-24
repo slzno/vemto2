@@ -31,4 +31,14 @@ export default class Route extends RelaDB.Model {
             childrenRoutes: () => this.hasMany(Route, "parentRouteId"),
         }
     }
+
+    getLaravelMethod(): string {
+        return this.method
+    }
+
+    routableIs(otherRoutable: any): boolean {
+        if(!otherRoutable) return false
+
+        return this.routableId === otherRoutable.id && this.routableType === otherRoutable.constructor.identifier()
+    }
 }

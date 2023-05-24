@@ -8,6 +8,7 @@
     import HandleProjectDatabase from '@Renderer/services/HandleProjectDatabase'
     import UiTabs from '@Renderer/components/ui/UiTabs.vue'
     import UiSelect from '@Renderer/components/ui/UiSelect.vue'
+import UiText from '@Renderer/components/ui/UiText.vue'
 
     // const projectStore = useProjectStore()
 
@@ -90,6 +91,18 @@
             </section>
 
             <section class="flex flex-col w-full h-screen space-y-4 mt-2 px-2" v-if="selectedTab === 'settings'">
+                <div>
+                    <UiText v-model="crud.name" label="Name" @input="crud.save()" />
+                </div>
+
+                <div>
+                    <UiText v-model="crud.plural" label="Plural" @input="crud.save()" />
+                </div>
+
+                <div>
+                    <UiText v-model="crud.namespace" label="Namespace" @input="crud.save()" />
+                </div>
+
                 <div>
                     <UiSelect v-model="crud.defaultSearchColumnId" label="Default search column" @change="crud.save()" >
                         <option :value="null" disabled>Select a column</option>
