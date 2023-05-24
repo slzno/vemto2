@@ -61,13 +61,13 @@ class <$ this.model.name $> extends Model
 
             <% } %>
             <# Many To Many #>
-            <% if(relationship.type == "ManyToMany") { %>
+            <% if(relationship.isManyToMany()) { %>
                 public function <$ relationship.name $>() 
                 {
                     return $this->belongsToMany(<$ relationship.relatedModel.name $>::class
                     <# Needs to add the pivot table if localKey or foreignKey are not default #>
                     <up if(relationship.getServiceFromType().needsToAddPivotToModelTemplate()) { up>
-                    , '<$ relationship.pivot.table $>'
+                    , '<$ relationship.pivot.name $>'
                     <up } up>
                     <# --- #>
                     <up if(relationship.getServiceFromType().hasDifferentForeignOrRelatedPivotKeys()) { up>
@@ -103,14 +103,6 @@ class <$ this.model.name $> extends Model
 
             <% } %>
 
-        <% } %>
-        <# Basic Morph Inverse Relationships #>
-        <% for(let relationship of this.model.getCommonMorphInverseRelationships()) { %>
-            public function <$ relationship.morphTo $>() 
-            {
-                return $this->morphTo();
-            }
-            
         <% } %>
     <% } %>
 }
