@@ -11,6 +11,7 @@ import CalculateThroughRelationshipsData from './services/relationships/Calculat
 import CalculateManyToManyRelationshipsData from './services/relationships/Calculators/CalculateManyToManyRelationshipsData'
 import FillCommonRelationshipKeys from './services/relationships/Fillers/FillCommonRelationshipKeys'
 import FillManyToManyRelationshipKeys from './services/relationships/Fillers/FillManyToManyRelationshipKeys'
+import FillMorphRelationshipKeys from './services/relationships/Fillers/FillMorphRelationshipKeys'
 import WordManipulator from '@Common/util/WordManipulator'
 
 export default class Relationship extends RelaDB.Model implements SchemaModel {
@@ -452,6 +453,10 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
 
         if(this.isManyToMany()) {
             return FillManyToManyRelationshipKeys.fillRelationship(this)
+        }
+
+        if(this.isMorph()) {
+            return FillMorphRelationshipKeys.fillRelationship(this)
         }
     }
 }
