@@ -22,6 +22,8 @@ export default class Route extends RelaDB.Model {
     projectId: string
     parentRouteId: string
     parentRoute: Route
+    hasCustomContent: boolean
+    customContent: string
 
     relationships() {
         return {
