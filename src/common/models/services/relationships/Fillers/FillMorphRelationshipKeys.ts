@@ -17,12 +17,12 @@ class FillMorphRelationshipKeys {
     fill(): void {
         this.calculateRelatedModel()
 
+        if(! this.relationship.relatedModelId) return
+
         if(this.relationship.type === 'MorphToMany') {
             this.calculatePivotTable()
             this.relationship.getServiceFromType().createPivotData(false)
         }
-
-        if(! this.relationship.relatedModelId) return
 
         this.relationship.getServiceFromType().calculateMorphTo()
     }
@@ -35,6 +35,7 @@ class FillMorphRelationshipKeys {
         if(!pivotTable) return
         
         this.relationship.pivotId = pivotTable.id
+        this.relationship.save()
     }
 
     calculateRelatedModel(): void {
@@ -45,6 +46,7 @@ class FillMorphRelationshipKeys {
         if(!relatedModel) return
 
         this.relationship.relatedModelId = relatedModel.id
+        this.relationship.save()
     }
 }
 

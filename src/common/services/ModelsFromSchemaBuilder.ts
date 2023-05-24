@@ -158,21 +158,6 @@ class ModelsFromSchemaBuilder {
             model.ownRelationships.forEach((relationship: Relationship) => {
                 const relatedModelInstance = this.project.findModelByClass(relationship.relatedModelName),
                     inverseRelType = RelationshipTypes.getInverse(relationship.type)
-
-                if(relationship.isThrough()) {
-                    const throughModel = this.project.findModelByName(WordManipulator.runMultiple(
-                        ['singularize', 'pascalCase'],
-                        relationship.parentTableName
-                    ))
-
-                    if(!throughModel) return
-
-                    relationship.throughId = throughModel.id
-                    relationship.secondKeyName = WordManipulator.snakeCase(throughModel.name) + '_id'
-                    relationship.save()
-
-                    return
-                }
     
                 if(!relatedModelInstance || !inverseRelType) return
     

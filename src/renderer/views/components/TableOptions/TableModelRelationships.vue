@@ -107,8 +107,6 @@
             .then((confirmed: boolean) => {
                 if(!confirmed) return
 
-                console.log(inverseRelationship)
-
                 inverseRelationship.delete()
             })
     }

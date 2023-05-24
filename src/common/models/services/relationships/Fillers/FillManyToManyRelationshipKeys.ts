@@ -31,6 +31,7 @@ class FillManyToManyRelationshipKeys {
         if(!relatedModel) return
 
         this.relationship.relatedModelId = relatedModel.id
+        this.relationship.save()
     }
 }
 

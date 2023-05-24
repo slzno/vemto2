@@ -27,9 +27,10 @@ class FillCommonRelationshipKeys {
         
         const relatedModel = this.relationship.project.findModelByClass(this.relationship.relatedModelName)
 
-        if(!relatedModel) return
+        if(! relatedModel) return
 
         this.relationship.relatedModelId = relatedModel.id
+        this.relationship.save()
     }
 }
 
