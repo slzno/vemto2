@@ -8,6 +8,8 @@ class Vemto {
     public static function respondWith($data)
     {
         echo self::jsonResponse($data);
+
+        exit(self::SUCCESS);
     }
 
     public static function dump(mixed $data)
