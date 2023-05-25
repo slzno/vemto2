@@ -17,8 +17,8 @@
 
     const tabs = [
         { label: "Applications", value: "applications" },
-        { label: "Routes", value: "routes" },
-        { label: "Menu", value: "menu" },
+        { label: "Generated Routes", value: "routes" },
+        { label: "Navigation", value: "navigation" },
         { label: "Domains", value: "domains" },
         { label: "Default Files", value: "default_files" },
         { label: "Themes", value: "themes" },
@@ -63,15 +63,15 @@
 
         <div class="space-y-2 p-4" v-if="selectedTab === 'routes'">
             <div class="space-y-2">
-                <div class="bg-slate-950 rounded-lg p-3 flex justify-between">
+                <!-- <div class="bg-slate-950 rounded-lg p-3 flex justify-between">
                     <div>
                         <div class="mt-2 space-x-1 font-mono">
                             <span class="px-2 py-0.5 bg-orange-200 text-orange-700 rounded">Middleware</span> <span>'auth:sanctum', 'verified'</span>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
-                <div class="bg-slate-950 rounded-lg p-3 flex justify-between ml-10" v-for="route in projectStore.project.routes" :key="route.id">
+                <div class="bg-slate-950 rounded-lg p-3 flex justify-between" v-for="route in projectStore.project.routes" :key="route.id">
                     <div>
                         <div class="mt-2 space-x-1 font-mono">
                             <span class="px-2 py-0.5 bg-green-300 text-green-700 rounded">{{ route.method.toUpperCase() }}</span> <span>{{ route.path }}</span>

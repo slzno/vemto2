@@ -41,8 +41,14 @@ contextBridge.exposeInMainWorld("api", {
     readProjectFile: (path: string) => {
         return ipcRenderer.invoke("file:project:read", path)
     },
+    writeProjectFile: (path: string, content: string) => {
+        return ipcRenderer.invoke("file:project:write", path, content)
+    },
     readTemplateFile: (path: string) => {
         return ipcRenderer.invoke("file:template:read", path)
+    },
+    writeTemplateFile: (path: string, content: string) => {
+        return ipcRenderer.invoke("file:template:write", path, content)
     },
     openProjectFile: (path: string) => {
         return ipcRenderer.invoke("file:project:open", path)
