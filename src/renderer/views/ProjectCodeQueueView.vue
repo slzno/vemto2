@@ -22,22 +22,23 @@ import TemplateErrorViewer from './components/Common/TemplateErrorViewer.vue'
 
 <template>
     <div
-        class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-hidden p-4"
+        class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-scroll p-4"
     >
-    <div class="flex top-0 left-0 space-x-2 text-sm z-20 mb-4">
-        <div>
-            <!-- Search -->
-            <div class="flex items-center">
-                <input
-                    type="text"
-                    class="border-0 bg-slate-100 dark:bg-slate-850 px-4 py-1 rounded-md"
-                    placeholder="Search files..."
-                />
+        <div class="flex top-0 left-0 space-x-2 text-sm z-20 mb-4">
+            <div>
+                <!-- Search -->
+                <div class="flex items-center">
+                    <input
+                        type="text"
+                        class="border-0 bg-slate-100 dark:bg-slate-850 px-4 py-1 rounded-md"
+                        placeholder="Search files..."
+                    />
+                </div>
             </div>
+
+            <UiButton @click="runSequentialGenerator()">Generate</UiButton>
         </div>
 
-        <UiButton @click="runSequentialGenerator()">Generate</UiButton>
-    </div>
         <div
             v-for="file in projectStore.project.renderableFiles"
             :key="file.id"

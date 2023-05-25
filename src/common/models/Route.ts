@@ -10,6 +10,7 @@ export enum RouteType {
 
 export default class Route extends RelaDB.Model {
     id: string
+    tag: string
     routableId: string
     routableType: string
     type: RouteType
@@ -36,6 +37,12 @@ export default class Route extends RelaDB.Model {
 
     getLaravelMethod(): string {
         return this.method
+    }
+
+    getContent(): string {
+        if(this.hasCustomContent) return this.customContent
+
+        return this.routable.getRouteContent(this)
     }
 
     routableIs(otherRoutable: any): boolean {

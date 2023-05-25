@@ -32,7 +32,7 @@ export default class RenderableLivewireIndexComponent extends Renderable {
     }
 
     getFilename(): string {
-        return `${changeCase.pascalCase(this.crud.name)}Index.php`
+        return `${this.crud.livewireIndexComponentName}.php`
     }
 
     getFormatter(): RenderableFileFormatter {

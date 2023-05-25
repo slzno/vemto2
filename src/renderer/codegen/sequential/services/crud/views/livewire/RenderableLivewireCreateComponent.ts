@@ -32,7 +32,7 @@ export default class RenderableLivewireCreateComponent extends Renderable {
     }
 
     getFilename(): string {
-        return `${changeCase.pascalCase(this.crud.name)}Create.php`
+        return `${this.crud.livewireCreateComponentName}.php`
     }
 
     getFormatter(): RenderableFileFormatter {

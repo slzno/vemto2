@@ -90,17 +90,21 @@ import UiText from '@Renderer/components/ui/UiText.vue'
                 </div>
             </section>
 
-            <section class="flex flex-col w-full h-screen space-y-4 mt-2 px-2" v-if="selectedTab === 'settings'">
+            <section class="flex flex-col w-full h-screen space-y-4 mt-2 px-2 pb-40 overflow-scroll" v-if="selectedTab === 'settings'">
                 <div>
-                    <UiText v-model="crud.name" label="Name" @input="crud.save()" />
+                    <UiText v-model="crud.name" label="Item Name" @input="crud.save()" />
                 </div>
 
                 <div>
-                    <UiText v-model="crud.plural" label="Plural" @input="crud.save()" />
+                    <UiText v-model="crud.plural" label="Collection Name" @input="crud.save()" />
                 </div>
 
                 <div>
-                    <UiText v-model="crud.namespace" label="Namespace" @input="crud.save()" />
+                    <UiText v-model="crud.settings.itemTitle" label="Item Title" @input="crud.save()" />
+                </div>
+
+                <div>
+                    <UiText v-model="crud.settings.collectionTitle" label="Collection Title" @input="crud.save()" />
                 </div>
 
                 <div>
@@ -123,6 +127,29 @@ import UiText from '@Renderer/components/ui/UiText.vue'
                         <option value="asc">Ascending</option>
                         <option value="desc">Descending</option>
                     </UiSelect>
+                </div>
+
+                
+                <b>Livewire specific</b>
+
+                <div>
+                    <UiText v-model="crud.livewireNamespace" label="Namespace" @input="crud.save()" />
+                </div>
+
+                <div>
+                    <UiText v-model="crud.livewireIndexComponentName" label="Index Component name" @input="crud.save()" />
+                </div>
+
+                <div>
+                    <UiText v-model="crud.livewireShowComponentName" label="Show Component name" @input="crud.save()" />
+                </div>
+
+                <div>
+                    <UiText v-model="crud.livewireCreateComponentName" label="Create Component name" @input="crud.save()" />
+                </div>
+
+                <div>
+                    <UiText v-model="crud.livewireEditComponentName" label="Edit Component name" @input="crud.save()" />
                 </div>
             </section>
         </div>

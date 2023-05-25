@@ -28,7 +28,7 @@ export default class RenderableLivewireEditView extends Renderable {
     }
 
     getPath(): string {
-        const folder = changeCase.paramCase(this.crud.name)
+        const folder = changeCase.paramCase(this.crud.plural)
 
         return `resources/views/livewire/${folder}`
     }

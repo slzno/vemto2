@@ -10,5 +10,5 @@ use Illuminate\Support\Facades\Route;
 // <$ lastRoutable.name $>
 
 <% } %>
-Route::<$ route.getLaravelMethod() $>('<$ route.path $>', App\Http\Livewire\PostsIndex::class)->name('<$ route.name $>');
+Route::<$ route.getLaravelMethod() $>('<$ route.path $>', <$ route.getContent() $>)->name('<$ route.name $>');
 <% } %>

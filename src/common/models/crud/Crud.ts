@@ -2,7 +2,7 @@ import Input from "./Input"
 import CrudPanel from "./CrudPanel"
 import Model from "@Common/models/Model"
 import Route, { RouteType } from "@Common/models/Route"
-import { camelCase, capitalCase, paramCase } from "change-case"
+import { camelCase, capitalCase, paramCase, pascalCase } from "change-case"
 import Column from "@Common/models/Column"
 import Project from "@Common/models/Project"
 import RelaDB from "@tiago_silva_pereira/reladb"
@@ -22,7 +22,6 @@ export default class Crud extends RelaDB.Model {
     id: string
     name: string
     plural: string
-    namespace: string
     type: CrudType
     model: Model
     modelId: string
@@ -39,6 +38,7 @@ export default class Crud extends RelaDB.Model {
     routes: Route[]
 
     // Livewire specific
+    livewireNamespace: string
     livewireIndexComponentName: string
     livewireShowComponentName: string
     livewireCreateComponentName: string
@@ -74,12 +74,12 @@ export default class Crud extends RelaDB.Model {
 
         const crud = new Crud()
         crud.type = CrudType.LIVEWIRE
-        crud.name = capitalCase(model.name)
-        crud.plural = capitalCase(model.plural)
-        crud.namespace = crud.calculateNamespace()
+        crud.name = paramCase(model.name)
+        crud.plural = paramCase(model.plural)
         crud.modelId = model.id
         crud.projectId = model.projectId
 
+        crud.calculateSettings()
         crud.calculateLiveWireSpecificData()
 
         if(defaultSearchColumn) crud.defaultSearchColumnId = defaultSearchColumn.id
@@ -93,15 +93,19 @@ export default class Crud extends RelaDB.Model {
         crud.addRoutes()
     }
 
-    calculateNamespace(): string {
-        return `App\\Http\\Livewire`
+    calculateSettings() {
+        this.settings = {
+            itemTitle: capitalCase(this.model.name),
+            collectionTitle: capitalCase(this.model.plural),
+        }
     }
 
     calculateLiveWireSpecificData() {
-        this.livewireIndexComponentName = `${this.name}Index`
-        this.livewireShowComponentName = `${this.name}Show`
-        this.livewireCreateComponentName = `${this.name}Create`
-        this.livewireEditComponentName = `${this.name}Edit`
+        this.livewireNamespace = `App\\Http\\Livewire`
+        this.livewireIndexComponentName = `${pascalCase(this.name)}Index`
+        this.livewireShowComponentName = `${pascalCase(this.name)}Show`
+        this.livewireCreateComponentName = `${pascalCase(this.name)}Create`
+        this.livewireEditComponentName = `${pascalCase(this.name)}Edit`
     }
 
     addInputsFromModel(model: Model) {
@@ -125,6 +129,7 @@ export default class Crud extends RelaDB.Model {
     addRoutes() {
         Route.create({
             name: `${paramCase(this.plural)}.index`,
+            tag: "index",
             method: "get",
             type: RouteType.ROUTE,
             path: `/${paramCase(this.plural)}`,
@@ -135,6 +140,7 @@ export default class Crud extends RelaDB.Model {
 
         Route.create({
             name: `${paramCase(this.plural)}.create`,
+            tag: "create",
             method: "get",
             type: RouteType.ROUTE,
             path: `/${paramCase(this.plural)}/create`,
@@ -145,6 +151,7 @@ export default class Crud extends RelaDB.Model {
 
         Route.create({
             name: `${paramCase(this.plural)}.edit`,
+            tag: "edit",
             method: "get",
             type: RouteType.ROUTE,
             path: `/${paramCase(this.plural)}/{${camelCase(this.name)}}`,
@@ -152,5 +159,28 @@ export default class Crud extends RelaDB.Model {
             routableType: "Crud",
             projectId: this.projectId,
         })
+    }
+
+    getRouteContent(route: Route): string {
+        if(this.type === CrudType.LIVEWIRE) {
+            return this.getLivewireRouteContent(route)
+        }
+    }
+
+    getLivewireRouteContent(route: Route): string {
+        const componentName = this.getLivewireComponentName(route)
+
+        return `${this.livewireNamespace}\\${componentName}::class`
+    }
+
+    getLivewireComponentName(route: Route): string {
+        switch(route.tag) {
+            case "index": return this.livewireIndexComponentName
+            case "create": return this.livewireCreateComponentName
+            case "edit": return this.livewireEditComponentName
+            case "show": return this.livewireShowComponentName
+        }
+
+        return "fn () => {}"
     }
 }
