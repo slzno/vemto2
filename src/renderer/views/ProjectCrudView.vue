@@ -41,7 +41,7 @@ import UiText from '@Renderer/components/ui/UiText.vue'
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-hidden"
     >
         <div v-if="crud">
-            <div class="p-2 font-bold">Edit {{ crud.name }} CRUD</div>
+            <div class="p-2 font-bold">Edit {{ crud.getLabel() }} CRUD</div>
 
             <UiTabs :tabs="tabs" v-model="selectedTab" :external="true" />
 

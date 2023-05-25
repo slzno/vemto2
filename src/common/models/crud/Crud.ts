@@ -93,6 +93,10 @@ export default class Crud extends RelaDB.Model {
         crud.addRoutes()
     }
 
+    getLabel(): string {
+        return this.settings.collectionTitle
+    }
+
     calculateSettings() {
         this.settings = {
             itemTitle: capitalCase(this.model.name),

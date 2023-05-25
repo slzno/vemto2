@@ -23,7 +23,7 @@ Route::middleware([
     <% if (!route.routableIs(lastRoutable)) { %>
     <% lastRoutable = route.routable %>
 
-    // <$ route.routable.settings.collectionTitle $>
+    // <$ route.routable.getLabel() $>
     <% } %>
     Route::<$ route.getLaravelMethod() $>('<$ route.path $>', <$ route.getContent() $>)
         ->name('<$ route.name $>');

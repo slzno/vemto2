@@ -5,6 +5,7 @@
     import { useRouter } from "vue-router"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import { ref } from "vue"
+import PageManager from "./components/ProjectApps/PageManager.vue"
 
     const router = useRouter(),
         projectStore = useProjectStore()
@@ -48,13 +49,14 @@
             </div>
     
     
-            <div>
+            <div class="flex space-x-2">
                 <CrudManager />
+                <PageManager />
             </div>
     
             <div class="mt-4 space-y-2 flex">
                 <div class="border border-slate-700 rounded-lg p-2 cursor-pointer hover:bg-slate-950" v-for="app in projectStore.project.cruds" :key="app.id" @click="openCrud(app.id)">
-                    <span class="font-semibold">{{ app.name }}</span>
+                    <span class="font-semibold">{{ app.getLabel() }}</span>
     
                     <UiButton @click="app.delete()">Delete</UiButton>
                 </div>
