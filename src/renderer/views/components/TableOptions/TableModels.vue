@@ -2,9 +2,9 @@
     import Model from "@Common/models/Model"
     import TableModel from "./TableModel.vue"
     import { PropType, toRef, reactive } from "vue"
-    import Table from "@Renderer/../common/models/Table"
+    import Table from "@Common/models/Table"
     import { PlusCircleIcon } from "@heroicons/vue/24/outline"
-    import WordManipulator from "@Renderer/../common/util/WordManipulator"
+    import CreateDefaultTableModel from "@Common/models/services/tables/CreateDefaultTableModel"
 
     const props = defineProps({
             table: {
@@ -17,6 +17,11 @@
         allTableModels = reactive(table.value.getModels())
 
     const addModel = (): void => {
+        if(!table.value.getModels().length) {
+            allTableModels.push(CreateDefaultTableModel.setTable(table.value).create())
+            return
+        }
+
         const model = new Model({
             tableId: table.value.id,
             projectId: table.value.project.id,
@@ -24,18 +29,7 @@
             hasGuarded: true,
             guarded: []
         })
-        
-        const modelNameByTableName = WordManipulator.runMultiple(
-            ['singularize', 'pascalCase'],
-            table.value.name
-        )
 
-        if(!table.value.getModels().length) {
-            model.name = modelNameByTableName
-            model.plural = table.value.name
-        }
-
-        model.calculateDataByName()
         model.saveFromInterface()
 
         allTableModels.push(model)

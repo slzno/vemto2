@@ -9,10 +9,13 @@
     import Validator from '@Common/util/Validator'
     import CreateDefaultTableColumns from '@Common/models/services/tables/CreateDefaultTableColumns'
     import Alert from '@Renderer/components/utils/Alert'
+    import UiCheckbox from '@Renderer/components/ui/UiCheckbox.vue'
+    import CreateDefaultTableModel from "@Common/models/services/tables/CreateDefaultTableModel"
 
     const showingCreateTableModal = ref(false),
         projectStore = useProjectStore(),
-        newTable = ref<Table>(null)
+        newTable = ref<Table>(null),
+        addModelForNewTable = ref(true)
 
     const createTable = (): void => {
         validate().then(isValid => {
@@ -21,6 +24,11 @@
             newTable.value.saveFromInterface()
 
             createTableColumns()
+
+            if(addModelForNewTable.value) {
+                CreateDefaultTableModel.setTable(newTable.value).create()
+            }
+
             close()
         })
     }
@@ -75,6 +83,8 @@
         newTable.value = new Table({
             projectId: projectStore.project.id,
         })
+
+        addModelForNewTable.value = true
     })
 </script>
 
@@ -112,8 +122,9 @@
                     @close="close()"
                 >
                     <div class="m-2">
-                        <div class="m-1" @keyup.enter="createTable()">
+                        <div class="m-1 flex flex-col gap-2" @keyup.enter="createTable()">
                             <UiText v-model="newTable.name" id="new-table-name" placeholder="Table Name"></UiText>
+                            <UiCheckbox v-model="addModelForNewTable" label="Add a default model"></UiCheckbox>
                         </div>
                         <div class="m-1 mt-2 flex justify-end">
                             <UiButton @click="createTable()">Create</UiButton>
