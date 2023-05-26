@@ -24,13 +24,17 @@ class CalculateThroughRelationshipsData extends CalculateRelationshipService {
     calculateName(): string {
         if(!this.relationship.through) return
 
-        this.relationship.name = WordManipulator.camelCase(this.relationship.relatedModel.plural)
+        const name = WordManipulator.camelCase(this.relationship.relatedModel.plural),
+            nameCount = this.countRelationshipsWithSameName(name),
+            hasSimilarNames = nameCount > 0
+
+        this.relationship.name = hasSimilarNames ? `${name}${nameCount + 1}` : name
     }
 
     calculateFirstKeyName(): void {
         if(!this.relationship.relatedModel) return
 
-        this.relationship.firstKeyName = this.getDefaultRelatedModelKey()
+        this.relationship.firstKeyName = this.getDefaultModelKeyName()
     }
 
     calculateSecondKeyName(): void {
@@ -39,8 +43,8 @@ class CalculateThroughRelationshipsData extends CalculateRelationshipService {
         this.relationship.secondKeyName = this.getDefaultThroughModelKey()
     }
 
-    getDefaultRelatedModelKey(): string {
-        return WordManipulator.snakeCase(this.relationship.relatedModel.name) + '_id'
+    getDefaultModelKeyName(): string {
+        return WordManipulator.snakeCase(this.relationship.model.name) + '_id'
     }
 
     getDefaultThroughModelKey(): string {
@@ -48,11 +52,15 @@ class CalculateThroughRelationshipsData extends CalculateRelationshipService {
     }
 
     hasDifferentFirstKeyName(): boolean {
-        return this.relationship.firstKeyName != this.getDefaultRelatedModelKey()
+        return this.relationship.firstKeyName != this.getDefaultModelKeyName()
     }
 
     hasDifferentSecondKeyName(): boolean {
         return this.relationship.secondKeyName != this.getDefaultThroughModelKey()
+    }
+
+    needsToAddFirstKeyNameToModelTemplate(): boolean {
+        return this.hasDifferentFirstKeyName() || this.hasDifferentSecondKeyName()
     }
 }
 

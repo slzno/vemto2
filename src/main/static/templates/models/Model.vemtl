@@ -93,7 +93,7 @@ class <$ this.model.name $> extends Model
                 public function <$ relationship.name $>() 
                 {
                     return $this-><$ relationship.getTypeCamelCase() $>(<$ relationship.relatedModel.name $>::class, <$ relationship.through.name $>::class
-                    <up if(relationship.getServiceFromType().hasDifferentFirstKeyName()) { up>
+                    <up if(relationship.getServiceFromType().needsToAddFirstKeyNameToModelTemplate()) { up>
                     , '<$ relationship.firstKeyName $>'
                     <up } up>
                     <up if(relationship.getServiceFromType().hasDifferentSecondKeyName()) { up>
