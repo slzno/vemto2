@@ -5,6 +5,7 @@
     import { useRouter } from "vue-router"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import { ref } from "vue"
+import PageManager from "./components/ProjectApps/PageManager.vue"
 
     const router = useRouter(),
         projectStore = useProjectStore()
@@ -17,8 +18,8 @@
 
     const tabs = [
         { label: "Applications", value: "applications" },
-        { label: "Routes", value: "routes" },
-        { label: "Menu", value: "menu" },
+        { label: "Generated Routes", value: "routes" },
+        { label: "Navigation", value: "navigation" },
         { label: "Domains", value: "domains" },
         { label: "Default Files", value: "default_files" },
         { label: "Themes", value: "themes" },
@@ -48,30 +49,34 @@
             </div>
     
     
-            <div>
+            <div class="flex space-x-2">
                 <CrudManager />
+                <PageManager />
             </div>
     
-            <div class="mt-4 space-y-2 flex">
-                <div class="border border-slate-700 rounded-lg p-2 cursor-pointer hover:bg-slate-950" v-for="app in projectStore.project.cruds" :key="app.id" @click="openCrud(app.id)">
-                    <span class="font-semibold">{{ app.name }}</span>
+            <div class="mt-4 space-y-2 flex flex-col">
+                <div class="border border-slate-700 bg-slate-850 rounded-lg p-3 cursor-pointer hover:bg-slate-800 w-full flex justify-between items-start" v-for="app in projectStore.project.cruds" :key="app.id" @click="openCrud(app.id)">
+                    <div class="flex flex-col">
+                        <span class="font-semibold">{{ app.getLabel() }}</span>
+                        <div class="text-slate-400">CRUD</div>
+                    </div>
     
-                    <UiButton @click="app.delete()">Delete</UiButton>
+                    <UiButton class="text-sm" @click="app.delete()">Delete</UiButton>
                 </div>
             </div>
         </div>
 
         <div class="space-y-2 p-4" v-if="selectedTab === 'routes'">
             <div class="space-y-2">
-                <div class="bg-slate-950 rounded-lg p-3 flex justify-between">
+                <!-- <div class="bg-slate-950 rounded-lg p-3 flex justify-between">
                     <div>
                         <div class="mt-2 space-x-1 font-mono">
                             <span class="px-2 py-0.5 bg-orange-200 text-orange-700 rounded">Middleware</span> <span>'auth:sanctum', 'verified'</span>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
-                <div class="bg-slate-950 rounded-lg p-3 flex justify-between ml-10" v-for="route in projectStore.project.routes" :key="route.id">
+                <div class="bg-slate-950 rounded-lg p-3 flex justify-between" v-for="route in projectStore.project.routes" :key="route.id">
                     <div>
                         <div class="mt-2 space-x-1 font-mono">
                             <span class="px-2 py-0.5 bg-green-300 text-green-700 rounded">{{ route.method.toUpperCase() }}</span> <span>{{ route.path }}</span>
@@ -80,7 +85,7 @@
 
                     <div>
                         <div class="rounded px-2 py-1 bg-slate-800 inline-block text-sm">
-                            {{ route.name }}
+                            {{ route.getName() }}
                         </div>
                     </div>
                 </div>

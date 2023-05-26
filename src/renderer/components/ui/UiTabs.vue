@@ -24,11 +24,20 @@
 
     onMounted((): void => {
         localValue.value = props.modelValue
+
+        const lastSelectedTab = localStorage.getItem('lastSelectedTab')
+
+        if (lastSelectedTab && props.tabs.find((tab) => tab.value === lastSelectedTab)) {
+            localValue.value = lastSelectedTab
+            emit('update:modelValue', lastSelectedTab)
+        }
     })
 
     const setTab = (value: string): void => {
         localValue.value = value
         emit('update:modelValue', value)
+
+        localStorage.setItem('lastSelectedTab', value)
     }
 </script>
 

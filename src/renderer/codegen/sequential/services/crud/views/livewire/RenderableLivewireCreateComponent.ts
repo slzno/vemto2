@@ -5,6 +5,7 @@ import {
     RenderableFileFormatter,
     RenderableFileType,
 } from "@Common/models/RenderableFile"
+import Namespace from "@Renderer/codegen/util/Namespace"
 
 export default class RenderableLivewireCreateComponent extends Renderable {
     crud: Crud
@@ -28,11 +29,11 @@ export default class RenderableLivewireCreateComponent extends Renderable {
     }
 
     getPath(): string {
-        return `app/Http/Livewire`
+        return Namespace.from(this.crud.livewireNamespace).toPath()
     }
 
     getFilename(): string {
-        return `${changeCase.pascalCase(this.crud.name)}Create.php`
+        return `${this.crud.livewireCreateComponentName}.php`
     }
 
     getFormatter(): RenderableFileFormatter {

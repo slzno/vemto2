@@ -43,6 +43,15 @@ export function HandleIpcMessages() {
         })
     })
 
+    ipcMain.handle("file:project:write", (event, filePath, content) => {
+        const project = Project.find(1)
+        if(!project) return null
+
+        return handleError(event, () => {
+            return FileSystem.writeProjectFile(project.getPath(), filePath, content)
+        })
+    })
+
     ipcMain.handle("file:template:read", (event, filePath) => {
         const project = Project.find(1)
         if(!project) return null

@@ -8,6 +8,7 @@
     import HandleProjectDatabase from '@Renderer/services/HandleProjectDatabase'
     import UiTabs from '@Renderer/components/ui/UiTabs.vue'
     import UiSelect from '@Renderer/components/ui/UiSelect.vue'
+import UiText from '@Renderer/components/ui/UiText.vue'
 
     // const projectStore = useProjectStore()
 
@@ -40,7 +41,7 @@
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-hidden"
     >
         <div v-if="crud">
-            <div class="p-2 font-bold">Edit {{ crud.name }} CRUD</div>
+            <div class="p-2 font-bold">Edit {{ crud.getLabel() }} CRUD</div>
 
             <UiTabs :tabs="tabs" v-model="selectedTab" :external="true" />
 
@@ -89,7 +90,27 @@
                 </div>
             </section>
 
-            <section class="flex flex-col w-full h-screen space-y-4 mt-2 px-2" v-if="selectedTab === 'settings'">
+            <section class="flex flex-col w-full h-screen space-y-4 mt-2 px-2 pb-40 overflow-scroll" v-if="selectedTab === 'settings'">
+                <div>
+                    <UiText v-model="crud.section" label="Section" @input="crud.save()" />
+                </div>
+
+                <div>
+                    <UiText v-model="crud.name" label="Item Name" @input="crud.save()" />
+                </div>
+
+                <div>
+                    <UiText v-model="crud.plural" label="Collection Name" @input="crud.save()" />
+                </div>
+
+                <div>
+                    <UiText v-model="crud.settings.itemTitle" label="Item Title" @input="crud.save()" />
+                </div>
+
+                <div>
+                    <UiText v-model="crud.settings.collectionTitle" label="Collection Title" @input="crud.save()" />
+                </div>
+
                 <div>
                     <UiSelect v-model="crud.defaultSearchColumnId" label="Default search column" @change="crud.save()" >
                         <option :value="null" disabled>Select a column</option>
@@ -110,6 +131,29 @@
                         <option value="asc">Ascending</option>
                         <option value="desc">Descending</option>
                     </UiSelect>
+                </div>
+
+                
+                <b>Livewire specific</b>
+
+                <div>
+                    <UiText v-model="crud.livewireNamespace" label="Namespace" @input="crud.save()" />
+                </div>
+
+                <div>
+                    <UiText v-model="crud.livewireIndexComponentName" label="Index Component name" @input="crud.save()" />
+                </div>
+
+                <div>
+                    <UiText v-model="crud.livewireShowComponentName" label="Show Component name" @input="crud.save()" />
+                </div>
+
+                <div>
+                    <UiText v-model="crud.livewireCreateComponentName" label="Create Component name" @input="crud.save()" />
+                </div>
+
+                <div>
+                    <UiText v-model="crud.livewireEditComponentName" label="Edit Component name" @input="crud.save()" />
                 </div>
             </section>
         </div>

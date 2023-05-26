@@ -4,10 +4,10 @@
 <% const modelName = crud.model.name %>
 <% const camelCase = this.require('camelCase') %>
 <% const paramCase = this.require('paramCase') %>
-<% const viewsFolderName = camelCase(crud.model.plural) %>
-<% const collectionVarName = camelCase(crud.model.plural) %>
+<% const collectionVarName = camelCase(crud.plural) %>
+<% const viewsFolderName = `${paramCase(crud.section)}.${paramCase(crud.plural)}` %>
 
-namespace App\Http\Livewire;
+namespace <$ crud.livewireNamespace $>;
  
 use Livewire\Component;
 use Livewire\WithPagination;

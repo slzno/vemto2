@@ -2,7 +2,7 @@ import Input from "./Input"
 import CrudPanel from "./CrudPanel"
 import Model from "@Common/models/Model"
 import Route, { RouteType } from "@Common/models/Route"
-import { camelCase, capitalCase, paramCase } from "change-case"
+import { camelCase, capitalCase, paramCase, pascalCase } from "change-case"
 import Column from "@Common/models/Column"
 import Project from "@Common/models/Project"
 import RelaDB from "@tiago_silva_pereira/reladb"
@@ -21,7 +21,9 @@ export interface CrudSettings {
 export default class Crud extends RelaDB.Model {
     id: string
     name: string
+    plural: string
     type: CrudType
+    section: string
     model: Model
     modelId: string
     project: Project
@@ -35,6 +37,13 @@ export default class Crud extends RelaDB.Model {
     defaultSortColumnId: string
     defaultSortDirection: string
     routes: Route[]
+
+    // Livewire specific
+    livewireNamespace: string
+    livewireIndexComponentName: string
+    livewireShowComponentName: string
+    livewireCreateComponentName: string
+    livewireEditComponentName: string
 
     relationships() {
         return {
@@ -66,14 +75,14 @@ export default class Crud extends RelaDB.Model {
 
         const crud = new Crud()
         crud.type = CrudType.LIVEWIRE
-        crud.name = capitalCase(model.plural)
+        crud.name = paramCase(model.name)
+        crud.plural = paramCase(model.plural)
+        crud.section = "Admin"
         crud.modelId = model.id
         crud.projectId = model.projectId
 
-        crud.settings = {
-            itemTitle: capitalCase(model.name),
-            collectionTitle: capitalCase(model.plural),
-        }
+        crud.calculateSettings()
+        crud.calculateLiveWireSpecificData()
 
         if(defaultSearchColumn) crud.defaultSearchColumnId = defaultSearchColumn.id
         if(defaultSortColumn) crud.defaultSortColumnId = defaultSortColumn.id
@@ -84,6 +93,25 @@ export default class Crud extends RelaDB.Model {
 
         crud.addInputsFromModel(model)
         crud.addRoutes()
+    }
+
+    getLabel(): string {
+        return this.settings.collectionTitle
+    }
+
+    calculateSettings() {
+        this.settings = {
+            itemTitle: capitalCase(this.model.name),
+            collectionTitle: capitalCase(this.model.plural),
+        }
+    }
+
+    calculateLiveWireSpecificData() {
+        this.livewireNamespace = `App\\Http\\Livewire\\${this.section}`
+        this.livewireIndexComponentName = `${pascalCase(this.name)}Index`
+        this.livewireShowComponentName = `${pascalCase(this.name)}Show`
+        this.livewireCreateComponentName = `${pascalCase(this.name)}Create`
+        this.livewireEditComponentName = `${pascalCase(this.name)}Edit`
     }
 
     addInputsFromModel(model: Model) {
@@ -106,33 +134,69 @@ export default class Crud extends RelaDB.Model {
 
     addRoutes() {
         Route.create({
-            name: `${paramCase(this.model.plural)}.index`,
+            name: `${paramCase(this.plural)}.index`,
+            tag: "index",
             method: "get",
             type: RouteType.ROUTE,
-            path: `/${paramCase(this.model.plural)}`,
+            path: `/${paramCase(this.plural)}`,
             routableId: this.id,
             routableType: "Crud",
             projectId: this.projectId,
         })
 
         Route.create({
-            name: `${paramCase(this.model.plural)}.create`,
+            name: `${paramCase(this.plural)}.create`,
+            tag: "create",
             method: "get",
             type: RouteType.ROUTE,
-            path: `/${paramCase(this.model.plural)}/create`,
+            path: `/${paramCase(this.plural)}/create`,
             routableId: this.id,
             routableType: "Crud",
             projectId: this.projectId,
         })
 
         Route.create({
-            name: `${paramCase(this.model.plural)}.edit`,
+            name: `${paramCase(this.plural)}.edit`,
+            tag: "edit",
             method: "get",
             type: RouteType.ROUTE,
-            path: `/${paramCase(this.model.plural)}/{${camelCase(this.model.name)}}`,
+            path: `/${paramCase(this.plural)}/{${camelCase(this.name)}}`,
             routableId: this.id,
             routableType: "Crud",
             projectId: this.projectId,
         })
+    }
+
+    getRouteNameByTag(tag: string): string {
+        const route = this.routes.find((route) => route.tag === tag)
+
+        if(! route) {
+            throw new Error(`Route with tag ${tag} not found`)
+        }
+
+        return `${paramCase(this.section)}.${route.name}`
+    }
+
+    getRouteContent(route: Route): string {
+        if(this.type === CrudType.LIVEWIRE) {
+            return this.getLivewireRouteContent(route)
+        }
+    }
+
+    getLivewireRouteContent(route: Route): string {
+        const componentName = this.getLivewireComponentName(route)
+
+        return `${this.livewireNamespace}\\${componentName}::class`
+    }
+
+    getLivewireComponentName(route: Route): string {
+        switch(route.tag) {
+            case "index": return this.livewireIndexComponentName
+            case "create": return this.livewireCreateComponentName
+            case "edit": return this.livewireEditComponentName
+            case "show": return this.livewireShowComponentName
+        }
+
+        return "fn () => {}"
     }
 }
