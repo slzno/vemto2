@@ -1,3 +1,4 @@
+import { paramCase } from 'change-case'
 import Project from './Project'
 import RelaDB from '@tiago_silva_pereira/reladb'
 
@@ -49,5 +50,13 @@ export default class Route extends RelaDB.Model {
         if(!otherRoutable) return false
 
         return this.routableId === otherRoutable.id && this.routableType === otherRoutable.constructor.identifier()
+    }
+
+    getName() {
+        if(this.routable.section) {
+            return `${paramCase(this.routable.section)}.${this.name}`
+        }
+
+        return this.name
     }
 }

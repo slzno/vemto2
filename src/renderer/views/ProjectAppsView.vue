@@ -85,7 +85,7 @@ import PageManager from "./components/ProjectApps/PageManager.vue"
 
                     <div>
                         <div class="rounded px-2 py-1 bg-slate-800 inline-block text-sm">
-                            {{ route.name }}
+                            {{ route.getName() }}
                         </div>
                     </div>
                 </div>

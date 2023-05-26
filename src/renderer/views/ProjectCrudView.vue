@@ -92,6 +92,10 @@ import UiText from '@Renderer/components/ui/UiText.vue'
 
             <section class="flex flex-col w-full h-screen space-y-4 mt-2 px-2 pb-40 overflow-scroll" v-if="selectedTab === 'settings'">
                 <div>
+                    <UiText v-model="crud.section" label="Section" @input="crud.save()" />
+                </div>
+
+                <div>
                     <UiText v-model="crud.name" label="Item Name" @input="crud.save()" />
                 </div>
 
