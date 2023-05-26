@@ -256,6 +256,10 @@ export default class Column extends RelaDB.Model implements SchemaModel {
         return this.getPreviousColumn().name
     }
 
+    isNotForeignIndex(): boolean {
+        return this.index && ! this.isForeign()
+    }
+
     hasPreviousColumn(): boolean {
         return !! this.getPreviousColumn()
     }
