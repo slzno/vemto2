@@ -104,18 +104,26 @@ class CalculateMorphRelationshipsData extends CalculateRelationshipService {
         const mophableIdName = this.relationship.morphToName + '_id',
             morphableTypeName = this.relationship.morphToName + '_type'
 
-        const idColumn = new Column({
-                    tableId: table.id,
-                    name: mophableIdName,
-                    type: idColumnType,
-                    index: true
-                }),
+        let idColumn = table.getColumnByName(mophableIdName)
+        let typeField = table.getColumnByName(morphableTypeName)
+
+        if(!idColumn) {
+            idColumn = new Column({
+                tableId: table.id,
+                name: mophableIdName,
+                type: idColumnType,
+                index: true
+            })
+        }
+        
+        if(!typeField) {
             typeField = new Column({
-                    tableId: table.id,
-                    name: morphableTypeName,
-                    type: 'string',
-                    index: true
-                })
+                tableId: table.id,
+                name: morphableTypeName,
+                type: 'string',
+                index: true
+            })
+        }
 
         idColumn.save()
         typeField.save()

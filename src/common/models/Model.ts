@@ -52,8 +52,7 @@ export default class Model extends RelaDB.Model implements SchemaModel {
             table: () => this.belongsTo(Table),
             project: () => this.belongsTo(Project),
             ownRelationships: () => this.hasMany(Relationship).cascadeDelete(),
-            relatedRelationships: () =>
-                this.hasMany(Relationship, "relatedModelId").cascadeDelete(),
+            relatedRelationships: () => this.hasMany(Relationship, "relatedModelId").cascadeDelete(),
         }
     }
 
@@ -356,7 +355,11 @@ export default class Model extends RelaDB.Model implements SchemaModel {
     }
 
     getCommonMorphRelatedRelationships(): Relationship[] {
-        return this.ownRelationships.filter((rel: Relationship) => rel.isCommonMorph())
+        return this.relatedRelationships.filter((rel: Relationship) => rel.isCommonMorph())
+    }
+
+    getMorphedToManyRelatedRelationships(): Relationship[] {
+        return this.relatedRelationships.filter((rel: Relationship) => rel.isManyToManyMorph())
     }
     
     static calculatePluralName(modelData: any): string {

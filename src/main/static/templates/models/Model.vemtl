@@ -1,5 +1,7 @@
 <?php
 
+<% const camelCase = this.require('camelCase') %>
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -102,6 +104,25 @@ class <$ this.model.name $> extends Model
                 }
 
             <% } %>
+        <% } %>
+    <% } %>
+    
+    <% if(this.model.relatedRelationships.length) { %>
+        <# Basic Morph Inverse Relationships #>
+        <% for(let relationship of this.model.getCommonMorphInverseRelationships()) { %>
+            public function <$ relationship.morphToName $>() 
+            {
+                return $this->morphTo();
+            }
+
+        <% } %>
+
+        <# MorphedByMany Relationships #>
+        <% for(let relationship of this.model.getMorphedToManyRelatedRelationships()) { %>
+            public function <$ camelCase(relationship.model.plural) $>() 
+            {
+                return $this->morphedByMany(<$ relationship.model.name $>::class, '<$ relationship.morphToName $>');
+            }
 
         <% } %>
     <% } %>
