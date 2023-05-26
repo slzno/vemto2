@@ -18,6 +18,7 @@ class FillThroughRelationshipKeys {
     fill(): void {
         this.calculateRelatedModel()
         this.calculateThroughModel()
+        this.calculateSecondKeyName()
     }
 
     calculateRelatedModel(): void {
@@ -42,10 +43,16 @@ class FillThroughRelationshipKeys {
         if(!throughModel) return
 
         this.relationship.throughId = throughModel.id
-        this.relationship.secondKeyName = this.relationship.secondKeyName || WordManipulator.snakeCase(throughModel.name) + '_id'
         this.relationship.save()
 
         return
+    }
+
+    calculateSecondKeyName(): void {
+        if(! this.relationship.throughId || this.relationship.secondKeyName) return
+
+        this.relationship.secondKeyName = WordManipulator.snakeCase(this.relationship.through.name) + '_id'
+        this.relationship.save()
     }
 }
 
