@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+    import Main from '@Renderer/services/wrappers/Main'
+    import { XMarkIcon } from '@heroicons/vue/24/outline'
     import Multiselect from '@vueform/multiselect/dist/multiselect.js'
     import { defineProps, computed } from 'vue'
 
@@ -28,6 +30,14 @@
                 default: () => []
             }
         })
+
+    const clearList = (callbackClearFunction: Function): void => {
+        Main.API.confirm('Are you sure you want to clear the list?').then(confirmed => {
+            if(!confirmed) return
+
+            callbackClearFunction()
+        })
+    }
         
     const emit = defineEmits(["change"]),
         localValue = computed({
@@ -64,6 +74,12 @@
                 dropdownHidden: 'hidden',
                 optionPointed: 'text-white bg-slate-800',
             }"
-        />
+        >
+            <template #clear="{ clear }">
+                <span role="button" tabindex="0" aria-label="❎" @click.stop="clearList(clear)" @keyup.enter="clearList(clear)">
+                    <XMarkIcon class="w-4 h-4 mr-2"  />
+                </span>
+            </template>
+        </Multiselect>
     </div>
 </template>
