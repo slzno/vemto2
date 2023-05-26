@@ -17,7 +17,7 @@
             </div>
             <div>
                 <UiText
-                    v-model="relationship.morphTo"
+                    v-model="relationship.morphToName"
                     placeholder="Morph To"
                     @input="$emit('save')"
                 />

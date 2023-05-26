@@ -47,11 +47,11 @@ class CalculateThroughRelationshipsData extends CalculateRelationshipService {
         return WordManipulator.snakeCase(this.relationship.through.name) + '_id'
     }
 
-    hasDifferentFirstKeyName() {
+    hasDifferentFirstKeyName(): boolean {
         return this.relationship.firstKeyName != this.getDefaultRelatedModelKey()
     }
 
-    hasDifferentSecondKeyName() {
+    hasDifferentSecondKeyName(): boolean {
         return this.relationship.secondKeyName != this.getDefaultThroughModelKey()
     }
 }

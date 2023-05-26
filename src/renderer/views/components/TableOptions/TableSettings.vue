@@ -20,7 +20,7 @@
     <div>
         <section class="space-y-2">
             <div>
-                <UiText v-model="table.name" placeholder="Table name" label="Table name" @change="saveTable()" />
+                <UiText v-model="table.name" placeholder="Table name" label="Table name" @input="saveTable()" />
             </div>
 
             <div>

@@ -346,10 +346,10 @@ export default class Model extends RelaDB.Model implements SchemaModel {
             alreadyGroupedMorphs = []
 
         commonRelationships.forEach(relationship => {
-            if(alreadyGroupedMorphs.includes(relationship.morphTo)) return
+            if(alreadyGroupedMorphs.includes(relationship.morphToName)) return
 
             groupedRelationships.push(relationship)
-            alreadyGroupedMorphs.push(relationship.morphTo)
+            alreadyGroupedMorphs.push(relationship.morphToName)
         })
         
         return groupedRelationships

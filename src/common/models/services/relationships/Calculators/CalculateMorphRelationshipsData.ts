@@ -19,9 +19,9 @@ class CalculateMorphRelationshipsData extends CalculateRelationshipService {
     }
 
     calculateMorphTo(): void {
-        if(this.relationship.morphTo) return
+        if(this.relationship.morphToName) return
 
-        this.relationship.morphTo = this.getCorrectAbleSuffix()
+        this.relationship.morphToName = this.getCorrectAbleSuffix()
     }
 
     getCorrectAbleSuffix(): string {
@@ -57,8 +57,7 @@ class CalculateMorphRelationshipsData extends CalculateRelationshipService {
     addPivotTable(): void {
         if(this.relationship.pivotId) return
 
-        const pivotName = WordManipulator.pluralize(this.relationship.morphTo)
-        
+        const pivotName = WordManipulator.pluralize(this.relationship.morphToName)
         let pivot = this.relationship.project.findTableByName(pivotName)
 
         if(!pivot) {
@@ -101,11 +100,11 @@ class CalculateMorphRelationshipsData extends CalculateRelationshipService {
         )
     }
 
-    addMorphableFieldsToTable(table: Table, idColumnType: string = 'unsignedBigInteger') {
-        const mophableIdName = this.relationship.morphTo + '_id',
-            morphableTypeName = this.relationship.morphTo + '_type'
+    addMorphableFieldsToTable(table: Table, idColumnType: string = 'unsignedBigInteger'): void {
+        const mophableIdName = this.relationship.morphToName + '_id',
+            morphableTypeName = this.relationship.morphToName + '_type'
 
-        let idColumn = new Column({
+        const idColumn = new Column({
                     tableId: table.id,
                     name: mophableIdName,
                     type: idColumnType,

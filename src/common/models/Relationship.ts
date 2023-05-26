@@ -58,7 +58,7 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
     idColumn: Column
 
     morphType: string
-    morphTo: string
+    morphToName: string
     
     typeFieldId: string
     typeField: Column
@@ -108,6 +108,7 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
             // Used in BelongsToMany and MorphToMany
             pivot: () => this.belongsTo(Table, 'pivotId'),
             relatedPivotKey: () => this.belongsTo(Column, 'relatedPivotKeyId'),
+            foreignPivotKey: () => this.belongsTo(Column, 'foreignPivotKeyId'),
 
             // Morphs
             idColumn: () => this.belongsTo(Column, 'idColumnId'),

@@ -4,6 +4,7 @@
     import Main from "@Renderer/services/wrappers/Main"
     import Relationship from "@Renderer/../common/models/Relationship"
     import UiButton from '@Renderer/components/ui/UiButton.vue'
+    import UiText from '@Renderer/components/ui/UiText.vue'
     import Model from "@Common/models/Model"
     import { PlusIcon, EllipsisVerticalIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import UiDropdownSelect from '@Renderer/components/ui/UiDropdownSelect.vue'
@@ -35,13 +36,7 @@
     const getRelatedModelRelationshipsForSelect = (relationship: Relationship) => {
         if(!relationship.relatedModelId) return []
 
-        return relationship.relatedModel
-            .ownRelationships.map((relatedModelRelationship: Relationship) => {
-                return {
-                    key: relatedModelRelationship.id,
-                    label: relatedModelRelationship.name
-                }
-            })
+        return getForSelect(relationship.relatedModel.ownRelationships)
     }
         
     const newRelationship = (): void => {
@@ -93,15 +88,18 @@
         }
 
         const inverseRelationship = relationship.inverse
+        let confirmationDenied = false
 
         Main.API.confirm("Are you sure you want to remove this relationship?")
             .then((confirmed: boolean) => {
+                confirmationDenied = !confirmed
+                
                 if(!confirmed) return
 
                 removeRelationship()
             })
 
-        if(!inverseRelationship) return
+        if(!inverseRelationship || confirmationDenied) return
 
         Main.API.confirm(`This relationship has an inverse relationship called ${inverseRelationship.name}. Do you want to remove it as well?`)
             .then((confirmed: boolean) => {
@@ -172,7 +170,6 @@
                                         @change="saveRelationship(relationship)"
                                     />
                                 </template>
-                            
                                 <template v-else>
                                     <UiText
                                         placeholder="Relationship Name"

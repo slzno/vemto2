@@ -72,8 +72,8 @@ class CalculateManyToManyRelationshipsData extends CalculateRelationshipService 
     createOrUpdatePivot(forceUpdate: boolean = false): void {
         if(this.relationship.pivotId && !forceUpdate) return
 
-        let pivotName = this.relationship.pivotTableName || this.getDefaultPivotName(),
-            pivot = this.relationship.project.findTableByName(pivotName)
+        const pivotName = this.relationship.pivotTableName || this.getDefaultPivotName()
+        let pivot = this.relationship.project.findTableByName(pivotName)
 
         if(!pivot) {
             pivot = new Table({
@@ -91,36 +91,40 @@ class CalculateManyToManyRelationshipsData extends CalculateRelationshipService 
     }
 
     createPivotData(pivot: Table): void {
-        let relatedPivotKeyName = this.getRelatedPivotKeyName(),
+        const relatedPivotKeyName = this.getRelatedPivotKeyName(),
             foreignPivotKeyName = this.getForeignPivotKeyName()
         
         pivot.addForeign(relatedPivotKeyName, this.relationship.relatedModel)
         pivot.addForeign(foreignPivotKeyName, this.relationship.model)
     }
 
-    calculateKeys() {
+    calculateKeys(): CalculateManyToManyRelationshipsData {
         this.calculateForeignPivotKey()
         this.calculateRelatedPivotKey()
 
         return this
     }
 
-    calculateForeignPivotKey() {
-        let keys = this.getDefaultKeys()
+    calculateForeignPivotKey(): void {
+        if(this.relationship.foreignPivotKeyId) return
+        
+        const keys = this.getDefaultKeys()
 
-        this.relationship.foreignPivotKeyId = this.relationship.foreignPivotKeyId || keys.foreignPivotKey.id
+        this.relationship.foreignPivotKeyId = keys.foreignPivotKey.id
     }
 
-    calculateRelatedPivotKey() {
-        let keys = this.getDefaultKeys()
+    calculateRelatedPivotKey(): void {
+        if(this.relationship.relatedPivotKeyId) return
+        
+        const keys = this.getDefaultKeys()
 
-        this.relationship.relatedPivotKeyId = this.relationship.relatedPivotKeyId || keys.relatedPivotKey.id
+        this.relationship.relatedPivotKeyId = keys.relatedPivotKey.id
     }
 
     getDefaultKeys() {
         if(!this.relationship.pivotId) throw new Error('It is necessary to specify the pivot table before getting keys')
 
-        let keys = {} as any
+        const keys = {} as any
 
         keys.relatedPivotKey = this.relationship.pivot.findColumnByName(this.getRelatedPivotKeyName())
         keys.foreignPivotKey = this.relationship.pivot.findColumnByName(this.getForeignPivotKeyName())
@@ -128,7 +132,7 @@ class CalculateManyToManyRelationshipsData extends CalculateRelationshipService 
         return keys
     }
 
-    getOriginalPivotName() {
+    getOriginalPivotName(): string {
         return this.relationship.pivotTableName || this.getDefaultPivotName()
     }
 
@@ -143,7 +147,7 @@ class CalculateManyToManyRelationshipsData extends CalculateRelationshipService 
     createInverseRelationship(): boolean {
         if(this.relationship.inverseId) return false
         
-        let inverseRelationship = new Relationship({
+        const inverseRelationship = new Relationship({
                 modelId: this.relationship.relatedModel.id,
                 relatedModelId: this.relationship.model.id,
                 type: this.getInverseTypeKey(),
@@ -186,7 +190,7 @@ class CalculateManyToManyRelationshipsData extends CalculateRelationshipService 
         return this.relationship.foreignPivotKey.name !== this.getForeignPivotKeyName()
     }
 
-    hasDifferentForeignOrRelatedPivotKeys() {
+    hasDifferentForeignOrRelatedPivotKeys(): boolean {
         return this.hasDifferentForeignKey() || this.hasDifferentRelatedPivot()
     }
 }

@@ -68,10 +68,8 @@ class CalculateCommonRelationshipsData extends CalculateRelationshipService {
     addForeign(): Index {
         if(!(['BelongsTo'].includes(this.relationship.type))) return
 
-        let foreignName = this.getForeignKeyName()
-
         return this.relationship.model.table.addForeign(
-            foreignName,
+            this.getForeignKeyName(),
             this.relationship.relatedModel
         )
     }
@@ -84,9 +82,11 @@ class CalculateCommonRelationshipsData extends CalculateRelationshipService {
     }
 
     calculateForeignKey() {
+        if(this.relationship.foreignKeyId) return
+
         let keys = this.getDefaultKeys()
 
-        this.relationship.foreignKeyId = this.relationship.foreignKeyId || keys.foreignKey.id
+        this.relationship.foreignKeyId = keys.foreignKey.id
     }
 
     calculateDefaultData(): void {
@@ -96,11 +96,13 @@ class CalculateCommonRelationshipsData extends CalculateRelationshipService {
     }
 
     calculateParentKey(): void {
+        if(this.relationship.parentKeyId) return
+
         this.checkTypeAndRelatedModel()
         
-        let keys = this.getDefaultKeys()
+        const keys = this.getDefaultKeys()
 
-        this.relationship.parentKeyId = this.relationship.parentKeyId || keys.parentKey.id
+        this.relationship.parentKeyId = keys.parentKey.id
     }
 
     calculateForeignKeyName() {
@@ -108,7 +110,7 @@ class CalculateCommonRelationshipsData extends CalculateRelationshipService {
     }
 
     getDefaultKeys() {
-        let keys = {} as any,
+        const keys = {} as any,
             foreignName = this.getForeignKeyName()
 
         if(['BelongsTo'].includes(this.relationship.type)) {
@@ -124,15 +126,15 @@ class CalculateCommonRelationshipsData extends CalculateRelationshipService {
         return keys
     }
 
-    getForeignKeyName() {
+    getForeignKeyName(): string {
         return this.relationship.foreignKeyName || this.getDefaultForeignKeyName()
     }
 
-    getDefaultForeignKeyName() {
+    getDefaultForeignKeyName(): string {
         return WordManipulator.snakeCase(this.relationship.getParentModel().name) + '_id'
     }
 
-    hasDifferentParentKey() {
+    hasDifferentParentKey(): boolean {
         return this.relationship.parentKey.name !== 'id'
     }
 

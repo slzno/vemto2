@@ -84,7 +84,7 @@ class <$ this.model.name $> extends Model
             <% if(relationship.isMorph()) { %>
                 public function <$ relationship.name $>() 
                 {
-                    return $this-><$ relationship.getTypeCamelCase() $>(<$ relationship.relatedModel.name $>::class, '<$ relationship.morphTo $>');
+                    return $this-><$ relationship.getTypeCamelCase() $>(<$ relationship.relatedModel.name $>::class, '<$ relationship.morphToName $>');
                 }
 
             <% } %>
