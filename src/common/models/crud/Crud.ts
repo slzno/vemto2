@@ -23,6 +23,7 @@ export default class Crud extends RelaDB.Model {
     name: string
     plural: string
     type: CrudType
+    section: string
     model: Model
     modelId: string
     project: Project
@@ -76,6 +77,7 @@ export default class Crud extends RelaDB.Model {
         crud.type = CrudType.LIVEWIRE
         crud.name = paramCase(model.name)
         crud.plural = paramCase(model.plural)
+        crud.section = "Admin"
         crud.modelId = model.id
         crud.projectId = model.projectId
 
@@ -105,7 +107,7 @@ export default class Crud extends RelaDB.Model {
     }
 
     calculateLiveWireSpecificData() {
-        this.livewireNamespace = `App\\Http\\Livewire`
+        this.livewireNamespace = `App\\Http\\Livewire\\${this.section}`
         this.livewireIndexComponentName = `${pascalCase(this.name)}Index`
         this.livewireShowComponentName = `${pascalCase(this.name)}Show`
         this.livewireCreateComponentName = `${pascalCase(this.name)}Create`
@@ -163,6 +165,16 @@ export default class Crud extends RelaDB.Model {
             routableType: "Crud",
             projectId: this.projectId,
         })
+    }
+
+    getRouteNameByTag(tag: string): string {
+        const route = this.routes.find((route) => route.tag === tag)
+
+        if(! route) {
+            throw new Error(`Route with tag ${tag} not found`)
+        }
+
+        return `${paramCase(this.section)}.${route.name}`
     }
 
     getRouteContent(route: Route): string {

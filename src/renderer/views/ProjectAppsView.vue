@@ -54,11 +54,14 @@ import PageManager from "./components/ProjectApps/PageManager.vue"
                 <PageManager />
             </div>
     
-            <div class="mt-4 space-y-2 flex">
-                <div class="border border-slate-700 rounded-lg p-2 cursor-pointer hover:bg-slate-950" v-for="app in projectStore.project.cruds" :key="app.id" @click="openCrud(app.id)">
-                    <span class="font-semibold">{{ app.getLabel() }}</span>
+            <div class="mt-4 space-y-2 flex flex-col">
+                <div class="border border-slate-700 bg-slate-850 rounded-lg p-3 cursor-pointer hover:bg-slate-800 w-full flex justify-between items-start" v-for="app in projectStore.project.cruds" :key="app.id" @click="openCrud(app.id)">
+                    <div class="flex flex-col">
+                        <span class="font-semibold">{{ app.getLabel() }}</span>
+                        <div class="text-slate-400">CRUD</div>
+                    </div>
     
-                    <UiButton @click="app.delete()">Delete</UiButton>
+                    <UiButton class="text-sm" @click="app.delete()">Delete</UiButton>
                 </div>
             </div>
         </div>

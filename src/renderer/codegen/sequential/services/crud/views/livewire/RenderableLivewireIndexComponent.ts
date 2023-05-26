@@ -5,6 +5,7 @@ import {
     RenderableFileFormatter,
     RenderableFileType,
 } from "@Common/models/RenderableFile"
+import Namespace from "@Renderer/codegen/util/Namespace"
 
 export default class RenderableLivewireIndexComponent extends Renderable {
     crud: Crud
@@ -28,7 +29,7 @@ export default class RenderableLivewireIndexComponent extends Renderable {
     }
 
     getPath(): string {
-        return `app/Http/Livewire`
+        return Namespace.from(this.crud.livewireNamespace).toPath()
     }
 
     getFilename(): string {
