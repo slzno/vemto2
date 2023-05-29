@@ -1,13 +1,17 @@
 import Table from "./Table"
+import Column from './Column'
 import Project from "./Project"
 import Relationship from "./Relationship"
 import RelaDB from "@tiago_silva_pereira/reladb"
+import GuardedModelColumn from './GuardedModelColumn'
 import { RenderableFileType } from "./RenderableFile"
 import DataComparator from "./services/DataComparator"
+import FillableModelColumn from './FillableModelColumn'
 import WordManipulator from "@Common/util/WordManipulator"
 import TableNameExceptions from "./static/TableNameExceptions"
 import DataComparisonLogger from "./services/DataComparisonLogger"
-import Column from './Column'
+import FillFillableColumns from "./services/models/Fillers/FillFillableColumns"
+import FillGuardedColumns from "./services/models/Fillers/FillGuardedColumns"
 
 export default class Model extends RelaDB.Model implements SchemaModel {
     id: string
@@ -34,12 +38,17 @@ export default class Model extends RelaDB.Model implements SchemaModel {
      * Laravel related properties
      */
     casts: any
+
     fillable: string[]
+    fillableColumns: Column[]
+
     dates: string[]
     hidden: string[]
     appends: string[]
     methods: string[]
+
     guarded: string[]
+    guardedColumns: Column[]
 
     hasGuarded: boolean
     hasHidden: boolean
@@ -53,6 +62,9 @@ export default class Model extends RelaDB.Model implements SchemaModel {
             project: () => this.belongsTo(Project),
             ownRelationships: () => this.hasMany(Relationship).cascadeDelete(),
             relatedRelationships: () => this.hasMany(Relationship, "relatedModelId").cascadeDelete(),
+
+            fillableColumns: () => this.belongsToMany(Column, FillableModelColumn).cascadeDetach(),
+            guardedColumns: () => this.belongsToMany(Column, GuardedModelColumn).cascadeDetach(),
         }
     }
 
@@ -210,21 +222,23 @@ export default class Model extends RelaDB.Model implements SchemaModel {
         this.hasTimestamps = data.hasTimestamps
         this.hasSoftDeletes = data.hasSoftDeletes
 
-        const table = this.project.findTableByName(data.tableName)
-
-        if (table) {
-            this.tableId = table.id
-        }
-
-        if(!this.plural) {
-            this.calculateDataByName(false)
-        }
-
+        this.fillInternalData()
         this.fillSchemaState()
 
         this.save()
 
         return true
+    }
+
+    fillInternalData() {
+        const table = this.project.findTableByName(this.tableName)
+
+        if (table) this.tableId = table.id
+
+        if(! this.plural) this.calculateDataByName(false)
+
+        FillFillableColumns.onModel(this)
+        FillGuardedColumns.onModel(this)
     }
 
     getFreeSimilarRelationship(relationship: Relationship): Relationship {
