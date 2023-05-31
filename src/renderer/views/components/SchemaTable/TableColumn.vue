@@ -16,7 +16,7 @@
                 'text-orange-500 dark:text-orange-400 font-semibold':
                     column.isUnique(),
                 'text-blue-400 dark:text-blue-300 font-semibold':
-                    column.index,
+                    column.isNotForeignIndex(),
             }"
             class="flex-grow pr-8 flex items-center"
         >
@@ -26,7 +26,7 @@
                     'bg-yellow-400 dark:bg-yellow-400': column.autoIncrement,
                     'bg-red-500 dark:bg-red-400': column.isForeign(),
                     'bg-orange-500 dark:bg-orange-400': column.isUnique(),
-                    'bg-blue-400 dark:bg-blue-300': column.index,
+                    'bg-blue-400 dark:bg-blue-300': column.isNotForeignIndex(),
                 }"
                 class="w-2 h-2 mr-2 rounded-full"
             ></div>
