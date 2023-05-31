@@ -214,8 +214,6 @@ export default class Index extends RelaDB.Model implements SchemaModel {
         }
 
         FillIndexColumns.onIndex(this)
-
-        console.log(this.indexColumns)
     }
 
     saveSchemaState() {

@@ -63,10 +63,36 @@
         })
     }
 
-    const saveModelPropertyFromSelect = (selectValue: Array<Object>, modelProperty: string): void => {
-        model.value[modelProperty] = selectValue.map((item: any) => item.value)
+    const saveModelGuardedFromSelect = (selectValue: Array<Object>): void => {
+        const columnNames = selectValue.map((item: any) => item.value)
+
+        model.value.guarded = columnNames
 
         saveModelData()
+
+        const columns = columnNames.map((columnName: string) => model.value.table.getColumnByName(columnName))
+
+        model.value.relation('guardedColumns').detachAll()
+
+        columns.forEach((column: Column) => {
+            model.value.relation('guardedColumns').attachUnique(column)
+        })
+    }
+
+    const saveModelFillableFromSelect = (selectValue: Array<Object>): void => {
+        const columnNames = selectValue.map((item: any) => item.value)
+
+        model.value.fillable = columnNames
+
+        saveModelData()
+
+        const columns = columnNames.map((columnName: string) => model.value.table.getColumnByName(columnName))
+
+        model.value.relation('fillableColumns').detachAll()
+
+        columns.forEach((column: Column) => {
+            model.value.relation('fillableColumns').attachUnique(column)
+        })
     }
 
     const deleteModel = (): void => {
@@ -140,8 +166,8 @@
                 <div v-if="model.hasGuarded">
                     <UiMultiSelect
                         inputLabel="Guarded"
-                        :default-value="getSelectDataForLayout(model.guarded)"
-                        @change="$event => saveModelPropertyFromSelect($event, 'guarded')"
+                        :default-value="getSelectDataForLayout(model.guardedColumns)"
+                        @change="$event => saveModelGuardedFromSelect($event)"
                         :options="getSelectDataForLayout(model.table.getColumns())" />
                 </div>
             </div>
@@ -158,8 +184,8 @@
                 <div v-if="model.hasFillable">
                     <UiMultiSelect
                         inputLabel="Fillable"
-                        :default-value="getSelectDataForLayout(model.fillable)"
-                        @change="$event => saveModelPropertyFromSelect($event, 'fillable')"
+                        :default-value="getSelectDataForLayout(model.fillableColumns)"
+                        @change="$event => saveModelFillableFromSelect($event)"
                         :options="getSelectDataForLayout(model.table.getColumns())" />
                 </div>
             </div>

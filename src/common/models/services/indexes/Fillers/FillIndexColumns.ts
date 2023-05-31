@@ -23,7 +23,5 @@ export default new class FillIndexColumns {
 
             this.index.relation("indexColumns").attachUnique(column)
         })
-
-        console.log(this.index.indexColumns, 'test')
     }
 }
