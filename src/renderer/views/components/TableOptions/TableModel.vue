@@ -9,6 +9,7 @@
     import Main from "@Renderer/services/wrappers/Main"
     import Column from "@Renderer/../common/models/Column"
     import TableModelRelationships from './TableModelRelationships.vue'
+    import { uniq } from 'lodash'
 
     const props = defineProps({
         model: {
@@ -63,36 +64,27 @@
         })
     }
 
-    const saveModelGuardedFromSelect = (selectValue: Array<Object>): void => {
-        const columnNames = selectValue.map((item: any) => item.value)
+    const saveModelMassAssignmentProperty = (selectValue: Array<Object>, modelPropertyName: string, modelPropertyRelationship: string): void => {
+        const columnNames = selectValue.map((item: any) => item.value),
+            uniqueColumnNames = uniq(columnNames.concat(model.value[modelPropertyName]))
 
-        model.value.guarded = columnNames
+        uniqueColumnNames.forEach((columnName: string) => {
+            const column = model.value.table.getColumnByName(columnName)
+
+            if(!column) return
+
+            if(columnNames.includes(columnName)) {
+                model.value.relation(modelPropertyRelationship).attachUnique(column)
+                return
+            }
+
+            model.value.relation(modelPropertyRelationship).detach(column)
+            uniqueColumnNames.splice(uniqueColumnNames.indexOf(columnName), 1)
+        })
+
+        model.value[modelPropertyName] = uniqueColumnNames
 
         saveModelData()
-
-        const columns = columnNames.map((columnName: string) => model.value.table.getColumnByName(columnName))
-
-        model.value.relation('guardedColumns').detachAll()
-
-        columns.forEach((column: Column) => {
-            model.value.relation('guardedColumns').attachUnique(column)
-        })
-    }
-
-    const saveModelFillableFromSelect = (selectValue: Array<Object>): void => {
-        const columnNames = selectValue.map((item: any) => item.value)
-
-        model.value.fillable = columnNames
-
-        saveModelData()
-
-        const columns = columnNames.map((columnName: string) => model.value.table.getColumnByName(columnName))
-
-        model.value.relation('fillableColumns').detachAll()
-
-        columns.forEach((column: Column) => {
-            model.value.relation('fillableColumns').attachUnique(column)
-        })
     }
 
     const deleteModel = (): void => {
@@ -167,7 +159,7 @@
                     <UiMultiSelect
                         inputLabel="Guarded"
                         :default-value="getSelectDataForLayout(model.guardedColumns)"
-                        @change="$event => saveModelGuardedFromSelect($event)"
+                        @change="$event => saveModelMassAssignmentProperty($event, 'guarded', 'guardedColumns')"
                         :options="getSelectDataForLayout(model.table.getColumns())" />
                 </div>
             </div>
@@ -185,7 +177,7 @@
                     <UiMultiSelect
                         inputLabel="Fillable"
                         :default-value="getSelectDataForLayout(model.fillableColumns)"
-                        @change="$event => saveModelFillableFromSelect($event)"
+                        @change="$event => saveModelMassAssignmentProperty($event, 'fillable', 'fillableColumns')"
                         :options="getSelectDataForLayout(model.table.getColumns())" />
                 </div>
             </div>
