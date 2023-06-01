@@ -117,9 +117,15 @@ export default class Column extends RelaDB.Model implements SchemaModel {
     isNotForeignIndex(): boolean {
         return this.index && ! this.isForeign()
     }
+    
+    isUniqueFromIndex(): boolean {
+        const uniqueIndexes = this.table.getUniqueIndexes()
+
+        return uniqueIndexes.some(index => index.columns.includes(this.name))
+    }
 
     isUnique(): boolean {
-        return this.isImplicitlyUnique()
+        return this.isImplicitlyUnique() || this.isUniqueFromIndex()
     }
 
     isImplicitlyUnique(): boolean {

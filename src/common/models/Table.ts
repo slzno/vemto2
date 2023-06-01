@@ -255,6 +255,10 @@ export default class Table extends RelaDB.Model implements SchemaModel {
         return this.getIndexes().filter((index) => index.isForeign())
     }
 
+    getUniqueIndexes(): Index[] {
+        return this.getIndexes().filter((index) => index.isUnique())
+    }
+
     hasPrimaryIndexForColumn(column: Column): boolean {
         return this.getIndexes().find((index: Index) => index.isPrimary() && index.hasColumn(column.name)) !== undefined
     }
