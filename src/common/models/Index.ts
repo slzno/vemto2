@@ -182,9 +182,7 @@ export default class Index extends RelaDB.Model implements SchemaModel {
     }
 
     applyChanges(data: any): boolean {
-        console.log('entrei no applyChanges antes do if')
         if (!this.hasSchemaChanges(data)) return false
-        console.log('entrei no applyChanges depois do if')
 
         this.name = data.name
         this.columns = data.columns
@@ -205,12 +203,11 @@ export default class Index extends RelaDB.Model implements SchemaModel {
     }
 
     fillIndexRelationships(data: any): void {
-        console.log('fillIndexRelationships')
-        if(!this.onTableId || !this.onTable) {
+        if(!this.onTable) {
             this.onTableId = this.table.project.findTableByName(data.on)?.id
         }
-        
-        if(!this.referencesColumnId || !this.referencesColumn) {
+
+        if(!this.referencesColumn) {
             this.referencesColumnId = this.table.findColumnByName(data.references)?.id
         }
     }

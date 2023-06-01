@@ -43,7 +43,7 @@
             return getForSelect(index.table.getColumns())
         }
 
-        if(!index.onTableId || !index.onTable) return []
+        if(!index.onTable) return []
 
         return getForSelect(index.onTable.getColumns())
     }
