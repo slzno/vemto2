@@ -9,6 +9,7 @@
     import Main from "@Renderer/services/wrappers/Main"
     import Column from "@Renderer/../common/models/Column"
     import TableModelRelationships from './TableModelRelationships.vue'
+    import { uniq } from 'lodash'
 
     const props = defineProps({
         model: {
@@ -63,8 +64,25 @@
         })
     }
 
-    const saveModelPropertyFromSelect = (selectValue: Array<Object>, modelProperty: string): void => {
-        model.value[modelProperty] = selectValue.map((item: any) => item.value)
+    const saveModelMassAssignmentProperty = (selectValue: Array<Object>, modelPropertyName: string, modelPropertyRelationship: string): void => {
+        const columnNames = selectValue.map((item: any) => item.value),
+            uniqueColumnNames = uniq(columnNames.concat(model.value[modelPropertyName]))
+
+        uniqueColumnNames.forEach((columnName: string) => {
+            const column = model.value.table.getColumnByName(columnName)
+
+            if(!column) return
+
+            if(columnNames.includes(columnName)) {
+                model.value.relation(modelPropertyRelationship).attachUnique(column)
+                return
+            }
+
+            model.value.relation(modelPropertyRelationship).detach(column)
+            uniqueColumnNames.splice(uniqueColumnNames.indexOf(columnName), 1)
+        })
+
+        model.value[modelPropertyName] = uniqueColumnNames
 
         saveModelData()
     }
@@ -140,8 +158,8 @@
                 <div v-if="model.hasGuarded">
                     <UiMultiSelect
                         inputLabel="Guarded"
-                        :default-value="getSelectDataForLayout(model.guarded)"
-                        @change="$event => saveModelPropertyFromSelect($event, 'guarded')"
+                        :default-value="getSelectDataForLayout(model.guardedColumns)"
+                        @change="$event => saveModelMassAssignmentProperty($event, 'guarded', 'guardedColumns')"
                         :options="getSelectDataForLayout(model.table.getColumns())" />
                 </div>
             </div>
@@ -158,8 +176,8 @@
                 <div v-if="model.hasFillable">
                     <UiMultiSelect
                         inputLabel="Fillable"
-                        :default-value="getSelectDataForLayout(model.fillable)"
-                        @change="$event => saveModelPropertyFromSelect($event, 'fillable')"
+                        :default-value="getSelectDataForLayout(model.fillableColumns)"
+                        @change="$event => saveModelMassAssignmentProperty($event, 'fillable', 'fillableColumns')"
                         :options="getSelectDataForLayout(model.table.getColumns())" />
                 </div>
             </div>

@@ -1,8 +1,10 @@
 import Table from "./Table"
+import Column from "./Column"
+import IndexColumn from "./IndexColumn"
 import RelaDB from "@tiago_silva_pereira/reladb"
 import DataComparator from "./services/DataComparator"
 import DataComparisonLogger from "./services/DataComparisonLogger"
-import Column from "./Column"
+import FillIndexColumns from "./services/indexes/Fillers/FillIndexColumns"
 
 export default class Index extends RelaDB.Model implements SchemaModel {
     id: string
@@ -19,7 +21,9 @@ export default class Index extends RelaDB.Model implements SchemaModel {
     schemaState: any
     removed: boolean
     algorithm: string
+
     columns: string[]
+    indexColumns: Column[]
 
     references: string
     referencesColumnId: string
@@ -33,6 +37,8 @@ export default class Index extends RelaDB.Model implements SchemaModel {
             table: () => this.belongsTo(Table),
             onTable: () => this.belongsTo(Table),
             referencesColumn: () => this.belongsTo(Column),
+
+            indexColumns: () => this.belongsToMany(Column, IndexColumn).cascadeDetach()
         }
     }
 
@@ -190,7 +196,7 @@ export default class Index extends RelaDB.Model implements SchemaModel {
         this.onUpdate = data.onUpdate
         this.onDelete = data.onDelete
 
-        this.fillIndexRelationships(data)
+        this.fillInternalData(data)
         this.fillSchemaState()
 
         this.save()
@@ -198,7 +204,7 @@ export default class Index extends RelaDB.Model implements SchemaModel {
         return true
     }
 
-    fillIndexRelationships(data: any): void {
+    fillInternalData(data: any): void {
         if(!this.tableId) {
             this.onTableId = this.table.project.findTableByName(data.on)?.id
         }
@@ -206,6 +212,8 @@ export default class Index extends RelaDB.Model implements SchemaModel {
         if(!this.referencesColumnId) {
             this.referencesColumnId = this.table.findColumnByName(data.references)?.id
         }
+
+        FillIndexColumns.onIndex(this)
     }
 
     saveSchemaState() {
