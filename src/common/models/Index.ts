@@ -82,6 +82,10 @@ export default class Index extends RelaDB.Model implements SchemaModel {
         return this.type === "foreign"
     }
 
+    isNotForeign(): boolean {
+        return !this.isForeign()
+    }
+
     isUnique(): boolean {
         return this.type === "unique"
     }
@@ -199,11 +203,11 @@ export default class Index extends RelaDB.Model implements SchemaModel {
     }
 
     fillIndexRelationships(data: any): void {
-        if(!this.tableId) {
+        if(!this.onTableId || !this.onTable) {
             this.onTableId = this.table.project.findTableByName(data.on)?.id
         }
-
-        if(!this.referencesColumnId) {
+        
+        if(!this.referencesColumnId || !this.referencesColumn) {
             this.referencesColumnId = this.table.findColumnByName(data.references)?.id
         }
     }

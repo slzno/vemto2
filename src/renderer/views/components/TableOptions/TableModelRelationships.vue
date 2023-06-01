@@ -25,7 +25,7 @@
             keyName: string = 'id',
             labelName: string = 'name'
         ) => {
-        return collection.map((model: Model) => {
+        return collection.map((model: any) => {
             return {
                 key: model[keyName],
                 label: model[labelName]
