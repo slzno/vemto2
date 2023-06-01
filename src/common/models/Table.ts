@@ -32,6 +32,8 @@ export default class Table extends RelaDB.Model implements SchemaModel {
             indexes: () => this.hasMany(Index).cascadeDelete(),
             labelColumn: () => this.belongsTo(Column, "labelColumnId"),
             columns: () => this.hasMany(Column).cascadeDelete().orderBy('order'),
+
+            pivotRelationships: () => this.hasMany(Relationship, 'pivotId').cascadeDelete()
         }
     }
 
@@ -253,6 +255,10 @@ export default class Table extends RelaDB.Model implements SchemaModel {
 
     getForeignIndexes(): Index[] {
         return this.getIndexes().filter((index) => index.isForeign())
+    }
+
+    getUniqueIndexes(): Index[] {
+        return this.getIndexes().filter((index) => index.isUnique())
     }
 
     hasPrimaryIndexForColumn(column: Column): boolean {
