@@ -1,9 +1,11 @@
 <script setup lang="ts">
     import { defineProps, toRef } from 'vue'
     import Index from '@Common/models/Index'
+    import Column from '@Common/models/Column'
     import UiText from '@Renderer/components/ui/UiText.vue'
     import IndexTypes from '@Common/models/static/IndexTypes'
     import UiDropdownSelect from '@Renderer/components/ui/UiDropdownSelect.vue'
+    import UiMultiSelect from '@Renderer/components/ui/UiMultiSelect.vue'
 
     const props = defineProps(['table']),
         table = toRef(props, 'table')
@@ -17,6 +19,21 @@
             return {
                 key: model[keyName],
                 label: model[labelName]
+            }
+        })
+    }
+
+    const getSelectDataForLayout = (property: Array<string>|Column[]): Array<Object> => {
+        if(!property || !Array.isArray(property)) return []
+
+        return property.map((guarded: string|Column) => {
+            if(typeof guarded === "object") {
+                guarded = guarded.name
+            }
+
+            return {
+                label: guarded,
+                value: guarded.toLowerCase(),
             }
         })
     }
@@ -61,7 +78,7 @@
             </div>
         </div>
 
-        <div class="flex gap-2 mb-2">
+        <div class="flex gap-2 mb-2" v-if="index.isForeign()">
             <div class="flex-1">
                 <UiDropdownSelect
                     v-model="index.referencesColumnId"
@@ -70,13 +87,21 @@
                 />
             </div>
 
-            <div class="flex-1" v-if="index.isForeign()">
+            <div class="flex-1">
                 <UiDropdownSelect
                     v-model="index.onTableId"
                     :options="getForSelect(table.project.getTables())"
                     placeholder="On Table"
                 />
             </div>
+        </div>
+
+        <div class="mb-2">
+            <UiMultiSelect
+                inputLabel="Columns"
+                :default-value="getSelectDataForLayout(index.columns)"
+                :options="getSelectDataForLayout(index.table.getColumns())"
+            />
         </div>
     </div>
 </template>

@@ -142,7 +142,8 @@
                         inputLabel="Guarded"
                         :default-value="getSelectDataForLayout(model.guarded)"
                         @change="$event => saveModelPropertyFromSelect($event, 'guarded')"
-                        :options="getSelectDataForLayout(model.table.getColumns())" />
+                        :options="getSelectDataForLayout(model.table.getColumns())"
+                    />
                 </div>
             </div>
 
@@ -160,7 +161,8 @@
                         inputLabel="Fillable"
                         :default-value="getSelectDataForLayout(model.fillable)"
                         @change="$event => saveModelPropertyFromSelect($event, 'fillable')"
-                        :options="getSelectDataForLayout(model.table.getColumns())" />
+                        :options="getSelectDataForLayout(model.table.getColumns())"
+                    />
                 </div>
             </div>
 
