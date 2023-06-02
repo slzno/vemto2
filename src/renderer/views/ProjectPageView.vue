@@ -57,11 +57,19 @@ import { Bars3Icon, DocumentDuplicateIcon, TrashIcon } from '@heroicons/vue/24/o
 
             <section class="flex w-full h-screen space-x-4 mt-2 px-2" v-if="selectedTab === 'page'">
                 <div class="space-y-2">
+                    <small>Basic</small>
                     <UiButton class="w-full">Section</UiButton>
                     <UiButton class="w-full" @click="addComponent('HeaderOne')">H1</UiButton>
                     <UiButton class="w-full">H2</UiButton>
                     <UiButton class="w-full">Small</UiButton>
                     <UiButton class="w-full" @click="addComponent('Paragraph')">Paragraph</UiButton>
+                    <small>Logic</small>
+                    <UiButton class="w-full">If</UiButton>
+                    <UiButton class="w-full">If...Else</UiButton>
+                    <UiButton class="w-full">Foreach</UiButton>
+                    <UiButton class="w-full">Forelse</UiButton>
+                    <small>Custom</small>
+                    <UiButton class="w-full">Navbar</UiButton>
                     <UiButton class="w-full">Post Item</UiButton>
                 </div>
 
