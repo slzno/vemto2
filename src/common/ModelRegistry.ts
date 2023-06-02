@@ -10,6 +10,7 @@ import Table from "./models/Table"
 import Crud from "./models/crud/Crud"
 import CrudPanel from "./models/crud/CrudPanel"
 import Input from "./models/crud/Input"
+import Page from "./models/page/Page"
 
 export default new class ModelRegistry {
     registerModels() {
@@ -25,6 +26,7 @@ export default new class ModelRegistry {
             RelaDB.Resolver.db().registerModel(Crud, "Crud")
             RelaDB.Resolver.db().registerModel(CrudPanel, "CrudPanel")
             RelaDB.Resolver.db().registerModel(Input, "Input")
+            RelaDB.Resolver.db().registerModel(Page, "Page")
         })
     }
 }

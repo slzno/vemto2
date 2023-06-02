@@ -1,6 +1,7 @@
-import Crud from "./crud/Crud"
 import Table from "./Table"
 import Model from "./Model"
+import Crud from "./crud/Crud"
+import Page from "./page/Page"
 import RelaDB from "@tiago_silva_pereira/reladb"
 
 import RenderableFile, {
@@ -14,6 +15,7 @@ export default class Project extends RelaDB.Model {
     path: string
     name: string
     cruds: Crud[]
+    pages: Page[]
     tables: Table[]
     models: Model[]
     routes: Route[]
@@ -28,6 +30,7 @@ export default class Project extends RelaDB.Model {
     relationships() {
         return {
             cruds: () => this.hasMany(Crud).cascadeDelete(),
+            pages: () => this.hasMany(Page).cascadeDelete(),
             tables: () => this.hasMany(Table).cascadeDelete(),
             models: () => this.hasMany(Model).cascadeDelete(),
             routes: () => this.hasMany(Route).cascadeDelete(),
@@ -56,6 +59,10 @@ export default class Project extends RelaDB.Model {
 
     getPath(): string {
         return this.path
+    }
+
+    getApplications(): any[] {
+        return [...this.cruds, ...this.pages]
     }
 
     hasTable(tableName: string): boolean {

@@ -99,6 +99,10 @@ export default class Crud extends RelaDB.Model {
         return this.settings.collectionTitle
     }
 
+    getAppType(): string {
+        return 'CRUD'
+    }
+
     calculateSettings() {
         this.settings = {
             itemTitle: capitalCase(this.model.name),

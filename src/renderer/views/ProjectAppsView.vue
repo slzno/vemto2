@@ -4,14 +4,23 @@
     import CrudManager from "./components/ProjectApps/CrudManager.vue"
     import { useRouter } from "vue-router"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
-    import { ref } from "vue"
-import PageManager from "./components/ProjectApps/PageManager.vue"
+    import { onMounted, ref } from "vue"
+    import PageManager from "./components/ProjectApps/PageManager.vue"
+    import HandleProjectDatabase from "@Renderer/services/HandleProjectDatabase"
+    import Crud from "@Common/models/crud/Crud"
+    import Page from "@Common/models/page/Page"
 
     const router = useRouter(),
-        projectStore = useProjectStore()
+        projectStore = useProjectStore(),
+        canShow = ref(false)
 
-    const openCrud = (crudId: string) => {
-        router.push({ name: "project-crud", params: { crudId } })
+    const openApp = (app: Crud | Page) => {
+        console.log(app)
+        if(app.getAppType() === "CRUD") {
+            router.push({ name: "project-crud", params: { crudId: app.id } })
+        } else {
+            router.push({ name: "project-page", params: { pageId: app.id } })
+        }
     }
 
     const selectedTab = ref("applications")
@@ -24,16 +33,21 @@ import PageManager from "./components/ProjectApps/PageManager.vue"
         { label: "Default Files", value: "default_files" },
         { label: "Themes", value: "themes" },
     ]
+
+    onMounted(async () => {
+        await HandleProjectDatabase.populate(() => canShow.value = true)
+    })
 </script>
 
 <template>
     <div
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-hidden"
+        v-if="canShow"
     >
         <div class="mt-2">
             <UiTabs :tabs="tabs" v-model="selectedTab" :external="true" />
         </div>
-        
+
         <div class="p-4" v-if="selectedTab === 'applications'">
             <div class="flex top-0 left-0 space-x-2 text-sm z-20 mb-4">
                 <div>
@@ -47,21 +61,27 @@ import PageManager from "./components/ProjectApps/PageManager.vue"
                     </div>
                 </div>
             </div>
-    
-    
+
             <div class="flex space-x-2">
                 <CrudManager />
                 <PageManager />
             </div>
-    
+
             <div class="mt-4 space-y-2 flex flex-col">
-                <div class="border border-slate-700 bg-slate-850 rounded-lg p-3 cursor-pointer hover:bg-slate-800 w-full flex justify-between items-start" v-for="app in projectStore.project.cruds" :key="app.id" @click="openCrud(app.id)">
+                <div
+                    class="border border-slate-700 bg-slate-850 rounded-lg p-3 cursor-pointer hover:bg-slate-800 w-full flex justify-between items-start"
+                    v-for="app in projectStore.project.getApplications()"
+                    :key="app.id"
+                    @click="openApp(app)"
+                >
                     <div class="flex flex-col">
                         <span class="font-semibold">{{ app.getLabel() }}</span>
-                        <div class="text-slate-400">CRUD</div>
+                        <div class="text-slate-400">{{ app.getAppType() }}</div>
                     </div>
-    
-                    <UiButton class="text-sm" @click="app.delete()">Delete</UiButton>
+
+                    <UiButton class="text-sm" @click="app.delete()"
+                        >Delete</UiButton
+                    >
                 </div>
             </div>
         </div>
@@ -76,21 +96,30 @@ import PageManager from "./components/ProjectApps/PageManager.vue"
                     </div>
                 </div> -->
 
-                <div class="bg-slate-950 rounded-lg p-3 flex justify-between" v-for="route in projectStore.project.routes" :key="route.id">
+                <div
+                    class="bg-slate-950 rounded-lg p-3 flex justify-between"
+                    v-for="route in projectStore.project.routes"
+                    :key="route.id"
+                >
                     <div>
                         <div class="mt-2 space-x-1 font-mono">
-                            <span class="px-2 py-0.5 bg-green-300 text-green-700 rounded">{{ route.method.toUpperCase() }}</span> <span>{{ route.path }}</span>
+                            <span
+                                class="px-2 py-0.5 bg-green-300 text-green-700 rounded"
+                                >{{ route.method.toUpperCase() }}</span
+                            >
+                            <span>{{ route.path }}</span>
                         </div>
                     </div>
 
                     <div>
-                        <div class="rounded px-2 py-1 bg-slate-800 inline-block text-sm">
+                        <div
+                            class="rounded px-2 py-1 bg-slate-800 inline-block text-sm"
+                        >
                             {{ route.getName() }}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 </template>

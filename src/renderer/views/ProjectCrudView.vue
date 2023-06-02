@@ -8,7 +8,7 @@
     import HandleProjectDatabase from '@Renderer/services/HandleProjectDatabase'
     import UiTabs from '@Renderer/components/ui/UiTabs.vue'
     import UiSelect from '@Renderer/components/ui/UiSelect.vue'
-import UiText from '@Renderer/components/ui/UiText.vue'
+    import UiText from '@Renderer/components/ui/UiText.vue'
 
     // const projectStore = useProjectStore()
 

@@ -4,7 +4,7 @@ const colors = require('tailwindcss/colors')
 
 module.exports = {
     darkMode: 'class',
-    content: ["./src/renderer/**/*.{vue,js,ts,jsx,tsx}"],
+    content: ["./src/renderer/**/*.{vue,js,ts,jsx,tsx}", "./src/common/models/page/components/**/*.{js,ts}"],
     theme: {
         extend: {
             blur: {
