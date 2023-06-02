@@ -52,8 +52,6 @@ export default class HandleProjectDatabase {
             HandleProjectDatabase.start(data)
 
             projectStore.setProject(Project.find(1))
-
-            if(callback) callback()
         }
 
         if(callback) callback()

@@ -181,9 +181,13 @@
                         @change="$event => saveModelMassAssignmentProperty($event, 'fillable', 'fillableColumns')"
                         :options="getSelectDataForLayout(model.table.getColumns())"
                     />
+                </div>
+            </div>
+            
             <TableModelRelationships
                 :model="model"
                 :models="models"
+            />
         </div>
     </div>
 </template>

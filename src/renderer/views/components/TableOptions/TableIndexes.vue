@@ -6,6 +6,7 @@
     import IndexTypes from '@Common/models/static/IndexTypes'
     import UiDropdownSelect from '@Renderer/components/ui/UiDropdownSelect.vue'
     import UiMultiSelect from '@Renderer/components/ui/UiMultiSelect.vue'
+import debounce from '@Renderer/../common/tools/debounce'
 
     const props = defineProps(['table']),
         table = toRef(props, 'table')
@@ -51,6 +52,10 @@
     const onEscapePressed = (index: Index) => {
         console.log('onEscapePressed', index)
     }
+
+    const saveIndex = debounce((index: Index) => {
+        index.saveFromInterface()
+    }, 500)
 </script>
 <template>
     <div
@@ -70,6 +75,7 @@
                     v-model="index.type"
                     :options="IndexTypes.getForDropdown()"
                     placeholder="Index Type"
+                    @change="saveIndex(index)"
                 />
             </div>
 
@@ -84,6 +90,7 @@
                     v-model="index.referencesColumnId"
                     :options="getTableColumnsFromIndexType(index)"
                     placeholder="References Column"
+                    @change="saveIndex(index)"
                 />
             </div>
 
@@ -92,6 +99,7 @@
                     v-model="index.onTableId"
                     :options="getForSelect(table.project.getTables())"
                     placeholder="On Table"
+                    @change="saveIndex(index)"
                 />
             </div>
         </div>
@@ -99,9 +107,16 @@
         <div class="mb-2">
             <UiMultiSelect
                 inputLabel="Columns"
-                :default-value="getSelectDataForLayout(index.columns)"
+                :default-value="getSelectDataForLayout(index.indexColumns)"
                 :options="getSelectDataForLayout(index.table.getColumns())"
             />
+        </div>
+
+        <div class="mb-2">
+            <UiText placeholder="On Update" v-model="index.onUpdate" @input="saveIndex(index)" />
+        </div>
+        <div class="mb-2">
+            <UiText placeholder="On Delete" v-model="index.onDelete" @input="saveIndex(index)" />
         </div>
     </div>
 </template>

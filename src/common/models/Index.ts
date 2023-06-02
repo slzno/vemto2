@@ -209,11 +209,11 @@ export default class Index extends RelaDB.Model implements SchemaModel {
     }
 
     fillIndexRelationships(data: any): void {
-        if(!this.onTable) {
+        if(!this.onTableId) {
             this.onTableId = this.table.project.findTableByName(data.on)?.id
         }
 
-        if(!this.referencesColumn) {
+        if(!this.referencesColumnId) {
             this.referencesColumnId = this.table.findColumnByName(data.references)?.id
         }
 

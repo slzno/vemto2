@@ -117,6 +117,7 @@ export default new class TestHelper {
         }
 
         const index = new Index
+        index.projectId = data.table.projectId
         index.name = data.name || "index_name"
         index.type = data.type || "index"
         index.tableId = data.table.id

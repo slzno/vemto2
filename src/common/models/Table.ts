@@ -425,6 +425,7 @@ export default class Table extends RelaDB.Model implements SchemaModel {
 
         const foreign = new Index({
             tableId: this.id,
+            projectId: this.project.id,
             name: column.name,
             columns: [column.name],
             type: 'foreign',
