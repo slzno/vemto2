@@ -71,6 +71,8 @@
         
                         <div class="p-4 space-y-2" v-if="selectedTab === 'indexes'">
                             <div class="text-red-400">Not implemented yet</div>
+
+                            <pre>{{ table.indexes }}</pre>
                         </div>
         
                         <div class="p-4 space-y-2" v-if="selectedTab === 'settings'">
