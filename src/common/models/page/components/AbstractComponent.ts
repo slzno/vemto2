@@ -3,12 +3,16 @@ import Component from "./interfaces/Component"
 export default abstract class AbstractComponent implements Component {
     id: string
     type: string
+    subType: string
     settings: any
+    category: string
 
     constructor(componentData: any) {
         this.id = componentData.id
         this.type = componentData.type
         this.settings = componentData.settings
+        this.category = componentData.category
+        this.subType = componentData.subType || 'default'
     }
 
     getSettingsAsKeyValue(): any {

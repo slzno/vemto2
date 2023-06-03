@@ -9,8 +9,11 @@ export default class HeaderOneComponent extends AbstractComponent implements Com
 
     getPreviewCode(): string {
         return `<input 
-                    v-model="internalComponent.settings.content"
-                    class="outline-none text-5xl font-bold bg-transparent w-full"/>`
+            spellcheck="false"
+            autocomplete="off"
+            v-model="component.settings.content"
+            class="outline-none text-5xl font-bold bg-transparent w-full"
+        />`
     }
 
     getRenderCode(): string {

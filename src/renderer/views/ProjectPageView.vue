@@ -10,6 +10,7 @@
     import UiTabs from '@Renderer/components/ui/UiTabs.vue'
     import UiSelect from '@Renderer/components/ui/UiSelect.vue'
     import UiText from '@Renderer/components/ui/UiText.vue'
+    import Draggable from "vuedraggable"
     import { Bars3Icon, DocumentDuplicateIcon, TrashIcon } from '@heroicons/vue/24/outline'
 
     // const projectStore = useProjectStore()
@@ -18,7 +19,8 @@
     const route = useRoute(),
         pageId = route.params.pageId,
         page = ref(null),
-        selectedComponent = ref(null)
+        selectedComponent = ref(null),
+        components = ref([])
 
     const selectedTab = ref("page")
 
@@ -31,12 +33,38 @@
     onMounted(async () => {
         await HandleProjectDatabase.populate(() => {
             page.value = Page.find(pageId)
+
+            components.value = page.value.getComponents()
         })
     })
 
     const addComponent = (type: string) => {
         page.value.addComponent({
             type: type,
+            category: 'block',
+            settings: {}
+        })
+    }
+
+    const addForelseComponent = () => {
+        page.value.addComponent({
+            type: 'Forelse',
+            subType: 'forelse',
+            category: 'logic',
+            settings: {}
+        })
+
+        page.value.addComponent({
+            type: 'Forelse',
+            subType: 'empty',
+            category: 'logic',
+            settings: {}
+        })
+
+        page.value.addComponent({
+            type: 'Forelse',
+            subType: 'endforelse',
+            category: 'logic',
             settings: {}
         })
     }
@@ -75,39 +103,50 @@
                     <UiButton class="w-full">Section</UiButton>
                     <UiButton class="w-full" @click="addComponent('HeaderOne')">H1</UiButton>
                     <UiButton class="w-full">H2</UiButton>
-                    <UiButton class="w-full">Small</UiButton>
+                    <UiButton class="w-full" @click="addComponent('Small')">Small</UiButton>
                     <UiButton class="w-full" @click="addComponent('Paragraph')">Paragraph</UiButton>
                     <small>Logic</small>
                     <UiButton class="w-full">If</UiButton>
                     <UiButton class="w-full">If...Else</UiButton>
                     <UiButton class="w-full">Foreach</UiButton>
-                    <UiButton class="w-full">Forelse</UiButton>
+                    <UiButton class="w-full" @click="addForelseComponent()">Forelse</UiButton>
                     <small>Custom</small>
                     <UiButton class="w-full">Navbar</UiButton>
                     <UiButton class="w-full">Post Item</UiButton>
                 </div>
 
                 <div class="flex-grow bg-slate-950 p-2 rounded-lg space-y-1">
-                    <div v-for="component in page.getComponents()" :key="component.id" @click="selectComponent(component)" :class="{'border-red-500': isSelected(component)}" class="relative border border-dotted border-slate-600 rounded-md p-4 hover:border-red-500 cursor-pointer group">
-                        <div class="absolute top-0 right-0 bg-red-500 p-1.5 px-2 flex justify-between space-x-2 rounded-tr rounded-bl opacity-0 group-hover:opacity-100">
-                            <div class="py-0.5 px-1 text-sm rounded bg-red-600">
-                                {{ component.getLabel() }}
-                            </div>
+                    <Draggable
+                        class="space-y-2"
+                        :list="components"
+                        item-key="id"
+                    >
+                        <template #item="{ element }">
+                            <div @click="selectComponent(element)" 
+                            :class="{'border-red-500': isSelected(element), 'bg-red-700 text-white text-sm w-2/5 p-1 font-mono': element.category === 'logic'}" 
+                            class="relative border border-dotted border-slate-600 rounded-md p-4 hover:border-red-500 cursor-pointer group"
+                        >
+                            <div class="absolute top-0 right-0 bg-red-500 p-1.5 px-2 flex justify-between space-x-2 rounded-tr rounded-bl opacity-0 group-hover:opacity-100">
+                                <div class="py-0.5 px-1 text-sm rounded bg-red-600">
+                                    {{ element.getLabel() }}
+                                </div>
 
-                            <button>
-                                <Bars3Icon class="w-6 h-6 text-white" />
-                            </button>
-                            <button>
-                                <DocumentDuplicateIcon class="w-6 h-6 text-white" />
-                            </button>
-                            <button @click="deleteComponent(component)">
-                                <TrashIcon class="w-6 h-6 text-white" />
-                            </button>
-                        </div>
-                        <div>
-                            <PreviewPageComponent :component="component" @update="updateComponent(component)" />
-                        </div>
-                    </div>
+                                <button>
+                                    <Bars3Icon class="w-6 h-6 text-white" />
+                                </button>
+                                <button>
+                                    <DocumentDuplicateIcon class="w-6 h-6 text-white" />
+                                </button>
+                                <button @click="deleteComponent(element)">
+                                    <TrashIcon class="w-6 h-6 text-white" />
+                                </button>
+                            </div>
+                            <div>
+                                <PreviewPageComponent :base-component="element" @update="updateComponent(element)" />
+                            </div>
+                            </div>
+                        </template>
+                    </Draggable>
                 </div>
             </section>
         </div>

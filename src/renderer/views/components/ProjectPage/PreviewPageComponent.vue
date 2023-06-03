@@ -4,26 +4,26 @@
 
     export default {
         props: {
-            component: {
+            baseComponent: {
                 type: Object,
                 default: null,
             },
         },
         data() {
             return { 
-                internalComponent: null,
+                component: null,
             }
         },
         watch: {
-            internalComponent: {
+            component: {
                 handler() {
-                    this.$emit("update", this.internalComponent)
+                    this.$emit("update", this.component)
                 },
                 deep: true,
             },
         },
         created() {
-            this.internalComponent = this.component
+            this.component = this.baseComponent
         },
         methods: {
             htmlToText(html) {
@@ -31,7 +31,7 @@
             },
         },
         setup(props) {
-            const fullTemplate = `<div v-if="internalComponent">${props.component.getPreviewCode()}</div>`
+            const fullTemplate = `<div v-if="component">${props.baseComponent.getPreviewCode()}</div>`
             return compile(fullTemplate)
         },
     }

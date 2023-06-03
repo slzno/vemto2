@@ -6,6 +6,8 @@ import RelaDB from "@tiago_silva_pereira/reladb"
 import HeaderOneComponent from "./components/HeaderOneComponent"
 import Component from "./components/interfaces/Component"
 import ParagraphComponent from "./components/ParagraphComponent"
+import SmallComponent from "./components/SmallComponent"
+import ForelseComponent from "./components/ForelseComponent"
 
 
 export default class Page extends RelaDB.Model {
@@ -115,6 +117,8 @@ export default class Page extends RelaDB.Model {
         return {
             'HeaderOne': HeaderOneComponent,
             'Paragraph': ParagraphComponent,
+            'Small': SmallComponent,
+            'Forelse': ForelseComponent,
         }
     }
 }

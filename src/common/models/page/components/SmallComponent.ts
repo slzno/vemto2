@@ -2,9 +2,9 @@ import Component from "./interfaces/Component"
 
 import AbstractComponent from "./AbstractComponent"
 
-export default class ParagraphComponent extends AbstractComponent implements Component {
+export default class SmallComponent extends AbstractComponent implements Component {
     getLabel(): string {
-        return 'Paragraph'
+        return 'Small'
     }
 
     getPreviewCode(): string {
@@ -12,12 +12,12 @@ export default class ParagraphComponent extends AbstractComponent implements Com
             spellcheck="false"
             autocomplete="off"
             v-model="component.settings.content"
-            class="outline-none bg-transparent w-full"
+            class="text-xs outline-none bg-transparent w-full"
         />`
     }
 
     getRenderCode(): string {
-        return `<p><$ this.content $></p>`
+        return `<small><$ this.content $></small>`
     }
 
     getSettings(): any {
