@@ -3,12 +3,18 @@ import AbstractComponent from "./AbstractComponent"
 
 export default class HeaderOneComponent extends AbstractComponent implements Component {
 
+    getLabel(): string {
+        return 'H1'
+    }
+
     getPreviewCode(): string {
-        return `<h1 class="text-5xl font-bold">{{content}}</h1>`
+        return `<input 
+                    v-model="internalComponent.settings.content"
+                    class="outline-none text-5xl font-bold bg-transparent w-full"/>`
     }
 
     getRenderCode(): string {
-        return `<h1>{{content}}</h1>`
+        return `<h1><$ this.content $></h1>`
     }
 
     getSettings(): any {

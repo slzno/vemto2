@@ -38,6 +38,8 @@ export default defineConfig({
     plugins: plugins,
     resolve: {
         alias: {
+            vue: 'vue/dist/vue.esm-bundler.js',
+            
             "@Main": fileURLToPath(new URL("./src/main", import.meta.url)),
 
             "@Renderer": fileURLToPath(

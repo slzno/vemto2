@@ -2,6 +2,7 @@
     // import { useProjectStore } from '@Renderer/stores/useProjectStore'
 
     import { onMounted, ref } from 'vue'
+    import PreviewPageComponent from '@Renderer/views/components/ProjectPage/PreviewPageComponent.vue'
     import { useRoute } from 'vue-router'
     import Page from '@Common/models/page/Page'
     import UiButton from '@Renderer/components/ui/UiButton.vue'
@@ -9,14 +10,15 @@
     import UiTabs from '@Renderer/components/ui/UiTabs.vue'
     import UiSelect from '@Renderer/components/ui/UiSelect.vue'
     import UiText from '@Renderer/components/ui/UiText.vue'
-import { Bars3Icon, DocumentDuplicateIcon, TrashIcon } from '@heroicons/vue/24/outline'
+    import { Bars3Icon, DocumentDuplicateIcon, TrashIcon } from '@heroicons/vue/24/outline'
 
     // const projectStore = useProjectStore()
 
     // get pageId from route params
     const route = useRoute(),
         pageId = route.params.pageId,
-        page = ref(null)
+        page = ref(null),
+        selectedComponent = ref(null)
 
     const selectedTab = ref("page")
 
@@ -33,8 +35,6 @@ import { Bars3Icon, DocumentDuplicateIcon, TrashIcon } from '@heroicons/vue/24/o
     })
 
     const addComponent = (type: string) => {
-        console.log(type)
-
         page.value.addComponent({
             type: type,
             settings: {}
@@ -43,6 +43,20 @@ import { Bars3Icon, DocumentDuplicateIcon, TrashIcon } from '@heroicons/vue/24/o
 
     const deleteComponent = (component: any) => {
         page.value.removeComponent(component)
+    }
+
+    const selectComponent = (component: any) => {
+        selectedComponent.value = component
+    }
+
+    const updateComponent = (component: any) => {
+        page.value.updateComponent(component)
+    }
+
+    const isSelected = (component: any) => {
+        if (!selectedComponent.value) return false
+
+        return selectedComponent.value.id === component.id
     }
 </script>
 
@@ -74,8 +88,12 @@ import { Bars3Icon, DocumentDuplicateIcon, TrashIcon } from '@heroicons/vue/24/o
                 </div>
 
                 <div class="flex-grow bg-slate-950 p-2 rounded-lg space-y-1">
-                    <div class="relative border border-dotted border-slate-600 rounded-md p-4 hover:border-red-500 cursor-pointer group" v-for="component in page.getComponents()" :key="component.id">
-                        <div class="absolute top-0 right-0 bg-red-500 p-1.5 px-4 flex justify-between space-x-2 rounded-tr rounded-bl opacity-0 group-hover:opacity-100">
+                    <div v-for="component in page.getComponents()" :key="component.id" @click="selectComponent(component)" :class="{'border-red-500': isSelected(component)}" class="relative border border-dotted border-slate-600 rounded-md p-4 hover:border-red-500 cursor-pointer group">
+                        <div class="absolute top-0 right-0 bg-red-500 p-1.5 px-2 flex justify-between space-x-2 rounded-tr rounded-bl opacity-0 group-hover:opacity-100">
+                            <div class="py-0.5 px-1 text-sm rounded bg-red-600">
+                                {{ component.getLabel() }}
+                            </div>
+
                             <button>
                                 <Bars3Icon class="w-6 h-6 text-white" />
                             </button>
@@ -87,13 +105,11 @@ import { Bars3Icon, DocumentDuplicateIcon, TrashIcon } from '@heroicons/vue/24/o
                             </button>
                         </div>
                         <div>
-                            <div v-html="component.getPreviewCode()"></div>
+                            <PreviewPageComponent :component="component" @update="updateComponent(component)" />
                         </div>
                     </div>
                 </div>
             </section>
-
-            
         </div>
     </div>
 </template>

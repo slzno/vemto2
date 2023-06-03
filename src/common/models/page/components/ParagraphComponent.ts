@@ -3,12 +3,18 @@ import Component from "./interfaces/Component"
 import AbstractComponent from "./AbstractComponent"
 
 export default class ParagraphComponent extends AbstractComponent implements Component {
+    getLabel(): string {
+        return 'Paragraph'
+    }
+
     getPreviewCode(): string {
-        return `<p>{{content}}</p>`
+        return `<input 
+            v-model="internalComponent.settings.content"
+            class="outline-none bg-transparent w-full"/>`
     }
 
     getRenderCode(): string {
-        return `<p>{{content}}</p>`
+        return `<p><$ this.content $></p>`
     }
 
     getSettings(): any {

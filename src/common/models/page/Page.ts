@@ -72,6 +72,10 @@ export default class Page extends RelaDB.Model {
     addComponent(component: any) {
         component.id = uuid()
 
+        const componentHandler = this.getComponentHandler(component)
+
+        component.settings = componentHandler.getSettingsAsKeyValue()
+
         this.components.push(component)
 
         this.save()
@@ -83,19 +87,31 @@ export default class Page extends RelaDB.Model {
         this.save()
     }
 
+    updateComponent(component: any) {
+        const index = this.components.findIndex((c: any) => c.id === component.id)
+
+        this.components[index] = component
+
+        this.save()
+    }
+
     getComponents(): Component[] {
         return this.components.map((component: any) => {
-            const componentType = this.getComponentTypeMap()[component.type]
-
-            if (!componentType) {
-                throw new Error(`Component type ${component.type} not found`)
-            }
-
-            return new componentType(component)
+            return this.getComponentHandler(component)
         })
     }
 
-    getComponentTypeMap(): any {
+    getComponentHandler(component: any): any {
+        const componentHandler = this.getComponentHandlerMap()[component.type]
+
+        if (!componentHandler) {
+            throw new Error(`Component type ${component.type} not found`)
+        }
+
+        return new componentHandler(component)
+    }
+
+    getComponentHandlerMap(): any {
         return {
             'HeaderOne': HeaderOneComponent,
             'Paragraph': ParagraphComponent,
