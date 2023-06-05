@@ -9,7 +9,7 @@
             },
             placeholder: {
                 type: String,
-                default: 'Please, select a option'
+                default: 'Please, select an option'
             },
             closeOnSelect: {
                 type: Boolean,

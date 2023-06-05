@@ -23,6 +23,11 @@
         id: {
             type: String,
             default: "",
+        },
+        
+        inlineLabel: {
+            type: Boolean,
+            default: false
         }
     })
 
@@ -40,17 +45,20 @@
 </script>
 
 <template>
-    <label v-if="label" class="text-xs text-slate-400">{{ label }}</label>
-    <input
-        class="w-full focus:border focus:border-red-500 dark:text-slate-200 focus:ring-transparent border-transparent bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
-        type="text"
-        :id="id"
-        :placeholder="placeholder"
-        v-model="localValue"
-        @blur="$emit('blur', localValue)"
-        @focus="$emit('focus', localValue)"
-        spellcheck="false"
-        autocomplete="false"
-        :disabled="disabled"
-    />
+    <div class="flex gap-1 flex-1" :class="{ 'flex-col': !inlineLabel, 'items-center': inlineLabel }">
+        <label v-if="label" class="text-xs text-slate-400">{{ label }}</label>
+        <input
+            :class="{ 'flex-1': inlineLabel }"
+            class="focus:border focus:border-red-500 dark:text-slate-200 focus:ring-transparent border-transparent bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
+            type="text"
+            :id="id"
+            :placeholder="placeholder"
+            v-model="localValue"
+            @blur="$emit('blur', localValue)"
+            @focus="$emit('focus', localValue)"
+            spellcheck="false"
+            autocomplete="false"
+            :disabled="disabled"
+        />
+    </div>
 </template>

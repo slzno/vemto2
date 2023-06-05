@@ -6,6 +6,7 @@ import RelaDB from '@tiago_silva_pereira/reladb'
 import DataComparator from './services/DataComparator'
 import DataComparisonLogger from './services/DataComparisonLogger'
 import Relationship from './Relationship'
+import WordManipulator from '@Common/util/WordManipulator'
 
 export default class Table extends RelaDB.Model implements SchemaModel {
     id: string
@@ -419,24 +420,24 @@ export default class Table extends RelaDB.Model implements SchemaModel {
     addForeign(name: string, relatedModel: Model): Index {
         const column = this.getOrCreateForeignColumn(name, relatedModel)
 
-        if(column.isForeign()) {
-            return
-        }
+        if(column.isForeign()) return
 
-        const foreign = new Index({
-            tableId: this.id,
-            projectId: this.project.id,
-            name: column.name,
-            columns: [column.name],
-            type: 'foreign',
-            on: relatedModel.table.name,
-            onTableId: relatedModel.table.id,
-            references: relatedModel.getPrimaryKeyColumn().name,
-            referencesColumnId: relatedModel.getPrimaryKeyColumn().id
-        })
+        const foreignName = `${WordManipulator.snakeCase(this.name)}_${WordManipulator.snakeCase(column.name)}_foreign`.toLowerCase(),
+            primaryKeyColumn = relatedModel.getPrimaryKeyColumn(),
+            foreign = new Index({
+                tableId: this.id,
+                name: foreignName,
+                columns: [column.name],
+                type: 'foreign',
+                on: relatedModel.table.name,
+                onTableId: relatedModel.table.id,
+                references: primaryKeyColumn?.name,
+                referencesColumnId: primaryKeyColumn?.id
+            })
         
         foreign.save()
-
+        foreign.relation('indexColumns').attachUnique(column)
+        
         return foreign
     }
 

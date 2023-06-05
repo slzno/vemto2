@@ -35,7 +35,7 @@ export default class Index extends RelaDB.Model implements SchemaModel {
     relationships() {
         return {
             table: () => this.belongsTo(Table),
-            onTable: () => this.belongsTo(Table),
+            onTable: () => this.belongsTo(Table, 'onTableId'),
             referencesColumn: () => this.belongsTo(Column),
 
             indexColumns: () => this.belongsToMany(Column, IndexColumn).cascadeDetach()
@@ -43,6 +43,8 @@ export default class Index extends RelaDB.Model implements SchemaModel {
     }
 
     static updating(data: any): any {
+        if(!data.referenceColumnId) return data
+
         const referenceColumn = Column.find(data.referenceColumnId)
 
         if (!referenceColumn) return data
@@ -132,7 +134,7 @@ export default class Index extends RelaDB.Model implements SchemaModel {
 
     hasSchemaChanges(comparisonData: any): boolean {
         if (!this.schemaState) return true
-
+        
         return this.hasDataChanges(comparisonData)
     }
 
@@ -199,25 +201,28 @@ export default class Index extends RelaDB.Model implements SchemaModel {
         this.language = data.language
         this.onUpdate = data.onUpdate
         this.onDelete = data.onDelete
-
-        this.fillIndexRelationships(data)
+        
         this.fillSchemaState()
-
+        
         this.save()
-
+        
+        this.calculateInternalData(data)
+        
         return true
     }
 
-    fillIndexRelationships(data: any): void {
+    calculateInternalData(data: any): void {
         if(!this.onTableId) {
             this.onTableId = this.table.project.findTableByName(data.on)?.id
         }
 
         if(!this.referencesColumnId) {
-            this.referencesColumnId = this.table.findColumnByName(data.references)?.id
+            this.referencesColumnId = this.getReferredTable().findColumnByName(data.references)?.id
         }
 
         FillIndexColumns.onIndex(this)
+
+        this.save()
     }
 
     saveSchemaState() {
@@ -264,6 +269,10 @@ export default class Index extends RelaDB.Model implements SchemaModel {
 
     getForeignTable(): Table {
         return this.table.project.findTableByName(this.on)
+    }
+
+    getReferredTable(): Table {
+        return this.isForeign() ? this.onTable : this.table
     }
 
     old(): Index {

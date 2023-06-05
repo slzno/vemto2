@@ -28,6 +28,10 @@
             small: {
                 type: Boolean,
                 required: false
+            },
+            label: {
+                type: String,
+                required: false
             }
         }),
         emit = defineEmits(['input', 'change', 'update:modelValue'])
@@ -239,6 +243,7 @@
         @keyup.enter="selectCurrentCandidate()"
         v-click-outside="close"
     >
+        <span class="text-xs text-slate-400" v-if="label">{{ label }}</span>
         <button
             ref="selectButton"
             class="flex focus:border-red-500 border border-transparent items-center justify-between bg-white dark:bg-slate-950 appearance-none rounded-lg leading-tight text-gray-600 dark:text-gray-300 py-1.5 px-1 w-full outline-none"

@@ -17,8 +17,9 @@ export default new class FillIndexColumns {
 
     fill() {
         this.index.columns.forEach((columnName: string) => {
-            const column: Column = this.index.onTable.findColumnByName(columnName)
+            const column: Column = this.index.table.findColumnByName(columnName)
 
+            console.log(column)
             if(!column) return
 
             this.index.relation("indexColumns").attachUnique(column)

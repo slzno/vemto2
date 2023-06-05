@@ -222,15 +222,16 @@ export default class Model extends RelaDB.Model implements SchemaModel {
         this.hasTimestamps = data.hasTimestamps
         this.hasSoftDeletes = data.hasSoftDeletes
 
-        this.fillInternalData()
         this.fillSchemaState()
-
+        
         this.save()
+        
+        this.calculateInternalData()
 
         return true
     }
 
-    fillInternalData() {
+    calculateInternalData() {
         const table = this.project.findTableByName(this.tableName)
 
         if (table) this.tableId = table.id
@@ -239,6 +240,8 @@ export default class Model extends RelaDB.Model implements SchemaModel {
 
         FillFillableColumns.onModel(this)
         FillGuardedColumns.onModel(this)
+
+        this.save()
     }
 
     getFreeSimilarRelationship(relationship: Relationship): Relationship {
@@ -319,7 +322,7 @@ export default class Model extends RelaDB.Model implements SchemaModel {
         )
     }
 
-    getPrimaryKeyColumn() {
+    getPrimaryKeyColumn(): Column {
         return this.table.columns.find(column => column.isPrimaryKey())
     }
 
