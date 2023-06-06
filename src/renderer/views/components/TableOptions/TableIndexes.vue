@@ -55,10 +55,13 @@ import WordManipulator from '@Renderer/../common/util/WordManipulator'
         const columnNames = selectValue.map((item: any) => item.value),
             uniqueColumnNames = uniq(columnNames.concat(index[modelPropertyName]))
 
+        console.log(uniqueColumnNames)
         uniqueColumnNames.forEach((columnName: string) => {
-            const column = index.getReferredTable().getColumnByName(columnName)
+            const column = index.table.getColumnByName(columnName)
 
             if(!column) return
+
+            console.log(column.name)
 
             if(columnNames.includes(columnName)) {
                 index.relation(modelPropertyRelationship).attachUnique(column)
@@ -79,7 +82,7 @@ import WordManipulator from '@Renderer/../common/util/WordManipulator'
         const sortedColumns = index.indexColumns.sort((colOne: Column, colTwo: Column) => colOne.order - colTwo.order),
             columnsNames = sortedColumns.map((column: Column) => column.name).join('_')
 
-        index.name = `${index.table.name}_${columnsNames}_${WordManipulator.snakeCase(index.type)}`
+        index.name = `${index.table.name}_${columnsNames}_${WordManipulator.snakeCase(index.type)}`.replace(/_{2,}/g, '_')
         saveIndex(index)
     }
 
