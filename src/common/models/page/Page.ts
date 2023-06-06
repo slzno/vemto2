@@ -19,6 +19,7 @@ export default class Page extends RelaDB.Model {
     section: string
     namespace: string
     components: any[]
+    livewireComponentName: string
 
     relationships() {
         return {
@@ -38,7 +39,8 @@ export default class Page extends RelaDB.Model {
 
         page.name = data.name
         page.section = 'site'
-        page.namespace = `App\\Http\\Livewire\\Pages\\${pascalCase(page.name)}`
+        page.namespace = `App\\Http\\Livewire\\Pages`
+        page.livewireComponentName = pascalCase(data.name)
         page.components = []
 
         page.save()

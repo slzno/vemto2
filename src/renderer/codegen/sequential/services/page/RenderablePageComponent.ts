@@ -1,18 +1,19 @@
 import * as changeCase from "change-case"
-import Crud from "@Common/models/crud/Crud"
+import Page from "@Common/models/page/Page"
 import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
 import {
     RenderableFileFormatter,
     RenderableFileType,
 } from "@Common/models/RenderableFile"
+import Namespace from "@Renderer/codegen/util/Namespace"
 
 export default class RenderablePageComponent extends Renderable {
-    crud: Crud
+    page: Page
 
-    constructor(crud: Crud) {
+    constructor(page: Page) {
         super()
 
-        this.crud = crud
+        this.page = page
     }
 
     canRender(): boolean {
@@ -20,31 +21,30 @@ export default class RenderablePageComponent extends Renderable {
     }
 
     getType(): RenderableFileType {
-        return RenderableFileType.HTML
+        return RenderableFileType.PHP
     }
 
     getTemplateFile(): string {
-        return "crud/views/livewire/FormView.vemtl"
+        return "page/PageComponent.vemtl"
     }
 
     getPath(): string {
-        const viewsFolder = changeCase.paramCase(this.crud.section), 
-            folder = changeCase.paramCase(this.crud.plural)
-
-        return `resources/views/livewire/${viewsFolder}/${folder}`
+        return Namespace.from(this.page.namespace).toPath()
     }
 
     getFilename(): string {
-        return "create.blade.php"
+        const componentName = this.page.livewireComponentName || changeCase.pascalCase(this.page.name)
+        
+        return `${componentName}.php`
     }
 
     getFormatter(): RenderableFileFormatter {
-        return RenderableFileFormatter.HTML
+        return RenderableFileFormatter.PHP
     }
 
     getData() {
         return {
-            crud: this.crud,
+            page: this.page,
         }
     }
 }

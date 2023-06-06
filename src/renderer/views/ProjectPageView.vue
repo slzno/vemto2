@@ -34,9 +34,13 @@
         await HandleProjectDatabase.populate(() => {
             page.value = Page.find(pageId)
 
-            components.value = page.value.getComponents()
+            loadComponents()
         })
     })
+
+    const loadComponents = () => {
+        components.value = page.value.getComponents()
+    }
 
     const addComponent = (type: string) => {
         page.value.addComponent({
@@ -44,6 +48,8 @@
             category: 'block',
             settings: {}
         })
+
+        loadComponents()
     }
 
     const addForelseComponent = () => {
@@ -67,10 +73,14 @@
             category: 'logic',
             settings: {}
         })
+
+        loadComponents()
     }
 
     const deleteComponent = (component: any) => {
         page.value.removeComponent(component)
+
+        loadComponents()
     }
 
     const selectComponent = (component: any) => {
@@ -152,6 +162,16 @@
                             </div>
                         </template>
                     </Draggable>
+                </div>
+            </section>
+
+            <section class="flex flex-col w-full h-screen space-y-4 mt-2 px-2 pb-40 overflow-scroll" v-if="selectedTab === 'settings'">
+                <div>
+                    <UiText v-model="page.section" label="Section" @input="page.save()" />
+
+                    <UiText v-model="page.namespace" label="Namespace" @input="page.save()" />
+
+                    <UiText v-model="page.livewireComponentName" label="Component Name" @input="page.save()" />
                 </div>
             </section>
         </div>

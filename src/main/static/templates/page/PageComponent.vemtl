@@ -1,0 +1,23 @@
+<?php
+
+namespace <$ this.page.namespace $>;
+
+use Livewire\Component;
+use Illuminate\Support\Collection;
+
+class <$ this.filenameWithoutExtension $> extends Component
+{
+    use WithPagination;
+    
+    public function mount()
+    {
+        //
+    }
+
+    public function render()
+    {
+        return view('livewire.pages.posts-page', [
+            //
+        ])->layout('layouts.guest');
+    }
+}
