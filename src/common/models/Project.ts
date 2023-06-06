@@ -113,6 +113,10 @@ export default class Project extends RelaDB.Model {
         return this.models.map((model) => model.name)
     }
 
+    getModelsPlurals(): string[] {
+        return this.models.map((model) => model.plural)
+    }
+
     getAllModelsKeyedByName(): { [key: string]: Model } {
         let models: { [key: string]: Model } = {}
 

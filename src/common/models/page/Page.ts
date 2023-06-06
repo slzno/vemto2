@@ -129,4 +129,51 @@ export default class Page extends RelaDB.Model {
 
         this.save()
     }
+
+    getInjectableModelsByRoute(route: Route): any[] {
+        const models = this.project.models,
+            mainRoute = this.routes[0]
+
+        if(!mainRoute) return []
+
+        // get all parameters from the route.path
+        const routeParameters = mainRoute.path.match(/{(.*?)}/g)
+
+        if(!routeParameters) return []
+
+        // get the route parameters names
+        const routeParametersNames = routeParameters.map((parameter: string) => {
+            return parameter.replace('{', '').replace('}', '')
+        })
+
+        // return all the models that are being used in the route
+        return models.filter((model: any) => {
+            return routeParametersNames.some((parameterName: string) => {
+                return parameterName === camelCase(model.name)
+            })
+        })
+    }
+
+    getModelCollections(): any[] {
+        const models = this.project.models
+        
+        const allComponentsContentSettings = this.getComponents().map((component: any) => {
+            if(component.settings.content) {
+                return component.settings.content
+            }
+
+            return ''
+        })
+
+        // return all the models that are being used in the content
+        return models.filter((model: any) => {
+            return allComponentsContentSettings.some((content: string) => {
+                const collectionVarName = `$${camelCase(model.plural)}`
+
+                console.log(collectionVarName)
+
+                return content.includes(collectionVarName)
+            })
+        })
+    }
 }

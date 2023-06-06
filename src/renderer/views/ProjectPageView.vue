@@ -172,6 +172,11 @@
                     <UiText v-model="page.namespace" label="Namespace" @input="page.save()" />
 
                     <UiText v-model="page.livewireComponentName" label="Component Name" @input="page.save()" />
+
+                    <b>Route:</b>
+                    <div v-for="route in page.routes" :key="route.id">
+                        <UiText v-model="route.path" label="Route path" @input="route.save()" />
+                    </div>
                 </div>
             </section>
         </div>
