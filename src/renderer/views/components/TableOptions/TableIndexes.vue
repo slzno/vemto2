@@ -45,7 +45,7 @@ import WordManipulator from '@Renderer/../common/util/WordManipulator'
         })
     }
 
-    const getTableColumnsFromIndexType = (index: Index) => {
+    const getReferredTableColumns = (index: Index) => {
         if(!index.onTable) return []
 
         return getForSelect(index.onTable.getColumns())
@@ -54,7 +54,7 @@ import WordManipulator from '@Renderer/../common/util/WordManipulator'
     const saveRelationshipProperty = (index: Index, selectValue: Array<Object>, modelPropertyName: string, modelPropertyRelationship: string): void => {
         const columnNames = selectValue.map((item: any) => item.value),
             uniqueColumnNames = uniq(columnNames.concat(index[modelPropertyName]))
-            
+
         uniqueColumnNames.forEach((columnName: string) => {
             const column = index.table.getColumnByName(columnName)
 
@@ -69,8 +69,8 @@ import WordManipulator from '@Renderer/../common/util/WordManipulator'
             uniqueColumnNames.splice(uniqueColumnNames.indexOf(columnName), 1)
         })
 
-        index[modelPropertyName] = uniqueColumnNames
-
+        index[modelPropertyName] = uniqueColumnNames.filter((columnName: string) => !! columnName)
+    
         saveIndex(index)
         generateIndexName(index)
     }
@@ -168,7 +168,7 @@ import WordManipulator from '@Renderer/../common/util/WordManipulator'
                 <div class="flex-1">
                     <UiDropdownSelect
                         v-model="index.referencesColumnId"
-                        :options="getTableColumnsFromIndexType(index)"
+                        :options="getReferredTableColumns(index)"
                         placeholder="References Column"
                         :may-open="index.isForeign() && !index.name && index.onTableId"
                         @change="saveIndex(index)"
