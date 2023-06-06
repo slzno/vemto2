@@ -212,12 +212,15 @@ export default class Index extends RelaDB.Model implements SchemaModel {
     }
 
     calculateInternalData(data: any): void {
-        if(!this.onTable) {
-            this.onTableId = this.table.project.findTableByName(data.on)?.id
+        const onTable = this.table.project.findTableByName(data.on),
+            referencesColumn = this.getReferredTable().findColumnByName(data.references)
+
+        if(onTable) {
+            this.onTableId = onTable.id
         }
 
-        if(!this.referencesColumn) {
-            this.referencesColumnId = this.getReferredTable().findColumnByName(data.references)?.id
+        if(referencesColumn) {
+            this.referencesColumnId = referencesColumn.id
         }
 
         FillIndexColumns.onIndex(this)

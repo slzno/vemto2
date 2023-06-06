@@ -236,7 +236,7 @@ export default class Model extends RelaDB.Model implements SchemaModel {
 
         if (table) this.tableId = table.id
 
-        if(! this.plural) this.calculateDataByName(false)
+        if (!this.plural) this.calculateDataByName(false)
 
         FillFillableColumns.onModel(this)
         FillGuardedColumns.onModel(this)
