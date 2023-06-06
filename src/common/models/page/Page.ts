@@ -121,4 +121,10 @@ export default class Page extends RelaDB.Model {
             'Forelse': ForelseComponent,
         }
     }
+
+    saveComponentsOrder(components: any[]) {
+        this.components = components
+
+        this.save()
+    }
 }

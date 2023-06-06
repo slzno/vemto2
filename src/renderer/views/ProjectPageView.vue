@@ -86,6 +86,10 @@
 
         return selectedComponent.value.id === component.id
     }
+
+    const saveComponentsOrder = () => {
+        page.value.saveComponentsOrder(components.value)
+    }
 </script>
 
 <template>
@@ -120,6 +124,7 @@
                         class="space-y-2"
                         :list="components"
                         item-key="id"
+                        @end="saveComponentsOrder()"
                     >
                         <template #item="{ element }">
                             <div @click="selectComponent(element)" 
@@ -131,13 +136,13 @@
                                     {{ element.getLabel() }}
                                 </div>
 
-                                <button>
+                                <button tabindex="-1">
                                     <Bars3Icon class="w-6 h-6 text-white" />
                                 </button>
-                                <button>
+                                <button tabindex="-1">
                                     <DocumentDuplicateIcon class="w-6 h-6 text-white" />
                                 </button>
-                                <button @click="deleteComponent(element)">
+                                <button tabindex="-1" @click="deleteComponent(element)">
                                     <TrashIcon class="w-6 h-6 text-white" />
                                 </button>
                             </div>
