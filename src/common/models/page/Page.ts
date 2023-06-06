@@ -37,7 +37,7 @@ export default class Page extends RelaDB.Model {
         const page = new Page()
 
         page.name = data.name
-        page.section = 'root'
+        page.section = 'site'
         page.namespace = `App\\Http\\Livewire\\Pages\\${pascalCase(page.name)}`
         page.components = []
 

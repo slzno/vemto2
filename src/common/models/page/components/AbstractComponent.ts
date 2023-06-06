@@ -1,4 +1,6 @@
 import Component from "./interfaces/Component"
+import Alert from "@Renderer/components/utils/Alert"
+import TemplateEngine from "@tiago_silva_pereira/vemto-template-engine"
 
 export default abstract class AbstractComponent implements Component {
     id: string
@@ -31,4 +33,33 @@ export default abstract class AbstractComponent implements Component {
     abstract getSettings(): any
     abstract getPreviewCode(): string
     abstract getRenderCode(): string
+
+    render() {
+        const templateEngine = new TemplateEngine(this.getRenderCode(), {
+            logger: null,
+            onBrowser: true,
+            disableImportsProcessing: true,
+        })
+
+        try {
+            return templateEngine
+                .setData(this)    
+                .compileWithErrorTreatment()
+        } catch (error: any) {
+            const latestError = templateEngine.getLatestError()
+
+            console.error(error)
+            
+            if(latestError) {
+                Alert.error('Error on template line ' + latestError.templateLine)
+                console.error('Error on template line ' + latestError.templateLine)
+                console.log('Data: ', this)
+                
+                error.hasTemplateError = true
+                error.templateLine = latestError.templateLine
+            }
+
+            throw error
+        }
+    }
 }

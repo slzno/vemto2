@@ -1,0 +1,5 @@
+<div>
+    <% for (let component of this.page.getComponents()) { %>
+    <$ component.render() $>
+    <% } %>
+</div>

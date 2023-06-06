@@ -17,7 +17,7 @@ export default class ParagraphComponent extends AbstractComponent implements Com
     }
 
     getRenderCode(): string {
-        return `<p><$ this.content $></p>`
+        return `<p><$ this.settings.content $></p>`
     }
 
     getSettings(): any {

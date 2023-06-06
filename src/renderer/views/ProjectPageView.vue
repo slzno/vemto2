@@ -129,7 +129,7 @@
                         <template #item="{ element }">
                             <div @click="selectComponent(element)" 
                             :class="{'border-red-500': isSelected(element), 'bg-red-700 text-white text-sm w-2/5 p-1 font-mono': element.category === 'logic'}" 
-                            class="relative border border-dotted border-slate-600 rounded-md p-4 hover:border-red-500 cursor-pointer group"
+                            class="relative border border-dotted border-slate-600 rounded-md p-4 hover:border-red-500 cursor-move group"
                         >
                             <div class="absolute top-0 right-0 bg-red-500 p-1.5 px-2 flex justify-between space-x-2 rounded-tr rounded-bl opacity-0 group-hover:opacity-100">
                                 <div class="py-0.5 px-1 text-sm rounded bg-red-600">

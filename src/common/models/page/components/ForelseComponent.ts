@@ -31,7 +31,19 @@ export default class ForelseComponent extends AbstractComponent implements Compo
     }
 
     getRenderCode(): string {
-        return `<p><$ this.content $></p>`
+        if(this.subType === 'forelse') {
+            return `@forelse(<$ this.settings.content $>)` 
+        }
+
+        if(this.subType === 'empty') {
+            return `@empty`
+        }
+
+        if(this.subType === 'endforelse') {
+            return `@endforelse`
+        }
+
+        return ``
     }
 
     getSettings(): any {

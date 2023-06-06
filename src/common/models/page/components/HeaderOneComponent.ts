@@ -17,7 +17,7 @@ export default class HeaderOneComponent extends AbstractComponent implements Com
     }
 
     getRenderCode(): string {
-        return `<h1><$ this.content $></h1>`
+        return `<h1><$ this.settings.content $></h1>`
     }
 
     getSettings(): any {
