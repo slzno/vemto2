@@ -54,14 +54,11 @@ import WordManipulator from '@Renderer/../common/util/WordManipulator'
     const saveRelationshipProperty = (index: Index, selectValue: Array<Object>, modelPropertyName: string, modelPropertyRelationship: string): void => {
         const columnNames = selectValue.map((item: any) => item.value),
             uniqueColumnNames = uniq(columnNames.concat(index[modelPropertyName]))
-
-        console.log(uniqueColumnNames)
+            
         uniqueColumnNames.forEach((columnName: string) => {
             const column = index.table.getColumnByName(columnName)
 
             if(!column) return
-
-            console.log(column.name)
 
             if(columnNames.includes(columnName)) {
                 index.relation(modelPropertyRelationship).attachUnique(column)
