@@ -2,6 +2,7 @@ import * as changeCase from "change-case"
 import Main from "@Renderer/services/wrappers/Main"
 import Alert from "@Renderer/components/utils/Alert"
 import TemplateEngine from "@tiago_silva_pereira/vemto-template-engine"
+import TextUtil from "@Renderer/../common/util/TextUtil"
 
 export default new class TemplateCompiler {
 
@@ -93,6 +94,8 @@ export default new class TemplateCompiler {
                 console.error('Error on template line ' + latestError.templateLine)
                 console.log('Data: ', this.data)
                 
+                console.log('Template Lines: ', TextUtil.getSurroundingLinesFromContent(this.templateEngine.getTemplate(), latestError.templateLine, 6))
+
                 error.hasTemplateError = true
                 error.templateLine = latestError.templateLine
             }

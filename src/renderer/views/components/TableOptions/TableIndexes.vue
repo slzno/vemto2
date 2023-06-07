@@ -10,7 +10,7 @@
     import { PlusCircleIcon, EllipsisVerticalIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import Main from "@Renderer/services/wrappers/Main"
     import { uniq } from 'lodash'
-import WordManipulator from '@Renderer/../common/util/WordManipulator'
+    import WordManipulator from '@Renderer/../common/util/WordManipulator'
 
     const props = defineProps(['table']),
         table = toRef(props, 'table'),

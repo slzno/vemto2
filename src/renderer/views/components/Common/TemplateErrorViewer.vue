@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { defineProps, onMounted, ref } from "vue"
     import Main from "@Renderer/services/wrappers/Main"
-import TextUtil from "@Renderer/../common/util/TextUtil"
+    import TextUtil from "@Renderer/../common/util/TextUtil"
     
     const templateContent = ref(""),
         templateLines = ref([]),

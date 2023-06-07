@@ -37,7 +37,6 @@ export default class Index extends RelaDB.Model implements SchemaModel {
             table: () => this.belongsTo(Table),
             onTable: () => this.belongsTo(Table, 'onTableId'),
             referencesColumn: () => this.belongsTo(Column, 'referencesColumnId'),
-
             indexColumns: () => this.belongsToMany(Column, IndexColumn).cascadeDetach()
         }
     }
