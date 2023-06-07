@@ -10,7 +10,6 @@
     import { PlusCircleIcon, EllipsisVerticalIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import Main from "@Renderer/services/wrappers/Main"
     import { uniq } from 'lodash'
-import WordManipulator from '@Renderer/../common/util/WordManipulator'
 
     const props = defineProps(['table']),
         table = toRef(props, 'table'),
@@ -71,15 +70,7 @@ import WordManipulator from '@Renderer/../common/util/WordManipulator'
 
         index[modelPropertyName] = uniqueColumnNames.filter((columnName: string) => !! columnName)
     
-        saveIndex(index)
-        generateIndexName(index)
-    }
-
-    const generateIndexName = (index: Index) => {
-        const sortedColumns = index.indexColumns.sort((colOne: Column, colTwo: Column) => colOne.order - colTwo.order),
-            columnsNames = sortedColumns.map((column: Column) => column.name).join('_')
-
-        index.name = `${index.table.name}_${columnsNames}_${WordManipulator.snakeCase(index.type)}`.replace(/_{2,}/g, '_')
+        index.name = index.calculateDefaultName()
         saveIndex(index)
     }
 
