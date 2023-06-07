@@ -7,9 +7,14 @@
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
 
     const showingModal = ref(false),
-        pageName = ref('')
+        pageName = ref(''),
+        pageRoute = ref('')
 
     const projectStore = useProjectStore()
+
+    watch(pageName, () => {
+        pageRoute.value = Page.calculateDefaultRoutePath(pageName.value)
+    })
 
     const show = () => {
         showingModal.value = true
@@ -22,6 +27,7 @@
     const save = () => {
         Page.createFromData({
             name: pageName.value,
+            route: pageRoute.value,
         })
 
         close()
@@ -39,6 +45,8 @@
             width="calc(100vw - 100px)"
         >
             <UiText v-model="pageName" label="Page Name" />
+
+            <UiText v-model="pageRoute" label="Page Route" />
 
             <template #footer>
                 <div class="flex justify-end p-2">

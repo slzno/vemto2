@@ -45,7 +45,7 @@ export default class Page extends RelaDB.Model {
 
         page.save()
 
-        page.addRoutes()
+        page.addRoute(data.route)
     }
 
     getLabel(): string {
@@ -56,17 +56,23 @@ export default class Page extends RelaDB.Model {
         return 'Page'
     }
 
-    addRoutes() {
+    addRoute(defaultRoutePath: string) {
+        const path = defaultRoutePath || Page.calculateDefaultRoutePath(this.name)
+
         Route.create({
             name: `${paramCase(this.name)}.index`,
             tag: "index",
             method: "get",
             type: RouteType.ROUTE,
-            path: `/pages/${paramCase(this.name)}`,
+            path: path,
             routableId: this.id,
             routableType: "Page",
             projectId: this.projectId,
         })
+    }
+
+    static calculateDefaultRoutePath(name: string): string {
+        return `/pages/${paramCase(name)}`
     }
 
     getRouteContent(route: Route): string {
