@@ -114,6 +114,7 @@
             <section class="flex w-full h-screen space-x-4 mt-2 px-2" v-if="selectedTab === 'page'">
                 <div class="space-y-2">
                     <small>Basic</small>
+                    <UiButton class="w-full" @click="addComponent('Custom')">Custom</UiButton>
                     <UiButton class="w-full">Section</UiButton>
                     <UiButton class="w-full" @click="addComponent('HeaderOne')">H1</UiButton>
                     <UiButton class="w-full">H2</UiButton>

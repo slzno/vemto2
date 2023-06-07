@@ -8,6 +8,7 @@ import Component from "./components/interfaces/Component"
 import ParagraphComponent from "./components/ParagraphComponent"
 import SmallComponent from "./components/SmallComponent"
 import ForelseComponent from "./components/ForelseComponent"
+import CustomComponent from "./components/CustomComponent"
 
 
 export default class Page extends RelaDB.Model {
@@ -121,15 +122,6 @@ export default class Page extends RelaDB.Model {
         return new componentHandler(component)
     }
 
-    getComponentHandlerMap(): any {
-        return {
-            'HeaderOne': HeaderOneComponent,
-            'Paragraph': ParagraphComponent,
-            'Small': SmallComponent,
-            'Forelse': ForelseComponent,
-        }
-    }
-
     saveComponentsOrder(components: any[]) {
         this.components = components
 
@@ -181,5 +173,15 @@ export default class Page extends RelaDB.Model {
                 return content.includes(collectionVarName)
             })
         })
+    }
+
+    getComponentHandlerMap(): any {
+        return {
+            'HeaderOne': HeaderOneComponent,
+            'Paragraph': ParagraphComponent,
+            'Small': SmallComponent,
+            'Forelse': ForelseComponent,
+            'Custom': CustomComponent,
+        }
     }
 }
