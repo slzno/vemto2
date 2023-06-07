@@ -20,7 +20,7 @@
                 <UiDropdownSelect
                     v-model="relationship.pivotId"
                     :options="getForSelect(projectStore.project.tables)"
-                    placeholder="Pivot Table"
+                    placeholder="Pivot Table (Optional)"
                     @input="$emit('save')"
                 />
             </div>
