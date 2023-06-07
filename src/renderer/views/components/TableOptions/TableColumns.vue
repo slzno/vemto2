@@ -15,7 +15,7 @@
             tableId: table.value.id
         }).saveFromInterface()
 
-        columns.value.push(newColumn)
+        columns.value = table.value.getOrderedColumns()
 
         nextTick(() => {
             const newColumnInput = document.getElementById(`table-column-${newColumn.id}`)

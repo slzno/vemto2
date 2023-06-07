@@ -52,10 +52,22 @@ export default class Column extends RelaDB.Model implements SchemaModel {
     static created(column: Column) {
         let nextOrder = 0
         
-        const tableColumns = column.table.getOrderedColumns()
+        const tableColumns = column.table.getOrderedColumns(),
+            firstTableDateColumn = tableColumns.find(column => column.isDeletedAt() || column.isCreatedAt())
 
         if(tableColumns.length > 0) {
             nextOrder = tableColumns[tableColumns.length - 1].order + 1
+        }
+
+        if(firstTableDateColumn) {
+            nextOrder = firstTableDateColumn.order
+
+            tableColumns.forEach(orderedColumn => {
+                if(orderedColumn.order < nextOrder || column.id == orderedColumn.id) return
+
+                orderedColumn.order++
+                orderedColumn.save()
+            })
         }
 
         column.faker = column.getDefaultFaker()
@@ -142,6 +154,10 @@ export default class Column extends RelaDB.Model implements SchemaModel {
 
     isCreatedAt(): boolean {
         return this.name === 'created_at'
+    }
+
+    isDeletedAt(): boolean {
+        return this.name === 'deleted_at'
     }
 
     isUpdatedAt(): boolean {
