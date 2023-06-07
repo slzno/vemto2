@@ -28,7 +28,7 @@ export default new class CreateDefaultTableColumns {
 
         new Column({
             tableId: this.table.id,
-            name: 'update_at',
+            name: 'updated_at',
             type: 'timestamp',
             nullable: true
         }).saveFromInterface()

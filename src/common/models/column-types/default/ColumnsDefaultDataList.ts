@@ -683,31 +683,37 @@ export default class ColumnsDefaultDataList {
             verified_at: {
                 type: "timestamp",
                 faker: "fake()->dateTime()",
+                nullable: true
             },
 
             reported_at: {
                 type: "timestamp",
                 faker: "fake()->dateTime()",
+                nullable: true
             },
 
             delivered_at: {
                 type: "timestamp",
                 faker: "fake()->dateTime()",
+                nullable: true
             },
 
             created_at: {
                 type: "timestamp",
                 faker: "fake()->dateTime()",
+                nullable: true
             },
 
             updated_at: {
                 type: "timestamp",
                 faker: "fake()->dateTime()",
+                nullable: true
             },
 
             deleted_at: {
                 type: "timestamp",
                 faker: "fake()->dateTime()",
+                nullable: true
             },
 
             weekday: {
