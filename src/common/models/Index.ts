@@ -5,6 +5,7 @@ import RelaDB from "@tiago_silva_pereira/reladb"
 import DataComparator from "./services/DataComparator"
 import DataComparisonLogger from "./services/DataComparisonLogger"
 import FillIndexColumns from "./services/indexes/Fillers/FillIndexColumns"
+import WordManipulator from "@Common/util/WordManipulator"
 
 export default class Index extends RelaDB.Model implements SchemaModel {
     id: string
@@ -129,6 +130,14 @@ export default class Index extends RelaDB.Model implements SchemaModel {
         if (!this.schemaState) return false
 
         return this.hasDataChanges(this)
+    }
+
+    calculateDefaultName(): string {
+        const sortedColumns = this.indexColumns.sort((colOne: Column, colTwo: Column) => colOne.order - colTwo.order),
+            columnsNames = sortedColumns.map((column: Column) => column.name).join('_'),
+            type = WordManipulator.snakeCase(this.type)
+
+        return `${this.table.name}_${columnsNames}_${type}`.replace(/_{2,}/g, '_')
     }
 
     hasSchemaChanges(comparisonData: any): boolean {
