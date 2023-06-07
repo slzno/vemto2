@@ -24,6 +24,7 @@ export default class Project extends RelaDB.Model {
     schemaModelsDataHash: string
     changedTablesIds: string[]
     renderableFiles: RenderableFile[]
+    currentRenderedFilesPaths: string[]
 
     lastForeignAlias: number = 0;
 
@@ -206,6 +207,10 @@ export default class Project extends RelaDB.Model {
     ) : RenderableFile {
         let renderableFile: RenderableFile = null
 
+        const fullPath = `${path}/${name}`
+
+        this.registerCurrentRenderedFilePath(fullPath)
+
         renderableFile = this.renderableFiles.find(
             (renderableFile) =>
                 renderableFile.path === path &&
@@ -217,6 +222,7 @@ export default class Project extends RelaDB.Model {
             renderableFile = new RenderableFile()
             renderableFile.path = path
             renderableFile.name = name
+            renderableFile.fullPath = fullPath
             renderableFile.template = template
             renderableFile.projectId = this.id
             renderableFile.type = type
@@ -233,5 +239,45 @@ export default class Project extends RelaDB.Model {
         return this.renderableFiles.some(
             (renderableFile) => renderableFile.status === RenderableFileStatus.CONFLICT
         )
+    }
+
+    clearCurrentRenderedFilesPaths() {
+        this.currentRenderedFilesPaths = []
+        this.save()
+    }
+
+    registerCurrentRenderedFilePath(path: string) {
+        if (!this.currentRenderedFilesPaths) this.currentRenderedFilesPaths = []
+
+        this.currentRenderedFilesPaths.push(path)
+        this.save()
+    }
+
+    getCurrentRenderedFilesPaths(): string[] {
+        return this.currentRenderedFilesPaths
+    }
+
+    processRemovableFiles() {
+        const removableFiles = this.getRemovableFiles()
+
+        removableFiles.forEach((path) => {
+            path.markToRemove()
+        })
+    }
+
+    getRemovableFiles(): RenderableFile[] {
+        let removableFiles: RenderableFile[] = []
+
+        const latestRenderedFiles = this.renderableFiles.filter(file => file.isRemovable())
+
+        if (!latestRenderedFiles) return removableFiles
+
+        latestRenderedFiles.forEach((file) => {
+            if (!this.currentRenderedFilesPaths.includes(file.fullPath)) {
+                removableFiles.push(file)
+            }
+        })
+
+        return removableFiles
     }
 }

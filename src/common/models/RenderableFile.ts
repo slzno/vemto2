@@ -27,12 +27,16 @@ export enum RenderableFileStatus {
     RENDERED = 'rendered',
     ERROR = 'error',
     CONFLICT = 'conflict',
+    ASK_TO_REMOVE = 'to-be-removed',
+    CAN_REMOVE = 'can-remove',
+    REMOVED = 'removed',
 }
 
 export default class RenderableFile extends RelaDB.Model {
     id: string
     path: string
     name: string
+    fullPath: string
     template: string
     status: RenderableFileStatus
     project: Project
@@ -44,11 +48,20 @@ export default class RenderableFile extends RelaDB.Model {
     formatter: string
     conflictFileName: string
     content: string
+    notRemovable: boolean
 
     relationships() {
         return {
             project: () => this.belongsTo(Project),
         }
+    }
+
+    isRemovable(): boolean {
+        return !this.notRemovable
+    }
+
+    canBeRemoved(): boolean {
+        return this.status === RenderableFileStatus.CAN_REMOVE
     }
 
     setContent(content: string) {
@@ -73,5 +86,33 @@ export default class RenderableFile extends RelaDB.Model {
 
     getRelativeFilePath(): string {
         return this.path + '/' + this.name
+    }
+
+    setAsNotRemovable() {
+        this.notRemovable = true
+
+        this.save()
+    }
+
+    setAsRemovable() {
+        this.notRemovable = false
+
+        this.save()
+    }
+
+    askToRemove() {
+        this.status = RenderableFileStatus.ASK_TO_REMOVE
+
+        this.save()
+    }
+
+    markToRemove() {
+        this.status = RenderableFileStatus.CAN_REMOVE
+
+        this.save()
+    }
+
+    wasRemoved() {
+        return this.status === RenderableFileStatus.REMOVED
     }
 }

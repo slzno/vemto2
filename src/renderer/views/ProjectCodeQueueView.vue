@@ -8,14 +8,21 @@
     import { ArrowPathIcon, TrashIcon } from '@heroicons/vue/24/outline'
     import SequentialGenerator from '@Renderer/codegen/sequential/SequentialGenerator'
 import TemplateErrorViewer from './components/Common/TemplateErrorViewer.vue'
+import { sentenceCase } from 'change-case'
+import Alert from '@Renderer/components/utils/Alert'
 
     const projectStore = useProjectStore()
 
     const runSequentialGenerator = async () => {
-        await (new SequentialGenerator()).run()
+        await (new SequentialGenerator()).run(projectStore.project)
     }
 
     const openFile = (file: RenderableFile): void => {
+        if(file.wasRemoved()) {
+            Alert.warning('This file was removed from the project')
+            return
+        }
+
         Main.API.openProjectFile(file.getRelativeFilePath())
     }
 </script>
@@ -57,12 +64,15 @@ import TemplateErrorViewer from './components/Common/TemplateErrorViewer.vue'
                                     'bg-yellow-500': file.status === RenderableFileStatus.PENDING,
                                     'bg-red-500': file.status === RenderableFileStatus.ERROR,
                                     'bg-orange-500': file.status === RenderableFileStatus.CONFLICT,
+                                    'bg-red-700': file.status === RenderableFileStatus.ASK_TO_REMOVE,
+                                    'bg-red-800': file.status === RenderableFileStatus.CAN_REMOVE,
+                                    'bg-gray-500': file.status === RenderableFileStatus.REMOVED,
                                 }"></div>
-                                <div>{{ TextUtil.capitalize(file.status) }}</div>
+                                <div>{{ sentenceCase(file.status) }}</div>
                             </div>
                         </div>
                     </div>
-                    <div class="italic hover:text-red-500 dark:hover:text-red-400">{{ file.getRelativeFilePath() }}</div>
+                    <div :class="{'line-through': file.status === RenderableFileStatus.REMOVED}" class="italic hover:text-red-500 dark:hover:text-red-400">{{ file.getRelativeFilePath() }}</div>
                 </div>
                 <div class="flex items-center space-x-2">
                     <SolveConflicts v-if="file.status === RenderableFileStatus.CONFLICT" :file="file" />

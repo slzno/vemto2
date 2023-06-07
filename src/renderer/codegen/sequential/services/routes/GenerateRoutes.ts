@@ -1,6 +1,8 @@
-import Main from "@Renderer/services/wrappers/Main"
 import Routes from "./Routes"
 import Route from "@Common/models/Route"
+import Project from "@Common/models/Project"
+import Main from "@Renderer/services/wrappers/Main"
+import { RenderableFileType } from "@Common/models/RenderableFile"
 
 export default class GenerateRoutes {
     async start() {
@@ -31,5 +33,17 @@ export default class GenerateRoutes {
         providerContent = providerContent.replace(routesFunctionRegex, routesFunctionContentWithNewRoutes)
 
         await Main.API.writeProjectFile('app/Providers/RouteServiceProvider.php', providerContent)
+
+        const project = Project.find(1)
+        const file = project.registerRenderableFile(
+            'app/Providers', 
+            'RouteServiceProvider.php',
+            'NoTemplate', 
+            RenderableFileType.PHP,
+        )
+
+        file.setContent(providerContent)
+        file.setAsNotRemovable()
+        file.save()
     }
 }

@@ -168,8 +168,6 @@ export default class Page extends RelaDB.Model {
             return allComponentsContentSettings.some((content: string) => {
                 const collectionVarName = `$${camelCase(model.plural)}`
 
-                console.log(collectionVarName)
-
                 return content.includes(collectionVarName)
             })
         })

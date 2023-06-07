@@ -20,7 +20,24 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
         if(project === null) return
 
         generateFiles()
+        removeFiles()
     }, 1000)
+
+    const removeFiles = async () => {
+        if (project.renderableFiles.length === 0) return
+
+        const removableFiles = project.renderableFiles.filter(file => file.canBeRemoved())
+
+        if (removableFiles.length === 0) return
+
+        removableFiles.forEach(file => {
+            const filePath = path.join(project.getPath(), file.getRelativeFilePath())
+
+            FileSystem.deleteFile(filePath)
+
+            setFileStatus(file, RenderableFileStatus.REMOVED)
+        })
+    }
 
     const generateFiles = async () => {
         if (project.renderableFiles.length === 0) return

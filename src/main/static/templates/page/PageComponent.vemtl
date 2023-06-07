@@ -51,7 +51,7 @@ class <$ this.filenameWithoutExtension $> extends Component
     {
         return view('<$ viewName $>', [
             <% for (let model of injectableModels) { %>
-            '<$ camelCase(model.name) $>' => $<$ camelCase(model.name) $>,
+            '<$ camelCase(model.name) $>' => $this-><$ camelCase(model.name) $>,
             <% } %>
             <% for (let model of modelCollections) { %>
             '<$ camelCase(model.plural) $>' => $this-><$ camelCase(model.plural) $>,
