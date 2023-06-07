@@ -52,28 +52,39 @@ export default class Column extends RelaDB.Model implements SchemaModel {
     static created(column: Column) {
         let nextOrder = 0
         
-        const tableColumns = column.table.getOrderedColumns(),
-            firstTableDateColumn = tableColumns.find(column => column.isDeletedAt() || column.isCreatedAt())
+        const tableColumns = column.table.getOrderedColumns()
 
         if(tableColumns.length > 0) {
             nextOrder = tableColumns[tableColumns.length - 1].order + 1
-        }
-
-        if(firstTableDateColumn) {
-            nextOrder = firstTableDateColumn.order
-
-            tableColumns.forEach(orderedColumn => {
-                if(orderedColumn.order < nextOrder || column.id == orderedColumn.id) return
-
-                orderedColumn.order++
-                orderedColumn.save()
-            })
         }
 
         column.faker = column.getDefaultFaker()
 
         column.order = nextOrder
         column.saveFromInterface()
+    }
+
+    reorderFromInterface(): void {
+        let nextOrder = 0
+        
+        const tableColumns = this.table.getOrderedColumns(),
+            firstTableDateColumn = tableColumns.find(orderedColumn => orderedColumn.isDeletedAt() || orderedColumn.isCreatedAt() || orderedColumn.isUpdatedAt())
+
+        if(firstTableDateColumn) {
+            nextOrder = firstTableDateColumn.order
+
+            tableColumns.forEach(orderedColumn => {
+                if(orderedColumn.order < nextOrder || this.id == orderedColumn.id) return
+
+                orderedColumn.order++
+                orderedColumn.save()
+            })
+        } else {
+            nextOrder = tableColumns[tableColumns.length - 1].order + 1
+        }
+
+        this.order = nextOrder
+        this.saveFromInterface()
     }
 
     saveFromInterface() {
@@ -123,13 +134,13 @@ export default class Column extends RelaDB.Model implements SchemaModel {
     isForeign(): boolean {
         const foreignIndexes = this.table.getForeignIndexes()
         
-        return foreignIndexes.some(index => index.columns.includes(this.name))
+        return foreignIndexes.some(index => index.indexColumns.map((column: Column) => column.id).includes(this.id))
     }
 
     isUniqueFromIndex(): boolean {
         const uniqueIndexes = this.table.getUniqueIndexes()
 
-        return uniqueIndexes.some(index => index.columns.includes(this.name))
+        return uniqueIndexes.some(index => index.indexColumns.map((column: Column) => column.id).includes(this.id))
     }
 
     isUnique(): boolean {
