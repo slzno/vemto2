@@ -11,6 +11,9 @@ import Crud from "./models/crud/Crud"
 import CrudPanel from "./models/crud/CrudPanel"
 import Input from "./models/crud/Input"
 import Page from "./models/page/Page"
+import FillableModelColumn from "./models/FillableModelColumn"
+import GuardedModelColumn from "./models/GuardedModelColumn"
+import IndexColumn from "./models/IndexColumn"
 
 export default new class ModelRegistry {
     registerModels() {
@@ -27,6 +30,9 @@ export default new class ModelRegistry {
             RelaDB.Resolver.db().registerModel(CrudPanel, "CrudPanel")
             RelaDB.Resolver.db().registerModel(Input, "Input")
             RelaDB.Resolver.db().registerModel(Page, "Page")
+            RelaDB.Resolver.db().registerModel(FillableModelColumn, "FillableModelColumn", "fillable_model_column")
+            RelaDB.Resolver.db().registerModel(GuardedModelColumn, "GuardedModelColumn", "guarded_model_column")
+            RelaDB.Resolver.db().registerModel(IndexColumn, "IndexColumn", "index_column")
         })
     }
 }

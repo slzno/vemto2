@@ -70,6 +70,7 @@ class TablesFromMigrationsBuilder {
         TablesFromMigrationsBuilder.processing = true
 
         this.readTables()
+        this.readTableIndexes()
 
         this.reset()
 
@@ -104,7 +105,6 @@ class TablesFromMigrationsBuilder {
             table.applyChanges(tableData)
 
             this.readColumns(tableData, table)
-            this.readIndexes(tableData, table)
         })
     }
 
@@ -142,6 +142,17 @@ class TablesFromMigrationsBuilder {
             if(columnIsIndex) columnData.index = true
 
             column.applyChanges(columnData)
+        })
+    }
+
+    readTableIndexes() {
+        const tablesKeyedByName = this.project.getAllTablesKeyedByName()
+
+        Object.keys(this.schemaTablesData).forEach((tableName) => {
+            let tableData = this.schemaTablesData[tableName],
+                table: Table = tablesKeyedByName[tableName]
+
+            this.readIndexes(tableData, table)
         })
     }
 

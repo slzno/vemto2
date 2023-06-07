@@ -1,6 +1,7 @@
 <script setup lang="ts">
     import { toRef, ref } from "vue"
     import Table from "@Common/models/Table"
+    import TableIndexes from "./TableIndexes.vue"
     import TableSettings from "./TableSettings.vue"
     import { XMarkIcon } from "@heroicons/vue/24/outline"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
@@ -70,9 +71,7 @@
                         </div>
         
                         <div class="p-4 space-y-2" v-if="selectedTab === 'indexes'">
-                            <div class="text-red-400">Not implemented yet</div>
-
-                            <pre>{{ table.indexes }}</pre>
+                            <TableIndexes :table="table" />
                         </div>
         
                         <div class="p-4 space-y-2" v-if="selectedTab === 'settings'">
