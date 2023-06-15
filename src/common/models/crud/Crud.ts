@@ -185,6 +185,8 @@ export default class Crud extends RelaDB.Model {
         if(this.type === CrudType.LIVEWIRE) {
             return this.getLivewireRouteContent(route)
         }
+
+        return ''
     }
 
     getLivewireRouteContent(route: Route): string {

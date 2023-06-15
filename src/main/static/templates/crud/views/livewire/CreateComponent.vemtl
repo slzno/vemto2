@@ -28,20 +28,26 @@ class <$ this.filenameWithoutExtension $> extends Component
 
     public function mount()
     {
+        // hook:BEFORE_MOUNT
         $this-><$ itemVarName $> = new <$ modelName $>();
+        // hook:AFTER_MOUNT
     }
 
     public function save()
     {
+        // hook:BEFORE_SAVE
         $this->validate();
+        // hook:AFTER_VALIDATE
 
         $this-><$ itemVarName $>->save();
+        // hook:AFTER_SAVE
 
         return redirect()->route('<$ collectionVarName $>.edit', $this-><$ itemVarName $>);
     }
 
     public function render()
     {
+        // hook:BEFORE_RENDER
         return view('livewire.<$ viewsFolderName $>.create', [
             '<$ itemVarName $>' => $this-><$ itemVarName $>,
         ]);

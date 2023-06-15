@@ -9,6 +9,7 @@
     import UiTabs from '@Renderer/components/ui/UiTabs.vue'
     import UiSelect from '@Renderer/components/ui/UiSelect.vue'
     import UiText from '@Renderer/components/ui/UiText.vue'
+    import CrudLogic from './components/ProjectCrud/CrudLogic.vue'
 
     // const projectStore = useProjectStore()
 
@@ -47,7 +48,7 @@
 
             <section class="flex w-full h-screen space-x-4 mt-2 px-2" v-if="selectedTab === 'form'">
                 <div class="space-y-2">
-                    <UiButton class="w-full">Add Text Input</UiButton>
+                    <UiButton class="w-full">Text Input</UiButton>
                 </div>
 
                 <div class="flex-grow bg-slate-950 p-2 rounded-lg">
@@ -88,6 +89,10 @@
                         </tr>
                     </table>
                 </div>
+            </section>
+
+            <section v-if="selectedTab === 'logic'">
+                <CrudLogic :crud="crud" />
             </section>
 
             <section class="flex flex-col w-full h-screen space-y-4 mt-2 px-2 pb-40 overflow-scroll" v-if="selectedTab === 'settings'">
