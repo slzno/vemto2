@@ -31,8 +31,6 @@
     onMounted(async () => {
         await HandleProjectDatabase.populate(() => {
             crud.value = Crud.find(crudId)
-
-            console.log(crud.value.panels)
         })
     })
 </script>
