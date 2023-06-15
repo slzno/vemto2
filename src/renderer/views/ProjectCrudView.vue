@@ -24,7 +24,7 @@
         { label: "Form", value: "form" },
         { label: "Data Table", value: "datatable" },
         { label: "Validation", value: "validation" },
-        { label: "Logic", value: "logic" },
+        { label: "Code", value: "logic" },
         { label: "Settings", value: "settings" },
     ]
 
