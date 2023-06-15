@@ -59,6 +59,10 @@
         "vue-tsc": "^0.40.13"
     },
     "dependencies": {
+        "@codemirror/commands": "^6.2.4",
+        "@codemirror/lang-php": "^6.0.1",
+        "@codemirror/state": "^6.2.1",
+        "@codemirror/view": "^6.13.2",
         "@headlessui/vue": "^1.7.9",
         "@heroicons/vue": "^2.0.11",
         "@highlightjs/vue-plugin": "^2.1.0",
@@ -68,6 +72,8 @@
         "@vueform/multiselect": "^2.6.1",
         "change-case": "^4.1.2",
         "click-outside-vue3": "^4.0.1",
+        "codemirror": "^6.0.1",
+        "codemirror-readonly-ranges": "^0.1.0-alpha.1",
         "crypto-js": "^4.1.1",
         "diff": "^5.1.0",
         "diff2html": "^3.4.33",
@@ -78,6 +84,7 @@
         "pinia": "^2.0.22",
         "pluralize": "^8.0.0",
         "prettier": "^2.7.1",
+        "range-analyzer": "^0.1.1-alpha.2",
         "shelljs": "^0.8.5",
         "uuid": "^9.0.0",
         "validatorjs": "^3.22.1",
