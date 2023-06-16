@@ -40,7 +40,7 @@
             crud.value
         ).compile()
 
-        initialHookLines = getHookLines(createComponentContent)
+        initialHookLines = getHookLinesNumbers(createComponentContent)
 
         self.MonacoEnvironment = {
             createTrustedTypesPolicy(policyName, policyOptions) { return undefined },
@@ -55,22 +55,35 @@
         }
 
         editor = monaco.editor.create(document.getElementById('createComponentEditor'), {
-            value: "function hello() {\ncontent\n}",
-            language: 'javascript',
+            value: createComponentContent,
+            language: 'php',
             minimap: {
                 enabled: false
             },
+            theme: 'vs-dark',
         })
 
         const model = editor.getModel()
 
-        const constrainedInstance = constrainedEditor(monaco);
-        constrainedInstance.initializeIn(editor);
-        constrainedInstance.addRestrictionsTo(model, [{
-            range: [2, 1, 2, 8], // Range of Util Variable name
-            label: 'functionBody',
-            allowMultiline: true,
-        }]);
+        const constrainedInstance = constrainedEditor(monaco)
+        constrainedInstance.initializeIn(editor)
+
+        let ranges = []
+        const hookRanges = getHookRanges(createComponentContent)
+
+        hookRanges.forEach((range, index) => {
+            ranges.push({
+                range: range,
+                label: 'hook' + index,
+                allowMultiline: true,
+            })
+        })
+
+        constrainedInstance.addRestrictionsTo(model, ranges)
+        
+        model.toggleHighlightOfEditableAreas()
+
+        console.log(model.getValueInEditableRanges())
     })
 
     const replaceHookLinesWithNoContent = (content: string) => {
@@ -87,8 +100,8 @@
         return lines.join("\n")
     }
 
-    const getNonHookLines = (content: string) => {
-        const hookLines = getHookLines(content),
+    const getNonHookLinesNumbers = (content: string) => {
+        const hookLines = getHookLinesNumbers(content),
             lines = content.split("\n")
 
         let nonHookLines = []
@@ -102,7 +115,7 @@
         return nonHookLines
     }
 
-    const getHookLines = (content: string) => {
+    const getHookLinesNumbers = (content: string) => {
         let lines = content.split("\n"),
             hookLines = []
 
@@ -126,47 +139,18 @@
         return lineNumbers
     }
 
-    // const getReadOnlyRanges = (): Array<{ from: number | undefined; to: number | undefined }> => {
-    //     const hookLines = initialHookLines,
-    //         lastestHookLine = hookLines[hookLines.length - 1],
-    //         lastestLine = targetState.doc.lines
+    const getHookRanges = (content: string) => {
+        let lines = content.split("\n"),
+            hookRanges = []
 
-    //     let ranges = []
+        lines.forEach((line, index) => {
+            if (line.includes("// hook:")) {
+                hookRanges.push([index + 1, 1, index + 1, line.length + 1])
+            }
+        })
 
-    //     hookLines.forEach((line, index) => {
-    //         const previousHookLine = hookLines[index - 1] ?? undefined,
-    //             previousLine = line === 1 ? undefined : line - 1
-
-    //         if (index === 0) {
-    //             ranges.push({
-    //                 from: 0,
-    //                 to: previousLine
-    //                     ? targetState.doc.line(previousLine).to
-    //                     : undefined,
-    //             })
-    //         } else {
-    //             ranges.push({
-    //                 from: previousHookLine
-    //                     ? targetState.doc.line(previousHookLine).to
-    //                     : undefined,
-    //                 to: previousLine
-    //                     ? targetState.doc.line(previousLine).to
-    //                     : undefined,
-    //             })
-    //         }
-    //     })
-
-    //     if (lastestHookLine < lastestLine) {
-    //         ranges.push({
-    //             from: lastestHookLine
-    //                 ? targetState.doc.line(lastestHookLine).to
-    //                 : undefined,
-    //             to: undefined,
-    //         })
-    //     }
-
-    //     return ranges
-    // }
+        return hookRanges
+    }
 </script>
 
 <template>
@@ -199,3 +183,9 @@
         </div>
     </div>
 </template>
+
+<style>
+.editableArea--multi-line {
+    background-color: #2d3748;
+}
+</style>
