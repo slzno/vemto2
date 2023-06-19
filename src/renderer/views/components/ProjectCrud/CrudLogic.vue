@@ -5,14 +5,7 @@
     import RenderableLivewireIndexComponent from "@Renderer/codegen/sequential/services/crud/views/livewire/RenderableLivewireIndexComponent"
     import RenderableLivewireCreateComponent from "@Renderer/codegen/sequential/services/crud/views/livewire/RenderableLivewireCreateComponent"
     import RenderableLivewireEditComponent from "@Renderer/codegen/sequential/services/crud/views/livewire/RenderableLivewireEditComponent"
-
-    import * as monaco from 'monaco-editor'
-    import { constrainedEditor } from "constrained-editor-plugin"
-    import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
-    import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
-    import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
-    import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
-    import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
+import HookEditor from "@Renderer/components/editors/HookEditor.vue"
 
     const props = defineProps({
         crud: {
@@ -22,13 +15,9 @@
     })
 
     const crud = toRef(props, "crud") as Ref<Crud>,
-        createComponentEditor = ref(null),
-        editComponentContent = ref(""),
         selectedTab = ref("createComponent")
 
-    let initialHookLines = [],
-        createComponentContent = "",
-        editor = null
+    let createComponentContent = ref("")
 
     const tabs = [
         { label: "Create Component", value: "createComponent" },
@@ -36,121 +25,12 @@
     ]
 
     onMounted(async () => {
-        createComponentContent = await new RenderableLivewireCreateComponent(
+        createComponentContent.value = await new RenderableLivewireCreateComponent(
             crud.value
         ).compile()
 
-        initialHookLines = getHookLinesNumbers(createComponentContent)
-
-        self.MonacoEnvironment = {
-            createTrustedTypesPolicy(policyName, policyOptions) { return undefined },
-            getWorker(_, label) {
-                if (label === 'json') return new jsonWorker()
-                if (label === 'css' || label === 'scss' || label === 'less') return new cssWorker()
-                if (label === 'html' || label === 'handlebars' || label === 'razor') return new htmlWorker()
-                if (label === 'typescript' || label === 'javascript') return new tsWorker()
-                
-                return new editorWorker()
-            }
-        }
-
-        editor = monaco.editor.create(document.getElementById('createComponentEditor'), {
-            value: createComponentContent,
-            language: 'php',
-            minimap: {
-                enabled: false
-            },
-            theme: 'vs-dark',
-        })
-
-        const model = editor.getModel()
-
-        const constrainedInstance = constrainedEditor(monaco)
-        constrainedInstance.initializeIn(editor)
-
-        let ranges = []
-        const hookRanges = getHookRanges(createComponentContent)
-
-        hookRanges.forEach((range, index) => {
-            ranges.push({
-                range: range,
-                label: 'hook' + index,
-                allowMultiline: true,
-            })
-        })
-
-        constrainedInstance.addRestrictionsTo(model, ranges)
-        
-        model.toggleHighlightOfEditableAreas()
-
-        console.log(model.getValueInEditableRanges())
+        console.log(createComponentContent)
     })
-
-    const replaceHookLinesWithNoContent = (content: string) => {
-        let lines = content.split("\n")
-
-        lines.forEach((line, index) => {
-            if (line.includes("// hook:")) {
-                // preserve the spaces before the hook comment
-                const spaces = line.match(/^\s+/)
-                lines[index] = spaces ? spaces[0] + "" : ""
-            }
-        })
-
-        return lines.join("\n")
-    }
-
-    const getNonHookLinesNumbers = (content: string) => {
-        const hookLines = getHookLinesNumbers(content),
-            lines = content.split("\n")
-
-        let nonHookLines = []
-
-        lines.forEach((line, index) => {
-            if (!hookLines.includes(index + 1)) {
-                nonHookLines.push(index + 1)
-            }
-        })
-
-        return nonHookLines
-    }
-
-    const getHookLinesNumbers = (content: string) => {
-        let lines = content.split("\n"),
-            hookLines = []
-
-        lines.forEach((line, index) => {
-            if (line.includes("// hook:")) {
-                hookLines.push(index + 1)
-            }
-        })
-
-        return hookLines
-    }
-
-    const getLineNumbers = (content: string) => {
-        let lines = content.split("\n"),
-            lineNumbers = []
-
-        lines.forEach((line, index) => {
-            lineNumbers.push(index + 1)
-        })
-
-        return lineNumbers
-    }
-
-    const getHookRanges = (content: string) => {
-        let lines = content.split("\n"),
-            hookRanges = []
-
-        lines.forEach((line, index) => {
-            if (line.includes("// hook:")) {
-                hookRanges.push([index + 1, 1, index + 1, line.length + 1])
-            }
-        })
-
-        return hookRanges
-    }
 </script>
 
 <template>
@@ -161,13 +41,10 @@
             v-show="selectedTab === 'createComponent'"
             class="flex flex-col w-full h-screen space-y-4 mt-2 px-2"
         >
-            <div
-                class="overflow-y-auto font-mono text-lg"
-                style="height: calc(100% - 150px)"
-                ref="createComponentEditor"
-                id="createComponentEditor"
-            ></div>
-            
+            <HookEditor
+                v-if="createComponentContent"
+                :content="createComponentContent"
+                :hooks="{}" />
         </div>
 
         <div
@@ -175,7 +52,6 @@
             class="flex flex-col w-full h-screen space-y-4 mt-2 px-2"
         >
             <textarea
-                v-model="editComponentContent"
                 class="bg-slate-900"
                 cols="30"
                 rows="30"
