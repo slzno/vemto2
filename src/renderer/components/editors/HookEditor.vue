@@ -1,9 +1,5 @@
 <script setup lang="ts">
-    import Crud from "@Common/models/crud/Crud"
-    import UiTabs from "@Renderer/components/ui/UiTabs.vue"
-    import { ref, defineProps, onMounted, PropType, toRef, Ref } from "vue"
-    import RenderableLivewireCreateComponent from "@Renderer/codegen/sequential/services/crud/views/livewire/RenderableLivewireCreateComponent"
-
+    import { ref, defineProps, onMounted, toRef, Ref, defineEmits } from "vue"
     import * as monaco from 'monaco-editor'
     import { constrainedEditor } from "constrained-editor-plugin"
     import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
@@ -24,16 +20,57 @@
         },
     })
 
+    const emit = defineEmits(["hooksUpdated"])
+
     const editorElement = ref(null),
         content = toRef(props, "content") as Ref<string>,
         hooks = toRef(props, "hooks") as Ref<any>
 
-    let initialHookLines = [],
-        editor = null
+    let editor = null
 
     onMounted(async () => {
-        initialHookLines = getHookLinesNumbers(content.value)
+        editor = createEditor()
 
+        const model = editor.getModel()
+
+        const constrainedInstance = constrainedEditor(monaco)
+        constrainedInstance.initializeIn(editor)
+
+        let ranges = []
+        const hookRanges = getHookRanges(content.value)
+
+        hookRanges.forEach(range => {
+            ranges.push({
+                range: range.range,
+                label: range.name,
+                allowMultiline: true,
+            })
+        })
+
+        constrainedInstance.addRestrictionsTo(model, ranges)
+        
+        model.toggleHighlightOfEditableAreas()
+
+        const starterRanges = {}
+
+        hookRanges.forEach((range, index) => {
+            const savedHook = hooks.value[range.name]
+
+            starterRanges[range.name] = savedHook || range.indentation
+        })
+
+        model.updateValueInEditableRanges(starterRanges)
+
+        model.onDidChangeContentInEditableRange(changedContent => {
+            Object.keys(changedContent).forEach(hookName => {
+                hooks.value[hookName] = changedContent[hookName]
+            })
+
+            emit("hooksUpdated", hooks.value)
+        })
+    })
+
+    const createEditor = () => {
         self.MonacoEnvironment = {
             getWorker(_, label) {
                 if (label === 'json') return new jsonWorker()
@@ -45,9 +82,7 @@
             }
         }
 
-        console.log(content.value)
-
-        editor = monaco.editor.create(editorElement.value, {
+        return monaco.editor.create(editorElement.value, {
             value: content.value,
             language: 'php',
             minimap: {
@@ -55,81 +90,6 @@
             },
             theme: 'vs-dark',
         })
-
-        const model = editor.getModel()
-
-        const constrainedInstance = constrainedEditor(monaco)
-        constrainedInstance.initializeIn(editor)
-
-        let ranges = []
-        const hookRanges = getHookRanges(content.value)
-
-        hookRanges.forEach((range, index) => {
-            ranges.push({
-                range: range,
-                label: 'hook' + index,
-                allowMultiline: true,
-            })
-        })
-
-        constrainedInstance.addRestrictionsTo(model, ranges)
-        
-        model.toggleHighlightOfEditableAreas()
-
-        console.log(model.getValueInEditableRanges())
-    })
-
-    const replaceHookLinesWithNoContent = (content: string) => {
-        let lines = content.split("\n")
-
-        lines.forEach((line, index) => {
-            if (line.includes("// hook:")) {
-                // preserve the spaces before the hook comment
-                const spaces = line.match(/^\s+/)
-                lines[index] = spaces ? spaces[0] + "" : ""
-            }
-        })
-
-        return lines.join("\n")
-    }
-
-    const getNonHookLinesNumbers = (content: string) => {
-        const hookLines = getHookLinesNumbers(content),
-            lines = content.split("\n")
-
-        let nonHookLines = []
-
-        lines.forEach((line, index) => {
-            if (!hookLines.includes(index + 1)) {
-                nonHookLines.push(index + 1)
-            }
-        })
-
-        return nonHookLines
-    }
-
-    const getHookLinesNumbers = (content: string) => {
-        let lines = content.split("\n"),
-            hookLines = []
-
-        lines.forEach((line, index) => {
-            if (line.includes("// hook:")) {
-                hookLines.push(index + 1)
-            }
-        })
-
-        return hookLines
-    }
-
-    const getLineNumbers = (content: string) => {
-        let lines = content.split("\n"),
-            lineNumbers = []
-
-        lines.forEach((line, index) => {
-            lineNumbers.push(index + 1)
-        })
-
-        return lineNumbers
     }
 
     const getHookRanges = (content: string) => {
@@ -138,7 +98,14 @@
 
         lines.forEach((line, index) => {
             if (line.includes("// hook:")) {
-                hookRanges.push([index + 1, 1, index + 1, line.length + 1])
+                const hookName = line.replace("// hook:", "").trim(),
+                    indentations = line.match(/^\s+/)
+
+                hookRanges.push({
+                    name: hookName,
+                    range: [index + 1, 1, index + 1, line.length + 1],
+                    indentation: indentations ? indentations[0] : "",
+                })
             }
         })
 
@@ -148,8 +115,7 @@
 
 <template>
     <div
-        class="overflow-y-auto"
-        style="height: calc(100% - 150px)"
+        class="overflow-y-auto w-full h-full"
         ref="editorElement"
         id="editorElement"
     ></div>

@@ -37,6 +37,7 @@ export default class Crud extends RelaDB.Model {
     defaultSortColumnId: string
     defaultSortDirection: string
     routes: Route[]
+    hooks: any
 
     // Livewire specific
     livewireNamespace: string
@@ -204,5 +205,22 @@ export default class Crud extends RelaDB.Model {
         }
 
         return "fn () => {}"
+    }
+
+    getHooks(type: string): any {
+        return this.hooks ? this.hooks[type] || {} : {}
+    }
+
+    getHookByName(type: string, name: string): any {
+        return this.getHooks(type)[name] || {}
+    }
+
+    saveHooks(type: string, hooks: any) {
+        this.hooks = this.hooks || {}
+        this.hooks[type] = hooks
+
+        console.log(this.hooks)
+
+        this.save()
     }
 }

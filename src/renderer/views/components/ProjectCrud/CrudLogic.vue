@@ -28,8 +28,6 @@ import HookEditor from "@Renderer/components/editors/HookEditor.vue"
         createComponentContent.value = await new RenderableLivewireCreateComponent(
             crud.value
         ).compile()
-
-        console.log(createComponentContent)
     })
 </script>
 
@@ -39,12 +37,15 @@ import HookEditor from "@Renderer/components/editors/HookEditor.vue"
 
         <div
             v-show="selectedTab === 'createComponent'"
-            class="flex flex-col w-full h-screen space-y-4 mt-2 px-2"
+            class="flex flex-col w-full space-y-4 mt-2 px-2"
+            style="height: calc(100vh - 122px)"
         >
             <HookEditor
                 v-if="createComponentContent"
                 :content="createComponentContent"
-                :hooks="{}" />
+                :hooks="crud.getHooks('createComponent')"
+                @hooksUpdated="hooks => crud.saveHooks('createComponent', hooks)"
+            />
         </div>
 
         <div
