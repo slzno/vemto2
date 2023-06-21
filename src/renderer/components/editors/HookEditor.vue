@@ -40,6 +40,8 @@
         let ranges = []
         const hookRanges = getHookRanges(content.value)
 
+        console.log(content.value)
+
         hookRanges.forEach((range) => {
             ranges.push({
                 range: range.range,

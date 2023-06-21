@@ -6,6 +6,7 @@ import { RenderableFileFormatter, RenderableFileType } from "@Common/models/Rend
 
 export default abstract class Renderable {
     project: Project
+    hooksEnabled: boolean = true
 
     constructor() {
         const project = Project.find(1)
@@ -27,6 +28,18 @@ export default abstract class Renderable {
 
     setProject(project: Project) {
         this.project = project
+
+        return this
+    }
+
+    enableHooks() {
+        this.hooksEnabled = true
+
+        return this
+    }
+
+    disableHooks() {
+        this.hooksEnabled = false
 
         return this
     }
@@ -92,9 +105,8 @@ export default abstract class Renderable {
             .setContent(templateContent)
             .setData(this.getFullData())
 
-        if(this.hooks) {
-            TemplateCompiler.setHooks(this.hooks())
-        }
+        TemplateCompiler.setHooksEnabled(this.hooksEnabled)
+        if(this.hooks) TemplateCompiler.setHooks(this.hooks())
 
         const compiledTemplate = await TemplateCompiler.compileWithImports()
 

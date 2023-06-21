@@ -10,9 +10,11 @@ export default new class TemplateCompiler {
     private hooks: any
     private imports: any
     private content: string
+    private hooksEnabled: boolean
     private templateEngine: TemplateEngine
 
     constructor() {
+        this.hooksEnabled = true
         this.templateEngine = null
     }
 
@@ -24,6 +26,24 @@ export default new class TemplateCompiler {
 
     setHooks(hooks: any) {
         this.hooks = hooks
+
+        return this
+    }
+
+    enableHooks() {
+        this.hooksEnabled = true
+
+        return this
+    }
+
+    disableHooks() {
+        this.hooksEnabled = false
+
+        return this
+    }
+
+    setHooksEnabled(enabled: boolean) {
+        this.hooksEnabled = enabled
 
         return this
     }
@@ -92,7 +112,9 @@ export default new class TemplateCompiler {
                 .setData(this.data)    
                 .compileWithErrorTreatment()
 
-            compiledContent = this.processHooks(compiledContent)
+            if(this.hooksEnabled) {
+                compiledContent = this.processHooks(compiledContent)
+            }
 
             return compiledContent
         } catch (error: any) {

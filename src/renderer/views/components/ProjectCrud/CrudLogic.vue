@@ -22,12 +22,13 @@ import HookEditor from "@Renderer/components/editors/HookEditor.vue"
     const tabs = [
         { label: "Create Component", value: "createComponent" },
         { label: "Edit Component", value: "editComponent" },
+        { label: "Index Component", value: "indexComponent" },
     ]
 
     onMounted(async () => {
         createComponentContent.value = await new RenderableLivewireCreateComponent(
             crud.value
-        ).compile()
+        ).disableHooks().compile()
     })
 </script>
 

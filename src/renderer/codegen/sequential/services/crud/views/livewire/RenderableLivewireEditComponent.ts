@@ -40,6 +40,10 @@ export default class RenderableLivewireEditComponent extends Renderable {
         return RenderableFileFormatter.PHP
     }
 
+    hooks() {
+        return this.crud.getHooks('editComponent')
+    }
+
     getData() {
         return {
             crud: this.crud,

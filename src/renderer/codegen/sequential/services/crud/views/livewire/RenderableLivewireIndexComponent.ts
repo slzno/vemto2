@@ -40,6 +40,10 @@ export default class RenderableLivewireIndexComponent extends Renderable {
         return RenderableFileFormatter.PHP
     }
 
+    hooks() {
+        return this.crud.getHooks('indexComponent')
+    }
+
     getData() {
         return {
             crud: this.crud,
