@@ -16,7 +16,9 @@ use App\Models\<$ modelName $>;
  
 class <$ this.filenameWithoutExtension $> extends Component
 {
+    // hook:BEFORE_VARIABLES
     public <$ modelName $> $<$ itemVarName $>;
+    // hook:AFTER_VARIABLES
 
     public function rules()
     {
@@ -24,6 +26,7 @@ class <$ this.filenameWithoutExtension $> extends Component
             <% for (let input of crud.inputs) { %>
             '<$ itemVarName $>.<$ input.column.name $>' => <$ input.getCreationRulesForTemplate() $>,
             <% } %>
+            // hook:RULES
         ];
     }
 
@@ -53,4 +56,5 @@ class <$ this.filenameWithoutExtension $> extends Component
             '<$ itemVarName $>' => $this-><$ itemVarName $>,
         ]);
     }
+    // hook:METHODS
 }

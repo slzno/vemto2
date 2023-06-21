@@ -21,6 +21,7 @@ export default abstract class Renderable {
     abstract getData(): any
     abstract canRender(): boolean
     
+    abstract hooks?(): any
     protected beforeRender?(): void
     protected afterRender?(renderedContent: string): void
 
@@ -90,6 +91,10 @@ export default abstract class Renderable {
         TemplateCompiler
             .setContent(templateContent)
             .setData(this.getFullData())
+
+        if(this.hooks) {
+            TemplateCompiler.setHooks(this.hooks())
+        }
 
         const compiledTemplate = await TemplateCompiler.compileWithImports()
 

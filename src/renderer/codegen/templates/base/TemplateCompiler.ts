@@ -7,6 +7,7 @@ import TextUtil from "@Renderer/../common/util/TextUtil"
 export default new class TemplateCompiler {
 
     private data: any
+    private hooks: any
     private imports: any
     private content: string
     private templateEngine: TemplateEngine
@@ -17,6 +18,12 @@ export default new class TemplateCompiler {
 
     setContent(content: string) {
         this.content = content
+
+        return this
+    }
+
+    setHooks(hooks: any) {
+        this.hooks = hooks
 
         return this
     }
@@ -81,9 +88,13 @@ export default new class TemplateCompiler {
         this.startEngine()
 
         try {
-            return this.templateEngine
+            let compiledContent = this.templateEngine
                 .setData(this.data)    
                 .compileWithErrorTreatment()
+
+            compiledContent = this.processHooks(compiledContent)
+
+            return compiledContent
         } catch (error: any) {
             const latestError = this.templateEngine.getLatestError()
 
@@ -102,6 +113,28 @@ export default new class TemplateCompiler {
 
             throw error
         }
+    }
+
+    processHooks(content: string) {
+        if(!this.hooks) return content
+
+        const lines = content.split('\n')
+
+        for(let i = 0; i < lines.length; i++) {
+            const line = lines[i]
+
+            if(line.trim().startsWith('// hook:')) {
+                const hookName = line.replace('// hook:', '').trim()
+
+                if(this.hooks[hookName]) {
+                    lines[i] = this.hooks[hookName]
+                } else {
+                    lines[i] = ''
+                }
+            }
+        }
+
+        return lines.join('\n')
     }
 
     getTemplateContent() {
