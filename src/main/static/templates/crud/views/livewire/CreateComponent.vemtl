@@ -12,6 +12,7 @@ namespace <$ crud.livewireNamespace $>;
  
 use Livewire\Component;
 use App\Models\<$ modelName $>;
+// hook:IMPORTS
  
 class <$ this.filenameWithoutExtension $> extends Component
 {

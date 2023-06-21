@@ -1,12 +1,13 @@
 <script setup lang="ts">
     import { ref, defineProps, onMounted, toRef, Ref, defineEmits } from "vue"
-    import * as monaco from 'monaco-editor'
+    import * as monaco from "monaco-editor"
+    import { BuiltinTheme } from "monaco-editor"
     import { constrainedEditor } from "constrained-editor-plugin"
-    import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
-    import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
-    import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
-    import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
-    import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
+    import editorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker"
+    import jsonWorker from "monaco-editor/esm/vs/language/json/json.worker?worker"
+    import cssWorker from "monaco-editor/esm/vs/language/css/css.worker?worker"
+    import htmlWorker from "monaco-editor/esm/vs/language/html/html.worker?worker"
+    import tsWorker from "monaco-editor/esm/vs/language/typescript/ts.worker?worker"
 
     const props = defineProps({
         content: {
@@ -39,7 +40,7 @@
         let ranges = []
         const hookRanges = getHookRanges(content.value)
 
-        hookRanges.forEach(range => {
+        hookRanges.forEach((range) => {
             ranges.push({
                 range: range.range,
                 label: range.name,
@@ -48,8 +49,6 @@
         })
 
         constrainedInstance.addRestrictionsTo(model, ranges)
-        
-        model.toggleHighlightOfEditableAreas()
 
         const starterRanges = {}
 
@@ -61,8 +60,10 @@
 
         model.updateValueInEditableRanges(starterRanges)
 
-        model.onDidChangeContentInEditableRange(changedContent => {
-            Object.keys(changedContent).forEach(hookName => {
+        highlightEditableLines(model)
+
+        model.onDidChangeContentInEditableRange((changedContent) => {
+            Object.keys(changedContent).forEach((hookName) => {
                 hooks.value[hookName] = changedContent[hookName]
             })
 
@@ -73,23 +74,68 @@
     const createEditor = () => {
         self.MonacoEnvironment = {
             getWorker(_, label) {
-                if (label === 'json') return new jsonWorker()
-                if (label === 'css' || label === 'scss' || label === 'less') return new cssWorker()
-                if (label === 'html' || label === 'handlebars' || label === 'razor') return new htmlWorker()
-                if (label === 'typescript' || label === 'javascript') return new tsWorker()
-                
+                if (label === "json") return new jsonWorker()
+                if (label === "css" || label === "scss" || label === "less")
+                    return new cssWorker()
+                if (
+                    label === "html" ||
+                    label === "handlebars" ||
+                    label === "razor"
+                )
+                    return new htmlWorker()
+                if (label === "typescript" || label === "javascript")
+                    return new tsWorker()
+
                 return new editorWorker()
-            }
+            },
         }
+
+        const theme = {
+            base: "vs-dark" as BuiltinTheme,
+            inherit: true,
+            rules: [],
+            colors: {
+                "editor.background": "#0f172a",
+            },
+        }
+
+        monaco.editor.defineTheme("vemto-dark", theme)
 
         return monaco.editor.create(editorElement.value, {
             value: content.value,
-            language: 'php',
+            language: "php",
+            automaticLayout: true,
             minimap: {
-                enabled: false
+                enabled: false,
             },
-            theme: 'vs-dark',
+            theme: "vemto-dark",
         })
+    }
+
+    const highlightEditableLines = (model: any) => {
+        const editableLines = getEditableLines(model)
+
+        editableLines.forEach((line) => {
+            editor.deltaDecorations([], [
+                { range: new monaco.Range(line, 1, line, 1), options: { isWholeLine: true, className: 'bg-slate-800' } }
+            ])
+        })
+    }
+
+    const getEditableLines = (model: any) => {
+        const editableRanges = model.getCurrentEditableRanges()
+        
+        let editableLines = []
+
+        Object.keys(editableRanges).forEach((key) => {
+            const range = editableRanges[key].range
+
+            for (let i = range.startLineNumber; i <= range.endLineNumber; i++) {
+                editableLines.push(i)
+            }
+        })
+
+        return editableLines
     }
 
     const getHookRanges = (content: string) => {
@@ -122,7 +168,7 @@
 </template>
 
 <style>
-.editableArea--multi-line {
-    background-color: #2d3748;
-}
+    .editableArea--multi-line {
+        background-color: #2d3748;
+    }
 </style>

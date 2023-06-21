@@ -219,8 +219,6 @@ export default class Crud extends RelaDB.Model {
         this.hooks = this.hooks || {}
         this.hooks[type] = hooks
 
-        console.log(this.hooks)
-
         this.save()
     }
 }
