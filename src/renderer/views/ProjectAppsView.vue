@@ -29,11 +29,12 @@ import AppNavs from "./components/ProjectApps/AppNavs.vue"
 
     const tabs = [
         { label: "Applications", value: "applications" },
-        { label: "Generated Routes", value: "routes" },
+        { label: "Plugins", value: "plugins" },
+        { label: "Routes", value: "routes" },
         { label: "Navigation", value: "navigation" },
         { label: "Domains", value: "domains" },
-        { label: "Default Files", value: "default_files" },
         { label: "Themes", value: "themes" },
+        { label: "Settings", value: "settings" },
     ]
 
     onMounted(async () => {
