@@ -1,3 +1,5 @@
+import Nav from "./Nav"
+import Route from "./Route"
 import Table from "./Table"
 import Model from "./Model"
 import Crud from "./crud/Crud"
@@ -8,12 +10,13 @@ import RenderableFile, {
     RenderableFileStatus,
     RenderableFileType,
 } from "./RenderableFile"
-import Route from "./Route"
+import GenerateBasicProjectData from "./services/project/GenerateBasicProjectData"
 
 export default class Project extends RelaDB.Model {
     id: string
     path: string
     name: string
+    navs: Nav[]
     cruds: Crud[]
     pages: Page[]
     tables: Table[]
@@ -30,6 +33,7 @@ export default class Project extends RelaDB.Model {
 
     relationships() {
         return {
+            navs: () => this.hasMany(Nav).cascadeDelete(),
             cruds: () => this.hasMany(Crud).cascadeDelete(),
             pages: () => this.hasMany(Page).cascadeDelete(),
             tables: () => this.hasMany(Table).cascadeDelete(),
@@ -279,5 +283,13 @@ export default class Project extends RelaDB.Model {
         })
 
         return removableFiles
+    }
+
+    getRootNavs(): Nav[] {
+        return this.navs.filter(nav => nav.isRoot())
+    }
+
+    generateBasicData() {
+        (new GenerateBasicProjectData(this)).handle()
     }
 }

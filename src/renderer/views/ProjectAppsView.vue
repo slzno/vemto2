@@ -9,6 +9,8 @@
     import HandleProjectDatabase from "@Renderer/services/HandleProjectDatabase"
     import Crud from "@Common/models/crud/Crud"
     import Page from "@Common/models/page/Page"
+import AppRoutes from "./components/ProjectApps/AppRoutes.vue"
+import AppNavs from "./components/ProjectApps/AppNavs.vue"
 
     const router = useRouter(),
         projectStore = useProjectStore(),
@@ -88,37 +90,13 @@
 
         <div class="space-y-2 p-4" v-if="selectedTab === 'routes'">
             <div class="space-y-2">
-                <!-- <div class="bg-slate-950 rounded-lg p-3 flex justify-between">
-                    <div>
-                        <div class="mt-2 space-x-1 font-mono">
-                            <span class="px-2 py-0.5 bg-orange-200 text-orange-700 rounded">Middleware</span> <span>'auth:sanctum', 'verified'</span>
-                        </div>
-                    </div>
-                </div> -->
+                <AppRoutes />
+            </div>
+        </div>
 
-                <div
-                    class="bg-slate-950 rounded-lg p-3 flex justify-between"
-                    v-for="route in projectStore.project.routes"
-                    :key="route.id"
-                >
-                    <div>
-                        <div class="mt-2 space-x-1 font-mono">
-                            <span
-                                class="px-2 py-0.5 bg-green-300 text-green-700 rounded"
-                                >{{ route.method.toUpperCase() }}</span
-                            >
-                            <span>{{ route.path }}</span>
-                        </div>
-                    </div>
-
-                    <div>
-                        <div
-                            class="rounded px-2 py-1 bg-slate-800 inline-block text-sm"
-                        >
-                            {{ route.getName() }}
-                        </div>
-                    </div>
-                </div>
+        <div class="space-y-2 p-4" v-if="selectedTab === 'navigation'">
+            <div class="space-y-2">
+                <AppNavs />
             </div>
         </div>
     </div>

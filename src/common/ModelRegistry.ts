@@ -6,6 +6,7 @@ import Project from "./models/Project"
 import Relationship from "./models/Relationship"
 import RenderableFile from "./models/RenderableFile"
 import Route from "./models/Route"
+import Nav from "./models/Nav"
 import Table from "./models/Table"
 import Crud from "./models/crud/Crud"
 import CrudPanel from "./models/crud/CrudPanel"
@@ -18,6 +19,7 @@ import IndexColumn from "./models/IndexColumn"
 export default new class ModelRegistry {
     registerModels() {
         RelaDB.Resolver.onDatabaseReady(() => {
+            RelaDB.Resolver.db().registerModel(Nav, "Nav")
             RelaDB.Resolver.db().registerModel(Column, "Column")
             RelaDB.Resolver.db().registerModel(Index, "Index")
             RelaDB.Resolver.db().registerModel(Model, "Model")

@@ -21,6 +21,10 @@ export default class HandleProjectDatabase {
             RelaDB.Resolver.db().driver.feedDatabaseData(initialDatabaseData)
         }
 
+        // *** DONT MOVE THIS LINE ABOVE ***
+        this.generateBasicProjectData()
+        // *** DONT MOVE THIS LINE ABOVE ***
+
         RelaDB.Resolver.db().onDataChanged(() => {
             updateDataDebounced()
         })
@@ -39,6 +43,14 @@ export default class HandleProjectDatabase {
         }, 300)
 
         return database
+    }
+
+    static generateBasicProjectData() {
+        const project = Project.find(1)
+
+        if(project) {
+            project.generateBasicData()
+        }
     }
 
     static async populate(callback?: Function) {

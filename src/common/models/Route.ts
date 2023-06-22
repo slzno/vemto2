@@ -32,7 +32,7 @@ export default class Route extends RelaDB.Model {
             project: () => this.belongsTo(Project),
             routable: () => this.morphTo("routable"),
             parentRoute: () => this.belongsTo(Route, "parentRouteId"),
-            childrenRoutes: () => this.hasMany(Route, "parentRouteId"),
+            childrenRoutes: () => this.hasMany(Route, "parentRouteId").cascadeDelete(),
         }
     }
 

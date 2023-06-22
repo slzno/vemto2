@@ -70,6 +70,8 @@
             })
 
             emit("hooksUpdated", hooks.value)
+
+            highlightEditableLines(model)
         })
     })
 

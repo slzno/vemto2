@@ -1,5 +1,6 @@
 import Input from "./Input"
 import CrudPanel from "./CrudPanel"
+import Nav from "@Common/models/Nav"
 import Model from "@Common/models/Model"
 import Route, { RouteType } from "@Common/models/Route"
 import { camelCase, capitalCase, paramCase, pascalCase } from "change-case"
@@ -37,6 +38,7 @@ export default class Crud extends RelaDB.Model {
     defaultSortColumnId: string
     defaultSortDirection: string
     routes: Route[]
+    navs: Nav[]
     hooks: any
 
     // Livewire specific
@@ -52,6 +54,7 @@ export default class Crud extends RelaDB.Model {
             project: () => this.belongsTo(Project),
             inputs: () => this.hasMany(Input).cascadeDelete(),
             panels: () => this.hasMany(CrudPanel).cascadeDelete(),
+            navs: () => this.morphMany(Nav, "navigable").cascadeDelete(),
             routes: () => this.morphMany(Route, "routable").cascadeDelete(),
             defaultSearchColumn: () => this.belongsTo(Column, "defaultSearchColumnId"),
             defaultSortColumn: () => this.belongsTo(Column, "defaultSortColumnId"),
@@ -94,6 +97,7 @@ export default class Crud extends RelaDB.Model {
 
         crud.addInputsFromModel(model)
         crud.addRoutes()
+        crud.addNavs()
     }
 
     getLabel(): string {
@@ -170,6 +174,22 @@ export default class Crud extends RelaDB.Model {
             routableType: "Crud",
             projectId: this.projectId,
         })
+    }
+
+    addNavs() {
+        const rootTag = Nav.findByTag("apps")
+
+        const nav = Nav.create({
+            name: this.settings.collectionTitle,
+            navigableId: this.id,
+            navigableType: "Crud",
+            projectId: this.projectId,
+        })
+
+        if(rootTag) {
+            nav.parentNavId = rootTag.id
+            nav.save()
+        }
     }
 
     getRouteNameByTag(tag: string): string {
