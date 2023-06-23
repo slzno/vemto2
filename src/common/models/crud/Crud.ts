@@ -7,6 +7,7 @@ import { camelCase, capitalCase, paramCase, pascalCase } from "change-case"
 import Column from "@Common/models/Column"
 import Project from "@Common/models/Project"
 import RelaDB from "@tiago_silva_pereira/reladb"
+import AppSection from "../AppSection"
 
 export enum CrudType {
     DEFAULT = "Default",
@@ -24,7 +25,8 @@ export default class Crud extends RelaDB.Model {
     name: string
     plural: string
     type: CrudType
-    section: string
+    section: AppSection
+    sectionId: string
     model: Model
     modelId: string
     project: Project
@@ -52,6 +54,7 @@ export default class Crud extends RelaDB.Model {
         return {
             model: () => this.belongsTo(Model),
             project: () => this.belongsTo(Project),
+            section: () => this.belongsTo(AppSection, "sectionId"),
             inputs: () => this.hasMany(Input).cascadeDelete(),
             panels: () => this.hasMany(CrudPanel).cascadeDelete(),
             navs: () => this.morphMany(Nav, "navigable").cascadeDelete(),
@@ -77,11 +80,13 @@ export default class Crud extends RelaDB.Model {
             || model.table.getPrimaryKeyColumn()
             || defaultSearchColumn
 
+        const defaultSection = AppSection.findDefaultAdminSection()
+
         const crud = new Crud()
         crud.type = CrudType.LIVEWIRE
         crud.name = paramCase(model.name)
         crud.plural = paramCase(model.plural)
-        crud.section = "Admin"
+        crud.sectionId = defaultSection ? defaultSection.id : null
         crud.modelId = model.id
         crud.projectId = model.projectId
 
@@ -116,7 +121,7 @@ export default class Crud extends RelaDB.Model {
     }
 
     calculateLiveWireSpecificData() {
-        this.livewireNamespace = `App\\Http\\Livewire\\${this.section}`
+        this.livewireNamespace = `App\\Http\\Livewire\\${pascalCase(this.section.name)}`
         this.livewireIndexComponentName = `${pascalCase(this.name)}Index`
         this.livewireShowComponentName = `${pascalCase(this.name)}Show`
         this.livewireCreateComponentName = `${pascalCase(this.name)}Create`
@@ -203,7 +208,7 @@ export default class Crud extends RelaDB.Model {
             throw new Error(`Route with tag ${tag} not found`)
         }
 
-        return `${paramCase(this.section)}.${route.name}`
+        return `${paramCase(this.section.routePrefix)}.${route.name}`
     }
 
     getRouteContent(route: Route): string {

@@ -44,8 +44,9 @@ import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
             v-for="section in projectStore.project.appSections"
             :key="section.id"
         >
-            <div @click="editSection(section)" v-if="isNotEditingSection(section)" class="font-mono w-full h-full p-3">
+            <div @click="editSection(section)" v-if="isNotEditingSection(section)" class="font-mono w-full h-full p-3 space-x-2 flex justify-between">
                 <span>{{ section.name }}</span>
+                <small class="text-slate-500">{{ section.getApplicationsCount() }} apps</small>
             </div>
             <div v-else class="p-3">
                 <UiText class="mb-3" v-model="editingSection.name" label="Name" />

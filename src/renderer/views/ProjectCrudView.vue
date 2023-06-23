@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    // import { useProjectStore } from '@Renderer/stores/useProjectStore'
+    import { useProjectStore } from '@Renderer/stores/useProjectStore'
 
     import { onMounted, ref } from 'vue'
     import { useRoute } from 'vue-router'
@@ -11,7 +11,7 @@
     import UiText from '@Renderer/components/ui/UiText.vue'
     import CrudLogic from './components/ProjectCrud/CrudLogic.vue'
 
-    // const projectStore = useProjectStore()
+    const projectStore = useProjectStore()
 
     // get crudId from route params
     const route = useRoute(),
@@ -95,7 +95,10 @@
 
             <section class="flex flex-col w-full h-screen space-y-4 mt-2 px-2 pb-40 overflow-scroll" v-if="selectedTab === 'settings'">
                 <div>
-                    <UiText v-model="crud.section" label="Section" @input="crud.save()" />
+                    <UiSelect v-model="crud.sectionId" label="Section" @change="crud.save()" >
+                        <option :value="null" disabled>Select a section</option>
+                        <option v-for="section in projectStore.project.appSections" :value="section.id" :key="section.id">{{ section.name }}</option>
+                    </UiSelect>
                 </div>
 
                 <div>

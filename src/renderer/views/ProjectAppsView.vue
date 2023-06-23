@@ -18,7 +18,6 @@ import AppSections from "./components/ProjectApps/AppSections.vue"
         canShow = ref(false)
 
     const openApp = (app: Crud | Page) => {
-        console.log(app)
         if(app.getAppType() === "CRUD") {
             router.push({ name: "project-crud", params: { crudId: app.id } })
         } else {

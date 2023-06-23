@@ -9,6 +9,7 @@ import ParagraphComponent from "./components/ParagraphComponent"
 import SmallComponent from "./components/SmallComponent"
 import ForelseComponent from "./components/ForelseComponent"
 import CustomComponent from "./components/CustomComponent"
+import AppSection from "../AppSection"
 
 
 export default class Page extends RelaDB.Model {
@@ -17,7 +18,8 @@ export default class Page extends RelaDB.Model {
     project: Project
     projectId: string
     routes: Route[]
-    section: string
+    section: AppSection
+    sectionId: string
     namespace: string
     components: any[]
     livewireComponentName: string
@@ -25,6 +27,7 @@ export default class Page extends RelaDB.Model {
     relationships() {
         return {
             project: () => this.belongsTo(Project),
+            section: () => this.belongsTo(AppSection, "sectionId"),
             routes: () => this.morphMany(Route, "routable").cascadeDelete(),
         }
     }
@@ -36,10 +39,11 @@ export default class Page extends RelaDB.Model {
     }
 
     static createFromData(data: any) {
-        const page = new Page()
+        const page = new Page(),
+            defaultSection = AppSection.findDefaultSiteSection()
 
         page.name = data.name
-        page.section = 'site'
+        page.sectionId = defaultSection ? defaultSection.id : null
         page.namespace = `App\\Http\\Livewire\\Pages`
         page.livewireComponentName = pascalCase(data.name)
         page.components = []

@@ -29,8 +29,6 @@ export default class GenerateInputValidation {
             baseValidationRules = this.getBaseValidationRules(ValidationRuleType.CREATION)
         }
 
-        console.log('baseValidationRules', baseValidationRules)
-
         validationRules = this.addLogicValidationToRules(baseValidationRules, type)
 
         return validationRules.map((rule) => {
