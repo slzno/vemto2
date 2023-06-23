@@ -12,6 +12,7 @@ export default class Nav extends RelaDB.Model {
     parentNavId: string
     children: Nav[]
     tag: string
+    customLink: string
 
     relationships() {
         return {
@@ -28,5 +29,13 @@ export default class Nav extends RelaDB.Model {
 
     isRoot(): boolean {
         return this.parentNavId === undefined
+    }
+
+    hasCustomLink(): boolean {
+        return !! this.customLink
+    }
+
+    getCustomLink(): string {
+        return this.customLink
     }
 }

@@ -23,7 +23,7 @@ export default class RenderableAppMenu extends Renderable {
     }
 
     getFormatter(): RenderableFileFormatter {
-        return RenderableFileFormatter.PHP
+        return RenderableFileFormatter.BLADE
     }
 
     getData() {

@@ -1,0 +1,14 @@
+<* indent-back *>
+<% for (let nav of this.project.getRootNavs()) { %>
+    <% for (let childrenNav of nav.children) { %>
+    <# Let's check if the nav item has custom link #>
+    <% if (childrenNav.hasCustomLink()) { %>
+    <x-responsive-nav-link href="<$ childrenNav.getCustomLink() $>">
+    <% } else { %>
+    <% let route = childrenNav.navigable.getIndexRouteName() %>
+    <x-responsive-nav-link href="{{ route('<$ route $>') }}" :active="request()->routeIs('<$ route $>')">
+    <% } %>
+        <$ childrenNav.name $>
+    </x-responsive-nav-link>
+    <% } %>
+<% } %>

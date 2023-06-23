@@ -17,7 +17,12 @@
 
             <x-slot name="content">
                 <% for (let childrenNav of nav.children) { %>
+                <# Let's check if the nav item has custom content #>
+                <% if (childrenNav.hasCustomLink()) { %>
+                <x-dropdown-link href="<$ childrenNav.getCustomLink() $>">
+                <% } else { %>
                 <x-dropdown-link href="{{ route('<$ childrenNav.navigable.getIndexRouteName() $>') }}">
+                <% } %>
                     <$ childrenNav.name $>
                 </x-dropdown-link>
                 <% } %>
