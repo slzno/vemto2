@@ -11,6 +11,7 @@ export default class AppSection extends RelaDB.Model {
     project: Project
     projectId: string
     routePrefix: string
+    routeBasePath: string
     requiresAuth: boolean
 
     relationships() {
@@ -20,9 +21,13 @@ export default class AppSection extends RelaDB.Model {
             pages: () => this.hasMany(Page, "sectionId").cascadeDelete(),
         }
     }
-
+    
     getApplicationsCount(): number {
         return this.cruds.length + this.pages.length
+    }
+
+    getApplications(): any[] {
+        return [...this.cruds, ...this.pages]
     }
 
     static findDefaultAdminSection(): AppSection {

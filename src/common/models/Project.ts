@@ -183,17 +183,9 @@ export default class Project extends RelaDB.Model {
         return this.routes.filter((route) => route.routableType === type)
     }
 
-    getRoutesByApplicationSection(section: string): Route[] {
-        return this.routes.filter((route) => route.routable.section === section)
-    }
-
-    getAllApplicationsSections(): string[] {
-        return this.getApplications().map((application) => application.section)
-    }
-
-    getApplicationsBySection(section: string): any[] {
+    getApplicationsBySection(section: AppSection): any[] {
         return this.getApplications().filter(
-            (application) => application.section === section
+            (application) => application.sectionId === section.id
         )
     }
 

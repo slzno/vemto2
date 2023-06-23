@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    // import { useProjectStore } from '@Renderer/stores/useProjectStore'
+    import { useProjectStore } from '@Renderer/stores/useProjectStore'
 
     import { onMounted, ref } from 'vue'
     import PreviewPageComponent from '@Renderer/views/components/ProjectPage/PreviewPageComponent.vue'
@@ -13,9 +13,8 @@
     import Draggable from "vuedraggable"
     import { Bars3Icon, DocumentDuplicateIcon, TrashIcon } from '@heroicons/vue/24/outline'
 
-    // const projectStore = useProjectStore()
+    const projectStore = useProjectStore()
 
-    // get pageId from route params
     const route = useRoute(),
         pageId = route.params.pageId,
         page = ref(null),
@@ -168,7 +167,10 @@
 
             <section class="flex flex-col w-full h-screen space-y-4 mt-2 px-2 pb-40 overflow-scroll" v-if="selectedTab === 'settings'">
                 <div>
-                    <UiText v-model="page.section" label="Section" @input="page.save()" />
+                    <UiSelect v-model="page.sectionId" label="Section" @change="page.save()" >
+                        <option :value="null" disabled>Select a section</option>
+                        <option v-for="section in projectStore.project.appSections" :value="section.id" :key="section.id">{{ section.name }}</option>
+                    </UiSelect>
 
                     <UiText v-model="page.namespace" label="Namespace" @input="page.save()" />
 

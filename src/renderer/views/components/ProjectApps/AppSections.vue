@@ -5,6 +5,7 @@
     import AppSection from "@Common/models/AppSection"
 import UiText from "@Renderer/components/ui/UiText.vue"
 import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
+import GenerateBasicSections from "../../../../common/models/services/project/GenerateBasicSections"
 
     const projectStore = useProjectStore(),
         editingSection = ref<null | AppSection>(null)
@@ -31,11 +32,32 @@ import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     const cancel = () => {
         editingSection.value = null
     }
+
+    const addSection = () => {
+        const section = new AppSection({
+            name: "New section",
+            routePrefix: "",
+            requiresAuth: false,
+            projectId: projectStore.project.id
+        })
+
+        section.save()
+    }
+
+    const addDefaultSections = async () => {
+        await new GenerateBasicSections(projectStore.project).handle()
+    }
+
+    const deleteSection = (section: AppSection) => {
+        if(!confirm("Are you sure you want to delete this section?")) return
+        section.delete()
+    }
 </script>
 
 <template>
-    <div class="mb-3">
-        <UiButton>Add Section</UiButton>
+    <div class="mb-3 flex space-x-2">
+        <UiButton @click="addSection()">Add Section</UiButton>
+        <UiButton @click="addDefaultSections()">Add Default Sections</UiButton>
     </div>
 
     <div class="bg-slate-950 p-3 rounded-lg border border-slate-700 h-screen">
@@ -48,14 +70,21 @@ import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
                 <span>{{ section.name }}</span>
                 <small class="text-slate-500">{{ section.getApplicationsCount() }} apps</small>
             </div>
-            <div v-else class="p-3">
+            <div v-else class="p-3 w-full">
                 <UiText class="mb-3" v-model="editingSection.name" label="Name" />
                 <UiText class="mb-3" v-model="editingSection.routePrefix" label="Route prefix" />
+                <UiText class="mb-3" v-model="editingSection.routeBasePath" label="Route base path" />
                 <UiCheckbox class="mb-3" v-model="editingSection.requiresAuth" label="Requires Auth?" />
 
                 <div class="mt-4 flex justify-between">
-                    <UiButton @click="cancel">Cancel</UiButton>
-                    <UiButton @click="saveSection()">Save</UiButton>
+                    <div class="flex space-x-2">
+                        <UiButton @click="deleteSection(editingSection)">Delete</UiButton>
+                    </div>
+                    
+                    <div class="flex space-x-2">
+                        <UiButton @click="cancel">Cancel</UiButton>
+                        <UiButton @click="saveSection()">Save</UiButton>
+                    </div>
                 </div>
             </div>
         </div>
