@@ -6,7 +6,7 @@
 <% const paramCase = this.require('paramCase') %>
 <% const itemVarName = camelCase(crud.name) %>
 <% const collectionVarName = camelCase(crud.plural) %>
-<% const viewsFolderName = `${paramCase(crud.section)}.${paramCase(crud.plural)}` %>
+<% const viewsFolderName = `${crud.section.getFolderName()}.${paramCase(crud.plural)}` %>
 
 namespace <$ crud.livewireNamespace $>;
  

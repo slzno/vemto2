@@ -4,7 +4,7 @@
 <% const paramCase = this.require('paramCase') %>
 <% const modelCollections = this.page.getModelCollections() %>
 <% const injectableModels = this.page.getInjectableModelsByRoute() %>
-<% const viewName = `pages.${paramCase(this.page.section)}.${paramCase(this.page.name)}` %>
+<% const viewName = `pages.${this.page.section.getFolderName()}.${paramCase(this.page.name)}` %>
 
 namespace <$ this.page.namespace $>;
 

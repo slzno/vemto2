@@ -33,9 +33,10 @@ export default class RenderablePageComponent extends Renderable {
     }
 
     getFilename(): string {
-        const componentName = this.page.livewireComponentName || changeCase.pascalCase(this.page.name)
+        const componentName = this.page.livewireComponentName 
+            || `${changeCase.pascalCase(this.page.name)}Page`
 
-        return `${componentName}Page.php`
+        return `${componentName}.php`
     }
 
     getFormatter(): RenderableFileFormatter {

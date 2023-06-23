@@ -208,6 +208,8 @@ export default class Crud extends RelaDB.Model {
             throw new Error(`Route with tag ${tag} not found`)
         }
 
+        if(!this.section) return route.name
+
         return `${paramCase(this.section.routePrefix)}.${route.name}`
     }
 

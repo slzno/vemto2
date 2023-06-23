@@ -28,7 +28,7 @@ export default class RenderablePageView extends Renderable {
     }
 
     getPath(): string {
-        const viewsFolder = changeCase.paramCase(this.page.section)
+        const viewsFolder = this.page.section.getFolderName()
 
         return `resources/views/pages/${viewsFolder}`
     }

@@ -16,17 +16,24 @@ use Illuminate\Support\Facades\Route;
 
 
 <% for (let section of this.project.appSections) { %>
-Route::prefix('/<$ section.routeBasePath $>')->name('<$ section.routePrefix $>.')->middleware([
-    'auth:sanctum',
-    config('jetstream.auth_session'),
-    'verified'
-])->group(function () {
-    <% let lastRoutable = null %>
-
+// <$ section.name $>
+Route::prefix('/<$ section.routeBasePath $>')
+    <% if(section.hasRoutePrefix()) { %>
+        ->name('<$ section.routePrefix $>.')
+    <% } %>
+    <% if(section.requiresAuthentication()) { %>
+        ->middleware([
+            'auth:sanctum',
+            config('jetstream.auth_session'),
+            'verified'
+        ])
+    <% } %>
+->group(function () {
     <% for(let app of section.getApplications()) { %>
         <% for(let route of app.routes) { %>
         Route::<$ route.getLaravelMethod() $>('<$ route.path $>', <$ route.getContent() $>)
             ->name('<$ route.name $>');
+        
         <% } %>
     <% } %>
 });

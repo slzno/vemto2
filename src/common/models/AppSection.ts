@@ -1,3 +1,4 @@
+import { paramCase } from 'change-case'
 import Crud from './crud/Crud'
 import Page from './page/Page'
 import Project from './Project'
@@ -21,6 +22,18 @@ export default class AppSection extends RelaDB.Model {
             pages: () => this.hasMany(Page, "sectionId").cascadeDelete(),
         }
     }
+
+    needsRouteGroup(): boolean {
+        return this.hasRoutePrefix() || this.requiresAuthentication()
+    }
+
+    hasRoutePrefix(): boolean {
+        return !! this.routePrefix
+    }
+
+    requiresAuthentication(): boolean {
+        return this.requiresAuth
+    }
     
     getApplicationsCount(): number {
         return this.cruds.length + this.pages.length
@@ -28,6 +41,10 @@ export default class AppSection extends RelaDB.Model {
 
     getApplications(): any[] {
         return [...this.cruds, ...this.pages]
+    }
+
+    getFolderName(): string {
+        return paramCase(this.name)
     }
 
     static findDefaultAdminSection(): AppSection {
