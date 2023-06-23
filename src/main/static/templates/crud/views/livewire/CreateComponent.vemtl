@@ -54,6 +54,7 @@ class <$ this.filenameWithoutExtension $> extends Component
         // hook:BEFORE_RENDER
         return view('livewire.<$ viewsFolderName $>.create', [
             '<$ itemVarName $>' => $this-><$ itemVarName $>,
+            // hook:RENDER_PARAMETERS
         ]);
     }
     // hook:METHODS

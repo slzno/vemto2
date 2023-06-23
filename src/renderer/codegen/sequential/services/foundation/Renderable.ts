@@ -22,7 +22,7 @@ export default abstract class Renderable {
     abstract getData(): any
     abstract canRender(): boolean
     
-    abstract hooks?(): any
+    protected hooks?(): any
     protected beforeRender?(): void
     protected afterRender?(renderedContent: string): void
 
@@ -89,6 +89,7 @@ export default abstract class Renderable {
     getFullData() {
         return {
             ...this.getData(),
+            project: this.project,
             filenameWithoutExtension: this.getFilenameWithoutExtension(),
         }
     }

@@ -11,8 +11,6 @@ import { ChevronDoubleRightIcon } from '@heroicons/vue/24/outline'
     })
 
     const navs = toRef(props, 'navs')
-
-    console.log(navs.value)
 </script>
 
 <template>

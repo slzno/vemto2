@@ -192,6 +192,10 @@ export default class Crud extends RelaDB.Model {
         }
     }
 
+    getIndexRouteName(): string {
+        return this.getRouteNameByTag("index")
+    }
+
     getRouteNameByTag(tag: string): string {
         const route = this.routes.find((route) => route.tag === tag)
 
