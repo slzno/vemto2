@@ -10,17 +10,17 @@ export default class GenerateBasicSections {
     }
 
     async handle() {
-        if(!AppSection.findDefaultAdminSection()) {
+        if(!AppSection.findSectionByName('Dashboard')) {
             AppSection.create({
-                name: "Admin",
-                routePrefix: "admin",
-                routeBasePath: "admin",
+                name: "Dashboard",
+                routePrefix: "dashboard",
+                routeBasePath: "dashboard",
                 projectId: this.project.id,
                 requiresAuth: true,
             })
         }
 
-        if(!AppSection.findDefaultSiteSection()) {
+        if(!AppSection.findSectionByName('Site')) {
             AppSection.create({
                 name: "Site",
                 routePrefix: "",

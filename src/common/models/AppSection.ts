@@ -48,12 +48,12 @@ export default class AppSection extends RelaDB.Model {
     }
 
     static findDefaultAdminSection(): AppSection {
-        return AppSection.get().filter(section => section.name === 'Admin')[0]
+        return AppSection.findSectionByName('Dashboard')
             || AppSection.findFirstSectionWhichRequiresAuth()
     }
 
     static findDefaultSiteSection(): AppSection {
-        return AppSection.get().filter(section => section.name === 'Site')[0]
+        return AppSection.findSectionByName('Site')
             || AppSection.findFirstSectionWhichDoesNotRequireAuth()
     }
 
@@ -63,5 +63,9 @@ export default class AppSection extends RelaDB.Model {
 
     static findFirstSectionWhichDoesNotRequireAuth(): AppSection {
         return AppSection.get().filter(section => ! section.requiresAuth)[0]
+    }
+
+    static findSectionByName(name: string): AppSection {
+        return AppSection.get().filter(section => section.name === name)[0]
     }
 }
