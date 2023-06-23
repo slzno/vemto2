@@ -1,5 +1,6 @@
 import Project from "@Common/models/Project"
 import GenerateBasicMenu from "./GenerateBasicMenu"
+import GenerateBasicSections from "./GenerateBasicSections"
 
 export default class GenerateBasicProjectData {
 
@@ -9,8 +10,9 @@ export default class GenerateBasicProjectData {
         this.project = project
     }
 
-    handle() {
-        (new GenerateBasicMenu(this.project)).handle()
+    async handle() {
+        await new GenerateBasicMenu(this.project).handle()
+        await new GenerateBasicSections(this.project).handle()
     }
 
 }

@@ -11,6 +11,7 @@
     import Page from "@Common/models/page/Page"
 import AppRoutes from "./components/ProjectApps/AppRoutes.vue"
 import AppNavs from "./components/ProjectApps/AppNavs.vue"
+import AppSections from "./components/ProjectApps/AppSections.vue"
 
     const router = useRouter(),
         projectStore = useProjectStore(),
@@ -29,6 +30,7 @@ import AppNavs from "./components/ProjectApps/AppNavs.vue"
 
     const tabs = [
         { label: "Applications", value: "applications" },
+        { label: "Sections", value: "sections" },
         { label: "Routes", value: "routes" },
         { label: "Navigation", value: "navigation" },
         { label: "Domains", value: "domains" },
@@ -86,6 +88,12 @@ import AppNavs from "./components/ProjectApps/AppNavs.vue"
                         >Delete</UiButton
                     >
                 </div>
+            </div>
+        </div>
+
+        <div class="space-y-2 p-4" v-if="selectedTab === 'sections'">
+            <div class="space-y-2">
+                <AppSections />
             </div>
         </div>
 

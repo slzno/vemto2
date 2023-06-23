@@ -76,8 +76,8 @@ export default class Page extends RelaDB.Model {
         return `/pages/${paramCase(name)}`
     }
 
-    getRouteContent(route: Route): string {
-        return ''
+    getRouteContent(): string {
+        return `${this.namespace}\\${this.livewireComponentName}::class`
     }
 
     addComponent(component: any) {

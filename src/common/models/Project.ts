@@ -11,6 +11,7 @@ import RenderableFile, {
     RenderableFileType,
 } from "./RenderableFile"
 import GenerateBasicProjectData from "./services/project/GenerateBasicProjectData"
+import AppSection from "./AppSection"
 
 export default class Project extends RelaDB.Model {
     id: string
@@ -22,6 +23,7 @@ export default class Project extends RelaDB.Model {
     tables: Table[]
     models: Model[]
     routes: Route[]
+    appSections: AppSection[]
     laravelVersion: Number
     schemaTablesDataHash: string
     schemaModelsDataHash: string
@@ -39,6 +41,7 @@ export default class Project extends RelaDB.Model {
             tables: () => this.hasMany(Table).cascadeDelete(),
             models: () => this.hasMany(Model).cascadeDelete(),
             routes: () => this.hasMany(Route).cascadeDelete(),
+            appSections: () => this.hasMany(AppSection).cascadeDelete(),
             renderableFiles: () => this.hasMany(RenderableFile).cascadeDelete(),
         }
     }
@@ -174,6 +177,24 @@ export default class Project extends RelaDB.Model {
 
     getTables(): Table[] {
         return this.tables.filter((table) => !table.isRemoved())
+    }
+
+    getRoutesByRoutableType(type: string): Route[] {
+        return this.routes.filter((route) => route.routableType === type)
+    }
+
+    getRoutesByApplicationSection(section: string): Route[] {
+        return this.routes.filter((route) => route.routable.section === section)
+    }
+
+    getAllApplicationsSections(): string[] {
+        return this.getApplications().map((application) => application.section)
+    }
+
+    getApplicationsBySection(section: string): any[] {
+        return this.getApplications().filter(
+            (application) => application.section === section
+        )
     }
 
     markTableAsChanged(table: Table) {

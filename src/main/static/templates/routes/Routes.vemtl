@@ -1,5 +1,7 @@
 <?php
 
+<% const paramCase = this.require('paramCase') %>
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,14 +14,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix('/admin')->name('admin.')->middleware([
+
+<% for (let section of this.project.getAllApplicationsSections()) { %>
+Route::prefix('/<$ paramCase(section) $>')->name('<$ paramCase(section) $>.')->middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified'
 ])->group(function () {
     <% let lastRoutable = null %>
 
-    <% for(let route of this.routes) { %>
+    <% for(let route of this.project.getRoutesByApplicationSection(section)) { %>
     <% if (!route.routableIs(lastRoutable)) { %>
     <% lastRoutable = route.routable %>
 
@@ -29,3 +33,5 @@ Route::prefix('/admin')->name('admin.')->middleware([
         ->name('<$ route.name $>');
     <% } %>
 });
+
+<% } %>

@@ -9,7 +9,7 @@ export default class GenerateBasicMenu {
         this.project = project
     }
 
-    handle() {
+    async handle() {
         if(this.project.navs.length) return
 
         Nav.create({
