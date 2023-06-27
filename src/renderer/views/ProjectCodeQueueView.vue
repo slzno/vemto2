@@ -23,6 +23,7 @@
     const tabs = [
         { label: "Queue", value: "default", badge: () => projectStore.project.getNonRemovedRenderableFiles().length },
         { label: "Removed", value: "removed", badge: () => projectStore.project.getRemovedRenderableFiles().length },
+        { label: "Templates", value: "templates" },
         { label: "Settings", value: "settings" },
     ]
 
