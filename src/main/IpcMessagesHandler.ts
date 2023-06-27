@@ -135,4 +135,23 @@ export function HandleIpcMessages() {
             return true
         })
     })
+
+    ipcMain.handle("folder:project:read", (event, folderPath, removeBasePath) => {
+        const project = Project.find(1)
+        if(!project) return null
+
+        return handleError(event, () => {
+            const completePath = path.join(project.getPath(), folderPath)
+
+            return FileSystem.readFolder(completePath, removeBasePath)
+        })
+    })
+
+    ipcMain.handle("folder:internal:read", (event, folderPath, removeBasePath) => {
+        return handleError(event, () => {
+            const completePath = path.join(app.getAppPath(), "static", folderPath)
+
+            return FileSystem.readFolder(completePath, removeBasePath)
+        })
+    })
 }

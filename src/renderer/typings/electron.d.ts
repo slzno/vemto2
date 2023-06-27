@@ -18,6 +18,8 @@ export default interface ElectronApi {
     openProjectFile: (path: string) => Promise<void>,
     readConflictsFile: (path: string) => Promise<string>,
     solveConflictReplacingCode: (fileId: string, conflictId: string, content: string) => Promise<void>,
+    readProjectFolder: (path: string, removeBasePath?: boolean) => Promise<string[]>,
+    readInternalFolder: (path: string, removeBasePath?: boolean) => Promise<string[]>,
 }
 
 declare global {

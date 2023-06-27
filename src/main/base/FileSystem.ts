@@ -175,6 +175,12 @@ class FileSystem {
         return JSON.parse(fileContent)
     }
 
+    readFolder(folderPath: string, removeBasePath: boolean): Array<string> {
+        const removeFromPathString = removeBasePath ? folderPath : ''
+
+        return this.walkSync(folderPath, [], removeFromPathString)
+    }
+
     walkSync(
         dir: string, 
         fileList: Array<string> = [], 
@@ -187,6 +193,9 @@ class FileSystem {
                 fileList = this.walkSync(path.join(dir, file, '/'), fileList, removeFromPathString)
             } else {
                 let filePath = path.join(dir, file).replace(removeFromPathString, '')
+
+                filePath = filePath.replace(/\\/g, '/')
+
                 fileList.push(filePath)
             }
         })

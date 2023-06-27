@@ -3,14 +3,14 @@
 <% const table = model.table %>
 <% const modelName = crud.model.name %>
 <% const camelCase = this.require('camelCase') %>
-<% const itemVarName = camelCase(crud.model.name) %>
-<% const collectionVarName = camelCase(crud.model.plural) %>
+<% const itemVarName = camelCase(crud.name) %>
+<% const collectionVarName = camelCase(crud.plural) %>
 <# --- #>
 <div>
     <form wire:submit.prevent="save">
         <% for (let input of crud.inputs) { %>
         <label for="<$ input.name $>"><$ input.label $></label><br/>
-        <input wire:model="<$ itemVarName $>.<$ input.column.name $>" type="text" name="<$ input.name $>" id="<$ input.name $>" placeholder="<$ input.placeholder $>">
+        <x-input wire:model="<$ itemVarName $>.<$ input.column.name $>" type="text" name="<$ input.name $>" id="<$ input.name $>" placeholder="<$ input.placeholder $>" />
         @if ($errors->has('<$ itemVarName $>.<$ input.column.name $>'))
             <div style="color: red;">
                 {{ $errors->first('<$ itemVarName $>.<$ input.column.name $>') }}
@@ -19,6 +19,6 @@
         <br/>
         <% } %>
         
-        <button type="submit">Save</button>
+        <x-button type="submit">Save</x-button>
     </form>
 </div>

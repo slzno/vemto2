@@ -59,4 +59,10 @@ contextBridge.exposeInMainWorld("api", {
     solveConflictReplacingCode: (fileId: string, conflictId: string, content: string) => {
         return ipcRenderer.invoke("file:conflicts:solve:replace", fileId, conflictId, content)
     },
+    readProjectFolder: (path: string, removeBasePath: boolean = false) => {
+        return ipcRenderer.invoke("folder:project:read", path, removeBasePath)
+    },
+    readInternalFolder: (path: string, removeBasePath: boolean = false) => {
+        return ipcRenderer.invoke("folder:internal:read", path, removeBasePath)
+    }
 })
