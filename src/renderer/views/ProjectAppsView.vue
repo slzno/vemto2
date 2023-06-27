@@ -9,16 +9,16 @@
     import HandleProjectDatabase from "@Renderer/services/HandleProjectDatabase"
     import Crud from "@Common/models/crud/Crud"
     import Page from "@Common/models/page/Page"
-import AppRoutes from "./components/ProjectApps/AppRoutes.vue"
-import AppNavs from "./components/ProjectApps/AppNavs.vue"
-import AppSections from "./components/ProjectApps/AppSections.vue"
+    import AppRoutes from "./components/ProjectApps/AppRoutes.vue"
+    import AppNavs from "./components/ProjectApps/AppNavs.vue"
+    import AppSections from "./components/ProjectApps/AppSections.vue"
 
     const router = useRouter(),
         projectStore = useProjectStore(),
         canShow = ref(false)
 
     const openApp = (app: Crud | Page) => {
-        if(app.getAppType() === "CRUD") {
+        if (app.getAppType() === "CRUD") {
             router.push({ name: "project-crud", params: { crudId: app.id } })
         } else {
             router.push({ name: "project-page", params: { pageId: app.id } })
@@ -39,9 +39,8 @@ import AppSections from "./components/ProjectApps/AppSections.vue"
     ]
 
     onMounted(async () => {
-        await HandleProjectDatabase.populate(() => { 
-            console.log(projectStore.project.cruds, Crud.get())
-            canShow.value = true 
+        await HandleProjectDatabase.populate(() => {
+            canShow.value = true
         })
     })
 </script>

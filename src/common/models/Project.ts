@@ -189,6 +189,24 @@ export default class Project extends RelaDB.Model {
         )
     }
 
+    getNonRemovedRenderableFiles(): RenderableFile[] {
+        return this.renderableFiles.filter(
+            (renderableFile) => !renderableFile.wasRemoved()
+        )
+    }
+
+    getRemovedRenderableFiles(): RenderableFile[] {
+        return this.renderableFiles.filter((renderableFile) =>
+            renderableFile.wasRemoved()
+        )
+    }
+
+    clearRemovedFiles() {
+        this.getRemovedRenderableFiles().forEach((renderableFile) =>
+            renderableFile.delete()
+        )
+    }
+
     markTableAsChanged(table: Table) {
         if (!this.changedTablesIds) this.changedTablesIds = []
 
