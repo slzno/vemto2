@@ -39,7 +39,10 @@ import AppSections from "./components/ProjectApps/AppSections.vue"
     ]
 
     onMounted(async () => {
-        await HandleProjectDatabase.populate(() => canShow.value = true)
+        await HandleProjectDatabase.populate(() => { 
+            console.log(projectStore.project.cruds, Crud.get())
+            canShow.value = true 
+        })
     })
 </script>
 

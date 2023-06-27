@@ -9,13 +9,15 @@
         PuzzlePieceIcon,
     } from "@heroicons/vue/24/outline"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
+    import { useNavigationStore } from "@Renderer/stores/useNavigationStore"
     
     import { computed } from "vue"
     import { useRoute } from "vue-router"
 
     const route = useRoute(),
         activeRoute = computed(() => route.path),
-        projectStore = useProjectStore()
+        projectStore = useProjectStore(),
+        navigationStore = useNavigationStore()
 </script>
 
 <template>
@@ -30,9 +32,10 @@
             </RouterLink>
 
             <RouterLink
+                @click="navigationStore.setActiveTab('schema')"
                 :class="{
-                    'text-red-500': activeRoute === '/project/schema',
-                    'text-slate-400 dark:text-slate-600  hover:text-slate-800 dark:hover:text-slate-400': activeRoute !== '/project/schema',
+                    'text-red-500': navigationStore.activeTabIs('schema'),
+                    'text-slate-400 dark:text-slate-600  hover:text-slate-800 dark:hover:text-slate-400': navigationStore.activeTabIsNot('schema'),
                 }"
                 class="w-full h-12 flex justify-center items-center py-10"
                 as="li"
@@ -42,9 +45,10 @@
             </RouterLink>
 
             <RouterLink
+                @click="navigationStore.setActiveTab('apps')"
                 :class="{
-                    'text-red-500': activeRoute === '/project/apps',
-                    'text-slate-400 dark:text-slate-600 hover:text-slate-800 dark:hover:text-slate-400': activeRoute !== '/project/apps',
+                    'text-red-500': navigationStore.activeTabIs('apps'),
+                    'text-slate-400 dark:text-slate-600 hover:text-slate-800 dark:hover:text-slate-400': navigationStore.activeTabIsNot('apps'),
                 }"
                 class="w-full h-12 flex justify-center items-center py-10"
                 as="li"
@@ -60,9 +64,10 @@
             </li>
 
             <RouterLink
+                @click="navigationStore.setActiveTab('code-queue')"
                 :class="{
-                    'text-red-500': activeRoute === '/project/code-queue',
-                    'text-slate-400 dark:text-slate-600  hover:text-slate-800 dark:hover:text-slate-400': activeRoute !== '/project/code-queue',
+                    'text-red-500': navigationStore.activeTabIs('code-queue'),
+                    'text-slate-400 dark:text-slate-600  hover:text-slate-800 dark:hover:text-slate-400': navigationStore.activeTabIsNot('code-queue'),
                 }"
                 class="w-full h-12 flex justify-center items-center py-10 relative"
                 as="li"

@@ -49,7 +49,7 @@ import GenerateBasicSections from "../../../../common/models/services/project/Ge
     }
 
     const deleteSection = (section: AppSection) => {
-        if(!confirm("Are you sure you want to delete this section?")) return
+        if(!confirm("Are you sure you want to delete this section? This will remove all related apps.")) return
         section.delete()
     }
 </script>
@@ -69,7 +69,6 @@ import GenerateBasicSections from "../../../../common/models/services/project/Ge
             <div @click="editSection(section)" v-if="isNotEditingSection(section)" class="font-mono w-full h-full p-3 space-x-2 flex justify-between">
                 <span>{{ section.name }}</span>
                 <small class="text-slate-500">{{ section.getApplicationsCount() }} apps</small>
-                {{ section.cruds }}
             </div>
             <div v-else class="p-3 w-full">
                 <UiText class="mb-3" v-model="editingSection.name" label="Name" />
