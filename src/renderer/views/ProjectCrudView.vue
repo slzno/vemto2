@@ -5,7 +5,6 @@
     import { useRoute } from 'vue-router'
     import Crud from '@Common/models/crud/Crud'
     import UiButton from '@Renderer/components/ui/UiButton.vue'
-    import HandleProjectDatabase from '@Renderer/services/HandleProjectDatabase'
     import UiTabs from '@Renderer/components/ui/UiTabs.vue'
     import UiSelect from '@Renderer/components/ui/UiSelect.vue'
     import UiText from '@Renderer/components/ui/UiText.vue'
@@ -29,9 +28,7 @@
     ]
 
     onMounted(async () => {
-        await HandleProjectDatabase.populate(() => {
-            crud.value = Crud.find(crudId)
-        })
+        crud.value = Crud.find(crudId)
     })
 </script>
 

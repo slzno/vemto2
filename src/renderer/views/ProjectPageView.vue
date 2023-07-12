@@ -6,7 +6,6 @@
     import { useRoute } from 'vue-router'
     import Page from '@Common/models/page/Page'
     import UiButton from '@Renderer/components/ui/UiButton.vue'
-    import HandleProjectDatabase from '@Renderer/services/HandleProjectDatabase'
     import UiTabs from '@Renderer/components/ui/UiTabs.vue'
     import UiSelect from '@Renderer/components/ui/UiSelect.vue'
     import UiText from '@Renderer/components/ui/UiText.vue'
@@ -30,11 +29,9 @@
     ]
 
     onMounted(async () => {
-        await HandleProjectDatabase.populate(() => {
-            page.value = Page.find(pageId)
+        page.value = Page.find(pageId)
 
-            loadComponents()
-        })
+        loadComponents()
     })
 
     const loadComponents = () => {

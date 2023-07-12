@@ -1,11 +1,13 @@
 <script setup lang="ts">
     import { RouterView } from "vue-router"
     import ProjectNavbar from "@Renderer/views/components/ProjectNavbar.vue"
-    import { onMounted } from "vue"
+    import { onMounted, ref } from "vue"
     import HandleProjectDatabase from "@Renderer/services/HandleProjectDatabase"
 
+    const canShow = ref(false)
+
     onMounted(async () => {
-        await HandleProjectDatabase.populate()
+        await HandleProjectDatabase.populate(() => canShow.value = true)
     })
 </script>
 
@@ -14,7 +16,7 @@
         <ProjectNavbar />
 
         <!-- Content -->
-        <div class="flex-1">
+        <div v-if="canShow" class="flex-1">
             <RouterView />
         </div>
     </div>

@@ -22,6 +22,7 @@ class <$ this.filenameWithoutExtension $> extends Component
 
     public function rules()
     {
+        // hook:BEFORE_RULES
         return [
             <% for (let input of crud.inputs) { %>
             '<$ itemVarName $>.<$ input.column.name $>' => <$ input.getCreationRulesForTemplate() $>,

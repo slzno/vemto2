@@ -59,6 +59,10 @@ export default class HandleProjectDatabase {
         if (projectStore.projectIsEmpty) {
             const latestProjectPath = window.localStorage.getItem("latest-project")
 
+            if(!latestProjectPath) {
+                return
+            }
+
             const data = await Main.API.loadProjectDatabase(latestProjectPath)
 
             HandleProjectDatabase.start(data)

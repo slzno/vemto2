@@ -4,7 +4,7 @@
     import CrudManager from "./components/ProjectApps/CrudManager.vue"
     import { useRouter } from "vue-router"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
-    import { onMounted, ref } from "vue"
+    import { ref } from "vue"
     import PageManager from "./components/ProjectApps/PageManager.vue"
     import HandleProjectDatabase from "@Renderer/services/HandleProjectDatabase"
     import Crud from "@Common/models/crud/Crud"
@@ -14,8 +14,7 @@
     import AppSections from "./components/ProjectApps/AppSections.vue"
 
     const router = useRouter(),
-        projectStore = useProjectStore(),
-        canShow = ref(false)
+        projectStore = useProjectStore()
 
     const openApp = (app: Crud | Page) => {
         if (app.getAppType() === "CRUD") {
@@ -37,18 +36,11 @@
         { label: "Plugins", value: "plugins" },
         { label: "Settings", value: "settings" },
     ]
-
-    onMounted(async () => {
-        await HandleProjectDatabase.populate(() => {
-            canShow.value = true
-        })
-    })
 </script>
 
 <template>
     <div
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-hidden"
-        v-if="canShow"
     >
         <div class="mt-2">
             <UiTabs :tabs="tabs" v-model="selectedTab" :external="true" />
