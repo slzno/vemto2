@@ -3,13 +3,34 @@
     import ProjectNavbar from "@Renderer/views/components/ProjectNavbar.vue"
     import { onMounted, ref } from "vue"
     import HandleProjectDatabase from "@Renderer/services/HandleProjectDatabase"
-import { ArrowTopRightOnSquareIcon, CommandLineIcon, FolderIcon, PlayIcon, ShieldExclamationIcon } from "@heroicons/vue/24/outline"
+    import { ArrowTopRightOnSquareIcon, CommandLineIcon, FolderIcon, PlayIcon, ShieldExclamationIcon } from "@heroicons/vue/24/outline"
+    import SequentialGenerator from "@Renderer/codegen/sequential/SequentialGenerator"
+    import { useProjectStore } from "@Renderer/stores/useProjectStore"
+    import { useAppStore } from "@Renderer/stores/useAppStore"
+import UiLoading from "@Renderer/components/ui/UiLoading.vue"
 
-    const canShow = ref(false)
+    const canShow = ref(false),
+        projectStore = useProjectStore(),
+        appStore = useAppStore()
 
     onMounted(async () => {
         await HandleProjectDatabase.populate(() => canShow.value = true)
     })
+
+    const generateCode = async () => {
+        appStore.startGeneratingCode()
+        
+        try {
+            await new SequentialGenerator().run(projectStore.project)
+
+            setTimeout(() => {
+                appStore.finishGeneratingCode()
+            }, 500)
+        } catch (error) {
+            appStore.finishGeneratingCode()
+            throw error
+        }
+    }
 </script>
 
 <template>
@@ -20,15 +41,22 @@ import { ArrowTopRightOnSquareIcon, CommandLineIcon, FolderIcon, PlayIcon, Shiel
         <div v-if="canShow" class="flex-1">
             <RouterView />
 
-            <div class="fixed flex justify-center bottom-0 w-full p-2.5">
-                <div class="py-2 px-5 rounded-full shadow bg-slate-750 border border-slate-600 flex space-x-2">
+            <div class="fixed flex justify-end bottom-0 p-2 z-50" style="width: calc(100% - 5rem)">
+                <div class="py-2 px-5 rounded-full shadow bg-slate-800 border border-slate-600 flex space-x-2">
                     <div>
-                        <PlayIcon class="w-6 h-6 text-slate-100" />
+                        <button class="flex text-slate-100 cursor-pointer hover:text-red-500" title="Generate Code" @click="generateCode()">
+                            <div v-if="appStore.isGenerating" class="w-6 h-6">
+                                <UiLoading />
+                            </div>
+                            <PlayIcon v-else class="w-6 h-6" />
+                        </button>
                     </div>
-                    <FolderIcon class="w-6 h-6 text-slate-100" />
-                    <CommandLineIcon class="w-6 h-6 text-slate-100" />
-                    <ShieldExclamationIcon class="w-6 h-6 text-slate-100" />
-                    <ArrowTopRightOnSquareIcon class="w-6 h-6 text-slate-100" />
+                    <button class="flex text-slate-100 cursor-pointer hover:text-red-500" title="Open Project Folder" @click="generateCode()">
+                        <FolderIcon class="w-6 h-6"/>
+                    </button>
+                    <CommandLineIcon class="w-6 h-6 text-slate-100 cursor-pointer hover:text-red-500" />
+                    <ShieldExclamationIcon class="w-6 h-6 text-slate-100 cursor-pointer hover:text-red-500" />
+                    <ArrowTopRightOnSquareIcon class="w-6 h-6 text-slate-100 cursor-pointer hover:text-red-500" />
                 </div>
             </div>
         </div>
