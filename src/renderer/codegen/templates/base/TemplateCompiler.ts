@@ -10,16 +10,24 @@ export default new class TemplateCompiler {
     private hooks: any
     private imports: any
     private content: string
+    private vthemeKeys: any
     private hooksEnabled: boolean
     private templateEngine: TemplateEngine
 
     constructor() {
+        this.vthemeKeys = {}
         this.hooksEnabled = true
         this.templateEngine = null
     }
 
     setContent(content: string) {
         this.content = content
+
+        return this
+    }
+
+    setVthemeKeys(vthemeKeys: any) {
+        this.vthemeKeys = vthemeKeys
 
         return this
     }
@@ -116,6 +124,10 @@ export default new class TemplateCompiler {
                 compiledContent = this.processHooks(compiledContent)
             }
 
+            if(this.content.includes('<# use vtheme #>')) {
+                compiledContent = this.processVtheme(compiledContent)
+            }
+
             return compiledContent
         } catch (error: any) {
             const latestError = this.templateEngine.getLatestError()
@@ -157,6 +169,23 @@ export default new class TemplateCompiler {
         }
 
         return lines.join('\n')
+    }
+
+    processVtheme(content: string) {
+        const vthemeKeys = content.match(/vtheme\((.*?)\)/g)
+
+        if(!vthemeKeys) return content
+
+        for(const vthemeKey of vthemeKeys) {
+            const key = vthemeKey.replace('vtheme(', '').replace(')', '')
+            const value = this.vthemeKeys[key]
+
+            if(value) {
+                content = content.replace(vthemeKey, value)
+            }
+        }
+
+        return content
     }
 
     getTemplateContent() {

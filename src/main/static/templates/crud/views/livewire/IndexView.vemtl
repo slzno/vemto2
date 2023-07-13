@@ -1,3 +1,4 @@
+<# use vtheme #>
 <% const crud = this.crud %>
 <% const model = crud.model %>
 <% const table = model.table %>
@@ -15,22 +16,22 @@
         <a href="{{ route('<$ crud.getRouteNameByTag('create') $>') }}">+ New</a>
     </div>
 
-    <table>
-        <thead>
-            <tr>
+    <table class="vtheme(table)">
+        <thead class="vtheme(table.head)">
+            <tr class="vtheme(table.head.row)">
                 <% for (let input of crud.inputs) { %>
                     <th wire:click="sortBy('<$ input.column.name $>')"><$ input.label $></th>
                 <% } %>
                 <th>Actions</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody class="vtheme(table.body)">
             @forelse ($<$ collectionVarName $> as $<$ itemVarName $>)
-            <tr wire:loading.class.delay="opacity-75">
+            <tr  class="vtheme(table.body.row)" wire:loading.class.delay="vtheme(default.delay)">
                 <% for (let input of crud.inputs) { %>
-                    <td>{{ $<$ itemVarName $>-><$ input.column.name $> }}</td>
+                    <td class="vtheme(table.col)">{{ $<$ itemVarName $>-><$ input.column.name $> }}</td>
                 <% } %>
-                <td>
+                <td class="vtheme(table.body.col)">
                     <a href="{{ route('<$ crud.getRouteNameByTag('edit') $>', $<$ itemVarName $>) }}">Edit</a>
                 </td>
             </tr>

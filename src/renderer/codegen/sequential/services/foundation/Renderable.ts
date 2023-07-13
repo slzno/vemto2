@@ -105,6 +105,7 @@ export default abstract class Renderable {
         TemplateCompiler
             .setContent(templateContent)
             .setData(this.getFullData())
+            .setVthemeKeys(this.project.getVthemeKeys())
 
         TemplateCompiler.setHooksEnabled(this.hooksEnabled)
         if(this.hooks) TemplateCompiler.setHooks(this.hooks())

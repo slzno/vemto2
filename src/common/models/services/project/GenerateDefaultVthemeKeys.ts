@@ -1,5 +1,5 @@
 import Project from "@Common/models/Project"
-import tailwindKeys from "./base/vthemeDefaultKeys.tailwind"
+import tailwindTheme from "./base/tailwind.vtheme"
 
 export default class GenerateDefaultVthemeKeys {
 
@@ -10,9 +10,9 @@ export default class GenerateDefaultVthemeKeys {
     }
 
     async handle() {
-        Object.keys(tailwindKeys).forEach((key) => {
+        Object.keys(tailwindTheme.keys).forEach((key) => {
             if(!this.project.hasVthemeKey(key)) {
-                this.project.setVthemeKey(key, tailwindKeys[key])
+                this.project.setVthemeKey(key, tailwindTheme.keys[key])
             }
         })
 
