@@ -47,7 +47,7 @@
             'bg-slate-800': !external,
             'bg-transparent': external,
         }"
-        class="flex space-x-2 text-sm text-slate-500 px-1 border-b border-slate-700"
+        class="flex space-x-2 text-sm text-slate-500 px-1 border-b border-slate-700 select-none"
     >
         <li
             v-for="tab in tabs"

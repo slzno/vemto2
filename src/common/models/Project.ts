@@ -30,6 +30,7 @@ export default class Project extends RelaDB.Model {
     changedTablesIds: string[]
     renderableFiles: RenderableFile[]
     currentRenderedFilesPaths: string[]
+    vthemeKeys: any
 
     lastForeignAlias: number = 0;
 
@@ -322,5 +323,29 @@ export default class Project extends RelaDB.Model {
 
     generateBasicData() {
         (new GenerateBasicProjectData(this)).handle()
+    }
+
+    getVthemeKeys(): { [key: string]: string } {
+        return this.vthemeKeys || {}
+    }
+
+    getVthemeKey(keyName): string {
+        if (!this.vthemeKeys) return null
+        return this.vthemeKeys[keyName] || null
+    }
+
+    hasVthemeKey(keyName): boolean {
+        return !!this.getVthemeKey(keyName)
+    }
+
+    setVthemeKey(keyName, value) {
+        if (!this.vthemeKeys) this.vthemeKeys = {}
+        this.vthemeKeys[keyName] = value
+        this.save()
+    }
+
+    saveVthemeKeys(vthemeKeys: any) {
+        this.vthemeKeys = vthemeKeys
+        this.save()
     }
 }

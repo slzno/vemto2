@@ -237,7 +237,7 @@
     })
 </script>
 <template>
-    <div class="relative text-gray-600 dark:text-white"
+    <div class="relative text-slate-600 dark:text-white"
         @keyup="keyPressed"
         @keyup.esc="close()"
         @keyup.enter="selectCurrentCandidate()"
@@ -246,7 +246,7 @@
         <span class="text-xs text-slate-400" v-if="label">{{ label }}</span>
         <button
             ref="selectButton"
-            class="flex focus:border-red-500 border border-transparent items-center justify-between bg-white dark:bg-slate-950 appearance-none rounded-lg leading-tight text-gray-600 dark:text-gray-300 py-1.5 px-1 w-full outline-none"
+            class="flex focus:border-red-500 border border-slate-650 items-center justify-between bg-white dark:bg-slate-950 appearance-none rounded-lg leading-tight text-slate-600 dark:text-slate-300 dark:focus:text-slate-200 py-1.5 px-2 w-full outline-none"
             :class="{ 'active': showing, 'p-2': !small }"
             :title="selected ? selected.label : placeholder"
             @focus="focusFiredOnce()"
@@ -254,7 +254,7 @@
         >
             <div class="text-left w-10/12 overflow-hidden whitespace-nowrap">
                 <span v-if="selected">{{ selected.label }}</span>
-                <span class="text-gray-500" v-else>{{ placeholder }}</span>
+                <span class="text-slate-500" v-else>{{ placeholder }}</span>
             </div>
             <div class="flex justify-end">
                 <ChevronDownIcon class="w-4 h-4 ml-1" />
@@ -268,18 +268,18 @@
         >
             <div class="relative">
                 <div class="p-2" style="height: 60px">
-                    <input ref="searchInput" class="focus:border focus:border-red-500 rounded leading-tight bg-gray-200 dark:bg-slate-800 text-gray-600 dark:text-gray-300 py-1 px-1 w-full border-2 border-transparent outline-none" placeholder="Search..." v-model="search">
+                    <input ref="searchInput" class="focus:border focus:border-red-500 rounded leading-tight bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 py-1 px-1 w-full border-2 border-transparent outline-none" placeholder="Search..." v-model="search">
                 </div>
                 <ul ref="dropdownList" class="list-reset h-full overflow-y-auto" style="max-height: 240px;">
                     <li :ref="optionReference(option)" v-for="(option, index) in filteredOptions" :key="index">
                         <p
-                            class="p-2 flex items-center justify-between hover:bg-gray-200 dark:hover:bg-gray-800 cursor-pointer"
-                            :class="{ 'bg-gray-200 dark:bg-gray-800': isSelected(option), 'bg-gray-200 dark:bg-gray-600 border border-gray-300': isSelectCandidate(option) }"
+                            class="p-2 flex items-center justify-between hover:bg-slate-200 dark:hover:bg-slate-800 cursor-pointer"
+                            :class="{ 'bg-slate-200 dark:bg-slate-800': isSelected(option), 'bg-slate-200 dark:bg-slate-600 border border-slate-300': isSelectCandidate(option) }"
                             @click="select(option)"
                         >
                             <span>
                                 <span class="block">{{ option.label }}</span>
-                                <span class="block text-sm text-gray-500" v-if="option.description">{{ option.description }}</span>
+                                <span class="block text-sm text-slate-500" v-if="option.description">{{ option.description }}</span>
                             </span>
                             <span v-if="isSelected(option)">
                                 <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" class="w-4 h-4"><path d="M5 13l4 4L19 7"></path></svg>

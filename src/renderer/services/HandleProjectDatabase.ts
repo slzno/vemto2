@@ -49,6 +49,8 @@ export default class HandleProjectDatabase {
         const project = Project.find(1)
 
         if(project) {
+            console.log("Generating basic project data")
+            
             project.generateBasicData()
         }
     }

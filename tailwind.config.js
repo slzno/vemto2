@@ -34,6 +34,9 @@ module.exports = {
             violet: colors.violet,
             slate: {
                 ...colors.slate,
+                50: '#F9FAFB',
+                650: '#2E3A48',
+                750: '#1F2D3D',
                 850: '#152033',
                 950: '#091023',
             }

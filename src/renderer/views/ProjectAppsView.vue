@@ -6,12 +6,12 @@
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import { ref } from "vue"
     import PageManager from "./components/ProjectApps/PageManager.vue"
-    import HandleProjectDatabase from "@Renderer/services/HandleProjectDatabase"
     import Crud from "@Common/models/crud/Crud"
     import Page from "@Common/models/page/Page"
     import AppRoutes from "./components/ProjectApps/AppRoutes.vue"
     import AppNavs from "./components/ProjectApps/AppNavs.vue"
     import AppSections from "./components/ProjectApps/AppSections.vue"
+    import AppThemes from "./components/ProjectApps/AppThemes.vue"
 
     const router = useRouter(),
         projectStore = useProjectStore()
@@ -31,9 +31,7 @@
         { label: "Sections", value: "sections" },
         { label: "Routes", value: "routes" },
         { label: "Navigation", value: "navigation" },
-        { label: "Domains", value: "domains" },
         { label: "Themes", value: "themes" },
-        { label: "Plugins", value: "plugins" },
         { label: "Settings", value: "settings" },
     ]
 </script>
@@ -99,6 +97,12 @@
         <div class="space-y-2 p-4" v-if="selectedTab === 'navigation'">
             <div class="space-y-2">
                 <AppNavs />
+            </div>
+        </div>
+
+        <div class="space-y-2 p-4" v-if="selectedTab === 'themes'">
+            <div class="space-y-2">
+                <AppThemes />
             </div>
         </div>
     </div>
