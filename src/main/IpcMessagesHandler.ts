@@ -1,4 +1,5 @@
 import path from "path"
+import child_process from "child_process"
 import { app, ipcMain, shell, dialog } from "electron"
 import FileSystem from "./base/FileSystem"
 import { handleError } from "./ErrorHandler"
@@ -80,6 +81,39 @@ export function HandleIpcMessages() {
         })
     })
 
+    ipcMain.handle("folder:project:open", (event, folderRelativePath) => {
+        const project = Project.find(1)
+        if(!project) return null
+
+        return handleError(event, () => {
+            const completePath = path.join(project.getPath(), folderRelativePath)
+
+            // Open the folder in the default file explorer
+            shell.openPath(completePath)
+        })
+    })
+
+    ipcMain.handle("folder:project:open:terminal", (event, folderRelativePath) => {
+        const project = Project.find(1)
+        if(!project) return null
+
+        return handleError(event, async () => {
+            const completePath = path.join(project.getPath(), folderRelativePath)
+
+            const isMacOs = process.platform === "darwin"
+            
+            if (isMacOs) {
+                await executeCommand(`osascript -e 'tell application "Terminal"' -e 'activate' -e 'do script "cd ${completePath} in window 1' -e 'end tell'`)
+            } else {
+                const fullCommand = `cd ${completePath};`,
+                    commandToExecute = fullCommand.replace(/;/g, '\\;')
+                
+                await executeCommand(`start wt.exe -w 0 -d . -p "PowerShell" powershell.exe -NoExit -Command "${commandToExecute}"`)
+            }
+        })
+    })
+
+
     ipcMain.handle("file:conflicts:read", (event, filePath) => {
         const project = Project.find(1)
         if(!project) return null
@@ -154,4 +188,27 @@ export function HandleIpcMessages() {
             return FileSystem.readFolder(completePath, removeBasePath)
         })
     })
+
+    const executeCommand = (command) => {
+        console.log('Executing: ' + command)
+        
+        return new Promise((resolve, reject) => {
+            child_process.exec(command, (error, out, err) => {
+                if(error) {
+                    console.error(error)
+                    reject(error)
+                }
+                
+                if(err) {
+                    console.error(err)
+                    reject(err)
+                }
+    
+                if(out) console.log(out)
+    
+                resolve(true)
+            })
+        })
+    
+    }
 }

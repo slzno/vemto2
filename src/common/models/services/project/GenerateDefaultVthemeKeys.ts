@@ -19,4 +19,10 @@ export default class GenerateDefaultVthemeKeys {
         this.project.save()
     }
 
+    async reset() {
+        this.project.vthemeKeys = {}
+
+        return this.handle()
+    }
+
 }

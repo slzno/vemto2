@@ -9,39 +9,48 @@
 <% const viewsFolderName = camelCase(crud.model.plural) %>
 <% const collectionVarName = camelCase(crud.model.plural) %>
 <# --- #>
-<div>
-    <div>
-        <input wire:model="search" type="text" placeholder="Search <$ crud.settings.collectionTitle $>...">
+<div class="vtheme(crud.container)">
+    <div class="vtheme(crud.tools)">
+        <x-ui.input wire:model="search" type="text" placeholder="Search <$ crud.settings.collectionTitle $>..." />
 
-        <a href="{{ route('<$ crud.getRouteNameByTag('create') $>') }}">+ New</a>
+        <a href="{{ route('<$ crud.getRouteNameByTag('create') $>') }}">
+            <x-ui.button>New</x-ui.button>
+        </a>
     </div>
 
-    <table class="vtheme(table)">
-        <thead class="vtheme(table.head)">
-            <tr class="vtheme(table.head.row)">
-                <% for (let input of crud.inputs) { %>
-                    <th wire:click="sortBy('<$ input.column.name $>')"><$ input.label $></th>
-                <% } %>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody class="vtheme(table.body)">
-            @forelse ($<$ collectionVarName $> as $<$ itemVarName $>)
-            <tr  class="vtheme(table.body.row)" wire:loading.class.delay="vtheme(default.delay)">
-                <% for (let input of crud.inputs) { %>
-                    <td class="vtheme(table.col)">{{ $<$ itemVarName $>-><$ input.column.name $> }}</td>
-                <% } %>
-                <td class="vtheme(table.body.col)">
-                    <a href="{{ route('<$ crud.getRouteNameByTag('edit') $>', $<$ itemVarName $>) }}">Edit</a>
-                </td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="<$ colspanSize $>">No <$ crud.settings.collectionTitle $> found.</td>
-            </tr>
-            @endforelse
-        </tbody>
-    </table>
-
-    {{ $<$ collectionVarName $>->links() }}
+    <x-ui.container.table>
+        <div class="vtheme(table.container)">
+            <table class="vtheme(table)">
+                <thead class="vtheme(table.head)">
+                    <tr class="vtheme(table.head.row)">
+                        <% for (let input of crud.inputs) { %>
+                            <th class="vtheme(table.head.col) vtheme(crud.table.head.col.extra)" wire:click="sortBy('<$ input.column.name $>')"><$ input.label $></th>
+                        <% } %>
+                        <th class="vtheme(crud.table.head.action-col)">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="vtheme(table.body)">
+                    @forelse ($<$ collectionVarName $> as $<$ itemVarName $>)
+                    <tr class="vtheme(table.body.row)" wire:loading.class.delay="vtheme(default.delay)">
+                        <% for (let input of crud.inputs) { %>
+                            <td class="vtheme(table.body.col) vtheme(crud.table.body.col.extra)">{{ $<$ itemVarName $>-><$ input.column.name $> }}</td>
+                        <% } %>
+                        <td class="vtheme(crud.table.body.action-col)">
+                            <a class="vtheme(crud.action-link)" href="{{ route('<$ crud.getRouteNameByTag('edit') $>', $<$ itemVarName $>) }}">Edit</a>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr class="vtheme(table.body.row)">
+                        <td class="vtheme(table.body.col)" colspan="<$ colspanSize $>">No <$ crud.settings.collectionTitle $> found.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+            
+        </div>
+        
+        <div class="vtheme(crud.pagination-container)">
+            {{ $<$ collectionVarName $>->links() }}
+        </div>
+    </x-ui.container.table>
 </div>

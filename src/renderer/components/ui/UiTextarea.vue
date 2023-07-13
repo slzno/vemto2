@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { defineProps, defineEmits, computed, ref, onMounted } from "vue"
+    import { defineProps, defineEmits, computed, ref, onMounted, watch, nextTick } from "vue"
 
     const textarea = ref(null)
 
@@ -49,6 +49,12 @@
         resize()
     })
 
+    watch(localValue, () => {
+        nextTick(() => {
+            resize()
+        })
+    })
+
     const resize = (): void => {
         textarea.value.style.height = "auto"
         textarea.value.style.height = textarea.value.scrollHeight + "px"
@@ -68,7 +74,6 @@
             v-model="localValue"
             @blur="$emit('blur', localValue)"
             @focus="$emit('focus', localValue)"
-            @input="resize"
             spellcheck="false"
             autocomplete="false"
             :disabled="disabled"

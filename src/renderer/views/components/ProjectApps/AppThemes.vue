@@ -1,6 +1,8 @@
 <script setup lang="ts">
-    import UiText from "@Renderer/components/ui/UiText.vue"
+    import UiButton from "@Renderer/components/ui/UiButton.vue"
+import UiText from "@Renderer/components/ui/UiText.vue"
 import UiTextarea from "@Renderer/components/ui/UiTextarea.vue"
+import GenerateDefaultVthemeKeys from "@Common/models/services/project/GenerateDefaultVthemeKeys"
     import Main from "@Renderer/services/wrappers/Main"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import { onMounted, reactive, ref } from "vue"
@@ -10,6 +12,10 @@ import UiTextarea from "@Renderer/components/ui/UiTextarea.vue"
     const vthemeKeys = reactive({})
 
     onMounted(async () => {
+        readVthemeKeys()
+    })
+
+    const readVthemeKeys = async () => {
         const templatesFiles = await Main.API.readInternalFolder("templates", true)
 
         for(let filePath of templatesFiles) {
@@ -19,7 +25,7 @@ import UiTextarea from "@Renderer/components/ui/UiTextarea.vue"
                 setVthemeKeysFromFileContent(fileContent)
             }
         }
-    })
+    }
 
     const setVthemeKeysFromFileContent = (content: string) => {
         const regex = /vtheme\((.*?)\)/g,
@@ -40,17 +46,30 @@ import UiTextarea from "@Renderer/components/ui/UiTextarea.vue"
         await projectStore.project.saveVthemeKeys(vthemeKeys)
     }
 
+    const resetTheme = async () => {
+        if(!Main.API.confirm("Are you sure you want to reset the theme?")) return
+
+        await (new GenerateDefaultVthemeKeys(projectStore.project)).reset()
+        readVthemeKeys()
+    }
+
 </script>
 
 <template>
     <div class="flex h-screen space-x-2">
-        <div class="w-1/2 h-full space-y-2">
-            <div v-for="key in Object.keys(vthemeKeys)">
-                <UiTextarea v-model="vthemeKeys[key]" :label="key" @input="saveVthemeKeys()" />
+        <div class="w-1/3 h-full space-y-2">
+            <div>
+                <UiButton @click="resetTheme()">Reset Theme</UiButton>
+            </div>
+            
+            <div class="space-y-2">
+                <div v-for="key in Object.keys(vthemeKeys)">
+                    <UiTextarea v-model="vthemeKeys[key]" :label="key" @input="saveVthemeKeys()" />
+                </div>
             </div>
         </div>
 
-        <div class="w-1/2 h-full bg-white rounded">
+        <div class="w-2/3 h-full bg-white rounded">
             
         </div>
     </div>
