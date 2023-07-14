@@ -1,18 +1,23 @@
 <script setup lang="ts">
+    import { computed } from "vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
-import UiText from "@Renderer/components/ui/UiText.vue"
-import UiTextarea from "@Renderer/components/ui/UiTextarea.vue"
-import GenerateDefaultVthemeKeys from "@Common/models/services/project/GenerateDefaultVthemeKeys"
+    import UiText from "@Renderer/components/ui/UiText.vue"
+    import UiTextarea from "@Renderer/components/ui/UiTextarea.vue"
+    import GenerateDefaultVthemeKeys from "@Common/models/services/project/GenerateDefaultVthemeKeys"
+    import RenderablePreview from "@Renderer/codegen/sequential/services/theme/RenderablePreview"
     import Main from "@Renderer/services/wrappers/Main"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import { onMounted, reactive, ref } from "vue"
 
     const projectStore = useProjectStore()
 
-    const vthemeKeys = reactive({})
+    const vthemeKeys = reactive({}),
+        search = ref(""),
+        compiledPreview = ref("")
 
     onMounted(async () => {
         readVthemeKeys()
+        preview()
     })
 
     const readVthemeKeys = async () => {
@@ -25,6 +30,8 @@ import GenerateDefaultVthemeKeys from "@Common/models/services/project/GenerateD
                 setVthemeKeysFromFileContent(fileContent)
             }
         }
+
+        preview()
     }
 
     const setVthemeKeysFromFileContent = (content: string) => {
@@ -43,7 +50,19 @@ import GenerateDefaultVthemeKeys from "@Common/models/services/project/GenerateD
     }
 
     const saveVthemeKeys = async () => {
+        preview()
         await projectStore.project.saveVthemeKeys(vthemeKeys)
+    }
+
+    const preview = async () => {
+        const preview = new RenderablePreview()
+        
+        compiledPreview.value = await preview.compile()
+
+        const iframe:any = document.getElementById('previewIframe')
+
+        iframe.contentDocument.open()
+        iframe.contentDocument.write(compiledPreview.value)
     }
 
     const resetTheme = async () => {
@@ -53,24 +72,39 @@ import GenerateDefaultVthemeKeys from "@Common/models/services/project/GenerateD
         readVthemeKeys()
     }
 
+    const filteredVthemeKeys = computed(() => {
+        const filtered = {}
+
+        for(let key of Object.keys(vthemeKeys)) {
+            const keyValue = vthemeKeys[key] || ""
+
+            if(key.includes(search.value) || keyValue.includes(search.value)) {
+                filtered[key] = vthemeKeys[key]
+            }
+        }
+
+        return filtered
+    })
+
 </script>
 
 <template>
     <div class="flex h-screen space-x-2">
         <div class="w-1/3 h-full space-y-2">
-            <div>
+            <div class="flex space-x-2">
+                <UiText v-model="search" placeholder="Search..."></UiText>
                 <UiButton @click="resetTheme()">Reset Theme</UiButton>
             </div>
             
-            <div class="space-y-2">
-                <div v-for="key in Object.keys(vthemeKeys)">
-                    <UiTextarea v-model="vthemeKeys[key]" :label="key" @input="saveVthemeKeys()" />
+            <div class="space-y-2 h-full overflow-auto pb-60">
+                <div v-for="key in Object.keys(filteredVthemeKeys)">
+                    <UiTextarea class="font-mono" v-model="vthemeKeys[key]" :label="key" @input="saveVthemeKeys()" />
                 </div>
             </div>
         </div>
 
         <div class="w-2/3 h-full bg-white rounded">
-            
+            <iframe id="previewIframe" class="w-full h-full" frameborder="0"></iframe>
         </div>
     </div>
 </template>

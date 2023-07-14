@@ -13,6 +13,7 @@
     import TemplateErrorViewer from "./components/Common/TemplateErrorViewer.vue"
     import { computed, ref } from "vue"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
+import UiText from "@Renderer/components/ui/UiText.vue"
 
     const projectStore = useProjectStore(),
         search = ref(""),
@@ -21,9 +22,18 @@
     const selectedTab = ref("default")
 
     const tabs = [
-        { label: "Queue", value: "default", badge: () => projectStore.project.getNonRemovedRenderableFiles().length },
-        { label: "Removed", value: "removed", badge: () => projectStore.project.getRemovedRenderableFiles().length },
-        { label: "Templates", value: "templates" },
+        {
+            label: "Queue",
+            value: "default",
+            badge: () =>
+                projectStore.project.getNonRemovedRenderableFiles().length,
+        },
+        {
+            label: "Removed",
+            value: "removed",
+            badge: () =>
+                projectStore.project.getRemovedRenderableFiles().length,
+        },
         { label: "Settings", value: "settings" },
     ]
 
@@ -32,14 +42,14 @@
     }
 
     const filteredFiles = computed(() => {
-        if (!projectStore.project || !projectStore.project.renderableFiles)
-            return []
+            if (!projectStore.project || !projectStore.project.renderableFiles)
+                return []
 
-        return filterBySearch(
-            projectStore.project.getNonRemovedRenderableFiles(),
-            search
-        )
-    }),
+            return filterBySearch(
+                projectStore.project.getNonRemovedRenderableFiles(),
+                search
+            )
+        }),
         removedFiles = computed(() => {
             if (!projectStore.project || !projectStore.project.renderableFiles)
                 return []
@@ -50,7 +60,10 @@
             )
         })
 
-    const filterBySearch = (files: RenderableFile[], search: any): RenderableFile[] => {
+    const filterBySearch = (
+        files: RenderableFile[],
+        search: any
+    ): RenderableFile[] => {
         return files.filter((file) => {
             return file
                 .getRelativeFilePath()
@@ -69,7 +82,8 @@
     }
 
     const clearRemovedFiles = (): void => {
-        if(!confirm("Are you sure you want to clear all removed files?")) return
+        if (!confirm("Are you sure you want to clear all removed files?"))
+            return
         projectStore.project?.clearRemovedFiles()
     }
 </script>
@@ -87,18 +101,16 @@
                 <div>
                     <!-- Search -->
                     <div class="flex items-center">
-                        <input
+                        <UiText
                             v-model="search"
-                            type="text"
-                            class="border-0 bg-slate-100 dark:bg-slate-850 px-4 py-1 rounded-md"
                             placeholder="Search files..."
                         />
                     </div>
                 </div>
-    
+
                 <UiButton @click="runSequentialGenerator()">Generate</UiButton>
             </div>
-    
+
             <div
                 v-for="file in filteredFiles"
                 :key="file.id"
@@ -110,7 +122,9 @@
                             <div
                                 class="inline-block p-1 rounded-md bg-slate-800 mr-2"
                             >
-                                <div class="flex items-center space-x-1 text-xs">
+                                <div
+                                    class="flex items-center space-x-1 text-xs"
+                                >
                                     <div
                                         class="rounded-full w-3 h-3"
                                         :class="{
@@ -144,7 +158,8 @@
                         <div
                             :class="{
                                 'line-through':
-                                    file.status === RenderableFileStatus.REMOVED,
+                                    file.status ===
+                                    RenderableFileStatus.REMOVED,
                             }"
                             class="italic hover:text-red-500 dark:hover:text-red-400"
                         >
@@ -156,14 +171,14 @@
                             v-if="file.status === RenderableFileStatus.CONFLICT"
                             :file="file"
                         />
-    
+
                         <UiButton @click="file.delete()">
                             <TrashIcon class="w-4 h-4 mr-1 text-red-500" />
                             Clear
                         </UiButton>
                     </div>
                 </div>
-    
+
                 <div
                     class="text-sm mt-2"
                     v-if="file.status === RenderableFileStatus.ERROR"
@@ -175,7 +190,7 @@
                             :errorLine="file.templateErrorLine"
                         />
                     </div>
-    
+
                     <div
                         class="text-red-400 bg-slate-100 dark:bg-slate-950 rounded-lg p-4"
                         v-else
@@ -191,18 +206,16 @@
                 <div>
                     <!-- Search -->
                     <div class="flex items-center">
-                        <input
+                        <UiText
                             v-model="search"
-                            type="text"
-                            class="border-0 bg-slate-100 dark:bg-slate-850 px-4 py-1 rounded-md"
                             placeholder="Search files..."
                         />
                     </div>
                 </div>
-    
+
                 <UiButton @click="clearRemovedFiles()">Clear All</UiButton>
             </div>
-    
+
             <div
                 v-for="file in removedFiles"
                 :key="file.id"
@@ -214,7 +227,9 @@
                             <div
                                 class="inline-block p-1 rounded-md bg-slate-800 mr-2"
                             >
-                                <div class="flex items-center space-x-1 text-xs">
+                                <div
+                                    class="flex items-center space-x-1 text-xs"
+                                >
                                     <div
                                         class="rounded-full w-3 h-3"
                                         :class="{
@@ -248,7 +263,8 @@
                         <div
                             :class="{
                                 'line-through':
-                                    file.status === RenderableFileStatus.REMOVED,
+                                    file.status ===
+                                    RenderableFileStatus.REMOVED,
                             }"
                             class="italic hover:text-red-500 dark:hover:text-red-400"
                         >
@@ -260,14 +276,14 @@
                             v-if="file.status === RenderableFileStatus.CONFLICT"
                             :file="file"
                         />
-    
+
                         <UiButton @click="file.delete()">
                             <TrashIcon class="w-4 h-4 mr-1 text-red-500" />
                             Clear
                         </UiButton>
                     </div>
                 </div>
-    
+
                 <div
                     class="text-sm mt-2"
                     v-if="file.status === RenderableFileStatus.ERROR"
@@ -279,7 +295,7 @@
                             :errorLine="file.templateErrorLine"
                         />
                     </div>
-    
+
                     <div
                         class="text-red-400 bg-slate-100 dark:bg-slate-950 rounded-lg p-4"
                         v-else

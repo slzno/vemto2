@@ -12,9 +12,11 @@
     import AppNavs from "./components/ProjectApps/AppNavs.vue"
     import AppSections from "./components/ProjectApps/AppSections.vue"
     import AppThemes from "./components/ProjectApps/AppThemes.vue"
+    import UiText from "@Renderer/components/ui/UiText.vue"
 
     const router = useRouter(),
-        projectStore = useProjectStore()
+        projectStore = useProjectStore(),
+        search = ref("")
 
     const openApp = (app: Crud | Page) => {
         if (app.getAppType() === "CRUD") {
@@ -32,6 +34,7 @@
         { label: "Routes", value: "routes" },
         { label: "Navigation", value: "navigation" },
         { label: "Themes", value: "themes" },
+        { label: "Templates", value: "templates" },
         { label: "Settings", value: "settings" },
     ]
 </script>
@@ -49,9 +52,8 @@
                 <div>
                     <!-- Search -->
                     <div class="flex items-center">
-                        <input
-                            type="text"
-                            class="border-0 bg-slate-100 dark:bg-slate-850 px-4 py-1 rounded-md"
+                        <UiText
+                            v-model="search"
                             placeholder="Search applications..."
                         />
                     </div>

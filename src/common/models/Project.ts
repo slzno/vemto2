@@ -335,7 +335,7 @@ export default class Project extends RelaDB.Model {
     }
 
     hasVthemeKey(keyName): boolean {
-        return !!this.getVthemeKey(keyName)
+        return typeof this.vthemeKeys[keyName] !== 'undefined'
     }
 
     setVthemeKey(keyName, value) {
