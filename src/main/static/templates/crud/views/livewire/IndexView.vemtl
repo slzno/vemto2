@@ -1,4 +1,3 @@
-<# use vtheme #>
 <% const crud = this.crud %>
 <% const model = crud.model %>
 <% const table = model.table %>
@@ -9,8 +8,8 @@
 <% const viewsFolderName = camelCase(crud.model.plural) %>
 <% const collectionVarName = camelCase(crud.model.plural) %>
 <# --- #>
-<div class="vtheme(crud.container)">
-    <div class="vtheme(crud.tools)">
+<div class="vtheme(crud.index.container)">
+    <div class="vtheme(crud.index.tools)">
         <x-ui.input wire:model="search" type="text" placeholder="Search <$ crud.settings.collectionTitle $>..." />
 
         <a href="{{ route('<$ crud.getRouteNameByTag('create') $>') }}">
@@ -49,7 +48,7 @@
             
         </div>
         
-        <div class="vtheme(crud.pagination-container)">
+        <div class="vtheme(crud.pagination.container)">
             {{ $<$ collectionVarName $>->links() }}
         </div>
     </x-ui.container.table>

@@ -115,4 +115,8 @@ export default class RenderableFile extends RelaDB.Model {
     wasRemoved() {
         return this.status === RenderableFileStatus.REMOVED
     }
+
+    hasConflict() {
+        return this.status === RenderableFileStatus.CONFLICT
+    }
 }

@@ -124,7 +124,7 @@ export default new class TemplateCompiler {
                 compiledContent = this.processHooks(compiledContent)
             }
 
-            if(this.content.includes('<# use vtheme #>')) {
+            if(this.content.includes('vtheme(')) {
                 compiledContent = this.processVtheme(compiledContent)
             }
 
@@ -182,6 +182,8 @@ export default new class TemplateCompiler {
 
             if(value) {
                 content = content.replace(vthemeKey, value)
+            } else {
+                content = content.replace(vthemeKey, "")
             }
         }
 

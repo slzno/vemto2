@@ -1,0 +1,5 @@
+<nav class="vtheme(ui.breadcrumbs.container)">
+    <ol class="vtheme(ui.breadcrumbs.list)"> 
+        {{ $slot }}
+    </ol>
+</nav>

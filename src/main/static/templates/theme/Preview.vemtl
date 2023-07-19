@@ -1,8 +1,7 @@
-<# use vtheme #>
 <script src="https://cdn.tailwindcss.com"></script>
 
 <div style="padding-bottom: 5rem;">
-    <div class="vtheme(crud.container)">
+    <div class="vtheme(crud.index.container)">
         <div class="vtheme(crud.tools)">
             <input class="vtheme(ui.input)" type="text" placeholder="Search..." />
     

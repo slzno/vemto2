@@ -26,7 +26,7 @@
         for(let filePath of templatesFiles) {
             const fileContent = await Main.API.readTemplateFile(filePath)
 
-            if(fileContent.includes("<# use vtheme #>")) {
+            if(fileContent.includes("vtheme(")) {
                 setVthemeKeysFromFileContent(fileContent)
             }
         }

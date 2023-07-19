@@ -29,6 +29,14 @@ import UiText from "@Renderer/components/ui/UiText.vue"
                 projectStore.project.getNonRemovedRenderableFiles().length,
         },
         {
+            label: "Conflicts",
+            value: "conflicts",
+            badge: () =>
+                projectStore.project.getConflictRenderableFiles().length,
+            emphasize: () =>
+                projectStore.project.getConflictRenderableFiles().length > 0,
+        },
+        {
             label: "Removed",
             value: "removed",
             badge: () =>
@@ -57,6 +65,15 @@ import UiText from "@Renderer/components/ui/UiText.vue"
             return filterBySearch(
                 projectStore.project.getRemovedRenderableFiles(),
                 searchRemoved
+            )
+        }),
+        conflictFiles = computed(() => {
+            if (!projectStore.project || !projectStore.project.renderableFiles)
+                return []
+
+            return filterBySearch(
+                projectStore.project.getConflictRenderableFiles(),
+                search
             )
         })
 
@@ -150,6 +167,86 @@ import UiText from "@Renderer/components/ui/UiText.vue"
                                                 file.status ===
                                                 RenderableFileStatus.REMOVED,
                                         }"
+                                    ></div>
+                                    <div>{{ sentenceCase(file.status) }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            :class="{
+                                'line-through':
+                                    file.status ===
+                                    RenderableFileStatus.REMOVED,
+                            }"
+                            class="italic hover:text-red-500 dark:hover:text-red-400"
+                        >
+                            {{ file.getRelativeFilePath() }}
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <SolveConflicts
+                            v-if="file.status === RenderableFileStatus.CONFLICT"
+                            :file="file"
+                        />
+
+                        <UiButton @click="file.delete()">
+                            <TrashIcon class="w-4 h-4 mr-1 text-red-500" />
+                            Clear
+                        </UiButton>
+                    </div>
+                </div>
+
+                <div
+                    class="text-sm mt-2"
+                    v-if="file.status === RenderableFileStatus.ERROR"
+                >
+                    <div v-if="file.hasTemplateError">
+                        <TemplateErrorViewer
+                            :errorMessage="file.error"
+                            :template="file.template"
+                            :errorLine="file.templateErrorLine"
+                        />
+                    </div>
+
+                    <div
+                        class="text-red-400 bg-slate-100 dark:bg-slate-950 rounded-lg p-4"
+                        v-else
+                    >
+                        {{ file.error }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-4" v-if="selectedTab === 'conflicts'">
+            <div class="flex top-0 left-0 space-x-2 text-sm z-20 mb-4">
+                <div>
+                    <!-- Search -->
+                    <div class="flex items-center">
+                        <UiText
+                            v-model="search"
+                            placeholder="Search files..."
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <div
+                v-for="file in conflictFiles"
+                :key="file.id"
+                class="flex flex-col bg-slate-200 dark:bg-slate-850 dark:hover:bg-slate-800 w-full rounded-lg mb-2 p-2 px-2"
+            >
+                <div class="flex items-center justify-between">
+                    <div class="flex cursor-pointer" @click="openFile(file)">
+                        <div class="w-24">
+                            <div
+                                class="inline-block p-1 rounded-md bg-slate-800 mr-2"
+                            >
+                                <div
+                                    class="flex items-center space-x-1 text-xs"
+                                >
+                                    <div
+                                        class="rounded-full w-3 h-3 bg-orange-500"
                                     ></div>
                                     <div>{{ sentenceCase(file.status) }}</div>
                                 </div>

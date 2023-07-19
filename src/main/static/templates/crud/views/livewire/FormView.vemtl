@@ -6,19 +6,34 @@
 <% const itemVarName = camelCase(crud.name) %>
 <% const collectionVarName = camelCase(crud.plural) %>
 <# --- #>
-<div>
-    <form wire:submit.prevent="save">
-        <% for (let input of crud.inputs) { %>
-        <label for="<$ input.name $>"><$ input.label $></label><br/>
-        <x-ui.input.text wire:model="<$ itemVarName $>.<$ input.column.name $>" type="text" name="<$ input.name $>" id="<$ input.name $>" placeholder="<$ input.placeholder $>" />
-        @if ($errors->has('<$ itemVarName $>.<$ input.column.name $>'))
-            <div style="color: red;">
-                {{ $errors->first('<$ itemVarName $>.<$ input.column.name $>') }}
+<div class="vtheme(crud.container)">
+    <x-ui.breadcrumbs>
+        <x-ui.breadcrumbs.link href="/">Dashboard</x-ui.breadcrumbs.link>
+        <x-ui.breadcrumbs.separator/>
+        <x-ui.breadcrumbs.link active><$ crud.name $></x-ui.breadcrumbs.link>
+    </x-ui.breadcrumbs>
+
+    <div class="vtheme(crud.header)">
+        <h1><$ crud.name $></h1>
+    </div>
+
+    <div class="vtheme(crud.form.container)">
+        <form class="vtheme(crud.form)" wire:submit.prevent="save">
+            <div class="vtheme(crud.form.fields.container)">
+                <% for (let input of crud.inputs) { %>
+                    <div class="vtheme(crud.form.field.group)">
+                        <x-ui.label for="<$ input.name $>"><$ input.label $></x-ui.label>
+                        <x-ui.input.text class="vtheme(crud.form.field.extra)" wire:model="<$ itemVarName $>.<$ input.column.name $>" type="text" name="<$ input.name $>" id="<$ input.name $>" placeholder="<$ input.placeholder $>" />
+                        <x-ui.input.error for="<$ input.name $>" />
+                    </div>
+                <% } %>
             </div>
-        @endif
-        <br/>
-        <% } %>
-        
-        <x-ui.button type="submit">Save</x-ui.button>
-    </form>
+
+            <div class="vtheme(crud.form.buttons-container)">
+                <div>
+                    <x-ui.button type="submit">Save</x-ui.button>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref, defineProps, defineEmits, onMounted } from 'vue'
+    import { ref, defineProps, defineEmits, onMounted } from "vue"
 
     let localValue = ref(null)
 
@@ -10,7 +10,12 @@
         },
 
         tabs: {
-            type: Array<{label: string, value: string, badge?: string | Function}>,
+            type: Array<{
+                label: string
+                value: string
+                badge?: string | Function
+                emphasize: Boolean | Function
+            }>,
             required: true,
         },
 
@@ -20,24 +25,27 @@
         },
     })
 
-    const emit = defineEmits(['update:modelValue'])
+    const emit = defineEmits(["update:modelValue"])
 
     onMounted((): void => {
         localValue.value = props.modelValue
 
-        const lastSelectedTab = localStorage.getItem('lastSelectedTab')
+        const lastSelectedTab = localStorage.getItem("lastSelectedTab")
 
-        if (lastSelectedTab && props.tabs.find((tab) => tab.value === lastSelectedTab)) {
+        if (
+            lastSelectedTab &&
+            props.tabs.find((tab) => tab.value === lastSelectedTab)
+        ) {
             localValue.value = lastSelectedTab
-            emit('update:modelValue', lastSelectedTab)
+            emit("update:modelValue", lastSelectedTab)
         }
     })
 
     const setTab = (value: string): void => {
         localValue.value = value
-        emit('update:modelValue', value)
+        emit("update:modelValue", value)
 
-        localStorage.setItem('lastSelectedTab', value)
+        localStorage.setItem("lastSelectedTab", value)
     }
 </script>
 
@@ -58,13 +66,19 @@
                 'bg-slate-850': !external && tab.value === localValue,
                 'bg-slate-900': external && tab.value === localValue,
                 'border-transparent': tab.value !== localValue,
-                'text-slate-300 border-slate-700': tab.value === localValue
+                'text-slate-300 border-slate-700': tab.value === localValue,
             }"
         >
             <div>{{ tab.label }}</div>
 
-            <div class="flex items-center justify-center h-4 w-5 text-xs border text-slate-500 border-slate-700 rounded" v-if="(typeof tab.badge !== 'undefined')">
-                {{ (typeof tab.badge === 'function') ? tab.badge() : tab.badge }}
+            <div
+                class="flex items-center justify-center h-4 w-5 text-xs border border-slate-700 rounded"
+                :class="typeof tab.emphasize === 'function' ?
+                    (tab.emphasize() ? 'border-red-500 text-red-500' : 'text-slate-500') :
+                    tab.emphasize ? 'border-red-500 text-red-500' : 'text-slate-500'"
+                v-if="typeof tab.badge !== 'undefined'"
+            >
+                {{ typeof tab.badge === "function" ? tab.badge() : tab.badge }}
             </div>
         </li>
     </ul>

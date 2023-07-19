@@ -202,6 +202,12 @@ export default class Project extends RelaDB.Model {
         )
     }
 
+    getConflictRenderableFiles(): RenderableFile[] {
+        return this.renderableFiles.filter(
+            (renderableFile) => renderableFile.hasConflict()
+        )
+    }
+
     clearRemovedFiles() {
         this.getRemovedRenderableFiles().forEach((renderableFile) =>
             renderableFile.delete()
