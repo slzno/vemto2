@@ -3,7 +3,7 @@
     'active' => false,
 ])
 
-<li class="ui.breadcrumbs.list.item">
+<li class="vtheme(ui.breadcrumbs.list.item)">
     <a 
         @if($href)
             href="{{ $href }}"

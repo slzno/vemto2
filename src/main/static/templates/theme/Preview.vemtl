@@ -50,50 +50,42 @@
     <hr>
     <br>
     
-    <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8 space-y-4">
-        <nav class="flex justify-between py-1">
-            <ol class="inline-flex items-center mb-3 space-x-1 text-xs text-neutral-500 [&_.active-breadcrumb]:text-neutral-600 [&_.active-breadcrumb]:font-medium sm:mb-0"> 
-                <li><a href="#_" class="inline-flex items-center py-1 font-normal hover:text-neutral-900 focus:outline-none">Dashboard</a></li>
+    <div class="vtheme(crud.container)">
+        <nav class="vtheme(ui.breadcrumbs.container)">
+            <ol class="vtheme(ui.breadcrumbs.list)"> 
+                <li class="vtheme(ui.breadcrumbs.list.item)"><a href="#_" class="vtheme(ui.breadcrumbs.list.item.link)">Dashboard</a></li>
                 <svg class="w-5 h-5 text-gray-400/70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="none" stroke="none"><path d="M10 8.013l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></g></svg>
-                <li><a class="inline-flex items-center py-1 font-normal rounded cursor-default active-breadcrumb focus:outline-none">Create Post</a></li>
+                <li class="vtheme(ui.breadcrumbs.list.item)"><a class="vtheme(ui.breadcrumbs.list.item.link) active-breadcrumb">Create Post</a></li>
             </ol>
         </nav>
         
-        <div class="w-full text-gray-500 text-lg font-semibold py-4 uppercase">
+        <div class="vtheme(crud.header)">
             <h1>Create Post</h1>
         </div>
     
-        <div class="overflow-hidden border rounded-lg bg-white">
-    
-            <div>
-                <form class="w-full" wire:submit.prevent="save">
-                    
-                    <div class="p-6 space-y-3">
-                        <div>
-                            <label class="mb-1.5 font-medium text-sm text-gray-700" for="user_id">User</label><br/>
-                            <input class="vtheme(ui.input) w-full" type="text" class="w-full" type="text" placeholder="User id" />
-                            <div style="color: red;">
-                                Input with errors
-                            </div>
-                        </div>
-    
-                        <div>
-                            <label class="mb-1.5 font-medium text-sm text-gray-700" for="user_id">Title</label><br/>
-                            <input class="vtheme(ui.input) w-full" type="text" class="w-full" type="text" placeholder="Title" />
-                        </div>
-    
+        <div class="vtheme(crud.form.container)">
+            <form class="vtheme(crud.form)" wire:submit.prevent="save">
+                <div class="vtheme(crud.form.fields.container)">
+                    <div class="vtheme(crud.form.field.group)">
+                        <label class="vtheme(ui.label)" for="user_id">User</label>
+                        <input class="vtheme(ui.input) vtheme(crud.form.field.extra)" type="text" placeholder="User" />
+                        <p class="vtheme(ui.input.error)">Input with errors</p>
                     </div>
-                    
-                    <div class="flex justify-between mt-4 border-t border-gray-50 bg-gray-50 p-4">
-                        <div>
-                            
-                        </div>
-                        <div>
-                            <button class="vtheme(ui.button)" type="submit">Save</button>
-                        </div>
+
+                    <div class="vtheme(crud.form.field.group)">
+                        <label class="vtheme(ui.label)" for="user_id">Title</label>
+                        <input class="vtheme(ui.input) vtheme(crud.form.field.extra)" type="text" placeholder="Title" />
                     </div>
-                </form>
-            </div>
+
+                </div>
+                
+                <div class="vtheme(crud.form.buttons-container)">
+                    <div></div>
+                    <div>
+                        <button class="vtheme(ui.button)" type="submit">Save</button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>

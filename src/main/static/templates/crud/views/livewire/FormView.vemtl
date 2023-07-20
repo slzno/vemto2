@@ -8,13 +8,15 @@
 <# --- #>
 <div class="vtheme(crud.container)">
     <x-ui.breadcrumbs>
-        <x-ui.breadcrumbs.link href="/">Dashboard</x-ui.breadcrumbs.link>
+        <x-ui.breadcrumbs.link href="/<$ crud.section.routeBasePath $>"><$ crud.section.name $></x-ui.breadcrumbs.link>
         <x-ui.breadcrumbs.separator/>
-        <x-ui.breadcrumbs.link active><$ crud.name $></x-ui.breadcrumbs.link>
+        <x-ui.breadcrumbs.link href="{{ route('<$ crud.getIndexRouteName() $>') }}"><$ crud.settings.collectionTitle $></x-ui.breadcrumbs.link>
+        <x-ui.breadcrumbs.separator/>
+        <x-ui.breadcrumbs.link active>Create <$ crud.settings.itemTitle $></x-ui.breadcrumbs.link>
     </x-ui.breadcrumbs>
 
     <div class="vtheme(crud.header)">
-        <h1><$ crud.name $></h1>
+        <h1>Create <$ crud.settings.itemTitle $></h1>
     </div>
 
     <div class="vtheme(crud.form.container)">
@@ -30,6 +32,9 @@
             </div>
 
             <div class="vtheme(crud.form.buttons-container)">
+                <div>
+                    <!-- Other buttons here -->
+                </div>
                 <div>
                     <x-ui.button type="submit">Save</x-ui.button>
                 </div>

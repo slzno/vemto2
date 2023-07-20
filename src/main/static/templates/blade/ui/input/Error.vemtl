@@ -1,5 +1,5 @@
 @props(['for'])
 
 @error($for)
-    <p {{ $attributes->merge(['class' => 'vtheme(ui.input-error)']) }}>{{ $message }}</p>
+    <p {{ $attributes->merge(['class' => 'vtheme(ui.input.error)']) }}>{{ $message }}</p>
 @enderror

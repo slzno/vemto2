@@ -9,6 +9,12 @@
 <% const collectionVarName = camelCase(crud.model.plural) %>
 <# --- #>
 <div class="vtheme(crud.index.container)">
+    <x-ui.breadcrumbs>
+        <x-ui.breadcrumbs.link href="/<$ crud.section.routeBasePath $>"><$ crud.section.name $></x-ui.breadcrumbs.link>
+        <x-ui.breadcrumbs.separator/>
+        <x-ui.breadcrumbs.link active><$ crud.settings.collectionTitle $></x-ui.breadcrumbs.link>
+    </x-ui.breadcrumbs>
+
     <div class="vtheme(crud.index.tools)">
         <x-ui.input wire:model="search" type="text" placeholder="Search <$ crud.settings.collectionTitle $>..." />
 
