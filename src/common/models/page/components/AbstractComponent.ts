@@ -34,6 +34,14 @@ export default abstract class AbstractComponent implements Component {
     abstract getPreviewCode(): string
     abstract getRenderCode(): string
 
+    hasNestedComponents(): boolean {
+        return false
+    }
+
+    getNestedComponentsKeys(): string[] {
+        return []
+    }
+
     render() {
         const templateEngine = new TemplateEngine(this.getRenderCode(), {
             logger: null,

@@ -10,9 +10,9 @@ export default class TwoColumnsComponent extends AbstractComponent implements Co
     getPreviewCode(): string {
         return `
             <div class="columns-1 lg:columns-2">
-                <div class="border border-slate-600 border-dotted p-2">
+                <div id="firstColumnComponents" class="border border-slate-600 bg-slate-800 border-dotted p-2" style="min-height: 10rem;">
                 </div>
-                <div class="border border-slate-600 border-dotted p-2">
+                <div id="secondColumnComponents" class="border border-slate-600 bg-slate-800 border-dotted p-2" style="min-height: 10rem;">
                 </div>
             </div>
         `
@@ -25,6 +25,14 @@ export default class TwoColumnsComponent extends AbstractComponent implements Co
             <div></div>
         </div>
         `
+    }
+
+    hasNestedComponents(): boolean {
+        return true
+    }
+
+    getNestedComponentsKeys(): string[] {
+        return ['firstColumnComponents', 'secondColumnComponents']
     }
 
     getSettings(): any {

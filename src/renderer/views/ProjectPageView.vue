@@ -11,6 +11,7 @@
     import UiText from '@Renderer/components/ui/UiText.vue'
     import Sortable from 'sortablejs'
     import { Bars3Icon, DocumentDuplicateIcon, TrashIcon } from '@heroicons/vue/24/outline'
+    import Component from '../../common/models/page/components/AbstractComponent'
 
     const projectStore = useProjectStore()
 
@@ -36,18 +37,26 @@
         loadComponents()
 
         nextTick(() => {
-            new Sortable(document.getElementById('dropzone1'), {
+            new Sortable(document.getElementById('componentsContainer'), {
                 group: "shared",
                 animation: 150,
                 fallbackOnBody: true,
                 swapThreshold: 0.65,
             })
 
-            new Sortable(document.getElementById('dropzone2'), {
-                group: "shared",
-                animation: 150,
-                fallbackOnBody: true,
-                swapThreshold: 0.65,
+            components.value.forEach((component: Component) => {
+                if(!component.hasNestedComponents()) return
+
+                const keys = component.getNestedComponentsKeys()
+                
+                keys.forEach((key: string) => {
+                    new Sortable(document.getElementById(key), {
+                        group: "shared",
+                        animation: 150,
+                        fallbackOnBody: true,
+                        swapThreshold: 0.65,
+                    })
+                })
             })
         })
     })
@@ -120,16 +129,16 @@
     <div
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-hidden"
     >
-        <div id="dropzone1" class="dropzone p-2 bg-green-300">
+        <!-- <div id="dropzone1" class="dropzone p-2 bg-green-300">
             <div class="item w-20 h-20 bg-red-200 border border-slate-900 m-2"></div>
             <div class="item w-20 h-20 bg-red-200 border border-slate-900 m-2"></div>
 
             <div class="item w-20 h-20 bg-red-200 border border-slate-900 m-2">
                 <div id="dropzone2" class="dropzone p-2 bg-green-300"></div>
             </div>
-        </div>
+        </div> -->
 
-        <div v-if="page && false">
+        <div v-if="page">
             <div class="p-2 font-bold">Edit {{ page.getLabel() }} Page</div>
 
             <UiTabs :tabs="tabs" v-model="selectedTab" :external="true" />
@@ -154,43 +163,32 @@
                     <UiButton class="w-full">Post Item</UiButton>
                 </div>
 
-                <div class="draggable-container w-full h-full">
-                    <div class="dropzone flex-grow bg-slate-950 p-2 rounded-lg space-y-1">
-                        <!-- <Draggable
-                            class="space-y-2"
-                            :list="components"
-                            item-key="id"
-                            @end="saveComponentsOrder()"
-                        > -->
-                            <div @click="selectComponent(component)"
-                                v-for="component in components" :key="component.id" 
-                                :class="{'border-red-500': isSelected(component), 'bg-red-450 text-white text-sm w-2/5 p-1 font-mono': component.category === 'logic'}" 
-                                class="draggable-source relative border border-dotted border-slate-600 rounded-md p-2 hover:border-red-500 cursor-move group"
-                            >
-                                <div class="absolute top-0 right-0 bg-red-500 p-1.5 px-2 flex justify-between space-x-2 rounded-tr rounded-bl opacity-0 group-hover:opacity-100">
-                                    <div class="py-0.5 px-1 text-sm rounded bg-red-600">
-                                        {{ component.getLabel() }}
-                                    </div>
-    
-                                    <button tabindex="-1">
-                                        <Bars3Icon class="w-6 h-6 text-white" />
-                                    </button>
-                                    <button tabindex="-1">
-                                        <DocumentDuplicateIcon class="w-6 h-6 text-white" />
-                                    </button>
-                                    <button tabindex="-1" @click="deleteComponent(component)">
-                                        <TrashIcon class="w-6 h-6 text-white" />
-                                    </button>
+                <div class="w-full h-full">
+                    <div id="componentsContainer" class="flex-grow bg-slate-950 p-2 rounded-lg space-y-1">
+                        <div @click="selectComponent(component)"
+                            v-for="component in components" :key="component.id" 
+                            :class="{'border-red-500': isSelected(component), 'bg-red-450 text-white text-sm w-2/5 p-1 font-mono': component.category === 'logic'}" 
+                            class="relative border border-dotted border-slate-600 rounded-md p-2 hover:border-red-500 cursor-move group"
+                        >
+                            <div class="absolute top-0 right-0 bg-red-500 p-1.5 px-2 flex justify-between space-x-2 rounded-tr rounded-bl opacity-0 group-hover:opacity-100">
+                                <div class="py-0.5 px-1 text-sm rounded bg-red-600">
+                                    {{ component.getLabel() }}
                                 </div>
-                                <div>
-                                    <PreviewPageComponent :base-component="component" @update="updateComponent(component)" />
-                                </div>
+
+                                <button tabindex="-1">
+                                    <Bars3Icon class="w-6 h-6 text-white" />
+                                </button>
+                                <button tabindex="-1">
+                                    <DocumentDuplicateIcon class="w-6 h-6 text-white" />
+                                </button>
+                                <button tabindex="-1" @click="deleteComponent(component)">
+                                    <TrashIcon class="w-6 h-6 text-white" />
+                                </button>
                             </div>
-                        <!-- </Draggable> -->
-                    </div>
-    
-                    <div class="dropzone w-full h-60 bg-red-200">
-    
+                            <div>
+                                <PreviewPageComponent :base-component="component" @update="updateComponent(component)" />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
