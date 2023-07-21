@@ -10,6 +10,7 @@ import SmallComponent from "./components/SmallComponent"
 import ForelseComponent from "./components/ForelseComponent"
 import CustomComponent from "./components/CustomComponent"
 import AppSection from "../AppSection"
+import TwoColumnsComponent from "./components/TwoColumnsComponent"
 
 
 export default class Page extends RelaDB.Model {
@@ -184,6 +185,7 @@ export default class Page extends RelaDB.Model {
             'Small': SmallComponent,
             'Forelse': ForelseComponent,
             'Custom': CustomComponent,
+            'TwoColumns': TwoColumnsComponent,
         }
     }
 }

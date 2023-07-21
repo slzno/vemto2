@@ -14,7 +14,7 @@
                 label: string
                 value: string
                 badge?: string | Function
-                emphasize: Boolean | Function
+                emphasize?: Boolean | Function
             }>,
             required: true,
         },

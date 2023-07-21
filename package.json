@@ -83,6 +83,7 @@
         "prettier": "^2.7.1",
         "range-analyzer": "^0.1.1-alpha.2",
         "shelljs": "^0.8.5",
+        "sortablejs": "^1.15.0",
         "uuid": "^9.0.0",
         "validatorjs": "^3.22.1",
         "vue": "^3.2.36",
