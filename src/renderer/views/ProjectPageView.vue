@@ -127,16 +127,11 @@
     }
 
     const componentClasses = (component) => {
-        let classesObj = {
+        return {
             'border-red-500': isSelected(component), 
-            'bg-red-450 text-white text-sm w-2/5 p-1 font-mono': component.category === 'logic'
+            'bg-red-450 text-white text-sm w-2/5 p-1 font-mono': component.category === 'logic',
+            'group': true
         }
-
-        const groupClass = `group/${component.id}`
-
-        classesObj[groupClass] = true
-
-        return classesObj
     }
 </script>
 
@@ -144,15 +139,6 @@
     <div
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-hidden"
     >
-        <!-- <div id="dropzone1" class="dropzone p-2 bg-green-300">
-            <div class="item w-20 h-20 bg-red-200 border border-slate-900 m-2"></div>
-            <div class="item w-20 h-20 bg-red-200 border border-slate-900 m-2"></div>
-
-            <div class="item w-20 h-20 bg-red-200 border border-slate-900 m-2">
-                <div id="dropzone2" class="dropzone p-2 bg-green-300"></div>
-            </div>
-        </div> -->
-
         <div v-if="page">
             <div class="p-2 font-bold">Edit {{ page.getLabel() }} Page</div>
 
@@ -186,7 +172,7 @@
                             class="relative border border-dotted border-slate-600 rounded-md p-2 hover:border-red-500 cursor-move"
                         >
                             <div 
-                                :class="`group-hover/${component.id}:opacity-100`"
+                                :class="`group-hover:opacity-100`"
                                 class="absolute top-0 right-0 bg-red-500 p-1.5 px-2 flex justify-between space-x-2 rounded-tr rounded-bl opacity-0">
                                 <div class="py-0.5 px-1 text-sm rounded bg-red-600">
                                     {{ component.getLabel() }}
