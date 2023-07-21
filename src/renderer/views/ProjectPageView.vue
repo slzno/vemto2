@@ -50,7 +50,9 @@
                 const keys = component.getNestedComponentsKeys()
                 
                 keys.forEach((key: string) => {
-                    new Sortable(document.getElementById(key), {
+                    const componentsContainerId = `${key}${component.id}`
+
+                    new Sortable(document.getElementById(componentsContainerId), {
                         group: "shared",
                         animation: 150,
                         fallbackOnBody: true,

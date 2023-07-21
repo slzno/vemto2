@@ -10,9 +10,9 @@ export default class TwoColumnsComponent extends AbstractComponent implements Co
     getPreviewCode(): string {
         return `
             <div class="columns-1 lg:columns-2">
-                <div id="firstColumnComponents" class="border border-slate-600 bg-slate-800 border-dotted p-2" style="min-height: 10rem;">
+                <div :id="'firstColumnComponents' + component.id" class="border border-slate-600 bg-slate-800 border-dotted p-2" style="min-height: 10rem;">
                 </div>
-                <div id="secondColumnComponents" class="border border-slate-600 bg-slate-800 border-dotted p-2" style="min-height: 10rem;">
+                <div :id="'secondColumnComponents' + component.id" class="border border-slate-600 bg-slate-800 border-dotted p-2" style="min-height: 10rem;">
                 </div>
             </div>
         `
