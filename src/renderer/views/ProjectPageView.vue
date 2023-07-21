@@ -125,6 +125,19 @@
     const saveComponentsOrder = () => {
         page.value.saveComponentsOrder(components.value)
     }
+
+    const componentClasses = (component) => {
+        let classesObj = {
+            'border-red-500': isSelected(component), 
+            'bg-red-450 text-white text-sm w-2/5 p-1 font-mono': component.category === 'logic'
+        }
+
+        const groupClass = `group/${component.id}`
+
+        classesObj[groupClass] = true
+
+        return classesObj
+    }
 </script>
 
 <template>
@@ -169,10 +182,12 @@
                     <div id="componentsContainer" class="flex-grow bg-slate-950 p-2 rounded-lg space-y-1">
                         <div @click="selectComponent(component)"
                             v-for="component in components" :key="component.id" 
-                            :class="{'border-red-500': isSelected(component), 'bg-red-450 text-white text-sm w-2/5 p-1 font-mono': component.category === 'logic'}" 
-                            class="relative border border-dotted border-slate-600 rounded-md p-2 hover:border-red-500 cursor-move group"
+                            :class="componentClasses(component)"
+                            class="relative border border-dotted border-slate-600 rounded-md p-2 hover:border-red-500 cursor-move"
                         >
-                            <div class="absolute top-0 right-0 bg-red-500 p-1.5 px-2 flex justify-between space-x-2 rounded-tr rounded-bl opacity-0 group-hover:opacity-100">
+                            <div 
+                                :class="`group-hover/${component.id}:opacity-100`"
+                                class="absolute top-0 right-0 bg-red-500 p-1.5 px-2 flex justify-between space-x-2 rounded-tr rounded-bl opacity-0">
                                 <div class="py-0.5 px-1 text-sm rounded bg-red-600">
                                     {{ component.getLabel() }}
                                 </div>
