@@ -3,6 +3,9 @@ import AbstractComponent from "./AbstractComponent"
 
 export default class TwoColumnsComponent extends AbstractComponent implements Component {
 
+    firstColumnComponents: any[]
+    secondColumnComponents: any[]
+
     getLabel(): string {
         return 'Two Columns'
     }
@@ -10,9 +13,16 @@ export default class TwoColumnsComponent extends AbstractComponent implements Co
     getPreviewCode(): string {
         return `
             <div class="columns-1 lg:columns-2">
-                <div :id="'firstColumnComponents' + component.id" class="border border-slate-600 bg-slate-800 border-dotted p-2 pb-32">
+                <div 
+                    :id="'firstColumnComponents' + component.id" 
+                    :component-id="component.id"
+                    components-container="firstColumnComponents"
+                    class="border border-slate-600 bg-slate-800 border-dotted p-2 pb-32">
                 </div>
-                <div :id="'secondColumnComponents' + component.id" class="border border-slate-600 bg-slate-800 border-dotted p-2 pb-32">
+                <div 
+                    :id="'secondColumnComponents' + component.id" 
+                    :component-id="component.id"
+                    components-container="secondColumnComponents" class="border border-slate-600 bg-slate-800 border-dotted p-2 pb-32">
                 </div>
             </div>
         `

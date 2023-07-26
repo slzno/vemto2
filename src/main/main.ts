@@ -13,7 +13,7 @@ HandleDatabase()
 HandleFileQueue()
 HandleIpcMessages()
 
-function createWindow() {
+async function createWindow() {
     const mainWindow = new BrowserWindow({
         width: 1320,
         height: 768,
@@ -27,16 +27,19 @@ function createWindow() {
             preload: join(__dirname, "preload.js"),
             nodeIntegration: false,
             contextIsolation: true,
+            // devTools: true,
         },
     })
 
     if (isDevelopment) {
         const rendererPort = process.argv[2]
-        mainWindow.loadURL(`http://localhost:${rendererPort}`)
+        await mainWindow.loadURL(`http://localhost:${rendererPort}`)
         
         if (!process.env.VEMTO_NO_EXTENSIONS) installExtension("nhdogjmejiglipccpnnnanhbledajbpd")
 
         if (process.env.VEMTO_HIDE_MENU) mainWindow.setMenu(null)
+
+        mainWindow.webContents.openDevTools()
     } else {
         mainWindow.setMenu(null)
         mainWindow.loadFile(join(app.getAppPath(), "renderer", "index.html"))

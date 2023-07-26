@@ -42,6 +42,7 @@
                 animation: 150,
                 fallbackOnBody: true,
                 swapThreshold: 0.65,
+                onEnd: onSortableEnd
             })
 
             components.value.forEach((component: Component) => {
@@ -57,11 +58,36 @@
                         animation: 150,
                         fallbackOnBody: true,
                         swapThreshold: 0.65,
+                        onEnd: onSortableEnd
                     })
                 })
             })
         })
     })
+
+    const onSortableEnd = (evt) => {
+        const componentId = evt.item.getAttribute('component-id') || null, 
+            fromKey = evt.from.getAttribute('component-id') || "page",
+            toKey = evt.to.getAttribute('component-id') || "page",
+            parentKey = evt.to.getAttribute('components-container') || "components"
+
+        moveComponent({
+            componentId: componentId,
+            from: fromKey,
+            to: toKey,
+            parentKey: parentKey,
+            oldIndex: evt.oldIndex,
+            newIndex: evt.newIndex
+        })
+    }
+
+    const moveComponent = (movementData: any) => {
+        if(!movementData.componentId) return
+
+        console.log(movementData)
+
+        page.value.moveComponent(movementData)
+    }
 
     const loadComponents = () => {
         components.value = page.value.getComponents()
@@ -167,6 +193,7 @@
                 <div class="w-full h-full">
                     <div id="componentsContainer" class="flex-grow bg-slate-950 p-2 rounded-lg space-y-1">
                         <div @click="selectComponent(component)"
+                            :component-id="component.id"
                             v-for="component in components" :key="component.id" 
                             :class="componentClasses(component)"
                             class="relative border border-dotted border-slate-600 rounded-md p-2 hover:border-red-500 cursor-move"

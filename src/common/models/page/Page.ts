@@ -12,7 +12,6 @@ import CustomComponent from "./components/CustomComponent"
 import AppSection from "../AppSection"
 import TwoColumnsComponent from "./components/TwoColumnsComponent"
 
-
 export default class Page extends RelaDB.Model {
     id: string
     name: string
@@ -59,11 +58,12 @@ export default class Page extends RelaDB.Model {
     }
 
     getAppType(): string {
-        return 'Page'
+        return "Page"
     }
 
     addRoute(defaultRoutePath: string) {
-        const path = defaultRoutePath || Page.calculateDefaultRoutePath(this.name)
+        const path =
+            defaultRoutePath || Page.calculateDefaultRoutePath(this.name)
 
         Route.create({
             name: `${paramCase(this.name)}.index`,
@@ -98,17 +98,109 @@ export default class Page extends RelaDB.Model {
     }
 
     removeComponent(component: any) {
-        this.components = this.components.filter((c: any) => c.id !== component.id)
+        this.components = this.components.filter(
+            (c: any) => c.id !== component.id
+        )
 
         this.save()
     }
 
     updateComponent(component: any) {
-        const index = this.components.findIndex((c: any) => c.id === component.id)
+        const index = this.components.findIndex(
+            (c: any) => c.id === component.id
+        )
 
         this.components[index] = component
 
         this.save()
+    }
+
+    moveComponent(movementData: any) {
+        const movedComponent = this.getComponent(movementData.componentId), 
+            fromComponent = this.getComponent(movementData.from),
+            toComponent = this.getComponent(movementData.to),
+            oldIndex = movementData.oldIndex,
+            newIndex = movementData.newIndex
+
+        if (!movedComponent) return
+
+        // Remove component from old position
+        // fromComponent[movementData.parentKey].splice(oldIndex, 1)
+
+        if(!toComponent[movementData.parentKey]) {
+            toComponent[movementData.parentKey] = []
+        }
+
+        toComponent[movementData.parentKey].splice(
+            newIndex,
+            0,
+            movedComponent
+        )
+
+        console.log(toComponent)
+
+        // this.rewriteComponent(fromComponent)
+        this.rewriteComponent(toComponent)
+
+        console.log(this.components)
+
+        // this.save()
+    }
+
+    rewriteComponent(component: any) {
+        // needs to change components recursively because of nested components
+        const components = this.components
+
+        // Define recursive writing function
+        const writeComponents = (components: any[]): any => {
+            for (let c of components) {
+                if (c.id == component.id) {
+                    c = component
+                } else if (c.hasNestedComponents()) {
+                    let nestedComponentsKeys = c.getNestedComponentsKeys()
+                    for (let key of nestedComponentsKeys) {
+                        // Check if component has array of nested components
+                        if (Array.isArray(c[key])) {
+                            writeComponents(c[key])
+                        }
+                    }
+                }
+            }
+        }
+
+        // Start writing
+        writeComponents(components)
+    }
+
+    getComponent(componentId: string): any {
+        if (componentId === "page") return this
+
+        const components = this.getComponents()
+
+        // Define recursive search function
+        const searchComponents = (components: any[]): any => {
+            for (let component of components) {
+                if (component.id == componentId) {
+                    return component
+                } else if (component.hasNestedComponents()) {
+                    let nestedComponentsKeys =
+                        component.getNestedComponentsKeys()
+                    for (let key of nestedComponentsKeys) {
+                        // Check if component has array of nested components
+                        if (Array.isArray(component[key])) {
+                            let result = searchComponents(component[key])
+                            // If the component was found in the nested components, return it
+                            if (result) return result
+                        }
+                    }
+                }
+            }
+            // Return null if component is not found
+            return null
+        }
+
+        // Start searching
+        return searchComponents(components)
     }
 
     getComponents(): Component[] {
@@ -137,17 +229,19 @@ export default class Page extends RelaDB.Model {
         const models = this.project.models,
             mainRoute = this.routes[0]
 
-        if(!mainRoute) return []
+        if (!mainRoute) return []
 
         // get all parameters from the route.path
         const routeParameters = mainRoute.path.match(/{(.*?)}/g)
 
-        if(!routeParameters) return []
+        if (!routeParameters) return []
 
         // get the route parameters names
-        const routeParametersNames = routeParameters.map((parameter: string) => {
-            return parameter.replace('{', '').replace('}', '')
-        })
+        const routeParametersNames = routeParameters.map(
+            (parameter: string) => {
+                return parameter.replace("{", "").replace("}", "")
+            }
+        )
 
         // return all the models that are being used in the route
         return models.filter((model: any) => {
@@ -159,14 +253,16 @@ export default class Page extends RelaDB.Model {
 
     getModelCollections(): any[] {
         const models = this.project.models
-        
-        const allComponentsContentSettings = this.getComponents().map((component: any) => {
-            if(component.settings.content) {
-                return component.settings.content
-            }
 
-            return ''
-        })
+        const allComponentsContentSettings = this.getComponents().map(
+            (component: any) => {
+                if (component.settings.content) {
+                    return component.settings.content
+                }
+
+                return ""
+            }
+        )
 
         // return all the models that are being used in the content
         return models.filter((model: any) => {
@@ -180,12 +276,12 @@ export default class Page extends RelaDB.Model {
 
     getComponentHandlerMap(): any {
         return {
-            'HeaderOne': HeaderOneComponent,
-            'Paragraph': ParagraphComponent,
-            'Small': SmallComponent,
-            'Forelse': ForelseComponent,
-            'Custom': CustomComponent,
-            'TwoColumns': TwoColumnsComponent,
+            HeaderOne: HeaderOneComponent,
+            Paragraph: ParagraphComponent,
+            Small: SmallComponent,
+            Forelse: ForelseComponent,
+            Custom: CustomComponent,
+            TwoColumns: TwoColumnsComponent,
         }
     }
 }

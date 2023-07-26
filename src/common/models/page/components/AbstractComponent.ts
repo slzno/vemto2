@@ -8,6 +8,7 @@ export default abstract class AbstractComponent implements Component {
     subType: string
     settings: any
     category: string
+    location: string
 
     constructor(componentData: any) {
         this.id = componentData.id
@@ -15,6 +16,7 @@ export default abstract class AbstractComponent implements Component {
         this.settings = componentData.settings
         this.category = componentData.category
         this.subType = componentData.subType || 'default'
+        this.location = componentData.location || 'components'
     }
 
     getSettingsAsKeyValue(): any {
