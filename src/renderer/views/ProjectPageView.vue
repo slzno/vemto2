@@ -107,31 +107,6 @@
         loadComponents()
     }
 
-    const addForelseComponent = () => {
-        page.value.addComponent({
-            type: 'Forelse',
-            subType: 'forelse',
-            category: 'logic',
-            settings: {}
-        })
-
-        page.value.addComponent({
-            type: 'Forelse',
-            subType: 'empty',
-            category: 'logic',
-            settings: {}
-        })
-
-        page.value.addComponent({
-            type: 'Forelse',
-            subType: 'endforelse',
-            category: 'logic',
-            settings: {}
-        })
-
-        loadComponents()
-    }
-
     const pageUpdated = () => {
         page.value.save()
 
@@ -162,7 +137,7 @@
                     <UiButton class="w-full">If</UiButton>
                     <UiButton class="w-full">If...Else</UiButton>
                     <UiButton class="w-full">Foreach</UiButton>
-                    <UiButton class="w-full" @click="addForelseComponent()">Forelse</UiButton>
+                    <UiButton class="w-full" @click="addComponent('Forelse')">Forelse</UiButton>
                     <small>Custom</small>
                     <UiButton class="w-full">Navbar</UiButton>
                     <UiButton class="w-full">Post Item</UiButton>

@@ -9,6 +9,7 @@ import HeaderOneComponent from '@Renderer/logic/page/components/HeaderOneCompone
 import TwoColumnsComponent from "@Renderer/logic/page/components/TwoColumnsComponent.vue"
 import ParagraphComponent from "@Renderer/logic/page/components/ParagraphComponent.vue"
 import CustomComponent from "@Renderer/logic/page/components/CustomComponent.vue"
+import ForelseComponent from "@Renderer/logic/page/components/ForelseComponent.vue"
 
 const componentMap = {
     HeaderOneComponent,
@@ -16,6 +17,7 @@ const componentMap = {
     SmallComponent,
     ParagraphComponent,
     CustomComponent,
+    ForelseComponent,
 }
 
 const props = defineProps({

@@ -3,47 +3,33 @@ import Component from "./interfaces/Component"
 import AbstractComponent from "./AbstractComponent"
 
 export default class ForelseComponent extends AbstractComponent implements Component {
+    foreachComponents: any[]
+    emptyComponents: any[]
+
     getLabel(): string {
         return 'Forelse'
     }
 
-    getPreviewCode(): string {
-        return `
-            <div v-if="component.subType === 'forelse'">
-                <span>@forelse(</span>
-                <input 
-                    spellcheck="false"
-                    autocomplete="off"
-                    v-model="component.settings.content"
-                    class="outline-none bg-transparent font-semibold text-center"
-                />
-                <span>)</span>
-            </div>
-
-            <div v-if="component.subType === 'empty'">
-                @empty
-            </div>
-
-            <div v-if="component.subType === 'endforelse'">
-                @endforelse
-            </div>
-        `
+    getName(): string {
+        return 'ForelseComponent'
     }
 
     getRenderCode(): string {
-        if(this.subType === 'forelse') {
-            return `@forelse(<$ this.settings.content $>)` 
-        }
+        return `
+            @forelse(<$ this.settings.content $>)
+            // nested
+            @empty
+            // nested
+            @endforelse
+        `
+    }
 
-        if(this.subType === 'empty') {
-            return `@empty`
-        }
+    hasNestedComponents(): boolean {
+        return true
+    }
 
-        if(this.subType === 'endforelse') {
-            return `@endforelse`
-        }
-
-        return ``
+    getNestedComponentsKeys(): string[] {
+        return ['foreachComponents', 'emptyComponents']
     }
 
     getSettings(): any {
