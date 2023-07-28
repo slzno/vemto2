@@ -27,28 +27,15 @@ onMounted(() => {
     component.value = props.baseComponent
 })
 
-const selectComponent = (component) => {
-    console.log(component)
-}
-
-const deleteComponent = (component) => {
-    console.log(component)
-}
-
-const isSelected = (component) => {
-    return false
-}
-
 const componentClasses = (component) => {
     return {
-        'border-red-500': isSelected(component), 
         'bg-red-450 text-white text-sm w-2/5 p-1 font-mono': component.category === 'logic',
     }
 }
 </script>
 
 <template>
-    <div v-if="component" @click="selectComponent(component)"
+    <div v-if="component"
         :component-id="component.id"
         :class="componentClasses(component)"
         class="relative border border-dotted border-slate-600 rounded-md p-2 hover:border-red-500 cursor-move"
@@ -68,7 +55,7 @@ const componentClasses = (component) => {
             <button tabindex="-1">
                 <DocumentDuplicateIcon class="w-6 h-6 text-white" />
             </button>
-            <button tabindex="-1" @click="$emit('delete', component)">
+            <button tabindex="-1" @click="emit('delete', component)">
                 <TrashIcon class="w-6 h-6 text-white" />
             </button>
         </div>
@@ -76,7 +63,7 @@ const componentClasses = (component) => {
             <component 
                 :is="componentMap[component.getName()]" 
                 :base-component="component" 
-                @update="$emit('update', component)" 
+                @update="emit('update', component)" 
             />
         </div>
     </div>

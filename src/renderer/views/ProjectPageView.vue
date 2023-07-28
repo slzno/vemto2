@@ -28,41 +28,39 @@
         { label: "Settings", value: "settings" },
     ]
 
-    let sortable = null
+    let sortables = []
 
     onMounted(async () => {
         page.value = Page.find(pageId)
 
         loadComponents()
 
-        nextTick(() => {
-            new Sortable(document.getElementById('componentsContainer'), {
-                group: "shared",
-                animation: 150,
-                fallbackOnBody: true,
-                swapThreshold: 0.65,
-                onEnd: onSortableEnd
-            })
+        nextTick(() => setupSortables())
+    })
 
-            components.value.forEach((component: Component) => {
-                if(!component.hasNestedComponents()) return
+    const setupSortables = () => {
+        const sortableSettings = {
+            group: "shared",
+            animation: 150,
+            fallbackOnBody: true,
+            swapThreshold: 0.65,
+            onEnd: onSortableEnd
+        }
 
-                const keys = component.getNestedComponentsKeys()
-                
-                keys.forEach((key: string) => {
-                    const componentsContainerId = `${key}${component.id}`
+        sortables.push(new Sortable(document.getElementById('componentsContainer'), sortableSettings))
 
-                    new Sortable(document.getElementById(componentsContainerId), {
-                        group: "shared",
-                        animation: 150,
-                        fallbackOnBody: true,
-                        swapThreshold: 0.65,
-                        onEnd: onSortableEnd
-                    })
-                })
+        components.value.forEach((component: Component) => {
+            if(!component.hasNestedComponents()) return
+
+            const keys = component.getNestedComponentsKeys()
+            
+            keys.forEach((key: string) => {
+                const componentsContainerId = `${key}${component.id}`
+
+                sortables.push(new Sortable(document.getElementById(componentsContainerId), sortableSettings))
             })
         })
-    })
+    }
 
     const onSortableEnd = (evt) => {
         const componentId = evt.item.getAttribute('component-id') || null, 
@@ -106,6 +104,8 @@
         })
 
         loadComponents()
+
+        nextTick(() => setupSortables())
     }
 
     const addForelseComponent = () => {
