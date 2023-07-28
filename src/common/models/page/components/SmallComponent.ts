@@ -7,13 +7,8 @@ export default class SmallComponent extends AbstractComponent implements Compone
         return 'Small'
     }
 
-    getPreviewCode(): string {
-        return `<input 
-            spellcheck="false"
-            autocomplete="off"
-            v-model="component.settings.content"
-            class="text-xs outline-none bg-transparent w-full"
-        />`
+    getName(): string {
+        return 'SmallComponent'
     }
 
     getRenderCode(): string {

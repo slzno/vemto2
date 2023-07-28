@@ -39,7 +39,6 @@ export default abstract class AbstractComponent implements Component {
     abstract getName(): string
     abstract getLabel(): string
     abstract getSettings(): any
-    abstract getPreviewCode(): string
     abstract getRenderCode(): string
 
     hasNestedComponents(): boolean {

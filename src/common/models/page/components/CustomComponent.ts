@@ -7,13 +7,8 @@ export default class CustomComponent extends AbstractComponent implements Compon
         return 'Custom'
     }
 
-    getPreviewCode(): string {
-        return `<input 
-            spellcheck="false"
-            autocomplete="off"
-            v-model="component.settings.content"
-            class="outline-none bg-transparent w-full"
-        />`
+    getName(): string {
+        return 'CustomComponent'
     }
 
     getRenderCode(): string {
@@ -24,7 +19,7 @@ export default class CustomComponent extends AbstractComponent implements Compon
         return {
             content: {
                 type: 'text',
-                default: 'Lorem Ipsum',
+                default: 'Your custom HTML or Text goes here',
             }
         }
     }

@@ -4,12 +4,18 @@ import { defineProps, defineEmits, ref, onMounted } from "vue"
 import { Bars3Icon, DocumentDuplicateIcon, TrashIcon } from '@heroicons/vue/24/outline'
 
 // Components
+import SmallComponent from "@Renderer/logic/page/components/SmallComponent.vue"
 import HeaderOneComponent from '@Renderer/logic/page/components/HeaderOneComponent.vue'
 import TwoColumnsComponent from "@Renderer/logic/page/components/TwoColumnsComponent.vue"
+import ParagraphComponent from "@Renderer/logic/page/components/ParagraphComponent.vue"
+import CustomComponent from "@Renderer/logic/page/components/CustomComponent.vue"
 
 const componentMap = {
     HeaderOneComponent,
     TwoColumnsComponent,
+    SmallComponent,
+    ParagraphComponent,
+    CustomComponent,
 }
 
 const props = defineProps({

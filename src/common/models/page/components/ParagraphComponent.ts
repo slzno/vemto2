@@ -7,13 +7,8 @@ export default class ParagraphComponent extends AbstractComponent implements Com
         return 'Paragraph'
     }
 
-    getPreviewCode(): string {
-        return `<input 
-            spellcheck="false"
-            autocomplete="off"
-            v-model="component.settings.content"
-            class="outline-none bg-transparent w-full"
-        />`
+    getName(): string {
+        return 'ParagraphComponent'
     }
 
     getRenderCode(): string {

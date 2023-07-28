@@ -14,10 +14,6 @@ export default class TwoColumnsComponent extends AbstractComponent implements Co
         return 'Two Columns'
     }
 
-    getPreviewCode(): string {
-        return ``
-    }
-
     getRenderCode(): string {
         return `
         <div class="columns-1 lg:columns-2">
