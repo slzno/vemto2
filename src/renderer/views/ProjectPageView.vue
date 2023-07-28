@@ -17,10 +17,10 @@
     const route = useRoute(),
         pageId = route.params.pageId,
         page = ref(null),
-        selectedComponent = ref(null),
         components = ref([])
 
-    const selectedTab = ref("page")
+    const selectedTab = ref("page"),
+        renderComponents = ref(true)
 
     const tabs = [
         { label: "Page", value: "page" },
@@ -34,12 +34,11 @@
         page.value = Page.find(pageId)
 
         loadComponents()
-
-        nextTick(() => setupSortables())
     })
 
     const setupSortables = () => {
         sortables.forEach(sortable => sortable.destroy())
+        sortables = []
 
         const sortableSettings = {
             group: "shared",
@@ -85,15 +84,17 @@
     const moveComponent = (movementData: any) => {
         if(!movementData.componentId) return
 
-        console.log(movementData)
+        renderComponents.value = false
 
         page.value.moveComponent(movementData)
 
-        loadComponents()
+        nextTick(() => loadComponents())
     }
 
     const loadComponents = () => {
         components.value = page.value.getComponents()
+        renderComponents.value = true
+        nextTick(() => setupSortables())
     }
 
     const addComponent = (type: string) => {
@@ -104,8 +105,6 @@
         })
 
         loadComponents()
-
-        nextTick(() => setupSortables())
     }
 
     const addForelseComponent = () => {
@@ -170,7 +169,7 @@
                 </div>
 
                 <div class="w-full h-full">
-                    <div id="componentsContainer" class="flex-grow bg-slate-950 p-2 rounded-lg space-y-2">
+                    <div v-if="renderComponents" id="componentsContainer" class="flex-grow bg-slate-950 p-2 rounded-lg space-y-2">
                         <PreviewPageComponent 
                             v-for="component in components" :key="component.id"
                             :page="page"

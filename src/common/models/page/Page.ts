@@ -86,6 +86,7 @@ export default class Page extends RelaDB.Model {
         const componentHandler = ComponentHelper.getComponentHandler(component)
 
         component.settings = componentHandler.getSettingsAsKeyValue()
+        component.location = "components"
 
         this.components.push(component)
 
@@ -114,7 +115,6 @@ export default class Page extends RelaDB.Model {
         if (!toComponent) return
 
         // Remove component from old position
-        // const index = fromComponent[movedComponent.location].indexOf(movedComponent)
         fromComponent[movedComponent.location].splice(oldIndex, 1)
 
         // Add component to new position
