@@ -31,7 +31,7 @@ const { component } = useComponentLogic(props.baseComponent, emit)
                     spellcheck="false"
                     autocomplete="off"
                     v-model="component.settings.content"
-                    class="outline-none bg-transparent font-semibold text-center text-red-300"
+                    class="outline-none bg-transparent font-semibold text-center text-red-300 border border-slate-600 w-72 rounded"
                 />
                 <span>)</span>
             </div>

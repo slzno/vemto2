@@ -4,6 +4,7 @@ import SmallComponent from "../SmallComponent"
 import ForelseComponent from "../ForelseComponent"
 import CustomComponent from "../CustomComponent"
 import TwoColumnsComponent from "../TwoColumnsComponent"
+import LinkComponent from "../LinkComponent"
 
 export default abstract class ComponentHelper {
 
@@ -25,6 +26,7 @@ export default abstract class ComponentHelper {
             Forelse: ForelseComponent,
             Custom: CustomComponent,
             TwoColumns: TwoColumnsComponent,
+            Link: LinkComponent,
         }
     }
 

@@ -133,6 +133,7 @@
                     <UiButton class="w-full">H2</UiButton>
                     <UiButton class="w-full" @click="addComponent('Small')">Small</UiButton>
                     <UiButton class="w-full" @click="addComponent('Paragraph')">Paragraph</UiButton>
+                    <UiButton class="w-full" @click="addComponent('Link')">Link</UiButton>
                     <small>Logic</small>
                     <UiButton class="w-full">If</UiButton>
                     <UiButton class="w-full">If...Else</UiButton>
