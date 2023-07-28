@@ -21,10 +21,10 @@ const { component } = useComponentLogic(props.baseComponent, emit)
                 :id="'firstColumnComponents' + component.id" 
                 :component-id="component.id"
                 components-container="firstColumnComponents"
-                class="border border-slate-600 bg-slate-800 border-dotted p-2 pb-32">
+                class="border border-slate-600 bg-slate-800 border-dotted p-2 pb-32 space-y-1">
                 
                 <PreviewPageComponent 
-                    v-for="nestedComponent in component.getNestedComponents()"
+                    v-for="nestedComponent in component.getNestedComponents('firstColumnComponents')"
                     :base-component="nestedComponent" 
                     @update="$emit('update', nestedComponent)"
                 />
@@ -34,10 +34,10 @@ const { component } = useComponentLogic(props.baseComponent, emit)
                 :id="'secondColumnComponents' + component.id" 
                 :component-id="component.id"
                 components-container="secondColumnComponents"
-                class="border border-slate-600 bg-slate-800 border-dotted p-2 pb-32">
+                class="border border-slate-600 bg-slate-800 border-dotted p-2 pb-32 space-y-1">
                 
                 <PreviewPageComponent 
-                    v-for="nestedComponent in component.getNestedComponents()"
+                    v-for="nestedComponent in component.getNestedComponents('secondColumnComponents')"
                     :base-component="nestedComponent" 
                     @update="$emit('update', nestedComponent)"
                 />

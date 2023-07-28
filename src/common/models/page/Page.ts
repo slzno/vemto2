@@ -121,11 +121,15 @@ export default class Page extends RelaDB.Model {
             oldIndex = movementData.oldIndex,
             newIndex = movementData.newIndex
 
+        console.log('Will move')
+
         if (!movedComponent) return
 
+        console.log('Here to move')
+
         // Remove component from old position
-        const index = fromComponent[movedComponent.location].indexOf(movedComponent)
-        fromComponent[movedComponent.location].splice(index, 1)
+        // const index = fromComponent[movedComponent.location].indexOf(movedComponent)
+        fromComponent[movedComponent.location].splice(oldIndex, 1)
 
         // Add component to new position
         movedComponent.location = movementData.parentKey
@@ -141,7 +145,6 @@ export default class Page extends RelaDB.Model {
         )
 
         this.components = JSON.parse(JSON.stringify(this.components))
-        this.components[2].testzera = 'test'
 
         this.save()
     }
