@@ -1,16 +1,21 @@
 <script setup lang="ts">
+import Page from "@Common/models/page/Page"
 import { defineProps, defineEmits, watch} from "vue"
 import useComponentLogic from "./base/useComponentLogic"
 import PreviewPageComponent from "@Renderer/views/components/ProjectPage/PreviewPageComponent.vue"
 
 const props = defineProps({
+    page: {
+        type: Page,
+        required: true,
+    },
     baseComponent: {
         type: Object,
         required: true,
     },
 })
 
-const emit = defineEmits(["update"])
+const emit = defineEmits(["pageUpdated"])
 const { component } = useComponentLogic(props.baseComponent, emit)
 </script>
 
@@ -21,12 +26,13 @@ const { component } = useComponentLogic(props.baseComponent, emit)
                 :id="'firstColumnComponents' + component.id" 
                 :component-id="component.id"
                 components-container="firstColumnComponents"
-                class="border border-slate-600 bg-slate-800 border-dotted p-2 pb-32 space-y-1">
+                class="rounded border border-slate-600 bg-slate-800 border-dotted p-2 pb-32 space-y-2">
                 
                 <PreviewPageComponent 
                     v-for="nestedComponent in component.getNestedComponents('firstColumnComponents')"
+                    :page="page"
                     :base-component="nestedComponent" 
-                    @update="$emit('update', nestedComponent)"
+                    @pageUpdated="emit('pageUpdated')"
                 />
             </div>
 
@@ -34,12 +40,13 @@ const { component } = useComponentLogic(props.baseComponent, emit)
                 :id="'secondColumnComponents' + component.id" 
                 :component-id="component.id"
                 components-container="secondColumnComponents"
-                class="border border-slate-600 bg-slate-800 border-dotted p-2 pb-32 space-y-1">
+                class="rounded border border-slate-600 bg-slate-800 border-dotted p-2 pb-32 space-y-2">
                 
                 <PreviewPageComponent 
                     v-for="nestedComponent in component.getNestedComponents('secondColumnComponents')"
+                    :page="page"
                     :base-component="nestedComponent" 
-                    @update="$emit('update', nestedComponent)"
+                    @pageUpdated="emit('pageUpdated')"
                 />
             </div>
         </div>

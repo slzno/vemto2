@@ -33,10 +33,6 @@ export default class Page extends RelaDB.Model {
         return data
     }
 
-    static updated(page: Page) {
-        console.log("Page updated", page.components)
-    }
-
     static createFromData(data: any) {
         const page = new Page(),
             defaultSection = AppSection.findDefaultSiteSection()
@@ -96,14 +92,6 @@ export default class Page extends RelaDB.Model {
         this.save()
     }
 
-    removeComponent(component: any) {
-        this.components = this.components.filter(
-            (c: any) => c.id !== component.id
-        )
-
-        this.save()
-    }
-
     updateComponent(component: any) {
         const index = this.components.findIndex(
             (c: any) => c.id === component.id
@@ -121,11 +109,9 @@ export default class Page extends RelaDB.Model {
             oldIndex = movementData.oldIndex,
             newIndex = movementData.newIndex
 
-        console.log('Will move')
-
         if (!movedComponent) return
-
-        console.log('Here to move')
+        if (!fromComponent) return
+        if (!toComponent) return
 
         // Remove component from old position
         // const index = fromComponent[movedComponent.location].indexOf(movedComponent)
@@ -186,6 +172,38 @@ export default class Page extends RelaDB.Model {
         return this.components.map((component: any) => {
             return ComponentHelper.getComponentHandler(component)
         })
+    }
+
+    removeComponent(component: Component): void {
+        const componentId = component.id
+
+        // Define recursive remove function
+        const removeComponents = (components: any[]): any => {
+            for (let i = 0; i < components.length; i++) {
+                const component = components[i];
+                const componentHandler = ComponentHelper.getComponentHandler(component)
+
+                if (component.id == componentId) {
+                    // Remove the component from the array and return
+                    components.splice(i, 1);
+                    return;
+                } else if (componentHandler.hasNestedComponents()) {
+                    let nestedComponentsKeys = componentHandler.getNestedComponentsKeys()
+    
+                    for (let key of nestedComponentsKeys) {
+                        // Check if component has array of nested components
+                        if (Array.isArray(component[key])) {
+                            removeComponents(component[key]);
+                        }
+                    }
+                }
+            }
+        }
+    
+        // Start removing
+        removeComponents(this.components)
+    
+        this.save()
     }
 
     saveComponentsOrder(components: any[]) {

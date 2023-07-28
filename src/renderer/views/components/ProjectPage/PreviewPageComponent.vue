@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Page from "@Common/models/page/Page"
 import { defineProps, defineEmits, ref, onMounted } from "vue"
 import { Bars3Icon, DocumentDuplicateIcon, TrashIcon } from '@heroicons/vue/24/outline'
 
@@ -12,13 +13,17 @@ const componentMap = {
 }
 
 const props = defineProps({
+    page: {
+        type: Page,
+        required: true,
+    },
     baseComponent: {
         type: Object,
         required: true,
     },
 })
 
-const emit = defineEmits(["update", "delete"])
+const emit = defineEmits(["pageUpdated"])
 
 const component = ref(null),
     mouseHover = ref(false)
@@ -26,6 +31,11 @@ const component = ref(null),
 onMounted(() => {
     component.value = props.baseComponent
 })
+
+const deleteComponent = (component) => {
+    props.page.removeComponent(component)
+    emit('pageUpdated')
+}
 
 const componentClasses = (component) => {
     return {
@@ -55,15 +65,16 @@ const componentClasses = (component) => {
             <button tabindex="-1">
                 <DocumentDuplicateIcon class="w-6 h-6 text-white" />
             </button>
-            <button tabindex="-1" @click="emit('delete', component)">
+            <button tabindex="-1" @click="deleteComponent(component)">
                 <TrashIcon class="w-6 h-6 text-white" />
             </button>
         </div>
         <div>
             <component 
                 :is="componentMap[component.getName()]" 
+                :page="page"
                 :base-component="component" 
-                @update="emit('update', component)" 
+                @pageUpdated="emit('pageUpdated')"
             />
         </div>
     </div>

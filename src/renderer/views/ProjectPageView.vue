@@ -39,6 +39,8 @@
     })
 
     const setupSortables = () => {
+        sortables.forEach(sortable => sortable.destroy())
+
         const sortableSettings = {
             group: "shared",
             animation: 150,
@@ -67,8 +69,6 @@
             fromKey = evt.from.getAttribute('component-id') || "page",
             toKey = evt.to.getAttribute('component-id') || "page",
             parentKey = evt.to.getAttribute('components-container') || "components"
-
-        console.log(evt.item)
 
         const movementData = {
             componentId: componentId,
@@ -133,28 +133,10 @@
         loadComponents()
     }
 
-    const deleteComponent = (component: any) => {
-        page.value.removeComponent(component)
+    const pageUpdated = () => {
+        page.value.save()
 
         loadComponents()
-    }
-
-    const selectComponent = (component: any) => {
-        selectedComponent.value = component
-    }
-
-    const updateComponent = (component: any) => {
-        page.value.updateComponent(component)
-    }
-
-    const isSelected = (component: any) => {
-        if (!selectedComponent.value) return false
-
-        return selectedComponent.value.id === component.id
-    }
-
-    const saveComponentsOrder = () => {
-        page.value.saveComponentsOrder(components.value)
     }
 </script>
 
@@ -188,12 +170,12 @@
                 </div>
 
                 <div class="w-full h-full">
-                    <div id="componentsContainer" class="flex-grow bg-slate-950 p-2 rounded-lg space-y-1">
+                    <div id="componentsContainer" class="flex-grow bg-slate-950 p-2 rounded-lg space-y-2">
                         <PreviewPageComponent 
                             v-for="component in components" :key="component.id"
+                            :page="page"
                             :base-component="component" 
-                            @update="updateComponent(component)" 
-                            @delete="deleteComponent(component)"
+                            @pageUpdated="pageUpdated()" 
                         />
                     </div>
                 </div>

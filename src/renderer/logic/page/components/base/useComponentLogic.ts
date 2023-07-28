@@ -8,7 +8,7 @@ export default function useComponentLogic(baseComponent, emit) {
     })
 
     watch(component, () => {
-        emit('update', component.value)
+        emit('pageUpdated')
     }, { deep: true })
 
     return { component }
