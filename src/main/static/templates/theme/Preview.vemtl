@@ -82,7 +82,7 @@
                 <div class="vtheme(crud.form.buttons-container)">
                     <div></div>
                     <div>
-                        <button class="vtheme(ui.button)" type="submit">Save</button>
+                        <button class="vtheme(ui.button)" type="button">Save</button>
                     </div>
                 </div>
             </form>

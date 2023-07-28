@@ -1,5 +1,6 @@
 import Component from "./interfaces/Component"
 import Alert from "@Renderer/components/utils/Alert"
+import ComponentHelper from "./services/ComponentHelper"
 import TemplateEngine from "@tiago_silva_pereira/vemto-template-engine"
 
 export default abstract class AbstractComponent implements Component {
@@ -17,6 +18,10 @@ export default abstract class AbstractComponent implements Component {
         this.category = componentData.category
         this.subType = componentData.subType || 'default'
         this.location = componentData.location || 'components'
+
+        this.getNestedComponentsKeys().forEach((key: string) => {
+            this[key] = componentData[key] || []
+        })
     }
 
     getSettingsAsKeyValue(): any {
@@ -31,6 +36,7 @@ export default abstract class AbstractComponent implements Component {
         return settingsAsKeyValue
     }
 
+    abstract getName(): string
     abstract getLabel(): string
     abstract getSettings(): any
     abstract getPreviewCode(): string
@@ -42,6 +48,18 @@ export default abstract class AbstractComponent implements Component {
 
     getNestedComponentsKeys(): string[] {
         return []
+    }
+
+    getNestedComponents(key: string): any[] {
+        if(!this.hasNestedComponents()) {
+            return []
+        }
+
+        if(!this[key]) {
+            return []
+        }
+
+        return this[key].map((component: any) => ComponentHelper.getComponentHandler(component))
     }
 
     render() {

@@ -2,7 +2,6 @@
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
 
     import { nextTick, onMounted, ref } from 'vue'
-    import PreviewPageComponent from '@Renderer/views/components/ProjectPage/PreviewPageComponent.vue'
     import { useRoute } from 'vue-router'
     import Page from '@Common/models/page/Page'
     import UiButton from '@Renderer/components/ui/UiButton.vue'
@@ -12,7 +11,8 @@
     import Sortable from 'sortablejs'
     import { Bars3Icon, DocumentDuplicateIcon, TrashIcon } from '@heroicons/vue/24/outline'
     import Component from '../../common/models/page/components/AbstractComponent'
-
+    import PreviewPageComponent from './components/ProjectPage/PreviewPageComponent.vue'
+    
     const projectStore = useProjectStore()
 
     const route = useRoute(),
@@ -35,6 +35,8 @@
         page.value = Page.find(pageId)
 
         loadComponents()
+
+        console.log(page.value.getComponents()[2])
 
         nextTick(() => {
             new Sortable(document.getElementById('componentsContainer'), {
@@ -216,7 +218,10 @@
                                 </button>
                             </div>
                             <div>
-                                <PreviewPageComponent :base-component="component" @update="updateComponent(component)" />
+                                <PreviewPageComponent 
+                                    :base-component="component" 
+                                    @update="updateComponent(component)" 
+                                />
                             </div>
                         </div>
                     </div>

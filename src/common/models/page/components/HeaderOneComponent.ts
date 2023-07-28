@@ -7,13 +7,12 @@ export default class HeaderOneComponent extends AbstractComponent implements Com
         return 'H1'
     }
 
+    getName(): string {
+        return 'HeaderOneComponent'
+    }
+
     getPreviewCode(): string {
-        return `<input 
-            spellcheck="false"
-            autocomplete="off"
-            v-model="component.settings.content"
-            class="outline-none text-5xl font-bold bg-transparent w-full"
-        />`
+        return ``
     }
 
     getRenderCode(): string {

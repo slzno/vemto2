@@ -6,26 +6,16 @@ export default class TwoColumnsComponent extends AbstractComponent implements Co
     firstColumnComponents: any[]
     secondColumnComponents: any[]
 
+    getName(): string {
+        return 'TwoColumnsComponent'
+    }
+
     getLabel(): string {
         return 'Two Columns'
     }
 
     getPreviewCode(): string {
-        return `
-            <div class="columns-1 lg:columns-2">
-                <div 
-                    :id="'firstColumnComponents' + component.id" 
-                    :component-id="component.id"
-                    components-container="firstColumnComponents"
-                    class="border border-slate-600 bg-slate-800 border-dotted p-2 pb-32">
-                </div>
-                <div 
-                    :id="'secondColumnComponents' + component.id" 
-                    :component-id="component.id"
-                    components-container="secondColumnComponents" class="border border-slate-600 bg-slate-800 border-dotted p-2 pb-32">
-                </div>
-            </div>
-        `
+        return ``
     }
 
     getRenderCode(): string {
@@ -46,10 +36,7 @@ export default class TwoColumnsComponent extends AbstractComponent implements Co
     }
 
     getSettings(): any {
-        return {
-            firstColumnComponents: [],
-            secondColumnComponents: [],
-        }
+        return {}
     }
 
 }

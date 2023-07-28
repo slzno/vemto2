@@ -3,14 +3,9 @@ import Route, { RouteType } from "@Common/models/Route"
 import { camelCase, capitalCase, paramCase, pascalCase } from "change-case"
 import Project from "@Common/models/Project"
 import RelaDB from "@tiago_silva_pereira/reladb"
-import HeaderOneComponent from "./components/HeaderOneComponent"
 import Component from "./components/interfaces/Component"
-import ParagraphComponent from "./components/ParagraphComponent"
-import SmallComponent from "./components/SmallComponent"
-import ForelseComponent from "./components/ForelseComponent"
-import CustomComponent from "./components/CustomComponent"
 import AppSection from "../AppSection"
-import TwoColumnsComponent from "./components/TwoColumnsComponent"
+import ComponentHelper from "./components/services/ComponentHelper"
 
 export default class Page extends RelaDB.Model {
     id: string
@@ -36,6 +31,10 @@ export default class Page extends RelaDB.Model {
         data.projectId = 1
 
         return data
+    }
+
+    static updated(page: Page) {
+        console.log("Page updated", page.components)
     }
 
     static createFromData(data: any) {
@@ -88,7 +87,7 @@ export default class Page extends RelaDB.Model {
     addComponent(component: any) {
         component.id = uuid()
 
-        const componentHandler = this.getComponentHandler(component)
+        const componentHandler = ComponentHelper.getComponentHandler(component)
 
         component.settings = componentHandler.getSettingsAsKeyValue()
 
@@ -125,7 +124,11 @@ export default class Page extends RelaDB.Model {
         if (!movedComponent) return
 
         // Remove component from old position
-        // fromComponent[movementData.parentKey].splice(oldIndex, 1)
+        const index = fromComponent[movedComponent.location].indexOf(movedComponent)
+        fromComponent[movedComponent.location].splice(index, 1)
+
+        // Add component to new position
+        movedComponent.location = movementData.parentKey
 
         if(!toComponent[movementData.parentKey]) {
             toComponent[movementData.parentKey] = []
@@ -137,54 +140,27 @@ export default class Page extends RelaDB.Model {
             movedComponent
         )
 
-        console.log(toComponent)
+        this.components = JSON.parse(JSON.stringify(this.components))
+        this.components[2].testzera = 'test'
 
-        // this.rewriteComponent(fromComponent)
-        this.rewriteComponent(toComponent)
-
-        console.log(this.components)
-
-        // this.save()
-    }
-
-    rewriteComponent(component: any) {
-        // needs to change components recursively because of nested components
-        const components = this.components
-
-        // Define recursive writing function
-        const writeComponents = (components: any[]): any => {
-            for (let c of components) {
-                if (c.id == component.id) {
-                    c = component
-                } else if (c.hasNestedComponents()) {
-                    let nestedComponentsKeys = c.getNestedComponentsKeys()
-                    for (let key of nestedComponentsKeys) {
-                        // Check if component has array of nested components
-                        if (Array.isArray(c[key])) {
-                            writeComponents(c[key])
-                        }
-                    }
-                }
-            }
-        }
-
-        // Start writing
-        writeComponents(components)
+        this.save()
     }
 
     getComponent(componentId: string): any {
         if (componentId === "page") return this
 
-        const components = this.getComponents()
+        const components = this.components
 
         // Define recursive search function
         const searchComponents = (components: any[]): any => {
             for (let component of components) {
+                const componentHandler = ComponentHelper.getComponentHandler(component)
+
                 if (component.id == componentId) {
                     return component
-                } else if (component.hasNestedComponents()) {
-                    let nestedComponentsKeys =
-                        component.getNestedComponentsKeys()
+                } else if (componentHandler.hasNestedComponents()) {
+                    let nestedComponentsKeys = componentHandler.getNestedComponentsKeys()
+
                     for (let key of nestedComponentsKeys) {
                         // Check if component has array of nested components
                         if (Array.isArray(component[key])) {
@@ -205,18 +181,8 @@ export default class Page extends RelaDB.Model {
 
     getComponents(): Component[] {
         return this.components.map((component: any) => {
-            return this.getComponentHandler(component)
+            return ComponentHelper.getComponentHandler(component)
         })
-    }
-
-    getComponentHandler(component: any): any {
-        const componentHandler = this.getComponentHandlerMap()[component.type]
-
-        if (!componentHandler) {
-            throw new Error(`Component type ${component.type} not found`)
-        }
-
-        return new componentHandler(component)
     }
 
     saveComponentsOrder(components: any[]) {
@@ -274,14 +240,5 @@ export default class Page extends RelaDB.Model {
         })
     }
 
-    getComponentHandlerMap(): any {
-        return {
-            HeaderOne: HeaderOneComponent,
-            Paragraph: ParagraphComponent,
-            Small: SmallComponent,
-            Forelse: ForelseComponent,
-            Custom: CustomComponent,
-            TwoColumns: TwoColumnsComponent,
-        }
-    }
+    
 }

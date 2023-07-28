@@ -35,11 +35,11 @@ async function createWindow() {
         const rendererPort = process.argv[2]
         await mainWindow.loadURL(`http://localhost:${rendererPort}`)
         
-        if (!process.env.VEMTO_NO_EXTENSIONS) installExtension("nhdogjmejiglipccpnnnanhbledajbpd")
+        if (!process.env.VEMTO_NO_EXTENSIONS) await installExtension("nhdogjmejiglipccpnnnanhbledajbpd")
 
-        if (process.env.VEMTO_HIDE_MENU) mainWindow.setMenu(null)
+        if (process.env.VEMTO_HIDE_MENU) await mainWindow.setMenu(null)
 
-        mainWindow.webContents.openDevTools()
+        await mainWindow.webContents.openDevTools()
     } else {
         mainWindow.setMenu(null)
         mainWindow.loadFile(join(app.getAppPath(), "renderer", "index.html"))

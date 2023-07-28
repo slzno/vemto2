@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import Nav from '@Common/models/Nav'
-import { ChevronDoubleRightIcon } from '@heroicons/vue/24/outline'
+    import { ChevronDoubleRightIcon } from '@heroicons/vue/24/outline'
     import { defineProps, PropType, toRef } from 'vue'
 
     const props = defineProps({
