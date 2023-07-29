@@ -15,8 +15,14 @@ export default class LinkComponent extends AbstractComponent implements Componen
 
     getRenderCode(): string {
         return `
-            <a href="<$ this.settings.href $>">
+            <a target="<$ this.settings.target $>" href="<$ this.settings.href $>">
+                <% if (this.settings.mode === 'text') { %>
                 <$ this.settings.content $>
+                <% } else { %>
+                    <% for (const component of this.getNestedComponents('nestedComponents')) { %>
+                        <$ component.render() $>
+                    <% } %>
+                <% } %>
             </a>
         `
     }
@@ -45,7 +51,7 @@ export default class LinkComponent extends AbstractComponent implements Componen
             },
             mode: {
                 type: 'select',
-                default: 'normal',
+                default: 'text',
             },
         }
     }

@@ -144,8 +144,8 @@
                     <UiButton class="w-full">Post Item</UiButton>
                 </div>
 
-                <div class="w-full h-full">
-                    <div v-if="renderComponents" id="componentsContainer" class="flex-grow bg-slate-950 p-2 rounded-lg space-y-2">
+                <div class="w-full h-screen">
+                    <div v-if="renderComponents" id="componentsContainer" class="flex-grow bg-slate-950 p-2 pb-96 rounded-lg space-y-2 h-full overflow-y-auto">
                         <PreviewPageComponent 
                             v-for="component in components" :key="component.id"
                             :page="page"

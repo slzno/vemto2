@@ -17,9 +17,13 @@ export default class ForelseComponent extends AbstractComponent implements Compo
     getRenderCode(): string {
         return `
             @forelse(<$ this.settings.content $>)
-            // nested
+            <% for (const component of this.getNestedComponents('foreachComponents')) { %>
+                <$ component.render() $>
+            <% } %>
             @empty
-            // nested
+            <% for (const component of this.getNestedComponents('emptyComponents')) { %>
+                <$ component.render() $>
+            <% } %>
             @endforelse
         `
     }

@@ -50,6 +50,16 @@ const { component } = useComponentLogic(props.baseComponent, emit)
                             class="outline-none bg-transparent font-semibold text-center text-red-300 border border-slate-600 w-96 rounded"
                         />
                     </div>
+
+                    <div>
+                        <span>mode=</span>
+                        <select 
+                            v-model="component.settings.mode"
+                            class="outline-none bg-transparent font-semibold text-center text-red-300 border border-slate-600 w-32 p-0 rounded">
+                            <option class="text-slate-900" value="text">Simple Text</option>
+                            <option class="text-slate-900" value="container">Container</option>
+                        </select>
+                    </div>
                 </div>
             </div>
     
@@ -58,13 +68,24 @@ const { component } = useComponentLogic(props.baseComponent, emit)
                     :id="'nestedComponents' + component.id" 
                     :component-id="component.id"
                     components-container="nestedComponents"
-                    class="rounded border border-slate-600 bg-slate-800 border-dotted p-2 pb-16 space-y-2">
+                    class="rounded border border-slate-600 bg-slate-800 border-dotted p-2 pb-16 space-y-2"
+                    v-show="component.settings.mode === 'container'"
+                >
                     
                     <PreviewPageComponent 
                         v-for="nestedComponent in component.getNestedComponents('nestedComponents')"
                         :page="page"
                         :base-component="nestedComponent" 
                         @pageUpdated="emit('pageUpdated')"
+                    />
+                </div>
+
+                <div v-show="component.settings.mode === 'text'">
+                    <input 
+                        spellcheck="false"
+                        autocomplete="off"
+                        v-model="component.settings.content"
+                        class="outline-none bg-transparent w-full"
                     />
                 </div>
             </div>

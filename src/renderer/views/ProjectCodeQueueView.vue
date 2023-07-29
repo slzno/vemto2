@@ -13,7 +13,7 @@
     import TemplateErrorViewer from "./components/Common/TemplateErrorViewer.vue"
     import { computed, ref } from "vue"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
-import UiText from "@Renderer/components/ui/UiText.vue"
+    import UiText from "@Renderer/components/ui/UiText.vue"
 
     const projectStore = useProjectStore(),
         search = ref(""),
@@ -33,8 +33,6 @@ import UiText from "@Renderer/components/ui/UiText.vue"
             value: "conflicts",
             badge: () =>
                 projectStore.project.getConflictRenderableFiles().length,
-            emphasize: () =>
-                projectStore.project.getConflictRenderableFiles().length > 0,
         },
         {
             label: "Removed",
