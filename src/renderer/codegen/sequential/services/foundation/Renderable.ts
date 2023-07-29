@@ -3,6 +3,7 @@ import Main from "@Renderer/services/wrappers/Main"
 import PhpFormatter from "@Renderer/codegen/formatters/PhpFormatter"
 import TemplateCompiler from "@Renderer/codegen/templates/base/TemplateCompiler"
 import { RenderableFileFormatter, RenderableFileType } from "@Common/models/RenderableFile"
+import BladeFormatter from "@Renderer/codegen/formatters/BladeFormatter"
 
 export default abstract class Renderable {
     project: Project
@@ -118,6 +119,12 @@ export default abstract class Renderable {
     async formatCompiledTemplate(compiledTemplate: string) {
         if(this.getFormatter() === RenderableFileFormatter.PHP) {
             return PhpFormatter.setContent(
+                compiledTemplate
+            ).format()
+        }
+
+        if(this.getFormatter() === RenderableFileFormatter.BLADE) {
+            return BladeFormatter.setContent(
                 compiledTemplate
             ).format()
         }

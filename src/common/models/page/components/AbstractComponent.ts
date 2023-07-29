@@ -2,6 +2,7 @@ import Component from "./interfaces/Component"
 import Alert from "@Renderer/components/utils/Alert"
 import ComponentHelper from "./services/ComponentHelper"
 import TemplateEngine from "@tiago_silva_pereira/vemto-template-engine"
+import BladeFormatter from "@Renderer/codegen/formatters/BladeFormatter"
 
 export default abstract class AbstractComponent implements Component {
     id: string
@@ -61,7 +62,7 @@ export default abstract class AbstractComponent implements Component {
         return this[key].map((component: any) => ComponentHelper.getComponentHandler(component))
     }
 
-    render() {
+    render(): string {
         const templateEngine = new TemplateEngine(this.getRenderCode(), {
             logger: null,
             onBrowser: true,
@@ -69,9 +70,15 @@ export default abstract class AbstractComponent implements Component {
         })
 
         try {
-            return templateEngine
+            const compiled = templateEngine
                 .setData(this)    
                 .compileWithErrorTreatment()
+
+            return compiled
+
+            // return BladeFormatter.setContent(
+            //     compiled
+            // ).format()
         } catch (error: any) {
             const latestError = templateEngine.getLatestError()
 

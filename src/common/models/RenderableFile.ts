@@ -5,6 +5,7 @@ export enum RenderableFileType {
     PHP_CLASS = 'php-class',
     HTML = 'html',
     PHP = 'php',
+    BLADE = 'blade',
     JS = 'js',
     CSS = 'css',
     SCSS = 'scss',
