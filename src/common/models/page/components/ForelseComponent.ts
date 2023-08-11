@@ -18,11 +18,11 @@ export default class ForelseComponent extends AbstractComponent implements Compo
         return `
             @forelse(<$ this.settings.content $>)
             <% for (const component of this.getNestedComponents('foreachComponents')) { %>
-                <$ component.render() $>
+                <$ await component.render() $>
             <% } %>
             @empty
             <% for (const component of this.getNestedComponents('emptyComponents')) { %>
-                <$ component.render() $>
+                <$ await component.render() $>
             <% } %>
             @endforelse
         `

@@ -20,7 +20,7 @@ export default class LinkComponent extends AbstractComponent implements Componen
                 <$ this.settings.content $>
                 <% } else { %>
                     <% for (const component of this.getNestedComponents('nestedComponents')) { %>
-                        <$ component.render() $>
+                        <$ await component.render() $>
                     <% } %>
                 <% } %>
             </a>

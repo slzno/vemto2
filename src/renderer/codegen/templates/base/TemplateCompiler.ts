@@ -112,13 +112,13 @@ export default new class TemplateCompiler {
         return templates
     }
 
-    compile() {
+    async compile() {
         this.startEngine()
 
         try {
-            let compiledContent = this.templateEngine
+            let compiledContent = await this.templateEngine
                 .setData(this.data)    
-                .compileWithErrorTreatment()
+                .compileAsyncWithErrorTreatment()
 
             if(this.hooksEnabled) {
                 compiledContent = this.processHooks(compiledContent)

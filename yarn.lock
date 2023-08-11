@@ -1145,12 +1145,12 @@
     source-map-support "^0.5.16"
 
 "@babel/runtime-corejs3@^7.16.5":
-  version "7.22.6"
-  resolved "https://registry.yarnpkg.com/@babel/runtime-corejs3/-/runtime-corejs3-7.22.6.tgz#e8e625eb3db29491e0326b3aeb9929c43b270ae4"
-  integrity sha512-M+37LLIRBTEVjktoJjbw4KVhupF0U/3PYUCbBwgAd9k17hoKhRu1n935QiG7Tuxv0LJOMrb2vuKEeYUlv0iyiw==
+  version "7.22.10"
+  resolved "https://registry.yarnpkg.com/@babel/runtime-corejs3/-/runtime-corejs3-7.22.10.tgz#5ecc3d32faa70009f084cc2e087d79e5f5cdcca9"
+  integrity sha512-IcixfV2Jl3UrqZX4c81+7lVg5++2ufYJyAFW3Aux/ZTvY6LVYYhJ9rMgnbX0zGVq6eqfVpnoatTjZdVki/GmWA==
   dependencies:
     core-js-pure "^3.30.2"
-    regenerator-runtime "^0.13.11"
+    regenerator-runtime "^0.14.0"
 
 "@babel/runtime@^7.8.4":
   version "7.19.0"
@@ -1922,14 +1922,6 @@
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==
-
-"@shufo/prettier-plugin-blade@^1.10.1":
-  version "1.10.1"
-  resolved "https://registry.yarnpkg.com/@shufo/prettier-plugin-blade/-/prettier-plugin-blade-1.10.1.tgz#460dfdfc8e9b64fc1da878360d4d3f64f51adbb2"
-  integrity sha512-6RNLs/NatWu5+bJZpAuNzwN+AXCC1+xdScLElIrWSsccg4WwgLuVzkUGHyJbeGArguAQM1+fYsDGDWEZcrq9tQ==
-  dependencies:
-    blade-formatter "1.36.0"
-    prettier "3.0.0"
 
 "@shufo/tailwindcss-class-sorter@3.0.1":
   version "3.0.1"
@@ -3208,10 +3200,10 @@ bl@^4.1.0:
     inherits "^2.0.4"
     readable-stream "^3.4.0"
 
-blade-formatter@1.36.0:
-  version "1.36.0"
-  resolved "https://registry.yarnpkg.com/blade-formatter/-/blade-formatter-1.36.0.tgz#a834e5745ae133467e832c0b8c33e2f4138b81d9"
-  integrity sha512-M8qvXoyMTmYmAbFOqjnSTc0IPpnXJfbIfFDDTFo2U/tv5CV8R7i9O4dxDpVovnxjduVjcoTUoBlepqAjWC+ktg==
+blade-formatter@^1.37.0:
+  version "1.37.0"
+  resolved "https://registry.yarnpkg.com/blade-formatter/-/blade-formatter-1.37.0.tgz#8e9e7a850a371ce46ce011d9fbe62ef16fcbe4e9"
+  integrity sha512-54XglGjcBQBzZr076CVmZLCrlHP77ojN2Ee+MkTrnZu3DUwWk+YP5sYIPFS5bRoVLND8IW4v5eEhwVN1imU26Q==
   dependencies:
     "@prettier/plugin-php" "^0.19.0"
     "@shufo/tailwindcss-class-sorter" "3.0.1"
@@ -8104,11 +8096,6 @@ prettier-linter-helpers@^1.0.0:
   dependencies:
     fast-diff "^1.1.2"
 
-prettier@3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.0.0.tgz#e7b19f691245a21d618c68bc54dc06122f6105ae"
-  integrity sha512-zBf5eHpwHOGPC47h0zrPyNn+eAEIdEzfywMoYn2XPi0P44Zp0tSq64rq0xAREh4auw2cJZHo9QUob+NqCQky4g==
-
 prettier@^2.2.0:
   version "2.8.8"
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.8.8.tgz#e8c5d7e98a4305ffe3de2e1fc4aca1a71c28b1da"
@@ -8372,15 +8359,15 @@ regenerate@^1.4.2:
   resolved "https://registry.yarnpkg.com/regenerate/-/regenerate-1.4.2.tgz#b9346d8827e8f5a32f7ba29637d398b69014848a"
   integrity sha512-zrceR/XhGYU/d/opr2EKO7aRHUeiBI8qjtfHqADTwZd6Szfy16la6kqD0MIUs5z5hx6AaKa+PixpPrR289+I0A==
 
-regenerator-runtime@^0.13.11:
-  version "0.13.11"
-  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.11.tgz#f6dca3e7ceec20590d07ada785636a90cdca17f9"
-  integrity sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==
-
 regenerator-runtime@^0.13.4:
   version "0.13.9"
   resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.9.tgz#8925742a98ffd90814988d7566ad30ca3b263b52"
   integrity sha512-p3VT+cOEgxFsRRA9X4lkI1E+k2/CtnKtU4gcxyaCUreilL/vqI6CdZ3wxVUx3UOUg+gnUOQQcRI7BmSI656MYA==
+
+regenerator-runtime@^0.14.0:
+  version "0.14.0"
+  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.14.0.tgz#5e19d68eb12d486f797e15a3c6a918f7cec5eb45"
+  integrity sha512-srw17NI0TUWHuGa5CFGGmhfNIeja30WMBfbslPNhf6JrqQlLN5gcrvig1oqPxiVaXb0oW0XRKtH6Nngs5lKCIA==
 
 regenerator-transform@^0.15.0:
   version "0.15.0"

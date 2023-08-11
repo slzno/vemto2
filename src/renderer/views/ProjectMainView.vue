@@ -34,7 +34,8 @@
 
             setTimeout(() => {
                 appStore.finishGeneratingCode()
-                Alert.success("Code generated successfully!", 2000)
+                const elapsedTime = SequentialGenerator.getElapsedTimeInSeconds()
+                Alert.success(`Code generated successfully in ${elapsedTime} seconds`, 2000)
             }, 500)
         } catch (error) {
             appStore.finishGeneratingCode()

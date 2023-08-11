@@ -1,10 +1,12 @@
-import prettier from "prettier/standalone"
 import BaseFormatter from "./BaseFormatter"
+// import { Formatter } from "blade-formatter"
 
 class BladeFormatter extends BaseFormatter {
     
     async format() {
-        // this.content = prettier.format(this.content, {parser: 'blade'})
+        // return new Formatter({
+        //     indentSize: 4
+        // }).formatContent(this.content)
 
         return this.content
     }

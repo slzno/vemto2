@@ -124,6 +124,7 @@ export default abstract class Renderable {
         }
 
         if(this.getFormatter() === RenderableFileFormatter.BLADE) {
+            console.log('Will format blade', compiledTemplate)
             return BladeFormatter.setContent(
                 compiledTemplate
             ).format()

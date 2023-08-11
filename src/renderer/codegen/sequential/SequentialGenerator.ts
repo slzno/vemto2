@@ -7,7 +7,12 @@ import GeneratePageFiles from "./services/page/GeneratePageFiles"
 import GenerateUiComponentsFiles from "./services/blade/ui/GenerateUiComponentsFiles"
 
 export default class SequentialGenerator {
+    static startTime: number = 0
+    static elapsedTime: number = 0
+
     async run(project: Project) {
+        SequentialGenerator.startTimer()
+
         project.clearCurrentRenderedFilesPaths()
 
         await new GenerateUiComponentsFiles().start()
@@ -20,5 +25,23 @@ export default class SequentialGenerator {
         await new GeneratePageFiles().start()
 
         project.processRemovableFiles()
+
+        SequentialGenerator.stopTimer()
+    }
+
+    static startTimer(): void {
+        this.startTime = Date.now()
+    }
+
+    static stopTimer(): void {
+        this.elapsedTime = Date.now() - this.startTime
+    }
+
+    static getElapsedTimeInSeconds(): number {
+        return this.elapsedTime / 1000
+    }
+
+    static getElapsedTime(): number {
+        return this.elapsedTime
     }
 }

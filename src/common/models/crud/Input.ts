@@ -64,7 +64,7 @@ export default class Input extends RelaDB.Model {
         const input = new Input()
         input.columnId = column.id
         input.name = column.name
-        input.type = InputType.TEXT
+        input.type = column.name === 'image' ? InputType.IMAGE : InputType.TEXT
         input.label = changeCase.sentenceCase(column.name)
         input.placeholder = changeCase.sentenceCase(column.name)
         input.readOnly = false
@@ -127,5 +127,9 @@ export default class Input extends RelaDB.Model {
         })
 
         return `[${templateRules.join(", ")}]`
+    }
+
+    render() {
+        return ''
     }
 }

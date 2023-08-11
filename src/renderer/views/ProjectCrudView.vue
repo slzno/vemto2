@@ -43,7 +43,9 @@
 
             <section class="flex w-full h-screen space-x-4 mt-2 px-2" v-if="selectedTab === 'form'">
                 <div class="space-y-2">
-                    <UiButton class="w-full">Text Input</UiButton>
+                    <UiButton class="w-full">Text</UiButton>
+                    <UiButton class="w-full">Image</UiButton>
+                    <UiButton class="w-full">Belongs To</UiButton>
                 </div>
 
                 <div class="flex-grow bg-slate-950 p-2 rounded-lg">
@@ -53,7 +55,7 @@
 
                         <div class="space-y-1">
                             <div class="p-1 border border-dotted rounded border-transparent hover:border-slate-700 cursor-pointer" v-for="input in panel.inputs" :key="panel.id">
-                                {{ input.label }}
+                                {{ input.label }} {{ input.type }}
                                 <input
                                     class="w-full dark:text-slate-200 border-0 bg-slate-100 dark:bg-slate-850 px-2 py-1 rounded-lg"
                                     disabled

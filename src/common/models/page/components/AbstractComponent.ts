@@ -62,7 +62,7 @@ export default abstract class AbstractComponent implements Component {
         return this[key].map((component: any) => ComponentHelper.getComponentHandler(component))
     }
 
-    render(): string {
+    async render(): Promise<string> {
         const templateEngine = new TemplateEngine(this.getRenderCode(), {
             logger: null,
             onBrowser: true,
@@ -70,15 +70,13 @@ export default abstract class AbstractComponent implements Component {
         })
 
         try {
-            const compiled = templateEngine
+            const compiled = await templateEngine
                 .setData(this)    
-                .compileWithErrorTreatment()
+                .compileAsyncWithErrorTreatment()
 
-            return compiled
-
-            // return BladeFormatter.setContent(
-            //     compiled
-            // ).format()
+            return BladeFormatter.setContent(
+                compiled
+            ).format()
         } catch (error: any) {
             const latestError = templateEngine.getLatestError()
 
