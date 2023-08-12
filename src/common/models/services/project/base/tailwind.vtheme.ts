@@ -36,9 +36,9 @@ export default {
             "w-full text-gray-500 text-lg font-semibold py-4 uppercase",
         "crud.form": "w-full mb-0",
         "crud.form.container": "overflow-hidden border rounded-lg bg-white",
-        "crud.form.fields.container": "p-6 space-y-3",
-        "crud.form.field.group": "w-full",
-        "crud.form.field.extra": "w-full",
+        "crud.form.inputs.container": "p-6 space-y-3",
+        "crud.form.input.group": "w-full",
+        "crud.form.input.extra": "w-full",
         "crud.form.buttons-container":
             "flex justify-between mt-4 border-t border-gray-50 bg-gray-50 p-4",
     },

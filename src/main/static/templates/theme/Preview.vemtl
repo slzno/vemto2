@@ -65,16 +65,16 @@
     
         <div class="vtheme(crud.form.container)">
             <form class="vtheme(crud.form)" wire:submit.prevent="save">
-                <div class="vtheme(crud.form.fields.container)">
-                    <div class="vtheme(crud.form.field.group)">
+                <div class="vtheme(crud.form.inputs.container)">
+                    <div class="vtheme(crud.form.input.group)">
                         <label class="vtheme(ui.label)" for="user_id">User</label>
-                        <input class="vtheme(ui.input) vtheme(crud.form.field.extra)" type="text" placeholder="User" />
+                        <input class="vtheme(ui.input) vtheme(crud.form.input.extra)" type="text" placeholder="User" />
                         <p class="vtheme(ui.input.error)">Input with errors</p>
                     </div>
 
-                    <div class="vtheme(crud.form.field.group)">
+                    <div class="vtheme(crud.form.input.group)">
                         <label class="vtheme(ui.label)" for="user_id">Title</label>
-                        <input class="vtheme(ui.input) vtheme(crud.form.field.extra)" type="text" placeholder="Title" />
+                        <input class="vtheme(ui.input) vtheme(crud.form.input.extra)" type="text" placeholder="Title" />
                     </div>
 
                 </div>

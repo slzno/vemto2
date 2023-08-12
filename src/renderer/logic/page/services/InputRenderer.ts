@@ -1,18 +1,19 @@
+import Input from "@Common/models/crud/Input"
 import Main from "@Renderer/services/wrappers/Main"
 import BladeFormatter from "@Renderer/codegen/formatters/BladeFormatter"
-import Component from "@Common/models/page/components/interfaces/Component"
 import TemplateCompiler from "@Renderer/codegen/templates/base/TemplateCompiler"
 
-export default new class ComponentRenderer {
+export default new class InputRenderer {
 
-    async render(component: Component): Promise<string> {
-        const templatePath = `page/components/${component.getName()}.vemtl`
-        const templateContent = await Main.API.readTemplateFile(templatePath)
+    async render(input: Input): Promise<string> {
+        const templateContent = await Main.API.readTemplateFile(input.getTemplate())
+
+        console.log(templateContent)
 
         TemplateCompiler
             .setContent(templateContent)
             .compilingInternally()
-            .setData(component)
+            .setData({input})
 
         const compiledTemplate = await TemplateCompiler.compileWithImports()
 

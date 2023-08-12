@@ -58,7 +58,7 @@ const componentClasses = (component) => {
     <div v-if="component"
         :component-id="component.id"
         :class="componentClasses(component)"
-        class="relative border border-slate-600 rounded-md p-2 hover:border-red-800 cursor-move"
+        class="relative border border-slate-800 rounded-md p-2 hover:border-red-800 cursor-move"
         @mouseenter="mouseHover = true"
         @mouseleave="mouseHover = false"
     >

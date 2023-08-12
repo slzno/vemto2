@@ -2,9 +2,10 @@
 <% const model = crud.model %>
 <% const table = model.table %>
 <% const modelName = crud.model.name %>
-<% const camelCase = this.require('camelCase') %>
+<% const camelCase = this.require("camelCase") %>
 <% const itemVarName = camelCase(crud.name) %>
 <% const collectionVarName = camelCase(crud.plural) %>
+<% const InputRenderer = this.require("InputRenderer") %>
 <# --- #>
 <div class="vtheme(crud.container)">
     <x-ui.breadcrumbs>
@@ -21,13 +22,9 @@
 
     <div class="vtheme(crud.form.container)">
         <form class="vtheme(crud.form)" wire:submit.prevent="save">
-            <div class="vtheme(crud.form.fields.container)">
+            <div class="vtheme(crud.form.inputs.container)">
                 <% for (let input of crud.inputs) { %>
-                    <div class="vtheme(crud.form.field.group)">
-                        <x-ui.label for="<$ input.name $>"><$ input.label $></x-ui.label>
-                        <x-ui.input.text class="vtheme(crud.form.field.extra)" wire:model="<$ itemVarName $>.<$ input.column.name $>" type="text" name="<$ input.name $>" id="<$ input.name $>" placeholder="<$ input.placeholder $>" />
-                        <x-ui.input.error for="<$ input.name $>" />
-                    </div>
+                    <$ await InputRenderer.render(input) $>
                 <% } %>
             </div>
 

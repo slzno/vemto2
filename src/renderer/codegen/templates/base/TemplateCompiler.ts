@@ -4,6 +4,7 @@ import Alert from "@Renderer/components/utils/Alert"
 import TemplateEngine from "@tiago_silva_pereira/vemto-template-engine"
 import TextUtil from "@Renderer/../common/util/TextUtil"
 import ComponentRenderer from "@Renderer/logic/page/services/ComponentRenderer"
+import InputRenderer from "@Renderer/logic/page/services/InputRenderer"
 
 export default new class TemplateCompiler {
 
@@ -14,11 +15,23 @@ export default new class TemplateCompiler {
     private vthemeKeys: any
     private hooksEnabled: boolean
     private templateEngine: TemplateEngine
+    private isInternalCompiling: boolean
 
     constructor() {
         this.vthemeKeys = {}
         this.hooksEnabled = true
         this.templateEngine = null
+        this.isInternalCompiling = false
+    }
+
+    compilingInternally() {
+        this.isInternalCompiling = true
+
+        return this
+    }
+
+    isCompilingInternally() {
+        return this.isInternalCompiling
     }
 
     setContent(content: string) {
@@ -236,6 +249,7 @@ export default new class TemplateCompiler {
             snakeCase: changeCase.snakeCase,
             kebabCase: changeCase.paramCase,
             ComponentRenderer: ComponentRenderer,
+            InputRenderer: InputRenderer,
         }
     }
 }

@@ -22,12 +22,12 @@ const { component } = useComponentLogic(props.baseComponent, emit)
 <template>
     <div v-if="component" class="flex flex-row">
         <div class="h-auto py-4 pl-2">
-            <div class="h-full w-1 border-l-2 border-dashed border-red-600 rounded"></div>
+            <div class="h-full w-1 border-l-2 border-dashed border-red-500 rounded"></div>
         </div>
         <div class="h-full flex-1 flex-grow">
             <div class="text-slate-400 font-mono py-1 flex items-center space-x-1">
                 
-                <div class="w-5 h-px border-b-2 border-dashed border-red-600"></div>
+                <div class="w-5 h-px border-b-2 border-dashed border-red-500"></div>
                 
                 <div class="flex-1 flex space-x-2">
                     <div>
@@ -91,7 +91,7 @@ const { component } = useComponentLogic(props.baseComponent, emit)
             </div>
     
             <div class="text-slate-400 font-mono py-1 flex items-center space-x-1">
-                <div class="w-5 h-px border-b-2 border-dashed border-red-600"></div> <span>Link</span>
+                <div class="w-5 h-px border-b-2 border-dashed border-red-500"></div> <span>Link</span>
             </div>
         </div>
     </div>

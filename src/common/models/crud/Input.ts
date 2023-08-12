@@ -11,6 +11,7 @@ export enum InputType {
     NUMBER = "number",
     FILE = "file",
     IMAGE = "image",
+    BELONGS_TO = "belongsTo",
 }
 
 export enum InputValidationRuleType {
@@ -129,7 +130,7 @@ export default class Input extends RelaDB.Model {
         return `[${templateRules.join(", ")}]`
     }
 
-    render() {
-        return ''
+    getTemplate() {
+        return `inputs/blade/${changeCase.pascalCase(this.type)}.vemtl`
     }
 }
