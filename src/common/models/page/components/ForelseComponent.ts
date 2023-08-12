@@ -14,20 +14,6 @@ export default class ForelseComponent extends AbstractComponent implements Compo
         return 'ForelseComponent'
     }
 
-    getRenderCode(): string {
-        return `
-            @forelse(<$ this.settings.content $>)
-            <% for (const component of this.getNestedComponents('foreachComponents')) { %>
-                <$ await component.render() $>
-            <% } %>
-            @empty
-            <% for (const component of this.getNestedComponents('emptyComponents')) { %>
-                <$ await component.render() $>
-            <% } %>
-            @endforelse
-        `
-    }
-
     hasNestedComponents(): boolean {
         return true
     }

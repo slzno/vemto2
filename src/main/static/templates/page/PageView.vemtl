@@ -1,5 +1,8 @@
+<# Template Variables #>
+<% const ComponentRenderer = this.require("ComponentRenderer") %>
+<# - #>
 <div>
     <% for (let component of this.page.getComponents()) { %>
-    <$ await component.render() $>
+    <$ await ComponentRenderer.render(component) $>
     <% } %>
 </div>

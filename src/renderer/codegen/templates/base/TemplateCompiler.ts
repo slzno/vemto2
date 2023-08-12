@@ -3,6 +3,7 @@ import Main from "@Renderer/services/wrappers/Main"
 import Alert from "@Renderer/components/utils/Alert"
 import TemplateEngine from "@tiago_silva_pereira/vemto-template-engine"
 import TextUtil from "@Renderer/../common/util/TextUtil"
+import ComponentRenderer from "@Renderer/logic/page/services/ComponentRenderer"
 
 export default new class TemplateCompiler {
 
@@ -234,6 +235,7 @@ export default new class TemplateCompiler {
             sentenceCase: changeCase.sentenceCase,
             snakeCase: changeCase.snakeCase,
             kebabCase: changeCase.paramCase,
+            ComponentRenderer: ComponentRenderer,
         }
     }
 }

@@ -11,10 +11,6 @@ export default class CustomComponent extends AbstractComponent implements Compon
         return 'CustomComponent'
     }
 
-    getRenderCode(): string {
-        return `<$ this.settings.content $>`
-    }
-
     getSettings(): any {
         return {
             content: {

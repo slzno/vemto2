@@ -22,12 +22,12 @@ const { component } = useComponentLogic(props.baseComponent, emit)
 <template>
     <div v-if="component" class="flex flex-row">
         <div class="h-auto py-4 pl-2">
-            <div class="h-full w-1 border-l border-dashed border-red-600 rounded"></div>
+            <div class="h-full w-1 border-l-2 border-dashed border-red-600 rounded"></div>
         </div>
         <div class="h-full flex-1 flex-grow">
-            <div class="text-red-400 font-mono py-1 flex items-center space-x-1">
+            <div class="text-slate-400 font-mono py-1 flex items-center space-x-1">
                 
-                <div class="w-5 h-px border-b border-dashed border-red-600"></div>
+                <div class="w-5 h-px border-b-2 border-dashed border-red-600"></div>
                 
                 <div class="flex-1 flex space-x-2">
                     <div>
@@ -35,7 +35,7 @@ const { component } = useComponentLogic(props.baseComponent, emit)
 
                         <select 
                             v-model="component.settings.target"
-                            class="outline-none bg-transparent font-semibold text-center text-red-300 border border-slate-600 w-32 p-0 rounded">
+                            class="outline-none bg-transparent text-center text-slate-200 border border-slate-700 w-32 p-0 rounded-md py-1">
                             <option class="text-slate-900" value="_blank">_blank</option>
                             <option class="text-slate-900" value="_self">_self</option>
                         </select>
@@ -47,7 +47,7 @@ const { component } = useComponentLogic(props.baseComponent, emit)
                             spellcheck="false"
                             autocomplete="off"
                             v-model="component.settings.href"
-                            class="outline-none bg-transparent font-semibold text-center text-red-300 border border-slate-600 w-96 rounded"
+                            class="outline-none bg-transparent text-center text-slate-200 border border-slate-700 w-96 rounded-md py-1"
                         />
                     </div>
 
@@ -55,7 +55,7 @@ const { component } = useComponentLogic(props.baseComponent, emit)
                         <span>mode=</span>
                         <select 
                             v-model="component.settings.mode"
-                            class="outline-none bg-transparent font-semibold text-center text-red-300 border border-slate-600 w-32 p-0 rounded">
+                            class="outline-none bg-transparent text-center text-slate-200 border border-slate-700 w-32 p-0 rounded-md py-1">
                             <option class="text-slate-900" value="text">Simple Text</option>
                             <option class="text-slate-900" value="container">Container</option>
                         </select>
@@ -68,7 +68,7 @@ const { component } = useComponentLogic(props.baseComponent, emit)
                     :id="'nestedComponents' + component.id" 
                     :component-id="component.id"
                     components-container="nestedComponents"
-                    class="rounded border border-slate-600 bg-slate-800 border-dotted p-2 pb-16 space-y-2"
+                    class="rounded border border-slate-700 border-dotted p-2 pb-16 space-y-2"
                     v-show="component.settings.mode === 'container'"
                 >
                     
@@ -90,8 +90,8 @@ const { component } = useComponentLogic(props.baseComponent, emit)
                 </div>
             </div>
     
-            <div class="text-red-400 font-mono py-1 flex items-center space-x-1">
-                <div class="w-5 h-px border-b border-dashed border-red-600"></div> <span>Link</span>
+            <div class="text-slate-400 font-mono py-1 flex items-center space-x-1">
+                <div class="w-5 h-px border-b-2 border-dashed border-red-600"></div> <span>Link</span>
             </div>
         </div>
     </div>

@@ -14,15 +14,6 @@ export default class TwoColumnsComponent extends AbstractComponent implements Co
         return 'Two Columns'
     }
 
-    getRenderCode(): string {
-        return `
-        <div class="columns-1 lg:columns-2">
-            <div></div>
-            <div></div>
-        </div>
-        `
-    }
-
     hasNestedComponents(): boolean {
         return true
     }

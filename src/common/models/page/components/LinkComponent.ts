@@ -13,20 +13,6 @@ export default class LinkComponent extends AbstractComponent implements Componen
         return 'LinkComponent'
     }
 
-    getRenderCode(): string {
-        return `
-            <a target="<$ this.settings.target $>" href="<$ this.settings.href $>">
-                <% if (this.settings.mode === 'text') { %>
-                <$ this.settings.content $>
-                <% } else { %>
-                    <% for (const component of this.getNestedComponents('nestedComponents')) { %>
-                        <$ await component.render() $>
-                    <% } %>
-                <% } %>
-            </a>
-        `
-    }
-
     hasNestedComponents(): boolean {
         return true
     }

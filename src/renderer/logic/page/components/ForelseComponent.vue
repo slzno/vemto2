@@ -22,16 +22,16 @@ const { component } = useComponentLogic(props.baseComponent, emit)
 <template>
     <div v-if="component" class="flex flex-row">
         <div class="h-auto py-4 pl-2">
-            <div class="h-full w-1 border-l border-dashed border-red-600 rounded"></div>
+            <div class="h-full w-1 border-l-2 border-dashed border-red-600 rounded"></div>
         </div>
         <div class="h-full flex-1 flex-grow">
-            <div class="text-red-400 font-mono py-1 flex items-center space-x-1">
-                <div class="w-5 h-px border-b border-dashed border-red-600"></div> <span>@forelse(</span>
+            <div class="text-slate-400 font-mono py-1 flex items-center space-x-1">
+                <div class="w-5 h-px border-b-2 border-dashed border-red-600"></div> <span>@forelse(</span>
                 <input 
                     spellcheck="false"
                     autocomplete="off"
                     v-model="component.settings.content"
-                    class="outline-none bg-transparent font-semibold text-center text-red-300 border border-slate-600 w-72 rounded"
+                    class="outline-none bg-transparent text-center text-slate-200 border border-slate-700 w-72 rounded-md py-1"
                 />
                 <span>)</span>
             </div>
@@ -41,7 +41,7 @@ const { component } = useComponentLogic(props.baseComponent, emit)
                     :id="'foreachComponents' + component.id" 
                     :component-id="component.id"
                     components-container="foreachComponents"
-                    class="rounded border border-slate-600 bg-slate-800 border-dotted p-2 pb-24 space-y-2">
+                    class="rounded border border-slate-700 border-dotted p-2 pb-24 space-y-2">
                     
                     <PreviewPageComponent 
                         v-for="nestedComponent in component.getNestedComponents('foreachComponents')"
@@ -52,8 +52,8 @@ const { component } = useComponentLogic(props.baseComponent, emit)
                 </div>
             </div>
     
-            <div class="text-red-400 font-mono py-1 flex items-center space-x-1">
-                <div class="w-5 h-px border-b border-dashed border-red-600"></div> <span>@empty</span>
+            <div class="text-slate-400 font-mono py-1 flex items-center space-x-1">
+                <div class="w-5 h-px border-b-2 border-dashed border-red-600"></div> <span>@empty</span>
             </div>
     
             <div class="pl-2">
@@ -61,7 +61,7 @@ const { component } = useComponentLogic(props.baseComponent, emit)
                     :id="'emptyComponents' + component.id" 
                     :component-id="component.id"
                     components-container="emptyComponents"
-                    class="rounded border border-slate-600 bg-slate-800 border-dotted p-2 pb-12 space-y-2">
+                    class="rounded border border-slate-700 border-dotted p-2 pb-12 space-y-2">
                     
                     <PreviewPageComponent 
                         v-for="nestedComponent in component.getNestedComponents('emptyComponents')"
@@ -72,8 +72,8 @@ const { component } = useComponentLogic(props.baseComponent, emit)
                 </div>
             </div>
     
-            <div class="text-red-400 font-mono py-1 flex items-center space-x-1">
-                <div class="w-5 h-px border-b border-dashed border-red-600"></div> <span>@endforelse</span>
+            <div class="text-slate-400 font-mono py-1 flex items-center space-x-1">
+                <div class="w-5 h-px border-b-2 border-dashed border-red-600"></div> <span>@endforelse</span>
             </div>
         </div>
     </div>

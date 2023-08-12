@@ -11,10 +11,6 @@ export default class SmallComponent extends AbstractComponent implements Compone
         return 'SmallComponent'
     }
 
-    getRenderCode(): string {
-        return `<small><$ this.settings.content $></small>`
-    }
-
     getSettings(): any {
         return {
             content: {

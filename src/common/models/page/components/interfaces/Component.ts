@@ -7,6 +7,5 @@ export default interface Component {
     location: string
     
     getName(): string
-    getRenderCode(): string
     getSettings(): any
 }

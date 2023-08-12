@@ -58,25 +58,25 @@ const componentClasses = (component) => {
     <div v-if="component"
         :component-id="component.id"
         :class="componentClasses(component)"
-        class="relative border border-dotted border-slate-600 rounded-md p-2 hover:border-red-500 cursor-move"
+        class="relative border border-slate-600 rounded-md p-2 hover:border-red-800 cursor-move"
         @mouseenter="mouseHover = true"
         @mouseleave="mouseHover = false"
     >
         <div 
             :class="{'group-hover:opacity-100': mouseHover, 'opacity-0': !mouseHover}"
-            class="absolute top-0 right-0 bg-red-500 p-1.5 px-2 flex justify-between space-x-2 rounded-tr rounded-bl">
-            <div class="py-0.5 px-1 text-sm rounded bg-red-600">
+            class="absolute top-0 right-0 bg-slate-800 border border-slate-700 p-1 px-2 flex justify-between space-x-2 rounded-tr rounded-bl">
+            <div class="flex items-center justify-center py-0.5 px-2 text-xs rounded bg-slate-650">
                 {{ component.getLabel() }}
             </div>
 
             <button tabindex="-1">
-                <Bars3Icon class="w-6 h-6 text-white" />
+                <Bars3Icon class="w-4 h-4 text-white" />
             </button>
             <button tabindex="-1">
-                <DocumentDuplicateIcon class="w-6 h-6 text-white" />
+                <DocumentDuplicateIcon class="w-4 h-4 text-white" />
             </button>
             <button tabindex="-1" @click="deleteComponent(component)">
-                <TrashIcon class="w-6 h-6 text-white" />
+                <TrashIcon class="w-4 h-4 text-white" />
             </button>
         </div>
         <div>
