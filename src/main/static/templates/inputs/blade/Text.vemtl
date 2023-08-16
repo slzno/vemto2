@@ -1,3 +1,7 @@
+<# TemplateData #>
+<# input:Input #>
+<# /TemplateData #>
+
 <% const input = this.input %>
 <% const crud = input.crud %>
 <% const camelCase = this.require("camelCase") %>
@@ -6,5 +10,5 @@
 <div class="vtheme(crud.form.input.group)">
     <x-ui.label for="<$ input.name $>"><$ input.label $></x-ui.label>
     <x-ui.input.text class="vtheme(crud.form.input.extra)" wire:model="<$ itemVarName $>.<$ input.column.name $>" type="text" name="<$ input.name $>" id="<$ input.name $>" placeholder="<$ input.placeholder $>" />
-    <x-ui.input.error for="<$ input.name $>" />
+    <x-ui.input.error for="<$ itemVarName $>.<$ input.column.name $>" />
 </div>

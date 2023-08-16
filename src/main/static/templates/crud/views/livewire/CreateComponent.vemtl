@@ -11,11 +11,14 @@
 namespace <$ crud.livewireNamespace $>;
  
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use App\Models\<$ modelName $>;
 // hook:IMPORTS
  
 class <$ this.filenameWithoutExtension $> extends Component
 {
+    use WithFileUploads;
+
     // hook:BEFORE_VARIABLES
     public <$ modelName $> $<$ itemVarName $>;
     // hook:AFTER_VARIABLES
@@ -47,7 +50,7 @@ class <$ this.filenameWithoutExtension $> extends Component
         $this-><$ itemVarName $>->save();
         // hook:AFTER_SAVE
 
-        return redirect()->route('<$ collectionVarName $>.edit', $this-><$ itemVarName $>);
+        return redirect()->route('<$ crud.getRouteNameByTag('edit') $>', $this-><$ itemVarName $>);
     }
 
     public function render()

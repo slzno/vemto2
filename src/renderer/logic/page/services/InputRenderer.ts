@@ -8,8 +8,6 @@ export default new class InputRenderer {
     async render(input: Input): Promise<string> {
         const templateContent = await Main.API.readTemplateFile(input.getTemplate())
 
-        console.log(templateContent)
-
         TemplateCompiler
             .setContent(templateContent)
             .compilingInternally()
