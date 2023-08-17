@@ -1,0 +1,41 @@
+<% const crud = this.crud %>
+<% const model = crud.model %>
+<% const table = model.table %>
+<% const modelName = crud.model.name %>
+<% const camelCase = this.require("camelCase") %>
+<% const itemVarName = camelCase(crud.name) %>
+<% const collectionVarName = camelCase(crud.plural) %>
+<% const InputRenderer = this.require("InputRenderer") %>
+<# --- #>
+<div class="vtheme(crud.container)">
+    <x-ui.breadcrumbs>
+        <x-ui.breadcrumbs.link href="/<$ crud.section.routeBasePath $>"><$ crud.section.name $></x-ui.breadcrumbs.link>
+        <x-ui.breadcrumbs.separator/>
+        <x-ui.breadcrumbs.link href="{{ route('<$ crud.getIndexRouteName() $>') }}"><$ crud.settings.collectionTitle $></x-ui.breadcrumbs.link>
+        <x-ui.breadcrumbs.separator/>
+        <x-ui.breadcrumbs.link active>Edit <$ crud.settings.itemTitle $></x-ui.breadcrumbs.link>
+    </x-ui.breadcrumbs>
+
+    <div class="vtheme(crud.header)">
+        <h1>Edit <$ crud.settings.itemTitle $></h1>
+    </div>
+
+    <div class="vtheme(crud.form.container)">
+        <form class="vtheme(crud.form)" wire:submit.prevent="save">
+            <div class="vtheme(crud.form.inputs.container)">
+                <% for (let input of crud.inputs) { %>
+                    <$ await InputRenderer.render(input) $>
+                <% } %>
+            </div>
+
+            <div class="vtheme(crud.form.buttons-container)">
+                <div>
+                    <!-- Other buttons here -->
+                </div>
+                <div>
+                    <x-ui.button type="submit">Save</x-ui.button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

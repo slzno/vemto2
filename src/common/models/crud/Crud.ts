@@ -96,7 +96,7 @@ export default class Crud extends RelaDB.Model {
         if(defaultSearchColumn) crud.defaultSearchColumnId = defaultSearchColumn.id
         if(defaultSortColumn) crud.defaultSortColumnId = defaultSortColumn.id
 
-        crud.defaultSortDirection = "asc"
+        crud.defaultSortDirection = "desc"
 
         crud.save()
 

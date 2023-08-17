@@ -24,7 +24,7 @@ export default class RenderableLivewireCreateView extends Renderable {
     }
 
     getTemplateFile(): string {
-        return "crud/views/livewire/FormView.vemtl"
+        return "crud/views/livewire/CreateView.vemtl"
     }
 
     getPath(): string {

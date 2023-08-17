@@ -24,7 +24,7 @@ export default class RenderableLivewireEditView extends Renderable {
     }
 
     getTemplateFile(): string {
-        return "crud/views/livewire/FormView.vemtl"
+        return "crud/views/livewire/EditView.vemtl"
     }
 
     getPath(): string {
