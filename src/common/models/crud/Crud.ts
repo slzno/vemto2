@@ -113,6 +113,14 @@ export default class Crud extends RelaDB.Model {
         return 'CRUD'
     }
 
+    getCommonInputs(): Input[] {
+        return this.inputs.filter((input) => input.isCommon())
+    }
+
+    getFileInputs(): Input[] {
+        return this.inputs.filter((input) => input.isFileOrImage())
+    }
+
     calculateSettings() {
         this.settings = {
             itemTitle: capitalCase(this.model.name),

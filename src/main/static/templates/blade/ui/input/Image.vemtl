@@ -32,12 +32,12 @@
 
         {{-- Show the image --}}
         <template x-if="imageUrl">
-            <img :src="imageUrl" class="vtheme(crud.form.input.image)">
+            <img @click.stop="imageInput.click()" :src="imageUrl" class="vtheme(crud.form.input.image)">
         </template>
 
         {{-- Show the gray box when image is not available --}}
         <template x-if="!imageUrl">
-            <div class="vtheme(crud.form.input.image)"></div>
+            <div @click.stop="imageInput.click()" class="vtheme(crud.form.input.image)"></div>
         </template>
 
         {{-- Image file selector --}}
@@ -45,8 +45,8 @@
 
         {{-- Upload and remove buttons --}}
         <div>
-            <button class="vtheme(ui.button)" @click.stop="imageInput.click()">Upload</button>
-            <button class="vtheme(ui.button)" x-show="imageUrl" @click.stop="remove()">Remove</button>
+            <button type="button" class="vtheme(crud.form.input.image.button)" @click.stop="imageInput.click()">Upload</button>
+            <button type="button" class="vtheme(crud.form.input.image.button)" x-show="imageUrl" @click.stop="remove()">Remove</button>
         </div>
     </div>
 </div>

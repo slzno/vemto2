@@ -3,6 +3,7 @@
 <% const crud = this.crud %>
 <% const modelName = crud.model.name %>
 <% const camelCase = this.require('camelCase') %>
+<% const pascalCase = this.require('pascalCase') %>
 <% const paramCase = this.require('paramCase') %>
 <% const itemVarName = camelCase(crud.name) %>
 <% const collectionVarName = camelCase(crud.plural) %>
@@ -11,37 +12,92 @@
 namespace <$ crud.livewireNamespace $>;
  
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use App\Models\<$ modelName $>;
+use Illuminate\Support\Facades\Storage;
+// hook:IMPORTS
  
 class <$ this.filenameWithoutExtension $> extends Component
 {
+    use WithFileUploads;
+    // hook:TRAITS
+
+    // hook:BEFORE_VARIABLES
     public <$ modelName $> $<$ itemVarName $>;
+    <% for (let input of crud.getFileInputs()) { %>
+    public $<$ input.getNewPropertyName() $>;
+    <% } %>
+    // hook:AFTER_VARIABLES
 
     public function rules()
     {
+        // hook:BEFORE_RULES
         return [
-            <% for (let input of crud.inputs) { %>
+            <% for (let input of crud.getCommonInputs()) { %>
             '<$ itemVarName $>.<$ input.column.name $>' => <$ input.getUpdateRulesForTemplate() $>,
             <% } %>
+            <% for (let input of crud.getFileInputs()) { %>
+            '<$ input.getNewPropertyName() $>' => <$ input.getCreationRulesForTemplate() $>,
+            <% } %>
+            // hook:RULES
         ];
     }
 
     public function mount(<$ modelName $> $<$ itemVarName $>)
     {
+        // hook:BEFORE_MOUNT
         $this-><$ itemVarName $> = $<$ itemVarName $>;
+        // hook:AFTER_MOUNT
     }
 
     public function save()
     {
+        // hook:BEFORE_SAVE
         $this->validate();
+        // hook:AFTER_VALIDATE
+
+        <% for (let input of crud.getFileInputs()) { %>
+        $this->process<$ pascalCase(input.name) $>();
+        <% } %>
 
         $this-><$ itemVarName $>->save();
+        // hook:AFTER_SAVE
     }
+
+    <% for (let input of crud.getFileInputs()) { %>
+    <% const fieldName = input.column?.name || input.name %>
+    public function process<$ pascalCase(input.name) $>()
+    {
+        if (empty($this-><$ input.getNewPropertyName() $>)) return;
+ 
+        if ($this->post-><$ fieldName $>) {
+            Storage::disk('public')->delete($this-><$ itemVarName $>-><$ fieldName $>);
+        }
+        
+        $this-><$ itemVarName $>-><$ fieldName $> = $this-><$ input.getNewPropertyName() $>->store('<$ input.getFileDiskName() $>', 'public');
+        $this-><$ input.getNewPropertyName() $> = null;
+    }
+
+    public function delete<$ pascalCase(input.name) $>()
+    {
+        if (empty($this-><$ itemVarName $>-><$ fieldName $>)) return;
+
+        Storage::disk('public')->delete($this-><$ itemVarName $>-><$ fieldName $>);
+        $this-><$ itemVarName $>-><$ fieldName $> = null;
+
+        $this-><$ itemVarName $>->save();
+
+        $this-><$ input.getNewPropertyName() $> = null;
+    }
+    <% } %>
 
     public function render()
     {
+        // hook:BEFORE_RENDER
         return view('livewire.<$ viewsFolderName $>.edit', [
             '<$ itemVarName $>' => $this-><$ itemVarName $>,
+            // hook:RENDER_PARAMETERS
         ]);
     }
+    // hook:METHODS
 }

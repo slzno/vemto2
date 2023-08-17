@@ -87,6 +87,26 @@ export default class Input extends RelaDB.Model {
         return input
     }
 
+    /**
+     * Get the property name for the input. 
+     * For eg, if the input name is "first_name", the property name will be "firstName" 
+     */
+    getPropertyName(): string {
+        return changeCase.camelCase(this.name)
+    }
+
+    getNewPropertyName(): string {
+        return "new" + changeCase.pascalCase(this.name)
+    }
+
+    getFileDiskName(): string {
+        return changeCase.snakeCase(this.crud.settings.collectionTitle)
+    }
+
+    isCommon() {
+        return !this.isFileOrImage()
+    }
+
     isPassword() {
         return this.name === "password"
     }

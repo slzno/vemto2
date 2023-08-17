@@ -39,7 +39,8 @@ export default {
         "crud.form.inputs.container": "p-6 space-y-3",
         "crud.form.input.group": "w-full",
         "crud.form.input.extra": "w-full",
-        "crud.form.input.image": "object-cover rounded border border-gray-200 bg-gray-100 w-20 h-20",
+        "crud.form.input.image": "object-cover rounded border border-gray-200 bg-gray-100 w-36 h-36 cursor-pointer hover:bg-gray-200 hover:opacity-75 transition duration-200 ease-in-out",
+        "crud.form.input.image.button": "p-0.5 px-1 text-xs border border-gray-200 rounded hover:bg-gray-200",
         "crud.form.buttons-container":
             "flex justify-between mt-4 border-t border-gray-50 bg-gray-50 p-4",
     },

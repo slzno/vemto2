@@ -3,6 +3,7 @@
 <% const crud = this.crud %>
 <% const modelName = crud.model.name %>
 <% const camelCase = this.require('camelCase') %>
+<% const pascalCase = this.require('pascalCase') %>
 <% const paramCase = this.require('paramCase') %>
 <% const itemVarName = camelCase(crud.name) %>
 <% const collectionVarName = camelCase(crud.plural) %>
@@ -18,17 +19,24 @@ use App\Models\<$ modelName $>;
 class <$ this.filenameWithoutExtension $> extends Component
 {
     use WithFileUploads;
+    // hook:TRAITS
 
     // hook:BEFORE_VARIABLES
     public <$ modelName $> $<$ itemVarName $>;
+    <% for (let input of crud.getFileInputs()) { %>
+    public $<$ input.getNewPropertyName() $>;
+    <% } %>
     // hook:AFTER_VARIABLES
 
     public function rules()
     {
         // hook:BEFORE_RULES
         return [
-            <% for (let input of crud.inputs) { %>
+            <% for (let input of crud.getCommonInputs()) { %>
             '<$ itemVarName $>.<$ input.column.name $>' => <$ input.getCreationRulesForTemplate() $>,
+            <% } %>
+            <% for (let input of crud.getFileInputs()) { %>
+            '<$ input.getNewPropertyName() $>' => <$ input.getCreationRulesForTemplate() $>,
             <% } %>
             // hook:RULES
         ];
@@ -47,11 +55,25 @@ class <$ this.filenameWithoutExtension $> extends Component
         $this->validate();
         // hook:AFTER_VALIDATE
 
+        <% for (let input of crud.getFileInputs()) { %>
+        $this->process<$ pascalCase(input.name) $>();
+        <% } %>
+
         $this-><$ itemVarName $>->save();
         // hook:AFTER_SAVE
 
         return redirect()->route('<$ crud.getRouteNameByTag('edit') $>', $this-><$ itemVarName $>);
     }
+
+    <% for (let input of crud.getFileInputs()) { %>
+    <% const fieldName = input.column?.name || input.name %>
+    public function process<$ pascalCase(input.name) $>()
+    {
+        if (empty($this-><$ input.getNewPropertyName() $>)) return;
+        
+        $this-><$ itemVarName $>-><$ fieldName $> = $this-><$ input.getNewPropertyName() $>->store('<$ input.getFileDiskName() $>', 'public');
+    }
+    <% } %>
 
     public function render()
     {
