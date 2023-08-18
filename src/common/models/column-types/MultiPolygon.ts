@@ -4,4 +4,5 @@ export default class MultiPolygon extends ColumnType {
     static label: string = 'MultiPolygon'
     static faker: string = '[]'
     static identifier: string = 'multiPolygon'
+    static inputType: string = 'text'
 }

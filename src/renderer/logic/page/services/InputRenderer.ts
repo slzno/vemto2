@@ -6,18 +6,27 @@ import TemplateCompiler from "@Renderer/codegen/templates/base/TemplateCompiler"
 export default new class InputRenderer {
 
     async render(input: Input): Promise<string> {
-        const templateContent = await Main.API.readTemplateFile(input.getTemplate())
+        
+        try {
+            const templateContent = await Main.API.readTemplateFile(input.getTemplate())
 
-        TemplateCompiler
-            .setContent(templateContent)
-            .compilingInternally()
-            .setData({input})
+            TemplateCompiler
+                .setContent(templateContent)
+                .compilingInternally()
+                .setData({input})
 
-        const compiledTemplate = await TemplateCompiler.compileWithImports()
+            const compiledTemplate = await TemplateCompiler.compileWithImports()
 
-        return BladeFormatter.setContent(
-            compiledTemplate
-        ).format()
+            console.log('DEU CERTOOOOOOOOOOOOOOOOOO')
+
+            return BladeFormatter.setContent(
+                compiledTemplate
+            ).format()
+        } catch (error) {
+            console.log(input.getTemplate())
+            // Needs to implement pause with errors HERE!!!
+            throw error
+        }
     }
 
 }

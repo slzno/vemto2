@@ -6,4 +6,5 @@ export default class MediumIncrements extends ColumnType {
     static defaultValueTypeIsString: boolean = false
     static isPrimaryKey: boolean = true
     static foreignType: string = 'unsignedMediumInteger'
+    static inputType: string = 'number'
 }

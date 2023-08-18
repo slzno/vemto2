@@ -5,4 +5,5 @@ export default class Timestamp extends ColumnType {
     static identifier: string = 'timestamp'
     static faker: string = 'fake()->dateTime()'
     static defaultValueTypeIsString: boolean = false
+    static inputType: string = 'dateTime'
 }

@@ -466,6 +466,10 @@ export default class Table extends RelaDB.Model implements SchemaModel {
         return column
     }
 
+    getLabelColumnName(): string {
+        return this.getLabelColumn().name || 'id'
+    }
+
     getLabelColumn(): Column {
         if(this.labelColumn) return this.labelColumn
 

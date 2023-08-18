@@ -4,4 +4,5 @@ export default class TimestampTz extends ColumnType {
     static label: string = 'TimestampTz'
     static faker: string = "fake()->dateTime('now', 'UTC')"
     static identifier: string = 'timestampTz'
+    static inputType: string = 'dateTime'
 }

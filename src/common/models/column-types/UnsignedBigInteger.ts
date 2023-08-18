@@ -5,4 +5,5 @@ export default class UnsignedBigInteger extends ColumnType {
     static identifier: string = 'unsignedBigInteger'
     static faker: string = 'fake()->randomNumber()'
     static defaultValueTypeIsString: boolean = false
+    static inputType: string = 'number'
 }

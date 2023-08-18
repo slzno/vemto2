@@ -6,4 +6,5 @@ export default class Boolean extends ColumnType {
     static faker: string = 'fake()->boolean()'
     static defaultValueTypeIsString: boolean = false
     static validationRules: any[] = ['boolean']
+    static inputType: string = 'checkbox'
 }

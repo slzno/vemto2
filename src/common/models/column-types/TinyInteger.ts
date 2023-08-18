@@ -5,4 +5,5 @@ export default class TinyInteger extends ColumnType {
     static identifier: string = 'tinyInteger'
     static defaultValueTypeIsString: boolean = false
     static faker: string = 'fake()->numberBetween(0, 127)'
+    static inputType: string = 'number'
 }

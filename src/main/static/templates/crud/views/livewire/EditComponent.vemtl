@@ -13,7 +13,11 @@ namespace <$ crud.livewireNamespace $>;
  
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Illuminate\Support\Collection;
 use App\Models\<$ modelName $>;
+<% for (let input of crud.getBelongsToInputs()) { %>
+use App\Models\<$ input.getRelatedModelName() $>;
+<% } %>
 use Illuminate\Support\Facades\Storage;
 // hook:IMPORTS
  
@@ -27,13 +31,17 @@ class <$ this.filenameWithoutExtension $> extends Component
     <% for (let input of crud.getFileInputs()) { %>
     public $<$ input.getNewPropertyName() $>;
     <% } %>
+    <% for (let input of crud.getBelongsToInputs()) { %>
+    <% const model = input.getRelatedModel() %>
+    public Collection $<$ camelCase(model.plural) $>;
+    <% } %>
     // hook:AFTER_VARIABLES
 
     public function rules()
     {
         // hook:BEFORE_RULES
         return [
-            <% for (let input of crud.getCommonInputs()) { %>
+            <% for (let input of crud.getBasicInputs()) { %>
             '<$ itemVarName $>.<$ input.column.name $>' => <$ input.getUpdateRulesForTemplate() $>,
             <% } %>
             <% for (let input of crud.getFileInputs()) { %>
@@ -47,6 +55,15 @@ class <$ this.filenameWithoutExtension $> extends Component
     {
         // hook:BEFORE_MOUNT
         $this-><$ itemVarName $> = $<$ itemVarName $>;
+
+        <% for (let input of crud.getBelongsToInputs()) { %>
+        <# --- #>
+        <% const model = input.getRelatedModel() %>
+        <% const label = model.table.getLabelColumnName() %>
+        <% const primaryKey = model.table.getPrimaryKeyName() %>
+        <# --- #>
+        $this-><$ camelCase(model.plural) $> = <$ model.name $>::pluck('<$ label $>', '<$ primaryKey $>');
+        <% } %>
         // hook:AFTER_MOUNT
     }
 

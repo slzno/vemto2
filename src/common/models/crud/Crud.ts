@@ -113,12 +113,20 @@ export default class Crud extends RelaDB.Model {
         return 'CRUD'
     }
 
+    getBasicInputs(): Input[] {
+        return this.inputs.filter((input) => input.isCommon() || input.isBelongsTo())
+    }
+
     getCommonInputs(): Input[] {
         return this.inputs.filter((input) => input.isCommon())
     }
 
     getFileInputs(): Input[] {
         return this.inputs.filter((input) => input.isFileOrImage())
+    }
+
+    getBelongsToInputs(): Input[] {
+        return this.inputs.filter((input) => input.isBelongsTo())
     }
 
     calculateSettings() {
@@ -147,8 +155,7 @@ export default class Crud extends RelaDB.Model {
             if(column.isPrimaryKey()) return
             if(column.isDefaultLaravelTimestamp()) return
 
-            const input = Input.createFromColumn(column)
-            input.crudId = this.id
+            const input = Input.createFromColumn(this, column)
             input.panelId = panel.id
             input.save()
         })

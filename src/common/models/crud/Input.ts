@@ -1,9 +1,11 @@
 import Crud from "./Crud"
 import Column from "../Column"
 import CrudPanel from "./CrudPanel"
+import Relationship from "../Relationship"
 import * as changeCase from "change-case"
 import RelaDB from "@tiago_silva_pereira/reladb"
 import GenerateInputValidation, { ValidationRuleType } from "./services/GenerateInputValidation"
+import Model from "../Model"
 
 export enum InputType {
     TEXT = "text",
@@ -32,6 +34,8 @@ export default class Input extends RelaDB.Model {
     panel: CrudPanel
     columnId: string
     column: Column
+    relationshipId: string
+    relationship: Relationship
     name: string
     type: InputType
     label: string
@@ -58,14 +62,15 @@ export default class Input extends RelaDB.Model {
             crud: () => this.belongsTo(Crud),
             column: () => this.belongsTo(Column),
             panel: () => this.belongsTo(CrudPanel, "panelId"),
+            relationship: () => this.belongsTo(Relationship, "relationshipId"),
         }
     }
 
-    static createFromColumn(column: Column) {
+    static createFromColumn(crud: Crud, column: Column) {
         const input = new Input()
+        input.crudId = crud.id
         input.columnId = column.id
         input.name = column.name
-        input.type = column.name === 'image' ? InputType.IMAGE : InputType.TEXT
         input.label = changeCase.sentenceCase(column.name)
         input.placeholder = changeCase.sentenceCase(column.name)
         input.readOnly = false
@@ -82,9 +87,26 @@ export default class Input extends RelaDB.Model {
         input.showOnDetails = true
         input.showOnIndex = true
 
+        input.calculateType(column)
+
         input.generateValidationRules()
 
         return input
+    }
+
+    calculateType(column: Column) {
+        const defaultInputType = column.getDefaultInputType() as InputType
+
+        if(column.hasBelongsToRelations()) {
+            const relationship = column.getFirstBelongsToRelation()
+
+            this.type = InputType.BELONGS_TO
+            this.relationshipId = relationship.id
+
+            return
+        }
+
+        this.type = defaultInputType
     }
 
     /**
@@ -103,6 +125,20 @@ export default class Input extends RelaDB.Model {
         return changeCase.snakeCase(this.crud.settings.collectionTitle)
     }
 
+    getRelatedModelName(): string {
+        const relatedModel = this.getRelatedModel()
+
+        return relatedModel ? relatedModel.name : ""
+    }
+
+    getRelatedModel(): Model {
+        return this.relationship ? this.relationship.relatedModel : null
+    }
+
+    isBelongsTo() {
+        return this.type === InputType.BELONGS_TO && !! this.relationshipId
+    }
+
     isCommon() {
         return !this.isFileOrImage()
     }
@@ -113,6 +149,14 @@ export default class Input extends RelaDB.Model {
 
     isFileOrImage() {
         return [InputType.FILE, InputType.IMAGE].includes(this.type)
+    }
+
+    isNullable() {
+        return !this.isRequired()
+    }
+
+    isRequired() {
+        return !! this.required
     }
 
     needsMaxValidation() {

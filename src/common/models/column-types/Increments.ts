@@ -6,4 +6,5 @@ export default class Increments extends ColumnType {
     static defaultValueTypeIsString: boolean = false
     static isPrimaryKey: boolean = true
     static foreignType: string = 'unsignedInteger'
+    static inputType: string = 'number'
 }

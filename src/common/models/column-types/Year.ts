@@ -5,4 +5,5 @@ export default class Year extends ColumnType {
     static identifier: string = 'year'
     static faker: string = 'fake()->year()'
     static defaultValueTypeIsString: boolean = false
+    static inputType: string = 'text'
 }

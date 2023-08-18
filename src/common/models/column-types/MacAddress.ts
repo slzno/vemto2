@@ -4,4 +4,5 @@ export default class MacAddress extends ColumnType {
     static label: string = 'MacAddress'
     static identifier: string = 'macAddress'
     static faker: string = 'fake()->macAddress()'
+    static inputType: string = 'text'
 }

@@ -6,4 +6,5 @@ export default class BigIncrements extends ColumnType {
     static defaultValueTypeIsString: boolean = false
     static isPrimaryKey: boolean = true
     static foreignType: string = 'unsignedBigInteger'
+    static inputType: string = 'number'
 }

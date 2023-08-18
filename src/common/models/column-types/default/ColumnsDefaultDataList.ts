@@ -10,6 +10,9 @@ export interface ColumnDefaultData {
     input?: any
     validationRules?: any[]
     defaultValueTypeIsString?: boolean
+    defaultValue?: string
+    inputType?: string
+    inputOptions?: any
 }
 
 export default class ColumnsDefaultDataList {

@@ -85,6 +85,10 @@
             emit('removeColumn')
         })
     }
+
+    const log = (column: Column) => {
+        console.log(column.getFirstBelongsToRelationship().model.name)
+    }
 </script>
 
 <template>
@@ -168,6 +172,7 @@
             
             <div class="mt-4" v-if="onDevelopment">
                 <UiButton @click="column.logDataComparison()">Log data comparison</UiButton>
+                <UiButton @click="log(column)">Log details</UiButton>
             </div>
         </div>
 

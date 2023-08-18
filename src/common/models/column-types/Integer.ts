@@ -5,4 +5,5 @@ export default class Integer extends ColumnType {
     static identifier: string = 'integer'
     static faker: string = 'fake()->randomNumber(0)'
     static defaultValueTypeIsString: boolean = false
+    static inputType: string = 'number'
 }

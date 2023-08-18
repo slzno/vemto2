@@ -5,10 +5,7 @@ export default class Text extends ColumnType {
     static hasLength: boolean = true
     static faker: string = 'fake()->text()'
     static identifier: string = 'text'
-    
-    static input: any = {
-        type: "textarea"
-    }
+    static inputType: string = 'textarea'
 
     static validationRules: any[] = [
         'string',

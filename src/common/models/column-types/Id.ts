@@ -6,4 +6,5 @@ export default class Id extends ColumnType {
     static isPrimaryKey: boolean = true
     static foreignType: string = 'unsignedBigInteger'
     static defaultValueTypeIsString: boolean = false
+    static inputType: string = 'number'
 }

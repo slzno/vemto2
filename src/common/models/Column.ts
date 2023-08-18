@@ -9,6 +9,7 @@ import ColumnTypeList from './column-types/base/ColumnTypeList'
 import DataComparisonLogger from './services/DataComparisonLogger'
 import Model from './Model'
 import ColumnsDefaultDataList, { ColumnDefaultData } from './column-types/default/ColumnsDefaultDataList'
+import Relationship from './Relationship'
 
 export default class Column extends RelaDB.Model implements SchemaModel {
     id: string
@@ -32,8 +33,14 @@ export default class Column extends RelaDB.Model implements SchemaModel {
     options: any
     inputs: Input[]
 
-    modelId: string
-    model: Model
+    relationshipsByForeignKey: Relationship[]
+    relationshipsByOwnerKey: Relationship[]
+    relationshipsByParentKey: Relationship[]
+    relationshipsByForeignPivotKey: Relationship[]
+    relationshipsByRelatedPivotKey: Relationship[]
+    relationshipsByMorphIdColumn: Relationship[]
+    relationshipsByMorphTypeColumn: Relationship[]
+
 
     constructor(data: any = {}) {
         const columnData = Object.assign(ColumnData.getDefault(), data)
@@ -44,10 +51,19 @@ export default class Column extends RelaDB.Model implements SchemaModel {
     relationships() {
         return {
             table: () => this.belongsTo(Table),
-            model: () => this.belongsTo(Model),
-            inputs: () => this.hasMany(Input),
+            inputs: () => this.hasMany(Input).cascadeDelete(),
+
+            // Relationships with Relationship class
+            relationshipsByForeignKey: () => this.hasMany(Relationship, 'foreignKeyId').cascadeDelete(),
+            relationshipsByOwnerKey: () => this.hasMany(Relationship, 'ownerKeyId').cascadeDelete(),
+            relationshipsByParentKey: () => this.hasMany(Relationship, 'parentKeyId').cascadeDelete(),
+            relationshipsByForeignPivotKey: () => this.hasMany(Relationship, 'foreignPivotKeyId').cascadeDelete(),
+            relationshipsByRelatedPivotKey: () => this.hasMany(Relationship, 'relatedPivotKeyId').cascadeDelete(),
+            relationshipsByMorphIdColumn: () => this.hasMany(Relationship, 'idColumnId').cascadeDelete(),
+            relationshipsByMorphTypeColumn: () => this.hasMany(Relationship, 'typeColumnId').cascadeDelete(),
         }
     }
+    
 
     static created(column: Column) {
         let nextOrder = 0
@@ -177,6 +193,31 @@ export default class Column extends RelaDB.Model implements SchemaModel {
 
     hasFaker(): boolean {
         return !! this.faker
+    }
+
+    hasBelongsToRelationsWithModel(model: Model): boolean {
+        return this.getBelongsToRelationsWithModel(model).length > 0
+    }
+
+    getFirstBelongsToRelationWithModel(model: Model): Relationship {
+        return this.getBelongsToRelationsWithModel(model)[0]
+    }
+
+    getBelongsToRelationsWithModel(model: Model): Relationship[] {
+        return this.getBelongsToRelations().filter(relationship => relationship.relatedModelId === model.id)
+    }
+
+    hasBelongsToRelations(): boolean {
+        return this.getBelongsToRelations().length > 0
+    }
+
+    getFirstBelongsToRelation(): Relationship {
+        return this.getBelongsToRelations()[0]
+    }
+
+    getBelongsToRelations(): Relationship[] {
+        return this.relationshipsByForeignKey
+            .filter(relationship => relationship.type === 'BelongsTo') || []
     }
 
     hasImplicitIndex(): boolean {
@@ -323,6 +364,20 @@ export default class Column extends RelaDB.Model implements SchemaModel {
         if(defaultSettingsByName && defaultSettingsByName.faker != 'undefined') return defaultSettingsByName.faker
 
         return this.getFakerByType()
+    }
+
+    getDefaultInputType(): string {
+        let defaultSettingsByName = this.getDefaultSettingsByName()
+
+        if(defaultSettingsByName && defaultSettingsByName.inputType != 'undefined') return defaultSettingsByName.inputType
+
+        return this.getInputTypeByColumnType() || 'text'
+    }
+
+    getInputTypeByColumnType(): string {
+        let type = this.getType()
+
+        if(type && type.inputType) return type.inputType
     }
 
     getDefaultSettingsByName(name?: string): ColumnDefaultData {

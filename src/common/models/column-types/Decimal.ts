@@ -5,4 +5,5 @@ export default class Decimal extends ColumnType {
     static identifier: string = 'decimal'
     static faker: string = 'fake()->randomNumber(1)'
     static defaultValueTypeIsString: boolean = false
+    static inputType: string = 'number'
 }
