@@ -2,31 +2,31 @@ import Input from "@Common/models/crud/Input"
 import Main from "@Renderer/services/wrappers/Main"
 import BladeFormatter from "@Renderer/codegen/formatters/BladeFormatter"
 import TemplateCompiler from "@Renderer/codegen/templates/base/TemplateCompiler"
+import { TemplateErrorLogger } from "@tiago_silva_pereira/vemto-template-engine"
 
-export default new class InputRenderer {
+export default class InputRenderer {
+
+    private errorLogger: TemplateErrorLogger
+
+    constructor(errorLogger: TemplateErrorLogger) {
+        this.errorLogger = errorLogger
+    }
 
     async render(input: Input): Promise<string> {
-        
-        try {
-            const templateContent = await Main.API.readTemplateFile(input.getTemplate())
+        const templateContent = await Main.API.readTemplateFile(input.getTemplate())
 
-            TemplateCompiler
-                .setContent(templateContent)
-                .compilingInternally()
-                .setData({input})
+        TemplateCompiler
+            .setContent(templateContent)
+            .compilingInternally()
+            .setData({input})
+            .setErrorLogger(this.errorLogger)
+            .setTemplateName(input.getTemplate())
 
-            const compiledTemplate = await TemplateCompiler.compileWithImports()
+        const compiledTemplate = await TemplateCompiler.compileWithImports()
 
-            console.log('DEU CERTOOOOOOOOOOOOOOOOOO')
-
-            return BladeFormatter.setContent(
-                compiledTemplate
-            ).format()
-        } catch (error) {
-            console.log(input.getTemplate())
-            // Needs to implement pause with errors HERE!!!
-            throw error
-        }
+        return BladeFormatter.setContent(
+            compiledTemplate
+        ).format()
     }
 
 }

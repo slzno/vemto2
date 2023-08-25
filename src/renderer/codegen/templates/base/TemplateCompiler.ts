@@ -1,7 +1,7 @@
 import * as changeCase from "change-case"
 import Main from "@Renderer/services/wrappers/Main"
 import Alert from "@Renderer/components/utils/Alert"
-import TemplateEngine from "@tiago_silva_pereira/vemto-template-engine"
+import TemplateEngine, { TemplateErrorLogger } from "@tiago_silva_pereira/vemto-template-engine"
 import TextUtil from "@Renderer/../common/util/TextUtil"
 import ComponentRenderer from "@Renderer/logic/page/services/ComponentRenderer"
 import InputRenderer from "@Renderer/logic/page/services/InputRenderer"
@@ -16,12 +16,16 @@ export default new class TemplateCompiler {
     private hooksEnabled: boolean
     private templateEngine: TemplateEngine
     private isInternalCompiling: boolean
+    private errorLogger: TemplateErrorLogger
+    private templateName: string
 
     constructor() {
         this.vthemeKeys = {}
         this.hooksEnabled = true
         this.templateEngine = null
         this.isInternalCompiling = false
+        this.errorLogger = new TemplateErrorLogger()
+        this.templateName = '(anonymous template)'
     }
 
     compilingInternally() {
@@ -36,6 +40,12 @@ export default new class TemplateCompiler {
 
     setContent(content: string) {
         this.content = content
+
+        return this
+    }
+
+    setTemplateName(templateName: string) {
+        this.templateName = templateName
 
         return this
     }
@@ -66,6 +76,12 @@ export default new class TemplateCompiler {
 
     setHooksEnabled(enabled: boolean) {
         this.hooksEnabled = enabled
+
+        return this
+    }
+
+    setErrorLogger(errorLogger: TemplateErrorLogger) {
+        this.errorLogger = errorLogger
 
         return this
     }
@@ -144,12 +160,11 @@ export default new class TemplateCompiler {
 
             return compiledContent
         } catch (error: any) {
+            console.log(this.errorLogger)
             const latestError = this.templateEngine.getLatestError()
 
             console.error(error)
-
             console.log(this.data)
-            console.error(this.templateEngine.getGeneratedCodeFunctionAsString())
             
             if(latestError) {
                 Alert.error('Error on template line ' + latestError.templateLine)
@@ -219,7 +234,8 @@ export default new class TemplateCompiler {
             onBrowser: true,
             imports: this.imports,
             require: this.getRequireData(),
-        })
+            templateName: this.templateName,
+        }, this.errorLogger)
 
         return this 
     }
@@ -239,6 +255,9 @@ export default new class TemplateCompiler {
     }
 
     getRequireData() {
+        const componentRenderer = new ComponentRenderer(this.errorLogger),
+            inputRenderer = new InputRenderer(this.errorLogger)
+
         return {
             camelCase: changeCase.camelCase,
             capitalCase: changeCase.capitalCase,
@@ -251,8 +270,8 @@ export default new class TemplateCompiler {
             sentenceCase: changeCase.sentenceCase,
             snakeCase: changeCase.snakeCase,
             kebabCase: changeCase.paramCase,
-            ComponentRenderer: ComponentRenderer,
-            InputRenderer: InputRenderer,
+            ComponentRenderer: componentRenderer,
+            InputRenderer: inputRenderer,
         }
     }
 }
