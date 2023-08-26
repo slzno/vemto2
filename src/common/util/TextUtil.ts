@@ -43,7 +43,7 @@ class TextUtil {
             finalLines = [],    
             initialLine = 0
 
-        if(fromLine <= 0 || fromLine > lines.length) throw new Error('Please define a valid content line number')
+        if(fromLine <= 0 || fromLine > lines.length) return []
         if(extraLines % 2 !== 0) throw new Error('The amount of extra lines must be an even number')
 
         for (let currentLine = fromLine; currentLine >= (fromLine - (extraLines / 2)); currentLine--) {

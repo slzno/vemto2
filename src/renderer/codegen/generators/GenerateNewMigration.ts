@@ -57,13 +57,14 @@ export default new class GenerateNewMigration {
     }
 
     async generateCreationMigration() {
-        const templateContent = await Main.API.readTemplateFile("CreationMigration.vemtl")
+        const templateCompiler = new TemplateCompiler(), 
+            templateContent = await Main.API.readTemplateFile("CreationMigration.vemtl")
 
-        TemplateCompiler
+        templateCompiler
             .setContent(templateContent)
             .setData({ table: this.table })
 
-        const compiledTemplate = await TemplateCompiler.compileWithImports()
+        const compiledTemplate = await templateCompiler.compileWithImports()
 
         return PhpFormatter.setContent(
             compiledTemplate
@@ -71,13 +72,14 @@ export default new class GenerateNewMigration {
     }
 
     async generateUpdaterMigration() {
-        const templateContent = await Main.API.readTemplateFile("UpdaterMigration.vemtl")
+        const templateCompiler = new TemplateCompiler(),
+            templateContent = await Main.API.readTemplateFile("UpdaterMigration.vemtl")
 
-        TemplateCompiler
+        templateCompiler
             .setContent(templateContent)
             .setData({ table: this.table })
 
-        const compiledTemplate = await TemplateCompiler.compileWithImports()
+        const compiledTemplate = await templateCompiler.compileWithImports()
 
         return PhpFormatter.setContent(
             compiledTemplate

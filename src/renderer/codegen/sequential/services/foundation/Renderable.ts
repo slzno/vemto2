@@ -8,6 +8,7 @@ import BladeFormatter from "@Renderer/codegen/formatters/BladeFormatter"
 export default abstract class Renderable {
     project: Project
     hooksEnabled: boolean = true
+    logEnabled: boolean = false
 
     constructor() {
         const project = Project.find(1)
@@ -53,7 +54,9 @@ export default abstract class Renderable {
 
         if(this.beforeRender) this.beforeRender()
 
-        console.log(`Rendering ${this.getTemplateFile()} as ${this.getFullFilePath()}...`)
+        if(this.logEnabled) {
+            console.log(`Rendering ${this.getTemplateFile()} as ${this.getFullFilePath()}...`)
+        }
 
         const file = this.project.registerRenderableFile(
             this.getPath(), 
@@ -69,7 +72,7 @@ export default abstract class Renderable {
             
             if(this.afterRender) this.afterRender(compiledTemplate)
         } catch (error: any) {
-            file.setError(error.message)
+            file.setError(error.message, error.stack)
 
             if(error.hasTemplateError) {
                 file.hasTemplateError = true
@@ -101,18 +104,19 @@ export default abstract class Renderable {
         }
 
         const templateFile = this.getTemplateFile(), 
+            templateCompiler = new TemplateCompiler(),
             templateContent = await Main.API.readTemplateFile(templateFile)
 
-        TemplateCompiler
+        templateCompiler
             .setContent(templateContent)
             .setData(this.getFullData())
             .setVthemeKeys(this.project.getVthemeKeys())
             .setTemplateName(templateFile)
 
-        TemplateCompiler.setHooksEnabled(this.hooksEnabled)
-        if(this.hooks) TemplateCompiler.setHooks(this.hooks())
+        templateCompiler.setHooksEnabled(this.hooksEnabled)
+        if(this.hooks) templateCompiler.setHooks(this.hooks())
 
-        const compiledTemplate = await TemplateCompiler.compileWithImports()
+        const compiledTemplate = await templateCompiler.compileWithImports()
 
         return this.formatCompiledTemplate(compiledTemplate)
     }

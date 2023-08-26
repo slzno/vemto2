@@ -106,7 +106,7 @@ export default class Input extends RelaDB.Model {
             return
         }
 
-        this.type = defaultInputType
+        this.type = defaultInputType || InputType.TEXT
     }
 
     /**

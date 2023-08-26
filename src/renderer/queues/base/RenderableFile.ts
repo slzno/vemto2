@@ -8,13 +8,14 @@ export default class RenderableFile {
     template: string
 
     async render() {
-        const templateContent = await Main.API.readTemplateFile(this.template)
+        const templateCompiler = new TemplateCompiler(),
+            templateContent = await Main.API.readTemplateFile(this.template)
 
-        TemplateCompiler
+        templateCompiler
             .setContent(templateContent)
             .setData({})
 
-        const compiledTemplate = await TemplateCompiler.compileWithImports()
+        const compiledTemplate = await templateCompiler.compileWithImports()
 
         const renderedContent = PhpFormatter.setContent(
             compiledTemplate

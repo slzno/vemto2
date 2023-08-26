@@ -369,7 +369,7 @@ export default class Column extends RelaDB.Model implements SchemaModel {
     getDefaultInputType(): string {
         let defaultSettingsByName = this.getDefaultSettingsByName()
 
-        if(defaultSettingsByName && defaultSettingsByName.inputType != 'undefined') return defaultSettingsByName.inputType
+        if(defaultSettingsByName && typeof defaultSettingsByName.inputType !== 'undefined') return defaultSettingsByName.inputType
 
         return this.getInputTypeByColumnType() || 'text'
     }

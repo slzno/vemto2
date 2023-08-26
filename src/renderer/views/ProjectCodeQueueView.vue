@@ -201,6 +201,7 @@
                     <div v-if="file.hasTemplateError">
                         <TemplateErrorViewer
                             :errorMessage="file.error"
+                            :errorStack="file.errorStack"
                             :template="file.template"
                             :errorLine="file.templateErrorLine"
                         />
@@ -281,6 +282,7 @@
                     <div v-if="file.hasTemplateError">
                         <TemplateErrorViewer
                             :errorMessage="file.error"
+                            :errorStack="file.errorStack"
                             :template="file.template"
                             :errorLine="file.templateErrorLine"
                         />
@@ -386,6 +388,7 @@
                     <div v-if="file.hasTemplateError">
                         <TemplateErrorViewer
                             :errorMessage="file.error"
+                            :errorStack="file.errorStack"
                             :template="file.template"
                             :errorLine="file.templateErrorLine"
                         />

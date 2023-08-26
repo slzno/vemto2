@@ -58,14 +58,15 @@ export default new class UpdateExistingMigration {
 
     async changeCreationMigration() {
         const creationMigration = this.table.getCreationMigration(),
-        creationMigrationContent = await Main.API.readProjectFile(creationMigration.relativePath),
+            templateCompiler = new TemplateCompiler(),
+            creationMigrationContent = await Main.API.readProjectFile(creationMigration.relativePath),
             creationSchemaTemplate = await Main.API.readTemplateFile('CreationSchema.vemtl')
 
-        TemplateCompiler
+        templateCompiler
             .setContent(creationSchemaTemplate)
             .setData({ table: this.table })
 
-        const compiledTemplate = await TemplateCompiler.compileWithImports(),
+        const compiledTemplate = await templateCompiler.compileWithImports(),
             migrationEditor = new MigrationEditor(creationMigrationContent)
 
         migrationEditor.replaceSchemaCreateOnUpMethod(this.table.name, compiledTemplate)
@@ -77,25 +78,26 @@ export default new class UpdateExistingMigration {
 
     async changeUpdaterMigration() {
         const latestMigration = this.table.getLatestUpdaterMigration(),
+            templateCompiler = new TemplateCompiler(),
             latestMigrationContent = await Main.API.readProjectFile(latestMigration.relativePath),
             upColumnsTemplate = await Main.API.readTemplateFile('UpdaterMigrationColumns.vemtl'),
             downColumnsTemplate = await Main.API.readTemplateFile('UpdaterMigrationColumnsDown.vemtl')
 
-        TemplateCompiler
+        templateCompiler
             .setContent(upColumnsTemplate)
             .setData({ table: this.table })
 
         const migrationEditor = new MigrationEditor(latestMigrationContent)
         
-        let compiledTemplate = await TemplateCompiler.compileWithImports()
+        let compiledTemplate = await templateCompiler.compileWithImports()
 
         migrationEditor.addContentToSchemaTableOnUpMethod(this.table.name, compiledTemplate)
 
-        TemplateCompiler
+        templateCompiler
             .setContent(downColumnsTemplate)
             .setData({ table: this.table })
 
-        compiledTemplate = await TemplateCompiler.compileWithImports()
+        compiledTemplate = await templateCompiler.compileWithImports()
 
         migrationEditor.addContentToSchemaTableOnDownMethod(this.table.name, compiledTemplate)
 

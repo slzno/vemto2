@@ -43,6 +43,7 @@ export default class RenderableFile extends RelaDB.Model {
     project: Project
     projectId: string
     error: string
+    errorStack: string
     hasTemplateError: boolean
     templateErrorLine: number
     type: RenderableFileType
@@ -75,8 +76,9 @@ export default class RenderableFile extends RelaDB.Model {
         return this
     }
 
-    setError(error: string) {
+    setError(error: string, stack: string = null) {
         this.error = error
+        this.errorStack = stack.toString()
 
         this.status = RenderableFileStatus.ERROR
 

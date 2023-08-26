@@ -47,13 +47,14 @@ export default new class GenerateTableChangerMigration {
     }
 
     async getContent() {
-        const templateContent = await Main.API.readTemplateFile("TableChangerMigration.vemtl")
+        const templateCompiler = new TemplateCompiler(),
+            templateContent = await Main.API.readTemplateFile("TableChangerMigration.vemtl")
 
-        TemplateCompiler
+        templateCompiler
             .setContent(templateContent)
             .setData({ table: this.table })
 
-        const compiledTemplate = await TemplateCompiler.compileWithImports()
+        const compiledTemplate = await templateCompiler.compileWithImports()
 
         return PhpFormatter.setContent(
             compiledTemplate

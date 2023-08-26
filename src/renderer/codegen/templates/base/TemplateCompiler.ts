@@ -6,7 +6,7 @@ import TextUtil from "@Renderer/../common/util/TextUtil"
 import ComponentRenderer from "@Renderer/logic/page/services/ComponentRenderer"
 import InputRenderer from "@Renderer/logic/page/services/InputRenderer"
 
-export default new class TemplateCompiler {
+export default class TemplateCompiler {
 
     private data: any
     private hooks: any
@@ -24,8 +24,8 @@ export default new class TemplateCompiler {
         this.hooksEnabled = true
         this.templateEngine = null
         this.isInternalCompiling = false
-        this.errorLogger = new TemplateErrorLogger()
         this.templateName = '(anonymous template)'
+        this.errorLogger = new TemplateErrorLogger()
     }
 
     compilingInternally() {
@@ -160,7 +160,6 @@ export default new class TemplateCompiler {
 
             return compiledContent
         } catch (error: any) {
-            console.log(this.errorLogger)
             const latestError = this.templateEngine.getLatestError()
 
             console.error(error)
@@ -234,8 +233,8 @@ export default new class TemplateCompiler {
             onBrowser: true,
             imports: this.imports,
             require: this.getRequireData(),
-            templateName: this.templateName,
-        }, this.errorLogger)
+            templateName: this.templateName
+        })
 
         return this 
     }
@@ -255,8 +254,8 @@ export default new class TemplateCompiler {
     }
 
     getRequireData() {
-        const componentRenderer = new ComponentRenderer(this.errorLogger),
-            inputRenderer = new InputRenderer(this.errorLogger)
+        const componentRenderer = new ComponentRenderer(),
+            inputRenderer = new InputRenderer()
 
         return {
             camelCase: changeCase.camelCase,
