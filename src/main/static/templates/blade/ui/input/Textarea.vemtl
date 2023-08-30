@@ -1,0 +1,6 @@
+@props(['disabled' => false])
+
+<textarea 
+    {{ $disabled ? 'disabled' : '' }} 
+    {!! $attributes->merge(['class' => 'vtheme(ui.input)']) !!}
+></textarea>

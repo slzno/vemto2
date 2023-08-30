@@ -13,6 +13,7 @@ export default {
             "inline-flex items-center justify-center px-4 py-2 text-sm font-medium tracking-wide text-white transition-colors duration-200 rounded-md bg-indigo-500 hover:bg-indigo-600 focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 focus:shadow-outline focus:outline-none",
         "ui.input":
             "inline-flex h-10 px-3 py-2 text-sm bg-white border rounded-md border-gray-300 ring-offset-background placeholder:text-gray-500 focus:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 disabled:cursor-not-allowed disabled:opacity-50",
+        "ui.input.checkbox": "",
         "ui.label": "block mb-1.5 font-medium text-sm text-gray-700",
         "ui.input.error": "text-sm text-red-600",
         "ui.breadcrumbs.container": "flex justify-between py-1",

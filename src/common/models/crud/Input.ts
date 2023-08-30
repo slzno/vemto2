@@ -6,15 +6,7 @@ import * as changeCase from "change-case"
 import RelaDB from "@tiago_silva_pereira/reladb"
 import GenerateInputValidation, { ValidationRuleType } from "./services/GenerateInputValidation"
 import Model from "../Model"
-
-export enum InputType {
-    TEXT = "text",
-    TEXTAREA = "textarea",
-    NUMBER = "number",
-    FILE = "file",
-    IMAGE = "image",
-    BELONGS_TO = "belongsTo",
-}
+import { InputType } from "./InputType"
 
 export enum InputValidationRuleType {
     TEXTUAL = "textual",

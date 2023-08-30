@@ -90,6 +90,11 @@ class <$ this.filenameWithoutExtension $> extends Component
         
         $this-><$ itemVarName $>-><$ fieldName $> = $this-><$ input.getNewPropertyName() $>->store('<$ input.getFileDiskName() $>', 'public');
     }
+
+    public function delete<$ pascalCase(input.name) $>()
+    {
+        $this-><$ input.getNewPropertyName() $> = null;
+    }
     <% } %>
 
     public function render()

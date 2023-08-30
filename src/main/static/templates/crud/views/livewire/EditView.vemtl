@@ -5,7 +5,9 @@
 <% const camelCase = this.require("camelCase") %>
 <% const itemVarName = camelCase(crud.name) %>
 <% const collectionVarName = camelCase(crud.plural) %>
+
 <% const InputRenderer = this.require("InputRenderer") %>
+<% InputRenderer.setProject(crud.project) %>
 <# --- #>
 <div class="vtheme(crud.container)">
     <x-ui.breadcrumbs>

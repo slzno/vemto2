@@ -26,5 +26,5 @@
         @endforeach
         <# --- #>
     </x-ui.input.select>
-    <x-ui.input.error for="<$ input.name $>" />
+    <x-ui.input.error for="<$ itemVarName $>.<$ input.column.name $>" />
 </div>
