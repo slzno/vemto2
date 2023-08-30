@@ -174,6 +174,26 @@ export default class Input extends RelaDB.Model {
         return this.getRulesForTemplate(this.updateRules)
     }
 
+    allowsPlaceholder() {
+        return [InputType.TEXT, InputType.TEXTAREA, InputType.NUMBER, InputType.PASSWORD, InputType.EMAIL].includes(this.type)
+    }
+
+    allowsDefaultValue() {
+        return [InputType.TEXT, InputType.TEXTAREA, InputType.NUMBER, InputType.PASSWORD, InputType.EMAIL].includes(this.type)
+    }
+
+    allowsMinimumLength() {
+        return ![InputType.SELECT, InputType.IMAGE, InputType.FILE, InputType.HIDDEN].includes(this.type)
+    }
+
+    allowsMaximumLength() {
+        return ![InputType.SELECT, InputType.IMAGE, InputType.FILE, InputType.HIDDEN].includes(this.type)
+    }
+
+    allowsStep() {
+        return [InputType.NUMBER].includes(this.type)
+    }
+
     getRulesForTemplate(rules: InputValidationRule[]) {
         const templateRules = rules.map((rule) => {
             if (rule.type === InputValidationRuleType.CODE) {

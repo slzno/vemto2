@@ -55,6 +55,10 @@ class <$ this.filenameWithoutExtension $> extends Component
         // hook:BEFORE_MOUNT
         $this-><$ itemVarName $> = new <$ modelName $>();
 
+        <% for (let input of crud.getInputsWithDefaultValue()) { %>
+        $this-><$ itemVarName $>-><$ input.column.name $> = '<$ input.getDefaultValue() $>';
+        <% } %>
+
         <% for (let input of crud.getBelongsToInputs()) { %>
         <# --- #>
         <% const model = input.getRelatedModel() %>

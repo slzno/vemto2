@@ -129,6 +129,10 @@ export default class Crud extends RelaDB.Model {
         return this.inputs.filter((input) => input.isBelongsTo())
     }
 
+    getInputsWithDefaultValue(): Input[] {
+        return this.inputs.filter((input) => input.defaultValue?.length)
+    }
+
     calculateSettings() {
         this.settings = {
             itemTitle: capitalCase(this.model.name),

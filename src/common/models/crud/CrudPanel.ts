@@ -16,4 +16,8 @@ export default class CrudPanel extends RelaDB.Model {
             inputs: () => this.hasMany(Input, "panelId").cascadeDelete(),
         }
     }
+
+    getOrderedInputs(): Input[] {
+        return this.inputs.sort((a, b) => a.order - b.order)
+    }
 }
