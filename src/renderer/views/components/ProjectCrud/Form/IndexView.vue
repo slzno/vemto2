@@ -29,6 +29,7 @@
         needsSelectRelationship = ref(false),
         panelInputs = reactive({}) as { [key: string]: Input[] },
         newInputData = ref({
+            type: null,
             panelId: null,
             columnId: null,
             column: null,
@@ -72,12 +73,14 @@
     }
 
     const inputTypes = () => {
-        return Object.values(InputType).map(value => changeCase.pascalCase(value))
+        return Object.values(InputType)
     }
 
     const addInput = (inputType: string) => {
         showingCreateInputModal.value = true
         needsSelectRelationship.value = inputType == changeCase.pascalCase(InputType.BELONGS_TO)
+
+        newInputData.value.type = inputType
     }
 
     const findNewInputColumn = () => {
@@ -90,7 +93,8 @@
         const panelId = newInputData.value.panelId,
             columnId = newInputData.value.columnId,
             column = newInputData.value.column,
-            relationshipId = newInputData.value.relationshipId
+            relationshipId = newInputData.value.relationshipId,
+            type = newInputData.value.type
 
         if(!panelId) {
             return Alert.error('Please, select a panel to create the input')
@@ -104,7 +108,7 @@
             return Alert.error('Please, select a relationship to create the input')
         }
 
-        const input = Input.createFromColumn(crud.value, column)
+        const input = Input.createFromColumn(crud.value, column, type)
 
         if(needsSelectRelationship.value) {
             input.relationshipId = relationshipId
@@ -127,7 +131,13 @@
     }
 
     const resetNewInputData = () => {
-        newInputData.value = { panelId: crud.value.panels[0].id, columnId: null, column: null, relationshipId: null }
+        newInputData.value = {
+            type: null,
+            panelId: crud.value.panels[0].id,
+            columnId: null,
+            column: null,
+            relationshipId: null
+        }
     }
 
     onMounted(() => {
@@ -142,7 +152,7 @@
     <div class="flex w-full h-screen space-x-4 mt-2 px-2">
         <div class="space-y-2">
             <template v-for="input in inputTypes()" :key="input">
-                <UiButton @click="addInput(input)" class="w-full">{{ input }}</UiButton>
+                <UiButton @click="addInput(input)" class="w-full">{{ changeCase.pascalCase(input) }}</UiButton>
             </template>
         </div>
 

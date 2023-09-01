@@ -59,7 +59,7 @@ export default class Input extends RelaDB.Model {
         }
     }
 
-    static createFromColumn(crud: Crud, column: Column) {
+    static createFromColumn(crud: Crud, column: Column, forceType?: InputType | null) {
         const input = new Input()
         input.crudId = crud.id
         input.columnId = column.id
@@ -80,7 +80,11 @@ export default class Input extends RelaDB.Model {
         input.showOnDetails = true
         input.showOnIndex = true
 
-        input.calculateType(column)
+        if (!forceType) {
+            input.calculateType(column)
+        } else {
+            input.type = forceType
+        }
 
         input.generateValidationRules()
 
@@ -185,6 +189,12 @@ export default class Input extends RelaDB.Model {
         const typeSettings = this.getTypeSettings()
 
         return typeSettings && !typeSettings.disableDefault
+    }
+
+    allowsItems() {
+        const typeSettings = this.getTypeSettings()
+
+        return typeSettings && typeSettings.allowsItems
     }
 
     allowsMinimumLength() {

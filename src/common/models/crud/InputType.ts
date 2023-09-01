@@ -12,5 +12,7 @@ export enum InputType {
     PASSWORD = "password",
     EMAIL = "email",
     DATE = "date",
-    DATETIME = "dateTime"
+    DATETIME = "dateTime",
+    TIME = "time",
+    RADIO = "radio",
 }
