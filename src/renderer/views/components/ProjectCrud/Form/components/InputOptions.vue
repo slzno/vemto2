@@ -2,7 +2,7 @@
     import { toRef } from "vue"
     import Input from "@Common/models/crud/Input"
     import debounce from "@Common/tools/debounce"
-    import { XMarkIcon } from "@heroicons/vue/24/outline"
+    import { XMarkIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiNumber from "@Renderer/components/ui/UiNumber.vue"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
@@ -15,6 +15,25 @@
     const saveInput = debounce(() => {
         input.value.save()
     }, 500);
+
+    const addItem = () => {
+        input.value.items.push({
+            value: "",
+            label: ""
+        })
+    }
+
+    const deleteItem = (deleteItem: any) => {
+        if(!window.confirm("Are you sure you want to delete this item?")) return
+
+        input.value.items.splice(input.value.items.indexOf(deleteItem), 1)
+    }
+
+    const removeEmptyItems = () => {
+        input.value.items = input.value.items.filter(item => item.value !== "" || item.label !== "")
+
+        saveInput()
+    }
 
     const show = toRef(props, "show"),
         input = toRef(props, "input")
@@ -73,6 +92,28 @@
 
                             <div v-if="input.allowsStep()">
                                 <UiNumber v-model="input.step" placeholder="Input Step" label="Step" @input="saveInput()" />
+                            </div>
+
+                            <div v-if="input.allowsItems">
+                                <label class="text-xs text-slate-400">Items</label>
+
+                                <div class="max-h-[300px] overflow-y-auto">
+                                    <template v-for="(item, index) in input.items" :key="index">
+                                        <div class="flex gap-2 my-1 justify-center items-center" @keyup.esc="removeEmptyItems()">
+                                            <div class="w-2/4">
+                                                <UiText v-model="item.value" placeholder="Item Value" @input="saveInput()" />
+                                            </div>
+                                            <div class="w-2/4">
+                                                <UiText v-model="item.label" placeholder="Item Label" @input="saveInput()" />
+                                            </div>
+                                            <TrashIcon class="w-5 h-5 text-red-400 hover:text-red-500 cursor-pointer" @click="deleteItem(item)" />
+                                        </div>
+                                    </template>
+                                </div>
+
+                                <div class="underline underline-offset-4 text-slate-300 hover:text-slate-100 text-sm gap-2 cursor-pointer mt-2" @click="addItem()">
+                                    + Add Item
+                                </div>
                             </div>
 
                             <UiCheckbox v-model="input.showOnCreation" label="On Create" @input="saveInput()" />

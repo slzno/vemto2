@@ -10,11 +10,12 @@
 <div class="vtheme(crud.form.input.group)">
     <x-ui.label for="<$ input.name $>"><$ input.label $></x-ui.label>
     <% for (let item of input.items) { %>
+    <x-ui.label for="<$ item.value $>"><$ item.label $></x-ui.label>
         <x-ui.input.radio
             class="vtheme(crud.form.input.extra)"
             wire:model="<$ itemVarName $>.<$ input.column.name $>"
             name="<$ input.name $>"
-            id="<$ input.name $>"
+            id="<$ item.value $>"
             value="<$ item.value $>"
         />
     <% } %>
