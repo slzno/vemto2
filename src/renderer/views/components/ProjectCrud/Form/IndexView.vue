@@ -22,10 +22,17 @@
         panelInputs = reactive({}) as { [key: string]: Input[] }
 
     const openInputModal = (input: Input) => {
-        if(selectedInput.value) inputOptionsClosed()
+        let time = 0
 
-        showingOptions.value = true
-        selectedInput.value = input
+        if(selectedInput.value) {
+            inputOptionsClosed()
+            time = 200
+        }
+
+        setTimeout(() => {
+            showingOptions.value = true
+            selectedInput.value = input
+        }, time)
     }
 
     const saveInputsOrder = (panel: CrudPanel) => {
@@ -42,14 +49,12 @@
         showingOptions.value = false
     }
 
-    const removeInput = (input: Input) => {
-        if(!input) return
+    const removeInput = (input: Input, panel: CrudPanel) => {
+        if(!input || !window.confirm('Are you sure you want to delete this input?')) return
 
         input.delete()
 
-        if(!panelInputs[input.panelId]) return
-
-        panelInputs[input.panelId] = input.panel.getOrderedInputs()
+        panelInputs[panel.id] = panel.getOrderedInputs()
     }
 
     onMounted(() => {
@@ -86,7 +91,7 @@
                                 <span>{{ element.label }} <i class="text-slate-500 text-sm">{{ element.type }}</i></span>
                                 <TrashIcon
                                     class="h-5 w-5 mr-1 invisible group-hover:visible text-red-400 cursor-pointer hover:text-red-500"
-                                    @click.stop="removeInput(element)"
+                                    @click.stop="removeInput(element, element.panel)"
                                 />
                             </div>
                             
