@@ -42,6 +42,7 @@ export default {
         "crud.form.input.extra": "w-full",
         "crud.form.input.image": "object-cover rounded border border-gray-200 w-36 h-36 cursor-pointer bg-gray-50 hover:opacity-75 transition duration-100 ease-in-out",
         "crud.form.input.image.button": "p-0.5 px-1 text-xs border border-gray-200 rounded hover:bg-gray-200",
+        "crud.form.input.file.name": "text-sm text-gray-500 p-1 rounded-sm bg-gray-50 border border-gray-200 mb-1",
         "crud.form.buttons-container":
             "flex justify-between mt-4 border-t border-gray-50 bg-gray-50 p-4",
     },

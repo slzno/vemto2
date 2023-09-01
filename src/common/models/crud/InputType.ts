@@ -12,5 +12,5 @@ export enum InputType {
     PASSWORD = "password",
     EMAIL = "email",
     DATE = "date",
-    DATETIME = "datetime"
+    DATETIME = "dateTime"
 }

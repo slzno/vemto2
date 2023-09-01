@@ -2,6 +2,6 @@
 
 <x-ui.input 
     :disabled="$disabled" 
-    type="datetime-local"
+    type="url"
     :attributes="$attributes"
 />

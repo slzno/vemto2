@@ -17,6 +17,6 @@
         placeholder="<$ input.placeholder $>"
         <$ input.min ? `min="${input.min}"` : '' $>
         <$ input.max ? `max="${input.max}"` : '' $>
-        />
+    />
     <x-ui.input.error for="<$ itemVarName $>.<$ input.column.name $>" />
 </div>
