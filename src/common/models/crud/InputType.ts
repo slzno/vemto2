@@ -11,4 +11,6 @@ export enum InputType {
     HIDDEN = "hidden",
     PASSWORD = "password",
     EMAIL = "email",
+    DATE = "date",
+    DATETIME = "datetime"
 }

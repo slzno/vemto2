@@ -1,7 +1,7 @@
 import Input from "@Common/models/crud/Input"
 import ColumnTypeList from "@Common/models/column-types/base/ColumnTypeList"
 import ColumnsDefaultData from "@Common/models/column-types/default/ColumnsDefaultDataList"
-import InputTypeList from "@Common/models/input-types/InputTypeList"
+import InputSettingsList from "@Common/models/data/InputSettingsList"
 import {
     InputValidationRule,
     InputValidationRuleType,
@@ -42,7 +42,7 @@ export default class GenerateInputValidation {
     getBaseValidationRules(
         type: ValidationRuleType = ValidationRuleType.CREATION
     ): string[] {
-        const inputType = InputTypeList.getType(this.input.type),
+        const inputType = InputSettingsList.getFromType(this.input.type),
             columnType = ColumnTypeList.getByIdentifier(this.input.column.type),
             columnDefaultData = ColumnsDefaultData.getSettingsByColumnName(
                 this.input.column.name

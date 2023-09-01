@@ -7,6 +7,7 @@ import RelaDB from "@tiago_silva_pereira/reladb"
 import GenerateInputValidation, { ValidationRuleType } from "./services/GenerateInputValidation"
 import Model from "../Model"
 import { InputType } from "./InputType"
+import InputSettingsList from "../data/InputSettingsList"
 
 export enum InputValidationRuleType {
     TEXTUAL = "textual",
@@ -156,7 +157,7 @@ export default class Input extends RelaDB.Model {
     }
 
     needsMinValidation() {
-        return [InputType.NUMBER].includes(this.type) && this.min
+        return [InputType.NUMBER, InputType.TEXT, InputType.TEXTAREA].includes(this.type) && this.min
     }
 
     generateValidationRules() {
@@ -175,23 +176,33 @@ export default class Input extends RelaDB.Model {
     }
 
     allowsPlaceholder() {
-        return [InputType.TEXT, InputType.TEXTAREA, InputType.NUMBER, InputType.PASSWORD, InputType.EMAIL].includes(this.type)
+        const typeSettings = this.getTypeSettings()
+
+        return typeSettings && !typeSettings.disablePlaceholder
     }
 
     allowsDefaultValue() {
-        return [InputType.TEXT, InputType.TEXTAREA, InputType.NUMBER, InputType.PASSWORD, InputType.EMAIL].includes(this.type)
+        const typeSettings = this.getTypeSettings()
+
+        return typeSettings && !typeSettings.disableDefault
     }
 
     allowsMinimumLength() {
-        return ![InputType.SELECT, InputType.IMAGE, InputType.FILE, InputType.HIDDEN].includes(this.type)
+        const typeSettings = this.getTypeSettings()
+
+        return typeSettings && !typeSettings.disableMin
     }
 
     allowsMaximumLength() {
-        return ![InputType.SELECT, InputType.IMAGE, InputType.FILE, InputType.HIDDEN].includes(this.type)
+        const typeSettings = this.getTypeSettings()
+
+        return typeSettings && !typeSettings.disableMax
     }
 
     allowsStep() {
-        return [InputType.NUMBER].includes(this.type)
+        const typeSettings = this.getTypeSettings()
+
+        return typeSettings && typeSettings.hasStep
     }
 
     getRulesForTemplate(rules: InputValidationRule[]) {
@@ -204,6 +215,10 @@ export default class Input extends RelaDB.Model {
         })
 
         return `[${templateRules.join(", ")}]`
+    }
+
+    getTypeSettings() {
+        return InputSettingsList.getFromType(this.type)
     }
 
     getTemplate() {

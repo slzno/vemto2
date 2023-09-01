@@ -9,7 +9,7 @@
 
 <div class="vtheme(crud.form.input.group)">
     <x-ui.label for="<$ input.name $>"><$ input.label $></x-ui.label>
-    <x-ui.input.text
+    <x-ui.input.number
         class="vtheme(crud.form.input.extra)"
         wire:model="<$ itemVarName $>.<$ input.column.name $>"
         name="<$ input.name $>"
@@ -17,6 +17,7 @@
         placeholder="<$ input.placeholder $>"
         <$ input.min ? `min="${input.min}"` : '' $>
         <$ input.max ? `max="${input.max}"` : '' $>
-        />
+        <$ input.step ? `step="${input.step}"` : '' $>
+    />
     <x-ui.input.error for="<$ itemVarName $>.<$ input.column.name $>" />
 </div>
