@@ -1,11 +1,17 @@
 <script lang="ts" setup>
-    import Draggable from "vuedraggable"
+    import Draggable from 'vuedraggable'
+    import * as changeCase from 'change-case'
+    import Column from '@Common/models/Column'
     import Crud from '@Common/models/crud/Crud'
     import Input from '@Common/models/crud/Input'
-    import { TrashIcon } from '@heroicons/vue/24/outline'
+    import Alert from '@Renderer/components/utils/Alert'
     import CrudPanel from '@Common/models/crud/CrudPanel'
+    import { TrashIcon } from '@heroicons/vue/24/outline'
     import InputOptions from './components/InputOptions.vue'
+    import UiModal from '@Renderer/components/ui/UiModal.vue'
+    import { InputType } from '@Common/models/crud/InputType'
     import UiButton from '@Renderer/components/ui/UiButton.vue'
+    import UiSelect from '@Renderer/components/ui/UiSelect.vue'
     import { defineProps, ref, toRef, onMounted, reactive } from 'vue'
 
     const props = defineProps({
@@ -19,7 +25,15 @@
         inputOptionsWindow = ref(null),
         showingOptions = ref(false),
         selectedInput = ref(null),
-        panelInputs = reactive({}) as { [key: string]: Input[] }
+        showingCreateInputModal = ref(false),
+        needsSelectRelationship = ref(false),
+        panelInputs = reactive({}) as { [key: string]: Input[] },
+        newInputData = ref({
+            panelId: null,
+            columnId: null,
+            column: null,
+            relationshipId: null
+        })
 
     const openInputModal = (input: Input) => {
         let time = 0
@@ -57,19 +71,111 @@
         panelInputs[panel.id] = panel.getOrderedInputs()
     }
 
+    const inputTypes = () => {
+        return Object.values(InputType).map(value => changeCase.pascalCase(value))
+    }
+
+    const addInput = (inputType: string) => {
+        showingCreateInputModal.value = true
+        needsSelectRelationship.value = inputType == changeCase.pascalCase(InputType.BELONGS_TO)
+    }
+
+    const findNewInputColumn = () => {
+        if(!newInputData.value.columnId) return
+
+        newInputData.value.column = Column.find(newInputData.value.columnId)
+    }
+
+    const createInput = () => {
+        const panelId = newInputData.value.panelId,
+            columnId = newInputData.value.columnId,
+            column = newInputData.value.column,
+            relationshipId = newInputData.value.relationshipId
+
+        if(!panelId) {
+            return Alert.error('Please, select a panel to create the input')
+        }
+
+        if(!columnId || !column) {
+            return Alert.error('Please, select a column to create the input')
+        }
+
+        if(needsSelectRelationship.value && !relationshipId) {
+            return Alert.error('Please, select a relationship to create the input')
+        }
+
+        const input = Input.createFromColumn(crud.value, column)
+
+        if(needsSelectRelationship.value) {
+            input.relationshipId = relationshipId
+        }
+
+        input.panelId = panelId
+        input.save()
+
+        panelInputs[panelId] = input.panel.getOrderedInputs()
+        
+        close()
+        resetNewInputData()
+    }
+
+    const close = (): void => {
+        showingCreateInputModal.value = false
+        needsSelectRelationship.value = false
+
+        resetNewInputData()
+    }
+
+    const resetNewInputData = () => {
+        newInputData.value = { panelId: crud.value.panels[0].id, columnId: null, column: null, relationshipId: null }
+    }
+
     onMounted(() => {
         crud.value.panels.forEach(panel => {
             panelInputs[panel.id] = panel.getOrderedInputs()
         })
+
+        resetNewInputData()
     })
 </script>
 <template>
     <div class="flex w-full h-screen space-x-4 mt-2 px-2">
         <div class="space-y-2">
-            <UiButton class="w-full">Text</UiButton>
-            <UiButton class="w-full">Image</UiButton>
-            <UiButton class="w-full">Belongs To</UiButton>
+            <template v-for="input in inputTypes()" :key="input">
+                <UiButton @click="addInput(input)" class="w-full">{{ input }}</UiButton>
+            </template>
         </div>
+
+        <UiModal
+            width="25%"
+            title="Create Input"
+            :show="showingCreateInputModal"
+            @close="close()"
+        >
+            <div class="m-2">
+                <div class="m-1 flex flex-col gap-2" @keyup.enter="createInput()">
+                    <UiSelect v-model="newInputData.panelId" label="Panel">
+                        <option :value="null" disabled>Select a panel</option>
+                        <option v-for="panel in crud.panels" :value="panel.id" :key="panel.id">{{ panel.title }}</option>
+                    </UiSelect>
+
+                    <UiSelect v-model="newInputData.columnId" label="Column" @change="findNewInputColumn">
+                        <option :value="null" disabled>Select a column</option>
+                        <option v-for="column in crud.model.table.columns" :value="column.id" :key="column.id">{{ column.name }}</option>
+                    </UiSelect>
+
+                    <template v-if="needsSelectRelationship && newInputData.column">
+                        <UiSelect v-model="newInputData.relationshipId" label="Relationship" >
+                            <option :value="null" disabled>Select a relationship</option>
+                            <option v-for="relationship in newInputData.column.getBelongsToRelations()" :value="relationship.id" :key="relationship.id">{{ relationship.name }}</option>
+                        </UiSelect>
+                    </template>
+                </div>
+                <div class="m-1 mt-2 flex justify-end">
+                    <UiButton @click="createInput()">Create</UiButton>
+                </div>
+            </div>
+        </UiModal>
 
         <div class="flex-grow bg-slate-950 p-2 rounded-lg">
             <section class="border border-dotted border-slate-600 rounded-md p-4" v-for="panel in crud.panels" :key="panel.id">
