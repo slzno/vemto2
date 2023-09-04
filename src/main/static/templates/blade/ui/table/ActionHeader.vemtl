@@ -1,0 +1,3 @@
+<th {!! $attributes->merge(['class' => 'vtheme(crud.table.head.action-col)']) !!}>
+    {{ $slot }}
+</th>

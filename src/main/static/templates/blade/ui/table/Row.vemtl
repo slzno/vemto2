@@ -1,0 +1,3 @@
+<tr {!! $attributes->merge(['class' => 'vtheme(table.body.row)']) !!}>
+    {{ $slot }}
+</tr>

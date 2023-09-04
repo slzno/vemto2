@@ -28,8 +28,9 @@ export default {
             "px-5 py-3 text-xs font-medium text-right uppercase",
         "crud.table.body.col.extra": "max-w-xs truncate",
         "crud.table.body.action-col":
-            "px-5 py-4 text-sm font-medium text-right whitespace-nowrap",
-        "crud.action-link": "text-indigo-600 hover:text-indigo-700",
+            "px-5 py-4 text-sm font-medium text-right whitespace-nowrap space-x-2",
+        "crud.action-link": "text-indigo-600 hover:text-indigo-700 cursor-pointer",
+        "crud.action-link-danger": "text-red-600 hover:text-red-700 cursor-pointer",
         "crud.index.tools": "flex justify-between align-top py-4",
         "crud.pagination.container": "mt-2",
         "crud.container": "max-w-7xl mx-auto py-10 sm:px-6 lg:px-8 space-y-4",
@@ -43,6 +44,6 @@ export default {
         "crud.form.input.image": "object-cover rounded border border-gray-200 w-36 h-36 cursor-pointer bg-gray-50 hover:opacity-75 transition duration-100 ease-in-out",
         "crud.form.input.image.button": "p-0.5 px-1 text-xs border border-gray-200 rounded hover:bg-gray-200",
         "crud.form.buttons-container":
-            "flex justify-between mt-4 border-t border-gray-50 bg-gray-50 p-4",
+            "flex justify-between mt-4 border-t border-gray-50 p-4",
     },
 }

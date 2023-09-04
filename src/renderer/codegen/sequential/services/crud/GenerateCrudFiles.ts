@@ -5,10 +5,12 @@ import RenderableLivewireCreateView from "./views/livewire/RenderableLivewireCre
 import RenderableLivewireCreateComponent from "./views/livewire/RenderableLivewireCreateComponent"
 import RenderableLivewireEditView from "./views/livewire/RenderableLivewireEditView"
 import RenderableLivewireEditComponent from "./views/livewire/RenderableLivewireEditComponent"
+import RenderableLivewireHasManyDetailComponent from "./views/livewire/RenderableLivewireHasManyDetailComponent"
+import RenderableLivewireHasManyDetailView from "./views/livewire/RenderableLivewireHasManyDetailView"
 
 export default class GenerateCrudFiles {
     async start() {
-        const cruds = Crud.get()
+        const cruds = Crud.getBasic()
 
         for (const crud of cruds) {
             await new RenderableLivewireIndexView(crud).render()
@@ -17,6 +19,11 @@ export default class GenerateCrudFiles {
             await new RenderableLivewireCreateComponent(crud).render()
             await new RenderableLivewireEditView(crud).render()
             await new RenderableLivewireEditComponent(crud).render()
+
+            crud.hasManyDetails.forEach(async hasManyDetail => {
+                await new RenderableLivewireHasManyDetailView(hasManyDetail).render()
+                await new RenderableLivewireHasManyDetailComponent(hasManyDetail).render()
+            })
         }
     }
 }

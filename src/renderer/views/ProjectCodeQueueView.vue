@@ -35,6 +35,11 @@
                 projectStore.project.getConflictRenderableFiles().length,
         },
         {
+            label: "Ignored",
+            value: "ignored",
+            badge: () => 0,
+        },
+        {
             label: "Removed",
             value: "removed",
             badge: () =>

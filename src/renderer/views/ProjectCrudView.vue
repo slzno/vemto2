@@ -45,7 +45,9 @@
                 <div class="space-y-2">
                     <UiButton class="w-full">Text</UiButton>
                     <UiButton class="w-full">Image</UiButton>
+                    <hr class="border border-slate-800" />
                     <UiButton class="w-full">Belongs To</UiButton>
+                    <UiButton class="w-full">Has Many</UiButton>
                 </div>
 
                 <div class="flex-grow bg-slate-950 p-2 rounded-lg">

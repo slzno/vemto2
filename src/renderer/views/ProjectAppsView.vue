@@ -74,10 +74,10 @@
                 >
                     <div class="flex flex-col">
                         <span class="font-semibold">{{ app.getLabel() }}</span>
-                        <div class="text-slate-400">{{ app.getAppType() }}</div>
+                        <div class="text-slate-400">{{ app.getAppSubType() }}</div>
                     </div>
 
-                    <UiButton class="text-sm" @click="app.delete()"
+                    <UiButton class="text-sm" @click.stop="app.delete()"
                         >Delete</UiButton
                     >
                 </div>
