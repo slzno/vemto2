@@ -13,5 +13,5 @@ test('it can mark a table as changed', () => {
 
     new TableColumnCreated(column).handle()
 
-    expect(project.fresh().hasChangedTables()).toBe(true)
+    expect(project.fresh().hasSchemaChanges()).toBe(true)
 })

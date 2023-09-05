@@ -86,7 +86,7 @@
     <div
         class="absolute bottom-0 left-0 p-4"
         style="z-index: 60;"
-        v-if="projectStore.project.hasChangedTables()"
+        v-if="projectStore.project.hasSchemaChanges()"
     >
         <div class="flex flex-col space-y-2 bg-slate-850 border border-slate-700 p-3 rounded-lg">
             <div class="flex items-center space-x-1 text-sm">
@@ -156,7 +156,7 @@
                                 <label>Create new migration</label>
                             </div>
     
-                            <div>
+                            <!-- <div>
                                 <input
                                     class="rounded-full bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300 mr-2"
                                     type="radio"
@@ -164,7 +164,7 @@
                                     v-model="table.selectedOption"
                                 />
                                 <label>Don't generate migration</label>
-                            </div>
+                            </div> -->
                         </div>
 
                         <div class="p-2 flex-grow space-y-2">

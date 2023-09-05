@@ -59,11 +59,11 @@ test('It can add the migration to the generation queue and remove the table from
 
     UpdateExistingMigration.setTable(table)
 
-    expect(table.project.hasChangedTables()).toBe(true)
+    expect(table.project.hasSchemaChanges()).toBe(true)
 
     await UpdateExistingMigration.run()
 
-    expect(table.project.hasChangedTables()).toBe(false)
+    expect(table.project.hasSchemaChanges()).toBe(false)
 })
 
 test('It can change a creation migration when a column was renamed', async () => {

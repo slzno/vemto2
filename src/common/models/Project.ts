@@ -155,14 +155,14 @@ export default class Project extends RelaDB.Model {
         return models
     }
 
-    hasChangedTables(): boolean {
+    hasSchemaChanges(): boolean {
         if (!this.changedTablesIds) return false
 
         return this.changedTablesIds.length > 0
     }
 
     getChangedTables(): Table[] {
-        if (!this.hasChangedTables()) return []
+        if (!this.hasSchemaChanges()) return []
 
         return this.tables.filter((table) =>
             this.changedTablesIds.includes(table.id)
@@ -346,6 +346,7 @@ export default class Project extends RelaDB.Model {
     }
 
     hasVthemeKey(keyName): boolean {
+        if (!this.vthemeKeys) return false
         return typeof this.vthemeKeys[keyName] !== 'undefined'
     }
 

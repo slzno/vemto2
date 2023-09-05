@@ -13,9 +13,13 @@
         selected = ref(false),
         emit = defineEmits(['tableRemoved'])
 
-    let clickedQuickly = false
+    let clickedQuickly = false,
+        isRemoving = false
 
     const removeTable = (): void => {
+        isRemoving = true
+        setTimeout(() => isRemoving = false, 500)
+
         Main.API.confirm("Are you sure you want to delete this table?").then((confirmed) => {
             if (!confirmed) return
 
@@ -49,8 +53,12 @@
             return
         }
 
-        selected.value = true
-        showingOptions.value = true
+        setTimeout(() => {
+            if(isRemoving) return
+
+            selected.value = true
+            showingOptions.value = true
+        }, 100);
     }
 
     const tableOptionsClosed = () => {
@@ -63,8 +71,8 @@
     <TableOptions ref="tableOptionsWindow" :table="table" :show="showingOptions && table" @close="tableOptionsClosed()" />
 
     <div
-        @mousedown="startClick()"
-        @mouseup="endClick()"
+        @mousedown.stop.prevent="startClick()"
+        @mouseup.stop.prevent="endClick()"
         :id="`table_${table.id}`"
         :ref="`table_${table.id}`"
         :data-table-id="table.id"
