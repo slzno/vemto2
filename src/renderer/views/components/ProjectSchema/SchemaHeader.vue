@@ -180,16 +180,6 @@
             class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow"
         >
             <div
-                class="px-5 cursor-pointer text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-500"
-            >
-                Main
-            </div>
-        </div>
-
-        <div
-            class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow"
-        >
-            <div
                 class="py-1 px-5 cursor-pointer text-slate-400 hover:text-red-500 flex items-center justify-center"
             >
                 New Schema
@@ -207,6 +197,26 @@
                         d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                     ></path>
                 </svg>
+            </div>
+        </div>
+
+        <div
+            class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow"
+        >
+            <div
+                class="px-5 cursor-pointer text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-500"
+            >
+                App
+            </div>
+        </div>
+
+        <div
+            class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow"
+        >
+            <div
+                class="px-5 cursor-pointer text-slate-600 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-500"
+            >
+                Laravel
             </div>
         </div>
     </div>

@@ -88,8 +88,13 @@
         }"
     >
         <div class="w-full dark:bg-slate-800 rounded-t-lg px-4 pt-2 pb-2 flex justify-between items-center">
-            <span class="title w-full font-bold text-lg dark:text-slate-300">
-                {{ table.name }}
+            <span class="title w-full font-bold text-lg dark:text-slate-300 flex items-center space-x-1">
+                <div>
+                    {{ table.name }}
+                </div>
+                <div class="text-sm font-normal text-slate-500" v-if="table.isNew()">
+                    (Draft)
+                </div>
             </span>
             <TrashIcon
                 class="w-5 h-5 group-hover:visible invisible cursor-pointer text-slate-400 hover:text-red-500"

@@ -10,6 +10,7 @@
     import Column from "@Renderer/../common/models/Column"
     import TableModelRelationships from './TableModelRelationships.vue'
     import { uniq } from 'lodash'
+import UiWarning from "@Renderer/components/ui/UiWarning.vue"
 
     const props = defineProps({
         model: {
@@ -102,6 +103,10 @@
         class="relative flex-col bg-slate-800 border-l-4 border-slate-700 p-2 rounded-xl shadow"
     >
         <div>
+            <UiWarning class="mb-2" v-if="model.isNew()">
+                <span>This model was not saved to the filesystem yet. Please generate the code pressing F5 to save it</span>
+            </UiWarning>
+
             <div class="flex justify-between gap-2">
                 <UiText
                     v-model="model.namespace"

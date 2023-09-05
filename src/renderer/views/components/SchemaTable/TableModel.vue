@@ -1,5 +1,6 @@
 <script setup lang="ts">
-    import { toRef } from "vue"
+    import { ExclamationCircleIcon, ExclamationTriangleIcon } from "@heroicons/vue/24/outline";
+import { toRef } from "vue"
 
     const props = defineProps(["model"]),
         model = toRef(props, "model")
@@ -9,7 +10,12 @@
     <div class="dark:text-slate-300 space-y-2">
         <div class="rounded bg-slate-50 dark:bg-slate-900 px-2 py-1 hover:bg-slate-100 dark:hover:bg-slate-950 hover:cursor-pointer">
             <div class="font-semibold text-sm flex justify-between">
-                {{ model.class }}
+                <div class="flex items-center space-x-1">
+                    <div v-if="model.isNew()" title="This model was not saved to the filesystem yet. Please generate the code pressing F5 to save it">
+                        <ExclamationTriangleIcon class="w-6 h-6 text-yellow-500 animate-pulse" />
+                    </div>
+                    <div>{{ model.class }}</div>
+                </div>
                 <div class="text-xs text-slate-700">Model</div>
             </div>
 
