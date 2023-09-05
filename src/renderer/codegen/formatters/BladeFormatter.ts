@@ -16,15 +16,13 @@ class BladeFormatter extends BaseFormatter {
     problematicSections: Array<any> = []
 
     async format() {
-        if(this.content.includes('Create Post')) console.log('will format blade', this.content)
+        return this.content
         
         this.removeProblematicSections()
 
         this.formatWithPrettierHtmlParser()
 
         this.addProblematicSectionsAgain()
-
-        if(this.content.includes('Create Post')) console.log('formatted', this.content)
 
         return this.content
     }
@@ -93,11 +91,11 @@ class BladeFormatter extends BaseFormatter {
     }
 
     addProblematicSection(section) {
-        let sectionKey = uuid()
+        let sectionKey = uuid().replaceAll('-', '')
 
         this.problematicSections[sectionKey] = section
 
-        this.content = this.content.replaceAll(section, `section="${sectionKey}"`)
+        this.content = this.content.replaceAll(section, `section=${sectionKey}`)
     }
 
     formatWithPrettierHtmlParser() {
@@ -110,6 +108,7 @@ class BladeFormatter extends BaseFormatter {
         Object.keys(this.problematicSections).forEach(sectionKey => {
             let sectionContent = this.problematicSections[sectionKey]
 
+            this.content = this.content.replaceAll(`section=${sectionKey}`, sectionContent)
             this.content = this.content.replaceAll(`section="${sectionKey}"`, sectionContent)
         })
     }

@@ -13,7 +13,7 @@
 <% const detailCrudModel = detailCrud.model %>
 <% const itemVarName = camelCase(detailCrud.name) %>
 <% const colspanSize = detailCrud.inputs.length + 1 %>
-<% const collectionVarName = camelCase(detailCrud.plural) %>
+<% const collectionVarName = 'detail' + pascalCase(detailCrud.plural) %>
 <% const viewsFolderName = `${detailCrud.section.getFolderName()}.${paramCase(detailCrud.plural)}` %>
 <# Setup #>
 <% InputRenderer.setProject(detailCrud.project) %>

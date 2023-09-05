@@ -74,6 +74,11 @@ export default class Project extends RelaDB.Model {
         return [...this.cruds, ...this.pages]
     }
 
+    deleteAllApplications() {
+        this.cruds.forEach((crud) => crud.delete())
+        this.pages.forEach((page) => page.delete())
+    }
+
     hasTable(tableName: string): boolean {
         return (
             this.tables.find((table) => table.name === tableName) !== undefined

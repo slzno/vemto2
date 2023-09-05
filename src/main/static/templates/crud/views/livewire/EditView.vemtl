@@ -40,4 +40,18 @@
             </div>
         </form>
     </div>
+
+    <% for (let hasManyDetail of crud.hasManyDetails) { %>
+    <div class="vtheme(crud.form.container)">
+        <div class="vtheme(crud.form)">
+            <div class="vtheme(crud.form.inputs.container)">
+                <div class="vtheme(crud.header)">
+                    <h2><$ hasManyDetail.detailCrud.settings.collectionTitle $></h2>
+                </div>
+    
+                <$ hasManyDetail.getLivewireBladeTag() $>
+            </div>
+        </div>
+    </div>
+    <% } %>
 </div>

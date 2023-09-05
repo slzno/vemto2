@@ -1,6 +1,7 @@
 import Crud from './Crud'
 import Relationship from '../Relationship'
 import RelaDB from '@tiago_silva_pereira/reladb'
+import { camelCase, paramCase } from 'change-case'
 
 export default class HasManyDetail extends RelaDB.Model {
     id: string
@@ -45,5 +46,12 @@ export default class HasManyDetail extends RelaDB.Model {
         hasManyDetail.save()
         
         return hasManyDetail
+    }
+
+    getLivewireBladeTag(): string {
+        const sectionPath = this.crud.section.getFolderName(), 
+            componentPath = `${sectionPath}.${paramCase(this.crud.name)}-${paramCase(this.detailCrud.plural)}-detail`
+
+        return `<livewire:${componentPath} :${paramCase(this.crud.name)}="$${camelCase(this.crud.name)}" />`
     }
 }

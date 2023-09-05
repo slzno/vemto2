@@ -63,6 +63,7 @@
             <div class="flex space-x-2">
                 <CrudManager />
                 <PageManager />
+                <!-- <UiButton @click="projectStore.project.deleteAllApplications()">Delete All</UiButton> -->
             </div>
 
             <div class="mt-4 space-y-2 flex flex-col">

@@ -51,9 +51,9 @@
                 </div>
 
                 <div class="flex-grow bg-slate-950 p-2 rounded-lg">
-                    <!-- crud.panels as panel div -->
+                    <!-- CRUD main panels -->
                     <div class="border border-dotted border-slate-600 rounded-md p-4" v-for="panel in crud.panels" :key="panel.id">
-                        <h1 class="font-bold text-lg text-slate-500 mb-4">{{ panel.title }}</h1>
+                        <h1 class="font-bold text-lg text-slate-500 mb-4">CRUD Inputs</h1>
 
                         <div class="space-y-1">
                             <div class="p-1 border border-dotted rounded border-transparent hover:border-slate-700 cursor-pointer" v-for="input in panel.inputs" :key="panel.id">
@@ -63,6 +63,15 @@
                                     disabled
                                 />
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Has Many Details -->
+                    <div class="border border-dotted border-slate-600 rounded-md p-4" v-for="detail in crud.hasManyDetails" :key="detail.id">
+                        <h1 class="font-bold text-lg text-slate-500 mb-4">Has Many Detail: {{ detail.detailCrud.settings.collectionTitle }}</h1>
+
+                        <div class="space-y-1">
+                            This is a Has Many Detail
                         </div>
                     </div>
                 </div>

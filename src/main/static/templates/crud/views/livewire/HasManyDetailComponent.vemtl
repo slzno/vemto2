@@ -15,7 +15,7 @@
 <% const detailCrudModel = detailCrud.model %>
 <% const modelName = detailCrudModel.name %>
 <% const itemVarName = camelCase(detailCrud.name) %>
-<% const collectionVarName = camelCase(detailCrud.plural) %>
+<% const collectionVarName = 'detail' + pascalCase(detailCrud.plural) %>
 
 namespace <$ detailCrud.livewireNamespace $>;
 

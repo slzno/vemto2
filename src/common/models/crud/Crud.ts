@@ -86,7 +86,7 @@ export default class Crud extends RelaDB.Model {
         return !! this.defaultSortColumn
     }
 
-    static createFromModel(model: Model, excludedColumns: Column[] = []) {
+    static createFromModel(model: Model, excludedColumns: Column[] = [], generateDetails: boolean = false) {
         const defaultSearchColumn = model.table.getLabelColumn()
 
         const defaultSortColumn = model.table.getUpdatedAtColumn() 
@@ -118,7 +118,9 @@ export default class Crud extends RelaDB.Model {
         crud.addRoutes()
         crud.addNavs()
 
-        crud.addHasManyDetails()
+        if(generateDetails) {
+            crud.addHasManyDetails()
+        }
 
         return crud
     }
