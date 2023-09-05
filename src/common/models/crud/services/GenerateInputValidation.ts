@@ -78,6 +78,10 @@ export default class GenerateInputValidation {
             rules.push(`min:${this.input.min}`)
         }
 
+        if(this.input.isDateOrDateTime()) {
+            rules.push('date')
+        }
+
         if(type === ValidationRuleType.UPDATE) {
             rules = this.treatUpdateRules(rules)
         }

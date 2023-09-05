@@ -94,6 +94,7 @@ export default class InputSettingsList {
                 disablePlaceholder: true,
                 disableMax: true,
                 disableMin: true,
+                allowsItems: true,
             },
             radioGroup: {
                 name: "Radio",
@@ -101,6 +102,7 @@ export default class InputSettingsList {
                 disablePlaceholder: true,
                 disableMax: true,
                 disableMin: true,
+                allowsItems: true
             },
             url: {
                 name: "Url",

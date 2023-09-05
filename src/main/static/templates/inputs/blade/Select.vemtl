@@ -12,7 +12,7 @@
 <div class="vtheme(crud.form.input.group)">
     <x-ui.label for="<$ input.name $>"><$ input.label $></x-ui.label>
     <x-ui.input.select
-        wire:model="<$ input.getNewPropertyName() $>"
+        wire:model="<$ itemVarName $>.<$ input.column.name $>"
         class="vtheme(crud.form.input.extra)" id="<$ input.name $>" name="<$ input.name $>">
         <# Select options #>
         <% if(input.isBelongsTo()) { %>

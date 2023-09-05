@@ -80,12 +80,13 @@ export default class Input extends RelaDB.Model {
         input.showOnDetails = true
         input.showOnIndex = true
 
-        if (!forceType) {
-            input.calculateType(column)
-        } else {
+        input.calculateType(column)
+
+        if (forceType) {
             input.type = forceType
         }
 
+        input.generateColumnParities()
         input.generateValidationRules()
 
         return input
@@ -171,6 +172,20 @@ export default class Input extends RelaDB.Model {
         this.updateRules = validationGenerator.get(ValidationRuleType.UPDATE)
     }
 
+    generateColumnParities() {
+        if (this.type === InputType.NUMBER) {
+            this.step = 1
+        }
+
+        if(['set', 'enum'].includes(this.column.type)) {
+            const options = this.column.options
+
+            if(options && Array.isArray(options)) {
+                options.forEach(option => this.items.push({ value: option, label: changeCase.capitalCase(option), }))
+            }
+        }
+    }
+
     getCreationRulesForTemplate() {
         return this.getRulesForTemplate(this.creationRules)
     }
@@ -215,6 +230,10 @@ export default class Input extends RelaDB.Model {
         return typeSettings && typeSettings.hasStep
     }
 
+    isDateOrDateTime() {
+        return [InputType.DATE, InputType.DATETIME].includes(this.type)
+    }
+
     getRulesForTemplate(rules: InputValidationRule[]) {
         const templateRules = rules.map((rule) => {
             if (rule.type === InputValidationRuleType.CODE) {
@@ -232,6 +251,7 @@ export default class Input extends RelaDB.Model {
     }
 
     getTemplate() {
+        console.log(this.name, this.type, changeCase.pascalCase(this.type))
         return `inputs/blade/${changeCase.pascalCase(this.type)}.vemtl`
     }
 }

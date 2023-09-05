@@ -94,7 +94,7 @@
                                 <UiNumber v-model="input.step" placeholder="Input Step" label="Step" @input="saveInput()" />
                             </div>
 
-                            <div v-if="input.allowsItems">
+                            <div v-if="input.allowsItems()">
                                 <label class="text-xs text-slate-400">Items</label>
 
                                 <div class="max-h-[300px] overflow-y-auto">

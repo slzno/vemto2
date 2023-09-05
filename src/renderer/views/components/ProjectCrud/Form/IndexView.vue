@@ -80,7 +80,7 @@
         showingCreateInputModal.value = true
         needsSelectRelationship.value = inputType == changeCase.pascalCase(InputType.BELONGS_TO)
 
-        newInputData.value.type = inputType
+        newInputData.value.type = inputType as InputType
     }
 
     const findNewInputColumn = () => {
@@ -108,7 +108,7 @@
             return Alert.error('Please, select a relationship to create the input')
         }
 
-        const input = Input.createFromColumn(crud.value, column, type)
+        const input = Input.createFromColumn(crud.value, column, type as InputType)
 
         if(needsSelectRelationship.value) {
             input.relationshipId = relationshipId
