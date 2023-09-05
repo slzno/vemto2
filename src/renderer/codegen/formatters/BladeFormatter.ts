@@ -17,14 +17,14 @@ class BladeFormatter extends BaseFormatter {
 
     async format() {
         return this.content
-        
-        this.removeProblematicSections()
 
-        this.formatWithPrettierHtmlParser()
+        // this.removeProblematicSections()
 
-        this.addProblematicSectionsAgain()
+        // this.formatWithPrettierHtmlParser()
 
-        return this.content
+        // this.addProblematicSectionsAgain()
+
+        // return this.content
     }
 
     removeProblematicSections() {
