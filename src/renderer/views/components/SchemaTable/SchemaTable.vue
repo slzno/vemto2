@@ -45,7 +45,7 @@
 
         setTimeout(() => {
             clickedQuickly = false
-        }, 200)
+        }, 300)
     }
 
     const endClick = () => {
@@ -55,10 +55,10 @@
 
         setTimeout(() => {
             if(isRemoving) return
-
+            
             selected.value = true
             showingOptions.value = true
-        }, 100);
+        }, 50);
     }
 
     const tableOptionsClosed = () => {
@@ -71,8 +71,8 @@
     <TableOptions ref="tableOptionsWindow" :table="table" :show="showingOptions && table" @close="tableOptionsClosed()" />
 
     <div
-        @mousedown.stop.prevent="startClick()"
-        @mouseup.stop.prevent="endClick()"
+        @mousedown="startClick()"
+        @mouseup="endClick()"
         :id="`table_${table.id}`"
         :ref="`table_${table.id}`"
         :data-table-id="table.id"
