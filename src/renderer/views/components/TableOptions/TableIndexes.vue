@@ -10,11 +10,14 @@
     import { PlusCircleIcon, EllipsisVerticalIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import Main from "@Renderer/services/wrappers/Main"
     import { uniq } from 'lodash'
+import UiButton from '@Renderer/components/ui/UiButton.vue'
 
     const props = defineProps(['table']),
         table = toRef(props, 'table'),
         tableIndexes = ref([]),
         showIndexOption = ref(null)
+
+    const onDevelopment = Main.API.onDevelopment()
 
     const getForSelect = (
         collection: any,
@@ -113,6 +116,10 @@
     onMounted(() => {
         tableIndexes.value = props.table.getIndexes()
     })
+
+    const log = (index: Index) => {
+        console.log(index)
+    }
 </script>
 <template>
     <div>
@@ -127,6 +134,9 @@
                 'border-blue-400': index.isCommon(),
             }"
         >
+            <div class="mt-4" v-if="onDevelopment">
+                <UiButton @click="log(index)">Log details</UiButton>
+            </div>
             <div class="flex gap-2 mb-2">
                 <div class="w-[10rem]">
                     <UiDropdownSelect
@@ -215,7 +225,7 @@
     >
         <div class="flex items-center">
             <PlusCircleIcon class="w-8 h-8" />
-            <span class="px-1.5">Add Index</span>
+            <span class="px-1.5">Add index</span>
         </div>
     </section>
 </template>

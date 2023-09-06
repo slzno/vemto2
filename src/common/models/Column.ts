@@ -1,7 +1,6 @@
 import Table from './Table'
 import Input from './crud/Input'
 import ColumnData from './data/ColumnData'
-import RelaDB from '@tiago_silva_pereira/reladb'
 import DataComparator from './services/DataComparator'
 import TableColumnChanged from '@Common/events/TableColumnChanged'
 import TableColumnCreated from '@Common/events/TableColumnCreated'
@@ -10,8 +9,9 @@ import DataComparisonLogger from './services/DataComparisonLogger'
 import Model from './Model'
 import ColumnsDefaultDataList, { ColumnDefaultData } from './column-types/default/ColumnsDefaultDataList'
 import Relationship from './Relationship'
+import AbstractSchemaModel from './composition/AbstractSchemaModel'
 
-export default class Column extends RelaDB.Model implements SchemaModel {
+export default class Column extends AbstractSchemaModel implements SchemaModel {
     id: string
     name: string
     type: string
@@ -224,6 +224,10 @@ export default class Column extends RelaDB.Model implements SchemaModel {
         return !! this.index
     }
 
+    isDirty(): boolean {
+        return this.hasLocalChanges()
+    }
+
     hasLocalChanges(): boolean {
         if(!this.schemaState) return false
 
@@ -243,22 +247,6 @@ export default class Column extends RelaDB.Model implements SchemaModel {
         const dataComparisonMap = this.dataComparisonMap(comparisonData)
 
         return Object.keys(dataComparisonMap).some(key => dataComparisonMap[key])
-    }
-
-    dataComparisonMap(comparisonData: any): any {
-        return {
-            name: DataComparator.stringsAreDifferent(this.schemaState.name, comparisonData.name),
-            type: DataComparator.stringsAreDifferent(this.schemaState.type, comparisonData.type),
-            length: DataComparator.numbersAreDifferent(this.schemaState.length, comparisonData.length),
-            nullable: DataComparator.booleansAreDifferent(this.schemaState.nullable, comparisonData.nullable),
-            autoIncrement: DataComparator.booleansAreDifferent(this.schemaState.autoIncrement, comparisonData.autoIncrement),
-            unsigned: DataComparator.booleansAreDifferent(this.schemaState.unsigned, comparisonData.unsigned),
-            index: DataComparator.booleansAreDifferent(this.schemaState.index, comparisonData.index),
-            unique: DataComparator.booleansAreDifferent(this.schemaState.unique, comparisonData.unique),
-            default: DataComparator.stringsAreDifferent(this.schemaState.default, comparisonData.default),
-            total: DataComparator.numbersAreDifferent(this.schemaState.total, comparisonData.total),
-            places: DataComparator.numbersAreDifferent(this.schemaState.places, comparisonData.places),
-        }
     }
 
     applyChanges(data: any): boolean {
@@ -294,6 +282,12 @@ export default class Column extends RelaDB.Model implements SchemaModel {
         this.schemaState = this.buildSchemaState()
     }
 
+    /**
+     * The next two methods (buildSchemaState and dataComparisonMap) are extremely 
+     * important to keep the state of the schema,
+     * and both need to reflect the same data structure to avoid false positives when
+     * comparing the data between the schema state and the current state.
+     */
     buildSchemaState() {
         return {
             name: this.name,
@@ -308,6 +302,35 @@ export default class Column extends RelaDB.Model implements SchemaModel {
             total: this.total,
             places: this.places
         }
+    }
+
+    dataComparisonMap(comparisonData: any): any {
+        return {
+            name: DataComparator.stringsAreDifferent(this.schemaState.name, comparisonData.name),
+            type: DataComparator.stringsAreDifferent(this.schemaState.type, comparisonData.type),
+            length: DataComparator.numbersAreDifferent(this.schemaState.length, comparisonData.length),
+            nullable: DataComparator.booleansAreDifferent(this.schemaState.nullable, comparisonData.nullable),
+            autoIncrement: DataComparator.booleansAreDifferent(this.schemaState.autoIncrement, comparisonData.autoIncrement),
+            unsigned: DataComparator.booleansAreDifferent(this.schemaState.unsigned, comparisonData.unsigned),
+            index: DataComparator.booleansAreDifferent(this.schemaState.index, comparisonData.index),
+            unique: DataComparator.booleansAreDifferent(this.schemaState.unique, comparisonData.unique),
+            default: DataComparator.stringsAreDifferent(this.schemaState.default, comparisonData.default),
+            total: DataComparator.numbersAreDifferent(this.schemaState.total, comparisonData.total),
+            places: DataComparator.numbersAreDifferent(this.schemaState.places, comparisonData.places),
+        }
+    }
+
+    /**
+     * The following method defines propertis that cannot be touched by the application without
+     * enabling the isSavingInternally flag. It prevents the application from saving data
+     * that is not supposed to be saved. The schemaState property is always protected when isSavingInternally
+     * is disabled, even if the property is not defined here. The main reason for this is that some properties
+     * can only be changed when reading the schema state from the application code, and never from the Vemto's
+     * interface.
+     * @returns {string[]}
+     */
+    static nonTouchableProperties(): string[] {
+        return []
     }
 
     isNew(): boolean {

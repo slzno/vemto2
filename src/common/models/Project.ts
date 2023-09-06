@@ -12,6 +12,7 @@ import RenderableFile, {
 } from "./RenderableFile"
 import GenerateBasicProjectData from "./services/project/GenerateBasicProjectData"
 import AppSection from "./AppSection"
+import CalculateSchemaChanges from "./services/project/CalculateSchemaChanges"
 
 export default class Project extends RelaDB.Model {
     id: string
@@ -156,9 +157,9 @@ export default class Project extends RelaDB.Model {
     }
 
     hasSchemaChanges(): boolean {
-        if (!this.changedTablesIds) return false
-
-        return this.changedTablesIds.length > 0
+        const changesCalculator = new CalculateSchemaChanges(this)
+        
+        return changesCalculator.hasChanges()
     }
 
     getChangedTables(): Table[] {

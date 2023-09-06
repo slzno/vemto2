@@ -107,7 +107,9 @@ class ModelsFromSchemaBuilder {
                 model = modelsKeyedByClass[modelData.class]
             }
 
+            Model.savingInternally()
             model.applyChanges(modelData)
+            Model.notSavingInternally()
 
             this.readRelationships(modelData, model)
         })
@@ -140,8 +142,10 @@ class ModelsFromSchemaBuilder {
             
             relationship.projectId = this.project.id
 
+            Relationship.savingInternally()
             relationship.applyChanges(relationshipData)
             relationship.fillRelationshipKeys()
+            Relationship.notSavingInternally()
 
             this.changedRelationships.push(relationship)
         })

@@ -87,7 +87,7 @@
     }
 
     const log = (column: Column) => {
-        console.log(column.getFirstBelongsToRelationship().model.name)
+        console.log(column.getFirstBelongsToRelation().model.name)
     }
 </script>
 

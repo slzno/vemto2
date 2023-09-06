@@ -7,14 +7,19 @@
     import { onMounted, reactive, ref, watch } from "vue"
     import GenerateNewMigration from "@Renderer/codegen/generators/GenerateNewMigration"
     import UpdateExistingMigration from "@Renderer/codegen/generators/UpdateExistingMigration"
+    import CalculateSchemaChanges from "@Common/models/services/project/CalculateSchemaChanges"
 
     const projectStore = useProjectStore(),
         showingModal = ref(false),
         tablesSettings = reactive({} as any)
         // selectedTable = ref("")
 
+    const changesCalculator = new CalculateSchemaChanges(projectStore.project)
+
     onMounted(() => {
         buildTablesSettings()
+
+        console.log(changesCalculator.calculate())
     })
 
     watch(showingModal, (willShowModal) => {

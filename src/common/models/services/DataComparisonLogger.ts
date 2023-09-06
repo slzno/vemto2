@@ -48,6 +48,7 @@ class DataComparisonLogger {
         let columns = []
 
         for(let key in this.completeSchemaState) {
+            console.log(key)
             columns.push({
                 "Key": key,
                 "Schema": this.schemaState[key],
