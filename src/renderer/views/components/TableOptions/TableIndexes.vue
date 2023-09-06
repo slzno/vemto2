@@ -9,8 +9,7 @@
     import debounce from '@Renderer/../common/tools/debounce'
     import { PlusCircleIcon, EllipsisVerticalIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import Main from "@Renderer/services/wrappers/Main"
-    import { uniq } from 'lodash'
-import UiButton from '@Renderer/components/ui/UiButton.vue'
+    import UiButton from '@Renderer/components/ui/UiButton.vue'
 
     const props = defineProps(['table']),
         table = toRef(props, 'table'),
@@ -53,28 +52,10 @@ import UiButton from '@Renderer/components/ui/UiButton.vue'
         return getForSelect(index.onTable.getColumns())
     }
 
-    const saveRelationshipProperty = (index: Index, selectValue: Array<Object>, modelPropertyName: string, modelPropertyRelationship: string): void => {
-        const columnNames = selectValue.map((item: any) => item.value),
-            uniqueColumnNames = uniq(columnNames.concat(index[modelPropertyName]))
+    const saveIndexColumns = (index: Index, selectValue: Array<Object>): void => {
+        const columnsNames = selectValue.map((item: any) => item.value)
 
-        uniqueColumnNames.forEach((columnName: string) => {
-            const column = index.table.getColumnByName(columnName)
-
-            if(!column) return
-
-            if(columnNames.includes(columnName)) {
-                index.relation(modelPropertyRelationship).attachUnique(column)
-                return
-            }
-
-            index.relation(modelPropertyRelationship).detach(column)
-            uniqueColumnNames.splice(uniqueColumnNames.indexOf(columnName), 1)
-        })
-
-        index[modelPropertyName] = uniqueColumnNames.filter((columnName: string) => !! columnName)
-    
-        index.name = index.calculateDefaultName()
-        saveIndex(index)
+        index.updateColumns(columnsNames)
     }
 
     const onEscapePressed = (index: Index) => {
@@ -192,7 +173,7 @@ import UiButton from '@Renderer/components/ui/UiButton.vue'
                     inputLabel="Columns"
                     :default-value="getSelectDataForLayout(index.indexColumns)"
                     :options="getSelectDataForLayout(index.table.getColumns())"
-                    @change="$event => saveRelationshipProperty(index, $event, 'columns', 'indexColumns')"
+                    @change="$event => saveIndexColumns(index, $event)"
                 />
             </div>
     

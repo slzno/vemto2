@@ -7,6 +7,8 @@ import FillIndexColumns from "./services/indexes/Fillers/FillIndexColumns"
 import WordManipulator from "@Common/util/WordManipulator"
 import AbstractSchemaModel from "./composition/AbstractSchemaModel"
 
+import { uniq } from 'lodash'
+
 export default class Index extends AbstractSchemaModel implements SchemaModel {
     id: string
 
@@ -314,5 +316,29 @@ export default class Index extends AbstractSchemaModel implements SchemaModel {
         oldIndex.tableId = this.tableId
 
         return oldIndex
+    }
+
+    updateColumns(columnsNames: string[]) {
+        const uniqueColumnNames = uniq(columnsNames.concat(this.columns))
+
+        uniqueColumnNames.forEach((columnName: string) => {
+            const column = this.table.getColumnByName(columnName)
+
+            if(!column) return
+
+            if(columnsNames.includes(columnName)) {
+                this.relation('indexColumns').attachUnique(column)
+                return
+            }
+
+            this.relation('indexColumns').detach(column)
+            uniqueColumnNames.splice(uniqueColumnNames.indexOf(columnName), 1)
+        })
+
+        this.columns = uniqueColumnNames.filter((columnName: string) => !! columnName)
+    
+        this.name = this.calculateDefaultName()
+
+        this.save()
     }
 }
