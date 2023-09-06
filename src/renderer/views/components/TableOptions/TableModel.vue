@@ -10,7 +10,10 @@
     import Column from "@Renderer/../common/models/Column"
     import TableModelRelationships from './TableModelRelationships.vue'
     import { uniq } from 'lodash'
-import UiWarning from "@Renderer/components/ui/UiWarning.vue"
+    import UiWarning from "@Renderer/components/ui/UiWarning.vue"
+import UiButton from "@Renderer/components/ui/UiButton.vue"
+
+    const onDevelopment = Main.API.onDevelopment()
 
     const props = defineProps({
         model: {
@@ -32,8 +35,8 @@ import UiWarning from "@Renderer/components/ui/UiWarning.vue"
         models.value = project.models
     })
 
-    const saveModelData = debounce((isNameChange: boolean) => {
-        if(isNameChange) {
+    const saveModelData = debounce((nameWasChanged: boolean) => {
+        if(nameWasChanged) {
             model.value.calculateDataByName()
         }
         
@@ -65,27 +68,16 @@ import UiWarning from "@Renderer/components/ui/UiWarning.vue"
         })
     }
 
-    const saveModelMassAssignmentProperty = (selectValue: Array<Object>, modelPropertyName: string, modelPropertyRelationship: string): void => {
-        const columnNames = selectValue.map((item: any) => item.value),
-            uniqueColumnNames = uniq(columnNames.concat(model.value[modelPropertyName]))
+    const saveFillableColumns= (selectValue: Array<Object>): void => {
+        const columnsNames = selectValue.map((item: any) => item.value)
 
-        uniqueColumnNames.forEach((columnName: string) => {
-            const column = model.value.table.getColumnByName(columnName)
+        model.value.saveFillableColumns(columnsNames)
+    }
 
-            if(!column) return
+    const saveGuardedColumns = (selectValue: Array<Object>): void => {
+        const columnsNames = selectValue.map((item: any) => item.value)
 
-            if(columnNames.includes(columnName)) {
-                model.value.relation(modelPropertyRelationship).attachUnique(column)
-                return
-            }
-
-            model.value.relation(modelPropertyRelationship).detach(column)
-            uniqueColumnNames.splice(uniqueColumnNames.indexOf(columnName), 1)
-        })
-
-        model.value[modelPropertyName] = uniqueColumnNames
-
-        saveModelData()
+        model.value.saveGuardedColumns(columnsNames)
     }
 
     const deleteModel = (): void => {
@@ -95,6 +87,10 @@ import UiWarning from "@Renderer/components/ui/UiWarning.vue"
             model.value.remove()
             emit('removeModel')
         })
+    }
+
+    const log = (data: any): void => {
+        console.log(data)
     }
 </script>
 
@@ -164,7 +160,7 @@ import UiWarning from "@Renderer/components/ui/UiWarning.vue"
                     <UiMultiSelect
                         inputLabel="Guarded"
                         :default-value="getSelectDataForLayout(model.guardedColumns)"
-                        @change="$event => saveModelMassAssignmentProperty($event, 'guarded', 'guardedColumns')"
+                        @change="$event => saveGuardedColumns($event)"
                         :options="getSelectDataForLayout(model.table.getColumns())"
                     />
                 </div>
@@ -183,7 +179,7 @@ import UiWarning from "@Renderer/components/ui/UiWarning.vue"
                     <UiMultiSelect
                         inputLabel="Fillable"
                         :default-value="getSelectDataForLayout(model.fillableColumns)"
-                        @change="$event => saveModelMassAssignmentProperty($event, 'fillable', 'fillableColumns')"
+                        @change="$event => saveFillableColumns($event)"
                         :options="getSelectDataForLayout(model.table.getColumns())"
                     />
                 </div>
@@ -193,6 +189,10 @@ import UiWarning from "@Renderer/components/ui/UiWarning.vue"
                 :model="model"
                 :models="models"
             />
+
+            <div class="mt-4" v-if="onDevelopment">
+                <UiButton @click="log(model)">Log details</UiButton>
+            </div>
         </div>
     </div>
 </template>

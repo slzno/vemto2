@@ -12,6 +12,8 @@ import FillFillableColumns from "./services/models/Fillers/FillFillableColumns"
 import FillGuardedColumns from "./services/models/Fillers/FillGuardedColumns"
 import AbstractSchemaModel from "./composition/AbstractSchemaModel"
 
+import { uniq } from 'lodash'
+
 export default class Model extends AbstractSchemaModel implements SchemaModel {
     id: string
     name: string
@@ -417,5 +419,39 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         }
 
         return `All${modelNamePlural}`
+    }
+
+    saveFillableColumns(columnsNames: string[]): void {
+        this.saveColumnsProperty(columnsNames, 'fillable', 'fillableColumns')
+    }
+
+    saveGuardedColumns(columnsNames: string[]): void {
+        this.saveColumnsProperty(columnsNames, 'guarded', 'guardedColumns')
+    }
+
+    saveColumnsProperty(
+        columnsNames: string[], 
+        type: string, 
+        relationshipName: string
+    ): void {
+        const uniqueColumnNames = uniq(columnsNames.concat(this[type]))
+
+        uniqueColumnNames.forEach((columnName: string) => {
+            const column = this.table.getColumnByName(columnName)
+
+            if(!column) return
+
+            if(columnsNames.includes(columnName)) {
+                this.relation(relationshipName).attachUnique(column)
+                return
+            }
+
+            this.relation(relationshipName).detach(column)
+            uniqueColumnNames.splice(uniqueColumnNames.indexOf(columnName), 1)
+        })
+
+        this[type] = uniqueColumnNames.filter((columnName: string) => !! columnName)
+
+        this.save()
     }
 }
