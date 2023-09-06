@@ -11,7 +11,7 @@
     import TableModelRelationships from './TableModelRelationships.vue'
     import { uniq } from 'lodash'
     import UiWarning from "@Renderer/components/ui/UiWarning.vue"
-import UiButton from "@Renderer/components/ui/UiButton.vue"
+    import UiButton from "@Renderer/components/ui/UiButton.vue"
 
     const onDevelopment = Main.API.onDevelopment()
 
