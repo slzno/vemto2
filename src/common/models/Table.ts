@@ -384,6 +384,8 @@ export default class Table extends RelaDB.Model implements SchemaModel {
     }
 
     getCreationMigration(): any {
+        if(!this.hasMigrations()) return null
+
         return this.migrations.find((migration) => migration.createdTables.includes(this.name))
     }
 

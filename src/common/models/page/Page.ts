@@ -52,6 +52,10 @@ export default class Page extends RelaDB.Model {
         return this.name
     }
 
+    getAppSubType(): string {
+        return this.getAppType()
+    }
+
     getAppType(): string {
         return "Page"
     }

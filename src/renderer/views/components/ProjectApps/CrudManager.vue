@@ -29,7 +29,14 @@
     watch(selectedModelId, modelChanged)
 
     const save = () => {
-        Crud.createFromModel(selectedModel.value)
+        const excludedColumns = [],
+            generateDetails = true
+
+        Crud.createFromModel(
+            selectedModel.value, 
+            excludedColumns, 
+            generateDetails
+        )
 
         close()
     }

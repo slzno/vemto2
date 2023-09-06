@@ -84,7 +84,8 @@
 
 <template>
     <div
-        class="absolute bottom-0 left-0 p-4 z-50"
+        class="absolute bottom-0 left-0 p-4"
+        style="z-index: 60;"
         v-if="projectStore.project.hasChangedTables()"
     >
         <div class="flex flex-col space-y-2 bg-slate-850 border border-slate-700 p-3 rounded-lg">

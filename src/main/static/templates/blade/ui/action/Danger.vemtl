@@ -1,0 +1,3 @@
+<a {!! $attributes->merge(['class' => 'vtheme(crud.action-link-danger)']) !!}>
+    {{ $slot }}
+</a>

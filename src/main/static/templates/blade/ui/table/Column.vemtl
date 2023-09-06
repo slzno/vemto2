@@ -5,12 +5,12 @@
 @php
 $allClasses = [
     'vtheme(table.head.col)' => true,
-    'vtheme(crud.table.head.col.extra)' => $forCrud,
+    'vtheme(crud.table.body.col.extra)' => $forCrud,
 ];
 
 $classes = join(' ', array_keys(array_filter($allClasses)));
 @endphp
 
-<th {!! $attributes->merge(['class' => $classes]) !!}>
+<td {!! $attributes->merge(['class' => 'vtheme(table.body.col)']) !!}>
     {{ $slot }}
-</th>
+</td>

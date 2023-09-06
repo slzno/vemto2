@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { defineProps, onMounted, ref } from "vue"
+    import { defineProps, onMounted, ref, watch } from "vue"
     import Main from "@Renderer/services/wrappers/Main"
     import TextUtil from "@Renderer/../common/util/TextUtil"
     import { DocumentMagnifyingGlassIcon } from "@heroicons/vue/24/outline"
@@ -37,6 +37,18 @@
     })
 
     onMounted(async () => {
+        renderError()
+    })
+
+    watch(() => props.errorLine, () => {
+        renderError()
+    })
+
+    watch(() => props.errorMessage, () => {
+        renderError()
+    })
+
+    const renderError = async () => {
         templateContent.value = await Main.API.readTemplateFile(props.template)
 
         templateLines.value = templateContent.value.split("\n")
@@ -46,7 +58,7 @@
             props.errorLine,
             props.lines
         )
-    })
+    }
 </script>
 
 <template>

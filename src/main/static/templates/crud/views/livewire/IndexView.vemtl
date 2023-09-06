@@ -4,7 +4,9 @@
 <% const modelName = crud.model.name %>
 <% const colspanSize = crud.inputs.length + 1 %>
 <% const camelCase = this.require('camelCase') %>
+<% const pascalCase = this.require('pascalCase') %>
 <% const itemVarName = camelCase(crud.model.name) %>
+<% const deletingItemVarName = `deleting${pascalCase(itemVarName)}` %>
 <% const viewsFolderName = camelCase(crud.model.plural) %>
 <% const collectionVarName = camelCase(crud.model.plural) %>
 <# --- #>
@@ -23,36 +25,55 @@
         </a>
     </div>
 
+    {{-- Delete Modal --}}
+    <x-ui.modal.confirm wire:model="confirmingDeletion">
+        <x-slot name="title">
+            {{ __('Delete') }}
+        </x-slot>
+
+        <x-slot name="content">
+            {{ __('Are you sure?') }}
+        </x-slot>
+    
+        <x-slot name="footer">
+            <x-ui.button wire:click="$toggle('confirmingDeletion')" wire:loading.attr="disabled">
+                {{ __('Cancel') }}
+            </x-ui.button>
+    
+            <x-ui.button.danger class="ml-3" wire:click="delete({{ $<$ deletingItemVarName $> }})" wire:loading.attr="disabled">
+                {{ __('Delete') }}
+            </x-ui.button.danger>
+        </x-slot>
+    </x-ui.modal.confirm>
+
+    {{-- Index Table --}}
     <x-ui.container.table>
-        <div class="vtheme(table.container)">
-            <table class="vtheme(table)">
-                <thead class="vtheme(table.head)">
-                    <tr class="vtheme(table.head.row)">
-                        <% for (let input of crud.inputs) { %>
-                            <th class="vtheme(table.head.col) vtheme(crud.table.head.col.extra)" wire:click="sortBy('<$ input.column.name $>')"><$ input.label $></th>
-                        <% } %>
-                        <th class="vtheme(crud.table.head.action-col)">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="vtheme(table.body)">
-                    @forelse ($<$ collectionVarName $> as $<$ itemVarName $>)
-                    <tr class="vtheme(table.body.row)" wire:loading.class.delay="vtheme(default.delay)">
-                        <% for (let input of crud.inputs) { %>
-                            <td class="vtheme(table.body.col) vtheme(crud.table.body.col.extra)">{{ $<$ itemVarName $>-><$ input.column.name $> }}</td>
-                        <% } %>
-                        <td class="vtheme(crud.table.body.action-col)">
-                            <a class="vtheme(crud.action-link)" href="{{ route('<$ crud.getRouteNameByTag('edit') $>', $<$ itemVarName $>) }}">Edit</a>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr class="vtheme(table.body.row)">
-                        <td class="vtheme(table.body.col)" colspan="<$ colspanSize $>">No <$ crud.settings.collectionTitle $> found.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-            
-        </div>
+        <x-ui.table>
+            <x-slot name="head">
+                <% for (let input of crud.inputs) { %>
+                    <x-ui.table.header for-crud wire:click="sortBy('<$ input.column.name $>')"><$ input.label $></x-ui.table.header>
+                <% } %>
+                <x-ui.table.action-header>Actions</x-ui.table.action-header>
+            </x-slot>
+
+            <x-slot name="body">
+                @forelse ($<$ collectionVarName $> as $<$ itemVarName $>)
+                <x-ui.table.row wire:loading.class.delay="vtheme(default.delay)">
+                    <% for (let input of crud.inputs) { %>
+                        <x-ui.table.column for-crud>{{ $<$ itemVarName $>-><$ input.column.name $> }}</x-ui.table.column>
+                    <% } %>
+                    <x-ui.table.action-column>
+                        <x-ui.action href="{{ route('<$ crud.getRouteNameByTag('edit') $>', $<$ itemVarName $>) }}">Edit</x-ui.action>
+                        <x-ui.action.danger wire:click="confirmDeletion({{ $<$ itemVarName $>->id }})">Delete</x-ui.action.danger>
+                    </x-ui.table.action-column>
+                </x-ui.table.row>
+                @empty
+                <x-ui.table.row>
+                    <x-ui.table.column colspan="<$ colspanSize $>">No <$ crud.settings.collectionTitle $> found.</x-ui.table.column>
+                </x-ui.table.row>
+                @endforelse
+            </x-slot>
+        </x-ui.table>
         
         <div class="vtheme(crud.pagination.container)">
             {{ $<$ collectionVarName $>->links() }}

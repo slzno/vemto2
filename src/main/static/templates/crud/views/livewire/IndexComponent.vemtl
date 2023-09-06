@@ -1,9 +1,13 @@
 <?php
 
 <% const crud = this.crud %>
-<% const modelName = crud.model.name %>
+<% const model = this.crud.model %>
+<% const modelName = model.name %>
 <% const camelCase = this.require('camelCase') %>
+<% const pascalCase = this.require('pascalCase') %>
 <% const paramCase = this.require('paramCase') %>
+<% const itemVarName = camelCase(crud.name) %>
+<% const deletingItemVarName = `deleting${pascalCase(itemVarName)}` %>
 <% const collectionVarName = camelCase(crud.plural) %>
 <% const viewsFolderName = `${crud.section.getFolderName()}.${paramCase(crud.plural)}` %>
 
@@ -12,7 +16,7 @@ namespace <$ crud.livewireNamespace $>;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\<$ modelName $>;
- 
+
 class <$ this.filenameWithoutExtension $> extends Component
 {
     use WithPagination;
@@ -27,9 +31,26 @@ class <$ this.filenameWithoutExtension $> extends Component
 
     public $queryString = ['search', 'sortField', 'sortDirection'];
 
+    public $confirmingDeletion = false;
+    public $<$ deletingItemVarName $>;
+
     public function updatingSearch()
     {
         $this->resetPage();
+    }
+
+    public function confirmDeletion(string $<$ model.table.getPrimaryKeyName() $>)
+    {
+        $this-><$ deletingItemVarName $> = $<$ model.table.getPrimaryKeyName() $>;
+
+        $this->confirmingDeletion = true;
+    }
+
+    public function delete(<$ modelName $> $<$ itemVarName $>)
+    {
+        $<$ itemVarName $>->delete();
+
+        $this->confirmingDeletion = false;
     }
 
     public function sortBy($field)

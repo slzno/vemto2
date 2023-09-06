@@ -302,6 +302,18 @@ export default class Model extends RelaDB.Model implements SchemaModel {
         return !!this.removed
     }
 
+    hasHasManyRelations(): boolean {
+        return this.getHasManyRelations().length > 0
+    }
+
+    getFirstBelongsToRelation(): Relationship {
+        return this.getHasManyRelations()[0]
+    }
+
+    getHasManyRelations(): Relationship[] {
+        return this.ownRelationships.filter(relationship => relationship.type === 'HasMany') || []
+    }
+
     getRelationshipsNames(): string[] {
         return this.ownRelationships.map((relationship) => relationship.name)
     }

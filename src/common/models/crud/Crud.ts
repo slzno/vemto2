@@ -8,6 +8,7 @@ import Column from "@Common/models/Column"
 import Project from "@Common/models/Project"
 import RelaDB from "@tiago_silva_pereira/reladb"
 import AppSection from "../AppSection"
+import HasManyDetail from "./HasManyDetail"
 
 export enum CrudType {
     DEFAULT = "Default",
@@ -42,6 +43,9 @@ export default class Crud extends RelaDB.Model {
     routes: Route[]
     navs: Nav[]
     hooks: any
+    hasManyDetails: HasManyDetail[]
+    detailHasManyDetails: HasManyDetail[]
+    isHasManyDetail: boolean
 
     // Livewire specific
     livewireNamespace: string
@@ -61,7 +65,17 @@ export default class Crud extends RelaDB.Model {
             routes: () => this.morphMany(Route, "routable").cascadeDelete(),
             defaultSearchColumn: () => this.belongsTo(Column, "defaultSearchColumnId"),
             defaultSortColumn: () => this.belongsTo(Column, "defaultSortColumnId"),
+            hasManyDetails: () => this.hasMany(HasManyDetail).cascadeDelete(),
+            detailHasManyDetails: () => this.hasMany(HasManyDetail, "detailCrudId").cascadeDelete(),
         }
+    }
+
+    static getBasic() {
+        return Crud.get().filter((crud) => crud.isBasic())
+    }
+
+    isBasic() {
+        return !this.isHasManyDetail
     }
 
     hasDefaultSearchColumn(): boolean {
@@ -72,7 +86,7 @@ export default class Crud extends RelaDB.Model {
         return !! this.defaultSortColumn
     }
 
-    static createFromModel(model: Model) {
+    static createFromModel(model: Model, excludedColumns: Column[] = [], generateDetails: boolean = false) {
         const defaultSearchColumn = model.table.getLabelColumn()
 
         const defaultSortColumn = model.table.getUpdatedAtColumn() 
@@ -100,13 +114,25 @@ export default class Crud extends RelaDB.Model {
 
         crud.save()
 
-        crud.addInputsFromModel(model)
+        crud.addInputsFromModel(model, excludedColumns)
         crud.addRoutes()
         crud.addNavs()
+
+        if(generateDetails) {
+            crud.addHasManyDetails()
+        }
+
+        return crud
     }
 
     getLabel(): string {
         return this.settings.collectionTitle
+    }
+
+    getAppSubType(): string {
+        if(this.isHasManyDetail) return 'Has Many Detail'
+
+        return this.getAppType()
     }
 
     getAppType(): string {
@@ -148,14 +174,17 @@ export default class Crud extends RelaDB.Model {
         this.livewireEditComponentName = `${pascalCase(this.name)}Edit`
     }
 
-    addInputsFromModel(model: Model) {
+    addInputsFromModel(model: Model, excludedColumns: Column[] = []) {
         const panel = new CrudPanel()
         panel.title = 'Main'
         panel.crudId = this.id
         panel.order = 0
         panel.save()
 
+        const excludedColumnsIds = excludedColumns.map((column) => column.id)
+
         model.table.getColumns().forEach((column) => {
+            if(excludedColumnsIds.includes(column.id)) return
             if(column.isPrimaryKey()) return
             if(column.isDefaultLaravelTimestamp()) return
 
@@ -255,6 +284,14 @@ export default class Crud extends RelaDB.Model {
         }
 
         return "fn () => {}"
+    }
+
+    addHasManyDetails() {
+        this.model.getHasManyRelations().forEach((relationship) => {
+            HasManyDetail.createFromRelation(this, relationship)
+        })
+
+        return this
     }
 
     getHooks(type: string): any {

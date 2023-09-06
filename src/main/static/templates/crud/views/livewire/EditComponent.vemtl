@@ -79,6 +79,8 @@ class <$ this.filenameWithoutExtension $> extends Component
 
         $this-><$ itemVarName $>->save();
         // hook:AFTER_SAVE
+
+        $this->emit('saved');
     }
 
     <% for (let input of crud.getFileInputs()) { %>

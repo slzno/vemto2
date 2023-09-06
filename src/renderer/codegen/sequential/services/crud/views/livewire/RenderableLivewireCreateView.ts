@@ -20,7 +20,7 @@ export default class RenderableLivewireCreateView extends Renderable {
     }
 
     getType(): RenderableFileType {
-        return RenderableFileType.HTML
+        return RenderableFileType.BLADE
     }
 
     getTemplateFile(): string {
@@ -39,7 +39,7 @@ export default class RenderableLivewireCreateView extends Renderable {
     }
 
     getFormatter(): RenderableFileFormatter {
-        return RenderableFileFormatter.HTML
+        return RenderableFileFormatter.BLADE
     }
 
     getData() {
