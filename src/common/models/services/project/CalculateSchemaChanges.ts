@@ -14,6 +14,24 @@ export default class CalculateSchemaChanges {
         this.project = project
     }
 
+    getAddedTables(): Table[] {
+        const { addedTables } = this.calculate()
+
+        return addedTables
+    }
+
+    getChangedTables(): Table[] {
+        const { changedTables } = this.calculate()
+
+        return changedTables
+    }
+
+    getRemovedTables(): Table[] {
+        const { removedTables } = this.calculate()
+
+        return removedTables
+    }
+
     hasChanges(): boolean {
         const { addedTables, changedTables, removedTables } = this.calculate()
 
@@ -36,6 +54,16 @@ export default class CalculateSchemaChanges {
         const { removedTables } = this.calculate()
 
         return removedTables.length > 0
+    }
+
+    getAllTables(): Table[] {
+        const { addedTables, changedTables, removedTables } = this.calculate()
+
+        const allTables = [...addedTables, ...changedTables, ...removedTables]
+
+        return allTables.filter((table, index, self) => {
+            return self.findIndex(t => t.id === table.id) === index
+        })
     }
 
     calculate(): SchemaChanges {

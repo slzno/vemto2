@@ -165,9 +165,7 @@ export default class Project extends RelaDB.Model {
     getChangedTables(): Table[] {
         if (!this.hasSchemaChanges()) return []
 
-        return this.tables.filter((table) =>
-            this.changedTablesIds.includes(table.id)
-        )
+        return new CalculateSchemaChanges(this).getAllTables()
     }
 
     getRenamedTables(): Table[] {
