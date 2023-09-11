@@ -49,11 +49,12 @@ export default class Crud extends RelaDB.Model {
 
     // Livewire specific
     livewireNamespace: string
+    livewireFormsNamespace: string
     livewireIndexComponentName: string
     livewireShowComponentName: string
     livewireCreateComponentName: string
     livewireEditComponentName: string
-
+    
     relationships() {
         return {
             model: () => this.belongsTo(Model),
@@ -105,7 +106,7 @@ export default class Crud extends RelaDB.Model {
         crud.projectId = model.projectId
 
         crud.calculateSettings()
-        crud.calculateLiveWireSpecificData()
+        crud.calculateLivewireSpecificData()
 
         if(defaultSearchColumn) crud.defaultSearchColumnId = defaultSearchColumn.id
         if(defaultSortColumn) crud.defaultSortColumnId = defaultSortColumn.id
@@ -155,6 +156,14 @@ export default class Crud extends RelaDB.Model {
         return this.inputs.filter((input) => input.isBelongsTo())
     }
 
+    hasBelongsToInputs(): boolean {
+        return this.getBelongsToInputs().length > 0
+    }
+
+    getFillableInputs(): Input[] {
+        return this.inputs.filter((input) => !input.isPassword())
+    }
+
     getInputsWithDefaultValue(): Input[] {
         return this.inputs.filter((input) => input.defaultValue?.length)
     }
@@ -166,8 +175,10 @@ export default class Crud extends RelaDB.Model {
         }
     }
 
-    calculateLiveWireSpecificData() {
-        this.livewireNamespace = `App\\Http\\Livewire\\${pascalCase(this.section.name)}`
+    calculateLivewireSpecificData() {
+        this.livewireNamespace = `App\\Livewire\\${pascalCase(this.section.name)}`
+        this.livewireFormsNamespace = `App\\Livewire\\${pascalCase(this.section.name)}\\${capitalCase(this.model.plural)}\\Forms`
+
         this.livewireIndexComponentName = `${pascalCase(this.name)}Index`
         this.livewireShowComponentName = `${pascalCase(this.name)}Show`
         this.livewireCreateComponentName = `${pascalCase(this.name)}Create`

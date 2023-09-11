@@ -12,100 +12,30 @@
 namespace <$ crud.livewireNamespace $>;
  
 use Livewire\Component;
-use Livewire\WithFileUploads;
-use Illuminate\Support\Collection;
-use App\Models\<$ modelName $>;
-<% for (let input of crud.getBelongsToInputs()) { %>
-use App\Models\<$ input.getRelatedModelName() $>;
-<% } %>
+use <$ crud.livewireFormsNamespace $>\<$ crud.livewireFormComponentName $>;
 // hook:IMPORTS
  
 class <$ this.filenameWithoutExtension $> extends Component
 {
-    use WithFileUploads;
     // hook:TRAITS
 
     // hook:BEFORE_VARIABLES
-    public <$ modelName $> $<$ itemVarName $>;
-    <% for (let input of crud.getFileInputs()) { %>
-    public $<$ input.getNewPropertyName() $>;
-    <% } %>
-    <% for (let input of crud.getBelongsToInputs()) { %>
-    <% const model = input.getRelatedModel() %>
-    public Collection $<$ camelCase(model.plural) $>;
-    <% } %>
+    public <$ crud.livewireFormComponentName $> $form;
     // hook:AFTER_VARIABLES
-
-    public function rules()
-    {
-        // hook:BEFORE_RULES
-        return [
-            <% for (let input of crud.getBasicInputs()) { %>
-            '<$ itemVarName $>.<$ input.column.name $>' => <$ input.getCreationRulesForTemplate() $>,
-            <% } %>
-            <% for (let input of crud.getFileInputs()) { %>
-            '<$ input.getNewPropertyName() $>' => <$ input.getCreationRulesForTemplate() $>,
-            <% } %>
-            // hook:RULES
-        ];
-    }
-
-    public function mount()
-    {
-        // hook:BEFORE_MOUNT
-        $this-><$ itemVarName $> = new <$ modelName $>();
-
-        <% for (let input of crud.getInputsWithDefaultValue()) { %>
-        $this-><$ itemVarName $>-><$ input.column.name $> = '<$ input.getDefaultValue() $>';
-        <% } %>
-
-        <% for (let input of crud.getBelongsToInputs()) { %>
-        <# --- #>
-        <% const model = input.getRelatedModel() %>
-        <% const label = model.table.getLabelColumnName() %>
-        <% const primaryKey = model.table.getPrimaryKeyName() %>
-        <# --- #>
-        $this-><$ camelCase(model.plural) $> = <$ model.name $>::pluck('<$ label $>', '<$ primaryKey $>');
-        <% } %>
-        // hook:AFTER_MOUNT
-    }
 
     public function save()
     {
-        // hook:BEFORE_SAVE
-        $this->validate();
-        // hook:AFTER_VALIDATE
-
-        <% for (let input of crud.getFileInputs()) { %>
-        $this->process<$ pascalCase(input.name) $>();
-        <% } %>
-
-        $this-><$ itemVarName $>->save();
-        // hook:AFTER_SAVE
+        // hook:BEFORE_SAVE_CALL
+        $this->form->store();
+        // hook:AFTER_SAVE_CALL
 
         return redirect()->route('<$ crud.getRouteNameByTag('edit') $>', $this-><$ itemVarName $>);
     }
-
-    <% for (let input of crud.getFileInputs()) { %>
-    <% const fieldName = input.column?.name || input.name %>
-    public function process<$ pascalCase(input.name) $>()
-    {
-        if (empty($this-><$ input.getNewPropertyName() $>)) return;
-        
-        $this-><$ itemVarName $>-><$ fieldName $> = $this-><$ input.getNewPropertyName() $>->store('<$ input.getFileDiskName() $>', 'public');
-    }
-
-    public function delete<$ pascalCase(input.name) $>()
-    {
-        $this-><$ input.getNewPropertyName() $> = null;
-    }
-    <% } %>
 
     public function render()
     {
         // hook:BEFORE_RENDER
         return view('livewire.<$ viewsFolderName $>.create', [
-            '<$ itemVarName $>' => $this-><$ itemVarName $>,
             // hook:RENDER_PARAMETERS
         ]);
     }

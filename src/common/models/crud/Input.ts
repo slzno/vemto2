@@ -235,15 +235,7 @@ export default class Input extends RelaDB.Model {
     }
 
     getRulesForTemplate(rules: InputValidationRule[]) {
-        const templateRules = rules.map((rule) => {
-            if (rule.type === InputValidationRuleType.CODE) {
-                return rule.value
-            }
-
-            return `'${rule.value}'`
-        })
-
-        return `[${templateRules.join(", ")}]`
+        return rules.map((rule) => rule.value).join("|")
     }
 
     getTypeSettings() {
@@ -251,7 +243,6 @@ export default class Input extends RelaDB.Model {
     }
 
     getTemplate() {
-        console.log(this.name, this.type, changeCase.pascalCase(this.type))
         return `inputs/blade/${changeCase.pascalCase(this.type)}.vemtl`
     }
 }

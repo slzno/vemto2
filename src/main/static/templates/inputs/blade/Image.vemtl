@@ -6,15 +6,14 @@
 <% const crud = input.crud %>
 <% const camelCase = this.require("camelCase") %>
 <% const pascalCase = this.require("pascalCase") %>
-<% const itemVarName = camelCase(crud.name) %>
 <% const fieldName = input.column?.name || input.name %>
 
 <div class="vtheme(crud.form.input.group)">
     <x-ui.label for="<$ input.name $>"><$ input.label $></x-ui.label>
     <x-ui.input.file
-        :src="$<$ itemVarName $>-><$ fieldName $> ? Storage::url($<$ itemVarName $>-><$ fieldName $>) : ''" 
+        :src="$form-><$ fieldName $> ? Storage::url($form-><$ fieldName $>) : ''" 
         wire:model="<$ input.getNewPropertyName() $>"
         x-on:removed="$wire.delete<$ pascalCase(input.name) $>()"
         class="vtheme(crud.form.input.extra)" id="<$ input.name $>" name="<$ input.name $>" />
-    <x-ui.input.error for="<$ itemVarName $>.<$ input.column.name $>" />
+    <x-ui.input.error for="form.<$ input.column.name $>" />
 </div>

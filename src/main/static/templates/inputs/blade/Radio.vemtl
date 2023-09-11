@@ -5,7 +5,6 @@
 <% const input = this.input %>
 <% const crud = input.crud %>
 <% const camelCase = this.require("camelCase") %>
-<% const itemVarName = camelCase(crud.name) %>
 
 <div class="vtheme(crud.form.input.radio.group)">
     <x-ui.label for="<$ input.name $>"><$ input.label $></x-ui.label>
@@ -13,7 +12,7 @@
         <div class="vtheme(crud.form.input.radio.box)">
             <x-ui.input.radio
                 class="vtheme(crud.form.input.extra)"
-                wire:model="<$ itemVarName $>.<$ input.column.name $>"
+                wire:model="form.<$ input.column.name $>"
                 name="<$ input.name $>"
                 id="<$ item.value $>"
                 value="<$ item.value $>"
@@ -21,5 +20,5 @@
             <x-ui.label for="<$ item.value $>"><$ item.label $></x-ui.label>
         </div>
     <% } %>
-    <x-ui.input.error for="<$ itemVarName $>.<$ input.column.name $>" />
+    <x-ui.input.error for="form.<$ input.column.name $>" />
 </div>
