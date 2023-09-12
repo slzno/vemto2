@@ -69,7 +69,9 @@ export default new class UpdateExistingMigration {
         const compiledTemplate = await templateCompiler.compileWithImports(),
             migrationEditor = new MigrationEditor(creationMigrationContent)
 
-        migrationEditor.replaceSchemaCreateOnUpMethod(this.table.name, compiledTemplate)
+        migrationEditor
+            .replaceSchemaCreateOnUpMethod(this.table.getCanonicalName(), compiledTemplate)
+            .changeTableOnSchemaDropOnDownMethod(this.table.getCanonicalName(), this.table.name)
 
         return PhpFormatter.setContent(
             migrationEditor.getMigrationContent()

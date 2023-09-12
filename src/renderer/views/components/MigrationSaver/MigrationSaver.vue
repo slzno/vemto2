@@ -39,7 +39,7 @@
         return tablesSettings[selectedTable.value.name]
     })
 
-    const buildTablesSettings = () => {
+    const buildTablesSettings = async () => {
         let allChanges = changesCalculator.getAllChangesWithTable()
 
         createdTables.value = changesCalculator.getAddedTables()
@@ -57,9 +57,9 @@
             selectedMode.value = "removed"
         }
 
-        allChanges.forEach((change) => {
+        for (const change of allChanges) {
             const table = change.table
-            
+
             tablesSettings[table.name] = {
                 instance: table,
                 latestMigration: table.getLatestMigration(),
@@ -67,23 +67,22 @@
                 canCreateNewMigration: table.canCreateNewMigration(),
                 migrationName: "",
                 migrationContent: "",
-
-                selectedOption: "create",
+                selectedOption: "createMigration",
             }
 
-            loadMigrationContent(table.name)
-        })
+            await loadMigrationContent(table.name)
+        }
     }
 
     const isSelectedTable = (table: Table) => {
         return selectedTable.value && selectedTable.value.id === table.id
     }
 
-    const selectTable = (table: Table, mode: "created"|"updated"|"removed") => {
+    const selectTable = async (table: Table, mode: "created"|"updated"|"removed") => {
         selectedTable.value = table
         selectedMode.value = mode
 
-        loadMigrationContent(table.name)
+        await loadMigrationContent(table.name)
     }
 
     const saveMigrations = async () => {
@@ -93,11 +92,11 @@
         const tables = Object.values(tablesSettings)
 
         tables.forEach((table: any) => {
-            if (table.selectedOption === "update") {
+            if (table.selectedOption === "updateMigration") {
                 UpdateExistingMigration.setTable(table.instance).run()
             }
 
-            if (table.selectedOption === "create") {
+            if (table.selectedOption === "createMigration") {
                 GenerateNewMigration.setTable(table.instance).run()
             }
         })
@@ -108,19 +107,19 @@
     const loadFirstTableMigrationContent = async () => {
         const firstTable = Object.keys(tablesSettings)[0]
 
-        loadMigrationContent(firstTable)
+        await loadMigrationContent(firstTable)
     }
 
     const loadMigrationContent = async (tableName: any) => {
         const table = tablesSettings[tableName]
 
-        if (table.selectedOption === "update") {
+        if (table.selectedOption === "updateMigration") {
             const migrationData = await UpdateExistingMigration.setTable(table.instance).getData()
             table.migrationName = migrationData.name
             table.migrationContent = migrationData.content
         }
 
-        if (table.selectedOption === "create") {
+        if (table.selectedOption === "createMigration") {
             const migrationData = await GenerateNewMigration.setTable(table.instance).getData()
             table.migrationName = migrationData.name
             table.migrationContent = migrationData.content
@@ -200,7 +199,7 @@
                                     <input
                                         class="rounded-full bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300 mr-2"
                                         type="radio"
-                                        value="create"
+                                        value="createMigration"
                                         v-model="selectedTableSettings.selectedOption"
                                         @change="loadMigrationContent(selectedTableSettings.instance.name)"
                                     />
@@ -211,7 +210,7 @@
                                     <input
                                         class="rounded-full bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300 mr-2"
                                         type="radio"
-                                        value="update"
+                                        value="updateMigration"
                                         v-model="selectedTableSettings.selectedOption"
                                         @change="loadMigrationContent(selectedTableSettings.instance.name)"
                                     />
@@ -222,7 +221,7 @@
                             </div>
     
                             <div class="p-2 flex-grow space-y-2">
-                                <UiText v-model="selectedTableSettings.migrationName" :disabled="selectedTableSettings.selectedOption === 'update'" />
+                                <UiText v-model="selectedTableSettings.migrationName" :disabled="selectedTableSettings.selectedOption === 'updateMigration'" />
                                 <highlightjs class="h-full" language="php" :code="selectedTableSettings.migrationContent" />
                             </div>
                         </div>

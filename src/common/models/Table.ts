@@ -389,9 +389,14 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     latestMigrationCreatedTable(): boolean {
-        let latestMigration = this.getLatestMigration()
+        const latestMigration = this.getLatestMigration(),
+            tableName = this.getCanonicalName()
 
-        return !! (latestMigration && latestMigration.createdTables.includes(this.name))
+        return !! (latestMigration && latestMigration.createdTables.includes(tableName))
+    }
+
+    getCanonicalName(): string {
+        return this.schemaState.name || this.name
     }
 
     getLatestMigration(): any {
@@ -421,7 +426,15 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     getCreationMigration(): any {
         if(!this.hasMigrations()) return null
 
-        return this.migrations.find((migration) => migration.createdTables.includes(this.name))
+        const tableName = this.getCanonicalName()
+
+        return this.migrations.find((migration) => migration.createdTables.includes(tableName))
+    }
+
+    probablyNeedsToUpdateLatestMigration(): boolean {
+        return this.canUpdateLatestMigration() 
+            && this.latestMigrationCreatedTable()
+            && this.wasRenamed()
     }
 
     canUpdateLatestMigration(): boolean {

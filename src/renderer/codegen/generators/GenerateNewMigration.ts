@@ -26,13 +26,19 @@ export default new class GenerateNewMigration {
         }
     }
 
-    getName() {
+    getName(): string {
         const datePrefix = new Date().toISOString().split('T')[0].replace(/-/g, '_'),
             timePrefix = new Date().toISOString().split('T')[1].split('.')[0].replace(/:/g, '')
 
-        return this.table.needsCreationMigration() ? 
-            `/database/migrations/${datePrefix}_${timePrefix}_create_${this.table.name}_table.php` :
-            `/database/migrations/${datePrefix}_${timePrefix}_update_${this.table.name}_table.php`
+        if(this.table.needsCreationMigration()) {
+            return `/database/migrations/${datePrefix}_${timePrefix}_create_${this.table.name}_table.php`
+        } 
+
+        if(this.table.wasRenamed()) {
+            return `/database/migrations/${datePrefix}_${timePrefix}_rename_${this.table.schemaState.name}_table_to_${this.table.name}.php`
+        }
+
+        return `/database/migrations/${datePrefix}_${timePrefix}_update_${this.table.name}_table.php`
     }
 
     async generateMigration() {
@@ -53,12 +59,31 @@ export default new class GenerateNewMigration {
             return await this.generateCreationMigration()
         } 
 
+        if(this.table.wasRenamed()) {
+            return await this.generateRenameMigration()
+        }
+
         return await this.generateUpdaterMigration()
     }
 
     async generateCreationMigration() {
         const templateCompiler = new TemplateCompiler(), 
             templateContent = await Main.API.readTemplateFile("CreationMigration.vemtl")
+
+        templateCompiler
+            .setContent(templateContent)
+            .setData({ table: this.table })
+
+        const compiledTemplate = await templateCompiler.compileWithImports()
+
+        return PhpFormatter.setContent(
+            compiledTemplate
+        ).format()
+    }
+
+    async generateRenameMigration() {
+        const templateCompiler = new TemplateCompiler(), 
+            templateContent = await Main.API.readTemplateFile("RenameMigration.vemtl")
 
         templateCompiler
             .setContent(templateContent)

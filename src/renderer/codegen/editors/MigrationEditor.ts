@@ -56,6 +56,24 @@ export default class MigrationEditor {
         return this
     }
 
+    replaceSchemaDropOnDownMethod(table: string, content: string) {
+        const tableContent = this.getSchemaDropOnDownMethod(table)
+
+        this.content = this.content.replace(tableContent, content)
+
+        return this
+    }
+
+    changeTableOnSchemaDropOnDownMethod(table: string, newTable: string) {
+        const tableContent = this.getSchemaDropOnDownMethod(table)
+
+        console.log(tableContent)
+
+        this.content = this.content.replace(tableContent, tableContent.replace(table, newTable))
+
+        return this
+    }
+
     getSchemaTableOnUpMethod(table: string): string {
         const regex = new RegExp(`(?<=up\\(\\)(.*))Schema::table\\(('|")${table}('|")(.*?)}\\);(?=(.*)})`, 's')
         
@@ -76,6 +94,12 @@ export default class MigrationEditor {
 
     getSchemaCreateContentOnUpMethod(table: string): string {
         const regex = new RegExp(`(?<=up\\(\\)(.*)Schema::create\\(('|")${table}('|")(.*){)(.*?)(?=}\\);(.*)})`, 's')
+        
+        return this.getRegexMatch(regex)
+    }
+
+    getSchemaDropOnDownMethod(table: string): string {
+        const regex = new RegExp(`(?<=down\\(\\)(.*))Schema::dropIfExists\\(('|")${table}('|")(.*?)\\);(?=(.*)})`, 's')
         
         return this.getRegexMatch(regex)
     }

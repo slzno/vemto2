@@ -1,0 +1,36 @@
+<?php
+<# TEMPLATE VARIABLES #>
+<# const pascalCase = TemplateRequire('pascalCase') #>
+<% const laravelVersion = 9 %>
+<####>
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+<% if (laravelVersion >= 9) { %>
+return new class extends Migration
+<% } else { %>
+class <$ this.table.getCreationMigrationClassName() $> extends Migration
+<% } %>
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::rename('<$ this.table.schemaState.name $>', '<$ this.table.name $>');
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::rename('<$ this.table.name $>', '<$ this.table.schemaState.name $>');
+    }
+}<% if (laravelVersion >= 9) { %>;<% } %>
