@@ -9,6 +9,10 @@
             type: String,
             default: "50%",
         },
+        height: {
+            type: String,
+            default: "auto",
+        },
     })
 
     const show = toRef(props, "show"),
@@ -31,7 +35,7 @@
             <div
                 class="flex flex-col relative rounded-lg bg-slate-850 shadow-2xl border border-slate-700"
                 style="max-height: calc(100vh - 5rem);"
-                :style="{ width: width }"
+                :style="{ width: width, height: height }"
             >
                 <button
                     class="cursor-pointer flex absolute top-2 right-2"

@@ -18,6 +18,9 @@
 .dark .hljs {
   background: #091023;
   border-radius: 0.5rem !important;
+  border: 1px solid;
+  border-color: rgb(46 58 72 / var(--tw-border-opacity)) !important;
+  cursor: not-allowed;
 }
 
 /* Diff to HTML */

@@ -68,9 +68,7 @@
                 migrationName: "",
                 migrationContent: "",
 
-                selectedOption: table.canUpdateLatestMigration()
-                    ? "update"
-                    : "create",
+                selectedOption: "create",
             }
 
             loadMigrationContent(table.name)
@@ -84,6 +82,8 @@
     const selectTable = (table: Table, mode: "created"|"updated"|"removed") => {
         selectedTable.value = table
         selectedMode.value = mode
+
+        loadMigrationContent(table.name)
     }
 
     const saveMigrations = async () => {
@@ -154,9 +154,10 @@
             title="Review Migrations"
             :show="showingModal"
             @close="showingModal = false"
-            width="1400px"
+            width="1500px"
+            height="calc(100vh - 5rem)"
         >
-            <section class="flex">
+            <section class="flex h-full">
                 <!-- Tables Selector -->
                 <div class="w-1/5 text-slate-400">
                     <div class="flex items-center p-2 bg-slate-950 text-slate-200">
@@ -191,37 +192,10 @@
                 <div class="w-4/5">
                     <div
                         v-if="selectedTableSettings"
-                        class="bg-slate-800 w-full"
+                        class="bg-slate-800 w-full h-full overflow-y-scroll"
                     >
-                        <header class="py-4 px-4 w-full text-right text-sm text-slate-400">
-                            Reviewing migrations for table
-                            <span class="text-red-500 dark:text-red-400">{{
-                                selectedTableSettings.instance.name
-                            }}</span>
-                        </header>
-    
                         <div class="flex p-4">
-                            <div class="p-4 space-y-4">
-                                <div v-if="selectedTableSettings.canUpdateLatestMigration">
-                                    <input
-                                        class="rounded-full bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300 mr-2"
-                                        type="radio"
-                                        value="update"
-                                        v-model="selectedTableSettings.selectedOption"
-                                        @change="loadMigrationContent(selectedTableSettings.instance.name)"
-                                    />
-                                    <label
-                                        >Update latest migration
-                                        <!-- <span
-                                            :title="table.latestMigration.relativePath"
-                                            class="text-green-500 py-1 px-2 ml-0.5 bg-slate-900 rounded"
-                                            >{{
-                                                table.latestMigration.migrationName
-                                            }}</span
-                                        > -->
-                                    </label>
-                                </div>
-        
+                            <div class="w-56 p-4 space-y-4">
                                 <div v-if="selectedTableSettings.canCreateNewMigration">
                                     <input
                                         class="rounded-full bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300 mr-2"
@@ -232,11 +206,24 @@
                                     />
                                     <label>Create new migration</label>
                                 </div>
+
+                                <div v-if="selectedTableSettings.canUpdateLatestMigration">
+                                    <input
+                                        class="rounded-full bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300 mr-2"
+                                        type="radio"
+                                        value="update"
+                                        v-model="selectedTableSettings.selectedOption"
+                                        @change="loadMigrationContent(selectedTableSettings.instance.name)"
+                                    />
+                                    <label
+                                        >Update latest migration
+                                    </label>
+                                </div>
                             </div>
     
                             <div class="p-2 flex-grow space-y-2">
                                 <UiText v-model="selectedTableSettings.migrationName" :disabled="selectedTableSettings.selectedOption === 'update'" />
-                                <highlightjs language="php" :code="selectedTableSettings.migrationContent" />
+                                <highlightjs class="h-full" language="php" :code="selectedTableSettings.migrationContent" />
                             </div>
                         </div>
                     </div>
@@ -245,7 +232,7 @@
 
             <template #footer>
                 <div class="flex justify-end p-4">
-                    <UiButton @click="saveMigrations">Save</UiButton>
+                    <UiButton @click="saveMigrations">Save Migrations</UiButton>
                 </div>
             </template>
         </UiModal>
