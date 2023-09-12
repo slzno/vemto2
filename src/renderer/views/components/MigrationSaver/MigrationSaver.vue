@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
-    import { ArrowDownTrayIcon, CircleStackIcon, MinusIcon, PlusIcon } from "@heroicons/vue/24/outline"
+    import { ArrowDownTrayIcon, ArrowRightIcon, CircleStackIcon, MinusIcon, PlusIcon } from "@heroicons/vue/24/outline"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import UiModal from "@Renderer/components/ui/UiModal.vue"
     import { Ref, computed, onMounted, reactive, ref, watch } from "vue"
@@ -174,7 +174,14 @@
                     </div>
 
                     <div @click.stop="selectTable(table, 'updated')" :class="{'text-red-400 bg-slate-800': isSelectedTable(table)}" class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer" v-for="table in changedTables" :key="table.id">
-                        {{ table.name }}
+                        <div title="Table was renamed" class="flex items-center space-x-1" v-if="table.wasRenamed()">
+                            <span class="text-slate-500">{{ table.schemaState.name }}</span>
+                            <ArrowRightIcon class="w-4 h-4" />
+                            <span>{{ table.name }}</span>
+                        </div>
+                        <div v-else>
+                            {{ table.name }}
+                        </div>
                     </div>
 
                     <div class="flex items-center p-2 bg-slate-950 text-slate-200">

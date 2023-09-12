@@ -438,7 +438,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     canUpdateLatestMigration(): boolean {
-        return this.hasMigrations()
+        return this.hasMigrations() && !this.isRemoved()
     }
 
     wasCreatedFromInterface(): boolean {

@@ -38,6 +38,10 @@ export default new class GenerateNewMigration {
             return `/database/migrations/${datePrefix}_${timePrefix}_rename_${this.table.schemaState.name}_table_to_${this.table.name}.php`
         }
 
+        if(this.table.isRemoved()) {
+            return `/database/migrations/${datePrefix}_${timePrefix}_drop_${this.table.schemaState.name}_table.php`
+        }
+
         return `/database/migrations/${datePrefix}_${timePrefix}_update_${this.table.name}_table.php`
     }
 
@@ -63,6 +67,10 @@ export default new class GenerateNewMigration {
             return await this.generateRenameMigration()
         }
 
+        if(this.table.isRemoved()) {
+            return await this.generateDropMigration()
+        }
+
         return await this.generateUpdaterMigration()
     }
 
@@ -84,6 +92,21 @@ export default new class GenerateNewMigration {
     async generateRenameMigration() {
         const templateCompiler = new TemplateCompiler(), 
             templateContent = await Main.API.readTemplateFile("RenameMigration.vemtl")
+
+        templateCompiler
+            .setContent(templateContent)
+            .setData({ table: this.table })
+
+        const compiledTemplate = await templateCompiler.compileWithImports()
+
+        return PhpFormatter.setContent(
+            compiledTemplate
+        ).format()
+    }
+
+    async generateDropMigration() {
+        const templateCompiler = new TemplateCompiler(), 
+            templateContent = await Main.API.readTemplateFile("DropMigration.vemtl")
 
         templateCompiler
             .setContent(templateContent)
