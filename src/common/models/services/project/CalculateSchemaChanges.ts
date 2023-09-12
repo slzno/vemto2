@@ -7,6 +7,12 @@ interface SchemaChanges {
     removedTables: Table[]
 }
 
+export enum SchemaChangeType {
+    Added = "added",
+    Changed = "changed",
+    Removed = "removed",
+}
+
 export default class CalculateSchemaChanges {
     protected project: Project
 
@@ -63,6 +69,20 @@ export default class CalculateSchemaChanges {
 
         return allTables.filter((table, index, self) => {
             return self.findIndex(t => t.id === table.id) === index
+        })
+    }
+
+    getAllChangesWithTable(): { table: Table, type: SchemaChangeType }[] {
+        const { addedTables, changedTables, removedTables } = this.calculate()
+
+        const allChanges = [
+            ...addedTables.map(table => ({ table, type: SchemaChangeType.Added })),
+            ...changedTables.map(table => ({ table, type: SchemaChangeType.Changed })),
+            ...removedTables.map(table => ({ table, type: SchemaChangeType.Removed })),
+        ]
+
+        return allChanges.filter((change, index, self) => {
+            return self.findIndex(c => c.table.id === change.table.id) === index
         })
     }
 

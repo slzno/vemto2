@@ -4,7 +4,7 @@
     import { ArrowDownTrayIcon, CircleStackIcon, MinusIcon, PlusIcon } from "@heroicons/vue/24/outline"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import UiModal from "@Renderer/components/ui/UiModal.vue"
-    import { Ref, onMounted, reactive, ref, watch } from "vue"
+    import { Ref, computed, onMounted, reactive, ref, watch } from "vue"
     import GenerateNewMigration from "@Renderer/codegen/generators/GenerateNewMigration"
     import UpdateExistingMigration from "@Renderer/codegen/generators/UpdateExistingMigration"
     import CalculateSchemaChanges from "@Common/models/services/project/CalculateSchemaChanges"
@@ -14,13 +14,14 @@
     const projectStore = useProjectStore(),
         showingModal = ref(false),
         tablesSettings = reactive({} as any)
-        // selectedTable = ref("")
 
     const changesCalculator = new CalculateSchemaChanges(projectStore.project)
 
-    let createdTables = ref([]) as Ref<Table[]>,
+    const createdTables = ref([]) as Ref<Table[]>,
         changedTables = ref([]) as Ref<Table[]>,
-        removedTables = ref([]) as Ref<Table[]>
+        removedTables = ref([]) as Ref<Table[]>,
+        selectedTable = ref(null) as Ref<Table|null>,
+        selectedMode = ref("created") as Ref<"created"|"updated"|"removed">
 
     onMounted(() => {
         buildTablesSettings()
@@ -33,14 +34,32 @@
         loadFirstTableMigrationContent()
     })
 
+    const selectedTableSettings = computed(() => {
+        if(!selectedTable.value) return null
+        return tablesSettings[selectedTable.value.name]
+    })
+
     const buildTablesSettings = () => {
+        let allChanges = changesCalculator.getAllChangesWithTable()
+
         createdTables.value = changesCalculator.getAddedTables()
         changedTables.value = changesCalculator.getChangedTables()
         removedTables.value = changesCalculator.getRemovedTables()
 
-        let updatedTables = projectStore.project.getChangedTables()
+        if(createdTables.value.length) {
+            selectedTable.value = createdTables.value[0]
+            selectedMode.value = "created"
+        } else if(changedTables.value.length) {
+            selectedTable.value = changedTables.value[0]
+            selectedMode.value = "updated"
+        } else if(removedTables.value.length) {
+            selectedTable.value = removedTables.value[0]
+            selectedMode.value = "removed"
+        }
 
-        updatedTables.forEach((table) => {
+        allChanges.forEach((change) => {
+            const table = change.table
+            
             tablesSettings[table.name] = {
                 instance: table,
                 latestMigration: table.getLatestMigration(),
@@ -53,7 +72,18 @@
                     ? "update"
                     : "create",
             }
+
+            loadMigrationContent(table.name)
         })
+    }
+
+    const isSelectedTable = (table: Table) => {
+        return selectedTable.value && selectedTable.value.id === table.id
+    }
+
+    const selectTable = (table: Table, mode: "created"|"updated"|"removed") => {
+        selectedTable.value = table
+        selectedMode.value = mode
     }
 
     const saveMigrations = async () => {
@@ -127,57 +157,58 @@
             width="1400px"
         >
             <section class="flex">
-                <div class="w-1/5">
-                    <div class="flex items-center p-2 bg-slate-950">
+                <!-- Tables Selector -->
+                <div class="w-1/5 text-slate-400">
+                    <div class="flex items-center p-2 bg-slate-950 text-slate-200">
                         <PlusIcon class="w-4 h-4 mr-2" />
                         Created Tables
                     </div>
 
-                    <div class="px-5 py-1 text-red-400 bg-slate-800 hover:text-slate-200 hover:bg-slate-800 hover:cursor-pointer" v-for="table in createdTables" :key="table.id">
+                    <div @click.stop="selectTable(table, 'created')" :class="{'text-red-400 bg-slate-800': isSelectedTable(table)}" class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer" v-for="table in createdTables" :key="table.id">
                         {{ table.name }}
                     </div>
 
-                    <div class="flex items-center p-2 bg-slate-950">
+                    <div class="flex items-center p-2 bg-slate-950 text-slate-200">
                         <CircleStackIcon class="w-4 h-4 mr-2" />
                         Changed Tables
                     </div>
 
-                    <div class="px-5 py-1 text-slate-400 hover:text-slate-200 hover:bg-slate-800 hover:cursor-pointer" v-for="table in changedTables" :key="table.id">
+                    <div @click.stop="selectTable(table, 'updated')" :class="{'text-red-400 bg-slate-800': isSelectedTable(table)}" class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer" v-for="table in changedTables" :key="table.id">
                         {{ table.name }}
                     </div>
 
-                    <div class="flex items-center p-2 bg-slate-950">
+                    <div class="flex items-center p-2 bg-slate-950 text-slate-200">
                         <MinusIcon class="w-4 h-4 mr-2" />
                         Removed Tables
                     </div>
 
-                    <div class="px-5 py-1 text-slate-400 hover:text-slate-200 hover:bg-slate-800 hover:cursor-pointer" v-for="table in removedTables" :key="table.id">
+                    <div @click.stop="selectTable(table, 'removed')" :class="{'text-red-400 bg-slate-800': isSelectedTable(table)}" class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer" v-for="table in removedTables" :key="table.id">
                         {{ table.name }}
                     </div>
                 </div>
 
+                <!-- Migrations -->
                 <div class="w-4/5">
                     <div
+                        v-if="selectedTableSettings"
                         class="bg-slate-800 w-full"
-                        v-for="table in tablesSettings"
-                        :key="table.instance.id"
                     >
                         <header class="py-4 px-4 w-full text-right text-sm text-slate-400">
                             Reviewing migrations for table
                             <span class="text-red-500 dark:text-red-400">{{
-                                table.instance.name
+                                selectedTableSettings.instance.name
                             }}</span>
                         </header>
     
                         <div class="flex p-4">
                             <div class="p-4 space-y-4">
-                                <div v-if="table.canUpdateLatestMigration">
+                                <div v-if="selectedTableSettings.canUpdateLatestMigration">
                                     <input
                                         class="rounded-full bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300 mr-2"
                                         type="radio"
                                         value="update"
-                                        v-model="table.selectedOption"
-                                        @change="loadMigrationContent(table.instance.name)"
+                                        v-model="selectedTableSettings.selectedOption"
+                                        @change="loadMigrationContent(selectedTableSettings.instance.name)"
                                     />
                                     <label
                                         >Update latest migration
@@ -191,32 +222,21 @@
                                     </label>
                                 </div>
         
-                                <div v-if="table.canCreateNewMigration">
+                                <div v-if="selectedTableSettings.canCreateNewMigration">
                                     <input
                                         class="rounded-full bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300 mr-2"
                                         type="radio"
                                         value="create"
-                                        v-model="table.selectedOption"
-                                        @change="loadMigrationContent(table.instance.name)"
+                                        v-model="selectedTableSettings.selectedOption"
+                                        @change="loadMigrationContent(selectedTableSettings.instance.name)"
                                     />
                                     <label>Create new migration</label>
                                 </div>
-        
-                                <!-- <div>
-                                    <input
-                                        class="rounded-full bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300 mr-2"
-                                        type="radio"
-                                        value="skip"
-                                        v-model="table.selectedOption"
-                                    />
-                                    <label>Don't generate migration</label>
-                                </div> -->
                             </div>
     
                             <div class="p-2 flex-grow space-y-2">
-                                <UiText v-model="table.migrationName" :disabled="table.selectedOption === 'update'" />
-                                <!-- <textarea class="bg-slate-950 rounded-lg border-none w-full text-slate-200 text-lg font-mono" spellcheck="false" autocomplete="false" rows="16"></textarea> -->
-                                <highlightjs language="php" :code="table.migrationContent" />
+                                <UiText v-model="selectedTableSettings.migrationName" :disabled="selectedTableSettings.selectedOption === 'update'" />
+                                <highlightjs language="php" :code="selectedTableSettings.migrationContent" />
                             </div>
                         </div>
                     </div>
