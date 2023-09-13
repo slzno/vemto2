@@ -5,9 +5,13 @@ import PhpFormatter from "../formatters/PhpFormatter"
 import MigrationEditor from "../editors/MigrationEditor"
 import TemplateCompiler from "../templates/base/TemplateCompiler"
 
-export default new class UpdateExistingMigration {
+export default class UpdateExistingMigration {
     table: Table
     project: Project
+
+    constructor(table: Table) {
+        this.setTable(table)
+    }
 
     setTable(table: Table) {
         this.table = table

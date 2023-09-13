@@ -13,9 +13,14 @@
             type: String,
             default: "auto",
         },
+        onTopOfEverything: {
+            type: Boolean,
+            default: false,
+        },
     })
 
     const show = toRef(props, "show"),
+        onTopOfEverything = toRef(props, "onTopOfEverything"),
         slots = useSlots()
 </script>
 
@@ -28,7 +33,9 @@
         leave-to-class="transition duration-300 opacity-0"
     >
         <div
-            class="fixed left-0 top-0 w-full h-full z-50 text-slate-200 flex items-center justify-center bg-slate-900 bg-opacity-95"
+            style="z-index: 70;"
+            :style="onTopOfEverything ? 'z-index: 10000 !important' : ''"
+            class="fixed left-0 top-0 w-full h-full text-slate-200 flex items-center justify-center bg-slate-900 bg-opacity-95"
             v-if="show"
         >
             <!-- Modal -->

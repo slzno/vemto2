@@ -24,6 +24,11 @@
             if (e.key === "F7") openProjectOnTerminal()
         })
 
+        Main.API.onDefaultError((error) => { 
+            if(error.error.includes('schema-reader')) {
+                projectStore.project.setCurrentSchemaError(error.error)
+            }
+        })
     })
 
     const generateCode = async () => {

@@ -11,6 +11,11 @@
         label: {
             type: String,
         },
+
+        smallText: {
+            type: Boolean,
+            default: false,
+        }
     })
 
     const emit = defineEmits(["update:modelValue", "change"]),
@@ -33,6 +38,9 @@
             class="rounded bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300"
             v-model="localValue"
         />
-        <span class="text-xs text-slate-400" v-if="label">{{ label }}</span>
+        <span :class="{
+            'text-xs': smallText,
+            'text-sm': !smallText,
+        }" class="text-slate-400" v-if="label">{{ label }}</span>
     </label>
 </template>

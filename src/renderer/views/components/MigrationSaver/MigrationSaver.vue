@@ -10,10 +10,13 @@
     import CalculateSchemaChanges from "@Common/models/services/project/CalculateSchemaChanges"
     import Main from "@Renderer/services/wrappers/Main"
     import Table from "@Common/models/Table"
+    import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
 
     const projectStore = useProjectStore(),
         showingModal = ref(false),
-        tablesSettings = reactive({} as any)
+        confirmSaveDialog = ref(null)
+
+    const tablesSettings = reactive({} as any)
 
     const changesCalculator = new CalculateSchemaChanges(projectStore.project)
 
@@ -40,6 +43,8 @@
     })
 
     const buildTablesSettings = async () => {
+        await resetTablesSettings()
+
         let allChanges = changesCalculator.getAllChangesWithTable()
 
         createdTables.value = changesCalculator.getAddedTables()
@@ -74,6 +79,12 @@
         }
     }
 
+    const resetTablesSettings = () => {
+        Object.keys(tablesSettings).forEach((tableName) => {
+            delete tablesSettings[tableName]
+        })
+    }
+
     const isSelectedTable = (table: Table) => {
         return selectedTable.value && selectedTable.value.id === table.id
     }
@@ -86,20 +97,25 @@
     }
 
     const saveMigrations = async () => {
-        const confirmed = await Main.API.confirm("Are you sure you want to save migrations?")
+        
+        const confirmed = await confirmSaveDialog.value.confirm()
         if(!confirmed) return
 
-        const tables = Object.values(tablesSettings)
+        const tables: any[] = Object.values(tablesSettings)
 
-        tables.forEach((table: any) => {
+        for(const table of tables) {
             if (table.selectedOption === "updateMigration") {
-                UpdateExistingMigration.setTable(table.instance).run()
+                console.log('will update')
+                const migrationUpdater = new UpdateExistingMigration(table.instance)
+                await migrationUpdater.run()
             }
 
             if (table.selectedOption === "createMigration") {
-                GenerateNewMigration.setTable(table.instance).run()
+                console.log('will create')
+                const migrationCreator = new GenerateNewMigration(table.instance)
+                await migrationCreator.run()
             }
-        })
+        }
 
         showingModal.value = false
     }
@@ -114,13 +130,17 @@
         const table = tablesSettings[tableName]
 
         if (table.selectedOption === "updateMigration") {
-            const migrationData = await UpdateExistingMigration.setTable(table.instance).getData()
+            const migrationUpdater = new UpdateExistingMigration(table.instance),
+                migrationData = await migrationUpdater.getData()
+
             table.migrationName = migrationData.name
             table.migrationContent = migrationData.content
         }
 
         if (table.selectedOption === "createMigration") {
-            const migrationData = await GenerateNewMigration.setTable(table.instance).getData()
+            const migrationCreator = new GenerateNewMigration(table.instance),
+                migrationData = await migrationCreator.getData()
+            
             table.migrationName = migrationData.name
             table.migrationContent = migrationData.content
         }
@@ -148,6 +168,10 @@
                 </UiButton>
             </div>
         </div>
+
+        <UiConfirm ref="confirmSaveDialog">
+            Are you sure you want to save migrations?
+        </UiConfirm>
 
         <UiModal
             title="Review Migrations"

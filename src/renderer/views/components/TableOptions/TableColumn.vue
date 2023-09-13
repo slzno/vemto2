@@ -118,7 +118,7 @@
                 </div>
 
                 <div class="flex items-center justify-between">
-                    <UiCheckbox v-model="column.nullable" label="Nullable" @change="column.saveFromInterface()" />
+                    <UiCheckbox small-text v-model="column.nullable" label="Nullable" @change="column.saveFromInterface()" />
                 </div>
 
                 <div class="flex items-center justify-between" @click="removeColumn">

@@ -32,6 +32,7 @@ export default class Project extends RelaDB.Model {
     renderableFiles: RenderableFile[]
     currentRenderedFilesPaths: string[]
     vthemeKeys: any
+    currentSchemaError: string
 
     lastForeignAlias: number = 0;
 
@@ -357,6 +358,20 @@ export default class Project extends RelaDB.Model {
 
     saveVthemeKeys(vthemeKeys: any) {
         this.vthemeKeys = vthemeKeys
+        this.save()
+    }
+
+    hasCurrentSchemaError(): boolean {
+        return !!this.currentSchemaError
+    }
+
+    setCurrentSchemaError(error: string) {
+        this.currentSchemaError = error
+        this.save()
+    }
+
+    clearCurrentSchemaError() {
+        this.currentSchemaError = null
         this.save()
     }
 }

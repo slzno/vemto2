@@ -4,9 +4,13 @@ import Project from "../../../common/models/Project"
 import PhpFormatter from "../formatters/PhpFormatter"
 import TemplateCompiler from "../templates/base/TemplateCompiler"
 
-export default new class GenerateNewMigration {
+export default class GenerateNewMigration {
     table: Table
     project: Project
+
+    constructor(table: Table) {
+        this.setTable(table)
+    }
 
     setTable(table: Table) {
         this.table = table
