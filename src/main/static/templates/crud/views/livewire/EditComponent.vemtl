@@ -13,7 +13,11 @@ namespace <$ crud.livewireNamespace $>;
   
 use Livewire\Component;
 use App\Models\<$ modelName $>;
+use Illuminate\Support\Collection;
 use <$ crud.livewireFormsNamespace $>\UpdateForm;
+<% for (let input of crud.getBelongsToInputs()) { %>
+use App\Models\<$ input.getRelatedModelName() $>;
+<% } %>
 // hook:IMPORTS
  
 class <$ this.filenameWithoutExtension $> extends Component
@@ -23,6 +27,11 @@ class <$ this.filenameWithoutExtension $> extends Component
 
     // hook:BEFORE_VARIABLES
     public UpdateForm $form;
+    <# --- #>
+    <% for (let input of crud.getBelongsToInputs()) { %>
+    <% const model = input.getRelatedModel() %>
+    public Collection $<$ camelCase(model.plural) $>;
+    <% } %>
     // hook:AFTER_VARIABLES
 
     public function mount(<$ modelName $> $<$ itemVarName $>)
@@ -31,6 +40,15 @@ class <$ this.filenameWithoutExtension $> extends Component
         $this-><$ itemVarName $> = $<$ itemVarName $>;
 
         $this->form->set<$ modelName $>($<$ itemVarName $>);
+        <# --- #>
+        <% for (let input of crud.getBelongsToInputs()) { %>
+        <# --- #>
+        <% const model = input.getRelatedModel() %>
+        <% const label = model.table.getLabelColumnName() %>
+        <% const primaryKey = model.table.getPrimaryKeyName() %>
+        <# --- #>
+        $this-><$ camelCase(model.plural) $> = <$ model.name $>::pluck('<$ label $>', '<$ primaryKey $>');
+        <% } %>
         // hook:AFTER_MOUNT
     }
 
@@ -40,7 +58,7 @@ class <$ this.filenameWithoutExtension $> extends Component
         $this->form->save();
         // hook:AFTER_SAVE_CALL
 
-        $this->emit('saved');
+        $this->dispatch('saved');
     }
 
     public function render()

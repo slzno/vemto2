@@ -15,4 +15,5 @@ export enum InputType {
     DATETIME = "dateTime",
     TIME = "time",
     RADIO = "radio",
+    COLOR = "color"
 }

@@ -25,10 +25,10 @@ class <$ this.filenameWithoutExtension $> extends Form
     <% for (let input of crud.inputs) { %>
         #[Rule('<$ input.getUpdateRulesForTemplate() $>')]
         <# --- #>
+        public $<$ input.column.name $> = '<$ input.defaultValue || '' $>';
+        
         <% if (input.isFileOrImage()) { %>
         public $<$ input.getNewPropertyName() $> = null;
-        <% } else { %>
-        public $<$ input.column.name $> = '<$ input.defaultValue || '' $>';
         <% } %>
 
     <% } %>
@@ -40,11 +40,7 @@ class <$ this.filenameWithoutExtension $> extends Form
         
         <% for (let input of crud.getFillableInputs()) { %>
             <# --- #>
-            <% if (input.isFileOrImage()) { %>
-                $this-><$ input.getNewPropertyName() $> = $<$ itemVarName $>-><$ input.column.name $>;
-            <% } else { %>
-                $this-><$ input.column.name $> = $<$ itemVarName $>-><$ input.column.name $>;
-            <% } %>
+            $this-><$ input.column.name $> = $<$ itemVarName $>-><$ input.column.name $>;
         <% } %>
     }
 
