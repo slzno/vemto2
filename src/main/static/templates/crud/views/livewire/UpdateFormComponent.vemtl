@@ -13,9 +13,6 @@ namespace <$ crud.livewireFormsNamespace $>;
 use Livewire\Form;
 use Livewire\Attributes\Rule;
 use App\Models\<$ modelName $>;
-<% for (let input of crud.getBelongsToInputs()) { %>
-use App\Models\<$ input.getRelatedModelName() $>;
-<% } %>
 // hook:IMPORTS
  
 class <$ this.filenameWithoutExtension $> extends Form
@@ -26,7 +23,7 @@ class <$ this.filenameWithoutExtension $> extends Form
     public ?<$ modelName $> $<$ itemVarName $>;
 
     <% for (let input of crud.inputs) { %>
-        #[Rule('<$ input.getCreationRulesForTemplate() $>')]
+        #[Rule('<$ input.getUpdateRulesForTemplate() $>')]
         <# --- #>
         <% if (input.isFileOrImage()) { %>
         public $<$ input.getNewPropertyName() $> = null;
@@ -35,32 +32,12 @@ class <$ this.filenameWithoutExtension $> extends Form
         <% } %>
 
     <% } %>
-    <# --- #>
-    <% for (let input of crud.getBelongsToInputs()) { %>
-    <% const model = input.getRelatedModel() %>
-    public Collection $<$ camelCase(model.plural) $>;
-    <% } %>
     // hook:AFTER_VARIABLES
-
-    <% if(crud.hasBelongsToInputs()) { %>
-        public function mount()
-        {
-            // hook:BEFORE_MOUNT
-            <% for (let input of crud.getBelongsToInputs()) { %>
-            <# --- #>
-            <% const model = input.getRelatedModel() %>
-            <% const label = model.table.getLabelColumnName() %>
-            <% const primaryKey = model.table.getPrimaryKeyName() %>
-            <# --- #>
-            $this-><$ camelCase(model.plural) $> = <$ model.name $>::pluck('<$ label $>', '<$ primaryKey $>');
-            <% } %>
-            // hook:AFTER_MOUNT
-        }
-    <% } %>
 
     public function set<$ modelName $>(<$ modelName $> $<$ itemVarName $>)
     {
         $this-><$ itemVarName $> = $<$ itemVarName $>;
+        
         <% for (let input of crud.getFillableInputs()) { %>
             <# --- #>
             <% if (input.isFileOrImage()) { %>
@@ -71,21 +48,7 @@ class <$ this.filenameWithoutExtension $> extends Form
         <% } %>
     }
 
-    public function store()
-    {
-        // hook:BEFORE_STORE_VALIDATE
-        $this->validate();
-        // hook:AFTER_STORE_VALIDATE
-
-        <% for (let input of crud.getFileInputs()) { %>
-        $this->process<$ pascalCase(input.name) $>();
-        <% } %>
-
-        <$ modelName $>::create($this->all());
-        // hook:AFTER_SAVE
-    }
-
-    public function update()
+    public function save()
     {
         // hook:BEFORE_UPDATE_VALIDATE
         $this->validate();
@@ -95,7 +58,17 @@ class <$ this.filenameWithoutExtension $> extends Form
         $this->process<$ pascalCase(input.name) $>();
         <% } %>
 
-        $this-><$ itemVarName $>->update($this->all());
+        $this-><$ itemVarName $>->update($this->except([
+            '<$ itemVarName $>',
+            <# --- #>
+            <% for(let input of crud.getBelongsToInputs()) { %>
+                '<$ input.column.name $>',
+            <% } %>
+            <# --- #>
+            <% for(let input of crud.getFileInputs()) { %>
+            '<$ input.getNewPropertyName() $>',
+            <% } %>
+        ]));
     }
 
     <% for (let input of crud.getFileInputs()) { %>

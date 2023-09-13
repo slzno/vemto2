@@ -20,7 +20,7 @@
 <# --- #>
 <div>
     <div class="vtheme(crud.index.tools)">
-        <x-ui.input wire:model="<$ collectionVarName $>Search" type="text" placeholder="Search <$ detailCrud.settings.collectionTitle $>..." />
+        <x-ui.input wire:model.live="<$ collectionVarName $>Search" type="text" placeholder="Search <$ detailCrud.settings.collectionTitle $>..." />
 
         <a wire:click="new<$ pascalCase(itemVarName) $>()">
             <x-ui.button>New</x-ui.button>

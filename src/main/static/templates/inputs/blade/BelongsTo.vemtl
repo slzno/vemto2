@@ -12,7 +12,7 @@
 <div class="vtheme(crud.form.input.group)">
     <x-ui.label for="<$ input.name $>"><$ input.label $></x-ui.label>
     <x-ui.input.select
-        wire:model="<$ itemVarName $>.<$ input.column.name $>" 
+        wire:model="form.<$ input.column.name $>" 
         name="<$ input.name $>" 
         id="<$ input.name $>"
         class="vtheme(crud.form.input.extra)">
@@ -26,5 +26,5 @@
         @endforeach
         <# --- #>
     </x-ui.input.select>
-    <x-ui.input.error for="<$ itemVarName $>.<$ input.column.name $>" />
+    <x-ui.input.error for="form.<$ input.column.name $>" />
 </div>

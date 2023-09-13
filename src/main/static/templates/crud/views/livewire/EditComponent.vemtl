@@ -13,20 +13,23 @@ namespace <$ crud.livewireNamespace $>;
   
 use Livewire\Component;
 use App\Models\<$ modelName $>;
-use <$ crud.livewireFormsNamespace $>\<$ crud.livewireFormComponentName $>;
+use <$ crud.livewireFormsNamespace $>\UpdateForm;
 // hook:IMPORTS
  
 class <$ this.filenameWithoutExtension $> extends Component
 {
     // hook:TRAITS
+    public ?<$ modelName $> $<$ itemVarName $> = null;
 
     // hook:BEFORE_VARIABLES
-    public <$ crud.livewireFormComponentName $> $form;
+    public UpdateForm $form;
     // hook:AFTER_VARIABLES
 
     public function mount(<$ modelName $> $<$ itemVarName $>)
     {
         // hook:BEFORE_MOUNT
+        $this-><$ itemVarName $> = $<$ itemVarName $>;
+
         $this->form->set<$ modelName $>($<$ itemVarName $>);
         // hook:AFTER_MOUNT
     }
@@ -34,7 +37,7 @@ class <$ this.filenameWithoutExtension $> extends Component
     public function save()
     {
         // hook:BEFORE_SAVE_CALL
-        $this->form->update();
+        $this->form->save();
         // hook:AFTER_SAVE_CALL
 
         $this->emit('saved');
