@@ -95,6 +95,12 @@ export default class Project extends RelaDB.Model {
         return this.tables.find((table) => table.name === tableName)
     }
 
+    findTableBySchemaStateName(schemaStateName: string): Table {
+        return this.tables.find(
+            (table) => table.schemaState.name === schemaStateName
+        )
+    }
+
     findTableById(tableId: string): Table {
         return this.tables.find((table) => table.id === tableId)
     }

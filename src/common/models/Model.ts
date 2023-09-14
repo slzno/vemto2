@@ -156,12 +156,18 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     }
 
     calculateInternalData() {
-        const table = this.project.findTableByName(this.tableName)
-
-        if (table) this.tableId = table.id
-
         if (!this.plural) this.calculateDataByName(false)
 
+        const table = this.project.findTableByName(this.tableName)
+
+        if (!table) {
+            this.save()
+            return
+        }
+
+        this.tableId = table.id
+
+        // Depends on a table
         FillFillableColumns.onModel(this)
         FillGuardedColumns.onModel(this)
 
@@ -348,6 +354,14 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         return relationships
     }
 
+    getValidRelationships(): Relationship[] {
+        return this.ownRelationships.filter((relationship) => relationship.isValid())
+    }
+
+    getValidOwnRelationships(): Relationship[] {
+        return this.ownRelationships.filter((relationship) => relationship.isValid())
+    }
+
     findRelationship(type: string, relatedModelName: string): Relationship {
         return this.ownRelationships.find((relationship) => relationship.type == type 
             && relationship.relatedModelName == relatedModelName
@@ -355,10 +369,12 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     }
 
     getPrimaryKeyColumn(): Column {
+        if (!this.table) return null
         return this.table.columns.find(column => column.isPrimaryKey())
     }
 
     getColumnByName(columnName: string): Column {
+        if (!this.table) return null
         return this.table.getColumnByName(columnName)
     }
 

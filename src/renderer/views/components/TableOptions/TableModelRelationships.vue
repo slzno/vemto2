@@ -36,7 +36,7 @@
     const getRelatedModelRelationshipsForSelect = (relationship: Relationship) => {
         if(!relationship.relatedModelId) return []
 
-        return getForSelect(relationship.relatedModel.ownRelationships)
+        return getForSelect(relationship.relatedModel.getValidOwnRelationships())
     }
         
     const newRelationship = (): void => {

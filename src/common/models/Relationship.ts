@@ -141,6 +141,10 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
         this.save()
     }
 
+    isValid(): boolean {
+        return !! this.model && !! this.relatedModel
+    }
+
     static updated(relationship: Relationship) {
         relationship.updateInverse()
     }

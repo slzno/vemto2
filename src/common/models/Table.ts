@@ -364,7 +364,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
 
         this.getModels().forEach((model: Model) => {
             relationships = relationships
-                .concat(model.ownRelationships)
+                .concat(model.getValidOwnRelationships())
         })
 
         return relationships

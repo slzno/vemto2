@@ -19,7 +19,7 @@ import { toRef } from "vue"
                 <div class="text-xs text-slate-700">Model</div>
             </div>
 
-            <div class="px-2 my-1" v-for="relationship in model.ownRelationships" :key="relationship.id">
+            <div class="px-2 my-1" v-for="relationship in model.getValidOwnRelationships()" :key="relationship.id">
                 <div class="w-full flex items-center">
                     <span
                         class="flex-grow pr-8 flex items-center text-slate-400"
