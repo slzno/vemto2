@@ -37,6 +37,21 @@ class ExtendedBuilder extends Builder
         });
     }
 
+    public function rename($from, $to)
+    {
+        $this->migrationsRepository->renameTable($from, $to);
+    }
+
+    public function drop($table)
+    {
+        $this->migrationsRepository->dropTable($table);
+    }
+
+    public function dropIfExists($table)
+    {
+        $this->migrationsRepository->dropTable($table);
+    }
+
     protected function processTable($table, $blueprint)
     {
         $addedColumns = $blueprint->getAddedColumns();

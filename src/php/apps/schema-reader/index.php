@@ -14,7 +14,6 @@ require_once 'classes/MigrationDecoder.php';
 require_once 'classes/ExtendedMigrator.php';
 require_once 'classes/ExtendedBlueprint.php';
 require_once 'classes/MigrationRepository.php';
-require_once 'classes/MigrationFilter.php';
 
 Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
     // Set the database connection to SQLite
@@ -66,12 +65,8 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
     // Bind the extended builder
     $app['db.schema'] = new ExtendedBuilder($app['db.connection']);
 
-    MigrationFilter::clear();
 
     foreach ($migrationsFiles as $migrationFile) {
-        // Filter the migration file
-        $migrationFile = MigrationFilter::filter($migrationFile);
-
         $migrationsRepository->newMigration($migrationFile);
         $migration = $migrator->resolveMigrationPath($migrationFile);
 

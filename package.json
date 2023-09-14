@@ -16,6 +16,7 @@
         "php:compile": "php ./src/php/compile.php",
         "php:test": "set VEMTO_DEBUG=1 && php ./src/php/tests/vendor/bin/phpunit ./src/php/tests/src --verbose",
         "php:test-output": "set VEMTO_DEBUG=1 && php ./src/php/output.php",
+        "php:test-schema": "set VEMTO_DEBUG=1 && php ./src/php/output.php schema-reader",
         "test:mock": "yarn php:test-output && php ./mock.php",
         "test": "jest --runInBand",
         "test:watch": "jest --watch",

@@ -23,6 +23,8 @@ class TableRepository {
             $this->processDroppedColumns($migration['droppedColumns']);
             $this->processRenamedColumns($migration['renamedColumns']);
             $this->processCommands($migration['commands']);
+            $this->processDroppedTables($migration['droppedTables']);
+            $this->processRenamedTables($migration['renamedTables']);
         }
 
         $this->orderTablesColumns();
@@ -184,6 +186,41 @@ class TableRepository {
         if ($commandIsDroppingIndex) {
             $this->dropIndex($command);
         }
+    }
+
+    protected function processDroppedTables($droppedTables)
+    {
+        foreach ($droppedTables as $table) {
+            $this->dropTable($table);
+        }
+    }
+
+    protected function dropTable($table)
+    {
+        if(!isset($this->tables[$table])) {
+            return;
+        }
+
+        unset($this->tables[$table]);
+    }
+
+    protected function processRenamedTables($renamedTables)
+    {
+        foreach ($renamedTables as $renameData) {
+            $this->renameTable($renameData['from'], $renameData['to']);
+        }
+    }
+
+    protected function renameTable($from, $to)
+    {
+        if(!isset($this->tables[$from])) {
+            return;
+        }
+
+        $this->tables[$to] = $this->tables[$from];
+        $this->tables[$to]['name'] = $to;
+
+        unset($this->tables[$from]);
     }
 
     protected function addIndex($command)

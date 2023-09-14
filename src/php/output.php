@@ -8,6 +8,17 @@
 // Get apps from compiler.json apps array property
 $compilerSettings = json_decode(file_get_contents(__DIR__ . '/compiler.json'));
 $apps = $compilerSettings->apps;
+$apps = (array) $apps;
+
+
+// If we have the attribute app in the console, run only that app
+if (isset($argv[1])) {
+    echo "Testing output for app: " . $argv[1] . PHP_EOL;
+
+    $apps = [
+        $argv[1] => $apps[$argv[1]]
+    ];
+}
 
 foreach ($apps as $app => $appSettings) {
     
