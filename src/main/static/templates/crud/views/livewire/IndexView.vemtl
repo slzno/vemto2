@@ -20,7 +20,7 @@
     <div class="vtheme(crud.index.tools)">
         <x-ui.input wire:model="search" type="text" placeholder="Search <$ crud.settings.collectionTitle $>..." />
 
-        <a href="{{ route('<$ crud.getRouteNameByTag('create') $>') }}">
+        <a wire:navigate href="{{ route('<$ crud.getRouteNameByTag('create') $>') }}">
             <x-ui.button>New</x-ui.button>
         </a>
     </div>

@@ -6,6 +6,7 @@
 <li class="vtheme(ui.breadcrumbs.list.item)">
     <a 
         @if($href)
+            wire:navigate
             href="{{ $href }}"
         @endif
         class="vtheme(ui.breadcrumbs.list.item.link) {{ $active ? 'active-breadcrumb' : '' }}"

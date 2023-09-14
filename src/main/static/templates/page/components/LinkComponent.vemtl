@@ -2,7 +2,7 @@
 <% const ComponentRenderer = this.require("ComponentRenderer") %>
 
 <# - #>
-<a target="<$ this.settings.target $>" href="<$ this.settings.href $>">
+<a wire:navigate target="<$ this.settings.target $>" href="<$ this.settings.href $>">
     <% if (this.settings.mode === 'text') { %>
     <$ this.settings.content $>
     <% } else { %>

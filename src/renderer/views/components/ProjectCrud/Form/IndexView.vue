@@ -12,7 +12,9 @@
     import { InputType } from '@Common/models/crud/InputType'
     import UiButton from '@Renderer/components/ui/UiButton.vue'
     import UiSelect from '@Renderer/components/ui/UiSelect.vue'
+    import HasManyDetail from '@Common/models/crud/HasManyDetail'
     import { defineProps, ref, toRef, onMounted, reactive } from 'vue'
+import Relationship from '@Common/models/Relationship'
 
     const props = defineProps({
         crud: {
@@ -26,6 +28,7 @@
         showingOptions = ref(false),
         selectedInput = ref(null),
         showingCreateInputModal = ref(false),
+        showingCreateDetailModal = ref(false),
         needsSelectRelationship = ref(false),
         panelInputs = reactive({}) as { [key: string]: Input[] },
         newInputData = ref({
@@ -34,7 +37,8 @@
             columnId: null,
             column: null,
             relationshipId: null
-        })
+        }),
+        newHasManyDetailRelationship = ref(null)
 
     const openInputModal = (input: Input) => {
         let time = 0
@@ -119,13 +123,19 @@
 
         panelInputs[panelId] = input.panel.getOrderedInputs()
         
-        close()
+        closeInputModal()
         resetNewInputData()
     }
 
-    const close = (): void => {
+    const closeInputModal = (): void => {
         showingCreateInputModal.value = false
         needsSelectRelationship.value = false
+
+        resetNewInputData()
+    }
+
+    const closeDetailModal = (): void => {
+        showingCreateDetailModal.value = false
 
         resetNewInputData()
     }
@@ -138,6 +148,24 @@
             column: null,
             relationshipId: null
         }
+    }
+
+    const createHasManyDetail = () => {
+        if(!newHasManyDetailRelationship.value) {
+            return Alert.error('Please, select a relationship to create the detail')
+        }
+
+        const relationship = Relationship.find(newHasManyDetailRelationship.value)
+
+        if(!relationship) {
+            return Alert.error('Please, select a valid relationship to create the detail')
+        }
+
+        HasManyDetail.createFromRelation(crud.value, relationship)
+
+        newHasManyDetailRelationship.value = null
+
+        closeDetailModal()
     }
 
     onMounted(() => {
@@ -154,14 +182,12 @@
             <template v-for="input in inputTypes()" :key="input">
                 <UiButton @click="addInput(input)" class="w-full">{{ changeCase.pascalCase(input) }}</UiButton>
             </template>
+            <h2>Master Details</h2>
+            <UiButton @click="showingCreateDetailModal = true" class="w-full">Add Has Many Detail</UiButton>
         </div>
 
-        <UiModal
-            width="25%"
-            title="Create Input"
-            :show="showingCreateInputModal"
-            @close="close()"
-        >
+        <!-- Input's Modal -->
+        <UiModal width="25%" title="Create Input" :show="showingCreateInputModal" @close="closeInputModal()">
             <div class="m-2">
                 <div class="m-1 flex flex-col gap-2" @keyup.enter="createInput()">
                     <UiSelect v-model="newInputData.panelId" label="Panel">
@@ -183,6 +209,21 @@
                 </div>
                 <div class="m-1 mt-2 flex justify-end">
                     <UiButton @click="createInput()">Create</UiButton>
+                </div>
+            </div>
+        </UiModal>
+
+        <!-- HasManyDetail Modal -->
+        <UiModal width="25%" title="Create Input" :show="showingCreateDetailModal" @close="closeDetailModal()">
+            <div class="m-2">
+                <div class="m-1 flex flex-col gap-2" @keyup.enter="createHasManyDetail()">
+                    <UiSelect v-model="newHasManyDetailRelationship" label="Relationship" >
+                        <option :value="null" disabled>Select a relationship</option>
+                        <option v-for="relationship in crud.model.getHasManyRelations()" :value="relationship.id" :key="relationship.id">{{ relationship.name }}</option>
+                    </UiSelect>
+                </div>
+                <div class="m-1 mt-2 flex justify-end">
+                    <UiButton @click="createHasManyDetail()">Create</UiButton>
                 </div>
             </div>
         </UiModal>
