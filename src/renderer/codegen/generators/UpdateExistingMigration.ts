@@ -5,9 +5,13 @@ import PhpFormatter from "../formatters/PhpFormatter"
 import MigrationEditor from "../editors/MigrationEditor"
 import TemplateCompiler from "../templates/base/TemplateCompiler"
 
-export default new class UpdateExistingMigration {
+export default class UpdateExistingMigration {
     table: Table
     project: Project
+
+    constructor(table: Table) {
+        this.setTable(table)
+    }
 
     setTable(table: Table) {
         this.table = table
@@ -69,7 +73,9 @@ export default new class UpdateExistingMigration {
         const compiledTemplate = await templateCompiler.compileWithImports(),
             migrationEditor = new MigrationEditor(creationMigrationContent)
 
-        migrationEditor.replaceSchemaCreateOnUpMethod(this.table.name, compiledTemplate)
+        migrationEditor
+            .replaceSchemaCreateOnUpMethod(this.table.getCanonicalName(), compiledTemplate)
+            .changeTableOnSchemaDropOnDownMethod(this.table.getCanonicalName(), this.table.name)
 
         return PhpFormatter.setContent(
             migrationEditor.getMigrationContent()

@@ -9,9 +9,11 @@
 
     onMounted(() => {
         Main.API.onDefaultError((error) => { 
-            Alert.error(error.error)
-            console.error(error.error)
-            console.error(error.stack)
+            if(!error.error.includes('schema-reader')) {
+                Alert.error(error.error)
+                console.error(error.error)
+                console.error(error.stack)
+            }
         })
 
         if(Main.API.onDevelopment()) {

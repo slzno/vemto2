@@ -2,13 +2,13 @@ import Index from './Index'
 import Model from './Model'
 import Column from './Column'
 import Project from './Project'
-import RelaDB from '@tiago_silva_pereira/reladb'
 import DataComparator from './services/DataComparator'
 import DataComparisonLogger from './services/DataComparisonLogger'
 import Relationship from './Relationship'
 import WordManipulator from '@Common/util/WordManipulator'
+import AbstractSchemaModel from './composition/AbstractSchemaModel'
 
-export default class Table extends RelaDB.Model implements SchemaModel {
+export default class Table extends AbstractSchemaModel implements SchemaModel {
     id: string
     name: string
     indexes: Index[]
@@ -75,6 +75,14 @@ export default class Table extends RelaDB.Model implements SchemaModel {
         this.markAsChanged()
     }
 
+    undoRemove() {
+        this.removed = false
+
+        this.save()
+
+        this.markAsChanged()
+    }
+
     getOldName(): string {
         if(!this.schemaState) return this.name
 
@@ -91,13 +99,6 @@ export default class Table extends RelaDB.Model implements SchemaModel {
         const dataComparisonMap = this.dataComparisonMap(data)
 
         return Object.keys(dataComparisonMap).some(key => dataComparisonMap[key])
-    }
-
-    dataComparisonMap(comparisonData: any) {
-        return {
-            name: DataComparator.stringsAreDifferent(this.schemaState.name, comparisonData.name),
-            migrations: DataComparator.arraysAreDifferent(this.schemaState.migrations, comparisonData.migrations),
-        }
     }
 
     applyChanges(data: any) {
@@ -124,10 +125,44 @@ export default class Table extends RelaDB.Model implements SchemaModel {
         this.schemaState = this.buildSchemaState()
     }
 
+    /**
+     * The next two methods (buildSchemaState and dataComparisonMap) are extremely 
+     * important to keep the state of the schema,
+     * and both need to reflect the same data structure to avoid false positives when
+     * comparing the data between the schema state and the current state.
+     */
     buildSchemaState() {
         return {
             name: this.name,
+            migrations: this.migrations,
         }
+    }
+
+    dataComparisonMap(comparisonData: any) {
+        return {
+            name: DataComparator.stringsAreDifferent(this.schemaState.name, comparisonData.name),
+            migrations: DataComparator.arraysAreDifferent(this.schemaState.migrations, comparisonData.migrations),
+        }
+    }
+
+    /**
+     * The following method defines propertis that cannot be touched by the application without
+     * enabling the isSavingInternally flag. It prevents the application from saving data
+     * that is not supposed to be saved. The schemaState property is always protected when isSavingInternally
+     * is disabled, even if the property is not defined here. The main reason for this is that some properties
+     * can only be changed when reading the schema state from the application code, and never from the Vemto's
+     * interface.
+     * @returns {string[]}
+     */
+    static nonTouchableProperties(): string[] {
+        return ['migrations']
+    }
+
+    isDirty(): boolean {
+        const hasDirtyColumns = this.getColumns().some((column) => column.isDirty()),
+            hasDirtyIndexes = this.getIndexes().some((index) => index.isDirty())
+
+        return !this.isRemoved() && (this.hasLocalChanges() || hasDirtyColumns || hasDirtyIndexes)
     }
 
     hasLocalChanges(): boolean {
@@ -329,7 +364,7 @@ export default class Table extends RelaDB.Model implements SchemaModel {
 
         this.getModels().forEach((model: Model) => {
             relationships = relationships
-                .concat(model.ownRelationships)
+                .concat(model.getValidOwnRelationships())
         })
 
         return relationships
@@ -354,9 +389,14 @@ export default class Table extends RelaDB.Model implements SchemaModel {
     }
 
     latestMigrationCreatedTable(): boolean {
-        let latestMigration = this.getLatestMigration()
+        const latestMigration = this.getLatestMigration(),
+            tableName = this.getCanonicalName()
 
-        return !! (latestMigration && latestMigration.createdTables.includes(this.name))
+        return !! (latestMigration && latestMigration.createdTables.includes(tableName))
+    }
+
+    getCanonicalName(): string {
+        return this.schemaState.name || this.name
     }
 
     getLatestMigration(): any {
@@ -386,11 +426,19 @@ export default class Table extends RelaDB.Model implements SchemaModel {
     getCreationMigration(): any {
         if(!this.hasMigrations()) return null
 
-        return this.migrations.find((migration) => migration.createdTables.includes(this.name))
+        const tableName = this.getCanonicalName()
+
+        return this.migrations.find((migration) => migration.createdTables.includes(tableName))
+    }
+
+    probablyNeedsToUpdateLatestMigration(): boolean {
+        return this.canUpdateLatestMigration() 
+            && this.latestMigrationCreatedTable()
+            && this.wasRenamed()
     }
 
     canUpdateLatestMigration(): boolean {
-        return this.hasMigrations()
+        return this.hasMigrations() && !this.isRemoved()
     }
 
     wasCreatedFromInterface(): boolean {

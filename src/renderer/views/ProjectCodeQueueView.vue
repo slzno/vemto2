@@ -128,7 +128,7 @@
                     </div>
                 </div>
 
-                <UiButton @click="runSequentialGenerator()">Generate</UiButton>
+                <!-- <UiButton @click="runSequentialGenerator()">Generate</UiButton> -->
             </div>
 
             <div

@@ -340,7 +340,7 @@ test('It fires TableColumnCreated when saving from interface', () => {
     column.tableId = project.tables[0].id
     column.saveFromInterface()
 
-    expect(project.fresh().hasChangedTables()).toBe(true)
+    expect(project.fresh().hasSchemaChanges()).toBe(true)
 })
 
 test('It fires TableColumnUpdated when saving from interface', () => {
@@ -350,7 +350,7 @@ test('It fires TableColumnUpdated when saving from interface', () => {
     column.name = 'special_primary_key'
     column.saveFromInterface()
 
-    expect(project.fresh().hasChangedTables()).toBe(true)
+    expect(project.fresh().hasSchemaChanges()).toBe(true)
 })
 
 test('It can mark a column as removed', () => {

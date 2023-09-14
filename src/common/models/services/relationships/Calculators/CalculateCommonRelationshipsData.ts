@@ -86,6 +86,10 @@ class CalculateCommonRelationshipsData extends CalculateRelationshipService {
 
         let keys = this.getDefaultKeys()
 
+        if(!keys.foreignKey) {
+            return
+        }
+
         this.relationship.foreignKeyId = keys.foreignKey.id
     }
 
@@ -101,6 +105,10 @@ class CalculateCommonRelationshipsData extends CalculateRelationshipService {
         this.checkTypeAndRelatedModel()
         
         const keys = this.getDefaultKeys()
+
+        if(!keys.parentKey) {
+            return
+        }
 
         this.relationship.parentKeyId = keys.parentKey.id
     }

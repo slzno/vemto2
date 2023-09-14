@@ -94,12 +94,12 @@ test('It can check if the project has changed tables', () => {
         table = TestHelper.createTable({ name: 'users' }),    
         column = TestHelper.createColumnWithSchemaState({ table })
 
-    expect(project.fresh().hasChangedTables()).toBe(false)
+    expect(project.fresh().hasSchemaChanges()).toBe(false)
     
     column.name = 'special_primary_key'
     column.saveFromInterface()
     
-    expect(project.fresh().hasChangedTables()).toBe(true)
+    expect(project.fresh().hasSchemaChanges()).toBe(true)
 })
 
 test('It can the project changed tables', () => {
@@ -117,11 +117,11 @@ test('It can mark a project table as changed', () => {
     const project = TestHelper.getProject(),
         table = TestHelper.createTable({ name: 'users' })
     
-    expect(project.fresh().hasChangedTables()).toBe(false)
+    expect(project.fresh().hasSchemaChanges()).toBe(false)
 
     project.markTableAsChanged(table)
 
-    expect(project.fresh().hasChangedTables()).toBe(true)
+    expect(project.fresh().hasSchemaChanges()).toBe(true)
 })
 
 test('It can clear project changed tables', () => {
@@ -130,11 +130,11 @@ test('It can clear project changed tables', () => {
     
     project.markTableAsChanged(table)
     
-    expect(project.fresh().hasChangedTables()).toBe(true)
+    expect(project.fresh().hasSchemaChanges()).toBe(true)
 
     project.clearChangedTables()
 
-    expect(project.fresh().hasChangedTables()).toBe(false)
+    expect(project.fresh().hasSchemaChanges()).toBe(false)
 })
 
 test('It can remove a table from changed tables', () => {
@@ -143,9 +143,9 @@ test('It can remove a table from changed tables', () => {
     
     project.markTableAsChanged(table)
     
-    expect(project.fresh().hasChangedTables()).toBe(true)
+    expect(project.fresh().hasSchemaChanges()).toBe(true)
 
     project.removeTableFromChangedTables(table)
 
-    expect(project.fresh().hasChangedTables()).toBe(false)
+    expect(project.fresh().hasSchemaChanges()).toBe(false)
 })

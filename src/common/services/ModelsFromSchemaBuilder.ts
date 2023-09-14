@@ -86,6 +86,8 @@ class ModelsFromSchemaBuilder {
         const modelsClasses = this.project.getModelsClasses(),
             modelsKeyedByClass = this.project.getAllModelsKeyedByClass()
 
+        console.log(this.schemaModelsData)
+        
         // Delete models that no longer exist
         modelsClasses.forEach((modelClass: string) => {
             if(!this.schemaModelsData.find(m => m.class === modelClass)) {
@@ -107,7 +109,9 @@ class ModelsFromSchemaBuilder {
                 model = modelsKeyedByClass[modelData.class]
             }
 
+            Model.savingInternally()
             model.applyChanges(modelData)
+            Model.notSavingInternally()
 
             this.readRelationships(modelData, model)
         })
@@ -140,8 +144,10 @@ class ModelsFromSchemaBuilder {
             
             relationship.projectId = this.project.id
 
+            Relationship.savingInternally()
             relationship.applyChanges(relationshipData)
             relationship.fillRelationshipKeys()
+            Relationship.notSavingInternally()
 
             this.changedRelationships.push(relationship)
         })

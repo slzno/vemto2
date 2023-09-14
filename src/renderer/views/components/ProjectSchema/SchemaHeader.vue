@@ -1,7 +1,7 @@
 <script setup lang="ts">
-    import { ref, onMounted, nextTick } from 'vue'
+    import { ref, onMounted, nextTick, defineEmits } from 'vue'
     import Table from "@Common/models/Table"
-    import { ArrowPathIcon } from "@heroicons/vue/24/outline"
+    import { ArrowDownTrayIcon, ArrowPathIcon, PhotoIcon, PlusCircleIcon } from "@heroicons/vue/24/outline"
     import UiModal from '@Renderer/components/ui/UiModal.vue'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
     import UiText from '@Renderer/components/ui/UiText.vue'
@@ -11,11 +11,16 @@
     import Alert from '@Renderer/components/utils/Alert'
     import UiCheckbox from '@Renderer/components/ui/UiCheckbox.vue'
     import CreateDefaultTableModel from "@Common/models/services/tables/CreateDefaultTableModel"
+import UiConfirm from '@Renderer/components/ui/UiConfirm.vue'
+import UiWarning from '@Renderer/components/ui/UiWarning.vue'
 
     const showingCreateTableModal = ref(false),
         projectStore = useProjectStore(),
         newTable = ref<Table>(null),
-        addModelForNewTable = ref(true)
+        addModelForNewTable = ref(true),
+        confirmDialog = ref(null)
+
+    const emit = defineEmits(['forceReload'])
 
     const createTable = (): void => {
         validate().then(isValid => {
@@ -86,10 +91,26 @@
 
         addModelForNewTable.value = true
     })
+
+    const forceReload = async () => {
+        const confirmed = await confirmDialog.value.confirm()
+        if(!confirmed) return
+
+        emit('forceReload')
+    }
 </script>
 
 <template>
+    <UiConfirm ref="confirmDialog">
+        Are you sure you want to force reload the schema? 
+        
+        <UiWarning class="mt-2">
+            All unsaved changes will be lost. This includes models and tables not synced with the application source code.
+        </UiWarning>
+    </UiConfirm>
+
     <div class="absolute flex top-0 left-0 p-4 space-x-2 text-sm z-20">
+
         <div
             class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow px-1"
         >
@@ -99,20 +120,7 @@
                     class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
                     @click="show()"
                 >
-                    <svg
-                        class="w-7 h-7"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                        ></path>
-                    </svg>
+                    <PlusCircleIcon class="w-7 h-7" />
                 </div>
 
                 <UiModal
@@ -146,22 +154,26 @@
                         viewBox="0 0 24 24"
                         xmlns="http://www.w3.org/2000/svg"
                     >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                        ></path>
+                        <PhotoIcon class="w-7 h-7" />
                     </svg>
+                </div>
+
+                <div
+                    class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
+                    title="Sync Schema"
+                >
+                    <ArrowPathIcon
+                        class="w-7 h-7"
+                    />
                 </div>
 
                 <div
                     class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
                     title="Force reload"
                 >
-                    <ArrowPathIcon
+                    <ArrowDownTrayIcon
                         class="w-7 h-7"
-                        @click="$emit('forceReload')"
+                        @click="forceReload()"
                     />
                 </div>
             </div>
@@ -173,16 +185,6 @@
                     class="border-0 bg-slate-100 dark:bg-slate-950 px-4 py-1 rounded-full"
                     placeholder="Search"
                 />
-            </div>
-        </div>
-
-        <div
-            class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow"
-        >
-            <div
-                class="px-5 cursor-pointer text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-500"
-            >
-                Main
             </div>
         </div>
 
@@ -207,6 +209,26 @@
                         d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                     ></path>
                 </svg>
+            </div>
+        </div>
+
+        <div
+            class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow"
+        >
+            <div
+                class="px-5 cursor-pointer text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-500"
+            >
+                App
+            </div>
+        </div>
+
+        <div
+            class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow"
+        >
+            <div
+                class="px-5 cursor-pointer text-slate-600 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-500"
+            >
+                Laravel
             </div>
         </div>
     </div>

@@ -12,6 +12,7 @@ import RenderableFile, {
 } from "./RenderableFile"
 import GenerateBasicProjectData from "./services/project/GenerateBasicProjectData"
 import AppSection from "./AppSection"
+import CalculateSchemaChanges from "./services/project/CalculateSchemaChanges"
 
 export default class Project extends RelaDB.Model {
     id: string
@@ -31,6 +32,7 @@ export default class Project extends RelaDB.Model {
     renderableFiles: RenderableFile[]
     currentRenderedFilesPaths: string[]
     vthemeKeys: any
+    currentSchemaError: string
 
     lastForeignAlias: number = 0;
 
@@ -91,6 +93,12 @@ export default class Project extends RelaDB.Model {
 
     findTableByName(tableName: string): Table {
         return this.tables.find((table) => table.name === tableName)
+    }
+
+    findTableBySchemaStateName(schemaStateName: string): Table {
+        return this.tables.find(
+            (table) => table.schemaState.name === schemaStateName
+        )
     }
 
     findTableById(tableId: string): Table {
@@ -155,18 +163,16 @@ export default class Project extends RelaDB.Model {
         return models
     }
 
-    hasChangedTables(): boolean {
-        if (!this.changedTablesIds) return false
-
-        return this.changedTablesIds.length > 0
+    hasSchemaChanges(): boolean {
+        const changesCalculator = new CalculateSchemaChanges(this)
+        
+        return changesCalculator.hasChanges()
     }
 
     getChangedTables(): Table[] {
-        if (!this.hasChangedTables()) return []
+        if (!this.hasSchemaChanges()) return []
 
-        return this.tables.filter((table) =>
-            this.changedTablesIds.includes(table.id)
-        )
+        return new CalculateSchemaChanges(this).getAllTables()
     }
 
     getRenamedTables(): Table[] {
@@ -346,6 +352,7 @@ export default class Project extends RelaDB.Model {
     }
 
     hasVthemeKey(keyName): boolean {
+        if (!this.vthemeKeys) return false
         return typeof this.vthemeKeys[keyName] !== 'undefined'
     }
 
@@ -357,6 +364,20 @@ export default class Project extends RelaDB.Model {
 
     saveVthemeKeys(vthemeKeys: any) {
         this.vthemeKeys = vthemeKeys
+        this.save()
+    }
+
+    hasCurrentSchemaError(): boolean {
+        return !!this.currentSchemaError
+    }
+
+    setCurrentSchemaError(error: string) {
+        this.currentSchemaError = error
+        this.save()
+    }
+
+    clearCurrentSchemaError() {
+        this.currentSchemaError = null
         this.save()
     }
 }

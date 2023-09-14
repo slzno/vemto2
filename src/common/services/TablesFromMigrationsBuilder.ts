@@ -102,7 +102,9 @@ class TablesFromMigrationsBuilder {
                 table = tablesKeyedByName[tableName]
             }
 
+            Table.savingInternally()
             table.applyChanges(tableData)
+            Table.notSavingInternally()
 
             this.readColumns(tableData, table)
         })
@@ -141,7 +143,9 @@ class TablesFromMigrationsBuilder {
 
             if(columnIsIndex) columnData.index = true
 
+            Column.savingInternally()
             column.applyChanges(columnData)
+            Column.notSavingInternally()
         })
     }
 
@@ -183,7 +187,9 @@ class TablesFromMigrationsBuilder {
                 index = indexesKeyedByName[indexName]
             }
 
+            Index.savingInternally()
             index.applyChanges(indexData)
+            Index.notSavingInternally()
         })
     }
 

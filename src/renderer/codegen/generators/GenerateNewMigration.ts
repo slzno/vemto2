@@ -4,9 +4,13 @@ import Project from "../../../common/models/Project"
 import PhpFormatter from "../formatters/PhpFormatter"
 import TemplateCompiler from "../templates/base/TemplateCompiler"
 
-export default new class GenerateNewMigration {
+export default class GenerateNewMigration {
     table: Table
     project: Project
+
+    constructor(table: Table) {
+        this.setTable(table)
+    }
 
     setTable(table: Table) {
         this.table = table
@@ -26,13 +30,23 @@ export default new class GenerateNewMigration {
         }
     }
 
-    getName() {
+    getName(): string {
         const datePrefix = new Date().toISOString().split('T')[0].replace(/-/g, '_'),
             timePrefix = new Date().toISOString().split('T')[1].split('.')[0].replace(/:/g, '')
 
-        return this.table.needsCreationMigration() ? 
-            `/database/migrations/${datePrefix}_${timePrefix}_create_${this.table.name}_table.php` :
-            `/database/migrations/${datePrefix}_${timePrefix}_update_${this.table.name}_table.php`
+        if(this.table.needsCreationMigration()) {
+            return `/database/migrations/${datePrefix}_${timePrefix}_create_${this.table.name}_table.php`
+        } 
+
+        if(this.table.wasRenamed()) {
+            return `/database/migrations/${datePrefix}_${timePrefix}_rename_${this.table.schemaState.name}_table_to_${this.table.name}.php`
+        }
+
+        if(this.table.isRemoved()) {
+            return `/database/migrations/${datePrefix}_${timePrefix}_drop_${this.table.schemaState.name}_table.php`
+        }
+
+        return `/database/migrations/${datePrefix}_${timePrefix}_update_${this.table.name}_table.php`
     }
 
     async generateMigration() {
@@ -53,12 +67,50 @@ export default new class GenerateNewMigration {
             return await this.generateCreationMigration()
         } 
 
+        if(this.table.wasRenamed()) {
+            return await this.generateRenameMigration()
+        }
+
+        if(this.table.isRemoved()) {
+            return await this.generateDropMigration()
+        }
+
         return await this.generateUpdaterMigration()
     }
 
     async generateCreationMigration() {
         const templateCompiler = new TemplateCompiler(), 
             templateContent = await Main.API.readTemplateFile("CreationMigration.vemtl")
+
+        templateCompiler
+            .setContent(templateContent)
+            .setData({ table: this.table })
+
+        const compiledTemplate = await templateCompiler.compileWithImports()
+
+        return PhpFormatter.setContent(
+            compiledTemplate
+        ).format()
+    }
+
+    async generateRenameMigration() {
+        const templateCompiler = new TemplateCompiler(), 
+            templateContent = await Main.API.readTemplateFile("RenameMigration.vemtl")
+
+        templateCompiler
+            .setContent(templateContent)
+            .setData({ table: this.table })
+
+        const compiledTemplate = await templateCompiler.compileWithImports()
+
+        return PhpFormatter.setContent(
+            compiledTemplate
+        ).format()
+    }
+
+    async generateDropMigration() {
+        const templateCompiler = new TemplateCompiler(), 
+            templateContent = await Main.API.readTemplateFile("DropMigration.vemtl")
 
         templateCompiler
             .setContent(templateContent)

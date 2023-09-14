@@ -315,7 +315,7 @@ test('It can mark a table as changed', () => {
 
     table.markAsChanged()
 
-    expect(project.fresh().hasChangedTables()).toBe(true)
+    expect(project.fresh().hasSchemaChanges()).toBe(true)
 })
 
 test('It can check if a table has migrations data', () => {

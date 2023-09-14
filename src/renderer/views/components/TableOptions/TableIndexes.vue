@@ -9,12 +9,14 @@
     import debounce from '@Renderer/../common/tools/debounce'
     import { PlusCircleIcon, EllipsisVerticalIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import Main from "@Renderer/services/wrappers/Main"
-    import { uniq } from 'lodash'
+    import UiButton from '@Renderer/components/ui/UiButton.vue'
 
     const props = defineProps(['table']),
         table = toRef(props, 'table'),
         tableIndexes = ref([]),
         showIndexOption = ref(null)
+
+    const onDevelopment = Main.API.onDevelopment()
 
     const getForSelect = (
         collection: any,
@@ -50,28 +52,10 @@
         return getForSelect(index.onTable.getColumns())
     }
 
-    const saveRelationshipProperty = (index: Index, selectValue: Array<Object>, modelPropertyName: string, modelPropertyRelationship: string): void => {
-        const columnNames = selectValue.map((item: any) => item.value),
-            uniqueColumnNames = uniq(columnNames.concat(index[modelPropertyName]))
+    const saveIndexColumns = (index: Index, selectValue: Array<Object>): void => {
+        const columnsNames = selectValue.map((item: any) => item.value)
 
-        uniqueColumnNames.forEach((columnName: string) => {
-            const column = index.table.getColumnByName(columnName)
-
-            if(!column) return
-
-            if(columnNames.includes(columnName)) {
-                index.relation(modelPropertyRelationship).attachUnique(column)
-                return
-            }
-
-            index.relation(modelPropertyRelationship).detach(column)
-            uniqueColumnNames.splice(uniqueColumnNames.indexOf(columnName), 1)
-        })
-
-        index[modelPropertyName] = uniqueColumnNames.filter((columnName: string) => !! columnName)
-    
-        index.name = index.calculateDefaultName()
-        saveIndex(index)
+        index.updateColumns(columnsNames)
     }
 
     const onEscapePressed = (index: Index) => {
@@ -113,6 +97,10 @@
     onMounted(() => {
         tableIndexes.value = props.table.getIndexes()
     })
+
+    const log = (index: Index) => {
+        console.log(index)
+    }
 </script>
 <template>
     <div>
@@ -127,6 +115,9 @@
                 'border-blue-400': index.isCommon(),
             }"
         >
+            <div class="mt-4" v-if="onDevelopment">
+                <UiButton @click="log(index)">Log details</UiButton>
+            </div>
             <div class="flex gap-2 mb-2">
                 <div class="w-[10rem]">
                     <UiDropdownSelect
@@ -182,7 +173,7 @@
                     inputLabel="Columns"
                     :default-value="getSelectDataForLayout(index.indexColumns)"
                     :options="getSelectDataForLayout(index.table.getColumns())"
-                    @change="$event => saveRelationshipProperty(index, $event, 'columns', 'indexColumns')"
+                    @change="$event => saveIndexColumns(index, $event)"
                 />
             </div>
     
@@ -215,7 +206,7 @@
     >
         <div class="flex items-center">
             <PlusCircleIcon class="w-8 h-8" />
-            <span class="px-1.5">Add Index</span>
+            <span class="px-1.5">Add index</span>
         </div>
     </section>
 </template>

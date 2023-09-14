@@ -2,7 +2,6 @@ import Model from './Model'
 import Column from './Column'
 import Table from './Table'
 import Project from './Project'
-import RelaDB from '@tiago_silva_pereira/reladb'
 import DataComparator from './services/DataComparator'
 import DataComparisonLogger from './services/DataComparisonLogger'
 import CalculateMorphRelationshipsData from './services/relationships/Calculators/CalculateMorphRelationshipsData'
@@ -14,8 +13,9 @@ import FillManyToManyRelationshipKeys from './services/relationships/Fillers/Fil
 import FillMorphRelationshipKeys from './services/relationships/Fillers/FillMorphRelationshipKeys'
 import FillThroughRelationshipKeys from './services/relationships/Fillers/FillThroughRelationshipKeys'
 import WordManipulator from '@Common/util/WordManipulator'
+import AbstractSchemaModel from './composition/AbstractSchemaModel'
 
-export default class Relationship extends RelaDB.Model implements SchemaModel {
+export default class Relationship extends AbstractSchemaModel implements SchemaModel {
     id: string
     defaultName: string
     usingFirstDefaultName: boolean
@@ -139,6 +139,10 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
         this.removed = true
 
         this.save()
+    }
+
+    isValid(): boolean {
+        return !! this.model && !! this.relatedModel
     }
 
     static updated(relationship: Relationship) {
@@ -311,28 +315,6 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
         return Object.keys(dataComparisonMap).some(key => dataComparisonMap[key])
     }
 
-    dataComparisonMap(comparisonData: any) {
-        return {
-            name: DataComparator.stringsAreDifferent(this.schemaState.name, comparisonData.name),
-            type: DataComparator.stringsAreDifferent(this.schemaState.type, comparisonData.type),
-            relatedTableName: DataComparator.stringsAreDifferent(this.schemaState.relatedTableName, comparisonData.relatedTableName),
-            relatedModelName: DataComparator.stringsAreDifferent(this.schemaState.relatedModelName, comparisonData.relatedModelName),
-            parentTableName: DataComparator.stringsAreDifferent(this.schemaState.parentTableName, comparisonData.parentTableName),
-            parentModelName: DataComparator.stringsAreDifferent(this.schemaState.parentModelName, comparisonData.parentModelName),
-            relatedKeyName: DataComparator.stringsAreDifferent(this.schemaState.relatedKeyName, comparisonData.relatedKeyName),
-            foreignKeyName: DataComparator.stringsAreDifferent(this.schemaState.foreignKeyName, comparisonData.foreignKeyName),
-            ownerKeyName: DataComparator.stringsAreDifferent(this.schemaState.ownerKeyName, comparisonData.ownerKeyName),
-            foreignPivotKeyName: DataComparator.stringsAreDifferent(this.schemaState.foreignPivotKeyName, comparisonData.foreignPivotKeyName),
-            relatedPivotKeyName: DataComparator.stringsAreDifferent(this.schemaState.relatedPivotKeyName, comparisonData.relatedPivotKeyName),
-            parentKeyName: DataComparator.stringsAreDifferent(this.schemaState.parentKeyName, comparisonData.parentKeyName),
-            pivotTableName: DataComparator.stringsAreDifferent(this.schemaState.pivotTableName, comparisonData.pivotTableName),
-            morphType: DataComparator.stringsAreDifferent(this.schemaState.morphType, comparisonData.morphType),
-            localKeyName: DataComparator.stringsAreDifferent(this.schemaState.localKeyName, comparisonData.localKeyName),
-            firstKeyName: DataComparator.stringsAreDifferent(this.schemaState.firstKeyName, comparisonData.firstKeyName),
-            secondKeyName: DataComparator.stringsAreDifferent(this.schemaState.secondKeyName, comparisonData.secondKeyName),
-        }
-    }
-
     hasLocalChanges(): boolean {
         if(!this.schemaState) return false
 
@@ -385,6 +367,12 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
         this.schemaState = this.buildSchemaState()
     }
 
+    /**
+     * The next two methods (buildSchemaState and dataComparisonMap) are extremely 
+     * important to keep the state of the schema,
+     * and both need to reflect the same data structure to avoid false positives when
+     * comparing the data between the schema state and the current state.
+     */
     buildSchemaState() {
         return {
             name: this.name,
@@ -404,6 +392,41 @@ export default class Relationship extends RelaDB.Model implements SchemaModel {
             firstKeyName: this.firstKeyName,
             secondKeyName: this.secondKeyName,
         }
+    }
+
+    dataComparisonMap(comparisonData: any) {
+        return {
+            name: DataComparator.stringsAreDifferent(this.schemaState.name, comparisonData.name),
+            type: DataComparator.stringsAreDifferent(this.schemaState.type, comparisonData.type),
+            relatedTableName: DataComparator.stringsAreDifferent(this.schemaState.relatedTableName, comparisonData.relatedTableName),
+            relatedModelName: DataComparator.stringsAreDifferent(this.schemaState.relatedModelName, comparisonData.relatedModelName),
+            parentTableName: DataComparator.stringsAreDifferent(this.schemaState.parentTableName, comparisonData.parentTableName),
+            parentModelName: DataComparator.stringsAreDifferent(this.schemaState.parentModelName, comparisonData.parentModelName),
+            relatedKeyName: DataComparator.stringsAreDifferent(this.schemaState.relatedKeyName, comparisonData.relatedKeyName),
+            foreignKeyName: DataComparator.stringsAreDifferent(this.schemaState.foreignKeyName, comparisonData.foreignKeyName),
+            ownerKeyName: DataComparator.stringsAreDifferent(this.schemaState.ownerKeyName, comparisonData.ownerKeyName),
+            foreignPivotKeyName: DataComparator.stringsAreDifferent(this.schemaState.foreignPivotKeyName, comparisonData.foreignPivotKeyName),
+            relatedPivotKeyName: DataComparator.stringsAreDifferent(this.schemaState.relatedPivotKeyName, comparisonData.relatedPivotKeyName),
+            parentKeyName: DataComparator.stringsAreDifferent(this.schemaState.parentKeyName, comparisonData.parentKeyName),
+            pivotTableName: DataComparator.stringsAreDifferent(this.schemaState.pivotTableName, comparisonData.pivotTableName),
+            morphType: DataComparator.stringsAreDifferent(this.schemaState.morphType, comparisonData.morphType),
+            localKeyName: DataComparator.stringsAreDifferent(this.schemaState.localKeyName, comparisonData.localKeyName),
+            firstKeyName: DataComparator.stringsAreDifferent(this.schemaState.firstKeyName, comparisonData.firstKeyName),
+            secondKeyName: DataComparator.stringsAreDifferent(this.schemaState.secondKeyName, comparisonData.secondKeyName),
+        }
+    }
+
+    /**
+     * The following method defines propertis that cannot be touched by the application without
+     * enabling the isSavingInternally flag. It prevents the application from saving data
+     * that is not supposed to be saved. The schemaState property is always protected when isSavingInternally
+     * is disabled, even if the property is not defined here. The main reason for this is that some properties
+     * can only be changed when reading the schema state from the application code, and never from the Vemto's
+     * interface.
+     * @returns {string[]}
+     */
+    static nonTouchableProperties(): string[] {
+        return []
     }
 
     wasCreatedFromInterface(): boolean {

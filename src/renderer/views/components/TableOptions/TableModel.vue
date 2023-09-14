@@ -10,6 +10,10 @@
     import Column from "@Renderer/../common/models/Column"
     import TableModelRelationships from './TableModelRelationships.vue'
     import { uniq } from 'lodash'
+    import UiWarning from "@Renderer/components/ui/UiWarning.vue"
+    import UiButton from "@Renderer/components/ui/UiButton.vue"
+
+    const onDevelopment = Main.API.onDevelopment()
 
     const props = defineProps({
         model: {
@@ -31,8 +35,8 @@
         models.value = project.models
     })
 
-    const saveModelData = debounce((isNameChange: boolean) => {
-        if(isNameChange) {
+    const saveModelData = debounce((nameWasChanged: boolean) => {
+        if(nameWasChanged) {
             model.value.calculateDataByName()
         }
         
@@ -64,27 +68,16 @@
         })
     }
 
-    const saveModelMassAssignmentProperty = (selectValue: Array<Object>, modelPropertyName: string, modelPropertyRelationship: string): void => {
-        const columnNames = selectValue.map((item: any) => item.value),
-            uniqueColumnNames = uniq(columnNames.concat(model.value[modelPropertyName]))
+    const saveFillableColumns= (selectValue: Array<Object>): void => {
+        const columnsNames = selectValue.map((item: any) => item.value)
 
-        uniqueColumnNames.forEach((columnName: string) => {
-            const column = model.value.table.getColumnByName(columnName)
+        model.value.saveFillableColumns(columnsNames)
+    }
 
-            if(!column) return
+    const saveGuardedColumns = (selectValue: Array<Object>): void => {
+        const columnsNames = selectValue.map((item: any) => item.value)
 
-            if(columnNames.includes(columnName)) {
-                model.value.relation(modelPropertyRelationship).attachUnique(column)
-                return
-            }
-
-            model.value.relation(modelPropertyRelationship).detach(column)
-            uniqueColumnNames.splice(uniqueColumnNames.indexOf(columnName), 1)
-        })
-
-        model.value[modelPropertyName] = uniqueColumnNames
-
-        saveModelData()
+        model.value.saveGuardedColumns(columnsNames)
     }
 
     const deleteModel = (): void => {
@@ -95,6 +88,10 @@
             emit('removeModel')
         })
     }
+
+    const log = (data: any): void => {
+        console.log(data)
+    }
 </script>
 
 <template>
@@ -102,6 +99,10 @@
         class="relative flex-col bg-slate-800 border-l-4 border-slate-700 p-2 rounded-xl shadow"
     >
         <div>
+            <UiWarning class="mb-2" v-if="model.isNew()">
+                <span>This model was not saved to the filesystem yet. Please generate the code pressing F5 to save it</span>
+            </UiWarning>
+
             <div class="flex justify-between gap-2">
                 <UiText
                     v-model="model.namespace"
@@ -159,7 +160,7 @@
                     <UiMultiSelect
                         inputLabel="Guarded"
                         :default-value="getSelectDataForLayout(model.guardedColumns)"
-                        @change="$event => saveModelMassAssignmentProperty($event, 'guarded', 'guardedColumns')"
+                        @change="$event => saveGuardedColumns($event)"
                         :options="getSelectDataForLayout(model.table.getColumns())"
                     />
                 </div>
@@ -178,7 +179,7 @@
                     <UiMultiSelect
                         inputLabel="Fillable"
                         :default-value="getSelectDataForLayout(model.fillableColumns)"
-                        @change="$event => saveModelMassAssignmentProperty($event, 'fillable', 'fillableColumns')"
+                        @change="$event => saveFillableColumns($event)"
                         :options="getSelectDataForLayout(model.table.getColumns())"
                     />
                 </div>
@@ -188,6 +189,10 @@
                 :model="model"
                 :models="models"
             />
+
+            <div class="mt-4" v-if="onDevelopment">
+                <UiButton @click="log(model)">Log details</UiButton>
+            </div>
         </div>
     </div>
 </template>

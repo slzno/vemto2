@@ -17,6 +17,7 @@
     import SchemaHeader from "./components/ProjectSchema/SchemaHeader.vue"
     import MigrationSaver from "./components/MigrationSaver/MigrationSaver.vue"
     import Main from "@Renderer/services/wrappers/Main"
+    import UiModal from "@Renderer/components/ui/UiModal.vue"
 
     const projectStore = useProjectStore()
 
@@ -39,7 +40,7 @@
         interval = setInterval(() => {
             if (isDragging) return
             loadSchema()
-        }, 1000)
+        }, 3000)
     })
 
     onUnmounted(() => {
@@ -183,6 +184,17 @@
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-hidden"
         v-if="projectStore.projectIsReady"
     >
+        <UiModal
+            :show="projectStore.project.hasCurrentSchemaError()"
+            title="Error loading schema"
+            width="800px"
+            @close="projectStore.project.setCurrentSchemaError(null)"
+        >
+            <div class="p-4 text-red-400 bg-slate-900 rounded-b-lg">
+                <pre class="overflow-hidden whitespace-pre-wrap">{{ projectStore.project.currentSchemaError }}</pre>
+            </div>
+        </UiModal>
+
         <SchemaHeader @forceReload="forceReload" @reload="loadSchema()" />
 
         <SchemaTables :tables="tablesData" :counter="counter" />

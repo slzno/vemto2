@@ -1,13 +1,15 @@
 import Table from "./Table"
 import Column from "./Column"
 import IndexColumn from "./IndexColumn"
-import RelaDB from "@tiago_silva_pereira/reladb"
 import DataComparator from "./services/DataComparator"
 import DataComparisonLogger from "./services/DataComparisonLogger"
 import FillIndexColumns from "./services/indexes/Fillers/FillIndexColumns"
 import WordManipulator from "@Common/util/WordManipulator"
+import AbstractSchemaModel from "./composition/AbstractSchemaModel"
 
-export default class Index extends RelaDB.Model implements SchemaModel {
+import { uniq } from 'lodash'
+
+export default class Index extends AbstractSchemaModel implements SchemaModel {
     id: string
 
     on: string
@@ -126,6 +128,10 @@ export default class Index extends RelaDB.Model implements SchemaModel {
         return !!this.onDelete
     }
 
+    isDirty(): boolean {
+        return this.hasLocalChanges()
+    }
+
     hasLocalChanges(): boolean {
         if (!this.schemaState) return false
 
@@ -152,43 +158,6 @@ export default class Index extends RelaDB.Model implements SchemaModel {
         return Object.keys(dataComparisonMap).some(
             (key) => dataComparisonMap[key]
         )
-    }
-
-    dataComparisonMap(comparisonData: any) {
-        return {
-            columns: DataComparator.arraysAreDifferent(
-                this.schemaState.columns,
-                comparisonData.columns
-            ),
-            algorithm: DataComparator.stringsAreDifferent(
-                this.schemaState.algorithm,
-                comparisonData.algorithm
-            ),
-            type: DataComparator.stringsAreDifferent(
-                this.schemaState.type,
-                comparisonData.type
-            ),
-            references: DataComparator.stringsAreDifferent(
-                this.schemaState.references,
-                comparisonData.references
-            ),
-            on: DataComparator.stringsAreDifferent(
-                this.schemaState.on,
-                comparisonData.on
-            ),
-            language: DataComparator.stringsAreDifferent(
-                this.schemaState.language,
-                comparisonData.language
-            ),
-            onUpdate: DataComparator.stringsAreDifferent(
-                this.schemaState.onUpdate,
-                comparisonData.onUpdate
-            ),
-            onDelete: DataComparator.stringsAreDifferent(
-                this.schemaState.onDelete,
-                comparisonData.onDelete
-            ),
-        }
     }
 
     logDataComparison(): void {
@@ -249,6 +218,12 @@ export default class Index extends RelaDB.Model implements SchemaModel {
         this.schemaState = this.buildSchemaState()
     }
 
+    /**
+     * The next two methods (buildSchemaState and dataComparisonMap) are extremely 
+     * important to keep the state of the schema,
+     * and both need to reflect the same data structure to avoid false positives when
+     * comparing the data between the schema state and the current state.
+     */
     buildSchemaState() {
         return {
             name: this.name,
@@ -261,6 +236,56 @@ export default class Index extends RelaDB.Model implements SchemaModel {
             onUpdate: this.onUpdate,
             onDelete: this.onDelete,
         }
+    }
+
+    dataComparisonMap(comparisonData: any) {
+        return {
+            columns: DataComparator.arraysAreDifferent(
+                this.schemaState.columns,
+                comparisonData.columns
+            ),
+            algorithm: DataComparator.stringsAreDifferent(
+                this.schemaState.algorithm,
+                comparisonData.algorithm
+            ),
+            type: DataComparator.stringsAreDifferent(
+                this.schemaState.type,
+                comparisonData.type
+            ),
+            references: DataComparator.stringsAreDifferent(
+                this.schemaState.references,
+                comparisonData.references
+            ),
+            on: DataComparator.stringsAreDifferent(
+                this.schemaState.on,
+                comparisonData.on
+            ),
+            language: DataComparator.stringsAreDifferent(
+                this.schemaState.language,
+                comparisonData.language
+            ),
+            onUpdate: DataComparator.stringsAreDifferent(
+                this.schemaState.onUpdate,
+                comparisonData.onUpdate
+            ),
+            onDelete: DataComparator.stringsAreDifferent(
+                this.schemaState.onDelete,
+                comparisonData.onDelete
+            ),
+        }
+    }
+
+    /**
+     * The following method defines propertis that cannot be touched by the application without
+     * enabling the isSavingInternally flag. It prevents the application from saving data
+     * that is not supposed to be saved. The schemaState property is always protected when isSavingInternally
+     * is disabled, even if the property is not defined here. The main reason for this is that some properties
+     * can only be changed when reading the schema state from the application code, and never from the Vemto's
+     * interface.
+     * @returns {string[]}
+     */
+    static nonTouchableProperties(): string[] {
+        return []
     }
 
     isNew(): boolean {
@@ -291,5 +316,29 @@ export default class Index extends RelaDB.Model implements SchemaModel {
         oldIndex.tableId = this.tableId
 
         return oldIndex
+    }
+
+    updateColumns(columnsNames: string[]) {
+        const uniqueColumnNames = uniq(columnsNames.concat(this.columns))
+
+        uniqueColumnNames.forEach((columnName: string) => {
+            const column = this.table.getColumnByName(columnName)
+
+            if(!column) return
+
+            if(columnsNames.includes(columnName)) {
+                this.relation('indexColumns').attachUnique(column)
+                return
+            }
+
+            this.relation('indexColumns').detach(column)
+            uniqueColumnNames.splice(uniqueColumnNames.indexOf(columnName), 1)
+        })
+
+        this.columns = uniqueColumnNames.filter((columnName: string) => !! columnName)
+    
+        this.name = this.calculateDefaultName()
+
+        this.save()
     }
 }
