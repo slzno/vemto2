@@ -405,7 +405,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     needsCreationMigration(): boolean {
-        return !this.hasCreationMigration()
+        return !this.hasCreationMigration() && !this.isRemoved()
     }
 
     hasCreationMigration(): boolean {
