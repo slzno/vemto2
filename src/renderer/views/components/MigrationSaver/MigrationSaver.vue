@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
-    import { ArrowDownTrayIcon, ArrowRightIcon, CircleStackIcon, MinusIcon, PlusIcon } from "@heroicons/vue/24/outline"
+    import { ArrowDownTrayIcon, ArrowRightIcon, ArrowUturnDownIcon, CircleStackIcon, MinusIcon, PlusIcon } from "@heroicons/vue/24/outline"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import UiModal from "@Renderer/components/ui/UiModal.vue"
     import { Ref, computed, onMounted, reactive, ref, watch } from "vue"
@@ -14,7 +14,8 @@
 
     const projectStore = useProjectStore(),
         showingModal = ref(false),
-        confirmSaveDialog = ref(null)
+        confirmSaveDialog = ref(null),
+        confirmUndoDialog = ref(null)
 
     const tablesSettings = reactive({} as any)
 
@@ -30,11 +31,11 @@
         buildTablesSettings()
     })
 
-    watch(showingModal, (willShowModal) => {
+    watch(showingModal, async (willShowModal) => {
         if(!willShowModal) return
         
-        buildTablesSettings()
-        loadFirstTableMigrationContent()
+        await buildTablesSettings()
+        await loadFirstTableMigrationContent()
     })
 
     const selectedTableSettings = computed(() => {
@@ -145,6 +146,14 @@
             table.migrationContent = migrationData.content
         }
     }
+
+    const undoTableChanges = async (table: Table) => {
+        const confirmed = await confirmUndoDialog.value.confirm()
+        if(!confirmed) return
+
+        await table.undoChanges()
+        await buildTablesSettings()
+    }
 </script>
 
 <template>
@@ -173,6 +182,10 @@
             Are you sure you want to save migrations?
         </UiConfirm>
 
+        <UiConfirm ref="confirmUndoDialog">
+            Are you sure you want to undo table changes?
+        </UiConfirm>
+
         <UiModal
             title="Review Migrations"
             :show="showingModal"
@@ -197,14 +210,22 @@
                         Changed Tables
                     </div>
 
-                    <div @click.stop="selectTable(table, 'updated')" :class="{'text-red-400 bg-slate-800': isSelectedTable(table)}" class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer" v-for="table in changedTables" :key="table.id">
-                        <div title="Table was renamed" class="flex items-center space-x-1" v-if="table.wasRenamed()">
-                            <span class="text-slate-500">{{ table.schemaState.name }}</span>
-                            <ArrowRightIcon class="w-4 h-4" />
-                            <span>{{ table.name }}</span>
+                    <div @click.stop="selectTable(table, 'updated')" :class="{'text-red-400 bg-slate-800': isSelectedTable(table)}" class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer flex justify-between items-center" v-for="table in changedTables" :key="table.id">
+                        <div>
+                            <div title="Table was renamed" class="flex items-center space-x-1" v-if="table.wasRenamed()">
+                                <span class="text-slate-500">{{ table.schemaState.name }}</span>
+                                <ArrowRightIcon class="w-4 h-4" />
+                                <span>{{ table.name }}</span>
+                            </div>
+                            <div v-else>
+                                {{ table.name }}
+                            </div>
                         </div>
-                        <div v-else>
-                            {{ table.name }}
+
+                        <div title="Undo table changes">
+                            <ArrowUturnDownIcon
+                                class="w-5 h-5  cursor-pointer text-slate-400 hover:text-red-500"
+                                @click.stop.prevent="undoTableChanges(table)" />
                         </div>
                     </div>
 
@@ -213,8 +234,16 @@
                         Removed Tables
                     </div>
 
-                    <div @click.stop="selectTable(table, 'removed')" :class="{'text-red-400 bg-slate-800': isSelectedTable(table)}" class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer" v-for="table in removedTables" :key="table.id">
-                        {{ table.name }}
+                    <div @click.stop="selectTable(table, 'removed')" :class="{'text-red-400 bg-slate-800': isSelectedTable(table)}" class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer flex justify-between items-center" v-for="table in removedTables" :key="table.id">
+                        <div>
+                            {{ table.name }}
+                        </div>
+
+                        <div title="Undo table changes">
+                            <ArrowUturnDownIcon
+                                class="w-5 h-5  cursor-pointer text-slate-400 hover:text-red-500"
+                                @click.stop.prevent="undoTableChanges(table)" />
+                        </div>
                     </div>
                 </div>
 

@@ -91,12 +91,6 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         this.save()
     }
 
-    getOldName(): string {
-        if (!this.schemaState) return this.name
-
-        return this.schemaState.name
-    }
-
     hasSchemaChanges(comparisonData: any): boolean {
         if (!this.schemaState) return true
 
@@ -312,20 +306,6 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
 
     wasCreatedFromInterface(): boolean {
         return !!this.createdFromInterface
-    }
-
-    isNew(): boolean {
-        return !this.schemaState
-    }
-
-    wasRenamed(): boolean {
-        if (!this.schemaState) return false
-
-        return this.schemaState.name !== this.name
-    }
-
-    isRemoved(): boolean {
-        return !!this.removed
     }
 
     hasHasManyRelations(): boolean {

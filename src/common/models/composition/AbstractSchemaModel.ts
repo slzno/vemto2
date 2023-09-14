@@ -2,6 +2,9 @@ import RelaDB from '@tiago_silva_pereira/reladb'
 
 export default abstract class AbstractSchemaModel extends RelaDB.Model {
 
+    name: string
+    schemaState: any
+    removed: boolean
     static isSavingInternally = false
 
     static updating(newData: any, currentData: any): any {
@@ -17,6 +20,50 @@ export default abstract class AbstractSchemaModel extends RelaDB.Model {
         }
 
         return newData
+    }
+
+    getOldName(): string {
+        if(!this.schemaState) return this.name
+
+        return this.schemaState.name
+    }
+
+    getCanonicalName(): string {
+        return this.schemaState.name || this.name
+    }
+
+    isNew(): boolean {
+        return !this.schemaState
+    }
+
+    wasRenamed(): boolean {
+        if(!this.schemaState) return false
+        
+        return this.schemaState.name !== this.name
+    }
+
+    isRemoved(): boolean {
+        return !! this.removed
+    }
+
+    undoChanges(): void {
+        const modelClass = this.constructor as any,
+            nonTouchableProperties = modelClass.nonTouchableProperties().concat(['schemaState'])
+        
+        Object.keys(this.getSchemaStateData()).forEach((key: string) => {
+            if(nonTouchableProperties.includes(key)) return
+            this[key] = this.schemaState[key]
+        })
+
+        if(this.isRemoved()) {
+            this.removed = false
+        }
+
+        this.save()
+    }
+
+    getSchemaStateData(): any {
+        return this.schemaState || {}
     }
 
     static savingInternally(): any {

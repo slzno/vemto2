@@ -15,7 +15,6 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     models: Model[]
     project: Project
     removed: boolean
-    schemaState: any
     projectId: string
     columns: Column[]
     migrations: any[]
@@ -81,12 +80,6 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         this.save()
 
         this.markAsChanged()
-    }
-
-    getOldName(): string {
-        if(!this.schemaState) return this.name
-
-        return this.schemaState.name
     }
 
     hasSchemaChanges(comparisonData: any): boolean {
@@ -395,10 +388,6 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         return !! (latestMigration && latestMigration.createdTables.includes(tableName))
     }
 
-    getCanonicalName(): string {
-        return this.schemaState.name || this.name
-    }
-
     getLatestMigration(): any {
         if(!this.hasMigrations()) return null
 
@@ -447,20 +436,6 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
 
     canCreateNewMigration(): boolean {
         return true
-    }
-
-    isNew(): boolean {
-        return !this.schemaState
-    }
-
-    wasRenamed(): boolean {
-        if(!this.schemaState) return false
-        
-        return this.schemaState.name !== this.name
-    }
-
-    isRemoved(): boolean {
-        return !! this.removed
     }
 
     getColumnByName(columnName: string): Column {
@@ -531,5 +506,19 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         if(firstStringField) return firstStringField
 
         return this.getPrimaryKeyColumn()
+    }
+
+    undoAllChanges() {
+        this.undoChanges()
+        this.undoAllColumnsChanges()
+        this.undoAllIndexesChanges()
+    }
+
+    undoAllColumnsChanges() {
+        this.columns.forEach(column => column.undoChanges())
+    }
+
+    undoAllIndexesChanges() {
+        this.indexes.forEach(index => index.undoChanges())
     }
 }

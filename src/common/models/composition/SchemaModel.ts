@@ -9,6 +9,9 @@ interface SchemaModel {
     saveSchemaState(): void
     fillSchemaState(): void
     buildSchemaState(): any
-    isNew(): boolean    
+    isNew(): boolean
+    wasRenamed(): boolean
+    isRemoved(): boolean
+    undoChanges(): void    
     logDataComparison(): void
 }

@@ -78,12 +78,6 @@ export default class Index extends AbstractSchemaModel implements SchemaModel {
         this.save()
     }
 
-    getOldName(): string {
-        if (!this.schemaState) return this.name
-
-        return this.schemaState.name
-    }
-
     isPrimary(): boolean {
         return this.type === "primary"
     }
@@ -286,20 +280,6 @@ export default class Index extends AbstractSchemaModel implements SchemaModel {
      */
     static nonTouchableProperties(): string[] {
         return []
-    }
-
-    isNew(): boolean {
-        return !this.schemaState
-    }
-
-    wasRenamed(): boolean {
-        if (!this.schemaState) return false
-
-        return this.schemaState.name !== this.name
-    }
-
-    isRemoved(): boolean {
-        return !!this.removed
     }
 
     hasColumn(column: string): boolean {
