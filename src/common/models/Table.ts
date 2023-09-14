@@ -305,6 +305,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     getColumns(): Column[] {
+        if(!this.columns) return []
         return this.columns.filter((column) => !column.isRemoved())
     }
 
@@ -359,6 +360,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     getModels(): Model[] {
+        if(!this.models) return []
         return this.models.filter((model: Model) => !model.isRemoved())
     }
 

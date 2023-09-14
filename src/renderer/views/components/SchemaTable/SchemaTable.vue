@@ -6,14 +6,12 @@
     import TableOptions from "../TableOptions/TableOptions.vue"
     import { ArrowUturnDownIcon, ExclamationCircleIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
-import UiWarning from "@Renderer/components/ui/UiWarning.vue"
 
     const props = defineProps(["table"]),
         table = toRef(props, "table"),
         showingOptions = ref(false),
         selected = ref(false),
-        confirmDeleteDialog = ref(null),
-        emit = defineEmits(['tableRemoved'])
+        confirmDeleteDialog = ref(null)
 
     let clickedQuickly = false,
         isRemoving = false
@@ -79,7 +77,7 @@ import UiWarning from "@Renderer/components/ui/UiWarning.vue"
         Are you sure you want to delete the <span class="text-red-400">{{ table.name }}</span> table?
     </UiConfirm>
 
-    <TableOptions ref="tableOptionsWindow" :table="table" :show="showingOptions && table" @close="tableOptionsClosed()" />
+    <TableOptions ref="tableOptionsWindow" v-if="table" :table="table" :show="showingOptions && table" @close="tableOptionsClosed()" />
 
     <div
         @mousedown="startClick()"
