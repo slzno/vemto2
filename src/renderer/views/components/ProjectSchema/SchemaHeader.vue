@@ -7,12 +7,10 @@
     import UiText from '@Renderer/components/ui/UiText.vue'
     import UiButton from '@Renderer/components/ui/UiButton.vue'
     import Validator from '@Common/util/Validator'
-    import CreateDefaultTableColumns from '@Common/models/services/tables/CreateDefaultTableColumns'
     import Alert from '@Renderer/components/utils/Alert'
     import UiCheckbox from '@Renderer/components/ui/UiCheckbox.vue'
-    import CreateDefaultTableModel from "@Common/models/services/tables/CreateDefaultTableModel"
-import UiConfirm from '@Renderer/components/ui/UiConfirm.vue'
-import UiWarning from '@Renderer/components/ui/UiWarning.vue'
+    import UiConfirm from '@Renderer/components/ui/UiConfirm.vue'
+    import UiWarning from '@Renderer/components/ui/UiWarning.vue'
 
     const showingCreateTableModal = ref(false),
         projectStore = useProjectStore(),
@@ -20,26 +18,20 @@ import UiWarning from '@Renderer/components/ui/UiWarning.vue'
         addModelForNewTable = ref(true),
         confirmDialog = ref(null)
 
-    const emit = defineEmits(['forceReload'])
+    const emit = defineEmits(['tableAdded', 'forceReload'])
 
     const createTable = (): void => {
         validate().then(isValid => {
             if(!isValid) return
 
-            newTable.value.saveFromInterface()
-
-            createTableColumns()
-
-            if(addModelForNewTable.value) {
-                CreateDefaultTableModel.setTable(newTable.value).create()
-            }
+            newTable.value.saveFromInterface(
+                addModelForNewTable.value
+            )
 
             close()
-        })
-    }
 
-    const createTableColumns = (): void => {
-        CreateDefaultTableColumns.setTable(newTable.value).create()
+            emit('tableAdded')
+        })
     }
 
     const validate = async (): Promise<boolean> => {

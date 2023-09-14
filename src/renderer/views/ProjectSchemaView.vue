@@ -50,6 +50,16 @@
         await loadSchema(force)
     }
 
+    const tableAdded = async () => {
+        
+        nextTick(() => {
+            setTimeout(() => {
+                initSchema()
+            }, 300)
+        })
+        
+    }
+
     const loadSchema = async (force = false) => {
         if (isDragging) return
         if (projectStore.projectIsEmpty) return
@@ -189,7 +199,11 @@
             </div>
         </UiModal>
 
-        <SchemaHeader @forceReload="forceReload" @reload="loadSchema()" />
+        <SchemaHeader 
+            @tableAdded="tableAdded()"
+            @forceReload="forceReload()" 
+            @reload="loadSchema()" 
+        />
 
         <SchemaTables :tables="projectStore.project.tables" :counter="counter" />
 

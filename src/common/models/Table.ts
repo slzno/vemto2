@@ -7,6 +7,8 @@ import DataComparisonLogger from './services/DataComparisonLogger'
 import Relationship from './Relationship'
 import WordManipulator from '@Common/util/WordManipulator'
 import AbstractSchemaModel from './composition/AbstractSchemaModel'
+import CreateDefaultTableColumns from './services/tables/CreateDefaultTableColumns'
+import CreateDefaultTableModel from './services/tables/CreateDefaultTableModel'
 
 export default class Table extends AbstractSchemaModel implements SchemaModel {
     id: string
@@ -45,7 +47,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         return tableData
     }
 
-    saveFromInterface() {
+    saveFromInterface(addModel: boolean = true) {
         let creating = false
 
         if(!this.isSaved()) creating = true
@@ -59,6 +61,12 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         this.save()
 
         this.markAsChanged()
+
+        CreateDefaultTableColumns.setTable(this).create()
+
+        if(addModel) {
+            CreateDefaultTableModel.setTable(this).create()
+        }
 
         return this
     }
