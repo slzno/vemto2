@@ -11,6 +11,7 @@ import AbstractSchemaModel from './composition/AbstractSchemaModel'
 export default class Table extends AbstractSchemaModel implements SchemaModel {
     id: string
     name: string
+    oldNames: string[]
     indexes: Index[]
     models: Model[]
     project: Project
@@ -99,6 +100,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         
         this.name = data.name
         this.migrations = data.migrations
+        this.oldNames = data.oldNames
         this.createdFromInterface = false
 
         this.fillSchemaState()
@@ -127,6 +129,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     buildSchemaState() {
         return {
             name: this.name,
+            oldNames: this.oldNames,
             migrations: this.migrations,
         }
     }
@@ -134,6 +137,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     dataComparisonMap(comparisonData: any) {
         return {
             name: DataComparator.stringsAreDifferent(this.schemaState.name, comparisonData.name),
+            oldNames: DataComparator.arraysAreDifferent(this.schemaState.oldNames, comparisonData.oldNames),
             migrations: DataComparator.arraysAreDifferent(this.schemaState.migrations, comparisonData.migrations),
         }
     }
@@ -162,6 +166,12 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         if(!this.schemaState) return false
 
         return this.hasDataChanges(this)
+    }
+
+    getFirstTableName(): string {
+        if(!this.oldNames || !this.oldNames.length) return this.getCanonicalName()
+
+        return this.oldNames[0]
     }
 
     logDataComparison(): void {
@@ -415,8 +425,8 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     getCreationMigration(): any {
         if(!this.hasMigrations()) return null
 
-        const tableName = this.getCanonicalName()
-
+        const tableName = this.getFirstTableName()
+        
         return this.migrations.find((migration) => migration.createdTables.includes(tableName))
     }
 

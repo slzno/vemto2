@@ -221,6 +221,13 @@ class TableRepository {
         $this->tables[$to]['name'] = $to;
 
         unset($this->tables[$from]);
+
+        $this->saveOldTableName($to, $from);
+    }
+
+    protected function saveOldTableName($tableName, $oldName)
+    {
+        $this->tables[$tableName]['oldNames'][] = $oldName;
     }
 
     protected function addIndex($command)
@@ -262,6 +269,7 @@ class TableRepository {
             'uniques' => [],
             'foreigns' => [],
             'migrations' => [],
+            'oldNames' => [],
         ];
     }
 
