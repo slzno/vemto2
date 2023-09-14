@@ -7,7 +7,7 @@
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import TableModels from "../TableOptions/TableModels.vue"
     import TableColumns from "../TableOptions/TableColumns.vue"
-import TableMigrations from "./TableMigrations.vue"
+    import TableMigrations from "./TableMigrations.vue"
 
     const props = defineProps({
         show: Boolean,

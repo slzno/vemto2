@@ -11,6 +11,7 @@
     import Main from "@Renderer/services/wrappers/Main"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import UiDropdownSelect from "@Renderer/components/ui/UiDropdownSelect.vue"
+    import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
 
     const onDevelopment = Main.API.onDevelopment()
 
@@ -24,7 +25,8 @@
 
     const column = toRef(props, "column") as Ref<Column>,
         showingOptions = ref(false),
-        columnTypes = ColumnTypeList.getArray()
+        columnTypes = ColumnTypeList.getArray(),
+        confirmDeleteDialog = ref(null)
 
     const onNameUpdated = () => {
         const hasDuplicateColumnName = column.value.table.hasColumnExceptId(column.value.name, column.value.id)
@@ -77,13 +79,12 @@
         })
     }
 
-    const removeColumn = () => {
-        Main.API.confirm("Are you sure you want to remove this column?").then((confirmed: boolean) => {
-            if(!confirmed) return
+    const removeColumn = async () => {
+        const confirmed = await confirmDeleteDialog.value.confirm()
+        if(!confirmed) return
 
-            column.value.remove()
-            emit('removeColumn')
-        })
+        column.value.remove()
+        emit('removeColumn')
     }
 
     const log = (column: Column) => {
@@ -101,6 +102,10 @@
         }"
         class="relative flex-col bg-slate-800 border-l-4 border-slate-700 p-2 rounded-xl shadow"
     >
+        <UiConfirm ref="confirmDeleteDialog">
+            Are you sure you want to remove the <span class="text-red-400">{{ column.name }}</span> column?
+        </UiConfirm>
+
         <div class="flex space-x-2 items-center">
             <div class="px-2">
                 <Bars3Icon
