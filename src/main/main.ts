@@ -17,7 +17,6 @@ async function createWindow() {
     const mainWindow = new BrowserWindow({
         width: 1320,
         height: 768,
-        fullscreen: true,
         titleBarStyle: 'hidden',
         titleBarOverlay: {
             color: '#0f172a',
@@ -45,6 +44,8 @@ async function createWindow() {
         mainWindow.setMenu(null)
         mainWindow.loadFile(join(app.getAppPath(), "renderer", "index.html"))
     }
+
+    mainWindow.maximize()
 
     HandleRenderableFileQueue(mainWindow)
 }
