@@ -1,22 +1,27 @@
 <script setup lang="ts">
-    import { ref, Ref, onMounted, nextTick } from "vue"
+    import { toRef, ref, Ref, onMounted, nextTick, watch } from "vue"
     import Column from "@Common/models/Column"
     import TableColumn from "./TableColumn.vue"
     import Draggable from "vuedraggable"
     import { PlusCircleIcon } from "@heroicons/vue/24/outline"
-    import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
 
-    const columns = ref([]) as Ref<Column[]>,
-        schemaStore = useSchemaStore()
+    const props = defineProps(["table"]),
+        table = toRef(props, "table")
+
+    const columns = ref([]) as Ref<Column[]>
+
+    watch(table, () => {
+        columns.value = table.value.getOrderedColumns()
+    })
 
     const addColumn = () => {
         const newColumn = new Column({
-            tableId: schemaStore.selectedTable.id
+            tableId: table.value.id
         }).saveFromInterface()
 
         newColumn.reorderFromInterface()
 
-        columns.value = schemaStore.selectedTable.getOrderedColumns()
+        columns.value = table.value.getOrderedColumns()
 
         nextTick(() => {
             const newColumnInput = document.getElementById(`table-column-${newColumn.id}`)
@@ -46,7 +51,7 @@
     }
 
     onMounted(() => {
-        columns.value = schemaStore.selectedTable.getOrderedColumns()
+        columns.value = table.value.getOrderedColumns()
     })
 </script>
 
@@ -54,7 +59,7 @@
     <section @keyup.esc="clearInvalidColumns">
         <Draggable
             class="space-y-2"
-            :list="schemaStore.selectedTable.getOrderedColumns()"
+            :list="columns"
             item-key="columns-draggable"
             @end="saveColumnsOrder"
         >
