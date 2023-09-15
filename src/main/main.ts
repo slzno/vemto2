@@ -17,6 +17,7 @@ async function createWindow() {
     const mainWindow = new BrowserWindow({
         width: 1320,
         height: 768,
+        fullscreen: true,
         titleBarStyle: 'hidden',
         titleBarOverlay: {
             color: '#0f172a',

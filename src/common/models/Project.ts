@@ -33,6 +33,8 @@ export default class Project extends RelaDB.Model {
     currentRenderedFilesPaths: string[]
     vthemeKeys: any
     currentSchemaError: string
+    scrollX: number
+    scrollY: number
 
     lastForeignAlias: number = 0;
 
@@ -378,6 +380,23 @@ export default class Project extends RelaDB.Model {
 
     clearCurrentSchemaError() {
         this.currentSchemaError = null
+        this.save()
+    }
+
+    hasScroll(): boolean {
+        return !! this.scrollX && !! this.scrollY
+    }
+
+    centerScroll(canvasWidth, canvasHeight, baseSize: number = 50000) {
+        this.scrollX = (baseSize / 2) - (canvasWidth / 2)
+        this.scrollY = (baseSize / 2) - (canvasHeight / 2)
+        this.save()
+    }
+
+    saveScroll(x: number, y: number) {
+        console.log('saving scroll', x, y)
+        this.scrollX = x
+        this.scrollY = y
         this.save()
     }
 }

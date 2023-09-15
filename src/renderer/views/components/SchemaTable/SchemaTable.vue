@@ -50,7 +50,7 @@
 
         setTimeout(() => {
             clickedQuickly = false
-        }, 300)
+        }, 250)
     }
 
     const endClick = () => {
@@ -63,7 +63,7 @@
             
             selected.value = true
             showingOptions.value = true
-        }, 50);
+        }, 1);
     }
 
     const tableOptionsClosed = () => {
