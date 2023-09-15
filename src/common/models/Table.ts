@@ -7,15 +7,17 @@ import DataComparisonLogger from './services/DataComparisonLogger'
 import Relationship from './Relationship'
 import WordManipulator from '@Common/util/WordManipulator'
 import AbstractSchemaModel from './composition/AbstractSchemaModel'
+import CreateDefaultTableColumns from './services/tables/CreateDefaultTableColumns'
+import CreateDefaultTableModel from './services/tables/CreateDefaultTableModel'
 
 export default class Table extends AbstractSchemaModel implements SchemaModel {
     id: string
     name: string
+    oldNames: string[]
     indexes: Index[]
     models: Model[]
     project: Project
     removed: boolean
-    schemaState: any
     projectId: string
     columns: Column[]
     migrations: any[]
@@ -45,7 +47,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         return tableData
     }
 
-    saveFromInterface() {
+    saveFromInterface(addModel: boolean = true) {
         let creating = false
 
         if(!this.isSaved()) creating = true
@@ -59,6 +61,12 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         this.save()
 
         this.markAsChanged()
+
+        CreateDefaultTableColumns.setTable(this).create()
+
+        if(addModel) {
+            CreateDefaultTableModel.setTable(this).create()
+        }
 
         return this
     }
@@ -83,12 +91,6 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         this.markAsChanged()
     }
 
-    getOldName(): string {
-        if(!this.schemaState) return this.name
-
-        return this.schemaState.name
-    }
-
     hasSchemaChanges(comparisonData: any): boolean {
         if(!this.schemaState) return true
         
@@ -106,6 +108,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         
         this.name = data.name
         this.migrations = data.migrations
+        this.oldNames = data.oldNames
         this.createdFromInterface = false
 
         this.fillSchemaState()
@@ -134,6 +137,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     buildSchemaState() {
         return {
             name: this.name,
+            oldNames: this.oldNames,
             migrations: this.migrations,
         }
     }
@@ -141,6 +145,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     dataComparisonMap(comparisonData: any) {
         return {
             name: DataComparator.stringsAreDifferent(this.schemaState.name, comparisonData.name),
+            oldNames: DataComparator.arraysAreDifferent(this.schemaState.oldNames, comparisonData.oldNames),
             migrations: DataComparator.arraysAreDifferent(this.schemaState.migrations, comparisonData.migrations),
         }
     }
@@ -169,6 +174,12 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         if(!this.schemaState) return false
 
         return this.hasDataChanges(this)
+    }
+
+    getFirstTableName(): string {
+        if(!this.oldNames || !this.oldNames.length) return this.getCanonicalName()
+
+        return this.oldNames[0]
     }
 
     logDataComparison(): void {
@@ -302,6 +313,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     getColumns(): Column[] {
+        if(!this.columns) return []
         return this.columns.filter((column) => !column.isRemoved())
     }
 
@@ -356,6 +368,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     getModels(): Model[] {
+        if(!this.models) return []
         return this.models.filter((model: Model) => !model.isRemoved())
     }
 
@@ -395,10 +408,6 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         return !! (latestMigration && latestMigration.createdTables.includes(tableName))
     }
 
-    getCanonicalName(): string {
-        return this.schemaState.name || this.name
-    }
-
     getLatestMigration(): any {
         if(!this.hasMigrations()) return null
 
@@ -416,7 +425,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     needsCreationMigration(): boolean {
-        return !this.hasCreationMigration()
+        return !this.hasCreationMigration() && !this.isRemoved()
     }
 
     hasCreationMigration(): boolean {
@@ -426,8 +435,8 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     getCreationMigration(): any {
         if(!this.hasMigrations()) return null
 
-        const tableName = this.getCanonicalName()
-
+        const tableName = this.getFirstTableName()
+        
         return this.migrations.find((migration) => migration.createdTables.includes(tableName))
     }
 
@@ -447,20 +456,6 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
 
     canCreateNewMigration(): boolean {
         return true
-    }
-
-    isNew(): boolean {
-        return !this.schemaState
-    }
-
-    wasRenamed(): boolean {
-        if(!this.schemaState) return false
-        
-        return this.schemaState.name !== this.name
-    }
-
-    isRemoved(): boolean {
-        return !! this.removed
     }
 
     getColumnByName(columnName: string): Column {
@@ -531,5 +526,19 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         if(firstStringField) return firstStringField
 
         return this.getPrimaryKeyColumn()
+    }
+
+    undoAllChanges() {
+        this.undoChanges()
+        this.undoAllColumnsChanges()
+        this.undoAllIndexesChanges()
+    }
+
+    undoAllColumnsChanges() {
+        this.columns.forEach(column => column.undoChanges())
+    }
+
+    undoAllIndexesChanges() {
+        this.indexes.forEach(index => index.undoChanges())
     }
 }

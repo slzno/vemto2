@@ -21,8 +21,7 @@
 
     const projectStore = useProjectStore()
 
-    let tablesData = ref([]),
-        counter = ref(0),
+    let counter = ref(0),
         interval = null,
         isDragging = false,
         currentConnections = {},
@@ -30,7 +29,6 @@
         jsPlumbInstance: BrowserJsPlumbInstance = null
 
     onMounted(async () => {
-        tablesData.value = Table.get()
         counter.value++
 
         nextTick(() => {
@@ -50,6 +48,16 @@
     const forceReload = async () => {
         const force = true
         await loadSchema(force)
+    }
+
+    const tableAdded = async () => {
+        
+        nextTick(() => {
+            setTimeout(() => {
+                initSchema()
+            }, 300)
+        })
+        
     }
 
     const loadSchema = async (force = false) => {
@@ -84,8 +92,6 @@
 
         await tablesBuilder.build()
 
-        tablesData.value = Table.get()
-
         if(force) projectStore.project.clearChangedTables()
 
         return true
@@ -111,7 +117,7 @@
     const initSchema = () => {
         initJsPlumbIfNotExists()
 
-        tablesData.value.forEach((table: any) => {
+        projectStore.project.tables.forEach((table: any) => {
             if(!table || !table.id) return
 
             if(!currentNodes[table.id]) {
@@ -167,10 +173,8 @@
         jsPlumbInstance.bind(EVENT_DRAG_STOP, (p: any) => {
             isDragging = false
 
-            const tableId = parseInt(p.el.getAttribute("data-table-id")),
-                table: Table = tablesData.value.find(
-                    (table) => table.id === tableId
-                )
+            const tableId = parseInt(p.el.getAttribute("data-table-id")).toString(),
+                table: Table = projectStore.project.findTableById(tableId)
 
             table.positionX = p.el.style.left.replace("px", "")
             table.positionY = p.el.style.top.replace("px", "")
@@ -195,9 +199,13 @@
             </div>
         </UiModal>
 
-        <SchemaHeader @forceReload="forceReload" @reload="loadSchema()" />
+        <SchemaHeader 
+            @tableAdded="tableAdded()"
+            @forceReload="forceReload()" 
+            @reload="loadSchema()" 
+        />
 
-        <SchemaTables :tables="tablesData" :counter="counter" />
+        <SchemaTables :tables="projectStore.project.tables" :counter="counter" />
 
         <MigrationSaver />
 

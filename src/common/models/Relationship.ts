@@ -185,12 +185,6 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
         inverse.save()
     }
 
-    getOldName(): string {
-        if(!this.schemaState) return this.name
-
-        return this.schemaState.name
-    }
-
     hasRelatedModel(): boolean {
         return !! this.relatedModelId
     }
@@ -431,20 +425,6 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
 
     wasCreatedFromInterface(): boolean {
         return !! this.createdFromInterface
-    }
-
-    isNew(): boolean {
-        return !this.schemaState
-    }
-
-    wasRenamed(): boolean {
-        if(!this.schemaState) return false
-        
-        return this.schemaState.name !== this.name
-    }
-
-    isRemoved(): boolean {
-        return !! this.removed
     }
 
     getServiceFromType(): any {

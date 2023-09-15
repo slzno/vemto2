@@ -22,6 +22,8 @@ class MigrationRepository {
 
             // TODO: FIX IT - melhor criar um campo createdTables<Array> e marcar todas as tabelas criadas
             'createdTables' => [],
+            'renamedTables' => [],
+            'droppedTables' => [],
         ];
     }
 
@@ -65,6 +67,19 @@ class MigrationRepository {
             'from' => $from,
             'to' => $to,
         ];
+    }
+
+    public function renameTable(string $from, string $to) 
+    {
+        $this->migrations[$this->currentMigration]['renamedTables'][] = [
+            'from' => $from,
+            'to' => $to,
+        ];
+    }
+
+    public function dropTable(string $table) 
+    {
+        $this->migrations[$this->currentMigration]['droppedTables'][] = $table;
     }
 
     public function getMigrations()

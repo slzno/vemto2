@@ -102,7 +102,7 @@ export default class Project extends RelaDB.Model {
     }
 
     findTableById(tableId: string): Table {
-        return this.tables.find((table) => table.id === tableId)
+        return this.tables.find((table) => table.id == tableId)
     }
 
     findModelByName(modelName: string): Model {
@@ -114,7 +114,7 @@ export default class Project extends RelaDB.Model {
     }
 
     findModelById(modelId: string): Model {
-        return this.models.find((model) => model.id === modelId)
+        return this.models.find((model) => model.id == modelId)
     }
 
     getTablesNames(): string[] {

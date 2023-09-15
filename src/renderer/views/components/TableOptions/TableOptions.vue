@@ -7,6 +7,7 @@
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import TableModels from "../TableOptions/TableModels.vue"
     import TableColumns from "../TableOptions/TableColumns.vue"
+    import TableMigrations from "./TableMigrations.vue"
 
     const props = defineProps({
         show: Boolean,
@@ -23,6 +24,7 @@
         { label: "Models", value: "models" },
         { label: "Indexes", value: "indexes" },
         { label: "Settings", value: "settings" },
+        { label: "Migrations", value: "migrations" },
     ]
 </script>
 
@@ -76,6 +78,10 @@
         
                         <div class="p-4 space-y-2" v-if="selectedTab === 'settings'">
                             <TableSettings :table="table" />
+                        </div>
+
+                        <div class="p-4 space-y-2" v-if="selectedTab === 'migrations'">
+                            <TableMigrations :table="table" />
                         </div>
                     </div>
                 </div>

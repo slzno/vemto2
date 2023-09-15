@@ -129,12 +129,6 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         this.save()
     }
 
-    getOldName(): string {
-        if(!this.schemaState) return this.name
-
-        return this.schemaState.name
-    }
-
     isPrimaryKey(): boolean {
         return this.isAutoIncrement() || this.table.hasPrimaryIndexForColumn(this)
     }
@@ -331,20 +325,6 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
      */
     static nonTouchableProperties(): string[] {
         return []
-    }
-
-    isNew(): boolean {
-        return !this.schemaState
-    }
-
-    wasRenamed(): boolean {
-        if(!this.schemaState) return false
-        
-        return this.schemaState.name !== this.name
-    }
-
-    isRemoved(): boolean {
-        return !! this.removed
     }
 
     getAfter(): string {

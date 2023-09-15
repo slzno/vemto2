@@ -5,30 +5,29 @@
     import TableColumn from "./TableColumn.vue"
     import TableOptions from "../TableOptions/TableOptions.vue"
     import { ArrowUturnDownIcon, ExclamationCircleIcon, TrashIcon } from "@heroicons/vue/24/outline"
-    import Main from "@Renderer/services/wrappers/Main"
+    import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
 
     const props = defineProps(["table"]),
         table = toRef(props, "table"),
         showingOptions = ref(false),
         selected = ref(false),
-        emit = defineEmits(['tableRemoved'])
+        confirmDeleteDialog = ref(null)
 
     let clickedQuickly = false,
         isRemoving = false
 
-    const removeTable = (): void => {
+    const removeTable = async () => {
         isRemoving = true
         setTimeout(() => isRemoving = false, 500)
 
-        Main.API.confirm("Are you sure you want to delete this table?").then((confirmed) => {
-            if (!confirmed) return
+        const confirmed = await confirmDeleteDialog.value.confirm()
+        if(!confirmed) return
 
-            showingOptions.value = false
-            selected.value = false
+        showingOptions.value = false
+        selected.value = false
 
-            nextTick(() => {
-                table.value.remove()
-            })
+        nextTick(() => {
+            table.value.remove()
         })
     }
 
@@ -74,7 +73,11 @@
 </script>
 
 <template>
-    <TableOptions ref="tableOptionsWindow" :table="table" :show="showingOptions && table" @close="tableOptionsClosed()" />
+    <UiConfirm ref="confirmDeleteDialog">
+        Are you sure you want to delete the <span class="text-red-400">{{ table.name }}</span> table?
+    </UiConfirm>
+
+    <TableOptions ref="tableOptionsWindow" v-if="table" :table="table" :show="showingOptions && table" @close="tableOptionsClosed()" />
 
     <div
         @mousedown="startClick()"
