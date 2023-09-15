@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { toRef, ref } from "vue"
+    import { toRef, ref, watch, nextTick } from "vue"
     import Table from "@Common/models/Table"
     import TableIndexes from "./TableIndexes.vue"
     import TableSettings from "./TableSettings.vue"
@@ -17,7 +17,8 @@
     const show = toRef(props, "show"),
         table = toRef(props, "table")
 
-    const selectedTab = ref("columns")
+    const selectedTab = ref("columns"),
+        tableOptionsModal = ref(null)
 
     const tabs = [
         { label: "Columns", value: "columns" },
@@ -26,6 +27,23 @@
         { label: "Settings", value: "settings" },
         { label: "Migrations", value: "migrations" },
     ]
+
+    /**
+     * Workaround to prevent the Schema Container from being dragged when the mouse is over the modal
+     */
+    watch(() => show.value, (value) => {
+        if (value) {
+            nextTick(() => {
+                tableOptionsModal.value.addEventListener("mousemove", (e) => {
+                    e.stopPropagation()
+                })
+            })
+        } else {
+            tableOptionsModal.value.removeEventListener("mousemove", (e) => {
+                e.stopPropagation()
+            })
+        }
+    })
 </script>
 
 <template>
@@ -37,7 +55,8 @@
         leave-to-class="transition duration-200 translate-y-full"
     >
         <div
-            class="fixed right-0 bottom-0 h-screen pt-10 px-4 z-50 text-slate-200"
+            ref="tableOptionsModal"
+            class="fixed right-0 bottom-0 h-screen pt-10 px-4 z-50 text-slate-200 cursor-default"
             style="width: 38rem"
             v-if="show"
         >

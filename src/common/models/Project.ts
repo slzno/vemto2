@@ -394,7 +394,6 @@ export default class Project extends RelaDB.Model {
     }
 
     saveScroll(x: number, y: number) {
-        console.log('saving scroll', x, y)
         this.scrollX = x
         this.scrollY = y
         this.save()
