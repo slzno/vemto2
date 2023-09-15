@@ -70,7 +70,7 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
 
     foreach ($migrationsFiles as $migrationFile) {
         // Filter the migration file
-        $migrationFile = MigrationFilter::filter($migrationFile);
+        // $migrationFile = MigrationFilter::filter($migrationFile);
 
         $migrationsRepository->newMigration($migrationFile);
         $migration = $migrator->resolveMigrationPath($migrationFile);

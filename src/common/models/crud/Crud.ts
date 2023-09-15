@@ -192,7 +192,9 @@ export default class Crud extends RelaDB.Model {
         panel.order = 0
         panel.save()
 
-        const excludedColumnsIds = excludedColumns.map((column) => column.id)
+        const excludedColumnsIds = excludedColumns
+            .filter((column) => column)
+            .map((column: Column) => column.id)
 
         model.table.getColumns().forEach((column) => {
             if(excludedColumnsIds.includes(column.id)) return
