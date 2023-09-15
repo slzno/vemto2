@@ -163,7 +163,7 @@
         if (jsPlumbInstance) return
 
         jsPlumbInstance = newInstance({
-            container: document.getElementById("tablesContainer")!,
+            container: document.getElementById("tablesReference")!,
         })
 
         jsPlumbInstance.bind(EVENT_DRAG_START, () => {
@@ -185,6 +185,7 @@
 
 <template>
     <div
+        style="width: 100%; height: 100%; max-width: calc(100vw - 80px); max-height: 100vh;"
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-hidden"
         v-if="projectStore.projectIsReady"
     >

@@ -45,6 +45,8 @@ async function createWindow() {
         mainWindow.loadFile(join(app.getAppPath(), "renderer", "index.html"))
     }
 
+    mainWindow.maximize()
+
     HandleRenderableFileQueue(mainWindow)
 }
 
