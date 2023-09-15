@@ -21,16 +21,13 @@
 
     const projectStore = useProjectStore()
 
-    let counter = ref(0),
-        interval = null,
+    let interval = null,
         isDragging = false,
         currentConnections = {},
         currentNodes = {},
         jsPlumbInstance: BrowserJsPlumbInstance = null
 
     onMounted(async () => {
-        counter.value++
-
         nextTick(() => {
             initSchema()
         })
@@ -206,7 +203,7 @@
             @reload="loadSchema()" 
         />
 
-        <SchemaTables :tables="projectStore.project.tables" :counter="counter" />
+        <SchemaTables />
 
         <MigrationSaver />
 

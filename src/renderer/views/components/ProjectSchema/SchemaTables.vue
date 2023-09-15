@@ -1,11 +1,12 @@
 <script setup lang="ts">
-    import { toRef, onMounted } from "vue"
+    import { onMounted } from "vue"
     import SchemaTable from "../SchemaTable/SchemaTable.vue"
+    import TableOptions from "../TableOptions/TableOptions.vue"
+    import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
 
-    const props = defineProps(["tables"]),
-        tables = toRef(props, "tables"),
-        projectStore = useProjectStore()
+    const projectStore = useProjectStore(),
+        schemaStore = useSchemaStore()
 
     let positionTracking: any = { top: 0, left: 0, x: 0, y: 0 }
 
@@ -97,6 +98,10 @@
 </script>
 
 <template>
+    <TableOptions 
+        :show="schemaStore.hasSelectedTable"
+    />
+
     <div
         id="tablesCanvas"
         style="width: 100%; height: 100%;"
@@ -113,7 +118,7 @@
                 class="relative bg-transparent"
             >
                 <SchemaTable
-                    v-for="table in tables"
+                    v-for="table in projectStore.project.tables"
                     :key="table.id"
                     :table="table"
                 />

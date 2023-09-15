@@ -1,42 +1,28 @@
 <script setup lang="ts">
     import Model from "@Common/models/Model"
     import TableModel from "./TableModel.vue"
-    import { PropType, toRef, reactive } from "vue"
-    import Table from "@Common/models/Table"
     import { PlusCircleIcon } from "@heroicons/vue/24/outline"
+    import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
     import CreateDefaultTableModel from "@Common/models/services/tables/CreateDefaultTableModel"
 
-    const props = defineProps({
-            table: {
-                type: Table as PropType<Table>,
-                required: true,
-            },
-        })
+    const schemaStore = useSchemaStore()
 
-    const table = toRef(props, "table"),
-        allTableModels = reactive(table.value.getModels())
 
     const addModel = (): void => {
-        if(!table.value.getModels().length) {
-            allTableModels.push(CreateDefaultTableModel.setTable(table.value).create())
+        if(!schemaStore.selectedTable.getModels().length) {
+            CreateDefaultTableModel.setTable(schemaStore.selectedTable).create()
             return
         }
 
         const model = new Model({
-            tableId: table.value.id,
-            projectId: table.value.project.id,
+            tableId: schemaStore.selectedTable.id,
+            projectId: schemaStore.selectedTable.project.id,
             namespace: "App\\Models",
             hasGuarded: true,
             guarded: []
         })
 
         model.saveFromInterface()
-
-        allTableModels.push(model)
-    }
-
-    const removeModel = (model: Model): void => {
-        allTableModels.splice(allTableModels.indexOf(model), 1)
     }
 </script>
 
@@ -44,8 +30,7 @@
     <div>
         <section class="space-y-2">
             <TableModel
-                v-for="model in allTableModels"
-                @removeModel="removeModel(model)"
+                v-for="model in schemaStore.selectedTable.getModels()"
                 :key="model.id"
                 :model="model"
             />
