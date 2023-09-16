@@ -162,10 +162,10 @@
                 <div
                     class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
                     title="Force reload (needs confirmation)"
+                    @click="forceReload()"
                 >
                     <ArrowDownTrayIcon
                         class="w-7 h-7"
-                        @click="forceReload()"
                     />
                 </div>
             </div>
