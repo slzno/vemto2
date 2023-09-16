@@ -163,7 +163,7 @@
         v-if="projectStore.project.hasSchemaChanges()"
     >
         <div class="flex flex-col space-y-2 bg-slate-850 border border-slate-700 rounded-lg">
-            <div class="flex items-center space-x-1 text-sm pt-3 pb-3 px-3 bg-slate-800 rounded-t-lg">
+            <div class="flex items-center space-x-1 text-sm pt-3 pb-3 px-3 bg-slate-800 rounded-t-lg text-slate-300">
                 <!-- <div class="rounded-full w-3 h-3 bg-red-500 animate-pulse"></div> -->
                 <div>There are tables changes</div>
             </div>
