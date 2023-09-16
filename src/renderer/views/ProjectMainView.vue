@@ -66,7 +66,7 @@
             <RouterView />
 
             <div class="fixed flex justify-end bottom-0 p-2 z-50" style="width: calc(100% - 5rem)">
-                <div class="py-2 px-5 rounded-full shadow bg-slate-800 border border-slate-600 flex space-x-2">
+                <div class="py-2 px-5 rounded-full shadow bg-slate-850 border border-slate-700 flex space-x-2">
                     <div>
                         <button class="flex text-slate-300 cursor-pointer hover:text-red-500" title="Generate Code (F5)" @click="generateCode()">
                             <div v-if="appStore.isGenerating" class="w-6 h-6">

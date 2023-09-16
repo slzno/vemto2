@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { ref, onMounted, nextTick, defineEmits } from 'vue'
     import Table from "@Common/models/Table"
-    import { ArrowDownTrayIcon, ArrowPathIcon, PhotoIcon, PlusCircleIcon } from "@heroicons/vue/24/outline"
+    import { ArrowDownTrayIcon, ArrowPathIcon, PhotoIcon, PlusCircleIcon, PlusIcon } from "@heroicons/vue/24/outline"
     import UiModal from '@Renderer/components/ui/UiModal.vue'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
     import UiText from '@Renderer/components/ui/UiText.vue'
@@ -145,7 +145,7 @@
     <div class="absolute flex top-0 left-0 p-4 space-x-2 text-sm z-20">
 
         <div
-            class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow px-1"
+            class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow px-1 border border-slate-700"
         >
             <!-- Tools and Icons -->
             <div class="flex">
@@ -216,38 +216,25 @@
             <div class="flex items-center mr-1 ml-8">
                 <input
                     type="text"
-                    class="border-0 bg-slate-100 dark:bg-slate-950 px-4 py-1 rounded-full"
+                    class="bg-slate-100 dark:bg-slate-950 px-4 py-1 rounded-full focus:border-red-500 border border-transparent focus:ring-transparent"
                     placeholder="Search"
                 />
             </div>
         </div>
 
         <div
-            class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow"
+            class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-700"
         >
             <div
                 class="py-1 px-5 cursor-pointer text-slate-400 hover:text-red-500 flex items-center justify-center"
             >
+                <PlusIcon class="w-4 h-4 mr-1" />
                 New Schema
-                <svg
-                    class="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                    ></path>
-                </svg>
             </div>
         </div>
 
         <div
-            class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow"
+            class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-700"
         >
             <div
                 class="px-5 cursor-pointer text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-500"
@@ -257,7 +244,7 @@
         </div>
 
         <div
-            class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow"
+            class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-700"
         >
             <div
                 class="px-5 cursor-pointer text-slate-600 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-500"
