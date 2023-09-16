@@ -200,7 +200,6 @@
         <SchemaHeader 
             @tableAdded="tableAdded()"
             @forceReload="forceReload()" 
-            @reload="loadSchema()" 
         />
 
         <SchemaTables />

@@ -11,7 +11,6 @@
     let positionTracking: any = { top: 0, left: 0, x: 0, y: 0 }
 
     onMounted(() => {
-
         centerScrollIfNecessary()
 
         const tablesCanvas = document.getElementById("tablesCanvas")
