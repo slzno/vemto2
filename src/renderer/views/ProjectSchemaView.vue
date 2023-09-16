@@ -47,8 +47,9 @@
         await loadSchema(force)
     }
 
-    const tableAdded = async () => {
-        
+    const tableAdded = async (table: Table) => {
+        console.log(table)
+
         nextTick(() => {
             setTimeout(() => {
                 initSchema()
@@ -198,8 +199,8 @@
         </UiModal>
 
         <SchemaHeader 
-            @tableAdded="tableAdded()"
-            @forceReload="forceReload()" 
+            @tableAdded="tableAdded"
+            @forceReload="forceReload" 
         />
 
         <SchemaTables />

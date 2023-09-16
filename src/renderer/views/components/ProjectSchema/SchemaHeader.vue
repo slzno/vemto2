@@ -28,9 +28,11 @@
                 addModelForNewTable.value
             )
 
+            updateTablePosition(newTable.value)
+
             close()
 
-            emit('tableAdded')
+            emit('tableAdded', newTable.value)
         })
     }
 
@@ -55,6 +57,45 @@
         }
 
         return !tableNameExists && !hasErrors
+    }
+
+    const updateTablePosition = (table: Table): void => {
+        const canvasCenter = getCurrentCanvasCenter(),
+            defaultTableWidth = 274,
+            defaultTableHeight = 198
+
+        // Calculate table offsets from table width and height
+        const offsetLeft = defaultTableWidth / 2,
+            offsetTop = defaultTableHeight / 2
+
+        // Calculate the new position of the table
+        const positionX = canvasCenter.x - offsetLeft,
+            positionY = canvasCenter.y - offsetTop
+
+        // Update the table position
+        table.positionX = positionX
+        table.positionY = positionY
+
+        table.save()
+    }
+
+    const getCurrentCanvasCenter = () => {
+        const tableCanvas = document.getElementById('tablesCanvas');
+        const tablesContainer = document.getElementById('tablesContainer');
+
+        // Get the current scroll position of tableCanvas
+        const scrollLeft = tableCanvas.scrollLeft;
+        const scrollTop = tableCanvas.scrollTop;
+
+        // Calculate half of tableCanvas' width and height
+        const halfWidth = tableCanvas.offsetWidth / 2;
+        const halfHeight = tableCanvas.offsetHeight / 2;
+
+        // Calculate the center position relative to tablesContainer
+        const centerX = scrollLeft + halfWidth - (tablesContainer.offsetWidth / 2);
+        const centerY = scrollTop + halfHeight - (tablesContainer.offsetHeight / 2);
+
+        return { x: centerX, y: centerY };
     }
 
     const show = (): void => {
@@ -115,6 +156,7 @@
                     <PlusCircleIcon class="w-7 h-7" />
                 </div>
 
+                <!-- New table modal -->
                 <UiModal
                     width="25%"
                     title="Create Table"

@@ -35,16 +35,8 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
             indexes: () => this.hasMany(Index).cascadeDelete(),
             labelColumn: () => this.belongsTo(Column, "labelColumnId"),
             columns: () => this.hasMany(Column).cascadeDelete().orderBy('order'),
-
             pivotRelationships: () => this.hasMany(Relationship, 'pivotId').cascadeDelete()
         }
-    }
-
-    static creating(tableData: any) {
-        tableData.positionX = 0
-        tableData.positionY = 0
-        
-        return tableData
     }
 
     saveFromInterface(addModel: boolean = true) {
