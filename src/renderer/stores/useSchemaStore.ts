@@ -3,6 +3,7 @@ import Table from "@Common/models/Table"
 
 export const useSchemaStore = defineStore("schema", {
     state: () => ({ 
+        focusedTable: {} as Table,
         selectedTable: {} as Table
     }),
 
@@ -15,6 +16,11 @@ export const useSchemaStore = defineStore("schema", {
 
         deselectTable(): void {
             this.selectedTable = {} as Table
+        },
+
+        focusTable(table: Table): void {
+            console.log("focusTable", table)
+            this.focusedTable = table
         }
     },
 

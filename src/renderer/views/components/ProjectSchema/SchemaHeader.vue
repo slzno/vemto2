@@ -43,9 +43,8 @@
     }
 
     const focusTable = (table: Table) => {
-        console.log('focus table')
         closeSearch()
-        // projectStore.focusTable(table)
+        schemaStore.focusTable(table)
     }
 
     const createTable = (): void => {

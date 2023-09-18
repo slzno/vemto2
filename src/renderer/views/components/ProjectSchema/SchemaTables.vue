@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { onMounted } from "vue"
+    import { onMounted, watch } from "vue"
     import SchemaTable from "../SchemaTable/SchemaTable.vue"
     import TableOptions from "../TableOptions/TableOptions.vue"
     import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
@@ -9,6 +9,12 @@
         schemaStore = useSchemaStore()
 
     let positionTracking: any = { top: 0, left: 0, x: 0, y: 0 }
+
+    watch(() => schemaStore.focusedTable, table => {
+        if(!table) return
+
+        centerOnTable(table)
+    })
 
     onMounted(() => {
         centerScrollIfNecessary()
@@ -23,6 +29,49 @@
 
         tablesCanvas.addEventListener('mousedown', mouseDownHandler)
     })
+
+    /**
+     * Center the scroll on the given table
+     */
+    const centerOnTable = (table) => {
+        const tableElement = document.getElementById(`table_${table.id}`)
+
+        if(!tableElement) return
+
+        const tableElementWidth = tableElement.offsetWidth,
+            tableElementHeight = tableElement.offsetHeight
+
+        const positionX = parseInt(table.positionX) + (tableElementWidth / 2),
+            positionY = parseInt(table.positionY) + (tableElementHeight / 2)
+
+        centerOnPosition(positionX, positionY)
+    }
+    
+    /**
+     * Center the scroll on the given position
+     * 
+     * @param x 
+     * @param y 
+     */
+    const centerOnPosition = (x, y) => {
+        // Reference to the tableCanvas element
+        const tableCanvas = document.getElementById('tablesCanvas');
+
+        // Calculate half of tableCanvas' width and height
+        const halfWidth: number = tableCanvas.offsetWidth / 2;
+        const halfHeight: number = tableCanvas.offsetHeight / 2;
+
+        // Calculate the center of tablesContainer
+        const centerTablesContainerX: number = 25000
+        const centerTablesContainerY: number = 25000
+
+        const scrollLeft = (centerTablesContainerX + parseInt(x)) - halfWidth,
+            scrollTop = (centerTablesContainerY + parseInt(y)) - halfHeight
+
+        // // Adjust the scroll position to center the computed target position
+        tableCanvas.scrollLeft = scrollLeft
+        tableCanvas.scrollTop = scrollTop
+    }
 
     const centerScrollIfNecessary = () => {
         if(projectStore.project.hasScroll()) return
