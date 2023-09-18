@@ -265,7 +265,7 @@
                     @keyup.esc="closeSearch()"
                     type="text"
                     class="bg-slate-100 dark:bg-slate-950 px-4 py-1 rounded-full focus:border-red-500 border border-transparent focus:ring-transparent"
-                    placeholder="Search"
+                    placeholder="Search..."
                 />
 
                 <div 
