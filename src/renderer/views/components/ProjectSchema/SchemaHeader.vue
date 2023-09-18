@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref, onMounted, nextTick, defineEmits } from 'vue'
+    import { ref, onMounted, nextTick, defineEmits, computed } from 'vue'
     import Table from "@Common/models/Table"
     import { ArrowDownTrayIcon, ArrowPathIcon, PhotoIcon, PlusCircleIcon, PlusIcon } from "@heroicons/vue/24/outline"
     import UiModal from '@Renderer/components/ui/UiModal.vue'
@@ -11,14 +11,42 @@
     import UiCheckbox from '@Renderer/components/ui/UiCheckbox.vue'
     import UiConfirm from '@Renderer/components/ui/UiConfirm.vue'
     import UiWarning from '@Renderer/components/ui/UiWarning.vue'
+    import { useSchemaStore } from '@Renderer/stores/useSchemaStore'
 
     const showingCreateTableModal = ref(false),
         projectStore = useProjectStore(),
+        schemaStore = useSchemaStore(),
         newTable = ref<Table>(null),
         addModelForNewTable = ref(true),
-        confirmDialog = ref(null)
+        confirmDialog = ref(null),
+        search = ref(''),
+        searchInput = ref(null),
+        searchIsFocused = ref(false)
 
     const emit = defineEmits(['tableAdded', 'forceReload'])
+
+    const filteredTables = computed(() => {
+        return projectStore.project.tables.filter(table => {
+            return table.name.toLowerCase().includes(search.value.toLowerCase())
+        }).sort((a, b) => {
+            return a.name.localeCompare(b.name)
+        })
+    })
+
+    const closeSearch = () => {
+        searchInput.value.blur()
+
+        setTimeout(() => {
+            searchIsFocused.value = false
+            search.value = ''
+        }, 150);
+    }
+
+    const focusTable = (table: Table) => {
+        console.log('focus table')
+        closeSearch()
+        // projectStore.focusTable(table)
+    }
 
     const createTable = (): void => {
         validate().then(isValid => {
@@ -213,12 +241,27 @@
             </div>
 
             <!-- Search -->
-            <div class="flex items-center mr-1 ml-8">
+            <div class="relative flex items-center mr-1 ml-8">
                 <input
+                    ref="searchInput"
+                    v-model="search"
+                    @focus="searchIsFocused = true"
+                    @blur="closeSearch()"
+                    @keyup.esc="closeSearch()"
                     type="text"
                     class="bg-slate-100 dark:bg-slate-950 px-4 py-1 rounded-full focus:border-red-500 border border-transparent focus:ring-transparent"
                     placeholder="Search"
                 />
+
+                <div 
+                    v-show="searchIsFocused"
+                    class="absolute p-4 rounded-lg shadow border border-slate-700 bg-slate-800 w-72"
+                    style="top: 110%; left: 0;"
+                >
+                    <div @click="focusTable(table)" class="cursor-pointer hover:bg-slate-700 rounded px-2 py-1" v-for="table in filteredTables" :key="table.id">
+                        {{ table.name }}
+                    </div>
+                </div>
             </div>
         </div>
 
