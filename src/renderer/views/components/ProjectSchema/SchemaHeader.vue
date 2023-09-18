@@ -169,7 +169,7 @@
         </UiWarning>
     </UiConfirm>
 
-    <div class="absolute flex top-0 left-0 p-4 space-x-2 text-sm z-20">
+    <div class="absolute flex top-0 left-0 p-4 space-x-2 text-sm z-20 bg-slate-900 rounded-r-full">
 
         <div
             class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow px-1 border border-slate-700"
