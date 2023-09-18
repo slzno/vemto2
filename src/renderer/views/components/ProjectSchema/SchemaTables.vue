@@ -1,4 +1,5 @@
 <script setup lang="ts">
+    import 'animate.css'
     import { onMounted, watch } from "vue"
     import SchemaTable from "../SchemaTable/SchemaTable.vue"
     import TableOptions from "../TableOptions/TableOptions.vue"
@@ -45,6 +46,8 @@
             positionY = parseInt(table.positionY) + (tableElementHeight / 2)
 
         centerOnPosition(positionX, positionY)
+
+        highlightTable(table)
     }
     
     /**
@@ -71,6 +74,18 @@
         // // Adjust the scroll position to center the computed target position
         tableCanvas.scrollLeft = scrollLeft
         tableCanvas.scrollTop = scrollTop
+    }
+
+    const highlightTable = (table) => {
+        const tableElement = document.getElementById(`table_${table.id}`)
+
+        if(!tableElement) return
+
+        tableElement.classList.add('animate__animated','animate__pulse', 'animate__faster')
+
+        setTimeout(() => {
+            tableElement.classList.remove('animate__animated','animate__pulse', 'animate__faster')
+        }, 500)
     }
 
     const centerScrollIfNecessary = () => {

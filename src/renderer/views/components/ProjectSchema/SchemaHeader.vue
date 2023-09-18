@@ -60,7 +60,23 @@
             close()
 
             emit('tableAdded', newTable.value)
+
+            setTimeout(() => {
+                highlightTable(newTable.value)
+            }, 350)
         })
+    }
+
+    const highlightTable = (table) => {
+        const tableElement = document.getElementById(`table_${table.id}`)
+
+        if(!tableElement) return
+
+        tableElement.classList.add('animate__animated','animate__pulse', 'animate__faster')
+
+        setTimeout(() => {
+            tableElement.classList.remove('animate__animated','animate__pulse', 'animate__faster')
+        }, 500)
     }
 
     const validate = async (): Promise<boolean> => {
