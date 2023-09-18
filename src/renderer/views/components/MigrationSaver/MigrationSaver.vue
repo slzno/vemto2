@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
-    import { ArrowDownTrayIcon, ArrowRightIcon, ArrowUturnDownIcon, CircleStackIcon, MinusIcon, PlusIcon } from "@heroicons/vue/24/outline"
+    import { ArrowDownTrayIcon, ArrowRightIcon, ArrowUturnDownIcon, CircleStackIcon, MinusIcon, PlusIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import UiModal from "@Renderer/components/ui/UiModal.vue"
     import { Ref, computed, onMounted, reactive, ref, watch } from "vue"
@@ -15,7 +15,8 @@
     const projectStore = useProjectStore(),
         showingModal = ref(false),
         confirmSaveDialog = ref(null),
-        confirmUndoDialog = ref(null)
+        confirmUndoDialog = ref(null),
+        confirmDeleteDialog = ref(null)
 
     const tablesSettings = reactive({} as any)
 
@@ -154,6 +155,14 @@
         await table.undoChanges()
         await buildTablesSettings()
     }
+
+    const deleteTable = async (table: Table) => {
+        const confirmed = await confirmDeleteDialog.value.confirm()
+        if(!confirmed) return
+
+        await table.delete()
+        await buildTablesSettings()
+    }
 </script>
 
 <template>
@@ -186,6 +195,10 @@
             Are you sure you want to undo table changes?
         </UiConfirm>
 
+        <UiConfirm ref="confirmDeleteDialog">
+            Are you sure you want to delete this table?
+        </UiConfirm>
+
         <UiModal
             title="Review Migrations"
             :show="showingModal"
@@ -201,8 +214,16 @@
                         Created Tables
                     </div>
 
-                    <div @click.stop="selectTable(table, 'created')" :class="{'text-red-400 bg-slate-800': isSelectedTable(table)}" class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer" v-for="table in createdTables" :key="table.id">
-                        {{ table.name }}
+                    <div @click.stop="selectTable(table, 'created')" :class="{'text-red-400 bg-slate-800': isSelectedTable(table)}" class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer flex justify-between items-center" v-for="table in createdTables" :key="table.id">
+                        <div>
+                            {{ table.name }}
+                        </div>
+
+                        <div title="Delete table">
+                            <TrashIcon
+                                class="w-4 h-4  cursor-pointer text-slate-400 hover:text-red-500"
+                                @click.stop.prevent="deleteTable(table)" />
+                        </div>
                     </div>
 
                     <div class="flex items-center p-2 bg-slate-950 text-slate-200">
