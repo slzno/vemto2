@@ -105,6 +105,7 @@ class ModelsFromSchemaBuilder {
                 modelsKeyedByClass[modelData.class] = model
             } else {
                 model = modelsKeyedByClass[modelData.class]
+                model.markAsNotRemoved()
             }
 
             Model.savingInternally()
@@ -122,7 +123,6 @@ class ModelsFromSchemaBuilder {
         // Delete relationships that no longer exist
         relationshipsNames.forEach((relationshipName: string) => {
             if(!modelData.relationships.find(r => r.name === relationshipName)) {
-                console.log('deleting relationship' + relationshipName + ' from model ' + model.name)
                 relationshipsKeyedByName[relationshipName].delete()
             }
         })
@@ -138,6 +138,7 @@ class ModelsFromSchemaBuilder {
                 relationshipsKeyedByName[relationshipData.name] = relationship
             } else {
                 relationship = relationshipsKeyedByName[relationshipData.name]
+                relationship.markAsNotRemoved()
             }
             
             relationship.projectId = this.project.id

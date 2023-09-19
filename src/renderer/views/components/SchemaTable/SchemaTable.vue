@@ -131,7 +131,7 @@
 
         <div class="font-mono px-4">
             <TableModel
-                v-for="model in table.getModels()"
+                v-for="model in table.models"
                 :key="model.name"
                 :model="model"
             />
