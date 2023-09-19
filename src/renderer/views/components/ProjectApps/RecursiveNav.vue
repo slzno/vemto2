@@ -3,6 +3,7 @@
     import UiCheckbox from '@Renderer/components/ui/UiCheckbox.vue';
     import UiText from '@Renderer/components/ui/UiText.vue';
     import UiButton from '@Renderer/components/ui/UiButton.vue';
+    import UiSelect from '@Renderer/components/ui/UiSelect.vue';
     import { ChevronDoubleRightIcon, Bars4Icon } from '@heroicons/vue/24/outline'
     import { defineProps, PropType, toRef, Ref } from 'vue'
 
@@ -42,6 +43,15 @@
                 {{ nav.name }}
             </template>
             <div class="p-1 w-full" v-else>
+                <UiText id="name" class="mb-3" v-model="nav.name" label="Name" />
+
+                <div class="mb-3">
+                    <UiSelect v-model="nav.navigableType" label="Navigable Type">
+                        <option value="Crud">Crud</option>
+                        <option value="Page">Page</option>
+                    </UiSelect>
+                </div>
+                
                 <UiCheckbox class="mb-3" v-model="nav.isCustom" label="Is Custom?" />
 
                 <template v-if="nav.isCustom">
