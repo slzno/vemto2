@@ -13,12 +13,14 @@
     import MorphRelationship from './TableRelationships/MorphRelationship.vue'
     import ThroughRelationship from './TableRelationships/ThroughRelationship.vue'
     import RelationshipTypes from '@Common/models/static/RelationshipTypes'
+    import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
 
     const props = defineProps(['model', 'models']),
         models = toRef(props, 'models'),
         model = toRef(props, 'model'),
         relationshipIdOptions = ref(null),
-        relationships = ref([])
+        relationships = ref([]),
+        confirmDeleteDialog = ref(null)
 
     const getForSelect = (
             collection: any,
@@ -68,7 +70,7 @@
         )
     }
 
-    const onRelationshipRemoving = (relationship: Relationship, force: boolean = false): void => {
+    const onRelationshipRemoving = async (relationship: Relationship, force: boolean = false) => {
         const removeRelationshipFromUI = (): void => {
             relationships.value.splice(relationships.value.indexOf(relationship), 1)
         }
@@ -88,25 +90,13 @@
         }
 
         const inverseRelationship = relationship.inverse
-        let confirmationDenied = false
+        
+        const confirmed = await confirmDeleteDialog.value.confirm()
+        if(!confirmed) return
 
-        Main.API.confirm("Are you sure you want to remove this relationship?")
-            .then((confirmed: boolean) => {
-                confirmationDenied = !confirmed
-                
-                if(!confirmed) return
-
-                removeRelationship()
-            })
-
-        if(!inverseRelationship || confirmationDenied) return
-
-        Main.API.confirm(`This relationship has an inverse relationship called ${inverseRelationship.name}. Do you want to remove it as well?`)
-            .then((confirmed: boolean) => {
-                if(!confirmed) return
-
-                inverseRelationship.delete()
-            })
+        removeRelationship()
+        
+        if(confirmed.deleteInverse) inverseRelationship.delete()
     }
 
     const checkRelationshipValidity = (): void => {
@@ -135,6 +125,15 @@
 </script>
 <template>
     <div class="mt-4">
+        <UiConfirm ref="confirmDeleteDialog" :options="{
+            'deleteInverse': {
+                'label': 'Delete inverse relationship',
+                'value': true
+            }
+        }">
+            Are you sure you want to delete this relationship?
+        </UiConfirm>
+
         <h2 class="text-slate-500 font-semibold mb-1">Relationships</h2>
 
         <div>

@@ -39,7 +39,7 @@
         <div
             ref="tableOptionsModal"
             class="fixed right-0 bottom-0 h-screen pt-10 px-4 z-50 text-slate-200 cursor-default"
-            style="width: 38rem"
+            style="width: 42rem"
             v-if="show && schemaStore.hasSelectedTable"
         >
             <div
