@@ -57,7 +57,6 @@ export default abstract class AbstractSchemaModel extends RelaDB.Model {
     }
 
     undoChanges(): void {
-        console.log('undoing changes')
         const modelClass = this.constructor as any,
             nonTouchableProperties = modelClass.nonTouchableProperties().concat(['schemaState'])
         

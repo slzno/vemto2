@@ -60,6 +60,8 @@ class TablesFromMigrationsBuilder {
 
     force() {
         this.hasLocalChanges = true
+
+        this.project.undoAllSchemaChanges()
         
         return this
     }

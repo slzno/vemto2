@@ -398,4 +398,8 @@ export default class Project extends RelaDB.Model {
         this.scrollY = y
         this.save()
     }
+
+    undoAllSchemaChanges() {
+        this.tables.forEach((table) => table.undoAllChanges())
+    }
 }
