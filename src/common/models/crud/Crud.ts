@@ -196,7 +196,7 @@ export default class Crud extends RelaDB.Model {
             .filter((column) => column)
             .map((column: Column) => column.id)
 
-        model.table.getColumns().forEach((column) => {
+        model.table.getColumns().forEach((column: Column) => {
             if(excludedColumnsIds.includes(column.id)) return
             if(column.isPrimaryKey()) return
             if(column.isDefaultLaravelTimestamp()) return

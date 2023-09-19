@@ -2,6 +2,7 @@ import Input from "@Common/models/crud/Input"
 import ColumnTypeList from "@Common/models/column-types/base/ColumnTypeList"
 import ColumnsDefaultData from "@Common/models/column-types/default/ColumnsDefaultDataList"
 import InputSettingsList from "@Common/models/data/InputSettingsList"
+import { clone } from 'lodash'
 import {
     InputValidationRule,
     InputValidationRuleType,
@@ -29,7 +30,10 @@ export default class GenerateInputValidation {
             baseValidationRules = this.getBaseValidationRules(ValidationRuleType.CREATION)
         }
 
-        validationRules = this.addLogicValidationToRules(baseValidationRules, type)
+        validationRules = this.addLogicValidationToRules(
+            clone(baseValidationRules),
+            type
+        )
 
         return validationRules.map((rule) => {
             return {
