@@ -1,10 +1,28 @@
 <script setup lang="ts">
+    import { ref } from "vue";
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import RecursiveNav from "./RecursiveNav.vue"
-import UiButton from "@Renderer/components/ui/UiButton.vue";
-import { Bars4Icon } from "@heroicons/vue/24/outline";
+    import UiButton from "@Renderer/components/ui/UiButton.vue";
+    import Nav from "@Common/models/Nav";
 
-    const projectStore = useProjectStore()
+    const projectStore = useProjectStore(),
+        editingNavigation = ref<null | Nav>(null)
+
+    const editNavigation = (navigation: Nav) => {
+        if(navigation.id === editingNavigation.value?.id) return
+
+        editingNavigation.value = navigation
+    }
+
+    const cancelEditing = () => {
+        editingNavigation.value = null
+    }
+
+    const saveNavigation = (navigation: Nav) => {
+        navigation.save()
+
+        cancelEditing()
+    }
 </script>
 
 <template>
@@ -18,14 +36,13 @@ import { Bars4Icon } from "@heroicons/vue/24/outline";
             v-for="nav in projectStore.project.getRootNavs()"
             :key="nav.id"
         >
-            <div class="mb-2 border border-slate-700 bg-slate-850 rounded-lg p-3 cursor-pointer hover:bg-slate-800 w-96 flex items-center">
-                <Bars4Icon class="w-4 h-4 mr-2 text-slate-600" />
-                {{ nav.name }}
-            </div>
-            
-            <template v-if="nav.children">
-                <RecursiveNav :navs="nav.children" />
-            </template>
+            <RecursiveNav
+                :nav="nav"
+                :editing-navigation="editingNavigation"
+                @editNavigation="editNavigation"
+                @cancelEditing="cancelEditing"
+                @saveNavigation="saveNavigation"
+            />
         </div>
     </div>
 

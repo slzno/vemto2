@@ -13,6 +13,7 @@ export default class Nav extends RelaDB.Model {
     children: Nav[]
     tag: string
     customLink: string
+    isCustom: boolean
 
     relationships() {
         return {
