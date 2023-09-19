@@ -86,8 +86,6 @@ class ModelsFromSchemaBuilder {
         const modelsClasses = this.project.getModelsClasses(),
             modelsKeyedByClass = this.project.getAllModelsKeyedByClass()
 
-        console.log(this.schemaModelsData)
-        
         // Delete models that no longer exist
         modelsClasses.forEach((modelClass: string) => {
             if(!this.schemaModelsData.find(m => m.class === modelClass)) {

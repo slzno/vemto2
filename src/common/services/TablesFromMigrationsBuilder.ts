@@ -100,6 +100,7 @@ class TablesFromMigrationsBuilder {
                 tablesKeyedByName[tableName] = table
             } else {
                 table = tablesKeyedByName[tableName]
+                table.markAsNotRemoved()
             }
 
             Table.savingInternally()
@@ -137,6 +138,7 @@ class TablesFromMigrationsBuilder {
                 columnsKeyedByName[columnName] = column
             } else {
                 column = columnsKeyedByName[columnName]
+                column.markAsNotRemoved()
             }
 
             const columnIsIndex = tableRawIndexes.some((index: any) => index.columns.includes(columnName))
@@ -185,6 +187,7 @@ class TablesFromMigrationsBuilder {
                 indexesKeyedByName[indexName] = index
             } else {
                 index = indexesKeyedByName[indexName]
+                index.markAsNotRemoved()
             }
 
             Index.savingInternally()

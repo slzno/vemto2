@@ -4,7 +4,7 @@
     import { ArrowDownTrayIcon, ArrowRightIcon, ArrowUturnDownIcon, CircleStackIcon, MinusIcon, PlusIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import UiModal from "@Renderer/components/ui/UiModal.vue"
-    import { Ref, computed, onMounted, reactive, ref, watch } from "vue"
+    import { Ref, computed, onMounted, onUnmounted, reactive, ref, watch } from "vue"
     import GenerateNewMigration from "@Renderer/codegen/generators/GenerateNewMigration"
     import UpdateExistingMigration from "@Renderer/codegen/generators/UpdateExistingMigration"
     import CalculateSchemaChanges from "@Common/models/services/project/CalculateSchemaChanges"
@@ -32,11 +32,21 @@
         buildTablesSettings()
     })
 
+    onUnmounted(() => {
+        showingModal.value = false
+    })
+
     watch(showingModal, async (willShowModal) => {
         if(!willShowModal) return
         
         await buildTablesSettings()
         await loadFirstTableMigrationContent()
+    })
+
+    watch(() => projectStore.hasSchemaChanges, async (hasChanges) => {
+        if(!hasChanges) {
+            showingModal.value = false
+        }
     })
 
     const selectedTableSettings = computed(() => {
@@ -152,7 +162,7 @@
         const confirmed = await confirmUndoDialog.value.confirm()
         if(!confirmed) return
 
-        await table.undoChanges()
+        await table.undoAllChanges()
         await buildTablesSettings()
     }
 

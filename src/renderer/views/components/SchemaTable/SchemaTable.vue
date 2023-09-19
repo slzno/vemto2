@@ -101,6 +101,9 @@
                 <div title="The table will be removed after saving the migration" class="text-sm font-normal text-slate-500" v-if="table.isRemoved()">
                     (Removed)
                 </div>
+                <div class="text-sm font-normal text-slate-500" v-if="table.isDirty()">
+                    (Changed)
+                </div>
             </span>
             <TrashIcon
                 v-show="!table.isRemoved()"
@@ -120,7 +123,7 @@
             }" 
             class="font-mono px-4">
             <TableColumn
-                v-for="column in table.getOrderedColumns()"
+                v-for="column in table.getAllOrderedColumns()"
                 :key="column.name"
                 :column="column"
             />

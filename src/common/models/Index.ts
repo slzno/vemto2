@@ -123,7 +123,7 @@ export default class Index extends AbstractSchemaModel implements SchemaModel {
     }
 
     isDirty(): boolean {
-        return this.hasLocalChanges()
+        return this.hasLocalChanges() || this.isRemoved()
     }
 
     hasLocalChanges(): boolean {

@@ -97,7 +97,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
 
     applyChanges(data: any) {
         if(!this.hasSchemaChanges(data)) return false
-        
+
         this.name = data.name
         this.migrations = data.migrations
         this.oldNames = data.oldNames
@@ -156,8 +156,8 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     isDirty(): boolean {
-        const hasDirtyColumns = this.getColumns().some((column) => column.isDirty()),
-            hasDirtyIndexes = this.getIndexes().some((index) => index.isDirty())
+        const hasDirtyColumns = this.columns.some((column) => column.isDirty()),
+            hasDirtyIndexes = this.columns.some((index) => index.isDirty())
 
         return !this.isRemoved() && (this.hasLocalChanges() || hasDirtyColumns || hasDirtyIndexes)
     }
@@ -239,11 +239,18 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     getColumnsNames(): string[] {
-        return this.getColumns().map((column) => column.name)
+        return this.columns.map((column) => column.name)
     }
 
     getAllColumnsKeyedByName(): { [key: string]: Column } {
-        return this.getColumns().reduce((columns, column) => {
+        return this.columns.reduce((columns, column) => {
+            columns[column.name] = column
+            return columns
+        }, {})
+    }
+
+    getAllRemovedColumnsKeyedByName(): { [key: string]: Column } {
+        return this.getRemovedColumns().reduce((columns, column) => {
             columns[column.name] = column
             return columns
         }, {})
@@ -282,11 +289,11 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     getIndexesNames(): string[] {
-        return this.getIndexes().map((index) => index.name)
+        return this.indexes.map((index) => index.name)
     }
 
     getAllIndexesKeyedByName(): { [key: string]: Index } {
-        return this.getIndexes().reduce((indexes, index) => {
+        return this.indexes.reduce((indexes, index) => {
             indexes[index.name] = index
             return indexes
         }, {})
@@ -307,6 +314,10 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     getColumns(): Column[] {
         if(!this.columns) return []
         return this.columns.filter((column) => !column.isRemoved())
+    }
+
+    getAllOrderedColumns(): Column[] {
+        return this.columns.sort((a, b) => a.order - b.order)
     }
 
     getOrderedColumns(): Column[] {

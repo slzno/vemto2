@@ -46,7 +46,18 @@ export default abstract class AbstractSchemaModel extends RelaDB.Model {
         return !! this.removed
     }
 
+    markAsRemoved(): void {
+        this.removed = true
+        this.save()
+    }
+
+    markAsNotRemoved(): void {
+        this.removed = false
+        this.save()
+    }
+
     undoChanges(): void {
+        console.log('undoing changes')
         const modelClass = this.constructor as any,
             nonTouchableProperties = modelClass.nonTouchableProperties().concat(['schemaState'])
         
@@ -56,6 +67,7 @@ export default abstract class AbstractSchemaModel extends RelaDB.Model {
         })
 
         if(this.isRemoved()) {
+            console.log('was removed')
             this.removed = false
         }
 

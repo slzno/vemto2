@@ -10,6 +10,8 @@ import Model from './Model'
 import ColumnsDefaultDataList, { ColumnDefaultData } from './column-types/default/ColumnsDefaultDataList'
 import Relationship from './Relationship'
 import AbstractSchemaModel from './composition/AbstractSchemaModel'
+import Index from './Index'
+import IndexColumn from './IndexColumn'
 
 export default class Column extends AbstractSchemaModel implements SchemaModel {
     id: string
@@ -32,6 +34,8 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
     faker: string
     options: any
     inputs: Input[]
+    referencedIndexes: Index[]
+    columnIndexes: Index[]
 
     relationshipsByForeignKey: Relationship[]
     relationshipsByOwnerKey: Relationship[]
@@ -52,6 +56,8 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         return {
             table: () => this.belongsTo(Table),
             inputs: () => this.hasMany(Input).cascadeDelete(),
+            referencedIndexes: () => this.hasMany(Index, 'referencesColumnId').cascadeDelete(),
+            columnIndexes: () => this.belongsToMany(Index, IndexColumn).cascadeDetach(),
 
             // Relationships with Relationship class
             relationshipsByForeignKey: () => this.hasMany(Relationship, 'foreignKeyId').cascadeDelete(),
@@ -219,7 +225,7 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
     }
 
     isDirty(): boolean {
-        return this.hasLocalChanges()
+        return this.hasLocalChanges() || this.isRemoved()
     }
 
     hasLocalChanges(): boolean {
