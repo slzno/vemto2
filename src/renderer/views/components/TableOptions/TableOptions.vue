@@ -1,6 +1,5 @@
 <script setup lang="ts">
-    import { toRef, ref } from "vue"
-    import Table from "@Common/models/Table"
+    import { toRef, ref, onMounted } from "vue"
     import TableIndexes from "./TableIndexes.vue"
     import TableSettings from "./TableSettings.vue"
     import { XMarkIcon } from "@heroicons/vue/24/outline"
@@ -8,16 +7,17 @@
     import TableModels from "../TableOptions/TableModels.vue"
     import TableColumns from "../TableOptions/TableColumns.vue"
     import TableMigrations from "./TableMigrations.vue"
+    import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
 
     const props = defineProps({
         show: Boolean,
-        table: Table,
     })
 
     const show = toRef(props, "show"),
-        table = toRef(props, "table")
+        schemaStore = useSchemaStore()
 
-    const selectedTab = ref("columns")
+    const selectedTab = ref("columns"),
+        tableOptionsModal = ref(null)
 
     const tabs = [
         { label: "Columns", value: "columns" },
@@ -37,9 +37,10 @@
         leave-to-class="transition duration-200 translate-y-full"
     >
         <div
-            class="fixed right-0 bottom-0 h-screen pt-10 px-4 z-50 text-slate-200"
+            ref="tableOptionsModal"
+            class="fixed right-0 bottom-0 h-screen pt-10 px-4 z-50 text-slate-200 cursor-default"
             style="width: 38rem"
-            v-if="show"
+            v-if="show && schemaStore.hasSelectedTable"
         >
             <div
                 class="relative rounded-t-lg bg-slate-850 w-full shadow-2xl border-t border-l border-r border-slate-600 h-full"
@@ -49,13 +50,13 @@
                         <div class="flex justify-between bg-slate-800 p-4 rounded-t-lg">
                             <div class="flex flex-col">
                                 <span class="font-semibold">Table Options</span>
-                                <div class="text-red-400">{{ table.name }}</div>
+                                <div class="text-red-400">{{ schemaStore.selectedTable.name }}</div>
                             </div>
                         </div>
         
                         <button
                             class="cursor-pointer flex absolute top-2 right-2"
-                            @click="$emit('close')"
+                            @click="schemaStore.deselectTable()"
                         >
                             <XMarkIcon class="w-4 h-4 stroke-2 hover:text-red-500" />
                         </button>
@@ -65,23 +66,23 @@
     
                     <div class="flex-grow overflow-auto pb-40">
                         <div class="p-4 space-y-2" v-if="selectedTab === 'columns'">
-                            <TableColumns :table="table" />
+                            <TableColumns :table="schemaStore.selectedTable" />
                         </div>
         
                         <div class="p-4 space-y-2" v-if="selectedTab === 'models'">
-                            <TableModels :table="table" />
+                            <TableModels :table="schemaStore.selectedTable" />
                         </div>
         
                         <div class="p-4 space-y-2" v-if="selectedTab === 'indexes'">
-                            <TableIndexes :table="table" />
+                            <TableIndexes :table="schemaStore.selectedTable" />
                         </div>
         
                         <div class="p-4 space-y-2" v-if="selectedTab === 'settings'">
-                            <TableSettings :table="table" />
+                            <TableSettings :table="schemaStore.selectedTable" />
                         </div>
 
                         <div class="p-4 space-y-2" v-if="selectedTab === 'migrations'">
-                            <TableMigrations :table="table" />
+                            <TableMigrations :table="schemaStore.selectedTable" />
                         </div>
                     </div>
                 </div>

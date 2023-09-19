@@ -1,17 +1,16 @@
 <script setup lang="ts">
-    import { nextTick, ref, toRef, defineEmits } from "vue"
+    import { nextTick, ref, toRef } from "vue"
     import Table from "@Common/models/Table"
     import TableModel from "./TableModel.vue"
     import TableColumn from "./TableColumn.vue"
-    import TableOptions from "../TableOptions/TableOptions.vue"
     import { ArrowUturnDownIcon, ExclamationCircleIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
+    import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
 
     const props = defineProps(["table"]),
         table = toRef(props, "table"),
-        showingOptions = ref(false),
-        selected = ref(false),
-        confirmDeleteDialog = ref(null)
+        confirmDeleteDialog = ref(null),
+        schemaStore = useSchemaStore()
 
     let clickedQuickly = false,
         isRemoving = false
@@ -22,9 +21,6 @@
 
         const confirmed = await confirmDeleteDialog.value.confirm()
         if(!confirmed) return
-
-        showingOptions.value = false
-        selected.value = false
 
         nextTick(() => {
             table.value.remove()
@@ -60,15 +56,9 @@
 
         setTimeout(() => {
             if(isRemoving) return
-            
-            selected.value = true
-            showingOptions.value = true
-        }, 1);
-    }
 
-    const tableOptionsClosed = () => {
-        selected.value = false
-        showingOptions.value = false
+            schemaStore.selectTable(table.value)
+        }, 1);
     }
 </script>
 
@@ -77,8 +67,6 @@
         Are you sure you want to delete the <span class="text-red-400">{{ table.name }}</span> table?
     </UiConfirm>
 
-    <TableOptions ref="tableOptionsWindow" v-if="table" :table="table" :show="showingOptions && table" @close="tableOptionsClosed()" />
-
     <div
         @mousedown="startClick()"
         @mouseup="endClick()"
@@ -86,8 +74,8 @@
         :ref="`table_${table.id}`"
         :data-table-id="table.id"
         :class="{
-            'border border-transparent': !selected,
-            'border dark:border-slate-500': selected,
+            'border border-transparent': schemaStore.selectedTableIsNot(table),
+            'border dark:border-slate-500': schemaStore.selectedTableIs(table),
         }"
         class="cursor-move schema-table group absolute shadow-lg rounded-lg hover:border-slate-500 bg-white dark:bg-slate-850 z-10 space-y-4 pb-4"
         style="min-width: 270px"

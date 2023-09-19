@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { defineProps, toRef, ref, onMounted } from 'vue'
+    import { defineProps, toRef, ref, onMounted, watch } from 'vue'
     import Index from '@Common/models/Index'
     import Column from '@Common/models/Column'
     import UiText from '@Renderer/components/ui/UiText.vue'
@@ -17,6 +17,14 @@
         showIndexOption = ref(null)
 
     const onDevelopment = Main.API.onDevelopment()
+
+    onMounted(() => {
+        tableIndexes.value = props.table.getIndexes()
+    })
+
+    watch(table, () => {
+        tableIndexes.value = table.value.getIndexes()
+    })
 
     const getForSelect = (
         collection: any,
@@ -93,10 +101,6 @@
             removeIndex()
         })
     }
-
-    onMounted(() => {
-        tableIndexes.value = props.table.getIndexes()
-    })
 
     const log = (index: Index) => {
         console.log(index)

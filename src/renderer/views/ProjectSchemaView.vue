@@ -21,16 +21,13 @@
 
     const projectStore = useProjectStore()
 
-    let counter = ref(0),
-        interval = null,
+    let interval = null,
         isDragging = false,
         currentConnections = {},
         currentNodes = {},
         jsPlumbInstance: BrowserJsPlumbInstance = null
 
     onMounted(async () => {
-        counter.value++
-
         nextTick(() => {
             initSchema()
         })
@@ -50,8 +47,9 @@
         await loadSchema(force)
     }
 
-    const tableAdded = async () => {
-        
+    const tableAdded = async (table: Table) => {
+        console.log(table)
+
         nextTick(() => {
             setTimeout(() => {
                 initSchema()
@@ -201,12 +199,11 @@
         </UiModal>
 
         <SchemaHeader 
-            @tableAdded="tableAdded()"
-            @forceReload="forceReload()" 
-            @reload="loadSchema()" 
+            @tableAdded="tableAdded"
+            @forceReload="forceReload" 
         />
 
-        <SchemaTables :tables="projectStore.project.tables" :counter="counter" />
+        <SchemaTables />
 
         <MigrationSaver />
 

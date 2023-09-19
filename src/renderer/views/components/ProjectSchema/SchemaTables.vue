@@ -1,16 +1,23 @@
 <script setup lang="ts">
-    import { toRef, onMounted } from "vue"
+    import 'animate.css'
+    import { onMounted, watch } from "vue"
     import SchemaTable from "../SchemaTable/SchemaTable.vue"
+    import TableOptions from "../TableOptions/TableOptions.vue"
+    import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
 
-    const props = defineProps(["tables"]),
-        tables = toRef(props, "tables"),
-        projectStore = useProjectStore()
+    const projectStore = useProjectStore(),
+        schemaStore = useSchemaStore()
 
     let positionTracking: any = { top: 0, left: 0, x: 0, y: 0 }
 
-    onMounted(() => {
+    watch(() => schemaStore.focusedTable, table => {
+        if(!table) return
 
+        centerOnTable(table)
+    })
+
+    onMounted(() => {
         centerScrollIfNecessary()
 
         const tablesCanvas = document.getElementById("tablesCanvas")
@@ -23,6 +30,63 @@
 
         tablesCanvas.addEventListener('mousedown', mouseDownHandler)
     })
+
+    /**
+     * Center the scroll on the given table
+     */
+    const centerOnTable = (table) => {
+        const tableElement = document.getElementById(`table_${table.id}`)
+
+        if(!tableElement) return
+
+        const tableElementWidth = tableElement.offsetWidth,
+            tableElementHeight = tableElement.offsetHeight
+
+        const positionX = parseInt(table.positionX) + (tableElementWidth / 2),
+            positionY = parseInt(table.positionY) + (tableElementHeight / 2)
+
+        centerOnPosition(positionX, positionY)
+
+        highlightTable(table)
+    }
+    
+    /**
+     * Center the scroll on the given position
+     * 
+     * @param x 
+     * @param y 
+     */
+    const centerOnPosition = (x, y) => {
+        // Reference to the tableCanvas element
+        const tableCanvas = document.getElementById('tablesCanvas');
+
+        // Calculate half of tableCanvas' width and height
+        const halfWidth: number = tableCanvas.offsetWidth / 2;
+        const halfHeight: number = tableCanvas.offsetHeight / 2;
+
+        // Calculate the center of tablesContainer
+        const centerTablesContainerX: number = 25000
+        const centerTablesContainerY: number = 25000
+
+        const scrollLeft = (centerTablesContainerX + parseInt(x)) - halfWidth,
+            scrollTop = (centerTablesContainerY + parseInt(y)) - halfHeight
+
+        // // Adjust the scroll position to center the computed target position
+        tableCanvas.scrollLeft = scrollLeft
+        tableCanvas.scrollTop = scrollTop
+    }
+
+    const highlightTable = (table) => {
+        const tableElement = document.getElementById(`table_${table.id}`)
+
+        if(!tableElement) return
+
+        tableElement.classList.add('animate__animated','animate__pulse', 'animate__faster')
+
+        setTimeout(() => {
+            tableElement.classList.remove('animate__animated','animate__pulse', 'animate__faster')
+        }, 500)
+    }
 
     const centerScrollIfNecessary = () => {
         if(projectStore.project.hasScroll()) return
@@ -97,6 +161,10 @@
 </script>
 
 <template>
+    <TableOptions 
+        :show="schemaStore.hasSelectedTable"
+    />
+
     <div
         id="tablesCanvas"
         style="width: 100%; height: 100%;"
@@ -113,7 +181,7 @@
                 class="relative bg-transparent"
             >
                 <SchemaTable
-                    v-for="table in tables"
+                    v-for="table in projectStore.project.tables"
                     :key="table.id"
                     :table="table"
                 />

@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import Model from "@Common/models/Model"
     import TableModel from "./TableModel.vue"
-    import { PropType, toRef, reactive } from "vue"
+    import { PropType, toRef, reactive, watch } from "vue"
     import Table from "@Common/models/Table"
     import { PlusCircleIcon } from "@heroicons/vue/24/outline"
     import CreateDefaultTableModel from "@Common/models/services/tables/CreateDefaultTableModel"
@@ -15,6 +15,10 @@
 
     const table = toRef(props, "table"),
         allTableModels = reactive(table.value.getModels())
+    
+    watch(table, () => {
+        allTableModels.splice(0, allTableModels.length, ...table.value.getModels())
+    })
 
     const addModel = (): void => {
         if(!table.value.getModels().length) {

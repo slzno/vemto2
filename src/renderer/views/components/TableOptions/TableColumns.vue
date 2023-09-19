@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { toRef, ref, Ref, onMounted, nextTick } from "vue"
+    import { toRef, ref, Ref, onMounted, nextTick, watch } from "vue"
     import Column from "@Common/models/Column"
     import TableColumn from "./TableColumn.vue"
     import Draggable from "vuedraggable"
@@ -9,6 +9,10 @@
         table = toRef(props, "table")
 
     const columns = ref([]) as Ref<Column[]>
+
+    watch(table, () => {
+        columns.value = table.value.getOrderedColumns()
+    })
 
     const addColumn = () => {
         const newColumn = new Column({
