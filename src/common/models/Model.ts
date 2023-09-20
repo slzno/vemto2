@@ -13,6 +13,7 @@ import FillGuardedColumns from "./services/models/Fillers/FillGuardedColumns"
 import AbstractSchemaModel from "./composition/AbstractSchemaModel"
 
 import { uniq } from 'lodash'
+import { snakeCase } from "change-case"
 
 export default class Model extends AbstractSchemaModel implements SchemaModel {
     id: string
@@ -356,6 +357,13 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     getColumnByName(columnName: string): Column {
         if (!this.table) return null
         return this.table.getColumnByName(columnName)
+    }
+
+    tableNameIsDifferentFromDefault(): boolean {
+        const currentTableName = this.table.name,
+            defaultTableName = snakeCase(WordManipulator.pluralize(this.name))
+
+        return currentTableName != defaultTableName
     }
 
     calculateDataByName(updateClassAndFileName: boolean = true): void {

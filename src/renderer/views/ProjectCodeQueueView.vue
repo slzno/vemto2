@@ -11,9 +11,10 @@
     import { TrashIcon } from "@heroicons/vue/24/outline"
     import SequentialGenerator from "@Renderer/codegen/sequential/SequentialGenerator"
     import TemplateErrorViewer from "./components/Common/TemplateErrorViewer.vue"
-    import { computed, ref } from "vue"
+    import { computed, ref, onMounted } from "vue"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
+    import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
 
     const projectStore = useProjectStore(),
         search = ref(""),
@@ -48,9 +49,9 @@
         { label: "Settings", value: "settings" },
     ]
 
-    const runSequentialGenerator = async () => {
-        await new SequentialGenerator().run(projectStore.project)
-    }
+    onMounted(() => {
+        projectStore.project.startCodeGenerationSettings()
+    })
 
     const filteredFiles = computed(() => {
             if (!projectStore.project || !projectStore.project.renderableFiles)
@@ -407,6 +408,38 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="p-4" v-if="selectedTab === 'settings'">
+            <UiCheckbox 
+                v-model="projectStore.project.codeGenerationSettings.models" 
+                label="Generate Models" 
+                @change="projectStore.project.save()"
+            />
+
+            <UiCheckbox 
+                v-model="projectStore.project.codeGenerationSettings.factories" 
+                label="Generate Factories" 
+                @change="projectStore.project.save()"
+            />
+
+            <UiCheckbox 
+                v-model="projectStore.project.codeGenerationSettings.seeders" 
+                label="Generate Seeders" 
+                @change="projectStore.project.save()"
+            />
+
+            <UiCheckbox 
+                v-model="projectStore.project.codeGenerationSettings.policies" 
+                label="Generate Policies" 
+                @change="projectStore.project.save()"
+            />
+
+            <UiCheckbox 
+                v-model="projectStore.project.codeGenerationSettings.routes" 
+                label="Generate Routes" 
+                @change="projectStore.project.save()"
+            />
         </div>
     </div>
 </template>

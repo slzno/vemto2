@@ -86,6 +86,14 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         column.saveFromInterface()
     }
 
+    static deleting(column: Column) {
+        column.columnIndexes.forEach((index: Index) => {
+            if(index.includesOnlyColumn(column)) {
+                index.delete()
+            }
+        })
+    }
+
     reorderFromInterface(): void {
         let nextOrder = 0
         
