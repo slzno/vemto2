@@ -118,5 +118,17 @@ import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
                 <AppThemes />
             </div>
         </div>
+
+        <div class="space-y-2 p-4" v-if="selectedTab === 'templates'">
+            <UiEmptyMessage>
+                <span>Under development... COMING SOON!</span>
+            </UiEmptyMessage>
+        </div>
+
+        <div class="space-y-2 p-4" v-if="selectedTab === 'settings'">
+            <UiEmptyMessage>
+                <span>Also under development... COMING SOON!</span>
+            </UiEmptyMessage>
+        </div>
     </div>
 </template>
