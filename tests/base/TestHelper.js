@@ -46,10 +46,6 @@ export default new class TestHelper {
 
         table.name = data.name || "users"
         table.projectId = project.id
-        
-        if(data.hasOwnProperty("needsMigration")) {
-            table.needsMigration = data.needsMigration
-        }
 
         table.save()
 

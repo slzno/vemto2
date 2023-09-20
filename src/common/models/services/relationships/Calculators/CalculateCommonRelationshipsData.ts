@@ -87,7 +87,7 @@ class CalculateCommonRelationshipsData extends CalculateRelationshipService {
         let keys = this.getDefaultKeys()
 
         if(!keys.foreignKey) {
-            return
+            throw new Error(`The foreign key ${this.getForeignKeyName()} does not exist in the ${this.relationship.model.name} model`)
         }
 
         this.relationship.foreignKeyId = keys.foreignKey.id
@@ -107,7 +107,7 @@ class CalculateCommonRelationshipsData extends CalculateRelationshipService {
         const keys = this.getDefaultKeys()
 
         if(!keys.parentKey) {
-            return
+            throw new Error(`The parent key ${this.getPrimaryKeyName()} does not exist in the ${this.relationship.relatedModel.name} model`)
         }
 
         this.relationship.parentKeyId = keys.parentKey.id
@@ -132,6 +132,12 @@ class CalculateCommonRelationshipsData extends CalculateRelationshipService {
         }
 
         return keys
+    }
+
+    getPrimaryKeyName(): string {
+        const primaryKey = this.relationship.model.getPrimaryKeyColumn()
+
+        return primaryKey ? primaryKey.name : 'id'
     }
 
     getForeignKeyName(): string {

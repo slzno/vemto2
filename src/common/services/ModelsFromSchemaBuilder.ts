@@ -96,23 +96,36 @@ class ModelsFromSchemaBuilder {
 
         // Create or update models
         this.schemaModelsData.forEach((modelData: any) => {
-            let model: Model = null
+            let model: Model = null,
+                isCreating = false
 
-            if(!modelsClasses.includes(modelData.class)) {
-                model = new Model
-                model.projectId = this.project.id
+            try {
+                if(!modelsClasses.includes(modelData.class)) {
+                    isCreating = true
 
-                modelsKeyedByClass[modelData.class] = model
-            } else {
-                model = modelsKeyedByClass[modelData.class]
-                model.markAsNotRemoved()
+                    model = new Model
+                    model.projectId = this.project.id
+    
+                    modelsKeyedByClass[modelData.class] = model
+                } else {
+                    model = modelsKeyedByClass[modelData.class]
+                    model.markAsNotRemoved()
+                }
+    
+                Model.savingInternally()
+                model.applyChanges(modelData)
+                Model.notSavingInternally()
+    
+                this.readRelationships(modelData, model)
+            } catch (error) {
+                if(isCreating) {
+                    model.delete()
+                }
+
+                console.log('Error reading model ' + modelData.class)
+                console.error(error)
+                return
             }
-
-            Model.savingInternally()
-            model.applyChanges(modelData)
-            Model.notSavingInternally()
-
-            this.readRelationships(modelData, model)
         })
     }
 
@@ -129,26 +142,40 @@ class ModelsFromSchemaBuilder {
 
         // Create or update relationships
         modelData.relationships.forEach((relationshipData: any) => {
-            let relationship: Relationship = null
+            let relationship: Relationship = null,
+                isCreating = false
 
-            if(!relationshipsNames.includes(relationshipData.name)) {
-                relationship = new Relationship
-                relationship.modelId = model.id
+            try {
+    
+                if(!relationshipsNames.includes(relationshipData.name)) {
+                    isCreating = true
+                    relationship = new Relationship
+                    relationship.modelId = model.id
+    
+                    relationshipsKeyedByName[relationshipData.name] = relationship
+                } else {
+                    relationship = relationshipsKeyedByName[relationshipData.name]
+                    relationship.markAsNotRemoved()
+                }
+                
+                relationship.projectId = this.project.id
+    
+                Relationship.savingInternally()
+                relationship.applyChanges(relationshipData)
+                relationship.fillRelationshipKeys()
+                Relationship.notSavingInternally()
+    
+                this.changedRelationships.push(relationship)
+            } catch (error) {
+                if(isCreating) {
+                    relationship.delete()
+                }
 
-                relationshipsKeyedByName[relationshipData.name] = relationship
-            } else {
-                relationship = relationshipsKeyedByName[relationshipData.name]
-                relationship.markAsNotRemoved()
+                console.log(`Error reading relationship ${modelData.class}.${relationshipData.name}`)
+                console.error(error)
+
+                return
             }
-            
-            relationship.projectId = this.project.id
-
-            Relationship.savingInternally()
-            relationship.applyChanges(relationshipData)
-            relationship.fillRelationshipKeys()
-            Relationship.notSavingInternally()
-
-            this.changedRelationships.push(relationship)
         })
     }
 

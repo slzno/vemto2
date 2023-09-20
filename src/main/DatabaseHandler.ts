@@ -30,6 +30,16 @@ export function HandleDatabase() {
         })
     })
 
+    ipcMain.handle("close:project:database", (event) => {
+        return handleError(event, () => {
+            console.log('Closing database...')
+
+            RelaDB.Resolver.db().driver.feedDatabaseData({})
+
+            return true
+        })
+    })
+
     ipcMain.handle("database:data:updated", (event, data) => {
         let oldData = RelaDB.Resolver.db().driver.getDatabaseData()
 

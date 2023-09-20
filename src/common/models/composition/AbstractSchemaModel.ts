@@ -66,7 +66,6 @@ export default abstract class AbstractSchemaModel extends RelaDB.Model {
         })
 
         if(this.isRemoved()) {
-            console.log('was removed')
             this.removed = false
         }
 

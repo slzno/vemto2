@@ -9,6 +9,7 @@ export default interface ElectronApi {
     onDefaultError: (callback: Callback) => void,
     onModelDataUpdated: (callback: Callback) => void,
     loadProjectDatabase: (path: string) => Promise<any>,
+    closeProjectDatabase: () => Promise<void>,
     databaseDataUpdated: (data: any) => void,
     addFileToGenerationQueue: (filePath: string, content: string) => Promise<void>,
     readProjectFile: (path: string) => Promise<string>,

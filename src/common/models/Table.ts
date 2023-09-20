@@ -25,7 +25,6 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     positionY: number
     labelColumn: Column
     labelColumnId: string
-    needsMigration: boolean
     createdFromInterface: boolean
 
     relationships() {
@@ -39,26 +38,19 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         }
     }
 
-    saveFromInterface(addModel: boolean = true) {
+    saveFromInterface(addModel: boolean = false) {
         let creating = false
 
         if(!this.isSaved()) creating = true
 
         this.createdFromInterface = creating
-        
-        if(creating) {
-            this.needsMigration = true
-        }
 
         this.save()
 
         this.markAsChanged()
 
-        CreateDefaultTableColumns.setTable(this).create()
-
-        if(addModel) {
-            CreateDefaultTableModel.setTable(this).create()
-        }
+        if(creating) CreateDefaultTableColumns.setTable(this).create()
+        if(addModel) CreateDefaultTableModel.setTable(this).create()
 
         return this
     }

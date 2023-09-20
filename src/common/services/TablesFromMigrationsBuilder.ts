@@ -92,24 +92,38 @@ class TablesFromMigrationsBuilder {
         })
 
         Object.keys(this.schemaTablesData).forEach((tableName) => {
-            let tableData = this.schemaTablesData[tableName],
-                table: Table = null
+            let table: Table = null,
+                isCreating = false
 
-            if(!tablesNames.includes(tableName)) {
-                table = new Table
-                table.projectId = this.project.id
+            try {
+                let tableData = this.schemaTablesData[tableName]
+    
+                if(!tablesNames.includes(tableName)) {
+                    isCreating = true
 
-                tablesKeyedByName[tableName] = table
-            } else {
-                table = tablesKeyedByName[tableName]
-                table.markAsNotRemoved()
+                    table = new Table
+                    table.projectId = this.project.id
+    
+                    tablesKeyedByName[tableName] = table
+                } else {
+                    table = tablesKeyedByName[tableName]
+                    table.markAsNotRemoved()
+                }
+    
+                Table.savingInternally()
+                table.applyChanges(tableData)
+                Table.notSavingInternally()
+    
+                this.readColumns(tableData, table)
+            } catch (error) {
+                if(isCreating) {
+                    table.delete()
+                }
+
+                console.log(`Error processing table ${tableName}`)
+                console.error(error)
+                return
             }
-
-            Table.savingInternally()
-            table.applyChanges(tableData)
-            Table.notSavingInternally()
-
-            this.readColumns(tableData, table)
         })
     }
 
@@ -130,26 +144,40 @@ class TablesFromMigrationsBuilder {
 
         // Add or update columns
         Object.keys(tableData.columns).forEach((columnName: any) => {
-            let columnData = tableData.columns[columnName],
-                column: Column = null
-            
-            if(!columnsNames.includes(columnName)) {
-                column = new Column
-                column.tableId = table.id
+            let column: Column = null,
+                isCreating = false
 
-                columnsKeyedByName[columnName] = column
-            } else {
-                column = columnsKeyedByName[columnName]
-                column.markAsNotRemoved()
+            try {
+                let columnData = tableData.columns[columnName]
+                
+                if(!columnsNames.includes(columnName)) {
+                    isCreating = true
+
+                    column = new Column
+                    column.tableId = table.id
+    
+                    columnsKeyedByName[columnName] = column
+                } else {
+                    column = columnsKeyedByName[columnName]
+                    column.markAsNotRemoved()
+                }
+    
+                const columnIsIndex = tableRawIndexes.some((index: any) => index.columns.includes(columnName))
+    
+                if(columnIsIndex) columnData.index = true
+    
+                Column.savingInternally()
+                column.applyChanges(columnData)
+                Column.notSavingInternally()
+            } catch (error) {
+                if(isCreating) {
+                    column.delete()
+                }
+
+                console.log(`Error processing column ${columnName}`)
+                console.error(error)
+                return
             }
-
-            const columnIsIndex = tableRawIndexes.some((index: any) => index.columns.includes(columnName))
-
-            if(columnIsIndex) columnData.index = true
-
-            Column.savingInternally()
-            column.applyChanges(columnData)
-            Column.notSavingInternally()
         })
     }
 
@@ -179,22 +207,36 @@ class TablesFromMigrationsBuilder {
 
         // Add or update indexes
         Object.keys(tableData.indexes).forEach((indexName: any) => {
-            let indexData = tableData.indexes[indexName],
-                index: Index = null
-            
-            if(!indexesNames.includes(indexName)) {
-                index = new Index
-                index.tableId = table.id
+            let index: Index = null,
+                isCreating = false
 
-                indexesKeyedByName[indexName] = index
-            } else {
-                index = indexesKeyedByName[indexName]
-                index.markAsNotRemoved()
+            try {
+                let indexData = tableData.indexes[indexName]
+                
+                if(!indexesNames.includes(indexName)) {
+                    isCreating = true
+
+                    index = new Index
+                    index.tableId = table.id
+    
+                    indexesKeyedByName[indexName] = index
+                } else {
+                    index = indexesKeyedByName[indexName]
+                    index.markAsNotRemoved()
+                }
+    
+                Index.savingInternally()
+                index.applyChanges(indexData)
+                Index.notSavingInternally()
+            } catch (error) {
+                if(isCreating) {
+                    index.delete()
+                }
+                
+                console.log(`Error processing index ${indexName}`)
+                console.error(error)
+                return
             }
-
-            Index.savingInternally()
-            index.applyChanges(indexData)
-            Index.notSavingInternally()
         })
     }
 
