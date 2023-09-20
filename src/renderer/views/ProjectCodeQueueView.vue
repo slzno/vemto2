@@ -15,6 +15,7 @@
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
+import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
 
     const projectStore = useProjectStore(),
         search = ref(""),
@@ -118,6 +119,11 @@
         </div>
 
         <div class="p-4" v-if="selectedTab === 'default'">
+
+            <UiEmptyMessage v-if="!filteredFiles.length">
+                <span>There are no files in the Queue</span>
+            </UiEmptyMessage>
+
             <div class="flex top-0 left-0 space-x-2 text-sm z-20 mb-4">
                 <div>
                     <!-- Search -->
@@ -224,6 +230,10 @@
         </div>
 
         <div class="p-4" v-if="selectedTab === 'conflicts'">
+            <UiEmptyMessage v-if="!conflictFiles.length">
+                <span>There are no files with conflicts</span>
+            </UiEmptyMessage>
+
             <div class="flex top-0 left-0 space-x-2 text-sm z-20 mb-4">
                 <div>
                     <!-- Search -->
@@ -305,6 +315,10 @@
         </div>
 
         <div class="p-4" v-if="selectedTab === 'removed'">
+            <UiEmptyMessage v-if="!removedFiles.length">
+                <span>There are no removed files</span>
+            </UiEmptyMessage>
+
             <div class="flex top-0 left-0 space-x-2 text-sm z-20 mb-4">
                 <div>
                     <!-- Search -->
