@@ -27,6 +27,8 @@
         Main.API.onDefaultError((error) => { 
             if(error.error.includes('schema-reader')) {
                 projectStore.project.setCurrentSchemaError(error.error)
+                console.error(error.error)
+                console.error(error.stack)
             }
         })
     })

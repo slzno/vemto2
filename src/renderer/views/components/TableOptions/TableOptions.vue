@@ -64,7 +64,7 @@
                         <UiTabs :tabs="tabs" v-model="selectedTab" />
                     </div>
     
-                    <div class="flex-grow overflow-auto pb-40">
+                    <div class="flex-grow overflow-y-scroll pb-40">
                         <div class="p-4 space-y-2" v-if="selectedTab === 'columns'">
                             <TableColumns :table="schemaStore.selectedTable" />
                         </div>
