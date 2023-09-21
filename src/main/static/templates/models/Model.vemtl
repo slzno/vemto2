@@ -13,6 +13,10 @@ class <$ this.model.name $> extends Model
 {
     use HasFactory;
 
+    <% if(this.model.tableNameIsDifferentFromDefault()) { %>
+    protected $table = '<$ this.model.table.name $>';
+    <% } %>
+
     <% if(this.model.hasGuarded) { %>
     protected $guarded = [
         <% for(let column of this.model.guardedColumns) { %>
@@ -27,10 +31,6 @@ class <$ this.model.name $> extends Model
         '<$ column.name $>',
         <% } %>
     ];
-    <% } %>
-
-    <% if(this.model.tableNameIsDifferentFromDefault()) { %>
-    protected $table = '<$ this.model.table.name $>';
     <% } %>
 
     <% if(this.model.ownRelationships.length) { %>

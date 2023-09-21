@@ -4,15 +4,16 @@ use PhpParser\Node;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\NodeVisitorAbstract;
 use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Property;
+use PhpParser\Node\Stmt\Use_;
 
 class StaticVisitor extends NodeVisitorAbstract
 {
     public $imports = [];
-    public $extends = [];
-    public $implements = [];
     public $traits = [];
     public $properties = [];
     public $methods = [];
+
     protected $fileContent = '';
     protected $currentClass = null;
     protected $previousFileVisitor = null;
@@ -44,23 +45,77 @@ class StaticVisitor extends NodeVisitorAbstract
 
         $this->stack[] = $node;
 
+        // Extract file imports
+        if ($node instanceof Use_) {
+            $this->extractImport($node);
+        }
+
+        // Locate the current class
         if ($node instanceof Class_) {
             $this->currentClass = $node;
         }
 
+        // Extract class use traits
+        if ($node instanceof Node\Stmt\TraitUse) {
+            $this->extractClassUseTrait($node);
+        }
+
+        // Extract class properties
+        if ($node instanceof Property) {
+            $this->extractClassProperty($node);
+        }
+
+        // Extract class methods
         if ($node instanceof ClassMethod) {
-            $methodName = $node->name->name;
+            $this->extractClassMethod($node);
+        }
+    }
 
-            $methodBody = $this->extractMethodCode($node->name->name);
-
-            $this->methods[] = [
+    public function extractImport($node)
+    {
+        foreach ($node->uses as $use) {
+            $this->imports[] = [
                 'node' => $node,
-                'name' => $methodName,
-                'class' => $this->currentClass->name->name,
-                'body' => $methodBody,
-                'previousBody' => $this->getPreviousMethodBody($node->name->name),
+                'name' => $use->name->toString(),
+                'alias' => $use->alias ? $use->alias->toString() : null,
             ];
         }
+    }
+
+    public function extractClassUseTrait($node)
+    {
+        foreach ($node->traits as $trait) {
+            Vemto::log($trait->toString());
+            $this->traits[] = [
+                'node' => $node,
+                'name' => $trait->toString(),
+                'class' => $this->currentClass->name->name,
+            ];
+        }
+    }
+
+    public function extractClassProperty($node)
+    {
+        $this->properties[] = [
+            'node' => $node,
+            'name' => $node->props[0]->name->name,
+            'class' => $this->currentClass->name->name,
+        ];
+    }
+
+    public function extractClassMethod($node)
+    {
+        $methodName = $node->name->name;
+
+        $methodBody = $this->extractMethodCode($node->name->name);
+
+        $this->methods[] = [
+            'node' => $node,
+            'name' => $methodName,
+            'class' => $this->currentClass->name->name,
+            'body' => $methodBody,
+            'previousBody' => $this->getPreviousMethodBody($node->name->name),
+        ];
     }
 
     public function extractMethodCode($methodName)

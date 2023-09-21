@@ -98,8 +98,8 @@ Vemto::execute('php-merger', function () use ($argv) {
     $resultFileContent = $printer->prettyPrintFile($currentFileVisitor->getCurrentFileAst());
 
     if(getenv('VEMTO_DEBUG')) {
-        Vemto::clearLog();
-        Vemto::log($resultFileContent);
+        // Vemto::clearLog();
+        // Vemto::log($resultFileContent);
     }
 
     $resultFilePath = Vemto::writeProcessedFile($resultFileContent);
