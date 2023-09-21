@@ -314,6 +314,12 @@ import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
             </div>
         </div>
 
+        <div class="p-4" v-if="selectedTab === 'ignored'">
+            <UiEmptyMessage>
+                <span>There are no ignored files</span>
+            </UiEmptyMessage>
+        </div>
+
         <div class="p-4" v-if="selectedTab === 'removed'">
             <UiEmptyMessage v-if="!removedFiles.length">
                 <span>There are no removed files</span>

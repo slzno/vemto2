@@ -44,6 +44,7 @@ export default class Project extends RelaDB.Model {
     currentRenderedFilesPaths: string[]
     vthemeKeys: any
     currentSchemaError: string
+    currentSchemaErrorStack: string
     scrollX: number
     scrollY: number
     codeGenerationSettings: ProjectCodeGenerationSettings
@@ -233,21 +234,39 @@ export default class Project extends RelaDB.Model {
     }
 
     getNonRemovedRenderableFiles(): RenderableFile[] {
-        return this.renderableFiles.filter(
+        return this.getOrderedRenderableFiles().filter(
             (renderableFile) => !renderableFile.wasRemoved()
         )
     }
 
     getRemovedRenderableFiles(): RenderableFile[] {
-        return this.renderableFiles.filter((renderableFile) =>
+        return this.getOrderedRenderableFiles().filter((renderableFile) =>
             renderableFile.wasRemoved()
         )
     }
 
     getConflictRenderableFiles(): RenderableFile[] {
-        return this.renderableFiles.filter(
+        return this.getOrderedRenderableFiles().filter(
             (renderableFile) => renderableFile.hasConflict()
         )
+    }
+
+    getOrderedRenderableFiles(): RenderableFile[] {
+        return this.renderableFiles.sort((a, b) => {
+            if (a.status === RenderableFileStatus.ERROR) return -1
+            if (b.status === RenderableFileStatus.ERROR) return 1
+
+            if (a.status === RenderableFileStatus.CONFLICT) return -1
+            if (b.status === RenderableFileStatus.CONFLICT) return 1
+
+            if (a.status === RenderableFileStatus.REMOVED) return -1
+            if (b.status === RenderableFileStatus.REMOVED) return 1
+
+            if (a.path < b.path) return -1
+            if (a.path > b.path) return 1
+
+            return 0
+        })
     }
 
     clearRemovedFiles() {
@@ -287,7 +306,7 @@ export default class Project extends RelaDB.Model {
         path: string,
         name: string,
         template: string,
-        type: RenderableFileType = RenderableFileType.PHP_CLASS
+        type: RenderableFileType = RenderableFileType.PHP
     ) : RenderableFile {
         let renderableFile: RenderableFile = null
 
@@ -304,14 +323,14 @@ export default class Project extends RelaDB.Model {
 
         if (!renderableFile) {
             renderableFile = new RenderableFile()
-            renderableFile.path = path
-            renderableFile.name = name
-            renderableFile.fullPath = fullPath
-            renderableFile.template = template
-            renderableFile.projectId = this.id
-            renderableFile.type = type
         }
 
+        renderableFile.path = path
+        renderableFile.name = name
+        renderableFile.fullPath = fullPath
+        renderableFile.template = template
+        renderableFile.projectId = this.id
+        renderableFile.type = type
         renderableFile.status = RenderableFileStatus.PREPARING
 
         renderableFile.save()
@@ -402,13 +421,29 @@ export default class Project extends RelaDB.Model {
         return !!this.currentSchemaError
     }
 
-    setCurrentSchemaError(error: string) {
+    setCurrentSchemaError(error: string, stack:string = null) {
         this.currentSchemaError = error
+        this.currentSchemaErrorStack = this.treatErrorStack(stack)
         this.save()
+    }
+
+    // split the stack into an array of lines and remove all lines that have the string ".phar"
+    treatErrorStack(stack: string): string {
+        if (!stack) return null
+
+        const lines = stack.split("\n").map(line => { 
+            line = line.replace('schema-reader Error: ', '')
+            line = line.trim() 
+
+            return line
+        })
+
+        return lines.filter(line => !line.includes(".phar")).join("\n")
     }
 
     clearCurrentSchemaError() {
         this.currentSchemaError = null
+        this.currentSchemaErrorStack = null
         this.save()
     }
 
