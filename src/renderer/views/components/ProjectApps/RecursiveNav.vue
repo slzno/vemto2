@@ -35,8 +35,8 @@
     <div>
         <div
             @click="$emit('editNavigation', nav)"
-            class="mb-2 border border-slate-700 bg-slate-850 rounded-lg p-3 cursor-pointer hover:bg-slate-800 w-96 flex items-center"
-            :class="{ 'ml-8': isChildren }"
+            class="mb-2 border border-slate-700 bg-slate-850 rounded-lg p-3 hover:bg-slate-800 w-96 flex items-center"
+            :class="{ 'ml-8': isChildren, 'cursor-pointer': !editingNavigation }"
         >
             <template v-if="editingNavigation?.id != nav.id">
                 <component class="w-4 h-4 mr-2 text-slate-600" :is="isChildren ? ChevronDoubleRightIcon : Bars4Icon" />
@@ -52,10 +52,10 @@
                     </UiSelect>
                 </div>
                 
-                <UiCheckbox class="mb-3" v-model="nav.isCustom" label="Is Custom?" />
+                <UiCheckbox v-model="nav.isCustom" label="Custom Navigation" />
 
                 <template v-if="nav.isCustom">
-                    <UiText id="customLink" class="mb-3" v-model="nav.customLink" label="Custom Link" />
+                    <UiText id="customLink" class="mt-3" v-model="nav.customLink" label="Custom Link" />
                 </template>
 
                 <div class="mt-4 flex justify-between">

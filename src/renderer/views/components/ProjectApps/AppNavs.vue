@@ -44,11 +44,14 @@
 
         nav.save()
 
+        resetModalData()
+        close()
+    }
+
+    const resetModalData = () => {
         navigableId.value = null
         navigableType.value = null
         name.value = null
-
-        close()
     }
 
     const close = () => {
