@@ -17,7 +17,7 @@
         "php:test": "set VEMTO_DEBUG=1 && php ./src/php/tests/vendor/bin/phpunit ./src/php/tests/src --verbose",
         "php:test-output": "set VEMTO_DEBUG=1 && php ./src/php/output.php",
         "php:test-schema": "set VEMTO_DEBUG=1 && php ./src/php/output.php schema-reader",
-        "php:test-merger": "set VEMTO_DEBUG=1 && php ./src/php/output.php php-merger",
+        "php:test-merger": "set VEMTO_DEBUG=1 && php ./src/php/output-merger.php",
         "test:mock": "yarn php:test-output && php ./mock.php",
         "test": "jest --runInBand",
         "test:watch": "jest --watch",
