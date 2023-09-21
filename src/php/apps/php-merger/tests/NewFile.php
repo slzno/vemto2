@@ -14,11 +14,15 @@ class User extends Model
     use HasFactory;
     use TestClass, Searchable;
 
+    const INFO = 'info';
+
     public $table = 'users';
 
     public $timestamps = false;
 
-    protected $guarded = [];
+    protected $guarded = [
+        'id'
+    ];
 
     public function posts()
     {

@@ -85,7 +85,6 @@ class StaticVisitor extends NodeVisitorAbstract
     public function extractClassUseTrait($node)
     {
         foreach ($node->traits as $trait) {
-            Vemto::log($trait->toString());
             $this->traits[] = [
                 'node' => $node,
                 'name' => $trait->toString(),
@@ -96,11 +95,29 @@ class StaticVisitor extends NodeVisitorAbstract
 
     public function extractClassProperty($node)
     {
+        Vemto::log($node->props[0]->name->name);
+        Vemto::log($this->extractPropertyCode($node->props[0]->name->name));
+
         $this->properties[] = [
             'node' => $node,
             'name' => $node->props[0]->name->name,
             'class' => $this->currentClass->name->name,
+            'body' => $this->extractPropertyCode($node->props[0]->name->name),
         ];
+    }
+
+    public function extractPropertyCode($propertyName)
+    {
+        $pattern = "/(public|private|protected)?\s*\\$" . $propertyName . "\s*=\s*[^;]+;/ms";
+
+        preg_match($pattern, $this->fileContent, $matches);
+
+        if (count($matches) > 0) {
+            $propertyCode = $matches[0];
+            return $propertyCode;
+        } else {
+            return '';
+        }
     }
 
     public function extractClassMethod($node)
