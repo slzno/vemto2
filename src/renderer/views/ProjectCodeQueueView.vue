@@ -11,9 +11,11 @@
     import { TrashIcon } from "@heroicons/vue/24/outline"
     import SequentialGenerator from "@Renderer/codegen/sequential/SequentialGenerator"
     import TemplateErrorViewer from "./components/Common/TemplateErrorViewer.vue"
-    import { computed, ref } from "vue"
+    import { computed, ref, onMounted } from "vue"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
+    import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
+import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
 
     const projectStore = useProjectStore(),
         search = ref(""),
@@ -48,9 +50,9 @@
         { label: "Settings", value: "settings" },
     ]
 
-    const runSequentialGenerator = async () => {
-        await new SequentialGenerator().run(projectStore.project)
-    }
+    onMounted(() => {
+        projectStore.project.startCodeGenerationSettings()
+    })
 
     const filteredFiles = computed(() => {
             if (!projectStore.project || !projectStore.project.renderableFiles)
@@ -117,6 +119,11 @@
         </div>
 
         <div class="p-4" v-if="selectedTab === 'default'">
+
+            <UiEmptyMessage v-if="!filteredFiles.length">
+                <span>There are no files in the Queue</span>
+            </UiEmptyMessage>
+
             <div class="flex top-0 left-0 space-x-2 text-sm z-20 mb-4">
                 <div>
                     <!-- Search -->
@@ -223,6 +230,10 @@
         </div>
 
         <div class="p-4" v-if="selectedTab === 'conflicts'">
+            <UiEmptyMessage v-if="!conflictFiles.length">
+                <span>There are no files with conflicts</span>
+            </UiEmptyMessage>
+
             <div class="flex top-0 left-0 space-x-2 text-sm z-20 mb-4">
                 <div>
                     <!-- Search -->
@@ -304,6 +315,10 @@
         </div>
 
         <div class="p-4" v-if="selectedTab === 'removed'">
+            <UiEmptyMessage v-if="!removedFiles.length">
+                <span>There are no removed files</span>
+            </UiEmptyMessage>
+
             <div class="flex top-0 left-0 space-x-2 text-sm z-20 mb-4">
                 <div>
                     <!-- Search -->
@@ -407,6 +422,38 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="p-4" v-if="selectedTab === 'settings'">
+            <UiCheckbox 
+                v-model="projectStore.project.codeGenerationSettings.models" 
+                label="Generate Models" 
+                @change="projectStore.project.save()"
+            />
+
+            <UiCheckbox 
+                v-model="projectStore.project.codeGenerationSettings.factories" 
+                label="Generate Factories" 
+                @change="projectStore.project.save()"
+            />
+
+            <UiCheckbox 
+                v-model="projectStore.project.codeGenerationSettings.seeders" 
+                label="Generate Seeders" 
+                @change="projectStore.project.save()"
+            />
+
+            <UiCheckbox 
+                v-model="projectStore.project.codeGenerationSettings.policies" 
+                label="Generate Policies" 
+                @change="projectStore.project.save()"
+            />
+
+            <UiCheckbox 
+                v-model="projectStore.project.codeGenerationSettings.routes" 
+                label="Generate Routes" 
+                @change="projectStore.project.save()"
+            />
         </div>
     </div>
 </template>

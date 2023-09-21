@@ -17,8 +17,8 @@ require_once 'classes/MigrationRepository.php';
 
 Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
     // Set the database connection to SQLite
-    config(['database.default' => 'sqlite']);
-    config(['database.connections.sqlite.database' => ':memory:']);
+    // config(['database.default' => 'sqlite']);
+    // config(['database.connections.sqlite.database' => ':memory:']);
 
     // Start the application with the extended kernel
     $app->bind(Illuminate\Contracts\Console\Kernel::class, ExtendedKernel::class);

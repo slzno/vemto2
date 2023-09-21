@@ -183,7 +183,7 @@ test('It can generate a migration to remove an index', async () => {
 })
 
 test('It can generate a migration to create a new table', async () => {
-    const table = TestHelper.createTable({ name: 'posts', needsMigration: true })
+    const table = TestHelper.createTable({ name: 'posts' })
 
     // add primary
     TestHelper.createColumn({ name: 'id', type: 'unsignedBigInteger', order: 0, table, autoIncrement: true })

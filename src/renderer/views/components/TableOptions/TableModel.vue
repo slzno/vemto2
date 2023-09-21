@@ -91,6 +91,7 @@
 
     const log = (data: any): void => {
         console.log(data)
+        console.log(data.tableNameIsDifferentFromDefault())
     }
 </script>
 

@@ -88,7 +88,7 @@
     }
 
     const log = (column: Column) => {
-        console.log(column.getFirstBelongsToRelation().model.name)
+        console.log(column.isNew())
     }
 </script>
 

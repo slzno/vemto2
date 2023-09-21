@@ -1,21 +1,21 @@
-import { default as DefaultPluralize } from 'pluralize'
+import { default as DefaultPluralizer } from 'pluralize'
 import * as changeCase from "change-case"
 
 export default class WordManipulator {
     static pluralize(word: string): string {
-        return DefaultPluralize.plural(word)
+        return DefaultPluralizer.plural(word)
     }
 
     static singularize(word: string): string {
-        return DefaultPluralize.singular(word)
+        return DefaultPluralizer.singular(word)
     }
 
     static isPlural(word: string): boolean {
-        return DefaultPluralize.isPlural(word)
+        return DefaultPluralizer.isPlural(word)
     }
 
     static isSingular(word: string): boolean {
-        return DefaultPluralize.isSingular(word)
+        return DefaultPluralizer.isSingular(word)
     }
 
     static pascalCase(word: string): string {

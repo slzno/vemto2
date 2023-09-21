@@ -13,6 +13,9 @@ contextBridge.exposeInMainWorld("api", {
     loadProjectDatabase: (path: string) => { 
         return ipcRenderer.invoke("get:project:database", path) 
     },
+    closeProjectDatabase: () => { 
+        return ipcRenderer.invoke("close:project:database") 
+    },
 
     // Error messages
     onDefaultError: (callback: Callback) => { 

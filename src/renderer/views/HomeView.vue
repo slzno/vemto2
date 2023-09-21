@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref } from "vue"
+    import { ref, onMounted } from "vue"
     import { useRouter } from "vue-router"
     import Project from "@Common/models/Project"
     import UiText from "@Renderer/components/ui/UiText.vue"

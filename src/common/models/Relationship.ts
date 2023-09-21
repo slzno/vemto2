@@ -149,12 +149,6 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
         relationship.updateInverse()
     }
 
-    static deleting(relationship: Relationship) {
-        if(relationship.foreignKey) {
-            relationship.foreignKey.delete()
-        }
-    }
-
     updateInverse(): void {
         let inverse = this.inverse
 

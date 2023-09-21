@@ -32,5 +32,11 @@ export const useProjectStore = defineStore("project", {
             
             return state.project.hasRenderableFilesWithConflict()
         },
+
+        hasSchemaChanges(state): boolean {
+            if(!state.project.id) return false
+            
+            return state.project.hasSchemaChanges()
+        },
     }
 })

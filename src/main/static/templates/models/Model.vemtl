@@ -10,7 +10,11 @@ use Illuminate\Database\Eloquent\Model;
 class <$ this.model.name $> extends Model 
 {
     use HasFactory;
-    
+
+    <% if(this.model.tableNameIsDifferentFromDefault()) { %>
+    protected $table = '<$ this.model.table.name $>';
+    <% } %>
+
     <% if(this.model.ownRelationships.length) { %>
         <# Relationships #>
         <% for (let relationship of this.model.ownRelationships) { %>

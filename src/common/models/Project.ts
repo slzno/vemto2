@@ -14,6 +14,17 @@ import GenerateBasicProjectData from "./services/project/GenerateBasicProjectDat
 import AppSection from "./AppSection"
 import CalculateSchemaChanges from "./services/project/CalculateSchemaChanges"
 
+interface ProjectCodeGenerationSettings {
+    models: boolean,
+    factories: boolean,
+    seeders: boolean,
+    policies: boolean,
+    requests: boolean,
+    controllers: boolean,
+    routes: boolean,
+    views: boolean,
+}
+
 export default class Project extends RelaDB.Model {
     id: string
     path: string
@@ -35,6 +46,7 @@ export default class Project extends RelaDB.Model {
     currentSchemaError: string
     scrollX: number
     scrollY: number
+    codeGenerationSettings: ProjectCodeGenerationSettings
 
     lastForeignAlias: number = 0;
 
@@ -49,6 +61,23 @@ export default class Project extends RelaDB.Model {
             appSections: () => this.hasMany(AppSection).cascadeDelete(),
             renderableFiles: () => this.hasMany(RenderableFile).cascadeDelete(),
         }
+    }
+
+    startCodeGenerationSettings() {
+        if (this.codeGenerationSettings) return
+
+        this.codeGenerationSettings = {
+            models: true,
+            factories: true,
+            seeders: true,
+            policies: true,
+            requests: true,
+            controllers: true,
+            routes: true,
+            views: true,
+        }
+
+        this.save()
     }
 
     static findOrCreate(): Project {
@@ -397,5 +426,9 @@ export default class Project extends RelaDB.Model {
         this.scrollX = x
         this.scrollY = y
         this.save()
+    }
+
+    undoAllSchemaChanges() {
+        this.tables.forEach((table) => table.undoAllChanges())
     }
 }

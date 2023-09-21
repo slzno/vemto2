@@ -1,5 +1,8 @@
 const sendErrorMessage = (event: any, error: any) => {
-    event.sender.send("error:default", {error: error, stack: error.stack})
+    event.sender.send("error:default", {
+        error: error.message || error.error || error, 
+        stack: error.stack
+    })
 }
 
 export async function handleError(event: any, callback: any) {

@@ -74,4 +74,8 @@ export default class HandleProjectDatabase {
 
         if(callback) callback()
     }
+
+    static async close() {
+        Main.API.closeProjectDatabase()
+    }
 }
