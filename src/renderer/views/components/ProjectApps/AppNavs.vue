@@ -1,16 +1,18 @@
 <script setup lang="ts">
-    import { ref } from "vue";
+    import { ref, onMounted } from "vue";
+    import Draggable from 'vuedraggable';
     import Nav from "@Common/models/Nav";
     import RecursiveNav from "./RecursiveNav.vue"
     import UiText from "@Renderer/components/ui/UiText.vue";
     import UiModal from "@Renderer/components/ui/UiModal.vue";
     import UiButton from "@Renderer/components/ui/UiButton.vue";
     import UiSelect from "@Renderer/components/ui/UiSelect.vue";
-    import { useProjectStore } from "@Renderer/stores/useProjectStore"
+    import { useProjectStore } from "@Renderer/stores/useProjectStore";
 
     const projectStore = useProjectStore(),
         editingNavigation = ref<null | Nav>(null),
-        showingCreateNavigationModal = ref<boolean>(false)
+        showingCreateNavigationModal = ref<boolean>(false),
+        navigations = ref<Nav[]>([])
 
     const navigableId = ref<number | null>(null),
         navigableType = ref<string | null>("Crud"),
@@ -46,6 +48,8 @@
 
         resetModalData()
         close()
+
+        navigations.value = projectStore.project.getRootNavs()
     }
 
     const resetModalData = () => {
@@ -57,10 +61,26 @@
     const close = () => {
         showingCreateNavigationModal.value = false
     }
+
+    const saveNavigationOrder = (event) => {
+        const { newIndex, oldIndex, movedContext } = event;
+        console.log(event, movedContext)
+        const movedNavigation = movedContext.element;
+
+        console.log(movedNavigation)
+        // const newParentNav = projectStore.project.getRootNavs().find(nav => nav.children.includes(movedNavigation));
+
+        // movedNavigation.parentNavId = newParentNav ? newParentNav.id : null;
+
+        // navigation.children.forEach((nav: Nav) => nav.save())
+    }
+
+    onMounted(() => {
+        navigations.value = projectStore.project.getRootNavs()
+    })
 </script>
 
 <template>
-
     <div class="mb-3">
         <UiButton @click="showingCreateNavigationModal = true">Add Menu Item</UiButton>
     </div>
@@ -94,18 +114,21 @@
     </UiModal>
 
     <div class="bg-slate-950 p-3 rounded-lg border border-slate-700 h-screen">
-        <div
-            v-for="nav in projectStore.project.getRootNavs()"
-            :key="nav.id"
+        <Draggable 
+            v-model="navigations"
+            item-key="app-navs-draggable"
+            group="navigations"
+            @end="saveNavigationOrder"
         >
-            <RecursiveNav
-                :nav="nav"
-                :editing-navigation="editingNavigation"
-                @editNavigation="editNavigation"
-                @cancelEditing="cancelEditing"
-                @saveNavigation="saveNavigation"
-            />
-        </div>
+            <template #item="{ element }">
+                <RecursiveNav
+                    :nav="element"
+                    :editing-navigation="editingNavigation"
+                    @editNavigation="editNavigation"
+                    @cancelEditing="cancelEditing"
+                    @saveNavigation="saveNavigation"
+                />
+            </template>
+        </Draggable>
     </div>
-
 </template>

@@ -25,11 +25,11 @@ export default class Nav extends RelaDB.Model {
     }
 
     static findByTag(tag: string): Nav {
-        return Nav.get().filter(nav => nav.tag === tag)[0]
+        return Nav.get().filter((nav: Nav) => nav.tag === tag)[0]
     }
 
     isRoot(): boolean {
-        return this.parentNavId === undefined
+        return true
     }
 
     hasCustomLink(): boolean {

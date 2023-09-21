@@ -1,11 +1,13 @@
 <script setup lang="ts">
-    import Nav from '@Common/models/Nav'
-    import UiCheckbox from '@Renderer/components/ui/UiCheckbox.vue';
+    import Draggable from 'vuedraggable';
+    import Nav from '@Common/models/Nav';
+    import { defineProps, PropType, toRef, Ref } from 'vue';
     import UiText from '@Renderer/components/ui/UiText.vue';
     import UiButton from '@Renderer/components/ui/UiButton.vue';
     import UiSelect from '@Renderer/components/ui/UiSelect.vue';
+    import UiCheckbox from '@Renderer/components/ui/UiCheckbox.vue';
+    import { useProjectStore } from "@Renderer/stores/useProjectStore";
     import { ChevronDoubleRightIcon, Bars4Icon } from '@heroicons/vue/24/outline'
-    import { defineProps, PropType, toRef, Ref } from 'vue'
 
     const props = defineProps({
             nav: {
@@ -22,12 +24,25 @@
                 required: true,
             },
         }),
-        nav = toRef(props, 'nav') as Ref<Nav | null>
+        nav = toRef(props, 'nav') as Ref<Nav | null>,
+        projectStore = useProjectStore()
 
     const deleteNavigation = (navigation: Nav) => {
         if(!confirm("Are you sure you want to delete this navigation?")) return
 
         navigation.delete()
+    }
+
+    const saveNavigationOrder = (event, navigation: Nav) => {
+        const { newIndex, oldIndex, movedContext } = event;
+        const movedNavigation = movedContext.element;
+
+        console.log(movedNavigation)
+        // const newParentNav = projectStore.project.getRootNavs().find(nav => nav.children.includes(movedNavigation));
+
+        // movedNavigation.parentNavId = newParentNav ? newParentNav.id : null;
+
+        // navigation.children.forEach((nav: Nav) => nav.save())
     }
 </script>
 
@@ -72,19 +87,23 @@
         </div>
 
         <template v-if="nav.children">
-            <div
-                v-for="childrenNav in nav.children"
-                :key="childrenNav.id"
+            <Draggable 
+                v-model="nav.children"
+                item-key="app-navs-draggable"
+                group="navigations"
+                @end="saveNavigationOrder($event, nav)"
             >
-                <RecursiveNav
-                    :nav="childrenNav"
-                    :is-children="true"
-                    :editing-navigation="editingNavigation"
-                    @editNavigation="$emit('editNavigation', childrenNav)"
-                    @saveNavigation="$emit('saveNavigation', childrenNav)"
-                    @cancelEditing="$emit('cancelEditing')"
-                />
-            </div>
+                <template #item="{ element }">
+                    <RecursiveNav
+                        :nav="element"
+                        :is-children="true"
+                        :editing-navigation="editingNavigation"
+                        @editNavigation="$emit('editNavigation', element)"
+                        @saveNavigation="$emit('saveNavigation', element)"
+                        @cancelEditing="$emit('cancelEditing')"
+                    />
+                </template>
+            </Draggable>
         </template>
     </div>
 </template>
