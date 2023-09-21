@@ -4,7 +4,8 @@
 
 <template>
     <div
-        class="text-sm p-2 fixed top-0 left-0 w-screen h-screen flex items-center justify-center space-x-2 pointer-events-none"
+        style="width: calc(100vw - 80px)"
+        class="text-sm p-2 fixed top-0 right-0 h-screen flex items-center justify-center space-x-2 pointer-events-none"
     >
         <div class="flex flex-col items-center space-y-10">
             <div>

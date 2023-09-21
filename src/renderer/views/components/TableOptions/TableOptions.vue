@@ -23,8 +23,8 @@
         { label: "Columns", value: "columns" },
         { label: "Models", value: "models" },
         { label: "Indexes", value: "indexes" },
-        { label: "Settings", value: "settings" },
         { label: "Migrations", value: "migrations" },
+        { label: "Settings", value: "settings" },
     ]
 </script>
 

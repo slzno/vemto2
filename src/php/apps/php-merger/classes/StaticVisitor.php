@@ -7,6 +7,11 @@ use PhpParser\Node\Stmt\ClassMethod;
 
 class StaticVisitor extends NodeVisitorAbstract
 {
+    public $imports = [];
+    public $extends = [];
+    public $implements = [];
+    public $traits = [];
+    public $properties = [];
     public $methods = [];
     protected $fileContent = '';
     protected $currentClass = null;
@@ -24,7 +29,7 @@ class StaticVisitor extends NodeVisitorAbstract
         $this->fileContent = $fileContent;
     }
 
-    public function setPreviousFilevisitor(mixed $previousFileVisitor)
+    public function setPreviousFileVisitor(mixed $previousFileVisitor)
     {
         $this->previousFileVisitor = $previousFileVisitor;
     }
@@ -32,6 +37,7 @@ class StaticVisitor extends NodeVisitorAbstract
     public function enterNode(Node $node)
     {
         // Use a stack to keep track of the current parent node
+        // This is needed to set the parent attribute of the nodes
         if (!empty($this->stack)) {
             $node->setAttribute('parent', end($this->stack));
         }

@@ -10,7 +10,8 @@
 
     const props = defineProps({
             modelValue: {
-                type: String,
+                // string or number
+                type: [String, Number],
                 required: true
             },
             mayOpen: {

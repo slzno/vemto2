@@ -94,6 +94,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         this.migrations = data.migrations
         this.oldNames = data.oldNames
         this.createdFromInterface = false
+        this.labelColumnId = null
 
         this.fillSchemaState()
 

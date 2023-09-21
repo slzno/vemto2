@@ -26,7 +26,7 @@
 
         Main.API.onDefaultError((error) => { 
             if(error.error.includes('schema-reader')) {
-                projectStore.project.setCurrentSchemaError(error.error)
+                projectStore.project.setCurrentSchemaError(error.error, error.stack)
                 console.error(error.error)
                 console.error(error.stack)
             }
@@ -72,20 +72,20 @@
                     <div class="py-2 px-5 rounded-full shadow bg-slate-850 border border-slate-700 flex space-x-2">
                         <div>
                             <button class="flex text-slate-300 outline-none focus:text-red-500 cursor-pointer hover:text-red-500" title="Generate Code (F5)" @click="generateCode()">
-                                <div v-if="appStore.isGenerating" class="w-6 h-6">
+                                <div v-if="appStore.isGenerating" class="w-7 h-7 stroke-1">
                                     <UiLoading />
                                 </div>
-                                <PlayIcon v-else class="w-6 h-6" />
+                                <PlayIcon v-else class="w-7 h-7 stroke-1" />
                             </button>
                         </div>
                         <button class="flex text-slate-300 outline-none focus:text-red-500 cursor-pointer hover:text-red-500" title="Open Project Folder (F6)" @click="openProjectFolder()">
-                            <FolderIcon class="w-6 h-6"/>
+                            <FolderIcon class="w-7 h-7 stroke-1"/>
                         </button>
                         <button class="flex text-slate-300 outline-none focus:text-red-500 cursor-pointer hover:text-red-500" title="Open Project on Command Line (F7)" @click="openProjectOnTerminal()">
-                            <CommandLineIcon class="w-6 h-6" />
+                            <CommandLineIcon class="w-7 h-7 stroke-1" />
                         </button>
-                        <ShieldExclamationIcon class="w-6 h-6 text-slate-300 cursor-pointer hover:text-red-500" />
-                        <!-- <ArrowTopRightOnSquareIcon class="w-6 h-6 text-slate-300 cursor-pointer hover:text-red-500" /> -->
+                        <ShieldExclamationIcon class="w-7 h-7 stroke-1 text-slate-300 cursor-pointer hover:text-red-500" />
+                        <!-- <ArrowTopRightOnSquareIcon class="w-7 h-7 stroke-1 text-slate-300 cursor-pointer hover:text-red-500" /> -->
                     </div>
                 </div>
             </div>

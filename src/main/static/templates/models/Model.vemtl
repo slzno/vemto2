@@ -7,9 +7,27 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+// test
+
 class <$ this.model.name $> extends Model 
 {
     use HasFactory;
+
+    <% if(this.model.hasGuarded) { %>
+    protected $guarded = [
+        <% for(let column of this.model.guardedColumns) { %>
+        '<$ column.name $>',
+        <% } %>
+    ];
+    <% } %>
+
+    <% if(this.model.hasFillable) { %>
+    protected $fillable = [
+        <% for(let column of this.model.fillableColumns) { %>
+        '<$ column.name $>',
+        <% } %>
+    ];
+    <% } %>
 
     <% if(this.model.tableNameIsDifferentFromDefault()) { %>
     protected $table = '<$ this.model.table.name $>';
