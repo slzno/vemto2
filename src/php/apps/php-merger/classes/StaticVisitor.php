@@ -29,7 +29,7 @@ class StaticVisitor extends NodeVisitorAbstract
         $this->fileContent = $fileContent;
     }
 
-    public function setPreviousFileVisitor(mixed $previousFileVisitor)
+    public function setPreviousFilevisitor(mixed $previousFileVisitor)
     {
         $this->previousFileVisitor = $previousFileVisitor;
     }

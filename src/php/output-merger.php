@@ -5,7 +5,7 @@
  * Created by Tiago Rodrigues, 2023-09-21
  */
 
-$output = executeApp($app);
+$output = executeApp();
 $vemtoOutput = parseResponse($output);
 
 echo $output . PHP_EOL;
@@ -22,8 +22,13 @@ function executeApp()
 {
     $output = '';
 
-    chdir(realpath(__DIR__ . '/apps/php-merger/tests'));
-    $output = exec('php ' . __DIR__ . '/apps/php-merger/index.php NewFile.php PreviousFile.php');
+    chdir(realpath(__DIR__ . '/apps/php-merger/'));
+    $firstFilePath = realpath(__DIR__ . '/apps/php-merger/') . '/tests/NewFile.php';
+    $secondFilePath = realpath(__DIR__ . '/apps/php-merger/') . '/tests/CurrentFile.php';
+    $command = 'php ' . __DIR__ . '/apps/php-merger/index.php ' . $firstFilePath . ' ' . $secondFilePath;
+
+    echo $command . PHP_EOL;
+    $output = exec($command);
     chdir(__DIR__);
 
     return $output;

@@ -42,6 +42,14 @@ class Vemto {
         file_put_contents($logFile, $typeHeaders[$type] . PHP_EOL . $message . PHP_EOL . PHP_EOL, FILE_APPEND);
     }
 
+    public static function clearLog()
+    {
+        $logFilePath = realpath(__DIR__ . '/../../../out/');
+        $logFile = $logFilePath . '/apps.log';
+
+        file_put_contents($logFile, '');
+    }
+
     public static function jsonResponse($data) {
         $jsonResponse = json_encode($data);
 

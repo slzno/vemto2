@@ -33,6 +33,7 @@ Vemto::execute('php-merger', function () use ($argv) {
 
     $newFileContent = file_get_contents($newFilePath);
     $currentFileContent = file_get_contents($currentFilePath);
+
     $previousFileContent = $previousFilePath && file_exists($previousFilePath) ? file_get_contents($previousFilePath) : null;
 
     // We need to process the previous file (the latest file version wrote to the disk from Vemto)
@@ -95,6 +96,11 @@ Vemto::execute('php-merger', function () use ($argv) {
 
     $printer = new PhpParser\PrettyPrinter\Standard();
     $resultFileContent = $printer->prettyPrintFile($currentFileVisitor->getCurrentFileAst());
+
+    if(getenv('VEMTO_DEBUG')) {
+        Vemto::clearLog();
+        Vemto::log($resultFileContent);
+    }
 
     $resultFilePath = Vemto::writeProcessedFile($resultFileContent);
 
