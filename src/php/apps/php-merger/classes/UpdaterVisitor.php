@@ -94,13 +94,16 @@ class UpdaterVisitor extends NodeVisitorAbstract
         $class = $this->getClassByName($newTrait['class']);
 
         if ($class) {
-            $class->stmts[] = $newTrait['node'];
+            $position = $this->calculateLastTraitStmtPosition($class['node']) + 1;
+            array_splice($class['node']->stmts, $position, 0, [$newTrait['node']]);
         }
     }
 
     protected function addOrUpdateProperties()
     {
-        foreach ($this->newFileVisitor->properties as $newProperty) {
+        $invertedProperties = array_reverse($this->newFileVisitor->properties);
+
+        foreach ($invertedProperties as $newProperty) {
             $propertyExists = false;
 
             foreach ($this->properties as $currentProperty) {
@@ -125,7 +128,8 @@ class UpdaterVisitor extends NodeVisitorAbstract
         $class = $this->getClassByName($newProperty['class']);
 
         if ($class) {
-            $class->stmts[] = $newProperty['node'];
+            $position = $this->calculateFirstPropertyStmtPosition($class['node']);
+            array_splice($class['node']->stmts, $position, 0, [$newProperty['node']]);
         }
     }
 
@@ -134,7 +138,7 @@ class UpdaterVisitor extends NodeVisitorAbstract
         $class = $this->getClassByName($newProperty['class']);
 
         if ($class) {
-            foreach ($class->stmts as $key => $propertyStatementsNode) {
+            foreach ($class['node']->stmts as $key => $propertyStatementsNode) {
                 $propertyName = $propertyStatementsNode->props[0]->name->name ?? null;
 
                 if(!$propertyName) continue;
@@ -150,7 +154,7 @@ class UpdaterVisitor extends NodeVisitorAbstract
                         $this->registerConflict($currentPropertyBody, $newProperty['body']);
                     }
 
-                    $class->stmts[$key] = $newProperty['node'];
+                    $class['node']->stmts[$key] = $newProperty['node'];
                 }
             }
         }
@@ -184,7 +188,7 @@ class UpdaterVisitor extends NodeVisitorAbstract
         $class = $this->getClassByName($newMethod['class']);
 
         if ($class) {
-            $class->stmts[] = $newMethod['node'];
+            $class['node']->stmts[] = $newMethod['node'];
         }
     }
 
@@ -193,7 +197,7 @@ class UpdaterVisitor extends NodeVisitorAbstract
         $class = $this->getClassByName($newMethod['class']);
 
         if ($class) {
-            foreach ($class->stmts as $key => $methodStatementsNode) {
+            foreach ($class['node']->stmts as $key => $methodStatementsNode) {
                 $methodName = $methodStatementsNode->name->name ?? null;
 
                 if(!$methodName) continue;
@@ -209,7 +213,7 @@ class UpdaterVisitor extends NodeVisitorAbstract
                         $this->registerConflict($currentMethodBody, $newMethod['body']);
                     }
 
-                    $class->stmts[$key] = $newMethod['node'];
+                    $class['node']->stmts[$key] = $newMethod['node'];
                 }
             }
         }

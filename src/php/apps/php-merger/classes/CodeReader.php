@@ -56,7 +56,7 @@ trait CodeReader {
         if ($node instanceof Class_) {
             $this->currentClass = $node;
 
-            $this->classes[] = $node;
+            $this->extractClass($node);
         }
 
         // Extract class use traits
@@ -86,6 +86,99 @@ trait CodeReader {
                 'alias' => $use->alias ? $use->alias->toString() : null,
             ];
         }
+    }
+
+    public function extractClass($node)
+    {
+        $className = $node->name->name;
+
+        $this->classes[$className] = [
+            'node' => $node,
+            'name' => $className,
+            'extends' => $node->extends ? $node->extends->toString() : null,
+            'implements' => $node->implements ? $node->implements[0]->toString() : null,
+        ];
+    }
+
+    public function calculateFirstTraitStmtPosition($node)
+    {
+        $firstTraitStmtPosition = 0;
+
+        foreach ($node->stmts as $key => $stmt) {
+            if ($stmt instanceof Node\Stmt\TraitUse) {
+                $firstTraitStmtPosition = $key;
+                break;
+            }
+        }
+
+        return $firstTraitStmtPosition;
+    }
+
+    public function calculateFirstPropertyStmtPosition($node)
+    {
+        $firstPropertyStmtPosition = 0;
+
+        foreach ($node->stmts as $key => $stmt) {
+            if ($stmt instanceof Property) {
+                $firstPropertyStmtPosition = $key;
+                break;
+            }
+        }
+
+        return $firstPropertyStmtPosition;
+    }
+
+    public function calculateFirstMethodStmtPosition($node)
+    {
+        $firstMethodStmtPosition = 0;
+
+        foreach ($node->stmts as $key => $stmt) {
+            if ($stmt instanceof ClassMethod) {
+                $firstMethodStmtPosition = $key;
+                break;
+            }
+        }
+
+        return $firstMethodStmtPosition;
+    }
+
+    public function calculateLastTraitStmtPosition($node)
+    {
+        $latestTraitStmtPosition = 0;
+
+        foreach ($node->stmts as $key => $stmt) {
+            if ($stmt instanceof Node\Stmt\TraitUse) {
+                $latestTraitStmtPosition = $key;
+            }
+        }
+
+        return $latestTraitStmtPosition;
+    }
+
+    public function calculateLastPropertyStmtPosition($node)
+    {
+        $latestPropertyStmtPosition = 0;
+
+        foreach ($node->stmts as $key => $stmt) {
+            if ($stmt instanceof Property) {
+                $latestPropertyStmtPosition = $key;
+            }
+        }
+
+        return $latestPropertyStmtPosition;
+    }
+
+    public function calculateLastMethodStmtPosition($node)
+    {
+        $latestMethodStmtPosition = 0;
+
+        foreach ($node->stmts as $key => $stmt) {
+            if ($stmt instanceof ClassMethod) {
+                $latestMethodStmtPosition = $key;
+            }
+        }
+
+        return $latestMethodStmtPosition;
     }
 
     public function extractClassUseTrait($node)
@@ -143,26 +236,18 @@ trait CodeReader {
         return null;
     }
 
-    public function getImportByName(string $name)
+    public function getImportByName(string $importName)
     {
-        return $this->imports[$name] ?? null;
+        return $this->imports[$importName] ?? null;
     }
 
-    protected function getClassByName(string $name) {
-        $class = null;
-
-        foreach ($this->classes as $currentClass) {
-            if ($currentClass->name->name === $name) {
-                $class = $currentClass;
-            }
-        }
-
-        return $class;
+    protected function getClassByName(string $className) {
+        return $this->classes[$className] ?? null;
     }
 
-    public function getTraitByName(string $name)
+    public function getTraitByName(string $traitName)
     {
-        return $this->traits[$name] ?? null;
+        return $this->traits[$traitName] ?? null;
     }
 
     public function getPropertyByName(string $propertyName)
