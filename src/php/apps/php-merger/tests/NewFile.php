@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Test\TestClass;
 use App\Models\Searchable;
+use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -12,11 +13,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class User extends Model
 {
     use HasFactory;
-    use TestClass, Searchable;
+    use TestClass;
+    use Searchable;
 
     const INFO = 'info';
 
     public $table = 'users';
+    protected $fillable = ['name', 'email', 'password', 'nickname'];
 
     public $timestamps = false;
 

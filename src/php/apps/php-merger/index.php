@@ -6,6 +6,8 @@ require_once 'load.php';
 // Load Vemto classes
 require_once 'common/Vemto.php';
 
+require_once 'classes/CodeExtractor.php';
+require_once 'classes/CodeReader.php';
 require_once 'classes/StaticVisitor.php';
 require_once 'classes/UpdaterVisitor.php';
 
@@ -98,8 +100,8 @@ Vemto::execute('php-merger', function () use ($argv) {
     $resultFileContent = $printer->prettyPrintFile($currentFileVisitor->getCurrentFileAst());
 
     if(getenv('VEMTO_DEBUG')) {
-        // Vemto::clearLog();
-        // Vemto::log($resultFileContent);
+        Vemto::clearLog();
+        Vemto::log($resultFileContent);
     }
 
     $resultFilePath = Vemto::writeProcessedFile($resultFileContent);
