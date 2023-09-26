@@ -94,8 +94,7 @@ class UpdaterVisitor extends NodeVisitorAbstract
         $class = $this->getClassByName($newTrait['class']);
 
         if ($class) {
-            $position = $this->calculateLastTraitStmtPosition($class['node']) + 1;
-            array_splice($class['node']->stmts, $position, 0, [$newTrait['node']]);
+            $class['node']->stmts[] = $newTrait['node'];
         }
     }
 
@@ -128,8 +127,7 @@ class UpdaterVisitor extends NodeVisitorAbstract
         $class = $this->getClassByName($newProperty['class']);
 
         if ($class) {
-            $position = $this->calculateFirstPropertyStmtPosition($class['node']);
-            array_splice($class['node']->stmts, $position, 0, [$newProperty['node']]);
+            $class['node']->stmts[] = $newProperty['node'];
         }
     }
 

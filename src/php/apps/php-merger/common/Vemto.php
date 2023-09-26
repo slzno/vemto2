@@ -113,4 +113,43 @@ class Vemto {
         }
     }
 
+    public static function runPhpCsFixer($fileContent)
+    {
+        $phpCsFixerPath = realpath(__DIR__ . '/../vendor/bin/php-cs-fixer');
+
+        if(!file_exists($phpCsFixerPath)) {
+            throw new Exception("PHP CS Fixer not found. Please run composer install on your PHP Box app before using it.");
+        }
+
+        // run cs fixer on the generated code
+        $newFileContent = self::manipulateTemporaryFile($fileContent, function($temporaryFilePath) use ($phpCsFixerPath) {
+            $command = "{$phpCsFixerPath} fix {$temporaryFilePath} --using-cache=no";
+
+            shell_exec($command);
+
+            return file_get_contents($temporaryFilePath);
+        });
+
+        return $newFileContent;
+    }
+
+    public static function manipulateTemporaryFile($fileContent, $manipulationCallback = null)
+    {
+        $newFileContent = $fileContent;
+
+        $temporaryFilePath = tempnam(sys_get_temp_dir(), 'vemto');
+
+        file_put_contents($temporaryFilePath, $fileContent);
+
+        Vemto::log("Temporary file path: {$temporaryFilePath}");
+        if($manipulationCallback) {
+            Vemto::log("Running manipulation callback");
+            $newFileContent = $manipulationCallback($temporaryFilePath);
+        }
+
+        unlink($temporaryFilePath);
+
+        return $newFileContent;
+    }
+
 }

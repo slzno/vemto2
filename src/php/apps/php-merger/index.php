@@ -99,8 +99,11 @@ Vemto::execute('php-merger', function () use ($argv) {
     $printer = new PhpParser\PrettyPrinter\Standard();
     $resultFileContent = $printer->prettyPrintFile($currentFileVisitor->getCurrentFileAst());
 
+    // run PHP CS Fixer on the generated code
+    $resultFileContent = Vemto::runPhpCsFixer($resultFileContent);
+
     if(getenv('VEMTO_DEBUG')) {
-        Vemto::clearLog();
+        // Vemto::clearLog();
         Vemto::log($resultFileContent);
     }
 

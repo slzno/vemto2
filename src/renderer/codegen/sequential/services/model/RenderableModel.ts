@@ -16,7 +16,7 @@ export default class RenderableModel extends Renderable {
     }
 
     getType(): RenderableFileType {
-        return RenderableFileType.PHP
+        return RenderableFileType.PHP_CLASS
     }
 
     getTemplateFile(): string {

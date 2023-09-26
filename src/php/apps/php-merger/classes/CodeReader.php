@@ -100,7 +100,7 @@ trait CodeReader {
         ];
     }
 
-    public function calculateFirstTraitStmtPosition($node)
+    public function getFirstTraitStmtPosition($node)
     {
         $firstTraitStmtPosition = 0;
 
@@ -114,7 +114,7 @@ trait CodeReader {
         return $firstTraitStmtPosition;
     }
 
-    public function calculateFirstPropertyStmtPosition($node)
+    public function getFirstPropertyStmtPosition($node)
     {
         $firstPropertyStmtPosition = 0;
 
@@ -125,10 +125,10 @@ trait CodeReader {
             }
         }
 
-        return $firstPropertyStmtPosition;
+        return $firstPropertyStmtPosition || $this->getLastTraitStmtPosition($node);
     }
 
-    public function calculateFirstMethodStmtPosition($node)
+    public function getFirstMethodStmtPosition($node)
     {
         $firstMethodStmtPosition = 0;
 
@@ -139,10 +139,10 @@ trait CodeReader {
             }
         }
 
-        return $firstMethodStmtPosition;
+        return $firstMethodStmtPosition || $this->getLastPropertyStmtPosition($node);
     }
 
-    public function calculateLastTraitStmtPosition($node)
+    public function getLastTraitStmtPosition($node)
     {
         $latestTraitStmtPosition = 0;
 
@@ -155,7 +155,7 @@ trait CodeReader {
         return $latestTraitStmtPosition;
     }
 
-    public function calculateLastPropertyStmtPosition($node)
+    public function getLastPropertyStmtPosition($node)
     {
         $latestPropertyStmtPosition = 0;
 
@@ -168,7 +168,7 @@ trait CodeReader {
         return $latestPropertyStmtPosition;
     }
 
-    public function calculateLastMethodStmtPosition($node)
+    public function getLastMethodStmtPosition($node)
     {
         $latestMethodStmtPosition = 0;
 
