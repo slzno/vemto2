@@ -1,12 +1,11 @@
 <script setup lang="ts">
-    import Draggable from 'vuedraggable';
     import Nav from '@Common/models/Nav';
-    import { defineProps, PropType, toRef, Ref } from 'vue';
     import UiText from '@Renderer/components/ui/UiText.vue';
     import UiButton from '@Renderer/components/ui/UiButton.vue';
     import UiSelect from '@Renderer/components/ui/UiSelect.vue';
     import UiCheckbox from '@Renderer/components/ui/UiCheckbox.vue';
     import { useProjectStore } from "@Renderer/stores/useProjectStore";
+    import { defineProps, PropType, toRef, Ref, ref, onMounted, defineEmits } from 'vue';
     import { ChevronDoubleRightIcon, Bars4Icon } from '@heroicons/vue/24/outline'
 
     const props = defineProps({
@@ -25,29 +24,31 @@
             },
         }),
         nav = toRef(props, 'nav') as Ref<Nav | null>,
-        projectStore = useProjectStore()
+        projectStore = useProjectStore(),
+        navigations = ref<Nav[]>([]),
+        emit = defineEmits(['childrenNavigationUpdated', 'editNavigation', 'saveNavigation', 'cancelEditing'])
 
     const deleteNavigation = (navigation: Nav) => {
         if(!confirm("Are you sure you want to delete this navigation?")) return
 
         navigation.delete()
+
+        emit('childrenNavigationUpdated')
     }
 
-    const saveNavigationOrder = (event, navigation: Nav) => {
-        const { newIndex, oldIndex, movedContext } = event;
-        const movedNavigation = movedContext.element;
+    onMounted(() => {
+        if(!props.nav) return
 
-        console.log(movedNavigation)
-        // const newParentNav = projectStore.project.getRootNavs().find(nav => nav.children.includes(movedNavigation));
-
-        // movedNavigation.parentNavId = newParentNav ? newParentNav.id : null;
-
-        // navigation.children.forEach((nav: Nav) => nav.save())
-    }
+        navigations.value = props.nav.children
+    })
 </script>
 
 <template>
-    <div>
+    <div
+        class="mb-2"
+        draggable="true"
+        :id="nav.id"
+    >
         <div
             @click="$emit('editNavigation', nav)"
             class="mb-2 border border-slate-700 bg-slate-850 rounded-lg p-3 hover:bg-slate-800 w-96 flex items-center"
@@ -86,24 +87,18 @@
             </div>
         </div>
 
-        <template v-if="nav.children">
-            <Draggable 
-                v-model="nav.children"
-                item-key="app-navs-draggable"
-                group="navigations"
-                @end="saveNavigationOrder($event, nav)"
-            >
-                <template #item="{ element }">
-                    <RecursiveNav
-                        :nav="element"
-                        :is-children="true"
-                        :editing-navigation="editingNavigation"
-                        @editNavigation="$emit('editNavigation', element)"
-                        @saveNavigation="$emit('saveNavigation', element)"
-                        @cancelEditing="$emit('cancelEditing')"
-                    />
-                </template>
-            </Draggable>
-        </template>
+        <div>
+            <template v-for="element in nav.children" :key="element.id">
+                <RecursiveNav
+                    :nav="element"
+                    :is-children="true"
+                    :editing-navigation="editingNavigation"
+                    @editNavigation="$emit('editNavigation', element)"
+                    @saveNavigation="$emit('saveNavigation', element)"
+                    @cancelEditing="$emit('cancelEditing')"
+                    @childrenNavigationUpdated="$emit('childrenNavigationUpdated')"
+                />
+            </template>
+        </div>
     </div>
 </template>

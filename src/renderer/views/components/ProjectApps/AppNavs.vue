@@ -1,6 +1,5 @@
 <script setup lang="ts">
     import { ref, onMounted } from "vue";
-    import Draggable from 'vuedraggable';
     import Nav from "@Common/models/Nav";
     import RecursiveNav from "./RecursiveNav.vue"
     import UiText from "@Renderer/components/ui/UiText.vue";
@@ -46,37 +45,47 @@
 
         nav.save()
 
-        resetModalData()
         close()
-
-        navigations.value = projectStore.project.getRootNavs()
+        resetModalData()
+        reloadNavigations()
     }
 
     const resetModalData = () => {
-        navigableId.value = null
-        navigableType.value = null
         name.value = null
+        navigableId.value = null
+        navigableType.value = 'Crud'
     }
 
     const close = () => {
         showingCreateNavigationModal.value = false
     }
+    
+    const reloadNavigations = () => {
+        navigations.value = projectStore.project.getRootNavs()
+    }
 
-    const saveNavigationOrder = (event) => {
-        const { newIndex, oldIndex, movedContext } = event;
-        console.log(event, movedContext)
-        const movedNavigation = movedContext.element;
+    const onDragStart = (event: any) => {
+        event.dataTransfer.setData("text/plain", event.target.id)
+    }
 
-        console.log(movedNavigation)
-        // const newParentNav = projectStore.project.getRootNavs().find(nav => nav.children.includes(movedNavigation));
+    const onDragEnd = (event: any) => {
+        const targetId = event.dataTransfer.getData("text"),
+            toId = event.target.id || event.target.parentElement.id
+        
+        if(!targetId || targetId == toId) return;
 
-        // movedNavigation.parentNavId = newParentNav ? newParentNav.id : null;
+        const navigation: Nav = Nav.find(targetId)
 
-        // navigation.children.forEach((nav: Nav) => nav.save())
+        if(!navigation) return
+
+        navigation.parentNavId = toId === 'root' ? null : toId
+        navigation.save()    
+        
+        reloadNavigations()
     }
 
     onMounted(() => {
-        navigations.value = projectStore.project.getRootNavs()
+        reloadNavigations()
     })
 </script>
 
@@ -113,22 +122,24 @@
         </div>
     </UiModal>
 
-    <div class="bg-slate-950 p-3 rounded-lg border border-slate-700 h-screen">
-        <Draggable 
-            v-model="navigations"
-            item-key="app-navs-draggable"
-            group="navigations"
-            @end="saveNavigationOrder"
-        >
-            <template #item="{ element }">
-                <RecursiveNav
-                    :nav="element"
-                    :editing-navigation="editingNavigation"
-                    @editNavigation="editNavigation"
-                    @cancelEditing="cancelEditing"
-                    @saveNavigation="saveNavigation"
-                />
-            </template>
-        </Draggable>
+    <div
+        class="bg-slate-950 p-3 rounded-lg border border-slate-700 h-screen"
+        id="root"
+        draggable="true"
+        @dragstart="onDragStart"
+        @drop.prevent="onDragEnd"
+        @dragenter.prevent
+        @dragover.prevent
+    >
+        <template v-for="element in navigations" :key="element.id">
+            <RecursiveNav
+                :nav="element"
+                :editing-navigation="editingNavigation"
+                @editNavigation="editNavigation"
+                @cancelEditing="cancelEditing"
+                @saveNavigation="saveNavigation"
+                @childrenNavigationUpdated="reloadNavigations"
+            />
+        </template>
     </div>
 </template>

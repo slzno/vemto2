@@ -29,7 +29,7 @@ export default class Nav extends RelaDB.Model {
     }
 
     isRoot(): boolean {
-        return true
+        return ! this.parentNavId
     }
 
     hasCustomLink(): boolean {
