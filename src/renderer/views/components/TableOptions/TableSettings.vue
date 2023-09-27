@@ -2,15 +2,14 @@
     import UiButton from '@Renderer/components/ui/UiButton.vue'
     import UiText from '@Renderer/components/ui/UiText.vue'
     import { defineProps, toRef } from 'vue'
-    import debounce from "@Renderer/../common/tools/debounce"
     import UiSelect from '@Renderer/components/ui/UiSelect.vue'
 
     const props = defineProps(['table']),
         table = toRef(props, 'table')
 
-    const saveTable = debounce(() => {
+    const saveTable = () => {
         table.value.saveFromInterface()
-    }, 500)
+    }
 
     const logTable = (table: any) => {
         console.log(table)

@@ -6,7 +6,6 @@
     import IndexTypes from '@Common/models/static/IndexTypes'
     import UiDropdownSelect from '@Renderer/components/ui/UiDropdownSelect.vue'
     import UiMultiSelect from '@Renderer/components/ui/UiMultiSelect.vue'
-    import debounce from '@Renderer/../common/tools/debounce'
     import { PlusCircleIcon, EllipsisVerticalIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import Main from "@Renderer/services/wrappers/Main"
     import UiButton from '@Renderer/components/ui/UiButton.vue'
@@ -80,9 +79,9 @@
         tableIndexes.value.push(index)
     }
 
-    const saveIndex = debounce((index: Index) => {
+    const saveIndex = (index: Index) => {
         index.saveFromInterface()
-    }, 500)
+    }
 
     const onIndexRemoving = (index: Index, force: boolean = false) => {
         const removeIndex = () => {

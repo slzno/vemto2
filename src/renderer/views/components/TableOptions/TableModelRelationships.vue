@@ -1,11 +1,9 @@
 <script setup lang="ts">
     import { defineProps, toRef, onMounted, ref, onBeforeUnmount } from 'vue'
-    import debounce from "@Common/tools/debounce"
     import Main from "@Renderer/services/wrappers/Main"
     import Relationship from "@Renderer/../common/models/Relationship"
     import UiButton from '@Renderer/components/ui/UiButton.vue'
     import UiText from '@Renderer/components/ui/UiText.vue'
-    import Model from "@Common/models/Model"
     import { PlusIcon, EllipsisVerticalIcon, TrashIcon, ArrowsRightLeftIcon } from "@heroicons/vue/24/outline"
     import UiDropdownSelect from '@Renderer/components/ui/UiDropdownSelect.vue'
     import CommonRelationship from './TableRelationships/CommonRelationship.vue'
@@ -54,13 +52,13 @@
         relationship.processAndSave(true)
     }
 
-    const saveRelationship = debounce((relationship: Relationship) => {
+    const saveRelationship = (relationship: Relationship) => {
         if(relationship.hasType() && relationship.hasRelatedModel()) {
             relationship.calculateDefaultData()
         }
 
         relationship.saveFromInterface()
-    }, 500)
+    }
 
     const toggleRelationshipOptions = (relationship: Relationship): void => {
         relationshipIdOptions.value = (

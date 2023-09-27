@@ -2,7 +2,6 @@
     import { PropType, Ref, toRef, ref, defineEmits } from "vue"
     import Column from "@Common/models/Column"
     import ColumnTypeList from "@Common/models/column-types/base/ColumnTypeList"
-    import debounce from "@Common/tools/debounce"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiNumber from "@Renderer/components/ui/UiNumber.vue"
     import { Bars3Icon, ChevronDownIcon, ChevronUpIcon, TrashIcon } from "@heroicons/vue/24/outline"
@@ -40,10 +39,9 @@
         saveColumn()
     }
 
-    // debounced
-    const saveColumn = debounce(() => {
+    const saveColumn = () => {
         column.value.saveFromInterface()
-    }, 500)
+    }
 
     const onColumnNameDuplicated = () => {
         Alert.error(`Column <b class="underline underline-offset-4">${column.value.name}</b> already exists`)

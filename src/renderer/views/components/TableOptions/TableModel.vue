@@ -1,7 +1,6 @@
 <script setup lang="ts">
     import { PropType, Ref, toRef, ref, onMounted, defineEmits } from "vue"
     import Model from "@Common/models/Model"
-    import debounce from "@Common/tools/debounce"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import { EllipsisVerticalIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
@@ -35,15 +34,15 @@
         models.value = project.models
     })
 
-    const saveModelData = debounce((nameWasChanged: boolean) => {
+    const saveModelData = (nameWasChanged: boolean = false) => {
         if(nameWasChanged) {
             model.value.calculateDataByName()
         }
         
         model.value.saveFromInterface()
-    }, 500)
+    }
 
-    const saveModelCollection = debounce(() => {
+    const saveModelCollection = () => {
         if(!model.value.plural || !model.value.plural.length) {
             model.value.plural = modelPluralReference.value
             return
@@ -51,7 +50,7 @@
 
         modelPluralReference.value = null
         saveModelData()
-    }, 500)
+    }
 
     const getSelectDataForLayout = (property: Array<string>|Column[]): Array<Object> => {
         if(!property || !Array.isArray(property)) return []
