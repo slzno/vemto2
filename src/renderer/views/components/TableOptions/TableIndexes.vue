@@ -125,6 +125,7 @@
             <div class="flex gap-2 mb-2">
                 <div class="w-[10rem]">
                     <UiDropdownSelect
+                        label="Type"
                         v-model="index.type"
                         :options="IndexTypes.getForDropdown()"
                         placeholder="Index Type"
@@ -134,7 +135,12 @@
                 </div>
     
                 <div class="flex-1">
-                    <UiText placeholder="Index name" v-model="index.name" :disabled="true" />
+                    <UiText 
+                        label="Name"
+                        placeholder="Index name" 
+                        v-model="index.name" 
+                        :disabled="true" 
+                    />
                 </div>
 
                 <div class="p-1 relative">
@@ -153,6 +159,7 @@
             <div class="flex gap-2 mb-2" v-if="index.isForeign()">
                 <div class="flex-1">
                     <UiDropdownSelect
+                        label="References Column"
                         v-model="index.referencesColumnId"
                         :options="getReferredTableColumns(index)"
                         placeholder="References Column"
@@ -163,6 +170,7 @@
     
                 <div class="flex-1">
                     <UiDropdownSelect
+                        label="On Table"
                         v-model="index.onTableId"
                         :options="getForSelect(table.project.getTables())"
                         placeholder="On Table"
@@ -186,7 +194,6 @@
                     <UiText
                         placeholder="On Update"
                         label="On Update"
-                        :inline-label="true"
                         v-model="index.onUpdate"
                         @input="saveIndex(index)"
                     />
@@ -195,7 +202,6 @@
                     <UiText
                         placeholder="On Delete"
                         label="On Delete"
-                        :inline-label="true"
                         v-model="index.onDelete"
                         @input="saveIndex(index)"
                     />
