@@ -4,9 +4,8 @@
     import UiButton from '@Renderer/components/ui/UiButton.vue';
     import UiSelect from '@Renderer/components/ui/UiSelect.vue';
     import UiCheckbox from '@Renderer/components/ui/UiCheckbox.vue';
-    import { useProjectStore } from "@Renderer/stores/useProjectStore";
-    import { defineProps, PropType, toRef, Ref, ref, onMounted, defineEmits } from 'vue';
     import { ChevronDoubleRightIcon, Bars4Icon } from '@heroicons/vue/24/outline'
+    import { defineProps, PropType, toRef, Ref, ref, onMounted, defineEmits } from 'vue';
 
     const props = defineProps({
             nav: {
@@ -24,7 +23,6 @@
             },
         }),
         nav = toRef(props, 'nav') as Ref<Nav | null>,
-        projectStore = useProjectStore(),
         navigations = ref<Nav[]>([]),
         emit = defineEmits(['childrenNavigationUpdated', 'editNavigation', 'saveNavigation', 'cancelEditing'])
 
