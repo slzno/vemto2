@@ -219,12 +219,11 @@ import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
                         />
                     </div>
 
-                    <div
-                        class="text-red-400 bg-slate-100 dark:bg-slate-950 rounded-lg p-4"
+                    <pre
+                        v-text="file.error"
+                        class="overflow-hidden whitespace-pre-wrap text-red-400 bg-slate-100 dark:bg-slate-950 rounded-lg p-4"
                         v-else
-                    >
-                        {{ file.error }}
-                    </div>
+                    ></pre>
                 </div>
             </div>
         </div>

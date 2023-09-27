@@ -71,9 +71,7 @@
                 </div>
             </div>
             <div v-show="showingStack" class="text-slate-200 p-4 border border-slate-800 overflow-hidden rounded mt-2">
-                <pre class="overflow-hidden whitespace-pre-wrap">
-                    {{ errorStack }}
-                </pre>
+                <pre v-text="errorStack" class="overflow-hidden whitespace-pre-wrap"></pre>
             </div>
             <div v-show="errorLine != 0" class="text-slate-300">On line <b>{{ errorLine }}</b> of template <span class="underline cursor-pointer hover:text-red-400">{{ template }}</span></div>
         </div>

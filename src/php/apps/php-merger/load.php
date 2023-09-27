@@ -1,5 +1,6 @@
 <?php
 
 $APP_DIRECTORY = getcwd();
+$SCRIPT_DIRECTORY = __DIR__;
 
-require './vendor/autoload.php';
+require $SCRIPT_DIRECTORY . '/vendor/autoload.php';

@@ -1,6 +1,7 @@
 <?php
 
-class Vemto {
+class Vemto
+{
 
     const SUCCESS = 0;
     const FAILURE = 1;
@@ -28,14 +29,14 @@ class Vemto {
             "success" => "[SUCCESS]",
         ];
 
-        if(getenv('VEMTO_DEBUG')) {
+        if (getenv('VEMTO_DEBUG')) {
             $logFilePath = realpath(__DIR__ . '/../../../out/');
             $logFile = $logFilePath . '/apps.log';
         } else {
             $logFile = getcwd() . '/vemto.log';
         }
 
-        if(!file_exists($logFile)) {
+        if (!file_exists($logFile)) {
             file_put_contents($logFile, '');
         }
 
@@ -50,18 +51,20 @@ class Vemto {
         file_put_contents($logFile, '');
     }
 
-    public static function jsonResponse($data) {
+    public static function jsonResponse($data)
+    {
         $jsonResponse = json_encode($data);
 
         return "VEMTO_JSON_RESPONSE_START(" . $jsonResponse . ")VEMTO_JSON_RESPONSE_END";
     }
 
-    public static function writeProcessedFile($fileContent) {
+    public static function writeProcessedFile($fileContent)
+    {
         $processedFilesFolder = getcwd() . '/.vemto/processed-files';
         $processedFileName = Illuminate\Support\Str::random(32) . '.php';
         $processedFilePath = $processedFilesFolder . '/' . $processedFileName;
 
-        if(!file_exists($processedFilesFolder)) {
+        if (!file_exists($processedFilesFolder)) {
             mkdir($processedFilesFolder);
         }
 
@@ -73,12 +76,13 @@ class Vemto {
         ];
     }
 
-    public static function writeConflictsFile($conflicts) {
+    public static function writeConflictsFile($conflicts)
+    {
         $conflictsFileFolder = getcwd() . '/.vemto/conflicts';
         $conflictsFileName = Illuminate\Support\Str::random(32) . '.json';
         $conflictsFilePath = $conflictsFileFolder . '/' . $conflictsFileName;
 
-        if(!file_exists($conflictsFileFolder)) {
+        if (!file_exists($conflictsFileFolder)) {
             mkdir($conflictsFileFolder);
         }
 
@@ -95,13 +99,13 @@ class Vemto {
     public static function execute(string $appName, $callback = null)
     {
         try {
-            if($callback) {
+            if ($callback) {
                 $callback();
             }
 
             exit(static::SUCCESS);
         } catch (\Throwable $th) {
-            if(getenv('VEMTO_DEBUG')) {
+            if (getenv('VEMTO_DEBUG')) {
                 Vemto::log($th->getMessage(), 'error');
                 Vemto::log($th->getTraceAsString(), 'error');
             }
@@ -117,17 +121,15 @@ class Vemto {
     {
         $staticFolder = Vemto::getStaticFolder();
         $phpCsFixerPath = $staticFolder . '/tools/php-cs-fixer/vendor/bin/php-cs-fixer';
+        $phpCsFixerSettingsPath = $staticFolder . '/tools/php-cs-fixer/.php-cs-fixer.php';
 
-        Vemto::log("Static location: {$staticFolder}");
-        Vemto::log("PHP CS Fixer path: {$phpCsFixerPath}");
-
-        if(!file_exists($phpCsFixerPath)) {
+        if (!file_exists($phpCsFixerPath)) {
             throw new Exception("PHP CS Fixer not found on internal build");
         }
 
         // run cs fixer on the generated code
-        $newFileContent = Vemto::manipulateTemporaryFile($fileContent, function($temporaryFilePath) use ($phpCsFixerPath) {
-            $command = "{$phpCsFixerPath} fix {$temporaryFilePath} --using-cache=no";
+        $newFileContent = Vemto::manipulateTemporaryFile($fileContent, function ($temporaryFilePath) use ($phpCsFixerPath, $phpCsFixerSettingsPath) {
+            $command = "{$phpCsFixerPath} fix {$temporaryFilePath} --using-cache=no --config={$phpCsFixerSettingsPath}";
 
             shell_exec($command);
 
@@ -145,9 +147,7 @@ class Vemto {
 
         file_put_contents($temporaryFilePath, $fileContent);
 
-        Vemto::log("Temporary file path: {$temporaryFilePath}");
-        if($manipulationCallback) {
-            Vemto::log("Running manipulation callback");
+        if ($manipulationCallback) {
             $newFileContent = $manipulationCallback($temporaryFilePath);
         }
 
@@ -166,5 +166,4 @@ class Vemto {
 
         return realpath(__DIR__ . '/../../../../main/static');
     }
-
 }
