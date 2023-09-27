@@ -33,9 +33,21 @@ export default class CommandExecutor {
                     }
                     
                     if (stderr) {
-                        console.error("(stderr) FAILED to execute command: " + command)
+                        let errorMessage = "(stderr) FAILED to execute command: " + command
+
+                        console.error(errorMessage)
+
                         console.error(stderr)
-                        reject(stderr)
+                        console.error("Error: " + error)
+                        console.error("Stdout: " + stdout)
+
+                        let errorData = {
+                            error: errorMessage,
+                            message: errorMessage,
+                            stack: null
+                        }
+
+                        reject(errorData)
                     }
 
                     if (error) { 

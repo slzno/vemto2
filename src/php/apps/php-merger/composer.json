@@ -1,8 +1,7 @@
 {
     "require": {
         "nikic/php-parser": "^4.17",
-        "illuminate/support": "^10.2",
-        "friendsofphp/php-cs-fixer": "^3.28"
+        "illuminate/support": "^10.2"
     },
     "require-dev": {
         "symfony/var-dumper": "^6.2"

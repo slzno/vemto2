@@ -115,10 +115,14 @@ class Vemto {
 
     public static function runPhpCsFixer($fileContent)
     {
-        $phpCsFixerPath = realpath(__DIR__ . '/../vendor/bin/php-cs-fixer');
+        $staticFolder = Vemto::getStaticFolder();
+        $phpCsFixerPath = $staticFolder . '/tools/php-cs-fixer/vendor/bin/php-cs-fixer';
+
+        Vemto::log("Static location: {$staticFolder}");
+        Vemto::log("PHP CS Fixer path: {$phpCsFixerPath}");
 
         if(!file_exists($phpCsFixerPath)) {
-            throw new Exception("PHP CS Fixer not found. Please run composer install on your PHP Box app before using it.");
+            throw new Exception("PHP CS Fixer not found on internal build");
         }
 
         // run cs fixer on the generated code
@@ -150,6 +154,17 @@ class Vemto {
         unlink($temporaryFilePath);
 
         return $newFileContent;
+    }
+
+    public static function getStaticFolder()
+    {
+        // If we are running from a phar file, the static folder is in the same directory
+        if (strpos(__FILE__, 'phar://') === 0) {
+            $pharLocation = str_replace('\\', '/', $_SERVER['SCRIPT_FILENAME']);
+            return dirname($pharLocation);
+        }
+
+        return realpath(__DIR__ . '/../../../../main/static');
     }
 
 }
