@@ -9,32 +9,32 @@
     import SolveConflicts from "./components/CodeQueue/SolveConflicts.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import { TrashIcon } from "@heroicons/vue/24/outline"
-    import SequentialGenerator from "@Renderer/codegen/sequential/SequentialGenerator"
     import TemplateErrorViewer from "./components/Common/TemplateErrorViewer.vue"
     import { computed, ref, onMounted } from "vue"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
-import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
+    import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
+    import RenderableFileViewer from "./components/CodeQueue/RenderableFileViewer.vue"
 
     const projectStore = useProjectStore(),
         search = ref(""),
         searchRemoved = ref("")
 
-    const selectedTab = ref("default")
+    const selectedTab = ref("queue")
 
     const tabs = [
         {
             label: "Queue",
-            value: "default",
+            value: "queue",
             badge: () =>
-                projectStore.project.getNonRemovedRenderableFiles().length,
+                projectStore.project.getNonRemovedRenderableFiles(false).length,
         },
         {
             label: "Conflicts",
             value: "conflicts",
             badge: () =>
-                projectStore.project.getConflictRenderableFiles().length,
+                projectStore.project.getConflictRenderableFiles(false).length,
         },
         {
             label: "Ignored",
@@ -45,7 +45,7 @@ import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
             label: "Removed",
             value: "removed",
             badge: () =>
-                projectStore.project.getRemovedRenderableFiles().length,
+                projectStore.project.getRemovedRenderableFiles(false).length,
         },
         { label: "Settings", value: "settings" },
     ]
@@ -94,18 +94,9 @@ import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
         })
     }
 
-    const openFile = (file: RenderableFile): void => {
-        if (file.wasRemoved()) {
-            Alert.warning("This file was removed from the project")
-            return
-        }
-
-        Main.API.openProjectFile(file.getRelativeFilePath())
-    }
-
     const clearRemovedFiles = (): void => {
-        if (!confirm("Are you sure you want to clear all removed files?"))
-            return
+        if (!confirm("Are you sure you want to clear all removed files?")) return
+
         projectStore.project?.clearRemovedFiles()
     }
 </script>
@@ -118,8 +109,7 @@ import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
             <UiTabs :tabs="tabs" v-model="selectedTab" :external="true" />
         </div>
 
-        <div class="p-4" v-if="selectedTab === 'default'">
-
+        <div class="p-4" v-if="selectedTab === 'queue'">
             <UiEmptyMessage v-if="!filteredFiles.length">
                 <span>There are no files in the Queue</span>
             </UiEmptyMessage>
@@ -134,98 +124,14 @@ import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
                         />
                     </div>
                 </div>
-
-                <!-- <UiButton @click="runSequentialGenerator()">Generate</UiButton> -->
             </div>
 
-            <div
+            <RenderableFileViewer
                 v-for="file in filteredFiles"
                 :key="file.id"
-                class="flex flex-col bg-slate-200 dark:bg-slate-850 dark:hover:bg-slate-800 w-full rounded-lg mb-2 p-2 px-2"
+                :file="file"
             >
-                <div class="flex items-center justify-between">
-                    <div class="flex cursor-pointer" @click="openFile(file)">
-                        <div class="w-24">
-                            <div
-                                class="inline-block p-1 rounded-md bg-slate-800 mr-2"
-                            >
-                                <div
-                                    class="flex items-center space-x-1 text-xs"
-                                >
-                                    <div
-                                        class="rounded-full w-3 h-3"
-                                        :class="{
-                                            'bg-green-500':
-                                                file.status ===
-                                                RenderableFileStatus.RENDERED,
-                                            'bg-yellow-500':
-                                                file.status ===
-                                                RenderableFileStatus.PENDING,
-                                            'bg-red-500':
-                                                file.status ===
-                                                RenderableFileStatus.ERROR,
-                                            'bg-orange-500':
-                                                file.status ===
-                                                RenderableFileStatus.CONFLICT,
-                                            'bg-red-700':
-                                                file.status ===
-                                                RenderableFileStatus.ASK_TO_REMOVE,
-                                            'bg-red-800':
-                                                file.status ===
-                                                RenderableFileStatus.CAN_REMOVE,
-                                            'bg-gray-500':
-                                                file.status ===
-                                                RenderableFileStatus.REMOVED,
-                                        }"
-                                    ></div>
-                                    <div>{{ sentenceCase(file.status) }}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div
-                            :class="{
-                                'line-through':
-                                    file.status ===
-                                    RenderableFileStatus.REMOVED,
-                            }"
-                            class="italic hover:text-red-500 dark:hover:text-red-400"
-                        >
-                            {{ file.getRelativeFilePath() }}
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <SolveConflicts
-                            v-if="file.status === RenderableFileStatus.CONFLICT"
-                            :file="file"
-                        />
-
-                        <UiButton @click="file.delete()">
-                            <TrashIcon class="w-4 h-4 mr-1 text-red-500" />
-                            Clear
-                        </UiButton>
-                    </div>
-                </div>
-
-                <div
-                    class="text-sm mt-2"
-                    v-if="file.status === RenderableFileStatus.ERROR"
-                >
-                    <div v-if="file.hasTemplateError">
-                        <TemplateErrorViewer
-                            :errorMessage="file.error"
-                            :errorStack="file.errorStack"
-                            :template="file.template"
-                            :errorLine="file.templateErrorLine"
-                        />
-                    </div>
-
-                    <pre
-                        v-text="file.error"
-                        class="overflow-hidden whitespace-pre-wrap text-red-400 bg-slate-100 dark:bg-slate-950 rounded-lg p-4"
-                        v-else
-                    ></pre>
-                </div>
-            </div>
+            </RenderableFileViewer>
         </div>
 
         <div class="p-4" v-if="selectedTab === 'conflicts'">
@@ -245,72 +151,12 @@ import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
                 </div>
             </div>
 
-            <div
+            <RenderableFileViewer
                 v-for="file in conflictFiles"
                 :key="file.id"
-                class="flex flex-col bg-slate-200 dark:bg-slate-850 dark:hover:bg-slate-800 w-full rounded-lg mb-2 p-2 px-2"
+                :file="file"
             >
-                <div class="flex items-center justify-between">
-                    <div class="flex cursor-pointer" @click="openFile(file)">
-                        <div class="w-24">
-                            <div
-                                class="inline-block p-1 rounded-md bg-slate-800 mr-2"
-                            >
-                                <div
-                                    class="flex items-center space-x-1 text-xs"
-                                >
-                                    <div
-                                        class="rounded-full w-3 h-3 bg-orange-500"
-                                    ></div>
-                                    <div>{{ sentenceCase(file.status) }}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div
-                            :class="{
-                                'line-through':
-                                    file.status ===
-                                    RenderableFileStatus.REMOVED,
-                            }"
-                            class="italic hover:text-red-500 dark:hover:text-red-400"
-                        >
-                            {{ file.getRelativeFilePath() }}
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <SolveConflicts
-                            v-if="file.status === RenderableFileStatus.CONFLICT"
-                            :file="file"
-                        />
-
-                        <UiButton @click="file.delete()">
-                            <TrashIcon class="w-4 h-4 mr-1 text-red-500" />
-                            Clear
-                        </UiButton>
-                    </div>
-                </div>
-
-                <div
-                    class="text-sm mt-2"
-                    v-if="file.status === RenderableFileStatus.ERROR"
-                >
-                    <div v-if="file.hasTemplateError">
-                        <TemplateErrorViewer
-                            :errorMessage="file.error"
-                            :errorStack="file.errorStack"
-                            :template="file.template"
-                            :errorLine="file.templateErrorLine"
-                        />
-                    </div>
-
-                    <div
-                        class="text-red-400 bg-slate-100 dark:bg-slate-950 rounded-lg p-4"
-                        v-else
-                    >
-                        {{ file.error }}
-                    </div>
-                </div>
-            </div>
+            </RenderableFileViewer>
         </div>
 
         <div class="p-4" v-if="selectedTab === 'ignored'">
@@ -338,125 +184,42 @@ import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
                 <UiButton @click="clearRemovedFiles()">Clear All</UiButton>
             </div>
 
-            <div
+            <RenderableFileViewer
                 v-for="file in removedFiles"
                 :key="file.id"
-                class="flex flex-col bg-slate-200 dark:bg-slate-850 dark:hover:bg-slate-800 w-full rounded-lg mb-2 p-2 px-2"
+                :file="file"
             >
-                <div class="flex items-center justify-between">
-                    <div class="flex cursor-pointer" @click="openFile(file)">
-                        <div class="w-24">
-                            <div
-                                class="inline-block p-1 rounded-md bg-slate-800 mr-2"
-                            >
-                                <div
-                                    class="flex items-center space-x-1 text-xs"
-                                >
-                                    <div
-                                        class="rounded-full w-3 h-3"
-                                        :class="{
-                                            'bg-green-500':
-                                                file.status ===
-                                                RenderableFileStatus.RENDERED,
-                                            'bg-yellow-500':
-                                                file.status ===
-                                                RenderableFileStatus.PENDING,
-                                            'bg-red-500':
-                                                file.status ===
-                                                RenderableFileStatus.ERROR,
-                                            'bg-orange-500':
-                                                file.status ===
-                                                RenderableFileStatus.CONFLICT,
-                                            'bg-red-700':
-                                                file.status ===
-                                                RenderableFileStatus.ASK_TO_REMOVE,
-                                            'bg-red-800':
-                                                file.status ===
-                                                RenderableFileStatus.CAN_REMOVE,
-                                            'bg-gray-500':
-                                                file.status ===
-                                                RenderableFileStatus.REMOVED,
-                                        }"
-                                    ></div>
-                                    <div>{{ sentenceCase(file.status) }}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div
-                            :class="{
-                                'line-through':
-                                    file.status ===
-                                    RenderableFileStatus.REMOVED,
-                            }"
-                            class="italic hover:text-red-500 dark:hover:text-red-400"
-                        >
-                            {{ file.getRelativeFilePath() }}
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <SolveConflicts
-                            v-if="file.status === RenderableFileStatus.CONFLICT"
-                            :file="file"
-                        />
-
-                        <UiButton @click="file.delete()">
-                            <TrashIcon class="w-4 h-4 mr-1 text-red-500" />
-                            Clear
-                        </UiButton>
-                    </div>
-                </div>
-
-                <div
-                    class="text-sm mt-2"
-                    v-if="file.status === RenderableFileStatus.ERROR"
-                >
-                    <div v-if="file.hasTemplateError">
-                        <TemplateErrorViewer
-                            :errorMessage="file.error"
-                            :errorStack="file.errorStack"
-                            :template="file.template"
-                            :errorLine="file.templateErrorLine"
-                        />
-                    </div>
-
-                    <div
-                        class="text-red-400 bg-slate-100 dark:bg-slate-950 rounded-lg p-4"
-                        v-else
-                    >
-                        {{ file.error }}
-                    </div>
-                </div>
-            </div>
+            </RenderableFileViewer>
         </div>
 
         <div class="p-4" v-if="selectedTab === 'settings'">
-            <UiCheckbox 
-                v-model="projectStore.project.codeGenerationSettings.models" 
-                label="Generate Models" 
+            <UiCheckbox
+                v-model="projectStore.project.codeGenerationSettings.models"
+                label="Generate Models"
                 @change="projectStore.project.save()"
             />
 
-            <UiCheckbox 
-                v-model="projectStore.project.codeGenerationSettings.factories" 
-                label="Generate Factories" 
+            <UiCheckbox
+                v-model="projectStore.project.codeGenerationSettings.factories"
+                label="Generate Factories"
                 @change="projectStore.project.save()"
             />
 
-            <UiCheckbox 
-                v-model="projectStore.project.codeGenerationSettings.seeders" 
-                label="Generate Seeders" 
+            <UiCheckbox
+                v-model="projectStore.project.codeGenerationSettings.seeders"
+                label="Generate Seeders"
                 @change="projectStore.project.save()"
             />
 
-            <UiCheckbox 
-                v-model="projectStore.project.codeGenerationSettings.policies" 
-                label="Generate Policies" 
+            <UiCheckbox
+                v-model="projectStore.project.codeGenerationSettings.policies"
+                label="Generate Policies"
                 @change="projectStore.project.save()"
             />
 
-            <UiCheckbox 
-                v-model="projectStore.project.codeGenerationSettings.routes" 
-                label="Generate Routes" 
+            <UiCheckbox
+                v-model="projectStore.project.codeGenerationSettings.routes"
+                label="Generate Routes"
                 @change="projectStore.project.save()"
             />
         </div>

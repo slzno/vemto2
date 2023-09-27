@@ -129,13 +129,14 @@
             </div>
             <div class="mt-2">
                 <UiText 
+                    label="Collection"
                     v-model="model.plural"
                     placeholder="Collection"
                     @blur="saveModelCollection()"
                     @focus="modelPluralReference = $event"
                 />
             </div>
-            <div class="mt-2 flex gap-3">
+            <div class="mt-4 flex gap-3">
                 <UiCheckbox
                     label="Has Timestamps"
                     v-model="model.hasTimestamps"

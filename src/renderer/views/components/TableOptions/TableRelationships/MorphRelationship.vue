@@ -10,6 +10,7 @@
         <template v-if="relationship.hasTypeAndRelatedModel()">
             <div>
                 <UiText
+                    label="Name"
                     v-model="relationship.name"
                     placeholder="Relationship name"
                     @input="$emit('save')"
@@ -17,6 +18,7 @@
             </div>
             <div>
                 <UiText
+                    label="Morph To"
                     v-model="relationship.morphToName"
                     placeholder="Morph To"
                     @input="$emit('save')"

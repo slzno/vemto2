@@ -233,20 +233,26 @@ export default class Project extends RelaDB.Model {
         )
     }
 
-    getNonRemovedRenderableFiles(): RenderableFile[] {
-        return this.getOrderedRenderableFiles().filter(
+    getNonRemovedRenderableFiles(ordered: boolean = true): RenderableFile[] {
+        const renderableFiles = ordered ? this.getOrderedRenderableFiles() : this.renderableFiles
+
+        return renderableFiles.filter(
             (renderableFile) => !renderableFile.wasRemoved()
         )
     }
 
-    getRemovedRenderableFiles(): RenderableFile[] {
-        return this.getOrderedRenderableFiles().filter((renderableFile) =>
+    getRemovedRenderableFiles(ordered: boolean = true): RenderableFile[] {
+        const renderableFiles = ordered ? this.getOrderedRenderableFiles() : this.renderableFiles
+
+        return renderableFiles.filter((renderableFile) =>
             renderableFile.wasRemoved()
         )
     }
 
-    getConflictRenderableFiles(): RenderableFile[] {
-        return this.getOrderedRenderableFiles().filter(
+    getConflictRenderableFiles(ordered: boolean = true): RenderableFile[] {
+        const renderableFiles = ordered ? this.getOrderedRenderableFiles() : this.renderableFiles
+
+        return renderableFiles.filter(
             (renderableFile) => renderableFile.hasConflict()
         )
     }

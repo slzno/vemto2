@@ -13,11 +13,13 @@
         <template v-if="relationship.hasTypeAndRelatedModel()">
             <div class="gap-2 flex flex-col">
                 <UiText
+                    label="Name"
                     v-model="relationship.name"
                     placeholder="Relationship Name"
                     @input="$emit('save')"
                 />
                 <UiDropdownSelect
+                    label="Pivot Table"
                     v-model="relationship.pivotId"
                     :options="getForSelect(projectStore.project.tables)"
                     placeholder="Pivot Table (Optional)"
@@ -27,6 +29,7 @@
             <div class="gap-2 flex flex-col">
                 <template v-if="relationship.foreignPivotKeyId">
                     <UiDropdownSelect
+                        label="Foreign Pivot Id"
                         v-model="relationship.foreignPivotKeyId"
                         :options="getForSelect(relationship.pivot.columns)"
                         placeholder="Foreign Pivot Id"
@@ -35,6 +38,7 @@
                 </template>
                 <template v-if="relationship.foreignPivotKeyId">
                     <UiDropdownSelect
+                        label="Related Pivot Id"
                         v-model="relationship.relatedPivotKeyId"
                         :options="getForSelect(relationship.pivot.columns)"
                         placeholder="Related Pivot Id"

@@ -6,7 +6,7 @@
     import UiButton from '@Renderer/components/ui/UiButton.vue'
     import UiText from '@Renderer/components/ui/UiText.vue'
     import Model from "@Common/models/Model"
-    import { PlusIcon, EllipsisVerticalIcon, TrashIcon } from "@heroicons/vue/24/outline"
+    import { PlusIcon, EllipsisVerticalIcon, TrashIcon, ArrowsRightLeftIcon } from "@heroicons/vue/24/outline"
     import UiDropdownSelect from '@Renderer/components/ui/UiDropdownSelect.vue'
     import CommonRelationship from './TableRelationships/CommonRelationship.vue'
     import ManyToManyRelationship from './TableRelationships/ManyToManyRelationship.vue'
@@ -96,7 +96,9 @@
 
         removeRelationship()
         
-        if(confirmed.deleteInverse) inverseRelationship.delete()
+        if(confirmed.deleteInverse && inverseRelationship) {
+            inverseRelationship.delete()
+        }
     }
 
     const checkRelationshipValidity = (): void => {
@@ -124,7 +126,7 @@
     })
 </script>
 <template>
-    <div class="mt-4">
+    <div class="mt-8">
         <UiConfirm ref="confirmDeleteDialog" :options="{
             'deleteInverse': {
                 'label': 'Delete inverse relationship',
@@ -134,22 +136,46 @@
             Are you sure you want to delete this relationship?
         </UiConfirm>
 
-        <h2 class="text-slate-500 font-semibold mb-1">Relationships</h2>
+        <h2 class="text-slate-200 font-semibold mb-2">
+            <ArrowsRightLeftIcon class="h-5 w-5 mr-1 inline-block text-slate-500" />
+            Relationships
+        </h2>
 
         <div>
             <div
-                class="mb-2 bg-slate-850 p-2 rounded-md space-y-1"
+                class="mb-2 bg-slate-850 p-3 rounded-md space-y-1.5 border border-slate-700"
                 v-for="relationship in relationships"
                 :key="relationship.id"
                 @keyup.escape="onEscapePressed(relationship)"
             >
-            <div class="flex flex-col gap-1">
+            
+            <header class="flex justify-end">
+                <span class="relative mt-1">
+                    <EllipsisVerticalIcon
+                        class="h-6 w-6 text-slate-400 cursor-pointer"
+                        @click="toggleRelationshipOptions(relationship)"
+                    />
+                    <div class="bg-slate-950 w-auto rounded absolute p-1 z-10 right-0 top-8 border border-gray-700" v-if="relationshipIdOptions === relationship.id">
+                        <ul>
+                            <li class="flex items-center justify-start text-md p-1 cursor-pointer" @click="onRelationshipRemoving(relationship)">
+                                <TrashIcon class="h-5 w-5 mr-1 text-red-400" />
+                                Delete
+                            </li>
+                        </ul>
+                    </div>
+                </span>
+            </header>
+
+            <div class="flex flex-col gap-1 space-y-1.5">
+
                     <div class="space-x-1 flex justify-between">
                         <!-- <UiButton @click="relationship.logDataComparison()">Log data comparison</UiButton> -->
+
 
                         <div class="text-red-400 flex gap-1 flex-1">
                             <div class="flex-1">
                                 <UiDropdownSelect
+                                    label="Type"
                                     v-model="relationship.type"
                                     :may-open="relationship.isNew() && !relationship.hasType()"
                                     placeholder="Relationship Type"
@@ -161,6 +187,7 @@
                             <div class="flex-1">
                                 <template v-if="! relationship.isThrough()">
                                     <UiDropdownSelect
+                                        label="Model"
                                         v-model="relationship.relatedModelId"
                                         :may-open="relationship.isNew() && !relationship.hasRelatedModel() && relationship.hasType()"
                                         placeholder="Relationship Model"
@@ -170,6 +197,7 @@
                                 </template>
                                 <template v-else>
                                     <UiText
+                                        label="Name"
                                         placeholder="Relationship Name"
                                         v-model="relationship.name"
                                         @input="saveRelationship(relationship)"
@@ -177,21 +205,6 @@
                                 </template>
                             </div>
                         </div>
-
-                        <span class="relative mt-1">
-                            <EllipsisVerticalIcon
-                                class="h-6 w-6 text-slate-400 cursor-pointer"
-                                @click="toggleRelationshipOptions(relationship)"
-                            />
-                            <div class="bg-slate-950 w-auto rounded absolute p-1 z-10 right-0 top-8 border border-gray-700" v-if="relationshipIdOptions === relationship.id">
-                                <ul>
-                                    <li class="flex items-center justify-start text-md p-1 cursor-pointer" @click="onRelationshipRemoving(relationship)">
-                                        <TrashIcon class="h-5 w-5 mr-1 text-red-400" />
-                                        Delete
-                                    </li>
-                                </ul>
-                            </div>
-                        </span>
                     </div>
 
                     <template v-if="relationship.isCommon()">
@@ -229,6 +242,7 @@
 
                 <template v-if="relationship.relatedModelId">
                     <UiDropdownSelect
+                        label="Inverse Relationship"
                         v-model="relationship.inverseId"
                         placeholder="Inverse Relationship (optional)"
                         :options="getRelatedModelRelationshipsForSelect(relationship)"
@@ -236,12 +250,12 @@
                     />
                 </template>
                 
-                <div>
+                <div class="flex justify-end">
                     <UiButton
                         v-if="relationship.hasTypeAndRelatedModel()"
                         @click="finishRelationshipCreation(relationship)"
                     >
-                        Save Relationship
+                        Save
                     </UiButton>
                 </div>
             </div>
@@ -252,7 +266,7 @@
                 @click="newRelationship()"
             >
                 <span class="flex items-center">
-                    <PlusIcon class="h-4 w-4 mr-1" /> Add relationship
+                    <PlusIcon class="h-4 w-4 mr-1" /> Add Relationship
                 </span>
             </UiButton>
         </div>

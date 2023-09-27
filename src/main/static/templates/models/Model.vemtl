@@ -6,15 +6,25 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+<% if(this.model.hasSoftDeletes) { %>
+use Illuminate\Database\Eloquent\SoftDeletes;
+<% } %>
 
 // test
 
 class <$ this.model.name $> extends Model 
 {
     use HasFactory;
+    <% if(this.model.hasSoftDeletes) { %>
+    use SoftDeletes;
+    <% } %>
 
     <% if(this.model.tableNameIsDifferentFromDefault()) { %>
     protected $table = '<$ this.model.table.name $>';
+    <% } %>
+
+    <% if(!this.model.hasTimestamps) { %>
+    public $timestamps = false;
     <% } %>
 
     <% if(this.model.hasGuarded) { %>
