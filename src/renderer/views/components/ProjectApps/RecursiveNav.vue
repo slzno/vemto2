@@ -54,7 +54,7 @@
         >
             <template v-if="editingNavigation?.id != nav.id">
                 <component class="w-4 h-4 mr-2 text-slate-600" :is="isChildren ? ChevronDoubleRightIcon : Bars4Icon" />
-                {{ nav.name }}
+                {{ nav.name }} ({{ nav.id }})
             </template>
             <div class="p-1 w-full" v-else>
                 <UiText id="name" class="mb-3" v-model="nav.name" label="Name" />

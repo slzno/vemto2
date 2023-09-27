@@ -71,16 +71,34 @@
     const onDragEnd = (event: any) => {
         const targetId = event.dataTransfer.getData("text"),
             toId = event.target.id || event.target.parentElement.id
-        
+
         if(!targetId || targetId == toId) return;
 
-        const navigation: Nav = Nav.find(targetId)
+        const targetNavigation: Nav = Nav.find(targetId)
 
-        if(!navigation) return
+        if(!targetNavigation) return
 
-        navigation.parentNavId = toId === 'root' ? null : toId
-        navigation.save()    
+        if(toId == 'root') {
+            targetNavigation.parentNavId = null
+            targetNavigation.save()
+
+            reloadNavigations()
+            return
+        }
+
+        const toNavigation = Nav.find(toId),
+            realParentNavId = toNavigation.isRoot() ? toNavigation.id : toNavigation.parentNavId
         
+        if(targetId == realParentNavId) return;
+        
+        targetNavigation.parentNavId = realParentNavId
+        targetNavigation.save()
+
+        targetNavigation.children.forEach((child: Nav) => {
+            child.parentNavId = realParentNavId
+            child.save()
+        })
+
         reloadNavigations()
     }
 
