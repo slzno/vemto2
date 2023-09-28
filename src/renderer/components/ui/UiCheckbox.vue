@@ -35,7 +35,7 @@
     <label class="flex items-center space-x-1">
         <input
             type="checkbox"
-            class="rounded bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300"
+            class="rounded bg-slate-950 border-0 text-red-450 shadow-sm focus:border-red-450 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300"
             v-model="localValue"
         />
         <span :class="{

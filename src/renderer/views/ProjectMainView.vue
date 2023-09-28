@@ -34,6 +34,11 @@
     })
 
     const generateCode = async () => {
+        if(projectStore.project.hasSchemaChanges()) {
+            Alert.error('There are schema changes that need to be applied before generating code')
+            return
+        }
+
         appStore.startGeneratingCode()
         
         try {
