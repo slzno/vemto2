@@ -12,8 +12,11 @@
         confirmDeleteDialog = ref(null),
         schemaStore = useSchemaStore()
 
+    const emit = defineEmits(["highlight"])
+    
     let clickedQuickly = false,
         isRemoving = false
+
 
     const removeTable = async () => {
         isRemoving = true
@@ -58,6 +61,10 @@
             if(isRemoving) return
 
             schemaStore.selectTable(table.value)
+
+            nextTick(() => {
+                emit("highlight", table.value)
+            })
         }, 1);
     }
 </script>

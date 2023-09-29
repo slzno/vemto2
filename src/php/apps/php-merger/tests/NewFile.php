@@ -41,4 +41,6 @@ class User extends Model
     {
         return $this->hasMany(Company::class);
     }
+
+    // removed_method:vehicles
 }

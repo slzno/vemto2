@@ -15,6 +15,7 @@ trait CodeReader {
     public $traits = [];
     public $properties = [];
     public $methods = [];
+    public $removedMethods = [];
 
     protected $fileContent = '';
     protected $currentClass = null;
@@ -72,6 +73,11 @@ trait CodeReader {
         // Extract class methods
         if ($node instanceof ClassMethod) {
             $this->extractClassMethod($node);
+        }
+
+        // Extract removed methods from comments like "// removed_method:method_name"
+        if ($node instanceof Node\Stmt\Nop) {
+            $this->extractRemovedMethod($node);
         }
     }
 
@@ -230,6 +236,21 @@ trait CodeReader {
     public function extractMethodCode($methodName)
     {
         return $this->extractMethodCodeFromContent($this->fileContent, $methodName);
+    }
+
+    public function extractRemovedMethod($node)
+    {
+        $comment = $node->getComments()[0]->getText();
+
+        if (strpos($comment, 'removed_method:') !== false) {
+            $methodName = str_replace('// removed_method:', '', $comment);
+
+            $this->removedMethods[$methodName] = [
+                'node' => $node,
+                'name' => $methodName,
+                'class' => $this->currentClass->name->name,
+            ];
+        }
     }
 
     protected function getPreviousMethodBody() {

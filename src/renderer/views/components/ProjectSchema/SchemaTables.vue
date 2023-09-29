@@ -79,11 +79,14 @@
     const highlightTable = (table) => {
         const tableElement = document.getElementById(`table_${table.id}`)
 
+        console.log('will highlight table', `table_${table.id}`)
+
         if(!tableElement) return
 
         tableElement.classList.add('animate__animated','animate__pulse', 'animate__faster')
 
         setTimeout(() => {
+            console.log('will remove animation')
             tableElement.classList.remove('animate__animated','animate__pulse', 'animate__faster')
         }, 500)
     }
@@ -184,6 +187,7 @@
                     v-for="table in projectStore.project.tables"
                     :key="table.id"
                     :table="table"
+                    @highlight="highlightTable(table)"
                 />
             </div>
         </div>

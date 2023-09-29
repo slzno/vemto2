@@ -347,6 +347,10 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         return relationships
     }
 
+    getRemovedRelationships(): Relationship[] {
+        return this.relatedRelationships.filter((relationship) => relationship.isRemoved())
+    }
+
     getValidRelationships(): Relationship[] {
         return this.ownRelationships.filter((relationship) => relationship.isValid())
     }

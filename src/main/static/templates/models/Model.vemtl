@@ -10,8 +10,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 <% } %>
 
-// test
-
 class <$ this.model.name $> extends Model 
 {
     use HasFactory;
@@ -157,5 +155,10 @@ class <$ this.model.name $> extends Model
             }
 
         <% } %>
+    <% } %>
+
+    <# The following code is used by PHP-Merger to remove #>
+    <% for(let relationship of this.model.getRemovedRelationships()) { %>
+    // remove_method:<% relationship.name %>
     <% } %>
 }

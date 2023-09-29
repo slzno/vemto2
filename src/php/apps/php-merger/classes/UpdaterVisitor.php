@@ -40,6 +40,7 @@ class UpdaterVisitor extends NodeVisitorAbstract
         $this->addMissingTraits();
         $this->addOrUpdateProperties();
         $this->addOrUpdateMethods();
+        $this->removeMethods();
     }
 
     protected function addMissingImports()
@@ -212,6 +213,27 @@ class UpdaterVisitor extends NodeVisitorAbstract
                     }
 
                     $class['node']->stmts[$key] = $newMethod['node'];
+                }
+            }
+        }
+    }
+
+    // remove methods using the newfile removedMethods property as reference
+    protected function removeMethods()
+    {
+        foreach ($this->newFileVisitor->removedMethods as $removedMethod) {
+            $removedMethodName = $removedMethod['name'];
+            $class = $this->getClassByName($removedMethod['class']);
+
+            if ($class) {
+                foreach ($class['node']->stmts as $key => $methodStatementsNode) {
+                    $methodName = $methodStatementsNode->name->name ?? null;
+
+                    if(!$methodName) continue;
+
+                    if ($methodStatementsNode instanceof ClassMethod && $methodStatementsNode->name->name === $removedMethodName) {
+                        unset($class['node']->stmts[$key]);
+                    }
                 }
             }
         }
