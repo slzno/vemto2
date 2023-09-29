@@ -3,6 +3,7 @@
     import UiText from '@Renderer/components/ui/UiText.vue'
     import { defineProps, toRef } from 'vue'
     import UiSelect from '@Renderer/components/ui/UiSelect.vue'
+import Table from '@Common/models/Table'
 
     const props = defineProps(['table']),
         table = toRef(props, 'table')
@@ -11,8 +12,9 @@
         table.value.saveFromInterface()
     }
 
-    const logTable = (table: any) => {
+    const logTable = (table: Table) => {
         console.log(table)
+        console.log("Is Dirty: ", table.isDirty())
     }
 </script>
 <template>

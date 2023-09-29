@@ -103,6 +103,7 @@
 
     const log = (index: Index) => {
         console.log(index)
+        console.log("Is Dirty: ", index.isDirty())
     }
 </script>
 <template>
@@ -120,6 +121,7 @@
         >
             <div class="mt-4" v-if="onDevelopment">
                 <UiButton @click="log(index)">Log details</UiButton>
+                <UiButton @click="index.logDataComparison()">Log data comparison</UiButton>
             </div>
             <div class="flex gap-2 mb-2">
                 <div class="w-[10rem]">

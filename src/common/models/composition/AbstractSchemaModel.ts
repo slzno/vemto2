@@ -35,7 +35,7 @@ export default abstract class AbstractSchemaModel extends RelaDB.Model {
     isNew(): boolean {
         return !this.schemaState
     }
-
+    
     wasRenamed(): boolean {
         if(!this.schemaState) return false
         

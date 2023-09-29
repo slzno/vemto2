@@ -126,6 +126,10 @@ export default class Index extends AbstractSchemaModel implements SchemaModel {
         return this.hasLocalChanges() || this.isRemoved() || this.isNew()
     }
 
+    wasOnlyRenamed(): boolean {
+        return this.wasRenamed() && !this.hasLocalChanges()
+    }
+
     includesColumn(column: Column): boolean {
         return this.indexColumns.some((indexColumn: Column) => indexColumn.id === column.id)
     }

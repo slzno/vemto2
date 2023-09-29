@@ -17,7 +17,7 @@
                         <ExclamationTriangleIcon class="w-6 h-6 text-yellow-500 animate-pulse" />
                     </div>
                     <div title="Authenticatable model" v-if="model.isAuthenticatable">
-                        <UserIcon class="w-4 h-4 text-slate-500"/>
+                        <UserIcon class="w-3.5 h-3.5 text-slate-400"/>
                     </div>
                     <div>{{ model.class }}</div>
                 </div>
