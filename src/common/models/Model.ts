@@ -57,6 +57,7 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     hasFillable: boolean
     hasTimestamps: boolean
     hasSoftDeletes: boolean
+    isAuthenticatable: boolean
 
     relationships() {
         return {
@@ -140,6 +141,7 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         this.hasFillable = data.hasFillable
         this.hasTimestamps = data.hasTimestamps
         this.hasSoftDeletes = data.hasSoftDeletes
+        this.isAuthenticatable = data.isAuthenticatable
 
         this.fillSchemaState()
         
@@ -212,6 +214,7 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
             hasFillable: this.hasFillable,
             hasTimestamps: this.hasTimestamps,
             hasSoftDeletes: this.hasSoftDeletes,
+            isAuthenticatable: this.isAuthenticatable,
         }
     }
 
@@ -289,6 +292,10 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
                 this.schemaState.hasSoftDeletes,
                 comparisonData.hasSoftDeletes
             ),
+            isAuthenticatable: DataComparator.booleansAreDifferent(
+                this.schemaState.isAuthenticatable,
+                comparisonData.isAuthenticatable
+            ),
         }
     }
 
@@ -349,6 +356,10 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
 
     getRemovedRelationships(): Relationship[] {
         return this.relatedRelationships.filter((relationship) => relationship.isRemoved())
+    }
+
+    getRenamedRelationships(): Relationship[] {
+        return this.relatedRelationships.filter((relationship) => relationship.wasRenamed())
     }
 
     getValidRelationships(): Relationship[] {

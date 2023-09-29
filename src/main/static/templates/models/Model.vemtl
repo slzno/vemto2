@@ -1,5 +1,6 @@
 <?php
 
+<% const extendsFrom = 'Model' %>
 <% const camelCase = this.require('camelCase') %>
 
 namespace App\Models;
@@ -9,8 +10,12 @@ use Illuminate\Database\Eloquent\Model;
 <% if(this.model.hasSoftDeletes) { %>
 use Illuminate\Database\Eloquent\SoftDeletes;
 <% } %>
+<% if(this.model.isAuthenticatable) { %>
+<% extendsFrom = 'Authenticatable' %>
+use Illuminate\Foundation\Auth\User as Authenticatable;
+<% } %>
 
-class <$ this.model.name $> extends Model 
+class <$ this.model.name $> extends <$ extendsFrom $> 
 {
     use HasFactory;
     <% if(this.model.hasSoftDeletes) { %>
@@ -157,8 +162,11 @@ class <$ this.model.name $> extends Model
         <% } %>
     <% } %>
 
-    <# The following code is used by PHP-Merger to remove #>
+    <# The following code is used by PHP-Merger to remove methods #>
     <% for(let relationship of this.model.getRemovedRelationships()) { %>
     // remove_method:<% relationship.name %>
+    <% } %>
+    <% for(let relationship of this.model.getRenamedRelationships()) { %>
+    // remove_method:<% relationship.getOldName() %>
     <% } %>
 }

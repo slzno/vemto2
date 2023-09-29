@@ -11,6 +11,8 @@ interface SchemaModel {
     buildSchemaState(): any
     isNew(): boolean
     wasRenamed(): boolean
+    getOldName(): string
+    getCanonicalName(): string
     isRemoved(): boolean
     undoChanges(): void    
     logDataComparison(): void
