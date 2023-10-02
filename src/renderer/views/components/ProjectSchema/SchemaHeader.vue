@@ -207,7 +207,7 @@
         <div class="absolute flex top-16 left-0 p-2 px-3 space-x-2 text-sm z-20 bg-slate-900 rounded-r-lg" v-show="projectStore.project.canShowSchemaSourceChangesAlert">
             <div class="flex items-center bg-white dark:bg-slate-850 rounded-lg shadow border border-slate-700 p-2.5 space-x-4">
                 <div>
-                    <div>Your code was changed since the last time you synced the schema</div>
+                    <div>There are changes in the code</div>
                 </div>
                 <div class="flex space-x-1">
                     <UiButton class="space-x-1" @click="forceReload()">
