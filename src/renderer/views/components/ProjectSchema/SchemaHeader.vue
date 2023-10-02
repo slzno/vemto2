@@ -177,12 +177,20 @@
 </script>
 
 <template>
-    <UiConfirm ref="confirmDialog">
-        Are you sure you want to force reload the schema? 
-        
-        <UiWarning class="mt-2">
+    <UiConfirm ref="confirmDialog" title="Synchronize Schema" :options="{
+        'reloadTables': {
+            'label': 'Reload Tables',
+            'value': true
+        },
+        'reloadModels': {
+            'label': 'Reload Models',
+            'value': true
+        },
+    }">
+        Are you sure you want to synchronize the schema with the source code? 
+        <!-- <UiWarning class="mt-2">
             All unsaved changes will be lost. This includes models and tables not synced with the application source code.
-        </UiWarning>
+        </UiWarning> -->
     </UiConfirm>
 
     <div class="absolute flex top-0 left-0 p-4 space-x-2 text-sm z-20 bg-slate-900 rounded-r-full">
@@ -238,18 +246,9 @@
                 <div
                     class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
                     title="Sync Schema"
-                >
-                    <ArrowPathIcon
-                        class="w-7 h-7"
-                    />
-                </div>
-
-                <div
-                    class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
-                    title="Force reload (needs confirmation)"
                     @click="forceReload()"
                 >
-                    <ArrowDownTrayIcon
+                    <ArrowPathIcon
                         class="w-7 h-7"
                     />
                 </div>

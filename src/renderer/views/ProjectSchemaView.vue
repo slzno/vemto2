@@ -18,7 +18,7 @@
     import MigrationSaver from "./components/MigrationSaver/MigrationSaver.vue"
     import Main from "@Renderer/services/wrappers/Main"
     import UiModal from "@Renderer/components/ui/UiModal.vue"
-import UiButton from "@Renderer/components/ui/UiButton.vue"
+    import UiButton from "@Renderer/components/ui/UiButton.vue"
 
     const projectStore = useProjectStore()
 
@@ -36,6 +36,7 @@ import UiButton from "@Renderer/components/ui/UiButton.vue"
         interval = setInterval(() => {
             if (isDragging) return
             loadSchema()
+            // checkSourceChanges()
         }, 3000)
     })
 
@@ -57,6 +58,25 @@ import UiButton from "@Renderer/components/ui/UiButton.vue"
             }, 300)
         })
         
+    }
+
+    const checkSourceChanges = async () => {
+        if (projectStore.projectIsEmpty) return
+
+        const schemaData = await Main.API.loadSchema(
+            projectStore.project.path
+        )
+
+        if (!schemaData) return
+
+        await tablesBuilder.setProject(projectStore.project).setSchemaData(schemaData).checkSchemaChanges()
+        await modelsBuilder.setProject(projectStore.project).setSchemaData(schemaData).checkSchemaChanges()
+
+        const hasSchemaChanges = tablesBuilder.hasSchemaChanges() || modelsBuilder.hasSchemaChanges()
+
+        if(!hasSchemaChanges) return
+
+        projectStore.setHasSourceChanges(true)
     }
 
     const loadSchema = async (force = false) => {

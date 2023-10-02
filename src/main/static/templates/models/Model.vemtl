@@ -1,6 +1,6 @@
 <?php
 
-<% const extendsFrom = 'Model' %>
+<% let extendsFrom = 'Model' %>
 <% const camelCase = this.require('camelCase') %>
 
 namespace App\Models;

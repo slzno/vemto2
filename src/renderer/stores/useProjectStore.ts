@@ -3,7 +3,8 @@ import Project from "@Common/models/Project"
 
 export const useProjectStore = defineStore("project", {
     state: () => ({ 
-        project: {} as Project
+        project: {} as Project,
+        hasSourceChanges: false,
     }),
 
     actions: {
@@ -15,7 +16,11 @@ export const useProjectStore = defineStore("project", {
             if(!this.project.id) return
 
             this.project = this.project.fresh()
-        }
+        },
+
+        setHasSourceChanges(hasSourceChanges: boolean) {
+            this.hasSourceChanges = hasSourceChanges
+        },
     },
 
     getters: {

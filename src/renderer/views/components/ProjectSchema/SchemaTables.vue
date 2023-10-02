@@ -79,14 +79,11 @@
     const highlightTable = (table) => {
         const tableElement = document.getElementById(`table_${table.id}`)
 
-        console.log('will highlight table', `table_${table.id}`)
-
         if(!tableElement) return
 
         tableElement.classList.add('animate__animated','animate__pulse', 'animate__faster')
 
         setTimeout(() => {
-            console.log('will remove animation')
             tableElement.classList.remove('animate__animated','animate__pulse', 'animate__faster')
         }, 500)
     }
