@@ -1,34 +1,52 @@
+import md5 from "crypto-js/md5"
 import Project from "@Common/models/Project";
 import Main from "@Renderer/services/wrappers/Main";
 
-class SchemaBuilder {
+export default class SchemaBuilder {
 
     project: Project
-    hasChanges: boolean = false
+    schemaData: any
+    schemaDataHash: string
 
     constructor(project: Project) {
         this.project = project
     }
 
     async readData() {
-        const schemaData = await Main.API.loadSchema(
-            projectStore.project.path
-        )
+        this.schemaData = await Main.API.loadSchema(this.project.path)
 
+        this.checkSchemaChanges()
 
-    }
-
-    checkSchemaChanges() {
         return this
     }
 
-    build() {
+    checkSchemaChanges() {
+        this.schemaDataHash = md5(JSON.stringify(this.schemaData)).toString()
+
+        if(this.project.lastReadSchemaDataHash !== this.schemaDataHash) {
+            this.project.lastReadSchemaDataHash = this.schemaDataHash
+
+            if(this.project.schemaDataHash !== this.schemaDataHash) {
+                this.project.canShowSchemaSourceChangesAlert = true
+            }
+
+            this.project.save()
+        }
+
+        return this
     }
 
-    buildTables() {
+    hasChanges() {
+        return this.project.schemaDataHash !== this.schemaDataHash
     }
 
-    buildModels() {
+    async build() {
+    }
+
+    async buildTables() {
+    }
+
+    async buildModels() {
     }
 
 }

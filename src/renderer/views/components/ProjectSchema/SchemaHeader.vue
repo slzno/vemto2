@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { ref, onMounted, nextTick, defineEmits, computed } from 'vue'
     import Table from "@Common/models/Table"
-    import { ArrowDownTrayIcon, ArrowPathIcon, PhotoIcon, PlusCircleIcon, PlusIcon } from "@heroicons/vue/24/outline"
+    import { ArrowDownTrayIcon, ArrowPathIcon, ChatBubbleLeftEllipsisIcon, PhotoIcon, PlusCircleIcon, PlusIcon, XMarkIcon } from "@heroicons/vue/24/outline"
     import UiModal from '@Renderer/components/ui/UiModal.vue'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
     import UiText from '@Renderer/components/ui/UiText.vue'
@@ -174,16 +174,21 @@
 
         emit('forceReload')
     }
+
+    const dismissChangesAlert = () => {
+        projectStore.project.canShowSchemaSourceChangesAlert = false
+        projectStore.project.save()
+    }
 </script>
 
 <template>
     <UiConfirm ref="confirmDialog" title="Synchronize Schema" :options="{
         'reloadTables': {
-            'label': 'Reload Tables',
+            'label': 'Sync Tables',
             'value': true
         },
         'reloadModels': {
-            'label': 'Reload Models',
+            'label': 'Sync Models',
             'value': true
         },
     }">
@@ -193,14 +198,39 @@
         </UiWarning> -->
     </UiConfirm>
 
-    <div class="absolute flex top-0 left-0 p-4 space-x-2 text-sm z-20 bg-slate-900 rounded-r-full">
+    <Transition
+        enter-from-class="transition duration-300 opacity-0"
+        enter-to-class="transition duration-300 opacity-100"
+        leave-from-class="transition duration-300 opacity-100"
+        leave-to-class="transition duration-300 opacity-0"
+    >
+        <div class="absolute flex top-16 left-0 p-2 px-3 space-x-2 text-sm z-20 bg-slate-900 rounded-r-lg" v-show="projectStore.project.canShowSchemaSourceChangesAlert">
+            <div class="flex items-center bg-white dark:bg-slate-850 rounded-lg shadow border border-slate-700 p-2.5 space-x-4">
+                <div>
+                    <div>Your code was changed since the last time you synced the schema</div>
+                </div>
+                <div class="flex space-x-1">
+                    <UiButton class="space-x-1" @click="forceReload()">
+                        <ArrowPathIcon class="w-4 h-4 text-green-500"/> 
+                        <div>Sync</div>
+                    </UiButton>
+                    <UiButton class="space-x-1" @click="dismissChangesAlert()">
+                        <XMarkIcon class="w-4 h-4 text-red-500"/>
+                        <div>Dismiss</div>
+                    </UiButton>
+                </div>
+            </div>
+        </div>
+    </Transition>
 
+    <div class="absolute flex top-0 left-0 p-3 space-x-2 text-sm z-20 bg-slate-900 rounded-r-full">
         <div
             class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow px-1 border border-slate-700"
         >
             <!-- Tools and Icons -->
             <div class="flex">
                 <div
+                    title="Add table"
                     class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
                     @click="show()"
                 >
@@ -225,9 +255,20 @@
                     </div>
                 </UiModal>
 
-                <!-- <div class="p-2 cursor-pointer text-slate-600 hover:text-red-500">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                    </div> -->
+                <div
+                    title="Add comment"
+                    class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
+                >
+                    <svg
+                        class="w-7 h-7"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <ChatBubbleLeftEllipsisIcon class="w-7 h-7" />
+                    </svg>
+                </div>
 
                 <div
                     class="p-2 cursor-pointer text-slate-400 hover:text-red-500"

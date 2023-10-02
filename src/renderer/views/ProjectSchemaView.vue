@@ -2,6 +2,7 @@
     import Table from "@Common/models/Table"
     import { nextTick, onMounted, onUnmounted, ref } from "vue"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
+    import SchemaBuilder from "@Renderer/services/schema/SchemaBuilder"
     import modelsBuilder from "@Renderer/services/schema/ModelsFromSchemaBuilder"
     import tablesBuilder from "@Renderer/services/schema/TablesFromMigrationsBuilder"
     import SchemaTables from "@Renderer/views/components/ProjectSchema/SchemaTables.vue"
@@ -33,11 +34,11 @@
             initSchema()
         })
 
+        // TODO: move this to the project layer (project store maybe?)
+
         interval = setInterval(() => {
-            if (isDragging) return
-            loadSchema()
-            // checkSourceChanges()
-        }, 3000)
+            checkSourceChanges()
+        }, 500)
     })
 
     onUnmounted(() => {
@@ -63,20 +64,9 @@
     const checkSourceChanges = async () => {
         if (projectStore.projectIsEmpty) return
 
-        const schemaData = await Main.API.loadSchema(
-            projectStore.project.path
-        )
+        const schemaBuilder = new SchemaBuilder(projectStore.project)
 
-        if (!schemaData) return
-
-        await tablesBuilder.setProject(projectStore.project).setSchemaData(schemaData).checkSchemaChanges()
-        await modelsBuilder.setProject(projectStore.project).setSchemaData(schemaData).checkSchemaChanges()
-
-        const hasSchemaChanges = tablesBuilder.hasSchemaChanges() || modelsBuilder.hasSchemaChanges()
-
-        if(!hasSchemaChanges) return
-
-        projectStore.setHasSourceChanges(true)
+        schemaBuilder.readData()
     }
 
     const loadSchema = async (force = false) => {

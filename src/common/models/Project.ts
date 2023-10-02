@@ -37,8 +37,12 @@ export default class Project extends RelaDB.Model {
     routes: Route[]
     appSections: AppSection[]
     laravelVersion: Number
+    schemaDataHash: string
+    lastReadSchemaDataHash: string
     schemaTablesDataHash: string
     schemaModelsDataHash: string
+    hasSchemaSourceChanges: boolean
+    canShowSchemaSourceChangesAlert: boolean
     changedTablesIds: string[]
     renderableFiles: RenderableFile[]
     currentRenderedFilesPaths: string[]
@@ -193,6 +197,11 @@ export default class Project extends RelaDB.Model {
         })
 
         return models
+    }
+
+    setHasSchemaSourceChanges(hasChanges: boolean) {
+        this.hasSchemaSourceChanges = hasChanges
+        this.save()
     }
 
     hasSchemaChanges(): boolean {
