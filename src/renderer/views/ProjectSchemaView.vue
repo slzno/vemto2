@@ -2,8 +2,8 @@
     import Table from "@Common/models/Table"
     import { nextTick, onMounted, onUnmounted, ref } from "vue"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
-    import modelsBuilder from "@Common/services/ModelsFromSchemaBuilder"
-    import tablesBuilder from "@Common/services/TablesFromMigrationsBuilder"
+    import modelsBuilder from "@Renderer/services/schema/ModelsFromSchemaBuilder"
+    import tablesBuilder from "@Renderer/services/schema/TablesFromMigrationsBuilder"
     import SchemaTables from "@Renderer/views/components/ProjectSchema/SchemaTables.vue"
 
     import {
@@ -271,3 +271,4 @@
         fill: #334155;
     }
 </style>
+@Renderer/services/schema/ModelsFromSchemaBuilder
