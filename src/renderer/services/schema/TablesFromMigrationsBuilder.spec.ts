@@ -1,7 +1,7 @@
 import TestHelper from '@Tests/base/TestHelper'
 import MockDatabase from '@Tests/base/MockDatabase'
 import { test, expect, beforeEach } from '@jest/globals'
-import schemaData from './tests/input/schema-reader-L9.json'
+import schemaData from '../../../common/services/tests/input/schema-reader-L9.json'
 import TablesFromMigrationsBuilder from './TablesFromMigrationsBuilder'
 
 beforeEach(() => {

@@ -61,16 +61,12 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         this.removed = true
 
         this.save()
-
-        this.markAsChanged()
     }
 
     undoRemove() {
         this.removed = false
 
         this.save()
-
-        this.markAsChanged()
     }
 
     hasSchemaChanges(comparisonData: any): boolean {

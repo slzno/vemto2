@@ -63,8 +63,6 @@ export default class Index extends AbstractSchemaModel implements SchemaModel {
     saveFromInterface() {
         this.save()
 
-        this.table.markAsChanged()
-
         return this
     }
 
