@@ -19,8 +19,8 @@ export default class GenerateNewMigration {
         return this
     }
 
-    run() {
-        return this.generateMigration()
+    async run() {
+        return await this.generateMigration()
     }
 
     async getData() {
@@ -52,7 +52,7 @@ export default class GenerateNewMigration {
     async generateMigration() {
         const fileContent = await this.getContent()
 
-        Main.API.addFileToGenerationQueue(
+        await Main.API.writeProjectFile(
             this.getName(),
             fileContent
         )

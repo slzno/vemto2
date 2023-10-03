@@ -52,9 +52,7 @@
 
         schemaBuilder.build(syncTables, syncModels)
 
-        nextTick(() => {
-            initSchema()
-        })
+        nextTick(() => initSchema())
     }
 
     const initSchema = () => {

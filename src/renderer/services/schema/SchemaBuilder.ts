@@ -10,33 +10,17 @@ export default class SchemaBuilder {
     schemaData: any
     schemaDataHash: string
 
+    static canCheckSchemaChanges: boolean = true
+
     constructor(project: Project) {
         this.project = project
-    }
-
-    async checkSchemaChanges() {
-        await this.readData()
-
-        this.schemaDataHash = md5(JSON.stringify(this.schemaData)).toString()
-
-        if(this.project.lastReadSchemaDataHash !== this.schemaDataHash) {
-            this.project.lastReadSchemaDataHash = this.schemaDataHash
-
-            if(this.project.schemaDataHash !== this.schemaDataHash) {
-                this.project.canShowSchemaSourceChangesAlert = true
-            }
-
-            this.project.save()
-        }
-
-        return this
     }
 
     hasChanges() {
         return this.project.schemaDataHash !== this.schemaDataHash
     }
 
-    async build(tables: boolean = true, models: boolean = true) {
+    async build(tables: boolean = false, models: boolean = false) {
         await this.readData()
 
         if(tables) await this.buildTables()
@@ -57,7 +41,7 @@ export default class SchemaBuilder {
         tablesBuilder.setSchemaData(this.schemaData)
 
         return await tablesBuilder.build()
-    }
+    } 
 
     async buildModels() {
         if (!this.schemaData) {
@@ -78,6 +62,52 @@ export default class SchemaBuilder {
 
     async readData() {
         this.schemaData = await Main.API.loadSchema(this.project.path)
+
+        return this
+    }
+
+    static disableSchemaChangesCheck() {
+        SchemaBuilder.canCheckSchemaChanges = false
+
+        return this
+    }
+
+    static enableSchemaChangesCheck() {
+        SchemaBuilder.canCheckSchemaChanges = true
+
+        return this
+    }
+
+    async checkSchemaChanges() {
+        if(!SchemaBuilder.canCheckSchemaChanges) return this
+
+        await this.readData()
+
+        this.schemaDataHash = md5(JSON.stringify(this.schemaData)).toString()
+
+        /**
+         * If we are ignoring next schema source changes, we should just save the hash and return
+         * We do it because we are going to update the schema by saving code from Vemto and we don't want to
+         * show the alert
+         */
+        if(this.project.canIgnoreNextSchemaSourceChanges) {
+            this.project.canIgnoreNextSchemaSourceChanges = false
+            this.project.lastReadSchemaDataHash = this.schemaDataHash
+
+            this.project.save()
+
+            return this
+        }
+
+        if(this.project.lastReadSchemaDataHash !== this.schemaDataHash) {
+            this.project.lastReadSchemaDataHash = this.schemaDataHash
+            
+            if(this.project.schemaDataHash !== this.schemaDataHash) {
+                this.project.canShowSchemaSourceChangesAlert = true
+            }
+
+            this.project.save()
+        }
 
         return this
     }

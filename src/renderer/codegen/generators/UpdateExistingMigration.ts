@@ -20,8 +20,8 @@ export default class UpdateExistingMigration {
         return this
     }
 
-    run() {
-        return this.updateLatestMigration()
+    async run() {
+        return await this.updateLatestMigration()
     }
 
     async getData() {
@@ -44,10 +44,12 @@ export default class UpdateExistingMigration {
 
         const fileContent = await this.generateLatestMigrationUpdate()
 
-        Main.API.addFileToGenerationQueue(
+        await Main.API.writeProjectFile(
             latestMigration.relativePath,
             fileContent
         )
+
+        return fileContent
     }
 
     async generateLatestMigrationUpdate() {

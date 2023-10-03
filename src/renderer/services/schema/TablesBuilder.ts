@@ -26,8 +26,6 @@ export default class TablesBuilder {
     async build() {
         if(TablesBuilder.processing) return
 
-        this.project.undoAllTablesChanges()
-
         this.processTables()
 
         return true

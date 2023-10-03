@@ -28,8 +28,6 @@ export default class ModelsBuilder {
     async build() {
         if(ModelsBuilder.processing) return
 
-        this.project.undoAllModelsChanges()
-
         this.processModels()
 
         return true

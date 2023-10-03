@@ -11,6 +11,7 @@
     import Main from "@Renderer/services/wrappers/Main"
     import Table from "@Common/models/Table"
     import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
+import SchemaBuilder from "@Renderer/services/schema/SchemaBuilder"
 
     const projectStore = useProjectStore(),
         showingModal = ref(false),
@@ -109,27 +110,40 @@
     }
 
     const saveMigrations = async () => {
-        
         const confirmed = await confirmSaveDialog.value.confirm()
         if(!confirmed) return
+        
+        SchemaBuilder.disableSchemaChangesCheck()
+        projectStore.project.ignoreNextSchemaSourceChanges()
+
+        console.log(projectStore.project.canIgnoreNextSchemaSourceChanges)
 
         const tables: any[] = Object.values(tablesSettings)
 
         for(const table of tables) {
             if (table.selectedOption === "updateMigration") {
-                console.log('will update')
                 const migrationUpdater = new UpdateExistingMigration(table.instance)
                 await migrationUpdater.run()
             }
 
             if (table.selectedOption === "createMigration") {
-                console.log('will create')
                 const migrationCreator = new GenerateNewMigration(table.instance)
                 await migrationCreator.run()
             }
         }
 
+        await readSchema()
+
+        SchemaBuilder.enableSchemaChangesCheck()
+
         showingModal.value = false
+    }
+
+    const readSchema = async () => {
+        const schemaBuilder = new SchemaBuilder(projectStore.project),
+            readTables = true
+
+        return await schemaBuilder.build(readTables)
     }
 
     const loadFirstTableMigrationContent = async () => {

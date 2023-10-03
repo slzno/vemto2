@@ -42,6 +42,7 @@ export default class Project extends RelaDB.Model {
     schemaTablesDataHash: string
     schemaModelsDataHash: string
     hasSchemaSourceChanges: boolean
+    canIgnoreNextSchemaSourceChanges: boolean
     canShowSchemaSourceChangesAlert: boolean
     renderableFiles: RenderableFile[]
     currentRenderedFilesPaths: string[]
@@ -196,6 +197,16 @@ export default class Project extends RelaDB.Model {
         })
 
         return models
+    }
+
+    ignoreNextSchemaSourceChanges() {
+        this.canIgnoreNextSchemaSourceChanges = true
+        this.save()
+    }
+
+    dontIgnoreNextSchemaSourceChanges() {
+        this.canIgnoreNextSchemaSourceChanges = false
+        this.save()
     }
 
     setHasSchemaSourceChanges(hasChanges: boolean) {
