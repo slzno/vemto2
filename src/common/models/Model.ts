@@ -485,4 +485,13 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
 
         this.save()
     }
+
+    undoAllChanges() {
+        this.undoChanges()
+        this.undoAllOwnRelationshipsChanges()
+    }
+
+    undoAllOwnRelationshipsChanges() {
+        this.ownRelationships.forEach(rel => rel.undoChanges())
+    }
 }

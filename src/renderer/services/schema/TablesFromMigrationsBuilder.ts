@@ -1,4 +1,3 @@
-import md5 from "crypto-js/md5"
 import Index from "@Common/models/Index"
 import Table from "@Common/models/Table"
 import Column from "@Common/models/Column"
@@ -9,27 +8,15 @@ class TablesFromMigrationsBuilder {
 
     project: Project
     schemaTablesData: any
-    hasLocalChanges: boolean
-    schemaTablesDataHash: string
 
     reset() {
         this.project = null
         this.schemaTablesData = null
-        this.hasLocalChanges = false
-        this.schemaTablesDataHash = ''
     }
 
     setProject(project: Project) {
         this.project = project
         return this
-    }
-
-    hasSchemaChanges() {
-        return this.hasLocalChanges
-    }
-    
-    doesNotHaveSchemaChanges() {
-        return !this.hasLocalChanges
     }
 
     setSchemaData(schemaData: any) {
@@ -40,30 +27,11 @@ class TablesFromMigrationsBuilder {
     async build() {
         if(TablesFromMigrationsBuilder.processing) return
 
+        this.project.undoAllTablesChanges()
+
         this.processTables()
-    }
 
-    async checkSchemaChanges() {
-        this.schemaTablesDataHash = md5(JSON.stringify(this.schemaTablesData)).toString()
-        
-        if (this.project.schemaTablesDataHash === this.schemaTablesDataHash) {
-            return
-        }
-
-        this.hasLocalChanges = true
-
-        this.project.schemaTablesDataHash = this.schemaTablesDataHash
-        this.project.save()
-
-        return this
-    }
-
-    force() {
-        this.hasLocalChanges = true
-
-        this.project.undoAllSchemaChanges()
-        
-        return this
+        return true
     }
 
     processTables() {

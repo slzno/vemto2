@@ -43,7 +43,6 @@ export default class Project extends RelaDB.Model {
     schemaModelsDataHash: string
     hasSchemaSourceChanges: boolean
     canShowSchemaSourceChangesAlert: boolean
-    changedTablesIds: string[]
     renderableFiles: RenderableFile[]
     currentRenderedFilesPaths: string[]
     vthemeKeys: any
@@ -290,33 +289,6 @@ export default class Project extends RelaDB.Model {
         )
     }
 
-    markTableAsChanged(table: Table) {
-        if (!this.changedTablesIds) this.changedTablesIds = []
-
-        if (this.changedTablesIds.indexOf(table.id) === -1) {
-            this.changedTablesIds.push(table.id)
-        }
-
-        this.save()
-    }
-
-    clearChangedTables() {
-        this.changedTablesIds = []
-
-        this.save()
-    }
-
-    removeTableFromChangedTables(table: Table) {
-        if (!this.changedTablesIds) return
-
-        const index = this.changedTablesIds.indexOf(table.id)
-        if (index > -1) {
-            this.changedTablesIds.splice(index, 1)
-        }
-
-        this.save()
-    }
-
     registerRenderableFile(
         path: string,
         name: string,
@@ -478,7 +450,11 @@ export default class Project extends RelaDB.Model {
         this.save()
     }
 
-    undoAllSchemaChanges() {
+    undoAllTablesChanges() {
         this.tables.forEach((table) => table.undoAllChanges())
+    }
+
+    undoAllModelsChanges() {
+        this.models.forEach((model) => model.undoAllChanges())
     }
 }

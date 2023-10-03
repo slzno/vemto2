@@ -48,8 +48,6 @@ export default class UpdateExistingMigration {
             latestMigration.relativePath,
             fileContent
         )
-
-        this.project.removeTableFromChangedTables(this.table)
     }
 
     async generateLatestMigrationUpdate() {

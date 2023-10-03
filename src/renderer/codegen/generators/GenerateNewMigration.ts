@@ -57,8 +57,6 @@ export default class GenerateNewMigration {
             fileContent
         )
 
-        this.project.removeTableFromChangedTables(this.table)
-
         return fileContent
     }
 

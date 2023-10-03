@@ -47,8 +47,6 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
 
         this.save()
 
-        this.markAsChanged()
-
         if(creating) CreateDefaultTableColumns.setTable(this).create()
         if(addModel) CreateDefaultTableModel.setTable(this).create()
 
@@ -386,11 +384,6 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
 
     hasSoftDeletes(): boolean {
         return this.hasColumn('deleted_at')
-    }
-
-    markAsChanged() {
-        this.project.markTableAsChanged(this)
-        return this
     }
 
     hasMigrations(): boolean {

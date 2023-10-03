@@ -45,9 +45,8 @@
         if (interval) clearInterval(interval)
     })
 
-    const forceReload = async () => {
-        const force = true
-        await loadSchema(force)
+    const syncSchema = async () => {
+        await loadSchema()
     }
 
     const tableAdded = async (table: Table) => {
@@ -69,7 +68,7 @@
         schemaBuilder.readData()
     }
 
-    const loadSchema = async (force = false) => {
+    const loadSchema = async () => {
         if (isDragging) return
         if (projectStore.projectIsEmpty) return
 
@@ -77,50 +76,32 @@
             projectStore.project.path
         )
 
-        const changedTables = await loadTables(schemaData, force),
-            changedModels = await loadModels(schemaData, force)
-
-        if(!changedTables && !changedModels) return
+        await loadTables(schemaData)
+        await loadModels(schemaData)
 
         nextTick(() => {
             initSchema()
         })
     }
 
-    const loadTables = async (schemaData: any, force = false) => {
+    const loadTables = async (schemaData: any) => {
         if (!schemaData) return
 
         await tablesBuilder
             .setProject(projectStore.project)
             .setSchemaData(schemaData)
-            .checkSchemaChanges()
 
-        if(force) tablesBuilder.force()
-
-        if (tablesBuilder.doesNotHaveSchemaChanges()) return false
-
-        await tablesBuilder.build()
-
-        if(force) projectStore.project.clearChangedTables()
-
-        return true
+        return await tablesBuilder.build()
     }
 
-    const loadModels = async (schemaData: any, force = false) => {
+    const loadModels = async (schemaData: any) => {
         if (!schemaData) return
 
         await modelsBuilder
             .setProject(projectStore.project)
             .setSchemaData(schemaData)
-            .checkSchemaChanges()
 
-        if(force) modelsBuilder.force()
-
-        if (modelsBuilder.doesNotHaveSchemaChanges()) return false
-
-        await modelsBuilder.build()
-
-        return true
+        return await modelsBuilder.build()
     }
 
     const initSchema = () => {
@@ -221,7 +202,7 @@
 
         <SchemaHeader 
             @tableAdded="tableAdded"
-            @forceReload="forceReload" 
+            @syncSchema="syncSchema" 
         />
 
         <SchemaTables />
