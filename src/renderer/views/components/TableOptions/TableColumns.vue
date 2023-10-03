@@ -59,6 +59,7 @@
     <section @keyup.esc="clearInvalidColumns">
         <Draggable
             class="space-y-2"
+            handle=".handle"
             :list="columns"
             item-key="columns-draggable"
             @end="saveColumnsOrder"

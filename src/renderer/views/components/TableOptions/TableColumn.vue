@@ -105,7 +105,7 @@
         </UiConfirm>
 
         <div class="flex space-x-2 items-center">
-            <div class="px-2">
+            <div class="px-2 handle">
                 <Bars3Icon
                     class="w-4 h-4 text-slate-400 hover:text-red-500 cursor-move"
                 />
