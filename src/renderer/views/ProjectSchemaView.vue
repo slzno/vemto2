@@ -1,10 +1,8 @@
 <script setup lang="ts">
     import Table from "@Common/models/Table"
-    import { nextTick, onMounted, onUnmounted, ref } from "vue"
+    import { nextTick, onMounted } from "vue"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import SchemaBuilder from "@Renderer/services/schema/SchemaBuilder"
-    import modelsBuilder from "@Renderer/services/schema/ModelsFromSchemaBuilder"
-    import tablesBuilder from "@Renderer/services/schema/TablesFromMigrationsBuilder"
     import SchemaTables from "@Renderer/views/components/ProjectSchema/SchemaTables.vue"
 
     import {
@@ -17,14 +15,12 @@
     import { BezierConnector } from "@jsplumb/connector-bezier"
     import SchemaHeader from "./components/ProjectSchema/SchemaHeader.vue"
     import MigrationSaver from "./components/MigrationSaver/MigrationSaver.vue"
-    import Main from "@Renderer/services/wrappers/Main"
     import UiModal from "@Renderer/components/ui/UiModal.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
 
     const projectStore = useProjectStore()
 
-    let interval = null,
-        isDragging = false,
+    let isDragging = false,
         currentConnections = {},
         currentNodes = {},
         jsPlumbInstance: BrowserJsPlumbInstance = null
@@ -33,25 +29,13 @@
         nextTick(() => {
             initSchema()
         })
-
-        // TODO: move this to the project layer (project store maybe?)
-
-        interval = setInterval(() => {
-            checkSourceChanges()
-        }, 500)
     })
 
-    onUnmounted(() => {
-        if (interval) clearInterval(interval)
-    })
-
-    const syncSchema = async () => {
-        await loadSchema()
+    const syncSchema = async (syncTables: boolean, syncModels: boolean) => {
+        await loadSchema(syncTables, syncModels)
     }
 
     const tableAdded = async (table: Table) => {
-        console.log(table)
-
         nextTick(() => {
             setTimeout(() => {
                 initSchema()
@@ -60,48 +44,17 @@
         
     }
 
-    const checkSourceChanges = async () => {
+    const loadSchema = async (syncTables: boolean, syncModels: boolean) => {
+        if (isDragging) return
         if (projectStore.projectIsEmpty) return
 
         const schemaBuilder = new SchemaBuilder(projectStore.project)
 
-        schemaBuilder.readData()
-    }
-
-    const loadSchema = async () => {
-        if (isDragging) return
-        if (projectStore.projectIsEmpty) return
-
-        const schemaData = await Main.API.loadSchema(
-            projectStore.project.path
-        )
-
-        await loadTables(schemaData)
-        await loadModels(schemaData)
+        schemaBuilder.build(syncTables, syncModels)
 
         nextTick(() => {
             initSchema()
         })
-    }
-
-    const loadTables = async (schemaData: any) => {
-        if (!schemaData) return
-
-        await tablesBuilder
-            .setProject(projectStore.project)
-            .setSchemaData(schemaData)
-
-        return await tablesBuilder.build()
-    }
-
-    const loadModels = async (schemaData: any) => {
-        if (!schemaData) return
-
-        await modelsBuilder
-            .setProject(projectStore.project)
-            .setSchemaData(schemaData)
-
-        return await modelsBuilder.build()
     }
 
     const initSchema = () => {
@@ -242,4 +195,4 @@
         fill: #334155;
     }
 </style>
-@Renderer/services/schema/ModelsFromSchemaBuilder
+@Renderer/services/schema/ModelsBuilder@Renderer/services/schema/TablesBuilder@Renderer/services/schema/ModelsBuilder

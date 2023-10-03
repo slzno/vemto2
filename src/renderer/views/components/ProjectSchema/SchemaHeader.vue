@@ -23,7 +23,7 @@
         searchInput = ref(null),
         searchIsFocused = ref(false)
 
-    const emit = defineEmits(['tableAdded', 'forceReload'])
+    const emit = defineEmits(['tableAdded', 'syncSchema'])
 
     const filteredTables = computed(() => {
         return projectStore.project.tables.filter(table => {
@@ -168,11 +168,11 @@
         addModelForNewTable.value = true
     })
 
-    const forceReload = async () => {
+    const syncSchema = async () => {
         const confirmed = await confirmDialog.value.confirm()
         if(!confirmed) return
 
-        emit('forceReload')
+        emit('syncSchema', confirmed.syncTables, confirmed.syncModels)
     }
 
     const dismissChangesAlert = () => {
@@ -183,11 +183,11 @@
 
 <template>
     <UiConfirm ref="confirmDialog" title="Synchronize Schema" :options="{
-        'reloadTables': {
+        'syncTables': {
             'label': 'Sync Tables',
             'value': true
         },
-        'reloadModels': {
+        'syncModels': {
             'label': 'Sync Models',
             'value': true
         },
@@ -210,7 +210,7 @@
                     <div>There are changes in the code</div>
                 </div>
                 <div class="flex space-x-1">
-                    <UiButton class="space-x-1" @click="forceReload()">
+                    <UiButton class="space-x-1" @click="syncSchema()">
                         <ArrowPathIcon class="w-4 h-4 text-green-500"/> 
                         <div>Sync</div>
                     </UiButton>
@@ -287,7 +287,7 @@
                 <div
                     class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
                     title="Sync Schema"
-                    @click="forceReload()"
+                    @click="syncSchema()"
                 >
                     <ArrowPathIcon
                         class="w-7 h-7"

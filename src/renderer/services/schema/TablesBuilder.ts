@@ -3,20 +3,19 @@ import Table from "@Common/models/Table"
 import Column from "@Common/models/Column"
 import Project from "@Common/models/Project"
 
-class TablesFromMigrationsBuilder {
+export default class TablesBuilder {
     static processing: boolean = false
 
     project: Project
     schemaTablesData: any
 
+    constructor(project: Project) {
+        this.project = project
+    }
+
     reset() {
         this.project = null
         this.schemaTablesData = null
-    }
-
-    setProject(project: Project) {
-        this.project = project
-        return this
     }
 
     setSchemaData(schemaData: any) {
@@ -25,7 +24,7 @@ class TablesFromMigrationsBuilder {
     }
 
     async build() {
-        if(TablesFromMigrationsBuilder.processing) return
+        if(TablesBuilder.processing) return
 
         this.project.undoAllTablesChanges()
 
@@ -35,16 +34,14 @@ class TablesFromMigrationsBuilder {
     }
 
     processTables() {
-        if(!this.hasLocalChanges) return
-
-        TablesFromMigrationsBuilder.processing = true
+        TablesBuilder.processing = true
 
         this.readTables()
         this.readTableIndexes()
 
         this.reset()
 
-        TablesFromMigrationsBuilder.processing = false
+        TablesBuilder.processing = false
     }
 
     readTables() {
@@ -209,5 +206,3 @@ class TablesFromMigrationsBuilder {
     }
 
 }
-
-export default new TablesFromMigrationsBuilder

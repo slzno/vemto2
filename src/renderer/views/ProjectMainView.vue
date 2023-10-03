@@ -1,29 +1,39 @@
 <script setup lang="ts">
     import { RouterView } from "vue-router"
     import ProjectNavbar from "@Renderer/views/components/ProjectNavbar.vue"
-    import { onMounted, ref } from "vue"
+    import { onMounted, onUnmounted, ref } from "vue"
     import HandleProjectDatabase from "@Renderer/services/HandleProjectDatabase"
-    import { ArrowTopRightOnSquareIcon, CommandLineIcon, FolderIcon, PlayIcon, ShieldExclamationIcon } from "@heroicons/vue/24/outline"
+    import { CommandLineIcon, FolderIcon, PlayIcon, ShieldExclamationIcon } from "@heroicons/vue/24/outline"
     import SequentialGenerator from "@Renderer/codegen/sequential/SequentialGenerator"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import { useAppStore } from "@Renderer/stores/useAppStore"
     import UiLoading from "@Renderer/components/ui/UiLoading.vue"
     import Alert from "@Renderer/components/utils/Alert"
     import Main from "@Renderer/services/wrappers/Main"
+    import SchemaBuilder from "@Renderer/services/schema/SchemaBuilder"
 
     const canShow = ref(false),
         projectStore = useProjectStore(),
         appStore = useAppStore()
 
+    let sourceChekerInterval = null
+
     onMounted(async () => {
-        await HandleProjectDatabase.populate(() => canShow.value = true)
+        handleErrors()
+        handleKeyInputs()
 
-        document.addEventListener("keydown", (e) => {
-            if (e.key === "F5") generateCode()
-            if (e.key === "F6") openProjectFolder()
-            if (e.key === "F7") openProjectOnTerminal()
+        await HandleProjectDatabase.populate(() => {
+            canShow.value = true
+
+            checkSourceChanges()
         })
+    })
 
+    onUnmounted(() => {
+        if (sourceChekerInterval) clearInterval(sourceChekerInterval)
+    })
+
+    const handleErrors = () => {
         Main.API.onDefaultError((error) => { 
             if(error.error.includes('schema-reader')) {
                 projectStore.project.setCurrentSchemaError(error.error, error.stack)
@@ -31,7 +41,27 @@
                 console.error(error.stack)
             }
         })
-    })
+    }
+
+    const handleKeyInputs = () => {
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "F5") generateCode()
+            if (e.key === "F6") openProjectFolder()
+            if (e.key === "F7") openProjectOnTerminal()
+        })
+    }
+
+    const checkSourceChanges = async () => {
+        if (sourceChekerInterval) clearInterval(sourceChekerInterval)
+
+        sourceChekerInterval = setInterval(() => {
+            if (projectStore.projectIsEmpty) return
+
+            const schemaBuilder = new SchemaBuilder(projectStore.project)
+
+            schemaBuilder.checkSchemaChanges()
+        }, 500)
+    }
 
     const generateCode = async () => {
         if(projectStore.project.hasSchemaChanges()) {

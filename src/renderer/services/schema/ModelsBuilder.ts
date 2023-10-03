@@ -2,22 +2,22 @@ import Model from "@Common/models/Model"
 import Project from "@Common/models/Project"
 import Relationship from "@Common/models/Relationship"
 import RelationshipTypes from "@Common/models/static/RelationshipTypes"
-class ModelsFromSchemaBuilder {
+
+export default class ModelsBuilder {
     static processing: boolean = false
 
     project: Project
     schemaModelsData: any
     changedRelationships: Relationship[] = []
 
+    constructor(project: Project) {
+        this.project = project
+    }
+
     reset() {
         this.project = null
         this.schemaModelsData = null
         this.changedRelationships = []
-    }
-
-    setProject(project: Project) {
-        this.project = project
-        return this
     }
 
     setSchemaData(schemaData: any) {
@@ -26,7 +26,7 @@ class ModelsFromSchemaBuilder {
     }
 
     async build() {
-        if(ModelsFromSchemaBuilder.processing) return
+        if(ModelsBuilder.processing) return
 
         this.project.undoAllModelsChanges()
 
@@ -36,7 +36,7 @@ class ModelsFromSchemaBuilder {
     }
 
     processModels() {
-        ModelsFromSchemaBuilder.processing = true
+        ModelsBuilder.processing = true
 
         this.readModels()
         this.setRelatedModels()
@@ -44,7 +44,7 @@ class ModelsFromSchemaBuilder {
 
         this.reset()
 
-        ModelsFromSchemaBuilder.processing = false
+        ModelsBuilder.processing = false
     }
 
     readModels() {
@@ -183,5 +183,3 @@ class ModelsFromSchemaBuilder {
     }
 
 }
-
-export default new ModelsFromSchemaBuilder

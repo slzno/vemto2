@@ -19,7 +19,6 @@ export const useSchemaStore = defineStore("schema", {
         },
 
         focusTable(table: Table): void {
-            console.log("focusTable", table)
             this.focusedTable = table
         }
     },
