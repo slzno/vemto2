@@ -30,7 +30,7 @@
     })
 
     onUnmounted(() => {
-        if (sourceChekerInterval) clearInterval(sourceChekerInterval)
+        SchemaBuilder.stopCheckingSchemaChanges()
     })
 
     const handleErrors = () => {
@@ -52,15 +52,9 @@
     }
 
     const checkSourceChanges = async () => {
-        if (sourceChekerInterval) clearInterval(sourceChekerInterval)
+        if (projectStore.projectIsEmpty) return
 
-        sourceChekerInterval = setInterval(() => {
-            if (projectStore.projectIsEmpty) return
-
-            const schemaBuilder = new SchemaBuilder(projectStore.project)
-
-            schemaBuilder.checkSchemaChanges()
-        }, 500)
+        SchemaBuilder.checkSchemaChangesContinuously(projectStore.project)
     }
 
     const generateCode = async () => {
