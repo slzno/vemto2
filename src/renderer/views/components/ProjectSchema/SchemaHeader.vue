@@ -193,9 +193,9 @@
         },
     }">
         Are you sure you want to synchronize the schema with the source code? 
-        <!-- <UiWarning class="mt-2">
-            All unsaved changes will be lost. This includes models and tables not synced with the application source code.
-        </UiWarning> -->
+        <UiWarning class="mt-2" v-show="projectStore.project.hasSchemaChanges()">
+            <b>You have unsaved changes in the schema that will be lost.</b> This includes tables and models not synced with the application source code.
+        </UiWarning>
     </UiConfirm>
 
     <Transition
