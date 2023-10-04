@@ -11,12 +11,14 @@
     import Table from "@Common/models/Table"
     import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
     import SchemaBuilder from "@Renderer/services/schema/SchemaBuilder"
+import UiLoading from "@Renderer/components/ui/UiLoading.vue"
 
     const projectStore = useProjectStore(),
         showingModal = ref(false),
         confirmSaveDialog = ref(null),
         confirmUndoDialog = ref(null),
-        confirmDeleteDialog = ref(null)
+        confirmDeleteDialog = ref(null),
+        savingMigrations = ref(false)
 
     const tablesSettings = reactive({} as any)
 
@@ -112,6 +114,8 @@
         const confirmed = await confirmSaveDialog.value.confirm()
         if(!confirmed) return
 
+        savingMigrations.value = true
+
         const tables: any[] = Object.values(tablesSettings)
 
         for(const table of tables) {
@@ -127,6 +131,8 @@
         }
 
         await readSchema()
+
+        savingMigrations.value = false
 
         close()
     }
@@ -235,7 +241,12 @@
                 width="1500px"
                 height="calc(100vh - 5rem)"
             >
-                <section class="flex h-full">
+                <section
+                    :class="{
+                        'opacity-30 pointer-events-none': savingMigrations,
+                    }"
+                    class="flex h-full"
+                >
                     <!-- Tables Selector -->
                     <div class="w-1/5 text-slate-400">
                         <div class="flex items-center p-2 bg-slate-950 text-slate-200">
@@ -248,11 +259,11 @@
                                 {{ table.name }}
                             </div>
 
-                            <div title="Delete table">
+                            <button class="cursor-pointer disabled:cursor-not-allowed disabled:opacity-60" title="Delete table">
                                 <TrashIcon
-                                    class="w-4 h-4  cursor-pointer text-slate-400 hover:text-red-500"
+                                    class="w-4 h-4 text-slate-400 hover:text-red-500"
                                     @click.stop.prevent="deleteTable(table)" />
-                            </div>
+                            </button>
                         </div>
 
                         <div class="flex items-center p-2 bg-slate-950 text-slate-200">
@@ -341,7 +352,13 @@
 
                 <template #footer>
                     <div class="flex justify-end p-4">
-                        <UiButton @click="saveMigrations">Save Migrations</UiButton>
+                        <UiButton :disabled="savingMigrations" @click="saveMigrations">
+                            <div class="flex space-x-1" v-if="savingMigrations">
+                                <UiLoading></UiLoading> 
+                                <div>Saving Migrations...</div>
+                            </div>
+                            <div v-else>Save Migrations</div>
+                        </UiButton>
                     </div>
                 </template>
             </UiModal>
