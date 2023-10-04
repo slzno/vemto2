@@ -142,7 +142,7 @@
     }
 
     const show = (): void => {
-        clear()
+        reset()
         showingCreateTableModal.value = true
 
         nextTick(() => {
@@ -154,16 +154,14 @@
         showingCreateTableModal.value = false
     }
 
-    const clear = (): void => {
-        if(!newTable.value) return
-
-        newTable.value.name = ''
-    }
-
-    onMounted(() => {
+    const reset = (): void => {
         newTable.value = new Table({
             projectId: projectStore.project.id,
         })
+    }
+
+    onMounted(() => {
+        reset()
 
         addModelForNewTable.value = true
     })

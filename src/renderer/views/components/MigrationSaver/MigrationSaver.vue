@@ -8,10 +8,9 @@
     import GenerateNewMigration from "@Renderer/codegen/generators/GenerateNewMigration"
     import UpdateExistingMigration from "@Renderer/codegen/generators/UpdateExistingMigration"
     import CalculateSchemaChanges from "@Common/models/services/project/CalculateSchemaChanges"
-    import Main from "@Renderer/services/wrappers/Main"
     import Table from "@Common/models/Table"
     import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
-import SchemaBuilder from "@Renderer/services/schema/SchemaBuilder"
+    import SchemaBuilder from "@Renderer/services/schema/SchemaBuilder"
 
     const projectStore = useProjectStore(),
         showingModal = ref(false),
@@ -34,7 +33,7 @@ import SchemaBuilder from "@Renderer/services/schema/SchemaBuilder"
     })
 
     onUnmounted(() => {
-        showingModal.value = false
+        close()
     })
 
     watch(showingModal, async (willShowModal) => {
@@ -42,12 +41,12 @@ import SchemaBuilder from "@Renderer/services/schema/SchemaBuilder"
         
         await buildTablesSettings()
         await loadFirstTableMigrationContent()
+
+        SchemaBuilder.disableSchemaChangesCheck()
     })
 
     watch(() => projectStore.hasSchemaChanges, async (hasChanges) => {
-        if(!hasChanges) {
-            showingModal.value = false
-        }
+        if(!hasChanges) close()
     })
 
     const selectedTableSettings = computed(() => {
@@ -112,11 +111,6 @@ import SchemaBuilder from "@Renderer/services/schema/SchemaBuilder"
     const saveMigrations = async () => {
         const confirmed = await confirmSaveDialog.value.confirm()
         if(!confirmed) return
-        
-        SchemaBuilder.disableSchemaChangesCheck()
-        projectStore.project.ignoreNextSchemaSourceChanges()
-
-        console.log(projectStore.project.canIgnoreNextSchemaSourceChanges)
 
         const tables: any[] = Object.values(tablesSettings)
 
@@ -134,16 +128,15 @@ import SchemaBuilder from "@Renderer/services/schema/SchemaBuilder"
 
         await readSchema()
 
-        SchemaBuilder.enableSchemaChangesCheck()
-
-        showingModal.value = false
+        close()
     }
 
     const readSchema = async () => {
-        const schemaBuilder = new SchemaBuilder(projectStore.project),
-            readTables = true
+        projectStore.project.ignoreNextSchemaSourceChanges()
 
-        return await schemaBuilder.build(readTables)
+        const schemaBuilder = new SchemaBuilder(projectStore.project)
+
+        await schemaBuilder.buildTables()
     }
 
     const loadFirstTableMigrationContent = async () => {
@@ -187,158 +180,171 @@ import SchemaBuilder from "@Renderer/services/schema/SchemaBuilder"
         await table.delete()
         await buildTablesSettings()
     }
+
+    const close = () => {
+        showingModal.value = false
+
+        SchemaBuilder.enableSchemaChangesCheck()
+    }
 </script>
 
 <template>
-    <div
-        class="absolute bottom-0 left-0 p-4"
-        style="z-index: 60;"
-        v-if="projectStore.project.hasSchemaChanges()"
+    <Transition
+        enter-from-class="transition duration-300 opacity-0"
+        enter-to-class="transition duration-300 opacity-100"
+        leave-from-class="transition duration-300 opacity-100"
+        leave-to-class="transition duration-300 opacity-0"
     >
-        <div class="flex flex-col space-y-2 bg-slate-850 border border-slate-700 rounded-lg">
-            <div class="flex items-center space-x-1 text-sm pt-3 pb-3 px-3 bg-slate-800 rounded-t-lg text-slate-300">
-                <!-- <div class="rounded-full w-3 h-3 bg-red-500 animate-pulse"></div> -->
-                <div>There are tables changes</div>
-            </div>
-            <div class="pt-1 pb-3 px-3">
-                <UiButton
-                    class="flex items-center justify-between"
-                    @click="showingModal = true"
-                >
-                    <ArrowDownTrayIcon class="w-4 h-4 mr-2" />
-                    Save
-                </UiButton>
-            </div>
-        </div>
-
-        <UiConfirm ref="confirmSaveDialog">
-            Are you sure you want to save migrations?
-        </UiConfirm>
-
-        <UiConfirm ref="confirmUndoDialog">
-            Are you sure you want to undo table changes?
-        </UiConfirm>
-
-        <UiConfirm ref="confirmDeleteDialog">
-            Are you sure you want to delete this table?
-        </UiConfirm>
-
-        <UiModal
-            title="Review Migrations"
-            :show="showingModal"
-            @close="showingModal = false"
-            width="1500px"
-            height="calc(100vh - 5rem)"
+        <div
+            class="absolute bottom-0 left-0 p-4"
+            style="z-index: 60;"
+            v-if="projectStore.project.hasSchemaChanges()"
         >
-            <section class="flex h-full">
-                <!-- Tables Selector -->
-                <div class="w-1/5 text-slate-400">
-                    <div class="flex items-center p-2 bg-slate-950 text-slate-200">
-                        <PlusIcon class="w-4 h-4 mr-2" />
-                        Created Tables
-                    </div>
+            <div class="flex flex-col space-y-2 bg-slate-850 border border-slate-700 rounded-lg">
+                <div class="flex items-center space-x-1 text-sm pt-3 pb-3 px-3 bg-slate-800 rounded-t-lg text-slate-300">
+                    <!-- <div class="rounded-full w-3 h-3 bg-red-500 animate-pulse"></div> -->
+                    <div>There are tables changes</div>
+                </div>
+                <div class="pt-1 pb-3 px-3">
+                    <UiButton
+                        class="flex items-center justify-between"
+                        @click="showingModal = true"
+                    >
+                        <ArrowDownTrayIcon class="w-4 h-4 mr-2" />
+                        Save
+                    </UiButton>
+                </div>
+            </div>
 
-                    <div @click.stop="selectTable(table, 'created')" :class="{'text-red-400 bg-slate-800': isSelectedTable(table)}" class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer flex justify-between items-center" v-for="table in createdTables" :key="table.id">
-                        <div>
-                            {{ table.name }}
+            <UiConfirm ref="confirmSaveDialog">
+                Are you sure you want to save migrations?
+            </UiConfirm>
+
+            <UiConfirm ref="confirmUndoDialog">
+                Are you sure you want to undo table changes?
+            </UiConfirm>
+
+            <UiConfirm ref="confirmDeleteDialog">
+                Are you sure you want to delete this table?
+            </UiConfirm>
+
+            <UiModal
+                title="Review Migrations"
+                :show="showingModal"
+                @close="close()"
+                width="1500px"
+                height="calc(100vh - 5rem)"
+            >
+                <section class="flex h-full">
+                    <!-- Tables Selector -->
+                    <div class="w-1/5 text-slate-400">
+                        <div class="flex items-center p-2 bg-slate-950 text-slate-200">
+                            <PlusIcon class="w-4 h-4 mr-2" />
+                            Created Tables
                         </div>
 
-                        <div title="Delete table">
-                            <TrashIcon
-                                class="w-4 h-4  cursor-pointer text-slate-400 hover:text-red-500"
-                                @click.stop.prevent="deleteTable(table)" />
-                        </div>
-                    </div>
-
-                    <div class="flex items-center p-2 bg-slate-950 text-slate-200">
-                        <CircleStackIcon class="w-4 h-4 mr-2" />
-                        Changed Tables
-                    </div>
-
-                    <div @click.stop="selectTable(table, 'updated')" :class="{'text-red-400 bg-slate-800': isSelectedTable(table)}" class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer flex justify-between items-center" v-for="table in changedTables" :key="table.id">
-                        <div>
-                            <div title="Table was renamed" class="flex items-center space-x-1" v-if="table.wasRenamed()">
-                                <span class="text-slate-500">{{ table.schemaState.name }}</span>
-                                <ArrowRightIcon class="w-4 h-4" />
-                                <span>{{ table.name }}</span>
-                            </div>
-                            <div v-else>
+                        <div @click.stop="selectTable(table, 'created')" :class="{'text-red-400 bg-slate-800': isSelectedTable(table)}" class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer flex justify-between items-center" v-for="table in createdTables" :key="table.id">
+                            <div>
                                 {{ table.name }}
                             </div>
+
+                            <div title="Delete table">
+                                <TrashIcon
+                                    class="w-4 h-4  cursor-pointer text-slate-400 hover:text-red-500"
+                                    @click.stop.prevent="deleteTable(table)" />
+                            </div>
                         </div>
 
-                        <div title="Undo table changes">
-                            <ArrowUturnDownIcon
-                                class="w-5 h-5  cursor-pointer text-slate-400 hover:text-red-500"
-                                @click.stop.prevent="undoTableChanges(table)" />
-                        </div>
-                    </div>
-
-                    <div class="flex items-center p-2 bg-slate-950 text-slate-200">
-                        <MinusIcon class="w-4 h-4 mr-2" />
-                        Removed Tables
-                    </div>
-
-                    <div @click.stop="selectTable(table, 'removed')" :class="{'text-red-400 bg-slate-800': isSelectedTable(table)}" class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer flex justify-between items-center" v-for="table in removedTables" :key="table.id">
-                        <div>
-                            {{ table.name }}
+                        <div class="flex items-center p-2 bg-slate-950 text-slate-200">
+                            <CircleStackIcon class="w-4 h-4 mr-2" />
+                            Changed Tables
                         </div>
 
-                        <div title="Undo table changes">
-                            <ArrowUturnDownIcon
-                                class="w-5 h-5  cursor-pointer text-slate-400 hover:text-red-500"
-                                @click.stop.prevent="undoTableChanges(table)" />
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Migrations -->
-                <div class="w-4/5">
-                    <div
-                        v-if="selectedTableSettings"
-                        class="bg-slate-800 w-full h-full overflow-y-scroll"
-                    >
-                        <div class="flex p-4">
-                            <div class="w-56 p-4 space-y-4">
-                                <div v-if="selectedTableSettings.canCreateNewMigration">
-                                    <input
-                                        class="rounded-full bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300 mr-2"
-                                        type="radio"
-                                        value="createMigration"
-                                        v-model="selectedTableSettings.selectedOption"
-                                        @change="loadMigrationContent(selectedTableSettings.instance.name)"
-                                    />
-                                    <label>Create new migration</label>
+                        <div @click.stop="selectTable(table, 'updated')" :class="{'text-red-400 bg-slate-800': isSelectedTable(table)}" class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer flex justify-between items-center" v-for="table in changedTables" :key="table.id">
+                            <div>
+                                <div title="Table was renamed" class="flex items-center space-x-1" v-if="table.wasRenamed()">
+                                    <span class="text-slate-500">{{ table.schemaState.name }}</span>
+                                    <ArrowRightIcon class="w-4 h-4" />
+                                    <span>{{ table.name }}</span>
                                 </div>
-
-                                <div v-if="selectedTableSettings.canUpdateLatestMigration">
-                                    <input
-                                        class="rounded-full bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300 mr-2"
-                                        type="radio"
-                                        value="updateMigration"
-                                        v-model="selectedTableSettings.selectedOption"
-                                        @change="loadMigrationContent(selectedTableSettings.instance.name)"
-                                    />
-                                    <label
-                                        >Update latest migration
-                                    </label>
+                                <div v-else>
+                                    {{ table.name }}
                                 </div>
                             </div>
-    
-                            <div class="p-2 flex-grow space-y-2">
-                                <UiText v-model="selectedTableSettings.migrationName" :disabled="selectedTableSettings.selectedOption === 'updateMigration'" />
-                                <highlightjs class="h-full" language="php" :code="selectedTableSettings.migrationContent" />
+
+                            <div title="Undo table changes">
+                                <ArrowUturnDownIcon
+                                    class="w-5 h-5  cursor-pointer text-slate-400 hover:text-red-500"
+                                    @click.stop.prevent="undoTableChanges(table)" />
+                            </div>
+                        </div>
+
+                        <div class="flex items-center p-2 bg-slate-950 text-slate-200">
+                            <MinusIcon class="w-4 h-4 mr-2" />
+                            Removed Tables
+                        </div>
+
+                        <div @click.stop="selectTable(table, 'removed')" :class="{'text-red-400 bg-slate-800': isSelectedTable(table)}" class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer flex justify-between items-center" v-for="table in removedTables" :key="table.id">
+                            <div>
+                                {{ table.name }}
+                            </div>
+
+                            <div title="Undo table changes">
+                                <ArrowUturnDownIcon
+                                    class="w-5 h-5  cursor-pointer text-slate-400 hover:text-red-500"
+                                    @click.stop.prevent="undoTableChanges(table)" />
                             </div>
                         </div>
                     </div>
-                </div>
-            </section>
 
-            <template #footer>
-                <div class="flex justify-end p-4">
-                    <UiButton @click="saveMigrations">Save Migrations</UiButton>
-                </div>
-            </template>
-        </UiModal>
-    </div>
+                    <!-- Migrations -->
+                    <div class="w-4/5">
+                        <div
+                            v-if="selectedTableSettings"
+                            class="bg-slate-800 w-full h-full overflow-y-scroll"
+                        >
+                            <div class="flex p-4">
+                                <div class="w-56 p-4 space-y-4">
+                                    <div v-if="selectedTableSettings.canCreateNewMigration">
+                                        <input
+                                            class="rounded-full bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300 mr-2"
+                                            type="radio"
+                                            value="createMigration"
+                                            v-model="selectedTableSettings.selectedOption"
+                                            @change="loadMigrationContent(selectedTableSettings.instance.name)"
+                                        />
+                                        <label>Create new migration</label>
+                                    </div>
+
+                                    <div v-if="selectedTableSettings.canUpdateLatestMigration">
+                                        <input
+                                            class="rounded-full bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300 mr-2"
+                                            type="radio"
+                                            value="updateMigration"
+                                            v-model="selectedTableSettings.selectedOption"
+                                            @change="loadMigrationContent(selectedTableSettings.instance.name)"
+                                        />
+                                        <label
+                                            >Update latest migration
+                                        </label>
+                                    </div>
+                                </div>
+        
+                                <div class="p-2 flex-grow space-y-2">
+                                    <UiText v-model="selectedTableSettings.migrationName" :disabled="selectedTableSettings.selectedOption === 'updateMigration'" />
+                                    <highlightjs class="h-full" language="php" :code="selectedTableSettings.migrationContent" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <template #footer>
+                    <div class="flex justify-end p-4">
+                        <UiButton @click="saveMigrations">Save Migrations</UiButton>
+                    </div>
+                </template>
+            </UiModal>
+        </div>
+    </Transition>
 </template>

@@ -1,15 +1,16 @@
 import md5 from "crypto-js/md5"
-import Project from "@Common/models/Project";
-import Main from "@Renderer/services/wrappers/Main";
-import TablesBuilder from "./TablesBuilder";
-import ModelsBuilder from "./ModelsBuilder";
+import Project from "@Common/models/Project"
+import Main from "@Renderer/services/wrappers/Main"
+import TablesBuilder from "./TablesBuilder"
+import ModelsBuilder from "./ModelsBuilder"
 
 export default class SchemaBuilder {
-
     project: Project
     schemaData: any
     schemaDataHash: string
 
+    static checkerInterval: any
+    static processing: boolean = false
     static canCheckSchemaChanges: boolean = true
 
     constructor(project: Project) {
@@ -23,36 +24,50 @@ export default class SchemaBuilder {
     async build(tables: boolean = false, models: boolean = false) {
         await this.readData()
 
-        if(tables) await this.buildTables()
-        if(models) await this.buildModels()
-
-        await this.updateProjectSettings()
+        if (tables) await this.buildTables()
+        if (models) await this.buildModels()
 
         return this
     }
 
     async buildTables() {
+        SchemaBuilder.processing = true
+
         if (!this.schemaData) {
-            throw new Error('Schema data is not set to build tables')
+            await this.readData()
         }
 
         const tablesBuilder = new TablesBuilder(this.project)
 
         tablesBuilder.setSchemaData(this.schemaData)
 
-        return await tablesBuilder.build()
-    } 
+        await tablesBuilder.build()
+
+        await this.updateProjectSettings()
+
+        SchemaBuilder.processing = false
+
+        return this
+    }
 
     async buildModels() {
+        SchemaBuilder.processing = true
+
         if (!this.schemaData) {
-            throw new Error('Schema data is not set to build models')
+            await this.readData()
         }
 
         const modelsBuilder = new ModelsBuilder(this.project)
 
         modelsBuilder.setSchemaData(this.schemaData)
 
-        return await modelsBuilder.build()
+        await modelsBuilder.build()
+
+        await this.updateProjectSettings()
+
+        SchemaBuilder.processing = false
+
+        return this
     }
 
     async updateProjectSettings() {
@@ -68,18 +83,35 @@ export default class SchemaBuilder {
 
     static disableSchemaChangesCheck() {
         SchemaBuilder.canCheckSchemaChanges = false
-
-        return this
     }
 
     static enableSchemaChangesCheck() {
         SchemaBuilder.canCheckSchemaChanges = true
+    }
+
+    static checkSchemaChangesContinuously(
+        project: Project,
+        interval: number = 750
+    ) {
+        SchemaBuilder.checkerInterval = setInterval(async () => {
+            project = project.fresh() // Needs to reload because it loses reference
+            await new SchemaBuilder(project).checkSchemaChanges()
+        }, interval)
+
+        return this
+    }
+
+    static stopCheckingSchemaChanges() {
+        if (!SchemaBuilder.checkerInterval) return this
+
+        clearInterval(SchemaBuilder.checkerInterval)
 
         return this
     }
 
     async checkSchemaChanges() {
-        if(!SchemaBuilder.canCheckSchemaChanges) return this
+        if (SchemaBuilder.processing) return
+        if (!SchemaBuilder.canCheckSchemaChanges) return
 
         await this.readData()
 
@@ -90,7 +122,7 @@ export default class SchemaBuilder {
          * We do it because we are going to update the schema by saving code from Vemto and we don't want to
          * show the alert
          */
-        if(this.project.canIgnoreNextSchemaSourceChanges) {
+        if (this.project.canIgnoreNextSchemaSourceChanges) {
             this.project.canIgnoreNextSchemaSourceChanges = false
             this.project.lastReadSchemaDataHash = this.schemaDataHash
 
@@ -99,10 +131,10 @@ export default class SchemaBuilder {
             return this
         }
 
-        if(this.project.lastReadSchemaDataHash !== this.schemaDataHash) {
+        if (this.project.lastReadSchemaDataHash !== this.schemaDataHash) {
             this.project.lastReadSchemaDataHash = this.schemaDataHash
-            
-            if(this.project.schemaDataHash !== this.schemaDataHash) {
+
+            if (this.project.schemaDataHash !== this.schemaDataHash) {
                 this.project.canShowSchemaSourceChangesAlert = true
             }
 
@@ -111,5 +143,4 @@ export default class SchemaBuilder {
 
         return this
     }
-
 }
