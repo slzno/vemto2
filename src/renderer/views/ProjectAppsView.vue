@@ -120,13 +120,13 @@ import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
         </div>
 
         <div class="space-y-2 p-4" v-if="selectedTab === 'templates'">
-            <UiEmptyMessage>
+            <UiEmptyMessage development>
                 <span>Under development... COMING SOON!</span>
             </UiEmptyMessage>
         </div>
 
         <div class="space-y-2 p-4" v-if="selectedTab === 'settings'">
-            <UiEmptyMessage>
+            <UiEmptyMessage development>
                 <span>Also under development... COMING SOON!</span>
             </UiEmptyMessage>
         </div>

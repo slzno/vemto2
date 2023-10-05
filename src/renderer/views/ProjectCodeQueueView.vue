@@ -1,15 +1,7 @@
 <script setup lang="ts">
-    import { sentenceCase } from "change-case"
-    import Main from "@Renderer/services/wrappers/Main"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
-    import RenderableFile, {
-        RenderableFileStatus,
-    } from "@Common/models/RenderableFile"
-    import Alert from "@Renderer/components/utils/Alert"
-    import SolveConflicts from "./components/CodeQueue/SolveConflicts.vue"
+    import RenderableFile from "@Common/models/RenderableFile"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
-    import { TrashIcon } from "@heroicons/vue/24/outline"
-    import TemplateErrorViewer from "./components/Common/TemplateErrorViewer.vue"
     import { computed, ref, onMounted } from "vue"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"

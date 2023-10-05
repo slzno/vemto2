@@ -1,9 +1,14 @@
 <script setup lang="ts">
     import {
-        BookmarkSlashIcon,
-        CubeTransparentIcon,
-        ExclamationTriangleIcon,
+        CubeTransparentIcon, TruckIcon,
     } from "@heroicons/vue/24/outline"
+
+    const props = defineProps({
+        development: {
+            type: Boolean,
+            default: false,
+        },
+    })
 
     const quotes = [
         "Programming today is a race between software engineers striving to build bigger and better idiot-proof programs, and the universe trying to build bigger and better idiots. So far, the universe is winning. - Rick Cook",
@@ -83,7 +88,12 @@
     >
         <div class="flex flex-col items-center space-y-10">
             <div>
+                <TruckIcon
+                    v-if="development"
+                    class="w-36 h-36 text-slate-800 stroke-1"
+                />
                 <CubeTransparentIcon
+                    v-else
                     class="w-36 h-36 text-slate-800 stroke-1"
                 />
             </div>
@@ -95,7 +105,7 @@
 
                 <!-- Show a random quote -->
                 <span
-                    class="text-base max-w-xl text-center text-slate-400 font-mono mt-5 border-dotted"
+                    class="text-base max-w-xl text-center text-slate-500 font-mono mt-5 border-dotted font-normal"
                 >
                     {{ getRandomQuote() }}
                 </span>

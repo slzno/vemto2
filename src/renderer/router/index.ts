@@ -7,6 +7,7 @@ import ProjectCodeQueueView from "../views/ProjectCodeQueueView.vue"
 import ProjectAppsView from "../views/ProjectAppsView.vue"
 import ProjectCrudView from "../views/ProjectCrudView.vue"
 import ProjectPageView from "../views/ProjectPageView.vue"
+import ProjectBotView from "../views/ProjectBotView.vue"
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -50,6 +51,12 @@ const router = createRouter({
                     path: "code-queue",
                     name: "project-code-queue",
                     component: ProjectCodeQueueView,
+                },
+
+                {
+                    path: "bot",
+                    name: "project-bot",
+                    component: ProjectBotView,
                 },
             ],
         },
