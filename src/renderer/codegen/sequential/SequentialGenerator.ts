@@ -13,6 +13,7 @@ export default class SequentialGenerator {
     async run(project: Project) {
         SequentialGenerator.startTimer()
 
+        project.setFilesQueueStatusProcessing()
         project.clearCurrentRenderedFilesPaths()
 
         await new GenerateUiComponentsFiles().start()
@@ -25,6 +26,12 @@ export default class SequentialGenerator {
         await new GeneratePageFiles().start()
 
         project.processRemovableFiles()
+
+        while(project.fresh().processingFilesQueue()) {
+            console.log("Waiting for files to be processed...", project.filesQueueStatus)
+            await new Promise(resolve => setTimeout(resolve, 500))
+            // await setTimeout(100)
+        }
 
         SequentialGenerator.stopTimer()
     }

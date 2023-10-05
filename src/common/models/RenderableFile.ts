@@ -58,6 +58,10 @@ export default class RenderableFile extends RelaDB.Model {
         }
     }
 
+    isPending(): boolean {
+        return this.status === RenderableFileStatus.PENDING
+    }
+
     isRemovable(): boolean {
         return !this.notRemovable
     }

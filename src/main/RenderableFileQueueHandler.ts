@@ -2,7 +2,7 @@ import path from "path"
 import { v4 as uuid } from "uuid"
 import { app, BrowserWindow } from "electron"
 import FileSystem from "./base/FileSystem"
-import Project from "../common/models/Project"
+import Project, { ProjectFilesQueueStatus } from "../common/models/Project"
 import PhpFormatter from "@Renderer/codegen/formatters/PhpFormatter"
 import RenderableFile, { RenderableFileStatus, RenderableFileType } from "../common/models/RenderableFile"
 import CommandExecutor from "./base/CommandExecutor"
@@ -19,40 +19,46 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
 
         if(project === null) return
 
-        generateFiles()
-        removeFiles()
+        generateOrRemoveFiles()
     }, 1000)
 
-    const removeFiles = async () => {
+    const generateOrRemoveFiles = async () => {
         if (project.renderableFiles.length === 0) return
 
-        const removableFiles = project.renderableFiles.filter(file => file.canBeRemoved())
-
-        if (removableFiles.length === 0) return
-
-        removableFiles.forEach(file => {
-            const filePath = path.join(project.getPath(), file.getRelativeFilePath())
-
-            FileSystem.deleteFile(filePath)
-
-            setFileStatus(file, RenderableFileStatus.REMOVED)
-        })
-    }
-
-    const generateFiles = async () => {
-        if (project.renderableFiles.length === 0) return
-
-        const pendingFiles = project.renderableFiles.filter(file => file.status === RenderableFileStatus.PENDING)
+        const pendingFiles = project.getAllPendingRenderableFiles()
 
         if (pendingFiles.length === 0) return
 
+        console.log("Processing files...")
+
         generating = true
 
-        pendingFiles.forEach(file => {
-            processFile(file)
-        })
+        for (let i = 0; i < pendingFiles.length; i++) {
+            const file = pendingFiles[i]
+
+            if(file.canBeRemoved()) {
+                await removeFile(file)
+                continue
+            }
+
+            await processFile(file)
+        }
 
         generating = false
+
+        console.log("Finished processing files")
+
+        updateModelData("Project", project.id, {
+            filesQueueStatus: ProjectFilesQueueStatus.IDLE
+        })
+    }
+
+    const removeFile = async (file: RenderableFile) => {
+        const filePath = path.join(project.getPath(), file.getRelativeFilePath())
+
+        FileSystem.deleteFile(filePath)
+
+        setFileStatus(file, RenderableFileStatus.REMOVED)
     }
 
     const processFile = async (file: RenderableFile) => {
@@ -142,13 +148,17 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
     }
 
     const setFileStatus = (file: RenderableFile, status: RenderableFileStatus, customData: any = {}) => {
+        updateModelData("RenderableFile", file.id, {
+            status: status,
+            ...customData
+        })
+    }
+
+    const updateModelData = (model: string, id: string, data: any) => {
         mainWindow.webContents.send("model:data:updated", {
-            model: "RenderableFile",
-            id: file.id,
-            data: {
-                status: status,
-                ...customData
-            }
+            model: model,
+            id: id,
+            data: data
         })
     }
 }

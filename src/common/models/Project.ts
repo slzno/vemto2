@@ -25,6 +25,16 @@ interface ProjectCodeGenerationSettings {
     views: boolean,
 }
 
+interface ScheduledSchemaCheck {
+    tables: boolean
+    models: boolean
+}
+
+export enum ProjectFilesQueueStatus {
+    IDLE = "idle",
+    PROCESSING = "processing",
+}
+
 export default class Project extends RelaDB.Model {
     id: string
     path: string
@@ -44,6 +54,7 @@ export default class Project extends RelaDB.Model {
     hasSchemaSourceChanges: boolean
     canIgnoreNextSchemaSourceChanges: boolean
     canShowSchemaSourceChangesAlert: boolean
+    scheduledSchemaSync: ScheduledSchemaCheck
     renderableFiles: RenderableFile[]
     currentRenderedFilesPaths: string[]
     vthemeKeys: any
@@ -52,6 +63,7 @@ export default class Project extends RelaDB.Model {
     scrollX: number
     scrollY: number
     codeGenerationSettings: ProjectCodeGenerationSettings
+    filesQueueStatus: ProjectFilesQueueStatus
 
     lastForeignAlias: number = 0;
 
@@ -199,6 +211,34 @@ export default class Project extends RelaDB.Model {
         return models
     }
 
+    scheduleSchemaTablesSync() {
+        this.scheduleSchemaSync(true, false)
+    }
+
+    scheduleSchemaModelsSync() {
+        this.scheduleSchemaSync(false, true)
+    }
+
+    scheduleSchemaSync(tables: boolean = false, models: boolean = false) {
+        this.scheduledSchemaSync = {
+            tables,
+            models,
+        }
+
+        this.save()
+    }
+
+    hasScheduledSchemaSync(): boolean {
+        if (!this.scheduledSchemaSync) return false
+
+        return this.scheduledSchemaSync.tables || this.scheduledSchemaSync.models
+    }
+    
+    resetScheduledSchemaSync() {
+        this.scheduledSchemaSync = null
+        this.save()
+    }
+
     ignoreNextSchemaSourceChanges() {
         this.canIgnoreNextSchemaSourceChanges = true
         this.save()
@@ -249,6 +289,12 @@ export default class Project extends RelaDB.Model {
     getApplicationsBySection(section: AppSection): any[] {
         return this.getApplications().filter(
             (application) => application.sectionId === section.id
+        )
+    }
+
+    getAllPendingRenderableFiles(): RenderableFile[] {
+        return this.renderableFiles.filter(
+            (renderableFile) => renderableFile.isPending() || renderableFile.canBeRemoved()
         )
     }
 
@@ -361,8 +407,8 @@ export default class Project extends RelaDB.Model {
     processRemovableFiles() {
         const removableFiles = this.getRemovableFiles()
 
-        removableFiles.forEach((path) => {
-            path.markToRemove()
+        removableFiles.forEach((file) => {
+            file.markToRemove()
         })
     }
 
@@ -467,5 +513,24 @@ export default class Project extends RelaDB.Model {
 
     undoAllModelsChanges() {
         this.models.forEach((model) => model.undoAllChanges())
+    }
+
+    processingFilesQueue(): boolean {
+        return this.filesQueueStatus === ProjectFilesQueueStatus.PROCESSING
+    }
+
+    setFilesQueueStatusProcessing() {
+        this.filesQueueStatus = ProjectFilesQueueStatus.PROCESSING
+        this.save()
+    }
+
+    setFilesQueueStatusIdle() {
+        this.filesQueueStatus = ProjectFilesQueueStatus.IDLE
+        this.save()
+    }
+
+    setFilesQueueStatus(status: ProjectFilesQueueStatus) {
+        this.filesQueueStatus = status
+        this.save()
     }
 }
