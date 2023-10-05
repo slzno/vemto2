@@ -93,7 +93,7 @@
         appStore.startGeneratingCode()
 
         try {
-            await new SequentialGenerator().run(projectStore.project)
+            await new SequentialGenerator(projectStore.project).run()
 
             setTimeout(() => {
                 appStore.finishGeneratingCode()

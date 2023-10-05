@@ -5,16 +5,25 @@ import GenerateCrudFiles from "./services/crud/GenerateCrudFiles"
 import GenerateModelFiles from "./services/model/GenerateModelFiles"
 import GeneratePageFiles from "./services/page/GeneratePageFiles"
 import GenerateUiComponentsFiles from "./services/blade/ui/GenerateUiComponentsFiles"
+import SchemaBuilder from "@Renderer/services/schema/SchemaBuilder"
 
 export default class SequentialGenerator {
     static startTime: number = 0
     static elapsedTime: number = 0
 
-    async run(project: Project) {
+    project: Project
+
+    constructor(project: Project) {
+        this.project = project
+    }
+
+    async run() {
         SequentialGenerator.startTimer()
 
-        project.setFilesQueueStatusProcessing()
-        project.clearCurrentRenderedFilesPaths()
+        SchemaBuilder.disableSchemaChangesCheck()
+
+        this.project.setFilesQueueStatusProcessing()
+        this.project.clearCurrentRenderedFilesPaths()
 
         await new GenerateUiComponentsFiles().start()
 
@@ -25,15 +34,29 @@ export default class SequentialGenerator {
         await new GenerateCrudFiles().start()
         await new GeneratePageFiles().start()
 
-        project.processRemovableFiles()
+        this.project.processRemovableFiles()
 
-        while(project.fresh().processingFilesQueue()) {
-            console.log("Waiting for files to be processed...", project.filesQueueStatus)
-            await new Promise(resolve => setTimeout(resolve, 500))
-            // await setTimeout(100)
-        }
+        await this.waitForProcessingFilesQueue()
+
+        await this.readSchema()
+
+        SchemaBuilder.enableSchemaChangesCheck()
 
         SequentialGenerator.stopTimer()
+    }
+
+    async waitForProcessingFilesQueue() {
+        while(this.project.fresh().processingFilesQueue()) {
+            await new Promise(resolve => setTimeout(resolve, 500))
+        }
+    }
+
+    async readSchema() {
+        this.project.ignoreNextSchemaSourceChanges()
+
+        const schemaBuilder = new SchemaBuilder(this.project)
+
+        await schemaBuilder.buildModels()
     }
 
     static startTimer(): void {
