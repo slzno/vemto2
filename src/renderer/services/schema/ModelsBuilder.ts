@@ -161,6 +161,7 @@ export default class ModelsBuilder {
                 const inverseRelationship = relatedModelInstance.findRelationship(inverseRelType, model.class)
     
                 if(!(inverseRelationship instanceof Relationship)) return
+                if(inverseRelationship.hasInverse()) return
     
                 relationship.inverseId = inverseRelationship.id
                 relationship.save()
