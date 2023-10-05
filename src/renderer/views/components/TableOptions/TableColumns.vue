@@ -76,7 +76,7 @@
     >
         <div class="flex items-center">
             <PlusCircleIcon class="w-8 h-8" />
-            <span class="px-1.5">Add column</span>
+            <span class="px-1.5">Add Column</span>
         </div>
     </section>
 </template>

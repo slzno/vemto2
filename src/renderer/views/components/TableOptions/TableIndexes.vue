@@ -108,116 +108,118 @@
 </script>
 <template>
     <div>
-        <div
-            v-for="index in tableIndexes"
-            :key="index.id"
-            @keyup.escape="onEscapePressed(index)"
-            class="relative flex-col bg-slate-800 border-l-4 border-slate-700 p-2 rounded-xl shadow mb-4"
-            :class="{
-                'border-red-400': index.isForeign(),
-                'border-orange-400': index.isUnique(),
-                'border-blue-400': index.isCommon(),
-            }"
-        >
-            <div class="mt-4" v-if="onDevelopment">
-                <UiButton @click="log(index)">Log details</UiButton>
-                <UiButton @click="index.logDataComparison()">Log data comparison</UiButton>
-            </div>
-            <div class="flex gap-2 mb-2">
-                <div class="w-[10rem]">
-                    <UiDropdownSelect
-                        label="Type"
-                        v-model="index.type"
-                        :options="IndexTypes.getForDropdown()"
-                        placeholder="Index Type"
-                        @change="saveIndex(index)"
-                        :may-open="!index.type && !index.name"
-                    />
+        <div>
+            <div
+                v-for="index in tableIndexes"
+                :key="index.id"
+                @keyup.escape="onEscapePressed(index)"
+                class="relative flex-col bg-slate-800 border-l-4 border-slate-700 p-2 rounded-xl shadow mb-4"
+                :class="{
+                    'border-red-400': index.isForeign(),
+                    'border-orange-400': index.isUnique(),
+                    'border-blue-400': index.isCommon(),
+                }"
+            >
+                <div class="mt-4" v-if="onDevelopment">
+                    <UiButton @click="log(index)">Log details</UiButton>
+                    <UiButton @click="index.logDataComparison()">Log data comparison</UiButton>
                 </div>
+                <div class="flex gap-2 mb-2">
+                    <div class="w-[10rem]">
+                        <UiDropdownSelect
+                            label="Type"
+                            v-model="index.type"
+                            :options="IndexTypes.getForDropdown()"
+                            placeholder="Index Type"
+                            @change="saveIndex(index)"
+                            :may-open="!index.type && !index.name"
+                        />
+                    </div>
+        
+                    <div class="flex-1">
+                        <UiText 
+                            label="Name"
+                            placeholder="Index name" 
+                            v-model="index.name" 
+                            :disabled="true" 
+                        />
+                    </div>
     
-                <div class="flex-1">
-                    <UiText 
-                        label="Name"
-                        placeholder="Index name" 
-                        v-model="index.name" 
-                        :disabled="true" 
+                    <div class="p-1 relative">
+                        <EllipsisVerticalIcon class="h-6 w-6 text-slate-400 cursor-pointer" @click="showIndexOption = showIndexOption == index.id ? null : index.id" />
+                        <div class="bg-slate-950 w-auto rounded absolute z-[20] p-1 right-0 top-8 border border-gray-700" v-if="showIndexOption == index.id">
+                            <ul>
+                                <li class="flex items-center justify-start text-md p-1 cursor-pointer" @click="onIndexRemoving(index)">
+                                    <TrashIcon class="h-5 w-5 mr-1 text-red-400" />
+                                    Delete
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="flex gap-2 mb-2" v-if="index.isForeign()">
+                    <div class="flex-1">
+                        <UiDropdownSelect
+                            label="References Column"
+                            v-model="index.referencesColumnId"
+                            :options="getReferredTableColumns(index)"
+                            placeholder="References Column"
+                            :may-open="index.isForeign() && !index.name && index.onTableId"
+                            @change="saveIndex(index)"
+                        />
+                    </div>
+        
+                    <div class="flex-1">
+                        <UiDropdownSelect
+                            label="On Table"
+                            v-model="index.onTableId"
+                            :options="getForSelect(table.project.getTables())"
+                            placeholder="On Table"
+                            :may-open="index.isForeign() && !index.name && !index.onTableId"
+                            @change="saveIndex(index)"
+                        />
+                    </div>
+                </div>
+        
+                <div class="mb-2">
+                    <UiMultiSelect
+                        inputLabel="Columns"
+                        :default-value="getSelectDataForLayout(index.indexColumns)"
+                        :options="getSelectDataForLayout(index.table.getColumns())"
+                        @change="$event => saveIndexColumns(index, $event)"
                     />
                 </div>
-
-                <div class="p-1 relative">
-                    <EllipsisVerticalIcon class="h-6 w-6 text-slate-400 cursor-pointer" @click="showIndexOption = showIndexOption == index.id ? null : index.id" />
-                    <div class="bg-slate-950 w-auto rounded absolute z-[20] p-1 right-0 top-8 border border-gray-700" v-if="showIndexOption == index.id">
-                        <ul>
-                            <li class="flex items-center justify-start text-md p-1 cursor-pointer" @click="onIndexRemoving(index)">
-                                <TrashIcon class="h-5 w-5 mr-1 text-red-400" />
-                                Delete
-                            </li>
-                        </ul>
+        
+                <div v-if="index.isForeign()">
+                    <div class="mb-2">
+                        <UiText
+                            placeholder="On Update"
+                            label="On Update"
+                            v-model="index.onUpdate"
+                            @input="saveIndex(index)"
+                        />
+                    </div>
+                    <div class="mb-2">
+                        <UiText
+                            placeholder="On Delete"
+                            label="On Delete"
+                            v-model="index.onDelete"
+                            @input="saveIndex(index)"
+                        />
                     </div>
                 </div>
             </div>
-    
-            <div class="flex gap-2 mb-2" v-if="index.isForeign()">
-                <div class="flex-1">
-                    <UiDropdownSelect
-                        label="References Column"
-                        v-model="index.referencesColumnId"
-                        :options="getReferredTableColumns(index)"
-                        placeholder="References Column"
-                        :may-open="index.isForeign() && !index.name && index.onTableId"
-                        @change="saveIndex(index)"
-                    />
-                </div>
-    
-                <div class="flex-1">
-                    <UiDropdownSelect
-                        label="On Table"
-                        v-model="index.onTableId"
-                        :options="getForSelect(table.project.getTables())"
-                        placeholder="On Table"
-                        :may-open="index.isForeign() && !index.name && !index.onTableId"
-                        @change="saveIndex(index)"
-                    />
-                </div>
-            </div>
-    
-            <div class="mb-2">
-                <UiMultiSelect
-                    inputLabel="Columns"
-                    :default-value="getSelectDataForLayout(index.indexColumns)"
-                    :options="getSelectDataForLayout(index.table.getColumns())"
-                    @change="$event => saveIndexColumns(index, $event)"
-                />
-            </div>
-    
-            <div v-if="index.isForeign()">
-                <div class="mb-2">
-                    <UiText
-                        placeholder="On Update"
-                        label="On Update"
-                        v-model="index.onUpdate"
-                        @input="saveIndex(index)"
-                    />
-                </div>
-                <div class="mb-2">
-                    <UiText
-                        placeholder="On Delete"
-                        label="On Delete"
-                        v-model="index.onDelete"
-                        @input="saveIndex(index)"
-                    />
-                </div>
-            </div>
         </div>
+    
+        <section
+            class="mt-4 flex w-full justify-center text-slate-400 hover:text-red-500 cursor-pointer text-lg"
+            @click="addIndex"
+        >
+            <div class="flex items-center">
+                <PlusCircleIcon class="w-8 h-8" />
+                <span class="px-1.5">Add Index</span>
+            </div>
+        </section>
     </div>
-
-    <section
-        class="flex w-full justify-center text-slate-400 hover:text-red-500 cursor-pointer text-lg"
-        @click="addIndex"
-    >
-        <div class="flex items-center">
-            <PlusCircleIcon class="w-8 h-8" />
-            <span class="px-1.5">Add index</span>
-        </div>
-    </section>
 </template>

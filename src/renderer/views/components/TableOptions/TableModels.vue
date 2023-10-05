@@ -60,7 +60,7 @@
         >
             <div class="flex items-center" @click="addModel()">
                 <PlusCircleIcon class="w-8 h-8" />
-                <span class="px-1.5">Add model</span>
+                <span class="px-1.5">Add Model</span>
             </div>
         </section>
     </div>
