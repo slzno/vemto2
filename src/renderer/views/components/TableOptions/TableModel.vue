@@ -31,7 +31,7 @@ import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     let models: Ref<Array<Model>> = ref([])
 
     const tabs = [
-        { label: "Model", value: "data" },
+        { label: "Data", value: "data" },
         { label: "Relationships", value: "relationships" },
         { label: "Code", value: "code" },
         { label: "Settings", value: "settings" },

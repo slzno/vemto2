@@ -126,7 +126,11 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
 
         this.createdFromInterface = creating
 
+        console.log('saving relationship ' + this.name + ' from interface')
+
         this.save()
+
+        console.log('saved relationship ' + this.name + ' from interface')
 
         return this
     }
@@ -150,6 +154,7 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
     }
 
     updateInverse(): void {
+        console.log('will update inverse')
         let inverse = this.inverse
 
         if(!inverse) return
@@ -203,7 +208,13 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
         return this.hasType() && this.hasRelatedModel()
     }
 
+    canCalculateDefaultData(): boolean {
+        return this.isNew() && this.hasTypeAndRelatedModel()
+    }
+
     calculateDefaultData(): void {
+        if(!this.canCalculateDefaultData()) return
+
         if(this.isCommon()) {
             CalculateCommonRelationshipsData.setRelationship(this)
                 .calculateDefaultData()

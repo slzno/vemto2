@@ -50,7 +50,7 @@
                         <div class="flex justify-between bg-slate-800 p-4 rounded-t-lg">
                             <div class="flex flex-col">
                                 <span class="font-semibold">Table Options</span>
-                                <div class="text-red-400">{{ schemaStore.selectedTable.name }}</div>
+                                <div class="text-red-400 font-thin text-lg">{{ schemaStore.selectedTable.name }}</div>
                             </div>
                         </div>
         

@@ -1,10 +1,9 @@
 <script setup lang="ts">
     import { defineProps, toRef, onMounted, ref, onBeforeUnmount } from 'vue'
-    import Main from "@Renderer/services/wrappers/Main"
     import Relationship from "@Renderer/../common/models/Relationship"
     import UiButton from '@Renderer/components/ui/UiButton.vue'
     import UiText from '@Renderer/components/ui/UiText.vue'
-    import { PlusIcon, EllipsisVerticalIcon, TrashIcon, ArrowsRightLeftIcon } from "@heroicons/vue/24/outline"
+    import { PlusIcon, EllipsisVerticalIcon, TrashIcon, PlusCircleIcon } from "@heroicons/vue/24/outline"
     import UiDropdownSelect from '@Renderer/components/ui/UiDropdownSelect.vue'
     import CommonRelationship from './TableRelationships/CommonRelationship.vue'
     import ManyToManyRelationship from './TableRelationships/ManyToManyRelationship.vue'
@@ -20,18 +19,13 @@
         relationships = ref([]),
         confirmDeleteDialog = ref(null)
 
-    const getForSelect = (
-            collection: any,
-            keyName: string = 'id',
-            labelName: string = 'name'
-        ) => {
-        return collection.map((model: any) => {
-            return {
-                key: model[keyName],
-                label: model[labelName]
-            }
-        })
-    }
+    onMounted(() => {
+        relationships.value = model.value.ownRelationships
+    })
+
+    onBeforeUnmount(() => {
+        checkRelationshipValidity()
+    })
 
     const getRelatedModelRelationshipsForSelect = (relationship: Relationship) => {
         if(!relationship.relatedModelId) return []
@@ -48,16 +42,13 @@
         relationships.value.push(relationship)
     }
 
-    const finishRelationshipCreation = (relationship: Relationship): void => {
-        relationship.processAndSave(true)
-    }
-
     const saveRelationship = (relationship: Relationship) => {
-        if(relationship.hasType() && relationship.hasRelatedModel()) {
-            relationship.calculateDefaultData()
+        if(relationship.id) {
+            relationship.saveFromInterface()
+            return
         }
 
-        relationship.saveFromInterface()
+        relationship.processAndSave(true)
     }
 
     const toggleRelationshipOptions = (relationship: Relationship): void => {
@@ -115,13 +106,18 @@
         }
     }
 
-    onMounted(() => {
-        relationships.value = model.value.ownRelationships
-    })
-
-    onBeforeUnmount(() => {
-        checkRelationshipValidity()
-    })
+    const getForSelect = (
+            collection: any,
+            keyName: string = 'id',
+            labelName: string = 'name'
+        ) => {
+        return collection.map((model: any) => {
+            return {
+                key: model[keyName],
+                label: model[labelName]
+            }
+        })
+    }
 </script>
 <template>
     <div>
@@ -142,7 +138,11 @@
                 @keyup.escape="onEscapePressed(relationship)"
             >
             
-            <header class="flex justify-end">
+            <header class="flex justify-between mb-4">
+                <div class="text-red-400 font-thin">
+                    {{ relationship.model?.name }}.{{ relationship.name }}
+                </div>
+
                 <span class="relative mt-1">
                     <EllipsisVerticalIcon
                         class="h-6 w-6 text-slate-400 cursor-pointer"
@@ -173,7 +173,7 @@
                                     :may-open="relationship.isNew() && !relationship.hasType()"
                                     placeholder="Relationship Type"
                                     :options="RelationshipTypes.getForDropdown()"
-                                    @change="saveRelationship(relationship)"
+                                    @change="relationship.calculateDefaultData()"
                                 />
                             </div>
 
@@ -185,7 +185,7 @@
                                         :may-open="relationship.isNew() && !relationship.hasRelatedModel() && relationship.hasType()"
                                         placeholder="Relationship Model"
                                         :options="getForSelect(models)"
-                                        @change="saveRelationship(relationship)"
+                                        @change="relationship.calculateDefaultData()"
                                     />
                                 </template>
                                 <template v-else>
@@ -193,7 +193,6 @@
                                         label="Name"
                                         placeholder="Relationship Name"
                                         v-model="relationship.name"
-                                        @input="saveRelationship(relationship)"
                                     />
                                 </template>
                             </div>
@@ -204,7 +203,6 @@
                         <CommonRelationship
                             :relationship="relationship"
                             :get-for-select="getForSelect"
-                            @save="saveRelationship(relationship)"
                         />
                     </template>
 
@@ -212,14 +210,12 @@
                         <ManyToManyRelationship
                             :relationship="relationship"
                             :get-for-select="getForSelect"
-                            @save="saveRelationship(relationship)"
                         />
                     </template>
 
                     <template v-if="relationship.isMorph()">
                         <MorphRelationship
                             :relationship="relationship"
-                            @save="saveRelationship(relationship)"
                         />
                     </template>
 
@@ -228,7 +224,6 @@
                             :models="models"
                             :relationship="relationship"
                             :get-for-select="getForSelect"
-                            @save="saveRelationship(relationship)"
                         />
                     </template>
                 </div>
@@ -239,14 +234,16 @@
                         v-model="relationship.inverseId"
                         placeholder="Inverse Relationship (optional)"
                         :options="getRelatedModelRelationshipsForSelect(relationship)"
-                        @change="saveRelationship(relationship)"
                     />
                 </template>
                 
-                <div class="flex justify-end">
+                <div class="flex justify-end items-center space-x-2">
+                    <small class="text-slate-500" v-show="relationship.hasUnsavedData()">
+                        There are unsaved changes
+                    </small>
                     <UiButton
                         v-if="relationship.hasTypeAndRelatedModel()"
-                        @click="finishRelationshipCreation(relationship)"
+                        @click="saveRelationship(relationship)"
                     >
                         Save
                     </UiButton>
@@ -259,7 +256,7 @@
                 @click="newRelationship()"
             >
                 <span class="flex items-center">
-                    <PlusIcon class="h-4 w-4 mr-1" /> Add Relationship
+                    <PlusCircleIcon class="h-5 w-5 mr-1" /> Add Relationship
                 </span>
             </UiButton>
         </div>
