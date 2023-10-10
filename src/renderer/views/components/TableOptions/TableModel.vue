@@ -11,6 +11,7 @@
     import { uniq } from 'lodash'
     import UiWarning from "@Renderer/components/ui/UiWarning.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
+import UiTabs from "@Renderer/components/ui/UiTabs.vue"
 
     const onDevelopment = Main.API.onDevelopment()
 
@@ -24,9 +25,17 @@
     const model = toRef(props, "model") as Ref<Model>,
         showModelOptions = ref(false),
         emit = defineEmits(['removeModel']),
-        modelPluralReference = ref(null)
+        modelPluralReference = ref(null),
+        selectedTab = ref("data")
     
     let models: Ref<Array<Model>> = ref([])
+
+    const tabs = [
+        { label: "Model", value: "data" },
+        { label: "Relationships", value: "relationships" },
+        { label: "Code", value: "code" },
+        { label: "Settings", value: "settings" },
+    ]
 
     onMounted((): void => {
         const project = model.value.project
@@ -98,7 +107,14 @@
     <div
         class="relative flex-col bg-slate-800 border-l-4 border-slate-700 p-2 rounded-xl shadow"
     >
-        <div>
+        <div class="mb-2">
+            <UiTabs :tabs="tabs" 
+                v-model="selectedTab" 
+                selected-class="bg-slate-800"  
+            />
+        </div>
+
+        <div v-show="selectedTab === 'data'">
             <UiWarning class="mb-2" v-if="model.isNew()">
                 <span>This model was not saved to the filesystem yet. Please generate the code pressing F5 to save it</span>
             </UiWarning>
@@ -185,15 +201,17 @@
                     />
                 </div>
             </div>
-            
-            <TableModelRelationships
-                :model="model"
-                :models="models"
-            />
 
             <div class="mt-4" v-if="onDevelopment">
                 <UiButton @click="log(model)">Log details</UiButton>
             </div>
+        </div>
+
+        <div v-show="selectedTab === 'relationships'">
+            <TableModelRelationships
+                :model="model"
+                :models="models"
+            />
         </div>
     </div>
 </template>

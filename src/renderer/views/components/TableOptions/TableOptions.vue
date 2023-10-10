@@ -61,7 +61,11 @@
                             <XMarkIcon class="w-4 h-4 stroke-2 hover:text-red-500" />
                         </button>
         
-                        <UiTabs :tabs="tabs" v-model="selectedTab" />
+                        <UiTabs :tabs="tabs" 
+                            v-model="selectedTab" 
+                            background-class="bg-slate-800" 
+                            selected-class="bg-slate-850"  
+                        />
                     </div>
     
                     <div class="flex-grow overflow-y-scroll pb-40">

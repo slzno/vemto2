@@ -124,7 +124,7 @@
     })
 </script>
 <template>
-    <div class="mt-8">
+    <div>
         <UiConfirm ref="confirmDeleteDialog" :options="{
             'deleteInverse': {
                 'label': 'Delete inverse relationship',
@@ -133,11 +133,6 @@
         }">
             Are you sure you want to delete this relationship?
         </UiConfirm>
-
-        <h2 class="text-slate-200 font-semibold mb-2">
-            <ArrowsRightLeftIcon class="h-5 w-5 mr-1 inline-block text-slate-500" />
-            Relationships
-        </h2>
 
         <div>
             <div

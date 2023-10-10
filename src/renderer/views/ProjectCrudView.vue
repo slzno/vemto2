@@ -39,7 +39,7 @@
         <div v-if="crud">
             <div class="p-2 font-bold">Edit {{ crud.getLabel() }} CRUD</div>
 
-            <UiTabs :tabs="tabs" v-model="selectedTab" :external="true" />
+            <UiTabs :tabs="tabs" v-model="selectedTab" />
 
             <section class="flex w-full h-screen space-x-4 mt-2 px-2" v-if="selectedTab === 'form'">
                 <div class="space-y-2">

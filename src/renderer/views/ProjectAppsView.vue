@@ -51,7 +51,7 @@ import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-hidden"
     >
         <div class="mt-2">
-            <UiTabs :tabs="tabs" v-model="selectedTab" :external="true" />
+            <UiTabs :tabs="tabs" v-model="selectedTab" />
         </div>
 
         <div class="p-4 h-full" v-if="selectedTab === 'applications'">

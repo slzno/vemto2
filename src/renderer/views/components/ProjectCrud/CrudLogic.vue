@@ -34,7 +34,7 @@ import HookEditor from "@Renderer/components/editors/HookEditor.vue"
 
 <template>
     <div class="mt-2">
-        <UiTabs :tabs="tabs" v-model="selectedTab" :external="true" />
+        <UiTabs :tabs="tabs" v-model="selectedTab" />
 
         <div
             v-show="selectedTab === 'createComponent'"
