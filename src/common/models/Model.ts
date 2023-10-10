@@ -366,6 +366,10 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         return this.ownRelationships.filter((relationship) => relationship.isValid())
     }
 
+    getPossibleInverseRelationships(relationship: Relationship): Relationship[] {
+        return this.ownRelationships.filter((rel) => rel.maybeInverseOf(relationship))
+    }
+
     getValidOwnRelationships(): Relationship[] {
         return this.ownRelationships.filter((relationship) => relationship.isValid())
     }

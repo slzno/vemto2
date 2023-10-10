@@ -20,17 +20,28 @@
         confirmDeleteDialog = ref(null)
 
     onMounted(() => {
-        relationships.value = model.value.ownRelationships
+        loadRelationships()
     })
 
     onBeforeUnmount(() => {
         checkRelationshipValidity()
     })
 
+    const loadRelationships = () => {
+        relationships.value = model.value.ownRelationships
+    }
+
     const getRelatedModelRelationshipsForSelect = (relationship: Relationship) => {
         if(!relationship.relatedModelId) return []
 
-        return getForSelect(relationship.relatedModel.getValidOwnRelationships())
+        const possibleRelationships = relationship.relatedModel.getPossibleInverseRelationships(relationship)
+
+        return possibleRelationships.map((rel: Relationship) => {
+            return {
+                key: rel.id,
+                label: rel.getLabel()
+            }
+        })
     }
         
     const newRelationship = (): void => {
@@ -45,10 +56,12 @@
     const saveRelationship = (relationship: Relationship) => {
         if(relationship.id) {
             relationship.saveFromInterface()
+            loadRelationships()
             return
         }
 
         relationship.processAndSave(true)
+        loadRelationships()
     }
 
     const toggleRelationshipOptions = (relationship: Relationship): void => {
@@ -88,6 +101,8 @@
         if(confirmed.deleteInverse && inverseRelationship) {
             inverseRelationship.delete()
         }
+
+        loadRelationships()
     }
 
     const checkRelationshipValidity = (): void => {
