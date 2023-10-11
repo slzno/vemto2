@@ -82,6 +82,7 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
 
     inverseId: string
     inverse: Relationship
+    inverses: Relationship[]
     
     /**
      * Default properties
@@ -94,7 +95,8 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
 
     relationships() {
         return {
-            inverse: () => this.belongsTo(Relationship, 'inverseId').atMostOne(),
+            inverse: () => this.belongsTo(Relationship, 'inverseId'),
+            inverses: () => this.hasMany(Relationship, 'inverseId'),
             
             model: () => this.belongsTo(Model),
             project: () => this.belongsTo(Project),
@@ -119,6 +121,13 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
         }
     }
 
+    static deleting(relationship: Relationship) {
+        relationship.inverses.forEach(inverse => {
+            inverse.inverseId = null
+            inverse.save()
+        })
+    }
+
     getLabel() {
         if(!this.model) return this.name
         
@@ -132,11 +141,7 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
 
         this.createdFromInterface = creating
 
-        console.log('saving relationship ' + this.name + ' from interface')
-
         this.save()
-
-        console.log('saved relationship ' + this.name + ' from interface')
 
         return this
     }
@@ -170,7 +175,6 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
     }
 
     updateInverse(): void {
-        console.log('will update inverse')
         let inverse = this.inverse
 
         if(!inverse) return
