@@ -4,6 +4,7 @@ import Table from "./Table"
 import Model from "./Model"
 import Crud from "./crud/Crud"
 import Page from "./page/Page"
+import Relationship from "./Relationship"
 import RelaDB from "@tiago_silva_pereira/reladb"
 
 import RenderableFile, {
@@ -13,6 +14,8 @@ import RenderableFile, {
 import GenerateBasicProjectData from "./services/project/GenerateBasicProjectData"
 import AppSection from "./AppSection"
 import CalculateSchemaChanges from "./services/project/CalculateSchemaChanges"
+import Column from "./Column"
+import Index from "./Index"
 
 interface ProjectCodeGenerationSettings {
     models: boolean,
@@ -43,8 +46,11 @@ export default class Project extends RelaDB.Model {
     cruds: Crud[]
     pages: Page[]
     tables: Table[]
+    columns: Column[]
+    indexes: Index[]
     models: Model[]
     routes: Route[]
+    ownRelationships: Relationship[]
     appSections: AppSection[]
     laravelVersion: Number
     schemaDataHash: string
@@ -73,9 +79,12 @@ export default class Project extends RelaDB.Model {
             cruds: () => this.hasMany(Crud).cascadeDelete(),
             pages: () => this.hasMany(Page).cascadeDelete(),
             tables: () => this.hasMany(Table).cascadeDelete(),
+            columns: () => this.belongsToMany(Column, Table),
+            indexes: () => this.belongsToMany(Index, Table),
             models: () => this.hasMany(Model).cascadeDelete(),
             routes: () => this.hasMany(Route).cascadeDelete(),
             appSections: () => this.hasMany(AppSection).cascadeDelete(),
+            ownRelationships: () => this.hasMany(Relationship).cascadeDelete(),
             renderableFiles: () => this.hasMany(RenderableFile).cascadeDelete(),
         }
     }
