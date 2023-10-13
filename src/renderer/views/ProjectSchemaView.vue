@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import Table from "@Common/models/Table"
-    import { nextTick, onMounted } from "vue"
+    import { nextTick, onMounted, watch } from "vue"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import SchemaBuilder from "@Renderer/services/schema/SchemaBuilder"
     import SchemaTables from "@Renderer/views/components/ProjectSchema/SchemaTables.vue"
@@ -27,8 +27,12 @@
 
     onMounted(async () => {
         nextTick(() => {
-            initSchema()
+            drawConnections()
         })
+    })
+
+    watch(() => projectStore.project.tables, () => {
+        nextTick(() => drawConnections())
     })
 
     const syncSchema = async (syncTables: boolean, syncModels: boolean) => {
@@ -38,10 +42,9 @@
     const tableAdded = async (table: Table) => {
         nextTick(() => {
             setTimeout(() => {
-                initSchema()
+                drawConnections()
             }, 300)
         })
-        
     }
 
     const loadSchema = async (syncTables: boolean, syncModels: boolean) => {
@@ -52,13 +55,16 @@
 
         schemaBuilder.build(syncTables, syncModels)
 
-        nextTick(() => initSchema())
+        nextTick(() => drawConnections())
     }
 
-    const initSchema = () => {
+    const drawConnections = () => {
         initJsPlumbIfNotExists()
 
-        projectStore.project.tables.forEach((table: any) => {
+        jsPlumbInstance.deleteEveryConnection()
+        currentConnections = {}
+
+        projectStore.project.tables.forEach((table: Table) => {
             if(!table || !table.id) return
 
             if(!currentNodes[table.id]) {
@@ -67,29 +73,37 @@
                 jsPlumbInstance.manage(currentNodes[table.id])
             }
             
-            let node = currentNodes[table.id]
+            const node = currentNodes[table.id],
+                relatedTablesRelations = table.getRelatedTablesRelations()
 
-            if (table.hasRelatedTables()) {
-                let relatedTables = table.getRelatedTables()
-
-                relatedTables.forEach((relatedTable: any) => {
-                    if(!relatedTable || !relatedTable.id) return
+            // connect tables
+            if (relatedTablesRelations.length > 0) {
+                relatedTablesRelations.forEach((relation: any) => {
+                    if(!relation.table || !relation.table.id) return
 
                     let relatedNode = document.getElementById(
-                            "table_" + relatedTable.id
+                            "table_" + relation.table.id
                         ),
-                        connectionName = table.name + "_" + relatedTable.name,
+                        connectionName = table.name + "_" + relation.table.name,
                         connectionNameReverse =
-                            relatedTable.name + "_" + table.name
+                            relation.table.name + "_" + table.name
 
                     if (relatedNode && !currentConnections[connectionName]) {
+                        const cssClass = relation.type === "relationship" ? "connector" : "connector dotted"
+
                         jsPlumbInstance.connect({
                             source: node!,
                             target: relatedNode!,
                             anchor: "Continuous",
                             // anchors: ["Right", "Left"],
-                            cssClass: "connector",
-                            connector: BezierConnector.type,
+                            cssClass: cssClass,
+                            connector: {
+                                type: BezierConnector.type,
+                                options: {
+                                    curviness: 100,
+                                },
+                            },
+                            // paintStyle: { dashstyle: "4 4 4 4" },
                         })
 
                         currentConnections[connectionName] = true
@@ -178,6 +192,10 @@
         stroke: #9ca3af;
         stroke-width: 2;
         z-index: 1;
+    }
+
+    svg.dotted path {
+        stroke-dasharray: 4 4 4 4;
     }
 
     svg.jtk-endpoint circle {
