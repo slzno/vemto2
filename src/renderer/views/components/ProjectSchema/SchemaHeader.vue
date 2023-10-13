@@ -177,6 +177,10 @@
         projectStore.project.canShowSchemaSourceChangesAlert = false
         projectStore.project.save()
     }
+
+    const info = (message: string) => {
+        Alert.info(message)
+    }
 </script>
 
 <template>
@@ -254,6 +258,7 @@
                 </UiModal>
 
                 <div
+                    @click="info('Schema Comments: Coming soon...')"
                     title="Add comment"
                     class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
                 >
@@ -269,6 +274,7 @@
                 </div>
 
                 <div
+                    @click="info('Save as Image: Coming soon...')"
                     class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
                 >
                     <svg

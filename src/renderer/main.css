@@ -7,7 +7,7 @@
 } */
 
 .titlebar {
-    -webkit-app-region: drag;
+  -webkit-app-region: drag;
 }
 
 .dark [type="checkbox"]:checked,

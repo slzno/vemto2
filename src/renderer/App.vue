@@ -34,9 +34,13 @@
 
 <template>
     <div
-        class="titlebar fixed top-0 right-0 z-50 hover:bg-slate-950 cursor-move "
-        style="height: 30px; width: 200px"
-    ></div>
+        class="titlebar bg-transparent fixed top-0 right-0 z-50 bg-slate-900 border-slate-800 hover:bg-slate-950 cursor-move text-slate-700 flex items-center justify-center px-2"
+        style="height: 15px; width: 100%;"
+    >
+        <div>
+            <!-- Current Project: vemto-test-01 -->
+        </div>
+    </div>
     <div id="app" class="w-full h-screen dark">
         <div class="text-slate-900 dark:text-slate-300 h-full w-full">
             <RouterView />

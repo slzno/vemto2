@@ -21,7 +21,7 @@
 </script>
 
 <template>
-    <nav class="w-20 h-full flex flex-col items-center justify-between bg-white dark:bg-slate-900 border-r-2 border-slate-100 dark:border-slate-800">
+    <nav class="w-20 h-full flex flex-col items-center justify-between bg-white dark:bg-slate-900 border-r border-slate-100 dark:border-slate-800">
         <ul>
             <RouterLink
                 class="w-full h-12 outline-none flex justify-center items-center py-10 text-slate-400 dark:text-slate-600"
