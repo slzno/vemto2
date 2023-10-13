@@ -20,6 +20,7 @@ export default class TablesBuilder {
 
     setSchemaData(schemaData: any) {
         this.schemaTablesData = schemaData.tables
+        
         return this
     }
 
