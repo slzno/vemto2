@@ -42,7 +42,7 @@ import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
         { label: "Navigation", value: "navigation" },
         { label: "Themes", value: "themes" },
         { label: "Templates", value: "templates" },
-        { label: "Settings", value: "settings" },
+        // { label: "Settings", value: "settings" },
     ]
 </script>
 

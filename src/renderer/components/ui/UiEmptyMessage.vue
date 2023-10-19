@@ -1,14 +1,40 @@
 <script setup lang="ts">
+    import { defineProps, ref, onMounted } from "vue"
     import {
         CubeTransparentIcon, TruckIcon,
     } from "@heroicons/vue/24/outline"
-
+    
     const props = defineProps({
         development: {
             type: Boolean,
             default: false,
         },
     })
+
+    const randomQuote = ref("")
+
+    onMounted(() => {
+        fillRandomQuote()
+    })
+
+    const fillRandomQuote = () => {
+        randomQuote.value = ""
+
+        setTimeout(() => {
+            randomQuote.value = getRandomQuote()
+        }, 10)
+
+        // after some time sufficiant to read the quote, change it (consider the length of the quote)
+        let nextQuoteTime = (randomQuote.value.length * 30) + 20000
+
+        setTimeout(() => {
+            fillRandomQuote()
+        }, nextQuoteTime)
+    }
+
+    const getRandomQuote = () => {
+        return quotes[Math.floor(Math.random() * quotes.length)]
+    }
 
     const quotes = [
         "Programming today is a race between software engineers striving to build bigger and better idiot-proof programs, and the universe trying to build bigger and better idiots. So far, the universe is winning. - Rick Cook",
@@ -75,10 +101,6 @@
         "I see little commercial potential for the Internet for at least ten years. - Bill Gates, 1994",
         "Before man reaches the moon, mail will be delivered within hours from New York to California, to Britain, to India or Australia. - Arthur Summerfield, 1959",
     ]
-
-    const getRandomQuote = () => {
-        return quotes[Math.floor(Math.random() * quotes.length)]
-    }
 </script>
 
 <template>
@@ -105,9 +127,18 @@
 
                 <!-- Show a random quote -->
                 <span
-                    class="text-base max-w-xl text-center text-slate-500 font-mono mt-5 border-dotted font-normal"
+                    class="text-base max-w-xl text-center text-slate-500 font-mono mt-5 border-dotted font-normal h-7 overflow-visible"
                 >
-                    {{ getRandomQuote() }}
+                    <Transition
+                        enter-from-class="transition duration-2000 opacity-0"
+                        enter-to-class="transition duration-2000 opacity-100"
+                        leave-from-class="transition duration-2000 opacity-100"
+                        leave-to-class="transition duration-2000 opacity-0"
+                    >
+                    <div v-if="randomQuote">
+                        {{ randomQuote }}
+                    </div>
+                    </Transition>
                 </span>
             </div>
         </div>
