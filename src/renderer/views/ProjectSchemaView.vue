@@ -169,7 +169,7 @@
             @tableAdded="tableAdded"
             @syncSchema="syncSchema" 
         />
-
+        Project: {{ projectStore.project.getPath() }}
         <SchemaTables />
 
         <MigrationSaver />

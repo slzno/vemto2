@@ -7,30 +7,16 @@
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import HandleProjectDatabase from "@Renderer/services/HandleProjectDatabase"
     import Main from "@Renderer/services/wrappers/Main"
+    import ProjectPathResolver from "@Common/services/ProjectPathResolver"
     import { CommandLineIcon, FolderIcon, PlusCircleIcon } from "@heroicons/vue/24/outline"
-import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
 
-    const projectPath = ref(localStorage.getItem("projectPath") || ""),
+    const projectPath = ref(localStorage.getItem("latest-project") || ""),
         search = ref("")
 
     const router = useRouter()
-    const projectStore = useProjectStore()
 
     const openProject = async () => {
-        localStorage.setItem("projectPath", projectPath.value)
-
-        const databaseData = await Main.API.loadProjectDatabase(
-            projectPath.value
-        )
-
-        HandleProjectDatabase.start(databaseData)
-
-        let project = Project.findOrCreate()
-
-        project.setPath(projectPath.value)
-        project.save()
-
-        projectStore.setProject(project)
+        await HandleProjectDatabase.setup(projectPath.value)
 
         window.localStorage.setItem("latest-project", projectPath.value)
 
@@ -40,9 +26,9 @@ import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
 
 <template>
     <section class="p-4 space-y-5 dark:bg-slate-900 h-screen">
-        <!-- <p>
+        <p>
             <UiText v-model="projectPath" />
-        </p> -->
+        </p>
 
         <header class="flex w-full justify-center mt-10">
             <div class="flex flex-col">
@@ -68,11 +54,11 @@ import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
                 <UiText v-model="search" placeholder="Search apps..." />
             </div>
 
-            <UiEmptyMessage>
+            <!-- <UiEmptyMessage>
                 There are no connected apps
-            </UiEmptyMessage>
+            </UiEmptyMessage> -->
 
-            <!-- <div class="flex flex-col gap-2 w-1/2 max-w-xl">
+            <div class="flex flex-col gap-2 w-1/2 max-w-xl">
                 <div class="p-2 rounded-lg border border-slate-650 bg-slate-850 cursor-pointer hover:bg-slate-800">
                     <div class="flex justify-between">
                         <div>vemto-test-01</div>
@@ -99,7 +85,7 @@ import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
                         C:\Users\tiago\code\tests\test-project
                     </div>
                 </div>
-            </div> -->
+            </div>
         </main>
     </section>
 </template>

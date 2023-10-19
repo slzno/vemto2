@@ -16,6 +16,7 @@ import AppSection from "./AppSection"
 import CalculateSchemaChanges from "./services/project/CalculateSchemaChanges"
 import Column from "./Column"
 import Index from "./Index"
+import ProjectPathResolver from "@Common/services/ProjectPathResolver"
 
 interface ProjectCodeGenerationSettings {
     models: boolean,
@@ -40,7 +41,6 @@ export enum ProjectFilesQueueStatus {
 
 export default class Project extends RelaDB.Model {
     id: string
-    path: string
     name: string
     navs: Nav[]
     cruds: Crud[]
@@ -122,11 +122,11 @@ export default class Project extends RelaDB.Model {
     }
 
     setPath(path: string) {
-        this.path = path
+        ProjectPathResolver.setPath(path)
     }
 
     getPath(): string {
-        return this.path
+        return ProjectPathResolver.getPath()
     }
 
     getApplications(): any[] {

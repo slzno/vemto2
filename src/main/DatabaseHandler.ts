@@ -56,6 +56,9 @@ export function HandleDatabase() {
 
         const project = Project.findOrFail(1)
 
+        if(!project) return
+        if(!project.getPath()) return
+
         let databaseFilePath = path.join(project.getPath(), ".vemto", "data.json")
         
         FileSystem.writeJsonFile(

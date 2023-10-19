@@ -1,18 +1,25 @@
 import path from "path"
 import { app } from "electron"
 import FileSystem from "../base/FileSystem"
+import ProjectPathResolver from "@Common/services/ProjectPathResolver"
 
 export default class PrepareProject {
 
-    static run(projectPath: string) {
-        return new Promise((resolve, reject) => {
-            const localTemplatesPath = path.join(app.getAppPath(), "static", "templates"),
-                projectTemplatesPath = path.join(projectPath, ".vemto", "templates")
+    static async run(projectPath: string) {
+        console.log('Preparing project...')
 
-            FileSystem.makeFolderFromTemplate(projectTemplatesPath, localTemplatesPath)
+        ProjectPathResolver.setPath(projectPath)
 
-            resolve(projectTemplatesPath)
-        })
+        console.log('Project path set to:', projectPath)
+
+        // TODO: check and copy vemto folder if not exists
+    }
+
+    static async copyVemtoFolderIfNotExists(projectPath: string) {
+        const localTemplatesPath = path.join(app.getAppPath(), "static", "templates"),
+            projectTemplatesPath = path.join(projectPath, ".vemto", "templates")
+
+        FileSystem.makeFolderFromTemplate(projectTemplatesPath, localTemplatesPath)
     }
 
 }

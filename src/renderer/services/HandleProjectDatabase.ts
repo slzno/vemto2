@@ -5,6 +5,8 @@ import RendererBridge from "./RendererBridge"
 import RelaDB from "@tiago_silva_pereira/reladb"
 import ModelRegistry from "@Common/ModelRegistry"
 import { useProjectStore } from "@Renderer/stores/useProjectStore"
+import ProjectPathResolver from "@Common/services/ProjectPathResolver"
+import ProjectManager from "./project/ProjectManager"
 
 export default class HandleProjectDatabase {
 
@@ -56,23 +58,35 @@ export default class HandleProjectDatabase {
     }
 
     static async populate(callback?: Function) {
-        const projectStore = useProjectStore()
+        const projectStore = useProjectStore(),
+            projectManager = new ProjectManager()
 
         if (projectStore.projectIsEmpty) {
-            const latestProjectPath = window.localStorage.getItem("latest-project")
+            const latestProjectPath = projectManager.getLatestProjectPath()
 
-            if(!latestProjectPath) {
-                return
-            }
+            if(!latestProjectPath) return
 
-            const data = await Main.API.loadProjectDatabase(latestProjectPath)
-
-            HandleProjectDatabase.start(data)
-
-            projectStore.setProject(Project.find(1))
+            await HandleProjectDatabase.setup(latestProjectPath)
         }
 
         if(callback) callback()
+    }
+
+    static async setup(projectPath: string) {
+        const projectStore = useProjectStore()
+
+        Main.API.prepareProject(projectPath)
+        ProjectPathResolver.setPath(projectPath)
+
+        const data = await Main.API.loadProjectDatabase(projectPath)
+
+        HandleProjectDatabase.start(data)
+
+        const project = Project.findOrCreate()
+
+        projectStore.setProject(project)
+
+        return project
     }
 
     static async close() {

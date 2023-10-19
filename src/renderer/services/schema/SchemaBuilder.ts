@@ -76,7 +76,7 @@ export default class SchemaBuilder {
     }
 
     async readData() {
-        this.schemaData = await Main.API.loadSchema(this.project.path)
+        this.schemaData = await Main.API.loadSchema(this.project.getPath())
 
         return this
     }
