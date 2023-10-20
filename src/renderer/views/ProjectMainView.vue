@@ -16,15 +16,18 @@
     import Alert from "@Renderer/components/utils/Alert"
     import Main from "@Renderer/services/wrappers/Main"
     import SchemaBuilder from "@Renderer/services/schema/SchemaBuilder"
+    import ErrorsDialog from "./components/ProjectMain/ErrorsDialog.vue"
+    import { useErrorsStore } from "@Renderer/stores/useErrorsStore"
 
     const canShow = ref(false),
         projectStore = useProjectStore(),
-        appStore = useAppStore()
+        errorsStore = useErrorsStore(),
+        appStore = useAppStore(),
+        errorsDialog = ref(null)
 
     let sourceCheckerTimeout = null
 
     onMounted(async () => {
-        handleErrors()
         handleKeyInputs()
 
         await HandleProjectDatabase.populate(() => {
@@ -37,19 +40,6 @@
     onUnmounted(() => {
         if (sourceCheckerTimeout) clearTimeout(sourceCheckerTimeout)
     })
-
-    const handleErrors = () => {
-        Main.API.onDefaultError((error) => {
-            if (error.error.includes("schema-reader")) {
-                projectStore.project.setCurrentSchemaError(
-                    error.error,
-                    error.stack
-                )
-                console.error(error.error)
-                console.error(error.stack)
-            }
-        })
-    }
 
     const handleKeyInputs = () => {
         document.addEventListener("keydown", (e) => {
@@ -131,6 +121,8 @@
                 class="fixed flex justify-end bottom-0 z-50"
                 style="width: calc(100% - 5rem)"
             >
+                <ErrorsDialog ref="errorsDialog" />
+
                 <div class="p-2 bg-slate-900 rounded-l-full">
                     <div
                         class="py-2 px-5 rounded-full shadow bg-slate-850 border border-slate-700 flex space-x-2"
@@ -164,10 +156,17 @@
                         >
                             <CommandLineIcon class="w-7 h-7 stroke-1" />
                         </button>
-                        <ShieldExclamationIcon
-                            class="w-7 h-7 stroke-1 text-slate-300 cursor-pointer hover:text-red-500"
-                        />
-                        <!-- <ArrowTopRightOnSquareIcon class="w-7 h-7 stroke-1 text-slate-300 cursor-pointer hover:text-red-500" /> -->
+                        <div @click="errorsDialog.show()" class="relative cursor-pointer">
+                            <!-- Errors alert animation -->
+                            <div v-show="errorsStore.hasErrors" class="absolute rounded-full w-3 h-3 bg-red-600 animate-ping" style="left: 25px; bottom: 20px;"></div>
+                            <ShieldExclamationIcon
+                                :class="{
+                                    'text-red-500': errorsStore.hasErrors,
+                                    'text-slate-300': !errorsStore.hasErrors,
+                                }"
+                                class="w-7 h-7 stroke-1 hover:text-red-500"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

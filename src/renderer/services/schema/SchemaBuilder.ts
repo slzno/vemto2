@@ -119,7 +119,7 @@ export default class SchemaBuilder {
 
         if (SchemaBuilder.processing) return
         if (!SchemaBuilder.canCheckSchemaChanges) return
-
+        
         await this.readData()
 
         this.schemaDataHash = md5(JSON.stringify(this.schemaData)).toString()
@@ -146,6 +146,7 @@ export default class SchemaBuilder {
             }
 
             this.project.save()
+            this.project.clearCurrentSchemaError()
         }
 
         return this

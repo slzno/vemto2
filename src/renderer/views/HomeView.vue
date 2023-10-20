@@ -34,7 +34,7 @@
     }
 
     const openProject = async (project: any) => {
-        projectManager.open(project.id)
+        await projectManager.open(project.id)
 
         openSchema()
     }

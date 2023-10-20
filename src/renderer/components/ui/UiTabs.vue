@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref, defineProps, defineEmits, onMounted } from "vue"
+    import { ref, defineProps, defineEmits, onMounted, watch } from "vue"
 
     let localValue = ref(null)
 
@@ -45,6 +45,13 @@
             emit("update:modelValue", lastSelectedTab)
         }
     })
+
+    watch(
+        () => props.modelValue,
+        (value) => {
+            localValue.value = value
+        }
+    )
 
     const setTab = (value: string): void => {
         localValue.value = value

@@ -59,6 +59,8 @@
     }
 
     const drawConnections = () => {
+        if(projectStore.projectIsEmpty) return
+
         initJsPlumbIfNotExists()
 
         jsPlumbInstance.deleteEveryConnection()
@@ -144,32 +146,11 @@
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-hidden"
         v-if="projectStore.projectIsReady"
     >
-        <UiModal
-            :show="projectStore.project.hasCurrentSchemaError()"
-            title="Error loading schema"
-            width="800px"
-            @close="projectStore.project.clearCurrentSchemaError()"
-        >
-            <div class="p-4 text-red-400 bg-slate-900 rounded-b-lg space-y-2">
-                <pre class="overflow-hidden whitespace-pre-wrap">{{ projectStore.project.currentSchemaError }}</pre>
-
-                <div v-if="projectStore.project.currentSchemaErrorStack">
-                    <pre class="overflow-hidden whitespace-pre-wrap p-2 bg-slate-950 rounded-lg text-slate-200">{{ projectStore.project.currentSchemaErrorStack }}</pre>
-                </div>
-            </div>
-
-            <template #footer>
-                <div class="flex justify-end p-2">
-                    <UiButton @click="projectStore.project.clearCurrentSchemaError()">Already Fixed</UiButton>
-                </div>
-            </template>
-        </UiModal>
-
         <SchemaHeader 
             @tableAdded="tableAdded"
             @syncSchema="syncSchema" 
         />
-        Project: {{ projectStore.project.getPath() }}
+
         <SchemaTables />
 
         <MigrationSaver />
