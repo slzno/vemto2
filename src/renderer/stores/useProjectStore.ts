@@ -21,6 +21,10 @@ export const useProjectStore = defineStore("project", {
         setHasSourceChanges(hasSourceChanges: boolean) {
             this.hasSourceChanges = hasSourceChanges
         },
+
+        closeProject() {
+            this.project = {} as Project
+        },
     },
 
     getters: {
