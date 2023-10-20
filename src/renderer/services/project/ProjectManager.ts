@@ -3,6 +3,20 @@ import HandleProjectDatabase from "../HandleProjectDatabase"
 
 export default class ProjectManager {
 
+    static closed = false
+
+    static isClosed() {
+        return ProjectManager.closed
+    }
+
+    static free() {
+        ProjectManager.closed = false
+    }
+
+    static close() {
+        ProjectManager.closed = true
+    }
+
     async connectFromPath(path: string) {
         let project = this.findByPath(path)
 
@@ -23,6 +37,10 @@ export default class ProjectManager {
         this.setLatestProjectPath(project.path)
 
         this.setAsUpdated(id)
+
+        ProjectManager.free()
+
+        return project
     }
 
     find(id: string) {
@@ -73,7 +91,7 @@ export default class ProjectManager {
         const projects = JSON.parse(projectsData)
 
         return projects.sort((a: any, b: any) => {
-            return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         })
     }
 

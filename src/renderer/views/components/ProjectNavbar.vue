@@ -10,26 +10,32 @@
     } from "@heroicons/vue/24/outline"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import { useNavigationStore } from "@Renderer/stores/useNavigationStore"
-    
-    import { computed } from "vue"
-    import { useRoute } from "vue-router"
+    import { useRouter } from "vue-router"
 
-    const route = useRoute(),
-        activeRoute = computed(() => route.path),
+    import ProjectManager from "@Renderer/services/project/ProjectManager"
+
+    const router = useRouter(),
         projectStore = useProjectStore(),
         navigationStore = useNavigationStore()
+
+    const goToHome = () => {
+        // Close the project manager to avoid overwriting projects with 
+        // information from the previous project
+        ProjectManager.close()
+
+        router.push("/")
+    }
 </script>
 
 <template>
     <nav class="w-20 h-full flex flex-col items-center justify-between bg-white dark:bg-slate-900 border-r border-slate-100 dark:border-slate-800">
         <ul>
-            <RouterLink
-                class="w-full h-12 outline-none flex justify-center items-center py-10 text-slate-400 dark:text-slate-600"
-                as="li"
-                to="/"
+            <li
+                class="w-full h-12 outline-none flex justify-center items-center py-10 text-slate-400 dark:text-slate-600 cursor-pointer hover:text-slate-800 dark:hover:text-slate-400"
+                @click="goToHome()"
             >
                 <HomeIcon class="w-5 h-5 stroke-2" />
-            </RouterLink>
+            </li>
 
             <RouterLink
                 @click="navigationStore.setActiveTab('schema')"

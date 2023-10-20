@@ -3,6 +3,7 @@ import Project from "@Common/models/Project"
 import Main from "@Renderer/services/wrappers/Main"
 import TablesBuilder from "./TablesBuilder"
 import ModelsBuilder from "./ModelsBuilder"
+import ProjectManager from "../project/ProjectManager"
 
 export default class SchemaBuilder {
     project: Project
@@ -110,6 +111,12 @@ export default class SchemaBuilder {
     }
 
     async checkSchemaChanges() {
+        if(ProjectManager.isClosed()) {
+            console.log("Project is closed, stopping schema changes check")
+            SchemaBuilder.stopCheckingSchemaChanges()
+            return
+        }
+
         if (SchemaBuilder.processing) return
         if (!SchemaBuilder.canCheckSchemaChanges) return
 
