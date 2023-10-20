@@ -43,9 +43,6 @@
             error.error,
             error.stack
         )
-
-        console.error(error.error)
-        console.error(error.stack)
     }
 
     watch(currentRoute, (route) => {

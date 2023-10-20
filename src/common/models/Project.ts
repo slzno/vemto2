@@ -475,6 +475,11 @@ export default class Project extends RelaDB.Model {
     }
 
     setCurrentSchemaError(error: string, stack:string = null) {
+        const currentErrorIsTheSame = this.currentSchemaError === error,
+            currentStackIsTheSame = this.currentSchemaErrorStack === this.treatErrorStack(stack)
+
+        if (currentErrorIsTheSame && currentStackIsTheSame) return
+
         this.currentSchemaError = error
         this.currentSchemaErrorStack = this.treatErrorStack(stack)
         this.save()
