@@ -21,6 +21,8 @@ import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     watch(() => errorsStore.hasErrors, (hasErrors) => {
         if(hasErrors) {
             show()
+        } else {
+            close()
         }
     })
 

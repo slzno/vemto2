@@ -82,6 +82,14 @@ export default class SchemaBuilder {
         return this
     }
 
+    schemaDataIsValid() {
+        return this.schemaData !== null 
+            && this.schemaData !== undefined
+            && Object.keys(this.schemaData).length > 0
+            && !this.schemaData.error
+            && !this.schemaData.stack
+    }
+
     static disableSchemaChangesCheck() {
         SchemaBuilder.canCheckSchemaChanges = false
     }
@@ -122,6 +130,10 @@ export default class SchemaBuilder {
         
         await this.readData()
 
+        if(this.schemaDataIsValid()) {
+            this.project.clearCurrentSchemaError()
+        }
+
         this.schemaDataHash = md5(JSON.stringify(this.schemaData)).toString()
 
         /**
@@ -146,7 +158,6 @@ export default class SchemaBuilder {
             }
 
             this.project.save()
-            this.project.clearCurrentSchemaError()
         }
 
         return this

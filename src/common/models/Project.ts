@@ -500,6 +500,8 @@ export default class Project extends RelaDB.Model {
     }
 
     clearCurrentSchemaError() {
+        if (!this.hasCurrentSchemaError()) return
+        
         this.currentSchemaError = null
         this.currentSchemaErrorStack = null
         this.save()
