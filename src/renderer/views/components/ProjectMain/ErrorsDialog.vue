@@ -87,20 +87,32 @@ import UiTabs from "@Renderer/components/ui/UiTabs.vue"
 
             <div class="p-2" style="height: calc(100% - 66px)">
                 <div v-if="selectedTab === 'errors'" class="w-full h-full overflow-y-scroll">
-                    <div class="flex flex-col gap-2 text-slate-400 w-full h-full justify-center items-center font-thin">
+                    <div class="flex justify-end mb-2">
+                        <UiSmallButton @click="errorsStore.clearErrors()">
+                            Clear
+                        </UiSmallButton>
+                    </div>
+                    <div class="p-2 text-sm rounded border border-slate-750" v-if="errorsStore.errors.length" v-for="error in errorsStore.errors">
+                        <pre class="overflow-hidden whitespace-pre-wrap mb-2 text-red-450">{{ error.message }}</pre>
+
+                        <div v-if="error.stack">
+                            <pre class="overflow-hidden whitespace-pre-wrap p-2 bg-slate-950 rounded-lg text-slate-200">{{ error.stack }}</pre>
+                        </div>
+                    </div>
+                    <div v-else class="flex flex-col gap-2 text-slate-400 w-full h-full justify-center items-center font-thin">
                         <CheckCircleIcon class="h-20 w-20 stroke-1 text-slate-500" />
                         No errors found
                     </div>
                 </div>
 
                 <div v-if="selectedTab === 'schema'" class="w-full h-full overflow-y-scroll">
-                    <div class="flex justify-end">
+                    <div class="flex justify-end mb-2">
                         <UiSmallButton @click="projectStore.project.clearCurrentSchemaError()">
                             Clear
                         </UiSmallButton>
                     </div>
-                    <div v-if="projectStore.project.hasCurrentSchemaError()" class="p-4 text-red-450 rounded-b-lg space-y-2">
-                        <pre class="overflow-hidden whitespace-pre-wrap">{{ projectStore.project.currentSchemaError }}</pre>
+                    <div v-if="projectStore.project.hasCurrentSchemaError()" class="p-2 text-sm rounded border border-slate-750">
+                        <pre class="overflow-hidden whitespace-pre-wrap text-red-450">{{ projectStore.project.currentSchemaError }}</pre>
 
                         <div v-if="projectStore.project.currentSchemaErrorStack">
                             <pre class="overflow-hidden whitespace-pre-wrap p-2 bg-slate-950 rounded-lg text-slate-200">{{ projectStore.project.currentSchemaErrorStack }}</pre>

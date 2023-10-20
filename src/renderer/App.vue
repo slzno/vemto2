@@ -3,11 +3,13 @@
     import { RouterView, useRouter, useRoute } from "vue-router"
     import Main from "@Renderer/services/wrappers/Main"
     import Alert from "@Renderer/components/utils/Alert"
+    import { useErrorsStore } from "./stores/useErrorsStore"
     import { useProjectStore } from "./stores/useProjectStore"
 
     const router = useRouter(),
         currentRoute = useRoute(),
-        projectStore = useProjectStore()
+        projectStore = useProjectStore(),
+        errorsStore = useErrorsStore()
 
     onMounted(() => {
         Main.API.onDefaultError((error) => {
@@ -19,6 +21,11 @@
             Alert.error(error.message)
             console.error(error.message)
             console.error(error.stack)
+
+            errorsStore.addError({
+                message: error.message,
+                stack: error.stack,
+            })
         })
 
         if (Main.API.onDevelopment()) {

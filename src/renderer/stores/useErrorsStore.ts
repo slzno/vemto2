@@ -13,7 +13,7 @@ export const useErrorsStore = defineStore("errors", {
 
     actions: {
         addError(error: Error) {
-            this.errors.push(error)
+            this.errors.unshift(error)
         },
 
         clearErrors() {
