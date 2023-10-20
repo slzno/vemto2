@@ -132,6 +132,9 @@ export default class SchemaBuilder {
 
         if(this.schemaDataIsValid()) {
             this.project.clearCurrentSchemaError()
+        } else {
+            // If the schema data is not valid, we should stop here
+            return
         }
 
         this.schemaDataHash = md5(JSON.stringify(this.schemaData)).toString()
