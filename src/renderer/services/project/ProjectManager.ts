@@ -4,10 +4,10 @@ import HandleProjectDatabase from "../HandleProjectDatabase"
 export default class ProjectManager {
 
     async connectFromPath(path: string) {
-        const project = this.findByPath(path)
+        let project = this.findByPath(path)
 
         if(!project) {
-            project = this.registerProject(path)
+            project = this.register(path)
         }
 
         await this.open(project.id)
@@ -18,9 +18,11 @@ export default class ProjectManager {
 
         if (!project) throw new Error("Project not found")
 
-        await HandleProjectDatabase.setup(project.getPath())
+        await HandleProjectDatabase.setup(project.path)
 
-        this.setLatestProjectPath(project.getPath())
+        this.setLatestProjectPath(project.path)
+
+        this.setAsUpdated(id)
     }
 
     find(id: string) {
@@ -45,28 +47,34 @@ export default class ProjectManager {
         window.localStorage.setItem("__projects", JSON.stringify(projects))
     }
 
-    register(name: string, path: string) {
+    register(path: string) {
         const projects = this.get()
 
-        const id = uuid()
+        const id = uuid(),
+            project = { 
+                id,
+                path, 
+                createdAt: new Date(), 
+                updatedAt: new Date() 
+            }
 
-        projects.push({ 
-            id,
-            name, 
-            path, 
-            createdAt: new Date(), 
-            updatedAt: new Date() 
-        })
+        projects.push(project)
 
         window.localStorage.setItem("__projects", JSON.stringify(projects))
+
+        return project
     }
 
     get() {
-        const projects = window.localStorage.getItem("__projects")
+        let projectsData = window.localStorage.getItem("__projects")
 
-        if (!projects) return []
+        if (!projectsData) return []
 
-        return JSON.parse(projects)
+        const projects = JSON.parse(projectsData)
+
+        return projects.sort((a: any, b: any) => {
+            return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+        })
     }
 
     getLatestProjectPath() {

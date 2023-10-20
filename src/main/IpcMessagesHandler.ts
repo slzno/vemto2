@@ -22,6 +22,16 @@ export function HandleIpcMessages() {
         return dialogResult === 0
     })
 
+    ipcMain.handle("dialog:folder:open", async (event) => {
+        return handleError(event, async () => {
+            const result = await dialog.showOpenDialog(null, {
+                properties: ['openDirectory']
+            })
+
+            return result.filePaths[0]
+        })
+    })
+
     ipcMain.handle("prepare:project", async (event, projectPath) => {
         return handleError(event, async () => {
             return await PrepareProject.run(projectPath)

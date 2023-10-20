@@ -1,35 +1,53 @@
 <script setup lang="ts">
-    import { ref, onMounted } from "vue"
+    import { ref, onMounted, computed } from "vue"
     import { useRouter } from "vue-router"
-    import Project from "@Common/models/Project"
+    import Main from "@Renderer/services/wrappers/Main"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
-    import { useProjectStore } from "@Renderer/stores/useProjectStore"
-    import HandleProjectDatabase from "@Renderer/services/HandleProjectDatabase"
-    import Main from "@Renderer/services/wrappers/Main"
-    import ProjectPathResolver from "@Common/services/ProjectPathResolver"
+    import ProjectManager from "@Renderer/services/project/ProjectManager"
     import { CommandLineIcon, FolderIcon, PlusCircleIcon } from "@heroicons/vue/24/outline"
 
-    const projectPath = ref(localStorage.getItem("latest-project") || ""),
-        search = ref("")
+    const projectManager = new ProjectManager(),
+        search = ref(""),
+        projects = ref([])
 
     const router = useRouter()
 
-    const openProject = async () => {
-        await HandleProjectDatabase.setup(projectPath.value)
+    onMounted(async () => {
+        projects.value = projectManager.get()
+    })
 
-        window.localStorage.setItem("latest-project", projectPath.value)
+    const filteredProjects = computed(() => {
+        return projects.value.filter((project) => {
+            return project.path.includes(search.value)
+        })
+    })
 
-        router.push("/project/schema")
+    const connectFolder = async () => {
+        const path = await Main.API.openFolderDialog()
+
+        if (!path) return
+
+        await projectManager.connectFromPath(path)
+
+        openSchema()
+    }
+
+    const openProject = async (project: any) => {
+        projectManager.open(project.id)
+
+        openSchema()
+    }
+
+    const openSchema = async () => {
+        // setTimeout(() => {
+            router.push("/project/schema")
+        // }, 500);
     }
 </script>
 
 <template>
     <section class="p-4 space-y-5 dark:bg-slate-900 h-screen">
-        <p>
-            <UiText v-model="projectPath" />
-        </p>
-
         <header class="flex w-full justify-center mt-10">
             <div class="flex flex-col">
                 <div class="flex gap-2">
@@ -37,7 +55,7 @@
                         <PlusCircleIcon class="w-5 h-5 text-red-500" />
                         New App
                     </UiButton>
-                    <UiButton class="gap-1.5" @click="openProject">
+                    <UiButton class="gap-1.5" @click="connectFolder()">
                         <FolderIcon class="w-5 h-5 text-red-500" />
                         Connect Folder
                     </UiButton>
@@ -59,30 +77,12 @@
             </UiEmptyMessage> -->
 
             <div class="flex flex-col gap-2 w-1/2 max-w-xl">
-                <div class="p-2 rounded-lg border border-slate-650 bg-slate-850 cursor-pointer hover:bg-slate-800">
+                <div v-for="project in filteredProjects" @click="openProject(project)" class="p-2 rounded-lg border border-slate-650 bg-slate-850 cursor-pointer hover:bg-slate-800">
                     <div class="flex justify-between">
-                        <div>vemto-test-01</div>
+                        <span>{{ project.path.split(/\/|\\/).pop() }}</span>
                     </div>
                     <div class="text-slate-500">
-                        C:\Users\tiago\code\vemto-test-01
-                    </div>
-                </div>
-
-                <div class="p-2 rounded-lg border border-slate-650 bg-slate-850 cursor-pointer hover:bg-slate-800">
-                    <div class="flex justify-between">
-                        vemto-blog
-                    </div>
-                    <div class="text-slate-500">
-                        C:\Users\tiago\code\tests\vemto-blog
-                    </div>
-                </div>
-
-                <div class="p-2 rounded-lg border border-slate-650 bg-slate-850 cursor-pointer hover:bg-slate-800">
-                    <div class="flex justify-between">
-                        test-project
-                    </div>
-                    <div class="text-slate-500">
-                        C:\Users\tiago\code\tests\test-project
+                        {{ project.path }}
                     </div>
                 </div>
             </div>

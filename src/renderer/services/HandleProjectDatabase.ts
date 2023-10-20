@@ -75,7 +75,7 @@ export default class HandleProjectDatabase {
     static async setup(projectPath: string) {
         const projectStore = useProjectStore()
 
-        Main.API.prepareProject(projectPath)
+        await Main.API.prepareProject(projectPath)
         ProjectPathResolver.setPath(projectPath)
 
         const data = await Main.API.loadProjectDatabase(projectPath)

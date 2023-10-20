@@ -4,6 +4,7 @@
 export default interface ElectronApi {
     onDevelopment: () => boolean,
     confirm: (message: string) => Promise<any>,
+    openFolderDialog: () => Promise<string>,
     prepareProject: (path: string) => Promise<string>,
     loadSchema: (path: string) => Promise<any>,
     onDefaultError: (callback: Callback) => void,

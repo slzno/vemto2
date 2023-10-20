@@ -26,8 +26,14 @@ contextBridge.exposeInMainWorld("api", {
         ipcRenderer.on("model:data:updated", (event, data) => callback(data))
     },
 
+    // System windows
+
     confirm: (message: string) => {
         return ipcRenderer.invoke("confirm", message)
+    },
+
+    openFolderDialog: () => {
+        return ipcRenderer.invoke("dialog:folder:open")
     },
 
     // Database messages
