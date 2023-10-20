@@ -16,8 +16,8 @@
                 return
             }
             
-            Alert.error(error.error)
-            console.error(error.error)
+            Alert.error(error.message)
+            console.error(error.message)
             console.error(error.stack)
         })
 
@@ -33,14 +33,14 @@
     })
 
     const isSchemaReaderError = (error: any): boolean => {
-        return error.error.includes("schema-reader")
+        return error.message.includes("schema-reader")
     }
 
     const treatSchemaReaderError = (error: any): void => {
         if(projectStore.projectIsEmpty) return
                 
         projectStore.project.setCurrentSchemaError(
-            error.error,
+            error.message,
             error.stack
         )
     }
