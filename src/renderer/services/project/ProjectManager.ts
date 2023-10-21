@@ -4,6 +4,7 @@ import HandleProjectDatabase from "../HandleProjectDatabase"
 export default class ProjectManager {
 
     static closed = false
+    static currentOpenProjectUuid = ""
 
     static isClosed() {
         return ProjectManager.closed
@@ -15,82 +16,94 @@ export default class ProjectManager {
 
     static close() {
         ProjectManager.closed = true
+
+        ProjectManager.setCurrentOpenProjectUuid("")
     }
 
     async connectFromPath(path: string) {
-        let project = this.findByPath(path)
+        let projectItem = this.findByPath(path)
 
-        if(!project) {
-            project = this.register(path)
+        if(!projectItem) {
+            projectItem = this.register(path)
         }
 
-        await this.open(project.id)
+        await this.open(projectItem.id)
     }
 
     async open(id: string) {
-        const project = this.find(id)
+        const projectItem = this.find(id)
 
-        if (!project) throw new Error("Project not found")
+        if (!projectItem) throw new Error("Project not found")
 
-        await HandleProjectDatabase.setup(project.path)
+        const project = await HandleProjectDatabase.setup(projectItem.path)
 
-        this.setLatestProjectPath(project.path)
+        ProjectManager.setCurrentOpenProjectUuid(project.uuid)
+
+        this.setLatestProjectPath(projectItem.path)
 
         this.setAsUpdated(id)
 
         ProjectManager.free()
 
-        return project
+        return projectItem
+    }
+
+    static getCurrentOpenProjectUuid() {
+        return ProjectManager.currentOpenProjectUuid
+    }
+
+    static setCurrentOpenProjectUuid(uuid: string) {
+        ProjectManager.currentOpenProjectUuid = uuid
     }
 
     find(id: string) {
-        const projects = this.get()
+        const projectItems = this.get()
 
-        return projects.find((p: any) => p.id === id)
+        return projectItems.find((p: any) => p.id === id)
     }
 
     findByPath(path: string) {
-        const projects = this.get()
+        const projectItems = this.get()
 
-        return projects.find((p: any) => p.path === path)
+        return projectItems.find((p: any) => p.path === path)
     }
 
     setAsUpdated(id: string) {
-        const projects = this.get()
+        const projectItems = this.get()
 
-        const index = projects.findIndex((p: any) => p.id === id)
+        const index = projectItems.findIndex((p: any) => p.id === id)
 
-        projects[index].updatedAt = new Date()
+        projectItems[index].updatedAt = new Date()
 
-        window.localStorage.setItem("__projects", JSON.stringify(projects))
+        window.localStorage.setItem("__projects", JSON.stringify(projectItems))
     }
 
     register(path: string) {
-        const projects = this.get()
+        const projectItems = this.get()
 
         const id = uuid(),
-            project = { 
+            projectItem = { 
                 id,
                 path, 
                 createdAt: new Date(), 
                 updatedAt: new Date() 
             }
 
-        projects.push(project)
+        projectItems.push(projectItem)
 
-        window.localStorage.setItem("__projects", JSON.stringify(projects))
+        window.localStorage.setItem("__projects", JSON.stringify(projectItems))
 
-        return project
+        return projectItem
     }
 
     get() {
-        let projectsData = window.localStorage.getItem("__projects")
+        let projectItemsData = window.localStorage.getItem("__projects")
 
-        if (!projectsData) return []
+        if (!projectItemsData) return []
 
-        const projects = JSON.parse(projectsData)
+        const projectItems = JSON.parse(projectItemsData)
 
-        return projects.sort((a: any, b: any) => {
+        return projectItems.sort((a: any, b: any) => {
             return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         })
     }

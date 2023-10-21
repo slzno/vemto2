@@ -229,6 +229,7 @@
         <div
             class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow px-1 border border-slate-700"
         >
+        {{ projectStore.project.uuid }}
             <!-- Tools and Icons -->
             <div class="flex">
                 <div

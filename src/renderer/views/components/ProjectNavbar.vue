@@ -19,8 +19,8 @@
         navigationStore = useNavigationStore()
 
     const goToHome = () => {
-        // Close the project manager to avoid the schema checker from the current project
-        // running on the next project
+        // Close the project manager to avoid the schema checker 
+        // from the current project running on the next project.
         ProjectManager.close()
 
         router.push("/")

@@ -4,6 +4,7 @@ import Table from "./Table"
 import Model from "./Model"
 import Crud from "./crud/Crud"
 import Page from "./page/Page"
+import { v4 as uuid } from "uuid"
 import Relationship from "./Relationship"
 import RelaDB from "@tiago_silva_pereira/reladb"
 
@@ -41,6 +42,7 @@ export enum ProjectFilesQueueStatus {
 
 export default class Project extends RelaDB.Model {
     id: string
+    uuid: string
     name: string
     navs: Nav[]
     cruds: Crud[]
@@ -87,6 +89,16 @@ export default class Project extends RelaDB.Model {
             ownRelationships: () => this.hasMany(Relationship).cascadeDelete(),
             renderableFiles: () => this.hasMany(RenderableFile).cascadeDelete(),
         }
+    }
+
+    static creating(data: any) {
+        data = Project.addUuidIfNotExists(data)
+        return data
+    }
+
+    static addUuidIfNotExists(data: any) {
+        if (!data.uuid) data.uuid = uuid()
+        return data
     }
 
     startCodeGenerationSettings() {

@@ -14,6 +14,8 @@
     const router = useRouter()
 
     onMounted(async () => {
+        // Close any open project
+        ProjectManager.close()
         projects.value = projectManager.get()
     })
 

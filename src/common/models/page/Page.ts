@@ -1,6 +1,6 @@
 import { v4 as uuid } from "uuid"
 import Route, { RouteType } from "@Common/models/Route"
-import { camelCase, capitalCase, paramCase, pascalCase } from "change-case"
+import { camelCase, paramCase, pascalCase } from "change-case"
 import Project from "@Common/models/Project"
 import RelaDB from "@tiago_silva_pereira/reladb"
 import Component from "./components/interfaces/Component"

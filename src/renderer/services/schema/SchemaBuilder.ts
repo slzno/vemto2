@@ -13,9 +13,16 @@ export default class SchemaBuilder {
     static checkerInterval: any
     static processing: boolean = false
     static canCheckSchemaChanges: boolean = true
+    static currentlyReadingProjectUuid: string = ""
 
     constructor(project: Project) {
         this.project = project
+
+        SchemaBuilder.currentlyReadingProjectUuid = project.uuid
+    }
+
+    currentOpenProjectIsDifferent() {
+        return SchemaBuilder.currentlyReadingProjectUuid !== ProjectManager.getCurrentOpenProjectUuid()
     }
 
     hasChanges() {
@@ -77,6 +84,12 @@ export default class SchemaBuilder {
     }
 
     async readData() {
+        if (this.currentOpenProjectIsDifferent()) {
+            console.log("Project is different, stop reading schema data")
+            this.schemaData = null
+            return this
+        }
+
         this.schemaData = await Main.API.loadSchema(this.project.getPath())
 
         return this
@@ -119,9 +132,13 @@ export default class SchemaBuilder {
     }
 
     async checkSchemaChanges() {
+        if (this.currentOpenProjectIsDifferent()) {
+            console.log("Project is different, stop checking schema changes")
+            return
+        }
+
         if(ProjectManager.isClosed()) {
             console.log("Project is closed, stopping schema changes check")
-            SchemaBuilder.stopCheckingSchemaChanges()
             return
         }
 
@@ -134,6 +151,7 @@ export default class SchemaBuilder {
             this.project.clearCurrentSchemaError()
         } else {
             // If the schema data is not valid, we should stop here
+            console.log("Schema data is not valid, stopping schema changes check")
             return
         }
 
