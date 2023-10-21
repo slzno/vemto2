@@ -14,10 +14,12 @@ export default class ProjectManager {
         ProjectManager.closed = false
     }
 
-    static close() {
+    static async close() {
         ProjectManager.closed = true
 
         ProjectManager.setCurrentOpenProjectUuid("")
+
+        await HandleProjectDatabase.close()
     }
 
     async connectFromPath(path: string) {

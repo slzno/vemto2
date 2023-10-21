@@ -4,7 +4,6 @@ import { app, ipcMain, shell, dialog } from "electron"
 import FileSystem from "./base/FileSystem"
 import { handleError } from "./ErrorHandler"
 import Project from "../common/models/Project"
-import PrepareProject from "./services/PrepareProject"
 import ReadProjectSchema from "./services/ReadProjectSchema"
 import RenderableFile from "../common/models/RenderableFile"
 
@@ -29,12 +28,6 @@ export function HandleIpcMessages() {
             })
 
             return result.filePaths[0]
-        })
-    })
-
-    ipcMain.handle("prepare:project", async (event, projectPath) => {
-        return handleError(event, async () => {
-            return await PrepareProject.run(projectPath)
         })
     })
 

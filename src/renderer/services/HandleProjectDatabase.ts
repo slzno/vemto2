@@ -10,6 +10,23 @@ import ProjectManager from "./project/ProjectManager"
 
 export default class HandleProjectDatabase {
 
+    static async setup(projectPath: string) {
+        const projectStore = useProjectStore()
+
+        await Main.API.prepareDatabase(projectPath)
+        ProjectPathResolver.setPath(projectPath)
+
+        const data = await Main.API.loadProjectDatabase(projectPath)
+
+        HandleProjectDatabase.start(data)
+
+        const project = Project.findOrCreate()
+
+        projectStore.setProject(project)
+
+        return project
+    }
+
     static start(initialDatabaseData: Object): RelaDB.Database {
         const database = new RelaDB.Database
             
@@ -72,24 +89,8 @@ export default class HandleProjectDatabase {
         if(callback) callback()
     }
 
-    static async setup(projectPath: string) {
-        const projectStore = useProjectStore()
-
-        await Main.API.prepareProject(projectPath)
-        ProjectPathResolver.setPath(projectPath)
-
-        const data = await Main.API.loadProjectDatabase(projectPath)
-
-        HandleProjectDatabase.start(data)
-
-        const project = Project.findOrCreate()
-
-        projectStore.setProject(project)
-
-        return project
-    }
-
     static async close() {
+        RelaDB.Resolver.db().driver.feedDatabaseData({})
         Main.API.closeProjectDatabase()
     }
 }

@@ -4,11 +4,8 @@ contextBridge.exposeInMainWorld("api", {
     onDevelopment: () => { return process.env.NODE_ENV === "development" },
 
     // Common messages
-    prepareProject: (path: string) => { 
-        return ipcRenderer.invoke("prepare:project", path)
-    },
-    loadSchema: (path: string) => { 
-        return ipcRenderer.invoke("get:project:schema", path) 
+    prepareDatabase: (path: string) => {
+        return ipcRenderer.invoke("prepare:project:database", path)
     },
     loadProjectDatabase: (path: string) => { 
         return ipcRenderer.invoke("get:project:database", path) 
@@ -16,29 +13,32 @@ contextBridge.exposeInMainWorld("api", {
     closeProjectDatabase: () => { 
         return ipcRenderer.invoke("close:project:database") 
     },
+    databaseDataUpdated: (data: any) => {
+        return ipcRenderer.invoke("database:data:updated", data)
+    },
+
+    // Schema messages
+    loadSchema: (path: string) => { 
+        return ipcRenderer.invoke("get:project:schema", path) 
+    },
 
     // Error messages
     onDefaultError: (callback: Callback) => { 
         ipcRenderer.on("error:default", (event, error) => callback(error))
     },
 
+    // Data Synchronization messages
     onModelDataUpdated: (callback: Callback) => {
         ipcRenderer.on("model:data:updated", (event, data) => callback(data))
     },
 
-    // System windows
-
+    // System windows messages
     confirm: (message: string) => {
         return ipcRenderer.invoke("confirm", message)
     },
 
     openFolderDialog: () => {
         return ipcRenderer.invoke("dialog:folder:open")
-    },
-
-    // Database messages
-    databaseDataUpdated: (data: any) => {
-        return ipcRenderer.invoke("database:data:updated", data)
     },
 
     // Files Queue
