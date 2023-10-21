@@ -22,6 +22,14 @@ export default class ProjectManager {
         await HandleProjectDatabase.close()
     }
 
+    async connectToLatest() {
+        const latestProjectPath = this.getLatestProjectPath()
+
+        if (latestProjectPath) {
+            await this.connectFromPath(latestProjectPath)
+        }
+    }
+
     async connectFromPath(path: string) {
         let projectItem = this.findByPath(path)
 

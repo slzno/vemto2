@@ -83,7 +83,7 @@ export default class HandleProjectDatabase {
 
             if(!latestProjectPath) return
 
-            await HandleProjectDatabase.setup(latestProjectPath)
+            await projectManager.connectToLatest()
         }
 
         if(callback) callback()
