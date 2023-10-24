@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { ref, onMounted, nextTick, defineEmits, computed } from 'vue'
     import Table from "@Common/models/Table"
-    import { ArrowDownTrayIcon, ArrowPathIcon, ChatBubbleLeftEllipsisIcon, PhotoIcon, PlusCircleIcon, PlusIcon, XMarkIcon } from "@heroicons/vue/24/outline"
+    import { ArrowDownTrayIcon, ArrowPathIcon, ChatBubbleLeftEllipsisIcon, MagnifyingGlassMinusIcon, MagnifyingGlassPlusIcon, PhotoIcon, PlusCircleIcon, PlusIcon, XMarkIcon } from "@heroicons/vue/24/outline"
     import UiModal from '@Renderer/components/ui/UiModal.vue'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
     import UiText from '@Renderer/components/ui/UiText.vue'
@@ -181,6 +181,14 @@
     const info = (message: string) => {
         Alert.info(message)
     }
+
+    const zoomIn = async () => {
+        projectStore.project.zoomIn()
+    }
+
+    const zoomOut = async () => {
+        projectStore.project.zoomOut()
+    }
 </script>
 
 <template>
@@ -229,7 +237,7 @@
         <div
             class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow px-1 border border-slate-700"
         >
-        {{ projectStore.project.uuid }}
+            <!-- {{ projectStore.project.uuid }} -->
             <!-- Tools and Icons -->
             <div class="flex">
                 <div
@@ -300,8 +308,33 @@
                 </div>
             </div>
 
+            <!-- Control -->
+            <div class="flex items-center ml-4 border-r border-l border-slate-750">
+                <div
+                    class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
+                    title="Zoom In"
+                    @click="zoomIn()"
+                >
+                    <MagnifyingGlassPlusIcon
+                        class="w-5 h-5"
+                    />
+                </div>
+                <div class="text-xs text-slate-500 w-5 text-center select-none">
+                    {{ projectStore.project.currentZoom }}
+                </div>
+                <div
+                    class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
+                    title="Zoom Out"
+                    @click="zoomOut()"
+                >
+                    <MagnifyingGlassMinusIcon
+                        class="w-5 h-5"
+                    />
+                </div>
+            </div>
+
             <!-- Search -->
-            <div class="relative flex items-center mr-1 ml-8">
+            <div class="relative flex items-center mr-1 ml-4">
                 <input
                     ref="searchInput"
                     v-model="search"

@@ -177,6 +177,7 @@
             style="width: 50000px; height: 50000px;"
         >
             <div id="tablesReference" 
+                :style="`transform: scale(${projectStore.project.getZoomAsScale()})`"
                 style="width: 1px; height: 1px;" 
                 class="relative bg-transparent"
             >

@@ -36,7 +36,9 @@ class Vemto
             $logFile = getcwd() . '/vemto.log';
         }
 
-        if (!file_exists($logFile)) {
+        // If the log file doesn't exist, create it
+        // If we are not in debug mode, we also clear the log file
+        if (!file_exists($logFile) || !getenv('VEMTO_DEBUG')) {
             file_put_contents($logFile, '');
         }
 

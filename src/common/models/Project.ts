@@ -72,8 +72,7 @@ export default class Project extends RelaDB.Model {
     scrollY: number
     codeGenerationSettings: ProjectCodeGenerationSettings
     filesQueueStatus: ProjectFilesQueueStatus
-
-    lastForeignAlias: number = 0;
+    currentZoom: number
 
     relationships() {
         return {
@@ -561,4 +560,29 @@ export default class Project extends RelaDB.Model {
         this.filesQueueStatus = status
         this.save()
     }
+
+    zoomIn() {
+        this.initZoom()
+        if (this.currentZoom >= 200) return
+        this.currentZoom += 10
+        this.save()
+    }
+
+    zoomOut() {
+        this.initZoom()
+        if (this.currentZoom <= 50) return
+        this.currentZoom -= 10
+        this.save()
+    }
+
+    initZoom() {
+        if (this.currentZoom) return
+        this.currentZoom = 100
+        this.save()
+    }
+
+    getZoomAsScale(): number {
+        return this.currentZoom / 100
+    }
+
 }

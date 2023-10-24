@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import Table from "@Common/models/Table"
-    import { nextTick, onMounted, watch } from "vue"
+    import { nextTick, onMounted, watch, ref } from "vue"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import SchemaBuilder from "@Renderer/services/schema/SchemaBuilder"
     import SchemaTables from "@Renderer/views/components/ProjectSchema/SchemaTables.vue"
@@ -15,20 +15,23 @@
     import { BezierConnector } from "@jsplumb/connector-bezier"
     import SchemaHeader from "./components/ProjectSchema/SchemaHeader.vue"
     import MigrationSaver from "./components/MigrationSaver/MigrationSaver.vue"
-    import UiModal from "@Renderer/components/ui/UiModal.vue"
-    import UiButton from "@Renderer/components/ui/UiButton.vue"
 
     const projectStore = useProjectStore()
 
     let isDragging = false,
         currentConnections = {},
         currentNodes = {},
+        canDrawTables = ref(false),
         jsPlumbInstance: BrowserJsPlumbInstance = null
 
     onMounted(async () => {
-        nextTick(() => {
-            drawConnections()
-        })
+        setTimeout(() => {
+            canDrawTables.value = true
+
+            nextTick(() => {
+                drawConnections()
+            })
+        }, 1);
     })
 
     watch(() => projectStore.project.tables, () => {
@@ -151,7 +154,7 @@
             @syncSchema="syncSchema" 
         />
 
-        <SchemaTables />
+        <SchemaTables v-if="canDrawTables" />
 
         <MigrationSaver />
 
@@ -192,4 +195,3 @@
         fill: #334155;
     }
 </style>
-@Renderer/services/schema/ModelsBuilder@Renderer/services/schema/TablesBuilder@Renderer/services/schema/ModelsBuilder
