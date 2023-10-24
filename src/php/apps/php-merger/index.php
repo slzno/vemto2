@@ -103,7 +103,7 @@ Vemto::execute('php-merger', function () use ($argv) {
     $resultFileContent = Vemto::runPhpCsFixer($resultFileContent);
 
     if(getenv('VEMTO_DEBUG')) {
-        // Vemto::clearLog();
+        Vemto::clearLog();
         Vemto::log($resultFileContent);
     }
 

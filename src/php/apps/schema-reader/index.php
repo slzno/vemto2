@@ -63,8 +63,9 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
     $app->bind('Illuminate\Database\Schema\Blueprint', ExtendedBlueprint::class);
 
     // Bind the extended builder
-    $app['db.schema'] = new ExtendedBuilder($app['db.connection']);
-
+    $app->singleton('db.schema', function ($app) {
+        return new ExtendedBuilder($app['db.connection']);
+    });
 
     foreach ($migrationsFiles as $migrationFile) {
         $migrationsRepository->newMigration($migrationFile);
