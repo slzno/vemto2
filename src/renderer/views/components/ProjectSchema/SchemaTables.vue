@@ -185,7 +185,6 @@
                     v-for="table in projectStore.project.tables"
                     :key="table.id"
                     :table="table"
-                    @highlight="highlightTable(table)"
                 />
             </div>
         </div>

@@ -71,7 +71,7 @@
 
 <template>
     <UiConfirm ref="confirmDeleteDialog">
-        Are you sure you want to delete the <span class="text-red-400">{{ table.name }}</span> table?
+        Are you sure you want to delete the  table?
     </UiConfirm>
 
     <div
@@ -81,6 +81,7 @@
         :ref="`table_${table.id}`"
         :data-table-id="table.id"
         :class="{
+            'opacity-30': schemaStore.hasSelectedTable && schemaStore.selectedTableIsNot(table),
             'border border-transparent': schemaStore.selectedTableIsNot(table),
             'border dark:border-slate-500': schemaStore.selectedTableIs(table),
         }"

@@ -6,10 +6,12 @@
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import ProjectManager from "@Renderer/services/project/ProjectManager"
     import { CommandLineIcon, FolderIcon, PlusCircleIcon } from "@heroicons/vue/24/outline"
+import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
 
     const projectManager = new ProjectManager(),
         search = ref(""),
-        projects = ref([])
+        projects = ref([]),
+        confirmDisconnectDialog = ref(null)
 
     const router = useRouter()
 
@@ -44,9 +46,20 @@
             router.push("/project/schema")
         // }, 500);
     }
+
+    const disconnectProject = async (project: any) => {
+        const confirmed = await confirmDisconnectDialog.value.confirm()
+        if(!confirmed) return
+
+        await projectManager.disconnect(project.id)
+    }
 </script>
 
 <template>
+    <UiConfirm ref="confirmDisconnectDialog">
+        Are you sure you want to disconnect this project?
+    </UiConfirm>
+
     <section class="p-4 space-y-5 dark:bg-slate-900 h-screen">
         <header class="flex w-full justify-center mt-10">
             <div class="flex flex-col">

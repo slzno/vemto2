@@ -38,12 +38,12 @@
     >
         <div
             ref="tableOptionsModal"
-            class="fixed right-0 bottom-0 h-screen pt-10 px-4 z-50 text-slate-200 cursor-default"
+            class="fixed right-0 bottom-0 h-screen pt-16 px-4 z-50 text-slate-200 cursor-default"
             style="width: 42rem"
             v-if="show && schemaStore.hasSelectedTable"
         >
             <div
-                class="relative rounded-t-lg bg-slate-850 w-full shadow-2xl border-t border-l border-r border-slate-600 h-full"
+                class="relative rounded-t-lg bg-slate-850 w-full shadow-2xl border-t border-l border-r border-slate-700 h-full"
             >
                 <div class="flex flex-col h-full">
                     <div>
