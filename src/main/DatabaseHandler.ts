@@ -35,6 +35,11 @@ export function HandleDatabase() {
             let databaseFilePath = path.join(projectPath, ".vemto", "data.json")
             let databaseData = FileSystem.readFileAsJsonIfExists(databaseFilePath)
 
+            if (!databaseData) {
+                console.log('Database data not found, creating new one...')
+                databaseData = RelaDB.Resolver.db().driver.storeBaseData()
+            }
+
             console.log('Feeding database data from first read...')
 
             RelaDB.Resolver.db().driver.feedDatabaseData(databaseData)
