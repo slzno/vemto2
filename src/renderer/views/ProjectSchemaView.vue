@@ -38,6 +38,14 @@
         nextTick(() => drawConnections())
     })
 
+    watch(() => projectStore.project.currentZoom, () => {
+        if(!jsPlumbInstance) return
+
+        jsPlumbInstance.setZoom(
+            projectStore.project.getZoomAsScale()
+        )
+    })
+
     const syncSchema = async (syncTables: boolean, syncModels: boolean) => {
         await loadSchema(syncTables, syncModels)
     }
@@ -140,6 +148,10 @@
             table.positionY = p.el.style.top.replace("px", "")
             table.save()
         })
+
+        jsPlumbInstance.setZoom(
+            projectStore.project.getZoomAsScale()
+        )
     }
 </script>
 

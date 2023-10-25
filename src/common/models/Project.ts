@@ -582,7 +582,9 @@ export default class Project extends RelaDB.Model {
     }
 
     getZoomAsScale(): number {
-        return this.currentZoom / 100
+        const currentZoom = this.currentZoom || 100
+
+        return currentZoom / 100
     }
 
 }
