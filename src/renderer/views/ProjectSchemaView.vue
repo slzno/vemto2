@@ -34,17 +34,8 @@
         }, 1);
     })
 
-    watch(() => projectStore.project.tables, () => {
-        nextTick(() => drawConnections())
-    })
-
-    watch(() => projectStore.project.currentZoom, () => {
-        if(!jsPlumbInstance) return
-
-        jsPlumbInstance.setZoom(
-            projectStore.project.getZoomAsScale()
-        )
-    })
+    watch(() => projectStore.project.currentZoom, () => changeSchemaZoom())
+    watch(() => projectStore.project.tables, () => nextTick(() => drawConnections()))
 
     const syncSchema = async (syncTables: boolean, syncModels: boolean) => {
         await loadSchema(syncTables, syncModels)
@@ -148,6 +139,13 @@
             table.positionY = p.el.style.top.replace("px", "")
             table.save()
         })
+
+        changeSchemaZoom()
+    }
+
+    const changeSchemaZoom = () => {
+        if (!jsPlumbInstance) return
+        if (projectStore.projectIsEmpty) return
 
         jsPlumbInstance.setZoom(
             projectStore.project.getZoomAsScale()

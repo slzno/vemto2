@@ -126,7 +126,7 @@ import Alert from "@Renderer/components/utils/Alert"
                                 <ClipboardDocumentIcon class="h-5 w-5 mr-1 text-red-400" /> Copy Path
                             </UiDropdownItem>
                             <UiDropdownItem @click="openProjectPath(project)">
-                                <FolderIcon class="h-5 w-5 mr-1 text-red-400" /> Open Path
+                                <FolderIcon class="h-5 w-5 mr-1 text-red-400" /> Open Folder
                             </UiDropdownItem>
                             <UiDropdownItem @click="openProjectOnTerminal(project)">
                                 <CommandLineIcon class="h-5 w-5 mr-1 text-red-400" /> Open Terminal
