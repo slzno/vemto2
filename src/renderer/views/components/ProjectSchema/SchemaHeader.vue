@@ -320,7 +320,7 @@
                     />
                 </div>
                 <div class="text-xs text-slate-500 w-5 text-center select-none">
-                    {{ projectStore.project.currentZoom }}
+                    {{ projectStore.project.currentZoom || 100 }}
                 </div>
                 <div
                     class="p-2 cursor-pointer text-slate-400 hover:text-red-500"

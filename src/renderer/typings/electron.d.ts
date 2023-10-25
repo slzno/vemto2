@@ -17,6 +17,8 @@ export default interface ElectronApi {
     writeProjectFile: (path: string, content: string) => Promise<void>,
     readTemplateFile: (path: string) => Promise<string>,
     writeTemplateFile: (path: string, content: string) => Promise<void>,
+    openFolder: (path: string) => Promise<void>,
+    openTerminal: (path: string) => Promise<void>,
     openProjectFile: (path: string) => Promise<void>,
     openProjectFolder: (path: string) => Promise<void>,
     openProjectFolderOnTerminal: (path: string) => Promise<void>,

@@ -9,11 +9,14 @@
     import { PlusCircleIcon, EllipsisVerticalIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import Main from "@Renderer/services/wrappers/Main"
     import UiButton from '@Renderer/components/ui/UiButton.vue'
+    import UiOptionsDropdown from '@Renderer/components/ui/UiOptionsDropdown.vue'
+    import UiDropdownItem from '@Renderer/components/ui/UiDropdownItem.vue'
+    import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
 
     const props = defineProps(['table']),
         table = toRef(props, 'table'),
         tableIndexes = ref([]),
-        showIndexOption = ref(null)
+        confirmDeleteDialog = ref(null)
 
     const onDevelopment = Main.API.onDevelopment()
 
@@ -83,7 +86,7 @@
         index.saveFromInterface()
     }
 
-    const onIndexRemoving = (index: Index, force: boolean = false) => {
+    const onIndexRemoving = async (index: Index, force: boolean = false) => {
         const removeIndex = () => {
             index.remove()
             tableIndexes.value.splice(tableIndexes.value.indexOf(index), 1)
@@ -94,11 +97,10 @@
             return
         }
 
-        Main.API.confirm("Are you sure you want to remove this index?").then((confirmed: boolean) => {
-            if(!confirmed) return
+        const confirmed = await confirmDeleteDialog.value.confirm()
+        if(!confirmed) return
 
-            removeIndex()
-        })
+        removeIndex()
     }
 
     const log = (index: Index) => {
@@ -108,6 +110,10 @@
 </script>
 <template>
     <div>
+        <UiConfirm ref="confirmDeleteDialog">
+            Are you sure you want to remove this index?
+        </UiConfirm>
+
         <div>
             <div
                 v-for="index in tableIndexes"
@@ -145,16 +151,12 @@
                         />
                     </div>
     
-                    <div class="p-1 relative">
-                        <EllipsisVerticalIcon class="h-6 w-6 text-slate-400 cursor-pointer" @click="showIndexOption = showIndexOption == index.id ? null : index.id" />
-                        <div class="bg-slate-950 w-auto rounded absolute z-[20] p-1 right-0 top-8 border border-gray-700" v-if="showIndexOption == index.id">
-                            <ul>
-                                <li class="flex items-center justify-start text-md p-1 cursor-pointer" @click="onIndexRemoving(index)">
-                                    <TrashIcon class="h-5 w-5 mr-1 text-red-400" />
-                                    Delete
-                                </li>
-                            </ul>
-                        </div>
+                    <div class="flex items-center justify-center">
+                        <UiOptionsDropdown>
+                            <UiDropdownItem @click="onIndexRemoving(index)">
+                                <TrashIcon class="h-5 w-5 mr-1 text-red-400" /> Delete
+                            </UiDropdownItem>
+                        </UiOptionsDropdown>
                     </div>
                 </div>
         

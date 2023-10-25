@@ -26,7 +26,7 @@
 
 <template>
     <!-- Transition animation from bottom to top -->
-    <Teleport to="body">
+    <Teleport to="#appContainer">
         <Transition
             enter-from-class="transition duration-300 opacity-0"
             enter-to-class="transition duration-300 opacity-100"

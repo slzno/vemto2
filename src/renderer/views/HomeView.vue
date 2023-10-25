@@ -5,8 +5,12 @@
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import ProjectManager from "@Renderer/services/project/ProjectManager"
-    import { CommandLineIcon, FolderIcon, PlusCircleIcon } from "@heroicons/vue/24/outline"
-import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
+    import { ClipboardDocumentIcon, CommandLineIcon, FolderIcon, PlusCircleIcon, XMarkIcon } from "@heroicons/vue/24/outline"
+    import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
+    import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
+    import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
+import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
+import Alert from "@Renderer/components/utils/Alert"
 
     const projectManager = new ProjectManager(),
         search = ref(""),
@@ -16,8 +20,12 @@ import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
     const router = useRouter()
 
     onMounted(async () => {
-        projects.value = projectManager.get()
+        getProjects()
     })
+
+    const getProjects = () => {
+        projects.value = projectManager.get()
+    }
 
     const filteredProjects = computed(() => {
         return projects.value.filter((project) => {
@@ -52,6 +60,26 @@ import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
         if(!confirmed) return
 
         await projectManager.disconnect(project.id)
+
+        getProjects()
+    }
+
+    const connectSSH = async () => {
+        Alert.info("SSH connection is not available yet (under development)")
+    }
+
+    const copyProjectPath = (project: any) => {
+        navigator.clipboard.writeText(project.path)
+
+        Alert.success("Project path copied to clipboard")
+    }
+
+    const openProjectPath = (project: any) => {
+        Main.API.openFolder(project.path)
+    }
+
+    const openProjectOnTerminal = (project: any) => {
+        Main.API.openTerminal(project.path)
     }
 </script>
 
@@ -72,7 +100,7 @@ import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
                         <FolderIcon class="w-5 h-5 text-red-500" />
                         Connect Folder
                     </UiButton>
-                    <UiButton class="gap-1.5" @click="openProject">
+                    <UiButton class="gap-1.5" @click="connectSSH">
                         <CommandLineIcon class="w-5 h-5 text-red-500" />
                         Connect SSH
                     </UiButton>
@@ -85,14 +113,28 @@ import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
                 <UiText v-model="search" placeholder="Search apps..." />
             </div>
 
-            <!-- <UiEmptyMessage>
+            <UiEmptyMessage v-if="!projects.length">
                 There are no connected apps
-            </UiEmptyMessage> -->
+            </UiEmptyMessage>
 
             <div class="flex flex-col gap-2 w-1/2 max-w-xl">
                 <div v-for="project in filteredProjects" @click="openProject(project)" class="p-2 rounded-lg border border-slate-650 bg-slate-850 cursor-pointer hover:bg-slate-800">
                     <div class="flex justify-between">
                         <span>{{ project.path.split(/\/|\\/).pop() }}</span>
+                        <UiOptionsDropdown>
+                            <UiDropdownItem @click="copyProjectPath(project)">
+                                <ClipboardDocumentIcon class="h-5 w-5 mr-1 text-red-400" /> Copy Path
+                            </UiDropdownItem>
+                            <UiDropdownItem @click="openProjectPath(project)">
+                                <FolderIcon class="h-5 w-5 mr-1 text-red-400" /> Open Path
+                            </UiDropdownItem>
+                            <UiDropdownItem @click="openProjectOnTerminal(project)">
+                                <CommandLineIcon class="h-5 w-5 mr-1 text-red-400" /> Open Terminal
+                            </UiDropdownItem>
+                            <UiDropdownItem @click="disconnectProject(project)">
+                                <XMarkIcon class="h-5 w-5 mr-1 text-red-400" /> Disconnect
+                            </UiDropdownItem>
+                        </UiOptionsDropdown>
                     </div>
                     <div class="text-slate-500">
                         {{ project.path }}

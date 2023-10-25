@@ -106,6 +106,16 @@ export default class ProjectManager {
         return projectItem
     }
 
+    disconnect(id: string) {
+        const projectItems = this.get()
+
+        const index = projectItems.findIndex((p: any) => p.id === id)
+
+        projectItems.splice(index, 1)
+
+        window.localStorage.setItem("__projects", JSON.stringify(projectItems))
+    }
+
     get() {
         let projectItemsData = window.localStorage.getItem("__projects")
 

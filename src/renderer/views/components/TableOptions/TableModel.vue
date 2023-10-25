@@ -2,16 +2,17 @@
     import { PropType, Ref, toRef, ref, onMounted, defineEmits } from "vue"
     import Model from "@Common/models/Model"
     import UiText from "@Renderer/components/ui/UiText.vue"
-    import { EllipsisVerticalIcon, TrashIcon } from "@heroicons/vue/24/outline"
+    import { TrashIcon } from "@heroicons/vue/24/outline"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import UiMultiSelect from "@Renderer/components/ui/UiMultiSelect.vue"
     import Main from "@Renderer/services/wrappers/Main"
     import Column from "@Renderer/../common/models/Column"
     import TableModelRelationships from './TableModelRelationships.vue'
-    import { uniq } from 'lodash'
     import UiWarning from "@Renderer/components/ui/UiWarning.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
-import UiTabs from "@Renderer/components/ui/UiTabs.vue"
+    import UiTabs from "@Renderer/components/ui/UiTabs.vue"
+    import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
+    import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
 
     const onDevelopment = Main.API.onDevelopment()
 
@@ -23,7 +24,6 @@ import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     })
 
     const model = toRef(props, "model") as Ref<Model>,
-        showModelOptions = ref(false),
         emit = defineEmits(['removeModel']),
         modelPluralReference = ref(null),
         selectedTab = ref("data")
@@ -130,16 +130,12 @@ import UiTabs from "@Renderer/components/ui/UiTabs.vue"
                     placeholder="Model name"
                     @input="saveModelData(true)"
                 />
-                <div class="p-1 relative">
-                    <EllipsisVerticalIcon class="h-6 w-6 text-slate-400 cursor-pointer" @click="showModelOptions = !showModelOptions" />
-                    <div class="bg-slate-950 w-auto rounded absolute p-1 right-0 top-8 border border-gray-700" v-if="showModelOptions">
-                        <ul>
-                            <li class="flex items-center justify-start text-md p-1 cursor-pointer" @click="deleteModel()">
-                                <TrashIcon class="h-5 w-5 mr-1 text-red-400" />
-                                Delete
-                            </li>
-                        </ul>
-                    </div>
+                <div class="flex items-center justify-center">
+                    <UiOptionsDropdown>
+                        <UiDropdownItem @click="deleteModel()">
+                            <TrashIcon class="h-5 w-5 mr-1 text-red-400" /> Delete
+                        </UiDropdownItem>
+                    </UiOptionsDropdown>
                 </div>
             </div>
             <div class="mt-2">

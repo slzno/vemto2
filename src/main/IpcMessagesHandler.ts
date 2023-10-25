@@ -6,6 +6,7 @@ import { handleError } from "./ErrorHandler"
 import Project from "../common/models/Project"
 import ReadProjectSchema from "./services/ReadProjectSchema"
 import RenderableFile from "../common/models/RenderableFile"
+import Terminal from "./base/Terminal"
 
 export function HandleIpcMessages() {
     ipcMain.handle("confirm", (event, message: string) => {
@@ -72,6 +73,18 @@ export function HandleIpcMessages() {
         })
     })
 
+    ipcMain.handle("folder:open", (event, folderPath) => {
+        return handleError(event, () => {
+            shell.openPath(folderPath)
+        })
+    })
+
+    ipcMain.handle("folder:open:terminal", (event, folderPath) => {
+        return handleError(event, async () => {
+            Terminal.open(folderPath)
+        })
+    })
+
     ipcMain.handle("file:project:open", (event, fileRelativePath) => {
         const project = Project.find(1)
         if(!project) return null
@@ -102,17 +115,8 @@ export function HandleIpcMessages() {
 
         return handleError(event, async () => {
             const completePath = path.join(project.getPath(), folderRelativePath)
-
-            const isMacOs = process.platform === "darwin"
             
-            if (isMacOs) {
-                await executeCommand(`osascript -e 'tell application "Terminal"' -e 'activate' -e 'do script "cd ${completePath} in window 1' -e 'end tell'`)
-            } else {
-                const fullCommand = `cd ${completePath};`,
-                    commandToExecute = fullCommand.replace(/;/g, '\\;')
-                
-                await executeCommand(`start wt.exe -w 0 -d . -p "PowerShell" powershell.exe -NoExit -Command "${commandToExecute}"`)
-            }
+            Terminal.open(completePath)
         })
     })
 
@@ -191,27 +195,4 @@ export function HandleIpcMessages() {
             return FileSystem.readFolder(completePath, removeBasePath)
         })
     })
-
-    const executeCommand = (command) => {
-        console.log('Executing: ' + command)
-        
-        return new Promise((resolve, reject) => {
-            child_process.exec(command, (error, out, err) => {
-                if(error) {
-                    console.error(error)
-                    reject(error)
-                }
-                
-                if(err) {
-                    console.error(err)
-                    reject(err)
-                }
-    
-                if(out) console.log(out)
-    
-                resolve(true)
-            })
-        })
-    
-    }
 }

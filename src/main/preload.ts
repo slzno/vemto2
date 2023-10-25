@@ -59,6 +59,12 @@ contextBridge.exposeInMainWorld("api", {
     writeTemplateFile: (path: string, content: string) => {
         return ipcRenderer.invoke("file:template:write", path, content)
     },
+    openFolder: (path: string) => {
+        return ipcRenderer.invoke("folder:open", path)
+    },
+    openTerminal: (path: string) => {
+        return ipcRenderer.invoke("folder:open:terminal", path)
+    },
     openProjectFile: (path: string) => {
         return ipcRenderer.invoke("file:project:open", path)
     },

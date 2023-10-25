@@ -3,7 +3,7 @@
     import Relationship from "@Renderer/../common/models/Relationship"
     import UiButton from '@Renderer/components/ui/UiButton.vue'
     import UiText from '@Renderer/components/ui/UiText.vue'
-    import { PlusIcon, EllipsisVerticalIcon, TrashIcon, PlusCircleIcon } from "@heroicons/vue/24/outline"
+    import { TrashIcon, PlusCircleIcon } from "@heroicons/vue/24/outline"
     import UiDropdownSelect from '@Renderer/components/ui/UiDropdownSelect.vue'
     import CommonRelationship from './TableRelationships/CommonRelationship.vue'
     import ManyToManyRelationship from './TableRelationships/ManyToManyRelationship.vue'
@@ -11,11 +11,12 @@
     import ThroughRelationship from './TableRelationships/ThroughRelationship.vue'
     import RelationshipTypes from '@Common/models/static/RelationshipTypes'
     import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
+    import UiOptionsDropdown from '@Renderer/components/ui/UiOptionsDropdown.vue'
+    import UiDropdownItem from '@Renderer/components/ui/UiDropdownItem.vue'
 
     const props = defineProps(['model', 'models']),
         models = toRef(props, 'models'),
         model = toRef(props, 'model'),
-        relationshipIdOptions = ref(null),
         relationships = ref([]),
         confirmDeleteDialog = ref(null)
 
@@ -62,14 +63,6 @@
 
         relationship.processAndSave(true)
         loadRelationships()
-    }
-
-    const toggleRelationshipOptions = (relationship: Relationship): void => {
-        relationshipIdOptions.value = (
-            relationshipIdOptions.value === relationship.id
-                ? null
-                : relationship.id
-        )
     }
 
     const onRelationshipRemoving = async (relationship: Relationship, force: boolean = false) => {
@@ -153,32 +146,24 @@
                 @keyup.escape="onEscapePressed(relationship)"
             >
             
-            <header class="flex justify-between mb-4">
-                <div class="text-red-400 font-thin">
+            <div class="flex justify-between mb-4">
+                <div class="text-red-400 font-thin overflow-visible">
                     {{ relationship.model?.name }}.{{ relationship.name }}
                 </div>
 
-                <span class="relative mt-1">
-                    <EllipsisVerticalIcon
-                        class="h-6 w-6 text-slate-400 cursor-pointer"
-                        @click="toggleRelationshipOptions(relationship)"
-                    />
-                    <div class="bg-slate-950 w-auto rounded absolute p-1 z-10 right-0 top-8 border border-gray-700" v-if="relationshipIdOptions === relationship.id">
-                        <ul>
-                            <li class="flex items-center justify-start text-md p-1 cursor-pointer" @click="onRelationshipRemoving(relationship)">
-                                <TrashIcon class="h-5 w-5 mr-1 text-red-400" />
-                                Delete
-                            </li>
-                        </ul>
-                    </div>
-                </span>
-            </header>
+                <div class="mt-1">
+                    <UiOptionsDropdown>
+                        <UiDropdownItem @click="onRelationshipRemoving(relationship)">
+                            <TrashIcon class="h-5 w-5 mr-1 text-red-400" /> Delete
+                        </UiDropdownItem>
+                    </UiOptionsDropdown>
+                </div>
+            </div>
 
             <div class="flex flex-col gap-1 space-y-1.5">
 
                     <div class="space-x-1 flex justify-between">
                         <!-- <UiButton @click="relationship.logDataComparison()">Log data comparison</UiButton> -->
-
 
                         <div class="text-red-400 flex gap-1 flex-1">
                             <div class="flex-1">
