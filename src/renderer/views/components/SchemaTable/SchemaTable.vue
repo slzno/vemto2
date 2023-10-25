@@ -71,7 +71,7 @@
 
 <template>
     <UiConfirm ref="confirmDeleteDialog">
-        Are you sure you want to delete the  table?
+        Are you sure you want to delete the <span class="text-red-400">{{ table.name }}</span> table?
     </UiConfirm>
 
     <div
