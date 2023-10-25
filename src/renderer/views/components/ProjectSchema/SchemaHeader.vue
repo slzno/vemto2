@@ -358,35 +358,41 @@
             </div>
         </div>
 
-        <div class="flex">
-            <div
-                class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-700"
-            >
+        <div class="flex gap-1 items-center text-xs">
+            <div>
                 <div
-                    class="py-1 px-5 cursor-pointer text-slate-400 hover:text-red-500 flex items-center justify-center"
+                    class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-700 h-6"
                 >
-                    <PlusIcon class="w-4 h-4 mr-1" />
-                    New Schema
+                    <div
+                        class="py-1 px-5 cursor-pointer text-slate-400 hover:text-red-500 flex items-center justify-center"
+                    >
+                        <PlusIcon class="w-4 h-4 mr-1" />
+                        New Schema
+                    </div>
                 </div>
             </div>
-    
-            <div
-                class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-700"
-            >
+            
+            <div>
                 <div
-                    class="px-5 cursor-pointer text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-500"
+                    class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-700 h-6"
                 >
-                    App
+                    <div
+                        class="px-5 cursor-pointer text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-500"
+                    >
+                        App
+                    </div>
                 </div>
             </div>
-    
-            <div
-                class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-700"
-            >
+            
+            <div>
                 <div
-                    class="px-5 cursor-pointer text-slate-600 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-500"
+                    class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-700 h-6"
                 >
-                    Laravel
+                    <div
+                        class="px-5 cursor-pointer text-slate-600 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-500"
+                    >
+                        Laravel
+                    </div>
                 </div>
             </div>
         </div>
