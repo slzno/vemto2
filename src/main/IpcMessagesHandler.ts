@@ -38,6 +38,18 @@ export function HandleIpcMessages() {
         })
     })
 
+    ipcMain.handle("file:read", (event, filePath) => {
+        return handleError(event, () => {
+            return FileSystem.readFile(filePath)
+        })
+    })
+
+    ipcMain.handle("folder:exists", (event, folderPath) => {
+        return handleError(event, () => {
+            return FileSystem.folderExists(folderPath)
+        })
+    })
+
     ipcMain.handle("file:project:read", (event, filePath) => {
         const project = Project.find(1)
         if(!project) return null

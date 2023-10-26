@@ -47,6 +47,12 @@ contextBridge.exposeInMainWorld("api", {
     },
 
     // Files Management
+    readFile: (path: string) => {
+        return ipcRenderer.invoke("file:read", path)
+    },
+    folderExists: (path: string) => {
+        return ipcRenderer.invoke("folder:exists", path)
+    },
     readProjectFile: (path: string) => {
         return ipcRenderer.invoke("file:project:read", path)
     },

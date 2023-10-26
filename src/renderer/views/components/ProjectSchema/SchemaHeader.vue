@@ -260,10 +260,13 @@
                             <UiText v-model="newTable.name" id="new-table-name" placeholder="Table Name"></UiText>
                             <UiCheckbox v-model="addModelForNewTable" label="Add a default model"></UiCheckbox>
                         </div>
-                        <div class="m-1 mt-2 flex justify-end">
+                    </div>
+
+                    <template #footer>
+                        <div class="flex justify-end p-2">
                             <UiButton @click="createTable()">Create</UiButton>
                         </div>
-                    </div>
+                    </template>
                 </UiModal>
 
                 <div

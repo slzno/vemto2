@@ -1,5 +1,5 @@
 <template>
-    <li class="flex items-center justify-start text-md p-1 cursor-pointer hover:bg-slate-850 px-3 rounded-md">
+    <li class="flex items-center justify-start text-md p-1 cursor-pointer hover:bg-slate-850 px-3 rounded">
         <slot></slot>
     </li>
 </template>

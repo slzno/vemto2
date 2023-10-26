@@ -40,6 +40,32 @@ export enum ProjectFilesQueueStatus {
     PROCESSING = "processing",
 }
 
+export enum ProjectCssFramework {
+    TAILWIND = "tailwind",
+    BOOTSTRAP = "bootstrap",
+    BULMA = "bulma",
+    FOUNDATION = "foundation",
+    OTHER = "other",
+}
+
+export enum ProjectUIStarterKit {
+    JETSTREAM = "jetstream",
+    BREEZE = "breeze",
+    LARAVEL_UI = "laravel_ui",
+    OTHER = "other",
+}
+
+export interface ProjectSettings {
+    cssFramework: ProjectCssFramework
+    uiStarterKit: ProjectUIStarterKit,
+    usesLivewire: boolean
+    usesInertia: boolean
+    usesVue: boolean
+    usesReact: boolean
+    usesSvelte: boolean
+    isFreshLaravelProject: boolean,
+}
+
 export default class Project extends RelaDB.Model {
     id: string
     uuid: string
@@ -71,8 +97,10 @@ export default class Project extends RelaDB.Model {
     scrollX: number
     scrollY: number
     codeGenerationSettings: ProjectCodeGenerationSettings
+    settings: ProjectSettings
     filesQueueStatus: ProjectFilesQueueStatus
     currentZoom: number
+    connectionFinished: boolean
 
     relationships() {
         return {

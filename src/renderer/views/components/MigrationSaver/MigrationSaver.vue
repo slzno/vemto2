@@ -351,7 +351,7 @@ import UiLoading from "@Renderer/components/ui/UiLoading.vue"
                 </section>
 
                 <template #footer>
-                    <div class="flex justify-end p-4">
+                    <div class="flex justify-end p-2">
                         <UiButton :disabled="savingMigrations" @click="saveMigrations">
                             <div class="flex space-x-1" v-if="savingMigrations">
                                 <UiLoading></UiLoading> 

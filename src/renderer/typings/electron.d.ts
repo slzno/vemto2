@@ -13,6 +13,8 @@ export default interface ElectronApi {
     closeProjectDatabase: () => Promise<void>,
     databaseDataUpdated: (data: any) => void,
     addFileToGenerationQueue: (filePath: string, content: string) => Promise<void>,
+    readFile: (path: string) => Promise<string>,
+    folderExists: (path: string) => Promise<boolean>,
     readProjectFile: (path: string) => Promise<string>,
     writeProjectFile: (path: string, content: string) => Promise<void>,
     readTemplateFile: (path: string) => Promise<string>,

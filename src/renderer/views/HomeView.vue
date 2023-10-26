@@ -1,6 +1,7 @@
 <script setup lang="ts">
-    import { ref, onMounted, computed } from "vue"
+    import { ref, onMounted, computed, Ref } from "vue"
     import { useRouter } from "vue-router"
+    import { ProjectSettings } from "@Common/models/Project"
     import Main from "@Renderer/services/wrappers/Main"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
@@ -9,13 +10,30 @@
     import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
     import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
     import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
-import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
-import Alert from "@Renderer/components/utils/Alert"
+    import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
+    import Alert from "@Renderer/components/utils/Alert"
+    import ProjectInfo from "@Renderer/services/project/ProjectInfo"
+    import UiModal from "@Renderer/components/ui/UiModal.vue"
+    import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
+    import UiSelect from "@Renderer/components/ui/UiSelect.vue"
+    import UiWarning from "@Renderer/components/ui/UiWarning.vue"
 
     const projectManager = new ProjectManager(),
         search = ref(""),
         projects = ref([]),
-        confirmDisconnectDialog = ref(null)
+        confirmDisconnectDialog = ref(null),
+        currentConnectingFolder = ref(null),
+        showingConnectingFolderModal = ref(false),
+        connectingFolderSettings = ref({
+            cssFramework: "tailwind",
+            uiStarterKit: "jetstream",
+            usesLivewire: false,
+            usesInertia: false,
+            usesVue: false,
+            usesReact: false,
+            usesSvelte: false,
+            isFreshLaravelProject: false,
+        }) as Ref<ProjectSettings>
 
     const router = useRouter()
 
@@ -33,20 +51,47 @@ import Alert from "@Renderer/components/utils/Alert"
         })
     })
 
-    const connectFolder = async () => {
+    const openFolder = async () => {
         const path = await Main.API.openFolderDialog()
 
         if (!path) return
 
-        await projectManager.connectFromPath(path)
-
-        openSchema()
+        await openPath(path)
     }
 
     const openProject = async (project: any) => {
-        await projectManager.open(project.id)
+        await openPath(project.path)
+    }
 
-        openSchema()
+    const openPath = async (path) => {
+        currentConnectingFolder.value = path
+
+        const projectInfo = new ProjectInfo(path)
+        await projectInfo.read()
+
+        if(!projectInfo.isLaravelProject) {
+            Alert.error("This folder is not a Laravel project")
+            return
+        }
+
+        if(projectInfo.alreadyConnected) {
+            await projectManager.connectFromPath(path)
+            openSchema()
+            return
+        }
+
+        buildConnectingFolderSettings(projectInfo)
+        showingConnectingFolderModal.value = true
+    }
+
+    const buildConnectingFolderSettings = (projectInfo) => {
+        connectingFolderSettings.value.cssFramework = projectInfo.getCssFramework()
+        connectingFolderSettings.value.uiStarterKit = projectInfo.getStarterKit()
+        connectingFolderSettings.value.usesLivewire = projectInfo.hasLivewire
+        connectingFolderSettings.value.usesInertia = projectInfo.hasInertia
+        connectingFolderSettings.value.usesVue = projectInfo.hasVue
+        connectingFolderSettings.value.usesReact = projectInfo.hasReact
+        connectingFolderSettings.value.usesSvelte = projectInfo.hasSvelte
     }
 
     const openSchema = async () => {
@@ -62,6 +107,10 @@ import Alert from "@Renderer/components/utils/Alert"
         await projectManager.disconnect(project.id)
 
         getProjects()
+    }
+
+    const newApp = async () => {
+        Alert.info("Applications creation wizard is not available yet. Please create a project manually then connect it to Vemto")
     }
 
     const connectSSH = async () => {
@@ -88,15 +137,71 @@ import Alert from "@Renderer/components/utils/Alert"
         Are you sure you want to disconnect this project?
     </UiConfirm>
 
+    <!-- Connect folder modal -->
+    <UiModal
+        width="700px"
+        title="Connect Folder"
+        :show="showingConnectingFolderModal"
+        @close="showingConnectingFolderModal = false"
+    >
+        <div class="p-4">
+            <div class="m-1 flex flex-col gap-4">
+
+                <div class="flex justify-end">
+                    <div class="px-2 py-1 bg-slate-950 rounded-md text-sm w-auto inline text-slate-300 font-mono">
+                        Connecting to <span class="text-red-400">{{ currentConnectingFolder }}</span>
+                    </div>
+                </div>
+
+                <div>
+                    <UiSelect v-model="connectingFolderSettings.cssFramework" label="CSS Framework">
+                        <option value="tailwind">TailwindCSS</option>
+                        <option value="bootstrap">Bootstrap</option>
+                        <option value="bulma">Bulma</option>
+                        <option value="foundation">Foundation</option>
+                        <option value="other">Other</option>
+                    </UiSelect>
+    
+                    <UiSelect v-model="connectingFolderSettings.uiStarterKit" label="Starter Kit">
+                        <option value="jetstream">Jetstream</option>
+                        <option value="breeze">Breeze</option>
+                        <option value="laravel_ui">Laravel UI</option>
+                        <option value="other">Other</option>
+                    </UiSelect>
+                </div>
+
+                <div>
+                    <UiCheckbox v-model="connectingFolderSettings.usesLivewire" label="Has Livewire installed"></UiCheckbox>
+                    <UiCheckbox v-model="connectingFolderSettings.usesInertia" label="Has Inertia installed"></UiCheckbox>
+                    <UiCheckbox v-model="connectingFolderSettings.usesVue" label="Has Vue installed"></UiCheckbox>
+                </div>
+
+                <div>
+                    <UiCheckbox v-model="connectingFolderSettings.isFreshLaravelProject" label="It is a fresh Laravel project"></UiCheckbox>
+
+                    <div class="mt-2 p-2 rounded-lg border border-slate-700 bg-slate-900 font-mono text-sm text-slate-300" v-if="connectingFolderSettings.isFreshLaravelProject">
+                        When a project is marked as fresh, Vemto will automatically generate some specific files after connecting it. This is useful when you want to connect a new project that was created manually. It is not recommended to mark a project as fresh if it is a previous existing project, as it may overwrite some files.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <template #footer>
+            <div class="flex justify-end p-2">
+                <UiButton>Connect</UiButton>
+            </div>
+        </template>
+    </UiModal>
+
     <section class="p-4 space-y-5 dark:bg-slate-900 h-screen">
         <header class="flex w-full justify-center mt-10">
             <div class="flex flex-col">
                 <div class="flex gap-2">
-                    <UiButton class="gap-1.5" @click="openProject">
+                    <UiButton class="gap-1.5" @click="newApp()">
                         <PlusCircleIcon class="w-5 h-5 text-red-500" />
                         New App
                     </UiButton>
-                    <UiButton class="gap-1.5" @click="connectFolder()">
+                    <UiButton class="gap-1.5" @click="openFolder()">
                         <FolderIcon class="w-5 h-5 text-red-500" />
                         Connect Folder
                     </UiButton>

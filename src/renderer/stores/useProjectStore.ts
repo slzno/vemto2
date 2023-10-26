@@ -1,5 +1,6 @@
 import { defineStore } from "pinia"
 import Project from "@Common/models/Project"
+import { useSchemaStore } from "./useSchemaStore"
 
 export const useProjectStore = defineStore("project", {
     state: () => ({ 
@@ -23,7 +24,10 @@ export const useProjectStore = defineStore("project", {
         },
 
         closeProject() {
+            const schemaStore = useSchemaStore()
+            
             this.project = {} as Project
+            schemaStore.deselectTable()
         },
     },
 
