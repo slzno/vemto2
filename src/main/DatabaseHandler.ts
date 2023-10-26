@@ -55,6 +55,8 @@ export function HandleDatabase() {
             isOpen = false
             RelaDB.Resolver.db().driver.feedDatabaseData({})
 
+            ProjectPathResolver.clearPath()
+
             return true
         })
     })

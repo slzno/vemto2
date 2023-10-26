@@ -10,4 +10,12 @@ export default new class ProjectPathResolver {
         return this.path
     }
 
+    hasPath() {
+        return !!this.path
+    }
+
+    clearPath() {
+        this.path = null
+    }
+
 }

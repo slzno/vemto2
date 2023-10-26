@@ -16,7 +16,6 @@
     import UiModal from "@Renderer/components/ui/UiModal.vue"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import UiSelect from "@Renderer/components/ui/UiSelect.vue"
-    import UiWarning from "@Renderer/components/ui/UiWarning.vue"
 
     const projectManager = new ProjectManager(),
         search = ref(""),
@@ -63,6 +62,14 @@
         await openPath(project.path)
     }
 
+    const finishConnect = async (path) => {
+        projectManager.setSettings(connectingFolderSettings.value)
+
+        await projectManager.connectFromPath(path)
+        
+        openSchema()
+    }
+
     const openPath = async (path) => {
         currentConnectingFolder.value = path
 
@@ -95,9 +102,7 @@
     }
 
     const openSchema = async () => {
-        // setTimeout(() => {
-            router.push("/project/schema")
-        // }, 500);
+        router.push("/project/schema")
     }
 
     const disconnectProject = async (project: any) => {
@@ -140,6 +145,7 @@
     <!-- Connect folder modal -->
     <UiModal
         width="700px"
+        height="600px"
         title="Connect Folder"
         :show="showingConnectingFolderModal"
         @close="showingConnectingFolderModal = false"
@@ -188,7 +194,7 @@
 
         <template #footer>
             <div class="flex justify-end p-2">
-                <UiButton>Connect</UiButton>
+                <UiButton @click="finishConnect(currentConnectingFolder)">Connect</UiButton>
             </div>
         </template>
     </UiModal>

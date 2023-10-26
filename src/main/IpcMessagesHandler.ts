@@ -1,5 +1,4 @@
 import path from "path"
-import child_process from "child_process"
 import { app, ipcMain, shell, dialog } from "electron"
 import FileSystem from "./base/FileSystem"
 import { handleError } from "./ErrorHandler"
@@ -7,6 +6,7 @@ import Project from "../common/models/Project"
 import ReadProjectSchema from "./services/ReadProjectSchema"
 import RenderableFile from "../common/models/RenderableFile"
 import Terminal from "./base/Terminal"
+import ProjectPathResolver from "@Common/services/ProjectPathResolver"
 
 export function HandleIpcMessages() {
     ipcMain.handle("confirm", (event, message: string) => {
@@ -205,6 +205,36 @@ export function HandleIpcMessages() {
             const completePath = path.join(app.getAppPath(), "static", folderPath)
 
             return FileSystem.readFolder(completePath, removeBasePath)
+        })
+    })
+
+    ipcMain.handle("folder:internal:copy", (event, folderPath, destination) => {
+        if(!ProjectPathResolver.hasPath()) {
+            console.log('Project path is not set')
+            return 
+        }
+
+        return handleError(event, () => {
+            const completePath = path.join(app.getAppPath(), "static", folderPath),
+                completeDestination = path.join(ProjectPathResolver.getPath(), destination)
+
+            return FileSystem.copyFolder(completePath, completeDestination)
+        })
+    })
+
+    // This is used to copy a folder from Vemto to the project folder, but it only
+    // creates the folder if it does not exist in the project
+    ipcMain.handle("folder:internal:copy:if-not-exists", (event, folderPath, destination) => {
+        if(!ProjectPathResolver.hasPath()) {
+            console.log('Project path is not set')
+            return 
+        }
+
+        return handleError(event, () => {
+            const completePath = path.join(app.getAppPath(), "static", folderPath),
+                completeDestination = path.join(ProjectPathResolver.getPath(), destination)
+
+            return FileSystem.copyFolderIfNotExists(completePath, completeDestination)
         })
     })
 }

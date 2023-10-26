@@ -109,14 +109,14 @@ class FileSystem {
     /**
      * Makes a folder based on a folder template (copy the folder)
      */
-    makeFolderFromTemplate(destinationFolder: string, templateFolder: string) {
+    copyFolderIfNotExists(templateFolder: string, destinationFolder: string) {
         if(this.folderDoesNotExist(destinationFolder)) {
-            this.copyFolder(destinationFolder, templateFolder)
+            this.copyFolder(templateFolder, destinationFolder)
         }
     }
 
 
-    copyFolder(destinationFolder: string, templateFolder: string): boolean {
+    copyFolder(templateFolder: string, destinationFolder: string): boolean {
         console.log('Copying Folder: ' + templateFolder + ' to ' + destinationFolder)
         return shell.cp('-R', templateFolder, destinationFolder)
     }

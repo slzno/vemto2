@@ -91,5 +91,11 @@ contextBridge.exposeInMainWorld("api", {
     },
     readInternalFolder: (path: string, removeBasePath: boolean = false) => {
         return ipcRenderer.invoke("folder:internal:read", path, removeBasePath)
-    }
+    },
+    copyInternalFolderToProject: (path: string, destination: string) => {
+        return ipcRenderer.invoke("folder:internal:copy", path, destination)
+    },
+    copyInternalFolderIfNotExists: (path: string, destination: string) => {
+        return ipcRenderer.invoke("folder:internal:copy:if-not-exists", path, destination)
+    },
 })

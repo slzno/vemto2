@@ -1,10 +1,14 @@
 import { v4 as uuid } from "uuid"
+import Project, { ProjectSettings } from "@Common/models/Project"
 import HandleProjectDatabase from "../HandleProjectDatabase"
+import ProjectConnector from "./ProjectConnector"
 
 export default class ProjectManager {
 
     static closed = false
     static currentOpenProjectUuid = ""
+
+    projectSettings: ProjectSettings
 
     static isClosed() {
         return ProjectManager.closed
@@ -45,7 +49,9 @@ export default class ProjectManager {
 
         if (!projectItem) throw new Error("Project not found")
 
-        const project = await HandleProjectDatabase.setup(projectItem.path)
+        const project: Project = await HandleProjectDatabase.setup(projectItem.path)
+
+        await this.setupProjectData(project)
 
         ProjectManager.setCurrentOpenProjectUuid(project.uuid)
 
@@ -56,6 +62,18 @@ export default class ProjectManager {
         ProjectManager.free()
 
         return projectItem
+    }
+
+    async setupProjectData(project: Project) {
+        const projectConnector = new ProjectConnector(project)
+
+        await projectConnector.connect(
+            this.projectSettings
+        )
+    }
+
+    setSettings(settings: ProjectSettings) {
+        this.projectSettings = settings
     }
 
     static getCurrentOpenProjectUuid() {
