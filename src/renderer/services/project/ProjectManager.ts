@@ -113,6 +113,7 @@ export default class ProjectManager {
             projectItem = { 
                 id,
                 path, 
+                type: "Folder",
                 createdAt: new Date(), 
                 updatedAt: new Date() 
             }

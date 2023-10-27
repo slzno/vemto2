@@ -10,8 +10,6 @@ export default class GenerateBasicMenu {
     }
 
     async handle() {
-        if(this.project.navs.length) return
-
         Nav.create({
             name: "Home",
             tag: "home",

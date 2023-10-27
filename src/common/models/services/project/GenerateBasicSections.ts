@@ -10,25 +10,21 @@ export default class GenerateBasicSections {
     }
 
     async handle() {
-        if(!AppSection.findSectionByName('Dashboard')) {
-            AppSection.create({
-                name: "Dashboard",
-                routePrefix: "dashboard",
-                routeBasePath: "dashboard",
-                projectId: this.project.id,
-                requiresAuth: true,
-            })
-        }
+        AppSection.create({
+            name: "Dashboard",
+            routePrefix: "dashboard",
+            routeBasePath: "dashboard",
+            projectId: this.project.id,
+            requiresAuth: true,
+        })
 
-        if(!AppSection.findSectionByName('Site')) {
-            AppSection.create({
-                name: "Site",
-                routePrefix: "",
-                routeBasePath: "",
-                projectId: this.project.id,
-                requiresAuth: false,
-            })
-        }
+        AppSection.create({
+            name: "Site",
+            routePrefix: "",
+            routeBasePath: "",
+            projectId: this.project.id,
+            requiresAuth: false,
+        })
     }
 
 }

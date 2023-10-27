@@ -480,10 +480,6 @@ export default class Project extends RelaDB.Model {
         return this.navs.filter(nav => nav.isRoot())
     }
 
-    generateBasicData() {
-        (new GenerateBasicProjectData(this)).handle()
-    }
-
     getVthemeKeys(): { [key: string]: string } {
         return this.vthemeKeys || {}
     }
@@ -613,6 +609,10 @@ export default class Project extends RelaDB.Model {
         const currentZoom = this.currentZoom || 100
 
         return currentZoom / 100
+    }
+
+    getTabNameFor(key: string) {
+        return `${this.uuid}-${key}`
     }
 
 }

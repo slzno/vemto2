@@ -1,3 +1,4 @@
+import GenerateBasicProjectData from "@Common/models/services/project/GenerateBasicProjectData"
 import SchemaBuilder from "../schema/SchemaBuilder"
 import Main from "../wrappers/Main"
 import Project, { ProjectSettings, ProjectUIStarterKit } from "@Common/models/Project"
@@ -72,7 +73,9 @@ export default class ProjectConnector {
     }
 
     async generateBasicProjectData() {
-        
+        const defaultDataGenerator = new GenerateBasicProjectData(this.project)
+
+        await defaultDataGenerator.handle()
     }
 
     async saveProject() {
