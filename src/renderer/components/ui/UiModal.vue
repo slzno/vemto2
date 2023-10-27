@@ -17,6 +17,10 @@
             type: Boolean,
             default: false,
         },
+        processing: {
+            type: Boolean,
+            default: false,
+        }
     })
 
     const show = toRef(props, "show"),
@@ -37,6 +41,9 @@
             <div
                 style="z-index: 70;"
                 :style="onTopOfEverything ? 'z-index: 10000 !important' : ''"
+                :class="{
+                    'select-none pointer-events-none': processing,
+                }"
                 class="fixed left-0 top-0 w-full h-full text-slate-200 flex items-center justify-center bg-slate-900 bg-opacity-95"
                 v-if="show"
             >
@@ -47,6 +54,9 @@
                     :style="{ width: width, height: height }"
                 >
                     <button
+                        :class="{
+                            'pointer-events-none opacity-20': processing,
+                        }"
                         class="cursor-pointer flex absolute top-2 right-2"
                         @click="$emit('close')"
                     >
@@ -55,17 +65,29 @@
 
                     <header class="flex justify-between bg-slate-800 p-2 rounded-t-lg border-b border-slate-700">
                         <div class="flex flex-col">
-                            <span class="font-semibold">{{ title }}</span>
+                            <span class="font-semibold">
+                                {{ title }}
+                            </span>
                         </div>
                     </header>
 
                     <!-- Modal Body -->
-                    <div class="w-full h-full overflow-y-auto scrollbar-thin scrollbar-thumb-slate-400 scrollbar-track-slate-300 dark:scrollbar-thumb-black dark:scrollbar-track-slate-900">
+                    <div
+                        :class="{
+                            'opacity-50': processing,
+                        }" 
+                        class="w-full h-full overflow-y-auto scrollbar-thin scrollbar-thumb-slate-400 scrollbar-track-slate-300 dark:scrollbar-thumb-black dark:scrollbar-track-slate-900"
+                    >
                         <slot></slot>
                     </div>
 
                     <!-- Modal Footer -->
-                    <footer v-if="slots.footer" class="bg-slate-800 rounded-b-lg border-t border-slate-700">
+                    <footer v-if="slots.footer" 
+                        :class="{
+                            'opacity-50': processing,
+                        }" 
+                        class="bg-slate-800 rounded-b-lg border-t border-slate-700"
+                    >
                         <slot name="footer"></slot>
                     </footer>
 
