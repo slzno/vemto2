@@ -30,12 +30,24 @@
 
             nextTick(() => {
                 drawConnections()
+                zoomWithMouseWheel()
             })
         }, 1);
     })
 
     watch(() => projectStore.project.currentZoom, () => changeSchemaZoom())
     watch(() => projectStore.project.tables, () => nextTick(() => drawConnections()))
+
+    const zoomWithMouseWheel = () => {
+        document.getElementById('tablesCanvas').addEventListener('mousewheel', (e: any) => { 
+            e.preventDefault()
+            e.stopPropagation()
+
+            const delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)))
+
+            delta > 0 ? projectStore.project.zoomIn() : projectStore.project.zoomOut()
+        }, { passive: false })
+    }
 
     const syncSchema = async (syncTables: boolean, syncModels: boolean) => {
         await loadSchema(syncTables, syncModels)
