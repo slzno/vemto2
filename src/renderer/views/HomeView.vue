@@ -16,6 +16,7 @@
     import UiModal from "@Renderer/components/ui/UiModal.vue"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import UiSelect from "@Renderer/components/ui/UiSelect.vue"
+import UiLoading from "@Renderer/components/ui/UiLoading.vue"
 
     const projectManager = new ProjectManager(),
         search = ref(""),
@@ -23,6 +24,7 @@
         confirmDisconnectDialog = ref(null),
         currentConnectingFolder = ref(null),
         showingConnectingFolderModal = ref(false),
+        processingConnectFolder = ref(false),
         connectingFolderSettings = ref({
             cssFramework: "tailwind",
             uiStarterKit: "jetstream",
@@ -63,10 +65,16 @@
     }
 
     const finishConnect = async (path) => {
+        processingConnectFolder.value = true
+
         projectManager.setSettings(connectingFolderSettings.value)
 
         await projectManager.connectFromPath(path)
+
+        await new Promise(resolve => setTimeout(resolve, 5000))
         
+        processingConnectFolder.value = false
+
         openSchema()
     }
 
@@ -148,6 +156,7 @@
         height="600px"
         title="Connect Folder"
         :show="showingConnectingFolderModal"
+        :processing="processingConnectFolder"
         @close="showingConnectingFolderModal = false"
     >
         <div class="p-4">
@@ -194,7 +203,13 @@
 
         <template #footer>
             <div class="flex justify-end p-2">
-                <UiButton @click="finishConnect(currentConnectingFolder)">Connect</UiButton>
+                <UiButton @click="finishConnect(currentConnectingFolder)">
+                    <div class="flex space-x-1" v-if="processingConnectFolder">
+                        <UiLoading></UiLoading> 
+                        <div>Connecting...</div>
+                    </div>
+                    <div v-else>Connect</div>
+                </UiButton>
             </div>
         </template>
     </UiModal>

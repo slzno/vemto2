@@ -32,6 +32,10 @@ export default class SchemaBuilder {
     async build(tables: boolean = false, models: boolean = false) {
         await this.readData()
 
+        if(this.schemaDataIsInvalid()) {
+            return
+        }
+
         if (tables) await this.buildTables()
         if (models) await this.buildModels()
 
@@ -85,15 +89,17 @@ export default class SchemaBuilder {
 
     async readData() {
         if (this.currentOpenProjectIsDifferent()) {
-            console.log("Project is different, stop reading schema data")
             this.schemaData = null
             return this
         }
 
-        // O problema ocorre aqui, então está relacionado com o background
         this.schemaData = await Main.API.loadSchema(this.project.getPath())
 
         return this
+    }
+
+    schemaDataIsInvalid() {
+        return !this.schemaDataIsValid()
     }
 
     schemaDataIsValid() {
@@ -140,6 +146,11 @@ export default class SchemaBuilder {
 
         if(ProjectManager.isClosed()) {
             console.log("Project is closed, stopping schema changes check")
+            return
+        }
+
+        if(!this.project.connectionFinished) {
+            console.log("Project connection is not finished, stopping schema changes check")
             return
         }
 

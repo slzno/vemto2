@@ -12,7 +12,6 @@ export default class ProjectConnector {
     }
 
     async connect(settings: ProjectSettings) {
-        console.log(this.project)
         if(this.project.connectionFinished) {
             return
         }
@@ -21,7 +20,8 @@ export default class ProjectConnector {
 
         await this.createVemtoFolder()
         await this.createNecessaryFiles()
-        await this.doFistSchemaSync()
+        await this.doFirstSchemaSync()
+        await this.generateBasicProjectData()
         await this.saveProject()
     }
 
@@ -49,7 +49,7 @@ export default class ProjectConnector {
         }
     }
 
-    async doFistSchemaSync() {
+    async doFirstSchemaSync() {
         if(this.project.connectionFinished) {
             throw new Error("Project connection is already finished, cannot do first schema sync")
         }
@@ -72,14 +72,13 @@ export default class ProjectConnector {
     }
 
     async generateBasicProjectData() {
-        //
+        
     }
 
     async saveProject() {
-        console.log("Saving project settings")
-
         this.project.settings = this.projectSettings
         this.project.connectionFinished = true
+        this.project.canIgnoreNextSchemaSourceChanges = true
 
         return await this.project.save()
     }

@@ -53,18 +53,18 @@ export default class ProjectManager {
         
         ProjectManager.setCurrentOpenProjectUuid(project.uuid)
         
+        await this.connectProject(project)
+
+        ProjectManager.free()
+
         this.setLatestProjectPath(projectItem.path)
         
         this.setAsUpdated(id)
-        
-        await this.setupProjectData(project)
-
-        ProjectManager.free()
 
         return projectItem
     }
 
-    async setupProjectData(project: Project) {
+    async connectProject(project: Project) {
         const projectConnector = new ProjectConnector(project)
 
         await projectConnector.connect(
