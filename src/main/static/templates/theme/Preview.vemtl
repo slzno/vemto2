@@ -1,4 +1,9 @@
-<script src="https://cdn.tailwindcss.com"></script>
+<% const cdnLink = this.project.getVthemeCdn() %>
+<% if (cdnLink && cdnLink.includes('tailwind')) { %>
+<script src="<$ cdnLink $>"></script>
+<% } else { %>
+<link href="<$ cdnLink $>" rel="stylesheet" crossorigin="anonymous"></link>
+<% } %>
 
 <div style="padding-bottom: 5rem;">
     <div class="vtheme(crud.index.container)">

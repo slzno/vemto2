@@ -1,4 +1,5 @@
 export default {
+    cdn: "https://cdn.tailwindcss.com",
     keys: {
         "default.delay": "opacity-75",
         table: "min-w-full divide-y divide-gray-200",

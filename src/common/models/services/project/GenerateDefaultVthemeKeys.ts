@@ -1,5 +1,8 @@
-import Project from "@Common/models/Project"
+import Project, { ProjectCssFramework } from "@Common/models/Project"
+import bulmaTheme from "./base/bulma.vtheme"
+import bootstrapTheme from "./base/bootstrap.vtheme"
 import tailwindTheme from "./base/tailwind.vtheme"
+import foundationTheme from "./base/foundation.vtheme"
 
 export default class GenerateDefaultVthemeKeys {
 
@@ -9,20 +12,50 @@ export default class GenerateDefaultVthemeKeys {
         this.project = project
     }
 
-    async handle() {
-        Object.keys(tailwindTheme.keys).forEach((key) => {
+    async handle(framework: ProjectCssFramework = ProjectCssFramework.TAILWIND) {
+        const themeData = this.getCorrectThemeData(framework)
+
+        Object.keys(themeData.keys).forEach((key) => {
             if(!this.project.hasVthemeKey(key)) {
-                this.project.setVthemeKey(key, tailwindTheme.keys[key])
+                this.project.setVthemeKey(key, themeData.keys[key])
             }
         })
 
+        this.project.setVthemeCdn(themeData.cdn)
         this.project.save()
     }
 
-    async reset() {
+    getCorrectThemeData(framework: ProjectCssFramework) {
+        switch(framework) {
+            case ProjectCssFramework.BULMA:
+                return bulmaTheme
+            case ProjectCssFramework.BOOTSTRAP:
+                return bootstrapTheme
+            case ProjectCssFramework.TAILWIND:
+                return tailwindTheme
+            case ProjectCssFramework.FOUNDATION:
+                return foundationTheme
+            default:
+                return this.getThemeDataWithoutValues()
+        }
+    }
+
+    getThemeDataWithoutValues() {
+        const baseThemeData = tailwindTheme
+
+        baseThemeData.cdn = ""
+
+        Object.keys(baseThemeData.keys).forEach((key) => {
+            baseThemeData.keys[key] = ""
+        })
+
+        return baseThemeData
+    }
+
+    async reset(framework: ProjectCssFramework = ProjectCssFramework.TAILWIND) {
         this.project.vthemeKeys = {}
 
-        return this.handle()
+        return this.handle(framework)
     }
 
 }

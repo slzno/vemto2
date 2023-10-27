@@ -55,8 +55,8 @@
             <UiTabs :name="projectStore.project.getTabNameFor('apps')" :tabs="tabs" v-model="selectedTab" />
         </div>
 
-        {{ projectStore.project.settings  }}
-        {{ projectStore.project.connectionFinished  }}
+        <!-- {{ projectStore.project.settings  }}
+        {{ projectStore.project.connectionFinished  }} -->
 
         <div class="p-4 h-full" v-if="selectedTab === 'applications'">
             <div class="flex top-0 left-0 space-x-2 text-sm z-20 mb-4">

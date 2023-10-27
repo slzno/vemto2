@@ -90,6 +90,7 @@ export default class Project extends RelaDB.Model {
     scheduledSchemaSync: ScheduledSchemaCheck
     renderableFiles: RenderableFile[]
     currentRenderedFilesPaths: string[]
+    vthemeCdn: string
     vthemeKeys: any
     currentSchemaError: string
     currentSchemaErrorStack: string
@@ -477,6 +478,15 @@ export default class Project extends RelaDB.Model {
 
     getRootNavs(): Nav[] {
         return this.navs.filter(nav => nav.isRoot())
+    }
+
+    getVthemeCdn(): string {
+        return this.vthemeCdn || null
+    }
+
+    setVthemeCdn(vthemeCdn: string) {
+        this.vthemeCdn = vthemeCdn
+        this.save()
     }
 
     getVthemeKeys(): { [key: string]: string } {
