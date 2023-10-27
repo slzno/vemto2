@@ -50,14 +50,14 @@ export default class ProjectManager {
         if (!projectItem) throw new Error("Project not found")
 
         const project: Project = await HandleProjectDatabase.setup(projectItem.path)
-
-        await this.setupProjectData(project)
-
+        
         ProjectManager.setCurrentOpenProjectUuid(project.uuid)
-
+        
         this.setLatestProjectPath(projectItem.path)
-
+        
         this.setAsUpdated(id)
+        
+        await this.setupProjectData(project)
 
         ProjectManager.free()
 

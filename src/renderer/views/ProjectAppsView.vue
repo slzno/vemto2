@@ -13,7 +13,7 @@
     import AppSections from "./components/ProjectApps/AppSections.vue"
     import AppThemes from "./components/ProjectApps/AppThemes.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
-import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
+    import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
 
     const router = useRouter(),
         projectStore = useProjectStore(),

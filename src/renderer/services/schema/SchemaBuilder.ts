@@ -90,6 +90,7 @@ export default class SchemaBuilder {
             return this
         }
 
+        // O problema ocorre aqui, então está relacionado com o background
         this.schemaData = await Main.API.loadSchema(this.project.getPath())
 
         return this

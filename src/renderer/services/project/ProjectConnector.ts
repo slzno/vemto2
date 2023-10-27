@@ -1,5 +1,6 @@
+import SchemaBuilder from "../schema/SchemaBuilder"
 import Main from "../wrappers/Main"
-import Project, { ProjectSettings } from "@Common/models/Project"
+import Project, { ProjectSettings, ProjectUIStarterKit } from "@Common/models/Project"
 
 export default class ProjectConnector {
 
@@ -11,13 +12,17 @@ export default class ProjectConnector {
     }
 
     async connect(settings: ProjectSettings) {
+        console.log(this.project)
         if(this.project.connectionFinished) {
             return
         }
 
+        this.projectSettings = settings
+
         await this.createVemtoFolder()
         await this.createNecessaryFiles()
-        await this.saveProject(settings)
+        await this.doFistSchemaSync()
+        await this.saveProject()
     }
 
     async createVemtoFolder() {
@@ -26,16 +31,57 @@ export default class ProjectConnector {
     }
 
     async createNecessaryFiles() {
+        if(!this.projectSettings.isFreshLaravelProject) {
+            console.log("Skip creating files for fresh Laravel project")
+            return;
+        }
+
+        if(this.isBreezeLivewire()) {
+            console.log("Creating files for Breeze project")
+            const templatesPath = "file-templates/starter-kits/breeze/resources"
+            await Main.API.copyInternalFolderToProject(templatesPath, "/")
+        }
+
+        if(this.isJetstreamLivewire()) {
+            console.log("Creating files for Jetstream Livewire project")
+            const templatesPath = "file-templates/starter-kits/jetstream-livewire/resources"
+            await Main.API.copyInternalFolderToProject(templatesPath, "/")
+        }
+    }
+
+    async doFistSchemaSync() {
+        if(this.project.connectionFinished) {
+            throw new Error("Project connection is already finished, cannot do first schema sync")
+        }
+
+        const schemaBuilder = new SchemaBuilder(this.project),
+            syncTables = true,
+            syncModels = true
+
+        return await schemaBuilder.build(syncTables, syncModels)
+    }
+
+    isBreezeLivewire() {
+        return this.projectSettings.uiStarterKit === ProjectUIStarterKit.BREEZE
+            && this.projectSettings.usesLivewire
+    }
+
+    isJetstreamLivewire() {
+        return this.projectSettings.uiStarterKit === ProjectUIStarterKit.JETSTREAM 
+            && this.projectSettings.usesLivewire
+    }
+
+    async generateBasicProjectData() {
         //
     }
 
-    async saveProject(settings: ProjectSettings) {
+    async saveProject() {
         console.log("Saving project settings")
 
-        this.project.settings = settings
+        this.project.settings = this.projectSettings
         this.project.connectionFinished = true
 
-        await this.project.save()
+        return await this.project.save()
     }
 
 }
