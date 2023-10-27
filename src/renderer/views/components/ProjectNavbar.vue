@@ -24,6 +24,7 @@
         await ProjectManager.close()
 
         router.push("/")
+        navigationStore.clearActiveTab()
         
         projectStore.closeProject()
     }

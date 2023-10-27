@@ -5,7 +5,8 @@
     import RenderableLivewireIndexComponent from "@Renderer/codegen/sequential/services/crud/views/livewire/RenderableLivewireIndexComponent"
     import RenderableLivewireCreateComponent from "@Renderer/codegen/sequential/services/crud/views/livewire/RenderableLivewireCreateComponent"
     import RenderableLivewireEditComponent from "@Renderer/codegen/sequential/services/crud/views/livewire/RenderableLivewireEditComponent"
-import HookEditor from "@Renderer/components/editors/HookEditor.vue"
+    import HookEditor from "@Renderer/components/editors/HookEditor.vue"
+    import { useProjectStore } from "@Renderer/stores/useProjectStore"
 
     const props = defineProps({
         crud: {
@@ -15,6 +16,7 @@ import HookEditor from "@Renderer/components/editors/HookEditor.vue"
     })
 
     const crud = toRef(props, "crud") as Ref<Crud>,
+        projectStore = useProjectStore(),
         selectedTab = ref("createComponent")
 
     let createComponentContent = ref("")
@@ -34,7 +36,11 @@ import HookEditor from "@Renderer/components/editors/HookEditor.vue"
 
 <template>
     <div class="mt-2">
-        <UiTabs :tabs="tabs" v-model="selectedTab" />
+        <UiTabs
+            :name="projectStore.project.getTabNameFor(`crud-code${crud.id}`)"
+            :tabs="tabs" 
+            v-model="selectedTab" 
+        />
 
         <div
             v-show="selectedTab === 'createComponent'"

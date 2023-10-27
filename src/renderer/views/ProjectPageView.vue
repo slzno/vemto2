@@ -121,7 +121,10 @@
         <div v-if="page">
             <div class="p-2 font-bold">Edit {{ page.getLabel() }} Page</div>
 
-            <UiTabs :tabs="tabs" v-model="selectedTab" />
+            <UiTabs :name="projectStore.project.getTabNameFor(`page${page.id}`)"
+                :tabs="tabs" 
+                v-model="selectedTab" 
+            />
 
             <section class="flex w-full h-screen space-x-4 mt-2 px-2" v-if="selectedTab === 'page'">
                 <div class="space-y-2">

@@ -82,7 +82,11 @@ import UiTabs from "@Renderer/components/ui/UiTabs.vue"
                     </div>
                 </div>
 
-                <UiTabs :tabs="tabs" v-model="selectedTab" />
+                <UiTabs 
+                    :name="projectStore.project.getTabNameFor(`errors`)"
+                    :tabs="tabs" 
+                    v-model="selectedTab" 
+                />
             </header>
 
             <div class="p-2" style="height: calc(100% - 66px)">

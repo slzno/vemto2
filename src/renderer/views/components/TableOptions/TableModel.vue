@@ -13,6 +13,7 @@
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
     import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
+    import { useProjectStore } from "@Renderer/stores/useProjectStore"
 
     const onDevelopment = Main.API.onDevelopment()
 
@@ -23,7 +24,8 @@
         },
     })
 
-    const model = toRef(props, "model") as Ref<Model>,
+    const projectStore = useProjectStore(), 
+        model = toRef(props, "model") as Ref<Model>,
         emit = defineEmits(['removeModel']),
         modelPluralReference = ref(null),
         selectedTab = ref("data")
@@ -108,7 +110,9 @@
         class="relative flex-col bg-slate-800 border-l-4 border-slate-700 p-2 rounded-xl shadow"
     >
         <div class="mb-2">
-            <UiTabs :tabs="tabs" 
+            <UiTabs 
+                :name="projectStore.project.getTabNameFor(`table${model.table.id}-model${model.id}`)"
+                :tabs="tabs" 
                 v-model="selectedTab" 
                 selected-class="bg-slate-800"  
             />

@@ -9,6 +9,11 @@
             required: true,
         },
 
+        name: {
+            type: String,
+            default: "tabs",
+        },
+
         tabs: {
             type: Array<{
                 label: string
@@ -35,7 +40,7 @@
     onMounted((): void => {
         localValue.value = props.modelValue
 
-        const lastSelectedTab = localStorage.getItem("lastSelectedTab")
+        const lastSelectedTab = localStorage.getItem(getLastSelectedKey())
 
         if (
             lastSelectedTab &&
@@ -57,7 +62,7 @@
         localValue.value = value
         emit("update:modelValue", value)
 
-        localStorage.setItem("lastSelectedTab", value)
+        localStorage.setItem(getLastSelectedKey(), value)
     }
 
     const calculateSelectedClasses = (tabValue: string): any => {
@@ -67,6 +72,8 @@
             'text-slate-300 border-slate-700': localValue.value === tabValue,
         }
     }
+
+    const getLastSelectedKey = () => `lastSelectedTab-${props.name}`
 </script>
 
 <template>

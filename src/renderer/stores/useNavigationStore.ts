@@ -10,6 +10,10 @@ export const useNavigationStore = defineStore("navigation", {
             this.activeTab = tab
 
             window.localStorage.setItem("activeProjectTab", tab)
+        },
+
+        clearActiveTab() {
+            this.activeTab = "schema"
         }
     },
 

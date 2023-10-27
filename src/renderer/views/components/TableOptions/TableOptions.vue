@@ -8,13 +8,15 @@
     import TableColumns from "../TableOptions/TableColumns.vue"
     import TableMigrations from "./TableMigrations.vue"
     import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
+    import { useProjectStore } from "@Renderer/stores/useProjectStore"
 
     const props = defineProps({
         show: Boolean,
     })
 
     const show = toRef(props, "show"),
-        schemaStore = useSchemaStore()
+        schemaStore = useSchemaStore(),
+        projectStore = useProjectStore()
 
     const selectedTab = ref("columns"),
         tableOptionsModal = ref(null)
@@ -61,7 +63,9 @@
                             <XMarkIcon class="w-4 h-4 stroke-2 hover:text-red-500" />
                         </button>
         
-                        <UiTabs :tabs="tabs" 
+                        <UiTabs
+                            :name="projectStore.project.getTabNameFor(`table${schemaStore.selectedTable.id}`)" 
+                            :tabs="tabs" 
                             v-model="selectedTab" 
                             background-class="bg-slate-800" 
                             selected-class="bg-slate-850"  

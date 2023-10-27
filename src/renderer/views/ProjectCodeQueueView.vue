@@ -95,10 +95,15 @@
 
 <template>
     <div
+        v-if="projectStore.projectIsReady"
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-scroll"
     >
         <div class="mt-2">
-            <UiTabs :tabs="tabs" v-model="selectedTab" />
+            <UiTabs 
+                :name="projectStore.project.getTabNameFor('queue')" 
+                :tabs="tabs" 
+                v-model="selectedTab" 
+            />
         </div>
 
         <div class="p-4" v-if="selectedTab === 'queue'">

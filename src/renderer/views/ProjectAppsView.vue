@@ -48,10 +48,11 @@
 
 <template>
     <div
+        v-if="projectStore.projectIsReady"
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-hidden"
     >
         <div class="mt-2">
-            <UiTabs :tabs="tabs" v-model="selectedTab" />
+            <UiTabs :name="projectStore.project.getTabNameFor('apps')" :tabs="tabs" v-model="selectedTab" />
         </div>
 
         {{ projectStore.project.settings  }}

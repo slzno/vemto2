@@ -16,7 +16,7 @@
     import UiModal from "@Renderer/components/ui/UiModal.vue"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import UiSelect from "@Renderer/components/ui/UiSelect.vue"
-import UiLoading from "@Renderer/components/ui/UiLoading.vue"
+    import UiLoading from "@Renderer/components/ui/UiLoading.vue"
 
     const projectManager = new ProjectManager(),
         search = ref(""),
@@ -70,8 +70,6 @@ import UiLoading from "@Renderer/components/ui/UiLoading.vue"
         projectManager.setSettings(connectingFolderSettings.value)
 
         await projectManager.connectFromPath(path)
-
-        await new Promise(resolve => setTimeout(resolve, 5000))
         
         processingConnectFolder.value = false
 

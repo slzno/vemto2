@@ -189,6 +189,10 @@
     const zoomOut = async () => {
         projectStore.project.zoomOut()
     }
+
+    const newSchema = async () => {
+        Alert.info('Multiple Schemas: Coming soon...')
+    }
 </script>
 
 <template>
@@ -362,7 +366,7 @@
         </div>
 
         <div class="flex gap-1 items-center text-xs">
-            <div>
+            <div @click="newSchema()">
                 <div
                     class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-700 h-6"
                 >
@@ -387,7 +391,7 @@
                 </div>
             </div>
             
-            <div>
+            <!-- <div>
                 <div
                     class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-700 h-6"
                 >
@@ -397,7 +401,7 @@
                         Laravel
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>
