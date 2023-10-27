@@ -6,6 +6,7 @@ import GenerateModelFiles from "./services/model/GenerateModelFiles"
 import GeneratePageFiles from "./services/page/GeneratePageFiles"
 import GenerateUiComponentsFiles from "./services/blade/ui/GenerateUiComponentsFiles"
 import SchemaBuilder from "@Renderer/services/schema/SchemaBuilder"
+import Main from "@Renderer/services/wrappers/Main"
 
 export default class SequentialGenerator {
     static startTime: number = 0
@@ -21,6 +22,8 @@ export default class SequentialGenerator {
         SequentialGenerator.startTimer()
 
         SchemaBuilder.disableSchemaChangesCheck()
+
+        await this.clearVemtoFolders()
 
         this.project.setFilesQueueStatusProcessing()
         this.project.clearCurrentRenderedFilesPaths()
@@ -43,6 +46,11 @@ export default class SequentialGenerator {
         SchemaBuilder.enableSchemaChangesCheck()
 
         SequentialGenerator.stopTimer()
+    }
+
+    async clearVemtoFolders() {
+        await Main.API.clearProjectFolder(".vemto/conflicts")
+        await Main.API.clearProjectFolder(".vemto/processed-files")
     }
 
     async waitForProcessingFilesQueue() {

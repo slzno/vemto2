@@ -200,6 +200,17 @@ export function HandleIpcMessages() {
         })
     })
 
+    ipcMain.handle("folder:project:clear", (event, folderPath) => {
+        const project = Project.find(1)
+        if(!project) return null
+
+        return handleError(event, () => {
+            const completePath = path.join(project.getPath(), folderPath)
+
+            return FileSystem.clearFolder(completePath)
+        })
+    })
+
     ipcMain.handle("folder:internal:read", (event, folderPath, removeBasePath) => {
         return handleError(event, () => {
             const completePath = path.join(app.getAppPath(), "static", folderPath)

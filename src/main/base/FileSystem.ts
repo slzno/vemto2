@@ -181,6 +181,28 @@ class FileSystem {
         return this.walkSync(folderPath, [], removeFromPathString)
     }
 
+    clearFolder(folderPath: string, removeOwnFolder: boolean = false): FileSystem {
+        if(this.folderDoesNotExist(folderPath)) return this
+
+        console.log('Clearing Folder: ' + folderPath)
+
+        fs.readdirSync(folderPath).forEach((file) => {
+            const curPath = path.join(folderPath, file)
+
+            if (fs.lstatSync(curPath).isDirectory()) {
+                this.clearFolder(curPath, true)
+            } else {
+                fs.unlinkSync(curPath)
+            }
+        })
+
+        if(removeOwnFolder) {
+            fs.rmdirSync(folderPath)
+        }
+
+        return this
+    }
+
     walkSync(
         dir: string, 
         fileList: Array<string> = [], 

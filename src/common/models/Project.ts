@@ -12,7 +12,6 @@ import RenderableFile, {
     RenderableFileStatus,
     RenderableFileType,
 } from "./RenderableFile"
-import GenerateBasicProjectData from "./services/project/GenerateBasicProjectData"
 import AppSection from "./AppSection"
 import CalculateSchemaChanges from "./services/project/CalculateSchemaChanges"
 import Column from "./Column"

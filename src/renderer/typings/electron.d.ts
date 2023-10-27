@@ -23,6 +23,7 @@ export default interface ElectronApi {
     openTerminal: (path: string) => Promise<void>,
     openProjectFile: (path: string) => Promise<void>,
     openProjectFolder: (path: string) => Promise<void>,
+    clearProjectFolder: (path: string) => Promise<void>,
     openProjectFolderOnTerminal: (path: string) => Promise<void>,
     readConflictsFile: (path: string) => Promise<string>,
     solveConflictReplacingCode: (fileId: string, conflictId: string, content: string) => Promise<void>,
