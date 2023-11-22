@@ -45,11 +45,14 @@ export default class HandleProjectDatabase {
         })
 
         const updateDataDebounced = debounce(() => {
-            const updatedData = RelaDB.Resolver.db().driver.getDatabaseData()
+            const updatedData = RelaDB.Resolver.db().driver.getDatabaseData(),
+                projectStore = useProjectStore()
 
             Main.API.databaseDataUpdated(updatedData)
 
             RendererBridge.dataUpdated()
+
+            projectStore.reloadProject()
 
             console.log("Database data updated")
         }, 300)
