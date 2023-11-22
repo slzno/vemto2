@@ -52,6 +52,9 @@ export default class HandleProjectDatabase {
 
             RendererBridge.dataUpdated()
 
+            // KEEP AN EYE ON THIS: reloading the project may cause issues
+            // when the projectStore loses the reference to the current
+            // project instance
             projectStore.reloadProject()
 
             console.log("Database data updated")
