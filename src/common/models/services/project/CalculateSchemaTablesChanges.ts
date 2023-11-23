@@ -1,19 +1,19 @@
 import Project from "@Common/models/Project"
 import Table from "@Common/models/Table"
 
-interface SchemaChanges {
+interface SchemaTablesChanges {
     addedTables: Table[]
     changedTables: Table[]
     removedTables: Table[]
 }
 
-export enum SchemaChangeType {
+export enum SchemaTableChangeType {
     Added = "added",
     Changed = "changed",
     Removed = "removed",
 }
 
-export default class CalculateSchemaChanges {
+export default class CalculateSchemaTablesChanges {
     protected project: Project
 
     constructor(project: Project) {
@@ -72,13 +72,13 @@ export default class CalculateSchemaChanges {
         })
     }
 
-    getAllChangesWithTable(): { table: Table, type: SchemaChangeType }[] {
+    getAllChangesWithTable(): { table: Table, type: SchemaTableChangeType }[] {
         const { addedTables, changedTables, removedTables } = this.calculate()
 
         const allChanges = [
-            ...addedTables.map(table => ({ table, type: SchemaChangeType.Added })),
-            ...changedTables.map(table => ({ table, type: SchemaChangeType.Changed })),
-            ...removedTables.map(table => ({ table, type: SchemaChangeType.Removed })),
+            ...addedTables.map(table => ({ table, type: SchemaTableChangeType.Added })),
+            ...changedTables.map(table => ({ table, type: SchemaTableChangeType.Changed })),
+            ...removedTables.map(table => ({ table, type: SchemaTableChangeType.Removed })),
         ]
 
         return allChanges.filter((change, index, self) => {
@@ -86,7 +86,7 @@ export default class CalculateSchemaChanges {
         })
     }
 
-    calculate(): SchemaChanges {
+    calculate(): SchemaTablesChanges {
         const addedTables: Table[] = []
         const changedTables: Table[] = []
         const removedTables: Table[] = []

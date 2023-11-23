@@ -1,7 +1,11 @@
 Schema::create('<$ this.table.name $>', function (Blueprint $table) {
     <# Table columns #>
     <% for (let column of this.table.getColumns()) { %>
+        <% if (column.isDefaultLaravelPrimaryKey()) { %>
+            $table->id();
+        <% } else { %>
         <import template="MigrationColumn.vemtl">
+        <% } %>
     <% } %>
     
     <# Indexes #>

@@ -13,10 +13,11 @@ import RenderableFile, {
     RenderableFileType,
 } from "./RenderableFile"
 import AppSection from "./AppSection"
-import CalculateSchemaChanges from "./services/project/CalculateSchemaChanges"
+import CalculateSchemaTablesChanges from "./services/project/CalculateSchemaTablesChanges"
 import Column from "./Column"
 import Index from "./Index"
 import ProjectPathResolver from "@Common/services/ProjectPathResolver"
+import CalculateSchemaModelsChanges from "./services/project/CalculateSchemaModelsChanges"
 
 interface ProjectCodeGenerationSettings {
     models: boolean,
@@ -303,15 +304,31 @@ export default class Project extends RelaDB.Model {
     }
 
     hasSchemaChanges(): boolean {
-        const changesCalculator = new CalculateSchemaChanges(this)
-        
-        return changesCalculator.hasChanges()
+        return this.hasSchemaTablesChanges() || this.hasSchemaModelsChanges()
+    }
+
+    hasSchemaTablesChanges(): boolean {
+        const tablesChangesCalculator = new CalculateSchemaTablesChanges(this)
+
+        return tablesChangesCalculator.hasChanges()
+    }
+
+    hasSchemaModelsChanges(): boolean {
+        const modelsChangesCalculator = new CalculateSchemaModelsChanges(this)
+
+        return modelsChangesCalculator.hasChanges()
     }
 
     getChangedTables(): Table[] {
-        if (!this.hasSchemaChanges()) return []
+        if (!this.hasSchemaTablesChanges()) return []
 
-        return new CalculateSchemaChanges(this).getAllTables()
+        return new CalculateSchemaTablesChanges(this).getAllTables()
+    }
+
+    getChangedModels(): Model[] {
+        if (!this.hasSchemaModelsChanges()) return []
+
+        return new CalculateSchemaModelsChanges(this).getAllModels()
     }
 
     getRenamedTables(): Table[] {

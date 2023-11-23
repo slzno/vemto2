@@ -93,6 +93,12 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         this.save()
     }
 
+    isDirty(): boolean {
+        const hasDirtyRelationships = this.ownRelationships.some((relationship) => relationship.isDirty())
+
+        return !this.isRemoved() && (this.hasLocalChanges() || hasDirtyRelationships)
+    }
+
     hasSchemaChanges(comparisonData: any): boolean {
         if (!this.schemaState) return true
 

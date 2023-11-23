@@ -326,6 +326,10 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
         return this.isCommonMorph() || this.isManyToManyMorph()
     }
 
+    isDirty(): boolean {
+        return this.hasLocalChanges() || this.isRemoved() || this.isNew()
+    }
+
     hasSchemaChanges(comparisonData: any): boolean {
         if(!this.schemaState) return true
         

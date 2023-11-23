@@ -140,6 +140,13 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         this.save()
     }
 
+    isDefaultLaravelPrimaryKey(): boolean {
+        return this.isAutoIncrement() 
+            && this.name === 'id'
+            && this.type === 'bigInteger'
+            && this.unsigned === true
+    }
+
     isPrimaryKey(): boolean {
         return this.isAutoIncrement() || this.table.hasPrimaryIndexForColumn(this)
     }

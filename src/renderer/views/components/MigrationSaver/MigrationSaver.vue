@@ -1,37 +1,48 @@
 <script setup lang="ts">
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
-    import { ArrowDownTrayIcon, ArrowRightIcon, ArrowUturnDownIcon, CircleStackIcon, MinusIcon, PlusIcon, TrashIcon } from "@heroicons/vue/24/outline"
+    import { ArrowDownTrayIcon, ArrowRightIcon, ArrowUturnDownIcon, CircleStackIcon, DocumentIcon, MinusIcon, PlusIcon, TableCellsIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import UiModal from "@Renderer/components/ui/UiModal.vue"
     import { Ref, computed, onMounted, onUnmounted, reactive, ref, watch } from "vue"
     import GenerateNewMigration from "@Renderer/codegen/generators/GenerateNewMigration"
     import UpdateExistingMigration from "@Renderer/codegen/generators/UpdateExistingMigration"
-    import CalculateSchemaChanges from "@Common/models/services/project/CalculateSchemaChanges"
+    import CalculateSchemaTablesChanges from "@Common/models/services/project/CalculateSchemaTablesChanges"
+    import CalculateSchemaModelsChanges from "@Common/models/services/project/CalculateSchemaModelsChanges"
     import Table from "@Common/models/Table"
+    import Model from "@Common/models/Model"
     import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
     import SchemaBuilder from "@Renderer/services/schema/SchemaBuilder"
-import UiLoading from "@Renderer/components/ui/UiLoading.vue"
+    import UiLoading from "@Renderer/components/ui/UiLoading.vue"
 
     const projectStore = useProjectStore(),
         showingModal = ref(false),
         confirmSaveDialog = ref(null),
         confirmUndoDialog = ref(null),
         confirmDeleteDialog = ref(null),
-        savingMigrations = ref(false)
+        savingMigrations = ref(false),
+        currentReviewingMode = ref("table") as Ref<"table"|"model">
 
-    const tablesSettings = reactive({} as any)
+    const tablesSettings = reactive({} as any),
+        modelsSettings = reactive({} as any)
 
-    const changesCalculator = new CalculateSchemaChanges(projectStore.project)
+    const tablesChangesCalculator = new CalculateSchemaTablesChanges(projectStore.project),
+        modelsChangesCalculator = new CalculateSchemaModelsChanges(projectStore.project)
 
     const createdTables = ref([]) as Ref<Table[]>,
         changedTables = ref([]) as Ref<Table[]>,
         removedTables = ref([]) as Ref<Table[]>,
         selectedTable = ref(null) as Ref<Table|null>,
-        selectedMode = ref("created") as Ref<"created"|"updated"|"removed">
+        selectedTableMode = ref("created") as Ref<"created"|"updated"|"removed">
+
+    const createdModels = ref([]) as Ref<Model[]>, 
+        changedModels = ref([]) as Ref<Model[]>,
+        removedModels = ref([]) as Ref<Model[]>,
+        selectedModel = ref(null) as Ref<Model|null>,
+        selectedModelMode = ref("created") as Ref<"created"|"updated"|"removed">
 
     onMounted(() => {
-        buildTablesSettings()
+        buildSettings()
     })
 
     onUnmounted(() => {
@@ -41,7 +52,7 @@ import UiLoading from "@Renderer/components/ui/UiLoading.vue"
     watch(showingModal, async (willShowModal) => {
         if(!willShowModal) return
         
-        await buildTablesSettings()
+        await buildSettings()
         await loadFirstTableMigrationContent()
 
         SchemaBuilder.disableSchemaChangesCheck()
@@ -55,25 +66,30 @@ import UiLoading from "@Renderer/components/ui/UiLoading.vue"
         if(!selectedTable.value) return null
         return tablesSettings[selectedTable.value.name]
     })
+    
+    const buildSettings = async () => {
+        await buildTablesSettings()
+        await buildModelsSettings()
+    }
 
     const buildTablesSettings = async () => {
         await resetTablesSettings()
 
-        let allChanges = changesCalculator.getAllChangesWithTable()
+        let allChanges = tablesChangesCalculator.getAllChangesWithTable()
 
-        createdTables.value = changesCalculator.getAddedTables()
-        changedTables.value = changesCalculator.getChangedTables()
-        removedTables.value = changesCalculator.getRemovedTables()
+        createdTables.value = tablesChangesCalculator.getAddedTables()
+        changedTables.value = tablesChangesCalculator.getChangedTables()
+        removedTables.value = tablesChangesCalculator.getRemovedTables()
 
         if(createdTables.value.length) {
             selectedTable.value = createdTables.value[0]
-            selectedMode.value = "created"
+            selectedTableMode.value = "created"
         } else if(changedTables.value.length) {
             selectedTable.value = changedTables.value[0]
-            selectedMode.value = "updated"
+            selectedTableMode.value = "updated"
         } else if(removedTables.value.length) {
             selectedTable.value = removedTables.value[0]
-            selectedMode.value = "removed"
+            selectedTableMode.value = "removed"
         }
 
         for (const change of allChanges) {
@@ -99,15 +115,61 @@ import UiLoading from "@Renderer/components/ui/UiLoading.vue"
         })
     }
 
+    const buildModelsSettings = async () => {
+        await resetModelsSettings()
+
+        let allChanges = modelsChangesCalculator.getAllChangesWithModel()
+
+        createdModels.value = modelsChangesCalculator.getAddedModels()
+        changedModels.value = modelsChangesCalculator.getChangedModels()
+        removedModels.value = modelsChangesCalculator.getRemovedModels()
+
+        if(createdModels.value.length) {
+            selectedModel.value = createdModels.value[0]
+            selectedModelMode.value = "created"
+        } else if(changedModels.value.length) {
+            selectedModel.value = changedModels.value[0]
+            selectedModelMode.value = "updated"
+        } else if(removedModels.value.length) {
+            selectedModel.value = removedModels.value[0]
+            selectedModelMode.value = "removed"
+        }
+
+        for (const change of allChanges) {
+            const model = change.model
+
+            modelsSettings[model.name] = {
+                instance: model,
+            }
+
+            await loadMigrationContent(model.name)
+        }
+    }
+
+    const resetModelsSettings = () => {
+        Object.keys(modelsSettings).forEach((tableName) => {
+            delete modelsSettings[tableName]
+        })
+    }
+
     const isSelectedTable = (table: Table) => {
         return selectedTable.value && selectedTable.value.id === table.id
     }
 
     const selectTable = async (table: Table, mode: "created"|"updated"|"removed") => {
+        currentReviewingMode.value = "table"
         selectedTable.value = table
-        selectedMode.value = mode
+        selectedTableMode.value = mode
 
         await loadMigrationContent(table.name)
+    }
+
+    const selectModel = async (model: Model, mode: "created"|"updated"|"removed") => {
+        currentReviewingMode.value = "model"
+        selectedModel.value = model
+        selectedModelMode.value = mode
+
+        // await loadModelContent(model.name)
     }
 
     const saveMigrations = async () => {
@@ -209,7 +271,7 @@ import UiLoading from "@Renderer/components/ui/UiLoading.vue"
             <div class="flex flex-col space-y-2 bg-slate-850 border border-slate-700 rounded-lg">
                 <div class="flex items-center space-x-1 text-sm pt-3 pb-3 px-3 bg-slate-800 rounded-t-lg text-slate-300">
                     <!-- <div class="rounded-full w-3 h-3 bg-red-500 animate-pulse"></div> -->
-                    <div>There are tables changes</div>
+                    <div>There are schema changes</div>
                 </div>
                 <div class="pt-1 pb-3 px-3">
                     <UiButton
@@ -223,7 +285,7 @@ import UiLoading from "@Renderer/components/ui/UiLoading.vue"
             </div>
 
             <UiConfirm ref="confirmSaveDialog">
-                Are you sure you want to save migrations?
+                Are you sure you want to save all schema changes?
             </UiConfirm>
 
             <UiConfirm ref="confirmUndoDialog">
@@ -235,7 +297,7 @@ import UiLoading from "@Renderer/components/ui/UiLoading.vue"
             </UiConfirm>
 
             <UiModal
-                title="Review Migrations"
+                title="Review schema changes"
                 :show="showingModal"
                 @close="close()"
                 width="1500px"
@@ -247,13 +309,17 @@ import UiLoading from "@Renderer/components/ui/UiLoading.vue"
                     }"
                     class="flex h-full"
                 >
-                    <!-- Tables Selector -->
-                    <div class="w-1/5 text-slate-400">
+                    <!-- Changes Selector -->
+                    <div class="w-1/5 text-slate-300 bg-slate-950">
                         <div class="flex items-center p-2 bg-slate-950 text-slate-200">
+                            <TableCellsIcon class="w-4 h-4 mr-2" />
+                            Tables
+                        </div>
+
+                        <div class="flex items-center p-2 bg-slate-950 text-slate-500">
                             <PlusIcon class="w-4 h-4 mr-2" />
                             Created Tables
                         </div>
-
                         <div @click.stop="selectTable(table, 'created')" :class="{'text-red-400 bg-slate-800': isSelectedTable(table)}" class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer flex justify-between items-center" v-for="table in createdTables" :key="table.id">
                             <div>
                                 {{ table.name }}
@@ -266,11 +332,10 @@ import UiLoading from "@Renderer/components/ui/UiLoading.vue"
                             </button>
                         </div>
 
-                        <div class="flex items-center p-2 bg-slate-950 text-slate-200">
+                        <div class="flex items-center p-2 bg-slate-950 text-slate-500">
                             <CircleStackIcon class="w-4 h-4 mr-2" />
                             Changed Tables
                         </div>
-
                         <div @click.stop="selectTable(table, 'updated')" :class="{'text-red-400 bg-slate-800': isSelectedTable(table)}" class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer flex justify-between items-center" v-for="table in changedTables" :key="table.id">
                             <div>
                                 <div title="Table was renamed" class="flex items-center space-x-1" v-if="table.wasRenamed()">
@@ -290,14 +355,87 @@ import UiLoading from "@Renderer/components/ui/UiLoading.vue"
                             </div>
                         </div>
 
-                        <div class="flex items-center p-2 bg-slate-950 text-slate-200">
+                        <div class="flex items-center p-2 bg-slate-950 text-slate-500">
                             <MinusIcon class="w-4 h-4 mr-2" />
                             Removed Tables
                         </div>
-
                         <div @click.stop="selectTable(table, 'removed')" :class="{'text-red-400 bg-slate-800': isSelectedTable(table)}" class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer flex justify-between items-center" v-for="table in removedTables" :key="table.id">
                             <div>
                                 {{ table.name }}
+                            </div>
+
+                            <div title="Undo table changes">
+                                <ArrowUturnDownIcon
+                                    class="w-5 h-5  cursor-pointer text-slate-400 hover:text-red-500"
+                                    @click.stop.prevent="undoTableChanges(table)" />
+                            </div>
+                        </div>
+
+                        <!-- Models -->
+                        <div class="flex items-center p-2 bg-slate-950 text-slate-200 border-t border-slate-800">
+                            <DocumentIcon class="w-4 h-4 mr-2" />
+                            Models
+                        </div>
+                        <div class="flex items-center p-2 bg-slate-950 text-slate-500">
+                            <PlusIcon class="w-4 h-4 mr-2" />
+                            Created Models
+                        </div>
+                        <div class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer flex justify-between items-center" v-for="model in createdModels" :key="model.id">
+                            <div>
+                                <div title="Model was renamed" class="flex items-center space-x-1" v-if="model.wasRenamed()">
+                                    <span class="text-slate-500">{{ model.schemaState.name }}</span>
+                                    <ArrowRightIcon class="w-4 h-4" />
+                                    <span>{{ model.name }}</span>
+                                </div>
+                                <div v-else>
+                                    {{ model.name }}
+                                </div>
+                            </div>
+
+                            <div title="Undo table changes">
+                                <ArrowUturnDownIcon
+                                    class="w-5 h-5  cursor-pointer text-slate-400 hover:text-red-500"
+                                    @click.stop.prevent="undoTableChanges(table)" />
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center p-2 bg-slate-950 text-slate-500">
+                            <CircleStackIcon class="w-4 h-4 mr-2" />
+                            Changed Models
+                        </div>
+                        <div class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer flex justify-between items-center" v-for="model in changedModels" :key="model.id">
+                            <div>
+                                <div title="Model was renamed" class="flex items-center space-x-1" v-if="model.wasRenamed()">
+                                    <span class="text-slate-500">{{ model.schemaState.name }}</span>
+                                    <ArrowRightIcon class="w-4 h-4" />
+                                    <span>{{ model.name }}</span>
+                                </div>
+                                <div v-else>
+                                    {{ model.name }}
+                                </div>
+                            </div>
+
+                            <div title="Undo table changes">
+                                <ArrowUturnDownIcon
+                                    class="w-5 h-5  cursor-pointer text-slate-400 hover:text-red-500"
+                                    @click.stop.prevent="undoTableChanges(table)" />
+                            </div>
+                        </div>
+
+                        <div class="flex items-center p-2 bg-slate-950 text-slate-500">
+                            <MinusIcon class="w-4 h-4 mr-2" />
+                            Removed Models
+                        </div>
+                        <div class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer flex justify-between items-center" v-for="model in removedModels" :key="model.id">
+                            <div>
+                                <div title="Model was renamed" class="flex items-center space-x-1" v-if="model.wasRenamed()">
+                                    <span class="text-slate-500">{{ model.schemaState.name }}</span>
+                                    <ArrowRightIcon class="w-4 h-4" />
+                                    <span>{{ model.name }}</span>
+                                </div>
+                                <div v-else>
+                                    {{ model.name }}
+                                </div>
                             </div>
 
                             <div title="Undo table changes">
@@ -355,9 +493,9 @@ import UiLoading from "@Renderer/components/ui/UiLoading.vue"
                         <UiButton :disabled="savingMigrations" @click="saveMigrations">
                             <div class="flex space-x-1" v-if="savingMigrations">
                                 <UiLoading></UiLoading> 
-                                <div>Saving Migrations...</div>
+                                <div>Saving...</div>
                             </div>
-                            <div v-else>Save Migrations</div>
+                            <div v-else>Save</div>
                         </UiButton>
                     </div>
                 </template>
@@ -365,3 +503,4 @@ import UiLoading from "@Renderer/components/ui/UiLoading.vue"
         </div>
     </Transition>
 </template>
+@Common/models/services/project/CalculateSchemaTablesChanges
