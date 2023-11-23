@@ -6,7 +6,9 @@
 </script>
 
 <template>
-    <div class="w-full flex items-center text-slate-700 dark:text-slate-400">
+    <div :class="{
+        'line-through opacity-50': column.isRemoved()
+    }" class="w-full flex items-center text-slate-700 dark:text-slate-400">
         <span
             :class="{
                 'text-yellow-500 dark:text-yellow-400 font-semibold':

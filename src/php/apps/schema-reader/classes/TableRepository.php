@@ -220,7 +220,11 @@ class TableRepository {
         $this->tables[$to] = $this->tables[$from];
         $this->tables[$to]['name'] = $to;
 
+        // Adding the new name to the collumns increment
+        $this->tableColumnsCreationIncrement[$to] = $this->tableColumnsCreationIncrement[$from];
+
         unset($this->tables[$from]);
+        unset($this->tableColumnsCreationIncrement[$from]);
 
         $this->saveOldTableName($to, $from);
     }

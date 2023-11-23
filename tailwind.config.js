@@ -6,14 +6,16 @@ module.exports = {
     darkMode: 'class',
     content: ["./src/renderer/**/*.{vue,js,ts,jsx,tsx}", "./src/common/models/page/components/**/*.{js,ts}"],
     theme: {
-        animation: {
-            'bounce-fast': 'bounce 0.3s infinite',
-            'pulse-fast': 'pulse 0.3s infinite',
-        },
         extend: {
             blur: {
                 'xs': '1px',
-            }
+            },
+            transitionDuration: {
+                '1500': '1500ms',
+                '2000': '2000ms',
+                '2500': '2500ms',
+                '3000': '3000ms',
+            },
         },
         colors: {
             transparent: 'transparent',

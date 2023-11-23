@@ -8,13 +8,15 @@
     import TableColumns from "../TableOptions/TableColumns.vue"
     import TableMigrations from "./TableMigrations.vue"
     import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
+    import { useProjectStore } from "@Renderer/stores/useProjectStore"
 
     const props = defineProps({
         show: Boolean,
     })
 
     const show = toRef(props, "show"),
-        schemaStore = useSchemaStore()
+        schemaStore = useSchemaStore(),
+        projectStore = useProjectStore()
 
     const selectedTab = ref("columns"),
         tableOptionsModal = ref(null)
@@ -23,8 +25,8 @@
         { label: "Columns", value: "columns" },
         { label: "Models", value: "models" },
         { label: "Indexes", value: "indexes" },
-        { label: "Settings", value: "settings" },
         { label: "Migrations", value: "migrations" },
+        { label: "Settings", value: "settings" },
     ]
 </script>
 
@@ -38,19 +40,19 @@
     >
         <div
             ref="tableOptionsModal"
-            class="fixed right-0 bottom-0 h-screen pt-10 px-4 z-50 text-slate-200 cursor-default"
-            style="width: 38rem"
+            class="fixed right-0 bottom-0 h-screen pt-16 px-4 z-50 text-slate-200 cursor-default"
+            style="width: 42rem"
             v-if="show && schemaStore.hasSelectedTable"
         >
             <div
-                class="relative rounded-t-lg bg-slate-850 w-full shadow-2xl border-t border-l border-r border-slate-600 h-full"
+                class="relative rounded-t-lg bg-slate-850 w-full shadow-2xl border-t border-l border-r border-slate-700 h-full"
             >
                 <div class="flex flex-col h-full">
                     <div>
                         <div class="flex justify-between bg-slate-800 p-4 rounded-t-lg">
                             <div class="flex flex-col">
                                 <span class="font-semibold">Table Options</span>
-                                <div class="text-red-400">{{ schemaStore.selectedTable.name }}</div>
+                                <div class="text-red-400 font-thin text-lg">{{ schemaStore.selectedTable.name }}</div>
                             </div>
                         </div>
         
@@ -61,10 +63,16 @@
                             <XMarkIcon class="w-4 h-4 stroke-2 hover:text-red-500" />
                         </button>
         
-                        <UiTabs :tabs="tabs" v-model="selectedTab" />
+                        <UiTabs
+                            :name="projectStore.project.getTabNameFor(`table${schemaStore.selectedTable.id}`)" 
+                            :tabs="tabs" 
+                            v-model="selectedTab" 
+                            background-class="bg-slate-800" 
+                            selected-class="bg-slate-850"  
+                        />
                     </div>
     
-                    <div class="flex-grow overflow-auto pb-40">
+                    <div class="flex-grow overflow-y-scroll pb-40">
                         <div class="p-4 space-y-2" v-if="selectedTab === 'columns'">
                             <TableColumns :table="schemaStore.selectedTable" />
                         </div>

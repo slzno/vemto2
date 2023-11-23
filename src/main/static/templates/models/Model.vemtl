@@ -1,16 +1,51 @@
 <?php
 
+<% let extendsFrom = 'Model' %>
 <% const camelCase = this.require('camelCase') %>
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+<% if(this.model.hasSoftDeletes) { %>
+use Illuminate\Database\Eloquent\SoftDeletes;
+<% } %>
+<% if(this.model.isAuthenticatable) { %>
+<% extendsFrom = 'Authenticatable' %>
+use Illuminate\Foundation\Auth\User as Authenticatable;
+<% } %>
 
-class <$ this.model.name $> extends Model 
+class <$ this.model.name $> extends <$ extendsFrom $> 
 {
     use HasFactory;
-    
+    <% if(this.model.hasSoftDeletes) { %>
+    use SoftDeletes;
+    <% } %>
+
+    <% if(this.model.tableNameIsDifferentFromDefault()) { %>
+    protected $table = '<$ this.model.table.name $>';
+    <% } %>
+
+    <% if(!this.model.hasTimestamps) { %>
+    public $timestamps = false;
+    <% } %>
+
+    <% if(this.model.hasGuarded) { %>
+    protected $guarded = [
+        <% for(let column of this.model.guardedColumns) { %>
+        '<$ column.name $>',
+        <% } %>
+    ];
+    <% } %>
+
+    <% if(this.model.hasFillable) { %>
+    protected $fillable = [
+        <% for(let column of this.model.fillableColumns) { %>
+        '<$ column.name $>',
+        <% } %>
+    ];
+    <% } %>
+
     <% if(this.model.ownRelationships.length) { %>
         <# Relationships #>
         <% for (let relationship of this.model.ownRelationships) { %>
@@ -125,5 +160,13 @@ class <$ this.model.name $> extends Model
             }
 
         <% } %>
+    <% } %>
+
+    <# The following code is used by PHP-Merger to remove methods #>
+    <% for(let relationship of this.model.getRemovedRelationships()) { %>
+    // remove_method:<% relationship.name %>
+    <% } %>
+    <% for(let relationship of this.model.getRenamedRelationships()) { %>
+    // remove_method:<% relationship.getOldName() %>
     <% } %>
 }

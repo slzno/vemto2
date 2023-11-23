@@ -185,12 +185,13 @@
     </UiModal>
 
     <UiModal
-        title="Resulting Code"
+        title="Edit Code"
         :show="showingManualModal"
         @close="closeManualModal()"
-        width="750px"
+        width="1000px"
+        height="600px"
     >
-        <textarea class="w-full bg-slate-900 border-none h-36" v-model="resultCode" />
+        <textarea class="w-full bg-slate-900 border-none h-full font-mono" v-model="resultCode" />
 
         <template #footer>
             <div class="flex justify-end p-2">

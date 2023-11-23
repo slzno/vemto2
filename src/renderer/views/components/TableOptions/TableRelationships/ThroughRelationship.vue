@@ -10,6 +10,7 @@
     <div class="grid flex-1 grid-cols-2 gap-1">
         <div>
             <UiDropdownSelect
+                label="Name"
                 v-model="relationship.relatedModelId"
                 :may-open="relationship.isNew() && !relationship.hasRelatedModel() && !relationship.throughId"
                 placeholder="Related Model"
@@ -19,6 +20,7 @@
         </div>
         <div>
             <UiDropdownSelect
+                label="Through Model"
                 v-model="relationship.throughId"
                 :may-open="relationship.isNew() && relationship.hasRelatedModel() && !relationship.throughId"
                 placeholder="Through Model"
@@ -28,6 +30,7 @@
         </div>
         <div>
             <UiText
+                label="Related Model Key"
                 v-model="relationship.firstKeyName"
                 placeholder="Related Model Key Name"
                 @input="$emit('save')"
@@ -35,6 +38,7 @@
         </div>
         <div>
             <UiText
+                label="Through Model Key"
                 v-model="relationship.secondKeyName"
                 placeholder="Through Model Key Name"
                 @input="$emit('save')"

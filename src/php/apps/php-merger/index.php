@@ -6,6 +6,8 @@ require_once 'load.php';
 // Load Vemto classes
 require_once 'common/Vemto.php';
 
+require_once 'classes/CodeExtractor.php';
+require_once 'classes/CodeReader.php';
 require_once 'classes/StaticVisitor.php';
 require_once 'classes/UpdaterVisitor.php';
 
@@ -33,6 +35,7 @@ Vemto::execute('php-merger', function () use ($argv) {
 
     $newFileContent = file_get_contents($newFilePath);
     $currentFileContent = file_get_contents($currentFilePath);
+
     $previousFileContent = $previousFilePath && file_exists($previousFilePath) ? file_get_contents($previousFilePath) : null;
 
     // We need to process the previous file (the latest file version wrote to the disk from Vemto)
@@ -95,6 +98,14 @@ Vemto::execute('php-merger', function () use ($argv) {
 
     $printer = new PhpParser\PrettyPrinter\Standard();
     $resultFileContent = $printer->prettyPrintFile($currentFileVisitor->getCurrentFileAst());
+
+    // run PHP CS Fixer on the generated code
+    $resultFileContent = Vemto::runPhpCsFixer($resultFileContent);
+
+    if(getenv('VEMTO_DEBUG')) {
+        Vemto::clearLog();
+        Vemto::log($resultFileContent);
+    }
 
     $resultFilePath = Vemto::writeProcessedFile($resultFileContent);
 

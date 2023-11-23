@@ -25,7 +25,6 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     positionY: number
     labelColumn: Column
     labelColumnId: string
-    needsMigration: boolean
     createdFromInterface: boolean
 
     relationships() {
@@ -39,26 +38,17 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         }
     }
 
-    saveFromInterface(addModel: boolean = true) {
+    saveFromInterface(addModel: boolean = false) {
         let creating = false
 
         if(!this.isSaved()) creating = true
 
         this.createdFromInterface = creating
-        
-        if(creating) {
-            this.needsMigration = true
-        }
 
         this.save()
 
-        this.markAsChanged()
-
-        CreateDefaultTableColumns.setTable(this).create()
-
-        if(addModel) {
-            CreateDefaultTableModel.setTable(this).create()
-        }
+        if(creating) CreateDefaultTableColumns.setTable(this).create()
+        if(addModel) CreateDefaultTableModel.setTable(this).create()
 
         return this
     }
@@ -71,16 +61,12 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         this.removed = true
 
         this.save()
-
-        this.markAsChanged()
     }
 
     undoRemove() {
         this.removed = false
 
         this.save()
-
-        this.markAsChanged()
     }
 
     hasSchemaChanges(comparisonData: any): boolean {
@@ -97,11 +83,12 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
 
     applyChanges(data: any) {
         if(!this.hasSchemaChanges(data)) return false
-        
+
         this.name = data.name
         this.migrations = data.migrations
         this.oldNames = data.oldNames
         this.createdFromInterface = false
+        this.labelColumnId = null
 
         this.fillSchemaState()
 
@@ -156,8 +143,8 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     isDirty(): boolean {
-        const hasDirtyColumns = this.getColumns().some((column) => column.isDirty()),
-            hasDirtyIndexes = this.getIndexes().some((index) => index.isDirty())
+        const hasDirtyColumns = this.columns.some((column) => column.isDirty()),
+            hasDirtyIndexes = this.indexes.some((index) => index.isDirty())
 
         return !this.isRemoved() && (this.hasLocalChanges() || hasDirtyColumns || hasDirtyIndexes)
     }
@@ -239,11 +226,18 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     getColumnsNames(): string[] {
-        return this.getColumns().map((column) => column.name)
+        return this.columns.map((column) => column.name)
     }
 
     getAllColumnsKeyedByName(): { [key: string]: Column } {
-        return this.getColumns().reduce((columns, column) => {
+        return this.columns.reduce((columns, column) => {
+            columns[column.name] = column
+            return columns
+        }, {})
+    }
+
+    getAllRemovedColumnsKeyedByName(): { [key: string]: Column } {
+        return this.getRemovedColumns().reduce((columns, column) => {
             columns[column.name] = column
             return columns
         }, {})
@@ -282,11 +276,11 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     getIndexesNames(): string[] {
-        return this.getIndexes().map((index) => index.name)
+        return this.indexes.map((index) => index.name)
     }
 
     getAllIndexesKeyedByName(): { [key: string]: Index } {
-        return this.getIndexes().reduce((indexes, index) => {
+        return this.indexes.reduce((indexes, index) => {
             indexes[index.name] = index
             return indexes
         }, {})
@@ -309,6 +303,10 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         return this.columns.filter((column) => !column.isRemoved())
     }
 
+    getAllOrderedColumns(): Column[] {
+        return this.columns.sort((a, b) => a.order - b.order)
+    }
+
     getOrderedColumns(): Column[] {
         return this.getColumns().sort((a, b) => a.order - b.order)
     }
@@ -316,13 +314,17 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     getIndexes(): Index[] {
         return this.indexes.filter((index) => !index.isRemoved())
     }
-
+    
     hasRelatedTables(): boolean {
         return !! this.getRelatedTables().length
     }
 
     getRelatedTables(): Table[] {
-        let relatedTables: Table[] = [],
+        return this.getRelatedTablesRelations().map((relation) => relation.table)
+    }
+
+    getRelatedTablesRelations(): any[] {
+        let relatedTables: any = {},
             relatedTablesIds: string[] = []
 
         this.getForeignIndexes().forEach((index) => {
@@ -333,7 +335,12 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
             let relatedTable = this.project.findTableByName(foreignTable.name)
 
             if(relatedTable && !relatedTablesIds.includes(relatedTable.id)) {
-                relatedTables.push(relatedTable)
+                
+                relatedTables[relatedTable.id] = {
+                    table: relatedTable,
+                    type: 'foreign',
+                }
+
                 relatedTablesIds.push(relatedTable.id)
             }
         })
@@ -343,20 +350,27 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
 
             if(relationship.pivot) {
                 relatedTable = relationship.pivot
+            }
 
-                if(relatedTable && !relatedTablesIds.includes(relatedTable.id)) {
-                    relatedTables.push(relatedTable)
+            if(relatedTable) {
+                if(relatedTablesIds.includes(relatedTable.id)) {
+                    const existingTable = relatedTables[relatedTable.id]
+
+                    if(existingTable) {
+                        existingTable.type = 'both'
+                    }
+                } else {
+                    relatedTables[relatedTable.id] = {
+                        table: relatedTable,
+                        type: 'relationship',
+                    }
+
                     relatedTablesIds.push(relatedTable.id)
                 }
             }
-
-            if(relatedTable && !relatedTablesIds.includes(relatedTable.id)) {
-                relatedTables.push(relatedTable)
-                relatedTablesIds.push(relatedTable.id)
-            }
         })
 
-        return relatedTables
+        return Object.values(relatedTables)
     }
 
     getModels(): Model[] {
@@ -382,11 +396,6 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
 
     hasSoftDeletes(): boolean {
         return this.hasColumn('deleted_at')
-    }
-
-    markAsChanged() {
-        this.project.markTableAsChanged(this)
-        return this
     }
 
     hasMigrations(): boolean {

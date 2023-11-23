@@ -4,7 +4,7 @@ import RenderableFactory from "./RenderableFactory"
 
 export default class GenerateModelFiles {
     async start() {
-        const models = Model.get()
+        const models = Model.getValid()
 
         for (const model of models) {
             await new RenderableModel(model).render()

@@ -10,7 +10,8 @@
 
     const props = defineProps({
             modelValue: {
-                type: String,
+                // string or number
+                type: [String, Number],
                 required: true
             },
             mayOpen: {
@@ -237,13 +238,13 @@
     })
 </script>
 <template>
-    <div class="relative text-slate-600 dark:text-white"
+    <div class="flex gap-1 flex-1 flex-col relative text-slate-600 dark:text-white"
         @keyup="keyPressed"
         @keyup.esc="close()"
         @keyup.enter="selectCurrentCandidate()"
         v-click-outside="close"
     >
-        <span class="text-xs text-slate-400" v-if="label">{{ label }}</span>
+        <label class="text-xs text-slate-400" v-if="label">{{ label }}</label>
         <button
             ref="selectButton"
             class="flex focus:border-red-500 border border-slate-650 items-center justify-between bg-white dark:bg-slate-950 appearance-none rounded-lg leading-tight text-slate-600 dark:text-slate-300 dark:focus:text-slate-200 py-1.5 px-2 w-full outline-none"
@@ -263,8 +264,8 @@
         
         <div
             v-show="showing"
-            class="bg-white dark:bg-slate-950 rounded-lg shadow-lg my-2 left-0 absolute overflow-hidden"
-            style="min-width: 225px; width: 100%; max-height: 300px; z-index: 999"
+            class="bg-white dark:bg-slate-950 rounded-lg shadow-lg my-2 left-0 absolute overflow-hidden border border-slate-650"
+            style="min-width: 225px; width: 100%; max-height: 300px; z-index: 999; top: 50px;"
         >
             <div class="relative">
                 <div class="p-2" style="height: 60px">

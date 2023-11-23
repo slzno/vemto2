@@ -13,6 +13,7 @@ import FillGuardedColumns from "./services/models/Fillers/FillGuardedColumns"
 import AbstractSchemaModel from "./composition/AbstractSchemaModel"
 
 import { uniq } from 'lodash'
+import { snakeCase } from "change-case"
 
 export default class Model extends AbstractSchemaModel implements SchemaModel {
     id: string
@@ -56,6 +57,7 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     hasFillable: boolean
     hasTimestamps: boolean
     hasSoftDeletes: boolean
+    isAuthenticatable: boolean
 
     relationships() {
         return {
@@ -139,6 +141,7 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         this.hasFillable = data.hasFillable
         this.hasTimestamps = data.hasTimestamps
         this.hasSoftDeletes = data.hasSoftDeletes
+        this.isAuthenticatable = data.isAuthenticatable
 
         this.fillSchemaState()
         
@@ -211,6 +214,7 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
             hasFillable: this.hasFillable,
             hasTimestamps: this.hasTimestamps,
             hasSoftDeletes: this.hasSoftDeletes,
+            isAuthenticatable: this.isAuthenticatable,
         }
     }
 
@@ -288,6 +292,10 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
                 this.schemaState.hasSoftDeletes,
                 comparisonData.hasSoftDeletes
             ),
+            isAuthenticatable: DataComparator.booleansAreDifferent(
+                this.schemaState.isAuthenticatable,
+                comparisonData.isAuthenticatable
+            ),
         }
     }
 
@@ -302,6 +310,18 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
      */
     static nonTouchableProperties(): string[] {
         return []
+    }
+
+    static getValid(): Model[] {
+        return Model.get().filter((model) => model.isValid())
+    }
+
+    isValid(): boolean {
+        return this.hasTable() && !this.isRemoved()
+    }
+
+    hasTable(): boolean {
+        return !! this.table
     }
 
     wasCreatedFromInterface(): boolean {
@@ -334,8 +354,20 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         return relationships
     }
 
+    getRemovedRelationships(): Relationship[] {
+        return this.relatedRelationships.filter((relationship) => relationship.isRemoved())
+    }
+
+    getRenamedRelationships(): Relationship[] {
+        return this.relatedRelationships.filter((relationship) => relationship.wasRenamed())
+    }
+
     getValidRelationships(): Relationship[] {
         return this.ownRelationships.filter((relationship) => relationship.isValid())
+    }
+
+    getPossibleInverseRelationships(relationship: Relationship): Relationship[] {
+        return this.ownRelationships.filter((rel) => rel.maybeInverseOf(relationship))
     }
 
     getValidOwnRelationships(): Relationship[] {
@@ -356,6 +388,13 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     getColumnByName(columnName: string): Column {
         if (!this.table) return null
         return this.table.getColumnByName(columnName)
+    }
+
+    tableNameIsDifferentFromDefault(): boolean {
+        const currentTableName = this.table.name,
+            defaultTableName = snakeCase(WordManipulator.pluralize(this.name))
+
+        return currentTableName != defaultTableName
     }
 
     calculateDataByName(updateClassAndFileName: boolean = true): void {
@@ -449,5 +488,14 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         this[type] = uniqueColumnNames.filter((columnName: string) => !! columnName)
 
         this.save()
+    }
+
+    undoAllChanges() {
+        this.undoChanges()
+        this.undoAllOwnRelationshipsChanges()
+    }
+
+    undoAllOwnRelationshipsChanges() {
+        this.ownRelationships.forEach(rel => rel.undoChanges())
     }
 }

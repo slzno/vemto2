@@ -24,6 +24,7 @@ class ModelRepository {
 
             $allMethods = $reflection->getMethods();
             $allTraitNames = $reflection->getTraitNames();
+            $extendsClass = $reflection->getParentClass();
             $classMethods = collect($allMethods)->filter(function ($method) use ($model) {
                 return $method->getFileName() == $model['fullPath'];
             });
@@ -114,7 +115,8 @@ class ModelRepository {
                 'relationships' => $relationships,
                 'methods' => $classMethods,
                 'hasTimestamps' => $properties['timestamps'] ?? true,
-                'hasSoftDeletes' => in_array('Illuminate\Database\Eloquent\SoftDeletes', $allTraitNames)
+                'hasSoftDeletes' => in_array('Illuminate\Database\Eloquent\SoftDeletes', $allTraitNames),
+                'isAuthenticatable' => $extendsClass ? $extendsClass->name === 'Illuminate\Foundation\Auth\User' : false,
             ];
         }
 

@@ -41,8 +41,6 @@ export default new class GenerateTableChangerMigration {
             fileContent
         )
 
-        this.project.removeTableFromChangedTables(this.table)
-
         return fileContent
     }
 

@@ -42,6 +42,7 @@ class CalculateCommonRelationshipsData extends CalculateRelationshipService {
         if(this.relationship.inverseId) return
         
         const inverseRelationship = new Relationship({
+                name: this.calculateInverseName(),
                 modelId: this.relationship.relatedModelId,
                 projectId: this.relationship.projectId,
                 relatedModelId: this.relationship.modelId,
@@ -63,6 +64,16 @@ class CalculateCommonRelationshipsData extends CalculateRelationshipService {
         }
 
         return true
+    }
+
+    calculateInverseName(): string {
+        const nameIsPlural = WordManipulator.isPlural(this.relationship.name)
+
+        if(nameIsPlural) {
+            return WordManipulator.singularize(this.relationship.name)
+        }
+
+        return WordManipulator.pluralize(this.relationship.name)
     }
 
     addForeign(): Index {
@@ -87,7 +98,7 @@ class CalculateCommonRelationshipsData extends CalculateRelationshipService {
         let keys = this.getDefaultKeys()
 
         if(!keys.foreignKey) {
-            return
+            throw new Error(`The foreign key ${this.getForeignKeyName()} does not exist in the ${this.relationship.model.name} model`)
         }
 
         this.relationship.foreignKeyId = keys.foreignKey.id
@@ -107,7 +118,7 @@ class CalculateCommonRelationshipsData extends CalculateRelationshipService {
         const keys = this.getDefaultKeys()
 
         if(!keys.parentKey) {
-            return
+            throw new Error(`The parent key ${this.getPrimaryKeyName()} does not exist in the ${this.relationship.relatedModel.name} model`)
         }
 
         this.relationship.parentKeyId = keys.parentKey.id
@@ -132,6 +143,12 @@ class CalculateCommonRelationshipsData extends CalculateRelationshipService {
         }
 
         return keys
+    }
+
+    getPrimaryKeyName(): string {
+        const primaryKey = this.relationship.model.getPrimaryKeyColumn()
+
+        return primaryKey ? primaryKey.name : 'id'
     }
 
     getForeignKeyName(): string {

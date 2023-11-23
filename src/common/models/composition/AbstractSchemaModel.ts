@@ -35,7 +35,7 @@ export default abstract class AbstractSchemaModel extends RelaDB.Model {
     isNew(): boolean {
         return !this.schemaState
     }
-
+    
     wasRenamed(): boolean {
         if(!this.schemaState) return false
         
@@ -44,6 +44,16 @@ export default abstract class AbstractSchemaModel extends RelaDB.Model {
 
     isRemoved(): boolean {
         return !! this.removed
+    }
+
+    markAsRemoved(): void {
+        this.removed = true
+        this.save()
+    }
+
+    markAsNotRemoved(): void {
+        this.removed = false
+        this.save()
     }
 
     undoChanges(): void {

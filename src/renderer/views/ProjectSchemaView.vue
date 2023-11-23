@@ -1,9 +1,8 @@
 <script setup lang="ts">
     import Table from "@Common/models/Table"
-    import { nextTick, onMounted, onUnmounted, ref } from "vue"
+    import { nextTick, onMounted, watch, ref } from "vue"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
-    import modelsBuilder from "@Common/services/ModelsFromSchemaBuilder"
-    import tablesBuilder from "@Common/services/TablesFromMigrationsBuilder"
+    import SchemaBuilder from "@Renderer/services/schema/SchemaBuilder"
     import SchemaTables from "@Renderer/views/components/ProjectSchema/SchemaTables.vue"
 
     import {
@@ -16,106 +15,72 @@
     import { BezierConnector } from "@jsplumb/connector-bezier"
     import SchemaHeader from "./components/ProjectSchema/SchemaHeader.vue"
     import MigrationSaver from "./components/MigrationSaver/MigrationSaver.vue"
-    import Main from "@Renderer/services/wrappers/Main"
-    import UiModal from "@Renderer/components/ui/UiModal.vue"
 
     const projectStore = useProjectStore()
 
-    let interval = null,
-        isDragging = false,
+    let isDragging = false,
         currentConnections = {},
         currentNodes = {},
+        canDrawTables = ref(false),
         jsPlumbInstance: BrowserJsPlumbInstance = null
 
     onMounted(async () => {
-        nextTick(() => {
-            initSchema()
-        })
+        setTimeout(() => {
+            canDrawTables.value = true
 
-        interval = setInterval(() => {
-            if (isDragging) return
-            loadSchema()
-        }, 3000)
+            nextTick(() => {
+                drawConnections()
+                zoomWithMouseWheel()
+            })
+        }, 1);
     })
 
-    onUnmounted(() => {
-        if (interval) clearInterval(interval)
-    })
+    watch(() => projectStore.project.currentZoom, () => changeSchemaZoom())
+    watch(() => projectStore.project.tables, () => nextTick(() => drawConnections()))
 
-    const forceReload = async () => {
-        const force = true
-        await loadSchema(force)
+    const zoomWithMouseWheel = () => {
+        document.getElementById('tablesCanvas').addEventListener('mousewheel', (e: any) => { 
+            e.preventDefault()
+            e.stopPropagation()
+
+            const delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)))
+
+            delta > 0 ? projectStore.project.zoomIn() : projectStore.project.zoomOut()
+        }, { passive: false })
+    }
+
+    const syncSchema = async (syncTables: boolean, syncModels: boolean) => {
+        await loadSchema(syncTables, syncModels)
     }
 
     const tableAdded = async (table: Table) => {
-        console.log(table)
-
         nextTick(() => {
             setTimeout(() => {
-                initSchema()
+                drawConnections()
             }, 300)
         })
-        
     }
 
-    const loadSchema = async (force = false) => {
+    const loadSchema = async (syncTables: boolean, syncModels: boolean) => {
         if (isDragging) return
         if (projectStore.projectIsEmpty) return
 
-        const schemaData = await Main.API.loadSchema(
-            projectStore.project.path
-        )
+        const schemaBuilder = new SchemaBuilder(projectStore.project)
 
-        const changedTables = await loadTables(schemaData, force),
-            changedModels = await loadModels(schemaData, force)
+        schemaBuilder.build(syncTables, syncModels)
 
-        if(!changedTables && !changedModels) return
-
-        nextTick(() => {
-            initSchema()
-        })
+        nextTick(() => drawConnections())
     }
 
-    const loadTables = async (schemaData: any, force = false) => {
-        if (!schemaData) return
+    const drawConnections = () => {
+        if(projectStore.projectIsEmpty) return
 
-        await tablesBuilder
-            .setProject(projectStore.project)
-            .setSchemaData(schemaData)
-            .checkSchemaChanges()
-
-        if(force) tablesBuilder.force()
-
-        if (tablesBuilder.doesNotHaveSchemaChanges()) return false
-
-        await tablesBuilder.build()
-
-        if(force) projectStore.project.clearChangedTables()
-
-        return true
-    }
-
-    const loadModels = async (schemaData: any, force = false) => {
-        if (!schemaData) return
-
-        await modelsBuilder
-            .setProject(projectStore.project)
-            .setSchemaData(schemaData)
-            .checkSchemaChanges()
-
-        if(force) modelsBuilder.force()
-
-        if (modelsBuilder.doesNotHaveSchemaChanges()) return false
-
-        await modelsBuilder.build()
-
-        return true
-    }
-
-    const initSchema = () => {
         initJsPlumbIfNotExists()
 
-        projectStore.project.tables.forEach((table: any) => {
+        jsPlumbInstance.deleteEveryConnection()
+        currentConnections = {}
+
+        projectStore.project.tables.forEach((table: Table) => {
             if(!table || !table.id) return
 
             if(!currentNodes[table.id]) {
@@ -124,29 +89,37 @@
                 jsPlumbInstance.manage(currentNodes[table.id])
             }
             
-            let node = currentNodes[table.id]
+            const node = currentNodes[table.id],
+                relatedTablesRelations = table.getRelatedTablesRelations()
 
-            if (table.hasRelatedTables()) {
-                let relatedTables = table.getRelatedTables()
-
-                relatedTables.forEach((relatedTable: any) => {
-                    if(!relatedTable || !relatedTable.id) return
+            // connect tables
+            if (relatedTablesRelations.length > 0) {
+                relatedTablesRelations.forEach((relation: any) => {
+                    if(!relation.table || !relation.table.id) return
 
                     let relatedNode = document.getElementById(
-                            "table_" + relatedTable.id
+                            "table_" + relation.table.id
                         ),
-                        connectionName = table.name + "_" + relatedTable.name,
+                        connectionName = table.name + "_" + relation.table.name,
                         connectionNameReverse =
-                            relatedTable.name + "_" + table.name
+                            relation.table.name + "_" + table.name
 
                     if (relatedNode && !currentConnections[connectionName]) {
+                        const cssClass = relation.type === "relationship" ? "connector" : "connector dotted"
+
                         jsPlumbInstance.connect({
                             source: node!,
                             target: relatedNode!,
                             anchor: "Continuous",
                             // anchors: ["Right", "Left"],
-                            cssClass: "connector",
-                            connector: BezierConnector.type,
+                            cssClass: cssClass,
+                            connector: {
+                                type: BezierConnector.type,
+                                options: {
+                                    curviness: 100,
+                                },
+                            },
+                            // paintStyle: { dashstyle: "4 4 4 4" },
                         })
 
                         currentConnections[connectionName] = true
@@ -178,6 +151,17 @@
             table.positionY = p.el.style.top.replace("px", "")
             table.save()
         })
+
+        changeSchemaZoom()
+    }
+
+    const changeSchemaZoom = () => {
+        if (!jsPlumbInstance) return
+        if (projectStore.projectIsEmpty) return
+
+        jsPlumbInstance.setZoom(
+            projectStore.project.getZoomAsScale()
+        )
     }
 </script>
 
@@ -187,23 +171,12 @@
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-hidden"
         v-if="projectStore.projectIsReady"
     >
-        <UiModal
-            :show="projectStore.project.hasCurrentSchemaError()"
-            title="Error loading schema"
-            width="800px"
-            @close="projectStore.project.setCurrentSchemaError(null)"
-        >
-            <div class="p-4 text-red-400 bg-slate-900 rounded-b-lg">
-                <pre class="overflow-hidden whitespace-pre-wrap">{{ projectStore.project.currentSchemaError }}</pre>
-            </div>
-        </UiModal>
-
         <SchemaHeader 
             @tableAdded="tableAdded"
-            @forceReload="forceReload" 
+            @syncSchema="syncSchema" 
         />
 
-        <SchemaTables />
+        <SchemaTables v-if="canDrawTables" />
 
         <MigrationSaver />
 
@@ -225,6 +198,10 @@
         stroke: #9ca3af;
         stroke-width: 2;
         z-index: 1;
+    }
+
+    svg.dotted path {
+        stroke-dasharray: 4 4 4 4;
     }
 
     svg.jtk-endpoint circle {

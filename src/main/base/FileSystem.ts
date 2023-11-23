@@ -109,14 +109,14 @@ class FileSystem {
     /**
      * Makes a folder based on a folder template (copy the folder)
      */
-    makeFolderFromTemplate(destinationFolder: string, templateFolder: string) {
+    copyFolderIfNotExists(templateFolder: string, destinationFolder: string) {
         if(this.folderDoesNotExist(destinationFolder)) {
-            this.copyFolder(destinationFolder, templateFolder)
+            this.copyFolder(templateFolder, destinationFolder)
         }
     }
 
 
-    copyFolder(destinationFolder: string, templateFolder: string): boolean {
+    copyFolder(templateFolder: string, destinationFolder: string): boolean {
         console.log('Copying Folder: ' + templateFolder + ' to ' + destinationFolder)
         return shell.cp('-R', templateFolder, destinationFolder)
     }
@@ -179,6 +179,28 @@ class FileSystem {
         const removeFromPathString = removeBasePath ? folderPath : ''
 
         return this.walkSync(folderPath, [], removeFromPathString)
+    }
+
+    clearFolder(folderPath: string, removeOwnFolder: boolean = false): FileSystem {
+        if(this.folderDoesNotExist(folderPath)) return this
+
+        console.log('Clearing Folder: ' + folderPath)
+
+        fs.readdirSync(folderPath).forEach((file) => {
+            const curPath = path.join(folderPath, file)
+
+            if (fs.lstatSync(curPath).isDirectory()) {
+                this.clearFolder(curPath, true)
+            } else {
+                fs.unlinkSync(curPath)
+            }
+        })
+
+        if(removeOwnFolder) {
+            fs.rmdirSync(folderPath)
+        }
+
+        return this
     }
 
     walkSync(

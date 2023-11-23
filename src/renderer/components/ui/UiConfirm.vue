@@ -123,19 +123,21 @@
             :height="height"
             @close="cancelClicked"
         >
-            <div class="p-4">
-                <slot></slot>
-            </div>
-
-            <div class="p-4" v-if="Object.keys(options).length">
-                <div class="text-slate-300 mb-3 text-xs" v-if="optionsTitle">{{ optionsTitle }}</div>
-                <div v-for="(option, key) in options">
-                    <UiCheckbox v-model="optionsValues[key]" :label="option.label"></UiCheckbox>
+            <div class="flex flex-col space-y-4 p-4">
+                <div>
+                    <slot></slot>
+                </div>
+    
+                <div v-if="Object.keys(options).length">
+                    <div class="text-slate-300 mb-3 text-xs" v-if="optionsTitle">{{ optionsTitle }}</div>
+                    <div v-for="(option, key) in options">
+                        <UiCheckbox v-model="optionsValues[key]" :label="option.label"></UiCheckbox>
+                    </div>
                 </div>
             </div>
 
             <template #footer>
-                <div class="flex justify-end p-4 space-x-2">
+                <div class="flex justify-end p-2 space-x-2">
                     <UiButton @click="cancelClicked">
                         <XMarkIcon class="w-4 h-4 mr-1 text-red-400" />
                         {{ cancelText }}

@@ -4,10 +4,10 @@
 
 <template>
     <div
-        class="bg-slate-900 text-sm text-white rounded-lg border border-yellow-500 p-2 flex items-center space-x-2 w-full"
+        class="bg-slate-900 text-sm text-yellow-200 font-mono rounded-lg border border-slate-700 p-2 flex items-center space-x-2 w-full"
     >
         <div>
-            <ExclamationTriangleIcon class="w-8 h-8 text-yellow-500 animate-pulse" />
+            <ExclamationTriangleIcon class="w-8 h-8 text-yellow-500 animate-pulse opacity-70" />
         </div>
 
         <div>

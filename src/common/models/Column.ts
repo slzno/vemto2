@@ -2,14 +2,14 @@ import Table from './Table'
 import Input from './crud/Input'
 import ColumnData from './data/ColumnData'
 import DataComparator from './services/DataComparator'
-import TableColumnChanged from '@Common/events/TableColumnChanged'
-import TableColumnCreated from '@Common/events/TableColumnCreated'
 import ColumnTypeList from './column-types/base/ColumnTypeList'
 import DataComparisonLogger from './services/DataComparisonLogger'
 import Model from './Model'
 import ColumnsDefaultDataList, { ColumnDefaultData } from './column-types/default/ColumnsDefaultDataList'
 import Relationship from './Relationship'
 import AbstractSchemaModel from './composition/AbstractSchemaModel'
+import Index from './Index'
+import IndexColumn from './IndexColumn'
 
 export default class Column extends AbstractSchemaModel implements SchemaModel {
     id: string
@@ -32,6 +32,8 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
     faker: string
     options: any[]
     inputs: Input[]
+    referencedIndexes: Index[]
+    columnIndexes: Index[]
 
     relationshipsByForeignKey: Relationship[]
     relationshipsByOwnerKey: Relationship[]
@@ -52,6 +54,8 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         return {
             table: () => this.belongsTo(Table),
             inputs: () => this.hasMany(Input).cascadeDelete(),
+            referencedIndexes: () => this.hasMany(Index, 'referencesColumnId').cascadeDelete(),
+            columnIndexes: () => this.belongsToMany(Index, IndexColumn).cascadeDetach(),
 
             // Relationships with Relationship class
             relationshipsByForeignKey: () => this.hasMany(Relationship, 'foreignKeyId').cascadeDelete(),
@@ -66,18 +70,31 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
     
 
     static created(column: Column) {
-        let nextOrder = 0
-        
-        const tableColumns = column.table.getOrderedColumns()
-
-        if(tableColumns.length > 0) {
-            nextOrder = tableColumns[tableColumns.length - 1].order + 1
-        }
-
         column.faker = column.getDefaultFaker()
 
-        column.order = nextOrder
+        if(typeof column.order === "undefined") {
+            column.order = column.calculateNextOrder()
+        }
+
         column.saveFromInterface()
+    }
+
+    static deleting(column: Column) {
+        column.columnIndexes.forEach((index: Index) => {
+            if(index.includesOnlyColumn(column)) {
+                index.delete()
+            }
+        })
+    }
+
+    calculateNextOrder(): number {
+        const tableColumns = this.table.getOrderedColumns()
+
+        if(tableColumns.length > 0) {
+            return tableColumns[tableColumns.length - 1].order + 1
+        }
+
+        return 0
     }
 
     reorderFromInterface(): void {
@@ -109,12 +126,6 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         if(!this.isSaved()) creating = true
 
         this.save()
-
-        if(creating) {
-            new TableColumnCreated(this).handle()
-        } else {
-            new TableColumnChanged(this).handle()
-        }
 
         return this
     }
@@ -219,7 +230,7 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
     }
 
     isDirty(): boolean {
-        return this.hasLocalChanges()
+        return this.hasLocalChanges() || this.isRemoved() || this.isNew()
     }
 
     hasLocalChanges(): boolean {
