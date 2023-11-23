@@ -2,6 +2,7 @@ import Table from "@Common/models/Table"
 import Relationship from "@Common/models/Relationship"
 import WordManipulator from "@Common/util/WordManipulator"
 import CalculateRelationshipService from "../base/CalculateRelationshipService"
+import { camelCase } from "change-case"
 
 class CalculateManyToManyRelationshipsData extends CalculateRelationshipService {
     relationship: Relationship
@@ -148,6 +149,7 @@ class CalculateManyToManyRelationshipsData extends CalculateRelationshipService 
         if(this.relationship.inverseId) return false
         
         const inverseRelationship = new Relationship({
+                name: this.calculateInverseName(),
                 modelId: this.relationship.relatedModel.id,
                 relatedModelId: this.relationship.model.id,
                 type: this.getInverseTypeKey(),
@@ -170,6 +172,10 @@ class CalculateManyToManyRelationshipsData extends CalculateRelationshipService 
         }
 
         return true
+    }
+
+    calculateInverseName(): string {
+        return camelCase(this.relationship.model.plural)
     }
 
     needsToAddPivotToModelTemplate() {

@@ -1,38 +1,23 @@
-import md5 from "crypto-js/md5"
 import Model from "@Common/models/Model"
 import Project from "@Common/models/Project"
 import Relationship from "@Common/models/Relationship"
 import RelationshipTypes from "@Common/models/static/RelationshipTypes"
-import WordManipulator from "@Common/util/WordManipulator"
 
-class ModelsFromSchemaBuilder {
+export default class ModelsBuilder {
     static processing: boolean = false
 
     project: Project
     schemaModelsData: any
-    hasLocalChanges: boolean
-    schemaModelsDataHash: string
     changedRelationships: Relationship[] = []
+
+    constructor(project: Project) {
+        this.project = project
+    }
 
     reset() {
         this.project = null
         this.schemaModelsData = null
-        this.hasLocalChanges = false
-        this.schemaModelsDataHash = ''
         this.changedRelationships = []
-    }
-
-    setProject(project: Project) {
-        this.project = project
-        return this
-    }
-
-    hasSchemaChanges() {
-        return this.hasLocalChanges
-    }
-    
-    doesNotHaveSchemaChanges() {
-        return !this.hasLocalChanges
     }
 
     setSchemaData(schemaData: any) {
@@ -41,37 +26,17 @@ class ModelsFromSchemaBuilder {
     }
 
     async build() {
-        if(ModelsFromSchemaBuilder.processing) return
+        if(ModelsBuilder.processing) return
+
+        await this.project.undoAllModelsChanges()
 
         this.processModels()
+
+        return true
     }
-
-    async checkSchemaChanges() {
-        this.schemaModelsDataHash = md5(JSON.stringify(this.schemaModelsData)).toString()
-        
-        if (this.project.schemaModelsDataHash === this.schemaModelsDataHash) {
-            return
-        }
-
-        this.hasLocalChanges = true
-
-        this.project.schemaModelsDataHash = this.schemaModelsDataHash
-        this.project.save()
-
-        return this
-    }
-
-    force() {
-        this.hasLocalChanges = true
-        
-        return this
-    }
-
 
     processModels() {
-        if(!this.hasLocalChanges) return
-
-        ModelsFromSchemaBuilder.processing = true
+        ModelsBuilder.processing = true
 
         this.readModels()
         this.setRelatedModels()
@@ -79,7 +44,7 @@ class ModelsFromSchemaBuilder {
 
         this.reset()
 
-        ModelsFromSchemaBuilder.processing = false
+        ModelsBuilder.processing = false
     }
 
     readModels() {
@@ -196,6 +161,7 @@ class ModelsFromSchemaBuilder {
                 const inverseRelationship = relatedModelInstance.findRelationship(inverseRelType, model.class)
     
                 if(!(inverseRelationship instanceof Relationship)) return
+                if(inverseRelationship.hasInverse()) return
     
                 relationship.inverseId = inverseRelationship.id
                 relationship.save()
@@ -218,5 +184,3 @@ class ModelsFromSchemaBuilder {
     }
 
 }
-
-export default new ModelsFromSchemaBuilder

@@ -5,8 +5,27 @@ import RendererBridge from "./RendererBridge"
 import RelaDB from "@tiago_silva_pereira/reladb"
 import ModelRegistry from "@Common/ModelRegistry"
 import { useProjectStore } from "@Renderer/stores/useProjectStore"
+import ProjectPathResolver from "@Common/services/ProjectPathResolver"
+import ProjectManager from "./project/ProjectManager"
 
 export default class HandleProjectDatabase {
+
+    static async setup(projectPath: string) {
+        const projectStore = useProjectStore()
+
+        await Main.API.prepareDatabase(projectPath)
+        ProjectPathResolver.setPath(projectPath)
+
+        const data = await Main.API.loadProjectDatabase(projectPath)
+
+        HandleProjectDatabase.start(data)
+
+        const project = Project.findOrCreate()
+
+        projectStore.setProject(project)
+
+        return project
+    }
 
     static start(initialDatabaseData: Object): RelaDB.Database {
         const database = new RelaDB.Database
@@ -21,10 +40,6 @@ export default class HandleProjectDatabase {
             RelaDB.Resolver.db().driver.feedDatabaseData(initialDatabaseData)
         }
 
-        // *** DONT MOVE THIS LINE ABOVE ***
-        this.generateBasicProjectData()
-        // *** DONT MOVE THIS LINE ABOVE ***
-
         RelaDB.Resolver.db().onDataChanged(() => {
             updateDataDebounced()
         })
@@ -37,6 +52,9 @@ export default class HandleProjectDatabase {
 
             RendererBridge.dataUpdated()
 
+            // KEEP AN EYE ON THIS: reloading the project may cause issues
+            // when the projectStore loses the reference to the current
+            // project instance
             projectStore.reloadProject()
 
             console.log("Database data updated")
@@ -45,37 +63,23 @@ export default class HandleProjectDatabase {
         return database
     }
 
-    static generateBasicProjectData() {
-        const project = Project.find(1)
-
-        if(project) {
-            console.log("Generating basic project data")
-            
-            project.generateBasicData()
-        }
-    }
-
     static async populate(callback?: Function) {
-        const projectStore = useProjectStore()
+        const projectStore = useProjectStore(),
+            projectManager = new ProjectManager()
 
         if (projectStore.projectIsEmpty) {
-            const latestProjectPath = window.localStorage.getItem("latest-project")
+            const latestProjectPath = projectManager.getLatestProjectPath()
 
-            if(!latestProjectPath) {
-                return
-            }
+            if(!latestProjectPath) return
 
-            const data = await Main.API.loadProjectDatabase(latestProjectPath)
-
-            HandleProjectDatabase.start(data)
-
-            projectStore.setProject(Project.find(1))
+            await projectManager.connectToLatest()
         }
 
         if(callback) callback()
     }
 
     static async close() {
+        RelaDB.Resolver.db().driver.feedDatabaseData({})
         Main.API.closeProjectDatabase()
     }
 }

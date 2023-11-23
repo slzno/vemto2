@@ -1,6 +1,6 @@
 const sendErrorMessage = (event: any, error: any) => {
     event.sender.send("error:default", {
-        error: error.message || error.error || error, 
+        message: error.message || error.error || error, 
         stack: error.stack
     })
 }

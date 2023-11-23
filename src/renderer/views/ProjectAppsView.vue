@@ -13,7 +13,7 @@
     import AppSections from "./components/ProjectApps/AppSections.vue"
     import AppThemes from "./components/ProjectApps/AppThemes.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
-import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
+    import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
 
     const router = useRouter(),
         projectStore = useProjectStore(),
@@ -42,17 +42,21 @@ import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
         { label: "Navigation", value: "navigation" },
         { label: "Themes", value: "themes" },
         { label: "Templates", value: "templates" },
-        { label: "Settings", value: "settings" },
+        // { label: "Settings", value: "settings" },
     ]
 </script>
 
 <template>
     <div
+        v-if="projectStore.projectIsReady"
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-hidden"
     >
         <div class="mt-2">
-            <UiTabs :tabs="tabs" v-model="selectedTab" :external="true" />
+            <UiTabs :name="projectStore.project.getTabNameFor('apps')" :tabs="tabs" v-model="selectedTab" />
         </div>
+
+        <!-- {{ projectStore.project.settings  }}
+        {{ projectStore.project.connectionFinished  }} -->
 
         <div class="p-4 h-full" v-if="selectedTab === 'applications'">
             <div class="flex top-0 left-0 space-x-2 text-sm z-20 mb-4">
@@ -120,13 +124,13 @@ import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
         </div>
 
         <div class="space-y-2 p-4" v-if="selectedTab === 'templates'">
-            <UiEmptyMessage>
+            <UiEmptyMessage development>
                 <span>Under development... COMING SOON!</span>
             </UiEmptyMessage>
         </div>
 
         <div class="space-y-2 p-4" v-if="selectedTab === 'settings'">
-            <UiEmptyMessage>
+            <UiEmptyMessage development>
                 <span>Also under development... COMING SOON!</span>
             </UiEmptyMessage>
         </div>

@@ -12,8 +12,11 @@
         confirmDeleteDialog = ref(null),
         schemaStore = useSchemaStore()
 
+    const emit = defineEmits(["highlight"])
+    
     let clickedQuickly = false,
         isRemoving = false
+
 
     const removeTable = async () => {
         isRemoving = true
@@ -58,6 +61,10 @@
             if(isRemoving) return
 
             schemaStore.selectTable(table.value)
+
+            nextTick(() => {
+                emit("highlight", table.value)
+            })
         }, 1);
     }
 </script>
@@ -74,10 +81,11 @@
         :ref="`table_${table.id}`"
         :data-table-id="table.id"
         :class="{
+            'opacity-30': schemaStore.hasSelectedTable && schemaStore.selectedTableIsNot(table),
             'border border-transparent': schemaStore.selectedTableIsNot(table),
             'border dark:border-slate-500': schemaStore.selectedTableIs(table),
         }"
-        class="cursor-move schema-table group absolute shadow-lg rounded-lg hover:border-slate-500 bg-white dark:bg-slate-850 z-10 space-y-4 pb-4"
+        class="cursor-move schema-table group absolute shadow-lg rounded-lg hover:border-slate-500 bg-white dark:bg-slate-850 z-10 space-y-4 pb-4 select-none"
         style="min-width: 270px"
         :style="{
             top: getTablePosition(table).top,

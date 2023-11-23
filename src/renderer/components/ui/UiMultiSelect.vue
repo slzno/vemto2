@@ -62,15 +62,15 @@
             :searchable="searchable"
             :placeholder="placeholder"
             :classes="{
-                container: 'relative mx-auto w-full flex items-center justify-end box-border cursor-pointer border border-gray-300 dark:border-slate-950 rounded text-base leading-snug outline-none dark:bg-slate-950',
-                containerOpen: 'rounded-t-none',
+                container: 'relative mx-auto w-full flex items-center justify-end box-border cursor-pointer border border-slate-300 dark:border-slate-650 rounded-lg text-base leading-snug outline-none dark:bg-slate-950',
+                containerOpen: 'rounded-lg',
                 tag: 'bg-red-500 text-white text-sm font-semibold py-0.5 pl-2 rounded mr-1 mb-1 flex items-center whitespace-nowrap rtl:pl-0 rtl:pr-2 rtl:mr-0 rtl:ml-1',
                 tagRemove: 'flex items-center justify-center p-1 mx-0.5 rounded-sm hover:bg-red-300 hover:bg-opacity-25 group',
                 option: 'flex items-center w-full justify-start box-border text-left cursor-pointer text-base leading-snug py-2 px-3',
-                tagsSearch: 'absolute inset-0 border-0 outline-none focus:ring-0 appearance-none p-0 dark:bg-transparent text-base font-sans box-border w-full',
-                placeholder: 'flex items-center h-full text-sm absolute left-0 top-0 pointer-events-none bg-white dark:bg-slate-950 dark:text-white leading-snug pl-3.5 text-black rtl:left-auto rtl:right-0 rtl:pl-0 rtl:pr-3.5',
-                dropdown: 'max-h-60 absolute -left-px -right-px bottom-0 transform translate-y-full border border-gray-300 dark:border-none -mt-px overflow-y-scroll z-50 bg-slate-950 flex flex-col rounded-b',
-                dropdownTop: '-translate-y-full top-px bottom-auto rounded-b-none rounded-t',
+                tagsSearch: 'absolute inset-0 border-0 outline-none focus:ring-0 appearance-none p-0 dark:bg-transparent text-base font-sans box-border w-full rounded',
+                placeholder: 'flex items-center h-full text-sm absolute left-0 top-0 pointer-events-none dark:text-white leading-snug pl-3.5 text-black rtl:left-auto rtl:right-0 rtl:pl-0 rtl:pr-3.5',
+                dropdown: 'max-h-60 absolute -left-px -right-px bottom-0 transform translate-y-full border border-slate-300 dark:border-slate-650 -mt-px overflow-y-scroll z-50 bg-slate-950 flex flex-col rounded-lg',
+                dropdownTop: '-translate-y-full top-px bottom-auto rounded-lg',
                 dropdownHidden: 'hidden',
                 optionPointed: 'text-white bg-slate-800',
             }"

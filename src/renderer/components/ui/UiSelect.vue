@@ -3,7 +3,7 @@ import { defineProps, defineEmits, computed } from "vue"
 
     const props = defineProps({
         modelValue: {
-            type: [String, Number, Boolean],
+            type: [String, Number, Boolean, null],
             required: true,
         },
 

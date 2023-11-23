@@ -1,17 +1,19 @@
 <script setup lang="ts">
     import { PropType, Ref, toRef, ref, onMounted, defineEmits } from "vue"
     import Model from "@Common/models/Model"
-    import debounce from "@Common/tools/debounce"
     import UiText from "@Renderer/components/ui/UiText.vue"
-    import { EllipsisVerticalIcon, TrashIcon } from "@heroicons/vue/24/outline"
+    import { TrashIcon } from "@heroicons/vue/24/outline"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import UiMultiSelect from "@Renderer/components/ui/UiMultiSelect.vue"
     import Main from "@Renderer/services/wrappers/Main"
     import Column from "@Renderer/../common/models/Column"
     import TableModelRelationships from './TableModelRelationships.vue'
-    import { uniq } from 'lodash'
     import UiWarning from "@Renderer/components/ui/UiWarning.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
+    import UiTabs from "@Renderer/components/ui/UiTabs.vue"
+    import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
+    import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
+    import { useProjectStore } from "@Renderer/stores/useProjectStore"
 
     const onDevelopment = Main.API.onDevelopment()
 
@@ -22,12 +24,20 @@
         },
     })
 
-    const model = toRef(props, "model") as Ref<Model>,
-        showModelOptions = ref(false),
+    const projectStore = useProjectStore(), 
+        model = toRef(props, "model") as Ref<Model>,
         emit = defineEmits(['removeModel']),
-        modelPluralReference = ref(null)
+        modelPluralReference = ref(null),
+        selectedTab = ref("data")
     
     let models: Ref<Array<Model>> = ref([])
+
+    const tabs = [
+        { label: "Data", value: "data" },
+        { label: "Relationships", value: "relationships" },
+        { label: "Code", value: "code" },
+        { label: "Settings", value: "settings" },
+    ]
 
     onMounted((): void => {
         const project = model.value.project
@@ -35,15 +45,15 @@
         models.value = project.models
     })
 
-    const saveModelData = debounce((nameWasChanged: boolean) => {
+    const saveModelData = (nameWasChanged: boolean = false) => {
         if(nameWasChanged) {
             model.value.calculateDataByName()
         }
         
         model.value.saveFromInterface()
-    }, 500)
+    }
 
-    const saveModelCollection = debounce(() => {
+    const saveModelCollection = () => {
         if(!model.value.plural || !model.value.plural.length) {
             model.value.plural = modelPluralReference.value
             return
@@ -51,7 +61,7 @@
 
         modelPluralReference.value = null
         saveModelData()
-    }, 500)
+    }
 
     const getSelectDataForLayout = (property: Array<string>|Column[]): Array<Object> => {
         if(!property || !Array.isArray(property)) return []
@@ -99,7 +109,16 @@
     <div
         class="relative flex-col bg-slate-800 border-l-4 border-slate-700 p-2 rounded-xl shadow"
     >
-        <div>
+        <div class="mb-2">
+            <UiTabs 
+                :name="projectStore.project.getTabNameFor(`table${model.table.id}-model${model.id}`)"
+                :tabs="tabs" 
+                v-model="selectedTab" 
+                selected-class="bg-slate-800"  
+            />
+        </div>
+
+        <div v-show="selectedTab === 'data'">
             <UiWarning class="mb-2" v-if="model.isNew()">
                 <span>This model was not saved to the filesystem yet. Please generate the code pressing F5 to save it</span>
             </UiWarning>
@@ -115,27 +134,24 @@
                     placeholder="Model name"
                     @input="saveModelData(true)"
                 />
-                <div class="p-1 relative">
-                    <EllipsisVerticalIcon class="h-6 w-6 text-slate-400 cursor-pointer" @click="showModelOptions = !showModelOptions" />
-                    <div class="bg-slate-950 w-auto rounded absolute p-1 right-0 top-8 border border-gray-700" v-if="showModelOptions">
-                        <ul>
-                            <li class="flex items-center justify-start text-md p-1 cursor-pointer" @click="deleteModel()">
-                                <TrashIcon class="h-5 w-5 mr-1 text-red-400" />
-                                Delete
-                            </li>
-                        </ul>
-                    </div>
+                <div class="flex items-center justify-center">
+                    <UiOptionsDropdown>
+                        <UiDropdownItem @click="deleteModel()">
+                            <TrashIcon class="h-5 w-5 mr-1 text-red-400" /> Delete
+                        </UiDropdownItem>
+                    </UiOptionsDropdown>
                 </div>
             </div>
             <div class="mt-2">
                 <UiText 
+                    label="Collection"
                     v-model="model.plural"
                     placeholder="Collection"
                     @blur="saveModelCollection()"
                     @focus="modelPluralReference = $event"
                 />
             </div>
-            <div class="mt-2 flex gap-3">
+            <div class="mt-4 flex gap-3">
                 <UiCheckbox
                     label="Has Timestamps"
                     v-model="model.hasTimestamps"
@@ -185,15 +201,17 @@
                     />
                 </div>
             </div>
-            
-            <TableModelRelationships
-                :model="model"
-                :models="models"
-            />
 
             <div class="mt-4" v-if="onDevelopment">
                 <UiButton @click="log(model)">Log details</UiButton>
             </div>
+        </div>
+
+        <div v-show="selectedTab === 'relationships'">
+            <TableModelRelationships
+                :model="model"
+                :models="models"
+            />
         </div>
     </div>
 </template>

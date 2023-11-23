@@ -42,6 +42,7 @@ class CalculateCommonRelationshipsData extends CalculateRelationshipService {
         if(this.relationship.inverseId) return
         
         const inverseRelationship = new Relationship({
+                name: this.calculateInverseName(),
                 modelId: this.relationship.relatedModelId,
                 projectId: this.relationship.projectId,
                 relatedModelId: this.relationship.modelId,
@@ -63,6 +64,16 @@ class CalculateCommonRelationshipsData extends CalculateRelationshipService {
         }
 
         return true
+    }
+
+    calculateInverseName(): string {
+        const nameIsPlural = WordManipulator.isPlural(this.relationship.name)
+
+        if(nameIsPlural) {
+            return WordManipulator.singularize(this.relationship.name)
+        }
+
+        return WordManipulator.pluralize(this.relationship.name)
     }
 
     addForeign(): Index {

@@ -4,15 +4,19 @@ import Table from "./Table"
 import Model from "./Model"
 import Crud from "./crud/Crud"
 import Page from "./page/Page"
+import { v4 as uuid } from "uuid"
+import Relationship from "./Relationship"
 import RelaDB from "@tiago_silva_pereira/reladb"
 
 import RenderableFile, {
     RenderableFileStatus,
     RenderableFileType,
 } from "./RenderableFile"
-import GenerateBasicProjectData from "./services/project/GenerateBasicProjectData"
 import AppSection from "./AppSection"
 import CalculateSchemaChanges from "./services/project/CalculateSchemaChanges"
+import Column from "./Column"
+import Index from "./Index"
+import ProjectPathResolver from "@Common/services/ProjectPathResolver"
 
 interface ProjectCodeGenerationSettings {
     models: boolean,
@@ -25,30 +29,78 @@ interface ProjectCodeGenerationSettings {
     views: boolean,
 }
 
+interface ScheduledSchemaCheck {
+    tables: boolean
+    models: boolean
+}
+
+export enum ProjectFilesQueueStatus {
+    IDLE = "idle",
+    PROCESSING = "processing",
+}
+
+export enum ProjectCssFramework {
+    TAILWIND = "tailwind",
+    BOOTSTRAP = "bootstrap",
+    BULMA = "bulma",
+    FOUNDATION = "foundation",
+    OTHER = "other",
+}
+
+export enum ProjectUIStarterKit {
+    JETSTREAM = "jetstream",
+    BREEZE = "breeze",
+    LARAVEL_UI = "laravel_ui",
+    OTHER = "other",
+}
+
+export interface ProjectSettings {
+    cssFramework: ProjectCssFramework
+    uiStarterKit: ProjectUIStarterKit,
+    usesLivewire: boolean
+    usesInertia: boolean
+    usesVue: boolean
+    usesReact: boolean
+    usesSvelte: boolean
+    isFreshLaravelProject: boolean,
+}
+
 export default class Project extends RelaDB.Model {
     id: string
-    path: string
+    uuid: string
     name: string
     navs: Nav[]
     cruds: Crud[]
     pages: Page[]
     tables: Table[]
+    columns: Column[]
+    indexes: Index[]
     models: Model[]
     routes: Route[]
+    ownRelationships: Relationship[]
     appSections: AppSection[]
     laravelVersion: Number
+    schemaDataHash: string
+    lastReadSchemaDataHash: string
     schemaTablesDataHash: string
     schemaModelsDataHash: string
-    changedTablesIds: string[]
+    hasSchemaSourceChanges: boolean
+    canIgnoreNextSchemaSourceChanges: boolean
+    canShowSchemaSourceChangesAlert: boolean
+    scheduledSchemaSync: ScheduledSchemaCheck
     renderableFiles: RenderableFile[]
     currentRenderedFilesPaths: string[]
+    vthemeCdn: string
     vthemeKeys: any
     currentSchemaError: string
+    currentSchemaErrorStack: string
     scrollX: number
     scrollY: number
     codeGenerationSettings: ProjectCodeGenerationSettings
-
-    lastForeignAlias: number = 0;
+    settings: ProjectSettings
+    filesQueueStatus: ProjectFilesQueueStatus
+    currentZoom: number
+    connectionFinished: boolean
 
     relationships() {
         return {
@@ -56,11 +108,24 @@ export default class Project extends RelaDB.Model {
             cruds: () => this.hasMany(Crud).cascadeDelete(),
             pages: () => this.hasMany(Page).cascadeDelete(),
             tables: () => this.hasMany(Table).cascadeDelete(),
+            columns: () => this.belongsToMany(Column, Table),
+            indexes: () => this.belongsToMany(Index, Table),
             models: () => this.hasMany(Model).cascadeDelete(),
             routes: () => this.hasMany(Route).cascadeDelete(),
             appSections: () => this.hasMany(AppSection).cascadeDelete(),
+            ownRelationships: () => this.hasMany(Relationship).cascadeDelete(),
             renderableFiles: () => this.hasMany(RenderableFile).cascadeDelete(),
         }
+    }
+
+    static creating(data: any) {
+        data = Project.addUuidIfNotExists(data)
+        return data
+    }
+
+    static addUuidIfNotExists(data: any) {
+        if (!data.uuid) data.uuid = uuid()
+        return data
     }
 
     startCodeGenerationSettings() {
@@ -96,11 +161,11 @@ export default class Project extends RelaDB.Model {
     }
 
     setPath(path: string) {
-        this.path = path
+        ProjectPathResolver.setPath(path)
     }
 
     getPath(): string {
-        return this.path
+        return ProjectPathResolver.getPath()
     }
 
     getApplications(): any[] {
@@ -194,6 +259,49 @@ export default class Project extends RelaDB.Model {
         return models
     }
 
+    scheduleSchemaTablesSync() {
+        this.scheduleSchemaSync(true, false)
+    }
+
+    scheduleSchemaModelsSync() {
+        this.scheduleSchemaSync(false, true)
+    }
+
+    scheduleSchemaSync(tables: boolean = false, models: boolean = false) {
+        this.scheduledSchemaSync = {
+            tables,
+            models,
+        }
+
+        this.save()
+    }
+
+    hasScheduledSchemaSync(): boolean {
+        if (!this.scheduledSchemaSync) return false
+
+        return this.scheduledSchemaSync.tables || this.scheduledSchemaSync.models
+    }
+    
+    resetScheduledSchemaSync() {
+        this.scheduledSchemaSync = null
+        this.save()
+    }
+
+    ignoreNextSchemaSourceChanges() {
+        this.canIgnoreNextSchemaSourceChanges = true
+        this.save()
+    }
+
+    dontIgnoreNextSchemaSourceChanges() {
+        this.canIgnoreNextSchemaSourceChanges = false
+        this.save()
+    }
+
+    setHasSchemaSourceChanges(hasChanges: boolean) {
+        this.hasSchemaSourceChanges = hasChanges
+        this.save()
+    }
+
     hasSchemaChanges(): boolean {
         const changesCalculator = new CalculateSchemaChanges(this)
         
@@ -232,22 +340,52 @@ export default class Project extends RelaDB.Model {
         )
     }
 
-    getNonRemovedRenderableFiles(): RenderableFile[] {
+    getAllPendingRenderableFiles(): RenderableFile[] {
         return this.renderableFiles.filter(
+            (renderableFile) => renderableFile.isPending() || renderableFile.canBeRemoved()
+        )
+    }
+
+    getNonRemovedRenderableFiles(ordered: boolean = true): RenderableFile[] {
+        const renderableFiles = ordered ? this.getOrderedRenderableFiles() : this.renderableFiles
+
+        return renderableFiles.filter(
             (renderableFile) => !renderableFile.wasRemoved()
         )
     }
 
-    getRemovedRenderableFiles(): RenderableFile[] {
-        return this.renderableFiles.filter((renderableFile) =>
+    getRemovedRenderableFiles(ordered: boolean = true): RenderableFile[] {
+        const renderableFiles = ordered ? this.getOrderedRenderableFiles() : this.renderableFiles
+
+        return renderableFiles.filter((renderableFile) =>
             renderableFile.wasRemoved()
         )
     }
 
-    getConflictRenderableFiles(): RenderableFile[] {
-        return this.renderableFiles.filter(
+    getConflictRenderableFiles(ordered: boolean = true): RenderableFile[] {
+        const renderableFiles = ordered ? this.getOrderedRenderableFiles() : this.renderableFiles
+
+        return renderableFiles.filter(
             (renderableFile) => renderableFile.hasConflict()
         )
+    }
+
+    getOrderedRenderableFiles(): RenderableFile[] {
+        return this.renderableFiles.sort((a, b) => {
+            if (a.status === RenderableFileStatus.ERROR) return -1
+            if (b.status === RenderableFileStatus.ERROR) return 1
+
+            if (a.status === RenderableFileStatus.CONFLICT) return -1
+            if (b.status === RenderableFileStatus.CONFLICT) return 1
+
+            if (a.status === RenderableFileStatus.REMOVED) return -1
+            if (b.status === RenderableFileStatus.REMOVED) return 1
+
+            if (a.path < b.path) return -1
+            if (a.path > b.path) return 1
+
+            return 0
+        })
     }
 
     clearRemovedFiles() {
@@ -256,38 +394,11 @@ export default class Project extends RelaDB.Model {
         )
     }
 
-    markTableAsChanged(table: Table) {
-        if (!this.changedTablesIds) this.changedTablesIds = []
-
-        if (this.changedTablesIds.indexOf(table.id) === -1) {
-            this.changedTablesIds.push(table.id)
-        }
-
-        this.save()
-    }
-
-    clearChangedTables() {
-        this.changedTablesIds = []
-
-        this.save()
-    }
-
-    removeTableFromChangedTables(table: Table) {
-        if (!this.changedTablesIds) return
-
-        const index = this.changedTablesIds.indexOf(table.id)
-        if (index > -1) {
-            this.changedTablesIds.splice(index, 1)
-        }
-
-        this.save()
-    }
-
     registerRenderableFile(
         path: string,
         name: string,
         template: string,
-        type: RenderableFileType = RenderableFileType.PHP_CLASS
+        type: RenderableFileType = RenderableFileType.PHP
     ) : RenderableFile {
         let renderableFile: RenderableFile = null
 
@@ -304,14 +415,14 @@ export default class Project extends RelaDB.Model {
 
         if (!renderableFile) {
             renderableFile = new RenderableFile()
-            renderableFile.path = path
-            renderableFile.name = name
-            renderableFile.fullPath = fullPath
-            renderableFile.template = template
-            renderableFile.projectId = this.id
-            renderableFile.type = type
         }
 
+        renderableFile.path = path
+        renderableFile.name = name
+        renderableFile.fullPath = fullPath
+        renderableFile.template = template
+        renderableFile.projectId = this.id
+        renderableFile.type = type
         renderableFile.status = RenderableFileStatus.PREPARING
 
         renderableFile.save()
@@ -344,8 +455,8 @@ export default class Project extends RelaDB.Model {
     processRemovableFiles() {
         const removableFiles = this.getRemovableFiles()
 
-        removableFiles.forEach((path) => {
-            path.markToRemove()
+        removableFiles.forEach((file) => {
+            file.markToRemove()
         })
     }
 
@@ -369,8 +480,13 @@ export default class Project extends RelaDB.Model {
         return this.navs.filter(nav => nav.isRoot())
     }
 
-    generateBasicData() {
-        (new GenerateBasicProjectData(this)).handle()
+    getVthemeCdn(): string {
+        return this.vthemeCdn || null
+    }
+
+    setVthemeCdn(vthemeCdn: string) {
+        this.vthemeCdn = vthemeCdn
+        this.save()
     }
 
     getVthemeKeys(): { [key: string]: string } {
@@ -402,13 +518,36 @@ export default class Project extends RelaDB.Model {
         return !!this.currentSchemaError
     }
 
-    setCurrentSchemaError(error: string) {
+    setCurrentSchemaError(error: string, stack:string = null) {
+        const currentErrorIsTheSame = this.currentSchemaError === error,
+            currentStackIsTheSame = this.currentSchemaErrorStack === this.treatErrorStack(stack)
+
+        if (currentErrorIsTheSame && currentStackIsTheSame) return
+
         this.currentSchemaError = error
+        this.currentSchemaErrorStack = this.treatErrorStack(stack)
         this.save()
     }
 
+    // split the stack into an array of lines and remove all lines that have the string ".phar"
+    treatErrorStack(stack: string): string {
+        if (!stack) return null
+
+        const lines = stack.split("\n").map(line => { 
+            line = line.replace('schema-reader Error: ', '')
+            line = line.trim() 
+
+            return line
+        })
+
+        return lines.filter(line => !line.includes(".phar")).join("\n")
+    }
+
     clearCurrentSchemaError() {
+        if (!this.hasCurrentSchemaError()) return
+        
         this.currentSchemaError = null
+        this.currentSchemaErrorStack = null
         this.save()
     }
 
@@ -428,7 +567,61 @@ export default class Project extends RelaDB.Model {
         this.save()
     }
 
-    undoAllSchemaChanges() {
+    undoAllTablesChanges() {
         this.tables.forEach((table) => table.undoAllChanges())
     }
+
+    undoAllModelsChanges() {
+        this.models.forEach((model) => model.undoAllChanges())
+    }
+
+    processingFilesQueue(): boolean {
+        return this.filesQueueStatus === ProjectFilesQueueStatus.PROCESSING
+    }
+
+    setFilesQueueStatusProcessing() {
+        this.filesQueueStatus = ProjectFilesQueueStatus.PROCESSING
+        this.save()
+    }
+
+    setFilesQueueStatusIdle() {
+        this.filesQueueStatus = ProjectFilesQueueStatus.IDLE
+        this.save()
+    }
+
+    setFilesQueueStatus(status: ProjectFilesQueueStatus) {
+        this.filesQueueStatus = status
+        this.save()
+    }
+
+    zoomIn() {
+        this.initZoom()
+        if (this.currentZoom >= 200) return
+        this.currentZoom += 10
+        this.save()
+    }
+
+    zoomOut() {
+        this.initZoom()
+        if (this.currentZoom <= 50) return
+        this.currentZoom -= 10
+        this.save()
+    }
+
+    initZoom() {
+        if (this.currentZoom) return
+        this.currentZoom = 100
+        this.save()
+    }
+
+    getZoomAsScale(): number {
+        const currentZoom = this.currentZoom || 100
+
+        return currentZoom / 100
+    }
+
+    getTabNameFor(key: string) {
+        return `${this.uuid}-${key}`
+    }
+
 }

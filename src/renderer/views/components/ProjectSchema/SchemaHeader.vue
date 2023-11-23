@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { ref, onMounted, nextTick, defineEmits, computed } from 'vue'
     import Table from "@Common/models/Table"
-    import { ArrowDownTrayIcon, ArrowPathIcon, PhotoIcon, PlusCircleIcon, PlusIcon } from "@heroicons/vue/24/outline"
+    import { ArrowDownTrayIcon, ArrowPathIcon, ChatBubbleLeftEllipsisIcon, MagnifyingGlassMinusIcon, MagnifyingGlassPlusIcon, PhotoIcon, PlusCircleIcon, PlusIcon, XMarkIcon } from "@heroicons/vue/24/outline"
     import UiModal from '@Renderer/components/ui/UiModal.vue'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
     import UiText from '@Renderer/components/ui/UiText.vue'
@@ -23,7 +23,7 @@
         searchInput = ref(null),
         searchIsFocused = ref(false)
 
-    const emit = defineEmits(['tableAdded', 'forceReload'])
+    const emit = defineEmits(['tableAdded', 'syncSchema'])
 
     const filteredTables = computed(() => {
         return projectStore.project.tables.filter(table => {
@@ -142,7 +142,7 @@
     }
 
     const show = (): void => {
-        clear()
+        reset()
         showingCreateTableModal.value = true
 
         nextTick(() => {
@@ -154,45 +154,98 @@
         showingCreateTableModal.value = false
     }
 
-    const clear = (): void => {
-        if(!newTable.value) return
-
-        newTable.value.name = ''
-    }
-
-    onMounted(() => {
+    const reset = (): void => {
         newTable.value = new Table({
             projectId: projectStore.project.id,
         })
+    }
+
+    onMounted(() => {
+        reset()
 
         addModelForNewTable.value = true
     })
 
-    const forceReload = async () => {
+    const syncSchema = async () => {
         const confirmed = await confirmDialog.value.confirm()
         if(!confirmed) return
 
-        emit('forceReload')
+        emit('syncSchema', confirmed.syncTables, confirmed.syncModels)
+    }
+
+    const dismissChangesAlert = () => {
+        projectStore.project.canShowSchemaSourceChangesAlert = false
+        projectStore.project.save()
+    }
+
+    const info = (message: string) => {
+        Alert.info(message)
+    }
+
+    const zoomIn = async () => {
+        projectStore.project.zoomIn()
+    }
+
+    const zoomOut = async () => {
+        projectStore.project.zoomOut()
+    }
+
+    const newSchema = async () => {
+        Alert.info('Multiple Schemas: Coming soon...')
     }
 </script>
 
 <template>
-    <UiConfirm ref="confirmDialog">
-        Are you sure you want to force reload the schema? 
-        
-        <UiWarning class="mt-2">
-            All unsaved changes will be lost. This includes models and tables not synced with the application source code.
+    <UiConfirm ref="confirmDialog" title="Synchronize Schema" :options="{
+        'syncTables': {
+            'label': 'Sync Tables',
+            'value': true
+        },
+        'syncModels': {
+            'label': 'Sync Models',
+            'value': true
+        },
+    }">
+        Are you sure you want to synchronize the schema with the source code? 
+        <UiWarning class="mt-2" v-show="projectStore.project.hasSchemaChanges()">
+            <b>You have unsaved changes in the schema that will be lost.</b> This includes tables and models not synced with the application source code.
         </UiWarning>
     </UiConfirm>
 
-    <div class="absolute flex top-0 left-0 p-4 space-x-2 text-sm z-20 bg-slate-900 rounded-r-full">
+    <Transition
+        enter-from-class="transition duration-300 opacity-0"
+        enter-to-class="transition duration-300 opacity-100"
+        leave-from-class="transition duration-300 opacity-100"
+        leave-to-class="transition duration-300 opacity-0"
+    >
+        <div class="absolute flex top-16 left-0 p-2 px-3 space-x-2 text-sm z-20 bg-slate-900 rounded-r-lg" v-show="projectStore.project.canShowSchemaSourceChangesAlert">
+            <div class="flex items-center bg-white dark:bg-slate-850 rounded-lg shadow border border-slate-700 p-2.5 space-x-4">
+                <div>
+                    <div>There are changes in the code</div>
+                </div>
+                <div class="flex space-x-1">
+                    <UiButton class="space-x-1" @click="syncSchema()">
+                        <ArrowPathIcon class="w-4 h-4 text-green-500"/> 
+                        <div>Sync</div>
+                    </UiButton>
+                    <UiButton class="space-x-1" @click="dismissChangesAlert()">
+                        <XMarkIcon class="w-4 h-4 text-red-500"/>
+                        <div>Dismiss</div>
+                    </UiButton>
+                </div>
+            </div>
+        </div>
+    </Transition>
 
+    <div class="absolute flex top-0 left-0 p-3 space-x-2 text-sm z-20 bg-slate-900 w-full">
         <div
             class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow px-1 border border-slate-700"
         >
+            <!-- {{ projectStore.project.uuid }} -->
             <!-- Tools and Icons -->
             <div class="flex">
                 <div
+                    title="Add table"
                     class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
                     @click="show()"
                 >
@@ -211,17 +264,33 @@
                             <UiText v-model="newTable.name" id="new-table-name" placeholder="Table Name"></UiText>
                             <UiCheckbox v-model="addModelForNewTable" label="Add a default model"></UiCheckbox>
                         </div>
-                        <div class="m-1 mt-2 flex justify-end">
+                    </div>
+
+                    <template #footer>
+                        <div class="flex justify-end p-2">
                             <UiButton @click="createTable()">Create</UiButton>
                         </div>
-                    </div>
+                    </template>
                 </UiModal>
 
-                <!-- <div class="p-2 cursor-pointer text-slate-600 hover:text-red-500">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                    </div> -->
+                <div
+                    @click="info('Schema Comments: Coming soon...')"
+                    title="Add comment"
+                    class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
+                >
+                    <svg
+                        class="w-7 h-7"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <ChatBubbleLeftEllipsisIcon class="w-7 h-7" />
+                    </svg>
+                </div>
 
                 <div
+                    @click="info('Save as Image: Coming soon...')"
                     class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
                 >
                     <svg
@@ -238,25 +307,41 @@
                 <div
                     class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
                     title="Sync Schema"
+                    @click="syncSchema()"
                 >
                     <ArrowPathIcon
                         class="w-7 h-7"
                     />
                 </div>
+            </div>
 
+            <!-- Control -->
+            <div class="flex items-center ml-4 border-r border-l border-slate-750">
                 <div
                     class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
-                    title="Force reload (needs confirmation)"
-                    @click="forceReload()"
+                    title="Zoom In"
+                    @click="zoomIn()"
                 >
-                    <ArrowDownTrayIcon
-                        class="w-7 h-7"
+                    <MagnifyingGlassPlusIcon
+                        class="w-5 h-5"
+                    />
+                </div>
+                <div class="text-xs text-slate-500 w-5 text-center select-none">
+                    {{ projectStore.project.currentZoom || 100 }}
+                </div>
+                <div
+                    class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
+                    title="Zoom Out"
+                    @click="zoomOut()"
+                >
+                    <MagnifyingGlassMinusIcon
+                        class="w-5 h-5"
                     />
                 </div>
             </div>
 
             <!-- Search -->
-            <div class="relative flex items-center mr-1 ml-8">
+            <div class="relative flex items-center mr-1 ml-4">
                 <input
                     ref="searchInput"
                     v-model="search"
@@ -280,35 +365,43 @@
             </div>
         </div>
 
-        <div
-            class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-700"
-        >
-            <div
-                class="py-1 px-5 cursor-pointer text-slate-400 hover:text-red-500 flex items-center justify-center"
-            >
-                <PlusIcon class="w-4 h-4 mr-1" />
-                New Schema
+        <div class="flex gap-1 items-center text-xs">
+            <div @click="newSchema()">
+                <div
+                    class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-700 h-6"
+                >
+                    <div
+                        class="py-1 px-5 cursor-pointer text-slate-400 hover:text-red-500 flex items-center justify-center"
+                    >
+                        <PlusIcon class="w-4 h-4 mr-1" />
+                        New Schema
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <div
-            class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-700"
-        >
-            <div
-                class="px-5 cursor-pointer text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-500"
-            >
-                App
+            
+            <div>
+                <div
+                    class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-700 h-6"
+                >
+                    <div
+                        class="px-5 cursor-pointer text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-500"
+                    >
+                        App
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <div
-            class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-700"
-        >
-            <div
-                class="px-5 cursor-pointer text-slate-600 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-500"
-            >
-                Laravel
-            </div>
+            
+            <!-- <div>
+                <div
+                    class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-700 h-6"
+                >
+                    <div
+                        class="px-5 cursor-pointer text-slate-600 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-500"
+                    >
+                        Laravel
+                    </div>
+                </div>
+            </div> -->
         </div>
     </div>
 </template>

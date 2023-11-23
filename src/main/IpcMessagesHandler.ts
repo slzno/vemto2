@@ -1,12 +1,12 @@
 import path from "path"
-import child_process from "child_process"
 import { app, ipcMain, shell, dialog } from "electron"
 import FileSystem from "./base/FileSystem"
 import { handleError } from "./ErrorHandler"
 import Project from "../common/models/Project"
-import PrepareProject from "./services/PrepareProject"
 import ReadProjectSchema from "./services/ReadProjectSchema"
 import RenderableFile from "../common/models/RenderableFile"
+import Terminal from "./base/Terminal"
+import ProjectPathResolver from "@Common/services/ProjectPathResolver"
 
 export function HandleIpcMessages() {
     ipcMain.handle("confirm", (event, message: string) => {
@@ -22,15 +22,31 @@ export function HandleIpcMessages() {
         return dialogResult === 0
     })
 
-    ipcMain.handle("prepare:project", async (event, projectPath) => {
+    ipcMain.handle("dialog:folder:open", async (event) => {
         return handleError(event, async () => {
-            return await PrepareProject.run(projectPath)
+            const result = await dialog.showOpenDialog(null, {
+                properties: ['openDirectory']
+            })
+
+            return result.filePaths[0]
         })
     })
 
     ipcMain.handle("get:project:schema", async (event, projectPath) => {
         return handleError(event, async () => {
             return await ReadProjectSchema.run(projectPath)
+        })
+    })
+
+    ipcMain.handle("file:read", (event, filePath) => {
+        return handleError(event, () => {
+            return FileSystem.readFile(filePath)
+        })
+    })
+
+    ipcMain.handle("folder:exists", (event, folderPath) => {
+        return handleError(event, () => {
+            return FileSystem.folderExists(folderPath)
         })
     })
 
@@ -69,6 +85,18 @@ export function HandleIpcMessages() {
         })
     })
 
+    ipcMain.handle("folder:open", (event, folderPath) => {
+        return handleError(event, () => {
+            shell.openPath(folderPath)
+        })
+    })
+
+    ipcMain.handle("folder:open:terminal", (event, folderPath) => {
+        return handleError(event, async () => {
+            Terminal.open(folderPath)
+        })
+    })
+
     ipcMain.handle("file:project:open", (event, fileRelativePath) => {
         const project = Project.find(1)
         if(!project) return null
@@ -99,17 +127,8 @@ export function HandleIpcMessages() {
 
         return handleError(event, async () => {
             const completePath = path.join(project.getPath(), folderRelativePath)
-
-            const isMacOs = process.platform === "darwin"
             
-            if (isMacOs) {
-                await executeCommand(`osascript -e 'tell application "Terminal"' -e 'activate' -e 'do script "cd ${completePath} in window 1' -e 'end tell'`)
-            } else {
-                const fullCommand = `cd ${completePath};`,
-                    commandToExecute = fullCommand.replace(/;/g, '\\;')
-                
-                await executeCommand(`start wt.exe -w 0 -d . -p "PowerShell" powershell.exe -NoExit -Command "${commandToExecute}"`)
-            }
+            Terminal.open(completePath)
         })
     })
 
@@ -181,6 +200,17 @@ export function HandleIpcMessages() {
         })
     })
 
+    ipcMain.handle("folder:project:clear", (event, folderPath) => {
+        const project = Project.find(1)
+        if(!project) return null
+
+        return handleError(event, () => {
+            const completePath = path.join(project.getPath(), folderPath)
+
+            return FileSystem.clearFolder(completePath)
+        })
+    })
+
     ipcMain.handle("folder:internal:read", (event, folderPath, removeBasePath) => {
         return handleError(event, () => {
             const completePath = path.join(app.getAppPath(), "static", folderPath)
@@ -189,26 +219,33 @@ export function HandleIpcMessages() {
         })
     })
 
-    const executeCommand = (command) => {
-        console.log('Executing: ' + command)
-        
-        return new Promise((resolve, reject) => {
-            child_process.exec(command, (error, out, err) => {
-                if(error) {
-                    console.error(error)
-                    reject(error)
-                }
-                
-                if(err) {
-                    console.error(err)
-                    reject(err)
-                }
-    
-                if(out) console.log(out)
-    
-                resolve(true)
-            })
+    ipcMain.handle("folder:internal:copy", (event, folderPath, destination) => {
+        if(!ProjectPathResolver.hasPath()) {
+            console.log('Project path is not set')
+            return 
+        }
+
+        return handleError(event, () => {
+            const completePath = path.join(app.getAppPath(), "static", folderPath),
+                completeDestination = path.join(ProjectPathResolver.getPath(), destination)
+
+            return FileSystem.copyFolder(completePath, completeDestination)
         })
-    
-    }
+    })
+
+    // This is used to copy a folder from Vemto to the project folder, but it only
+    // creates the folder if it does not exist in the project
+    ipcMain.handle("folder:internal:copy:if-not-exists", (event, folderPath, destination) => {
+        if(!ProjectPathResolver.hasPath()) {
+            console.log('Project path is not set')
+            return 
+        }
+
+        return handleError(event, () => {
+            const completePath = path.join(app.getAppPath(), "static", folderPath),
+                completeDestination = path.join(ProjectPathResolver.getPath(), destination)
+
+            return FileSystem.copyFolderIfNotExists(completePath, completeDestination)
+        })
+    })
 }

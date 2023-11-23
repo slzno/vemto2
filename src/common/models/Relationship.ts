@@ -82,6 +82,7 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
 
     inverseId: string
     inverse: Relationship
+    inverses: Relationship[]
     
     /**
      * Default properties
@@ -94,7 +95,8 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
 
     relationships() {
         return {
-            inverse: () => this.belongsTo(Relationship, 'inverseId').atMostOne(),
+            inverse: () => this.belongsTo(Relationship, 'inverseId'),
+            inverses: () => this.hasMany(Relationship, 'inverseId'),
             
             model: () => this.belongsTo(Model),
             project: () => this.belongsTo(Project),
@@ -117,6 +119,19 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
             // HasManyThrough
             through: () => this.belongsTo(Model, 'throughId')
         }
+    }
+
+    static deleting(relationship: Relationship) {
+        relationship.inverses.forEach(inverse => {
+            inverse.inverseId = null
+            inverse.save()
+        })
+    }
+
+    getLabel() {
+        if(!this.model) return this.name
+        
+        return this.model.name + '.' + this.name
     }
 
     saveFromInterface() {
@@ -143,6 +158,16 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
 
     isValid(): boolean {
         return !! this.model && !! this.relatedModel
+    }
+
+    maybeInverseOf(relationship: Relationship) {
+        if(this.relatedModelId !== relationship.modelId) return false
+
+        const inverseTypes = this.inverseTypes()
+
+        if(!inverseTypes.includes(relationship.type)) return false
+
+        return true
     }
 
     static updated(relationship: Relationship) {
@@ -183,6 +208,10 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
         return !! this.relatedModelId
     }
 
+    hasInverse(): boolean {
+        return !! this.inverseId
+    }
+
     hasModel(): boolean {
         return !! this.model
     }
@@ -199,7 +228,13 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
         return this.hasType() && this.hasRelatedModel()
     }
 
+    canCalculateDefaultData(): boolean {
+        return this.isNew() && this.hasTypeAndRelatedModel()
+    }
+
     calculateDefaultData(): void {
+        if(!this.canCalculateDefaultData()) return
+
         if(this.isCommon()) {
             CalculateCommonRelationshipsData.setRelationship(this)
                 .calculateDefaultData()
@@ -458,4 +493,25 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
             return FillThroughRelationshipKeys.fillRelationship(this)
         }
     }
+
+    inverseTypes(): string[] {
+        if(this.type === 'BelongsTo') return ['HasMany', 'HasOne']
+
+        if(this.type === 'HasOne') return ['BelongsTo']
+
+        if(this.type === 'HasMany') return ['BelongsTo']
+
+        if(this.type === 'BelongsToMany') return ['BelongsToMany']
+
+        if(this.type === 'MorphOne') return ['MorphTo']
+
+        if(this.type === 'MorphMany') return ['MorphTo']
+
+        if(this.type === 'MorphToMany') return ['MorphToMany']
+
+        if(this.type === 'HasManyThrough') return ['HasManyThrough']
+
+        return []
+    }
+
 }

@@ -4,11 +4,8 @@ contextBridge.exposeInMainWorld("api", {
     onDevelopment: () => { return process.env.NODE_ENV === "development" },
 
     // Common messages
-    prepareProject: (path: string) => { 
-        return ipcRenderer.invoke("prepare:project", path)
-    },
-    loadSchema: (path: string) => { 
-        return ipcRenderer.invoke("get:project:schema", path) 
+    prepareDatabase: (path: string) => {
+        return ipcRenderer.invoke("prepare:project:database", path)
     },
     loadProjectDatabase: (path: string) => { 
         return ipcRenderer.invoke("get:project:database", path) 
@@ -16,23 +13,32 @@ contextBridge.exposeInMainWorld("api", {
     closeProjectDatabase: () => { 
         return ipcRenderer.invoke("close:project:database") 
     },
+    databaseDataUpdated: (data: any) => {
+        return ipcRenderer.invoke("database:data:updated", data)
+    },
+
+    // Schema messages
+    loadSchema: (path: string) => { 
+        return ipcRenderer.invoke("get:project:schema", path) 
+    },
 
     // Error messages
     onDefaultError: (callback: Callback) => { 
         ipcRenderer.on("error:default", (event, error) => callback(error))
     },
 
+    // Data Synchronization messages
     onModelDataUpdated: (callback: Callback) => {
         ipcRenderer.on("model:data:updated", (event, data) => callback(data))
     },
 
+    // System windows messages
     confirm: (message: string) => {
         return ipcRenderer.invoke("confirm", message)
     },
 
-    // Database messages
-    databaseDataUpdated: (data: any) => {
-        return ipcRenderer.invoke("database:data:updated", data)
+    openFolderDialog: () => {
+        return ipcRenderer.invoke("dialog:folder:open")
     },
 
     // Files Queue
@@ -41,6 +47,12 @@ contextBridge.exposeInMainWorld("api", {
     },
 
     // Files Management
+    readFile: (path: string) => {
+        return ipcRenderer.invoke("file:read", path)
+    },
+    folderExists: (path: string) => {
+        return ipcRenderer.invoke("folder:exists", path)
+    },
     readProjectFile: (path: string) => {
         return ipcRenderer.invoke("file:project:read", path)
     },
@@ -53,6 +65,12 @@ contextBridge.exposeInMainWorld("api", {
     writeTemplateFile: (path: string, content: string) => {
         return ipcRenderer.invoke("file:template:write", path, content)
     },
+    openFolder: (path: string) => {
+        return ipcRenderer.invoke("folder:open", path)
+    },
+    openTerminal: (path: string) => {
+        return ipcRenderer.invoke("folder:open:terminal", path)
+    },
     openProjectFile: (path: string) => {
         return ipcRenderer.invoke("file:project:open", path)
     },
@@ -61,6 +79,9 @@ contextBridge.exposeInMainWorld("api", {
     },
     openProjectFolderOnTerminal: (path: string) => {
         return ipcRenderer.invoke("folder:project:open:terminal", path)
+    },
+    clearProjectFolder: (path: string) => {
+        return ipcRenderer.invoke("folder:project:clear", path)
     },
     readConflictsFile: (path: string) => {
         return ipcRenderer.invoke("file:conflicts:read", path)
@@ -73,5 +94,11 @@ contextBridge.exposeInMainWorld("api", {
     },
     readInternalFolder: (path: string, removeBasePath: boolean = false) => {
         return ipcRenderer.invoke("folder:internal:read", path, removeBasePath)
-    }
+    },
+    copyInternalFolderToProject: (path: string, destination: string) => {
+        return ipcRenderer.invoke("folder:internal:copy", path, destination)
+    },
+    copyInternalFolderIfNotExists: (path: string, destination: string) => {
+        return ipcRenderer.invoke("folder:internal:copy:if-not-exists", path, destination)
+    },
 })

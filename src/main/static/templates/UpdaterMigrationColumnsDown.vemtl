@@ -26,7 +26,7 @@
 <#  #>
 <#  #>
 <# Changed indexes #>
-<% for (let newIndex of this.table.getNotRenamedChangedIndexes()) { %>
+<% for (let newIndex of this.table.getChangedIndexes()) { %>
     <# Gets old index data from new index #>
     <% let index = newIndex.old() %>
     <# It drops and recreates the index #>

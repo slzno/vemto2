@@ -1,74 +1,15 @@
 <?php
 
-use PhpParser\Node;
-use PhpParser\Node\Stmt\Class_;
 use PhpParser\NodeVisitorAbstract;
-use PhpParser\Node\Stmt\ClassMethod;
-
 class StaticVisitor extends NodeVisitorAbstract
 {
-    public $methods = [];
-    protected $fileContent = '';
-    protected $currentClass = null;
+    use CodeReader;
+
     protected $previousFileVisitor = null;
-
-    protected $stack;
-
-    public function beginTraverse()
-    {
-        $this->stack = [];
-    }
-
-    public function setFileContent(string $fileContent)
-    {
-        $this->fileContent = $fileContent;
-    }
 
     public function setPreviousFilevisitor(mixed $previousFileVisitor)
     {
         $this->previousFileVisitor = $previousFileVisitor;
-    }
-
-    public function enterNode(Node $node)
-    {
-        // Use a stack to keep track of the current parent node
-        if (!empty($this->stack)) {
-            $node->setAttribute('parent', end($this->stack));
-        }
-
-        $this->stack[] = $node;
-
-        if ($node instanceof Class_) {
-            $this->currentClass = $node;
-        }
-
-        if ($node instanceof ClassMethod) {
-            $methodName = $node->name->name;
-
-            $methodBody = $this->extractMethodCode($node->name->name);
-
-            $this->methods[] = [
-                'node' => $node,
-                'name' => $methodName,
-                'class' => $this->currentClass->name->name,
-                'body' => $methodBody,
-                'previousBody' => $this->getPreviousMethodBody($node->name->name),
-            ];
-        }
-    }
-
-    public function extractMethodCode($methodName)
-    {
-        $pattern = "/(public|private|protected)?\s*function\s+" . $methodName . "\s*\([^)]*\)\s*{((?>[^{}]+|\{(?>[^{}]+|(?-1))*\})*)}/ms";
-
-        preg_match($pattern, $this->fileContent, $matches);
-
-        if (count($matches) > 0) {
-            $methodCode = $matches[0];
-            return $methodCode;
-        } else {
-            return '';
-        }
     }
 
     protected function getPreviousMethodBody(string $methodName)

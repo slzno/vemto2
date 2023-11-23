@@ -5,15 +5,28 @@ import GenerateCrudFiles from "./services/crud/GenerateCrudFiles"
 import GenerateModelFiles from "./services/model/GenerateModelFiles"
 import GeneratePageFiles from "./services/page/GeneratePageFiles"
 import GenerateUiComponentsFiles from "./services/blade/ui/GenerateUiComponentsFiles"
+import SchemaBuilder from "@Renderer/services/schema/SchemaBuilder"
+import Main from "@Renderer/services/wrappers/Main"
 
 export default class SequentialGenerator {
     static startTime: number = 0
     static elapsedTime: number = 0
 
-    async run(project: Project) {
+    project: Project
+
+    constructor(project: Project) {
+        this.project = project
+    }
+
+    async run() {
         SequentialGenerator.startTimer()
 
-        project.clearCurrentRenderedFilesPaths()
+        SchemaBuilder.disableSchemaChangesCheck()
+
+        await this.clearVemtoFolders()
+
+        this.project.setFilesQueueStatusProcessing()
+        this.project.clearCurrentRenderedFilesPaths()
 
         await new GenerateUiComponentsFiles().start()
 
@@ -24,9 +37,34 @@ export default class SequentialGenerator {
         await new GenerateCrudFiles().start()
         await new GeneratePageFiles().start()
 
-        project.processRemovableFiles()
+        this.project.processRemovableFiles()
+
+        await this.waitForProcessingFilesQueue()
+
+        await this.readSchema()
+
+        SchemaBuilder.enableSchemaChangesCheck()
 
         SequentialGenerator.stopTimer()
+    }
+
+    async clearVemtoFolders() {
+        await Main.API.clearProjectFolder(".vemto/conflicts")
+        await Main.API.clearProjectFolder(".vemto/processed-files")
+    }
+
+    async waitForProcessingFilesQueue() {
+        while(this.project.fresh().processingFilesQueue()) {
+            await new Promise(resolve => setTimeout(resolve, 500))
+        }
+    }
+
+    async readSchema() {
+        this.project.ignoreNextSchemaSourceChanges()
+
+        const schemaBuilder = new SchemaBuilder(this.project)
+
+        await schemaBuilder.buildModels()
     }
 
     static startTimer(): void {

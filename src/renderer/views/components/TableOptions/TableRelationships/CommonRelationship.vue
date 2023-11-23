@@ -11,6 +11,7 @@
         <template v-if="relationship.hasTypeAndRelatedModel()">
             <div>
                 <UiText
+                    label="Name"
                     v-model="relationship.name"
                     placeholder="Relationship name"
                     @input="$emit('save')"
@@ -18,6 +19,7 @@
             </div>
             <div v-if="!relationship.foreignKeyId">
                 <UiText
+                    label="Foreign Key Name"
                     v-model="relationship.foreignKeyName"
                     placeholder="Foreign Key Name"
                     @input="$emit('save')"
@@ -25,6 +27,7 @@
             </div>
             <div v-if="relationship.foreignKeyId">
                 <UiDropdownSelect
+                    label="Foreign Key"
                     v-model="relationship.foreignKeyId"
                     placeholder="Select the Foreign Key"
                     :options="getForSelect(relationship.getServiceFromType().getForeignModel().table.columns)"

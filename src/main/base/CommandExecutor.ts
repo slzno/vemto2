@@ -32,10 +32,25 @@ export default class CommandExecutor {
                         console.error(stdout)
                     }
                     
-                    if (stderr) {
-                        console.error("(stderr) FAILED to execute command: " + command)
+                    // We need to check for "Loaded config default." because PHP CS Fixer outputs this to stderr,
+                    // instead of stdout, for some reason. There is a closed issue on their repo about this.
+                    // https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/issues/3725
+                    if (stderr && !stderr.includes("Loaded config default")) {
+                        let errorMessage = "(stderr) FAILED to execute command: " + command + "\n\n" + stderr
+
+                        console.error(errorMessage)
+
                         console.error(stderr)
-                        reject(stderr)
+                        console.error("Error: " + error)
+                        console.error("Stdout: " + stdout)
+
+                        let errorData = {
+                            error: errorMessage,
+                            message: errorMessage,
+                            stack: null
+                        }
+
+                        reject(errorData)
                     }
 
                     if (error) { 

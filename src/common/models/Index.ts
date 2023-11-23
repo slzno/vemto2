@@ -63,8 +63,6 @@ export default class Index extends AbstractSchemaModel implements SchemaModel {
     saveFromInterface() {
         this.save()
 
-        this.table.markAsChanged()
-
         return this
     }
 
@@ -124,6 +122,10 @@ export default class Index extends AbstractSchemaModel implements SchemaModel {
 
     isDirty(): boolean {
         return this.hasLocalChanges() || this.isRemoved() || this.isNew()
+    }
+
+    wasOnlyRenamed(): boolean {
+        return this.wasRenamed() && !this.hasLocalChanges()
     }
 
     includesColumn(column: Column): boolean {

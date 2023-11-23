@@ -39,7 +39,11 @@
         <div v-if="crud">
             <div class="p-2 font-bold">Edit {{ crud.getLabel() }} CRUD</div>
 
-            <UiTabs :tabs="tabs" v-model="selectedTab" :external="true" />
+            <UiTabs 
+                :name="projectStore.project.getTabNameFor(`crud${crud.id}`)" 
+                :tabs="tabs" 
+                v-model="selectedTab" 
+            />
 
             <section v-if="selectedTab === 'form'">
                 <IndexView :crud="crud" />

@@ -1,9 +1,11 @@
 import { defineStore } from "pinia"
 import Project from "@Common/models/Project"
+import { useSchemaStore } from "./useSchemaStore"
 
 export const useProjectStore = defineStore("project", {
     state: () => ({ 
-        project: {} as Project
+        project: {} as Project,
+        hasSourceChanges: false,
     }),
 
     actions: {
@@ -14,8 +16,29 @@ export const useProjectStore = defineStore("project", {
         reloadProject() {
             if(!this.project.id) return
 
-            this.project = this.project.fresh()
-        }
+            const currentProject = this.project
+
+            // Reset project to empty. This is necessary because if we use
+            // this.project.fresh(), it changes the instance of the project
+            // and its relationships, which breaks some things. By doing this,
+            // we can keep the same instance of the project and its relationships,
+            // but still make the reactivity detect the changes
+            this.project = null
+
+            // reload project
+            this.project = currentProject
+        },
+
+        setHasSourceChanges(hasSourceChanges: boolean) {
+            this.hasSourceChanges = hasSourceChanges
+        },
+
+        closeProject() {
+            const schemaStore = useSchemaStore()
+            
+            this.project = {} as Project
+            schemaStore.deselectTable()
+        },
     },
 
     getters: {

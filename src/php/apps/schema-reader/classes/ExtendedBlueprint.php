@@ -1,6 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Builder;
+use \Illuminate\Database\Connection;
+use \Illuminate\Database\Schema\Grammars\Grammar;
 
 class ExtendedBlueprint extends Illuminate\Database\Schema\Blueprint
 {
@@ -10,6 +11,14 @@ class ExtendedBlueprint extends Illuminate\Database\Schema\Blueprint
     {
         parent::__construct($table, $callback, $prefix);
         $this->migrationsRepository = app('localMigrationsRepository');
+    }
+
+    /**
+     * Lets rewrite the build method to avoid executing any queries
+     */
+    public function build(Connection $connection, Grammar $grammar)
+    {
+        return null;
     }
 
     protected function addColumnDefinition($definition)

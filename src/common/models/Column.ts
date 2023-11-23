@@ -2,8 +2,6 @@ import Table from './Table'
 import Input from './crud/Input'
 import ColumnData from './data/ColumnData'
 import DataComparator from './services/DataComparator'
-import TableColumnChanged from '@Common/events/TableColumnChanged'
-import TableColumnCreated from '@Common/events/TableColumnCreated'
 import ColumnTypeList from './column-types/base/ColumnTypeList'
 import DataComparisonLogger from './services/DataComparisonLogger'
 import Model from './Model'
@@ -72,17 +70,12 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
     
 
     static created(column: Column) {
-        let nextOrder = 0
-        
-        const tableColumns = column.table.getOrderedColumns()
-
-        if(tableColumns.length > 0) {
-            nextOrder = tableColumns[tableColumns.length - 1].order + 1
-        }
-
         column.faker = column.getDefaultFaker()
 
-        column.order = nextOrder
+        if(typeof column.order === "undefined") {
+            column.order = column.calculateNextOrder()
+        }
+
         column.saveFromInterface()
     }
 
@@ -92,6 +85,16 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
                 index.delete()
             }
         })
+    }
+
+    calculateNextOrder(): number {
+        const tableColumns = this.table.getOrderedColumns()
+
+        if(tableColumns.length > 0) {
+            return tableColumns[tableColumns.length - 1].order + 1
+        }
+
+        return 0
     }
 
     reorderFromInterface(): void {
@@ -123,12 +126,6 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         if(!this.isSaved()) creating = true
 
         this.save()
-
-        if(creating) {
-            new TableColumnCreated(this).handle()
-        } else {
-            new TableColumnChanged(this).handle()
-        }
 
         return this
     }

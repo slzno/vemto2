@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ExclamationCircleIcon, ExclamationTriangleIcon } from "@heroicons/vue/24/outline";
+    import { ExclamationCircleIcon, ExclamationTriangleIcon, UserIcon } from "@heroicons/vue/24/outline";
     import { toRef } from "vue"
 
     const props = defineProps(["model"]),
@@ -16,12 +16,15 @@
                     <div v-if="model.isNew()" title="This model was not saved to the filesystem yet. Please generate the code pressing F5 to save it">
                         <ExclamationTriangleIcon class="w-6 h-6 text-yellow-500 animate-pulse" />
                     </div>
+                    <div title="Authenticatable model" v-if="model.isAuthenticatable">
+                        <UserIcon class="w-3.5 h-3.5 text-slate-400"/>
+                    </div>
                     <div>{{ model.class }}</div>
                 </div>
                 <div class="text-xs text-slate-700">Model</div>
             </div>
 
-            <div class="px-2 my-1" v-for="relationship in model.getValidOwnRelationships()" :key="relationship.id">
+            <div class="px-2 my-1" v-for="relationship in model.ownRelationships" :key="relationship.id">
                 <div class="w-full flex items-center">
                     <span
                         class="flex-grow pr-8 flex items-center text-slate-400"

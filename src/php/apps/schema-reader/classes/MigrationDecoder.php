@@ -1,5 +1,4 @@
 <?php
-
 class MigrationDecoder {
 
     protected $migration;
@@ -20,7 +19,7 @@ class MigrationDecoder {
 
         foreach ($methods as $method) {
             if ($method->name == 'up') {
-                $this->upActions = $method->invoke($this->migration);
+                $this->upActions[] = $method->invoke($this->migration);
             }
         }
     }

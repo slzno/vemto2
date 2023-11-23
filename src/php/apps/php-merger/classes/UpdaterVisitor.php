@@ -7,12 +7,7 @@ use PhpParser\Node\Stmt\ClassMethod;
 
 class UpdaterVisitor extends NodeVisitorAbstract
 {
-    public $methods = [];
-
-    protected $stack;
-    protected $classes = [];
-    protected $fileContent = '';
-    protected $currentClass = null;
+    use CodeReader;
 
     protected $newFileVisitor;
     protected $currentFileAst;
@@ -39,68 +34,143 @@ class UpdaterVisitor extends NodeVisitorAbstract
         return $this->currentFileAst;
     }
 
-    public function beginTraverse()
-    {
-        $this->stack = [];
-    }
-
-    public function enterNode(Node $node)
-    {
-        if(!empty($this->stack)) {
-            $node->setAttribute('parent', end($this->stack));
-        }
-
-        $this->stack[] = $node;
-
-        if($node instanceof Class_) {
-            $this->currentClass = $node;
-
-            $this->classes[] = $node;
-        }
-
-        if ($node instanceof ClassMethod) {
-            $methodName = $node->name->name;
-
-            $methodBody = $this->extractMethodCode($node->name->name);
-
-            $this->methods[$methodName] = [
-                'node' => $node,
-                'name' => $methodName,
-                'class' => $this->currentClass->name->name,
-                'body' => $methodBody,
-            ];
-        }    
-    }
-
-    public function extractMethodCode($methodName)
-    {
-        $pattern = "/(public|private|protected)?\s*function\s+" . $methodName . "\s*\([^)]*\)\s*{((?>[^{}]+|\{(?>[^{}]+|(?-1))*\})*)}/ms";
-
-        preg_match($pattern, $this->fileContent, $matches);
-
-        if (count($matches) > 0) {
-            $methodCode = $matches[0];
-            return $methodCode;
-        } else {
-            return '';
-        }
-    }
-
     public function afterTraverse(array $nodes)
     {
-        $this->addInexistentMethods();
+        $this->addMissingImports();
+        $this->addMissingTraits();
+        $this->addOrUpdateProperties();
+        $this->addOrUpdateMethods();
+        $this->removeMethods();
     }
 
-    protected function addInexistentMethods()
+    protected function addMissingImports()
+    {
+        foreach ($this->newFileVisitor->imports as $newImport) {
+            $importExists = false;
+
+            foreach ($this->imports as $currentImport) {
+                $sameName = $newImport['name'] == $currentImport['name'];
+                $sameAlias = $newImport['alias'] == $currentImport['alias'];
+
+                $importExists = $sameName && $sameAlias;
+
+                if($importExists) break;
+            }
+
+            if (!$importExists) {
+                $this->addImport($newImport);
+            }
+        }
+    }
+
+    protected function addImport(array $newImport)
+    {
+        $importNode = $newImport['node'];
+
+        array_unshift($this->currentFileAst[0]->stmts, $importNode);
+    }
+
+    protected function addMissingTraits()
+    {
+        foreach ($this->newFileVisitor->traits as $newTrait) {
+            $traitExists = false;
+
+            foreach ($this->traits as $currentTrait) {
+                $sameName = $newTrait['name'] == $currentTrait['name'];
+                $sameClass = $newTrait['class'] == $currentTrait['class'];
+
+                $traitExists = $sameName && $sameClass;
+
+                if($traitExists) break;
+            }
+
+            if (!$traitExists) {
+                $this->addTrait($newTrait);
+            }
+        }
+    }
+
+    protected function addTrait(array $newTrait)
+    {
+        $class = $this->getClassByName($newTrait['class']);
+
+        if ($class) {
+            $class['node']->stmts[] = $newTrait['node'];
+        }
+    }
+
+    protected function addOrUpdateProperties()
+    {
+        $invertedProperties = array_reverse($this->newFileVisitor->properties);
+
+        foreach ($invertedProperties as $newProperty) {
+            $propertyExists = false;
+
+            foreach ($this->properties as $currentProperty) {
+                $sameName = $newProperty['name'] === $currentProperty['name'];
+                $sameClass = $newProperty['class'] === $currentProperty['class'];
+
+                $propertyExists = $sameName && $sameClass;
+
+                if($propertyExists) break;
+            }
+
+            if (!$propertyExists) {
+                $this->addProperty($newProperty);
+            } else {
+                $this->updateProperty($newProperty);
+            }
+        }
+    }
+
+    protected function addProperty(array $newProperty)
+    {
+        $class = $this->getClassByName($newProperty['class']);
+
+        if ($class) {
+            $class['node']->stmts[] = $newProperty['node'];
+        }
+    }
+
+    protected function updateProperty(array $newProperty)
+    {
+        $class = $this->getClassByName($newProperty['class']);
+
+        if ($class) {
+            foreach ($class['node']->stmts as $key => $propertyStatementsNode) {
+                $propertyName = $propertyStatementsNode->props[0]->name->name ?? null;
+
+                if(!$propertyName) continue;
+
+                if ($propertyStatementsNode instanceof Node\Stmt\Property && $propertyName === $newProperty['name']) {
+                    $currentProperty = $this->getPropertyByName($propertyName);
+
+                    $currentPropertyBody = $currentProperty['body'];
+
+                    $newPropertyIsDifferentFromCurrent = $newProperty['body'] !== $currentPropertyBody;
+
+                    if($newPropertyIsDifferentFromCurrent) {
+                        $this->registerConflict($currentPropertyBody, $newProperty['body']);
+                    }
+
+                    $class['node']->stmts[$key] = $newProperty['node'];
+                }
+            }
+        }
+    }
+
+    protected function addOrUpdateMethods()
     {
         foreach ($this->newFileVisitor->methods as $newMethod) {
-
             $methodExists = false;
 
             foreach ($this->methods as $currentMethod) {
-                if ($newMethod['name'] === $currentMethod['name'] && $newMethod['class'] === $currentMethod['class']) {
-                    $methodExists = true;
-                }
+                $sameName = $newMethod['name'] === $currentMethod['name'];
+                $sameClass = $newMethod['class'] === $currentMethod['class'];
+
+                $methodExists = $sameName && $sameClass;
+
+                if($methodExists) break;
             }
 
             if (!$methodExists) {
@@ -108,6 +178,7 @@ class UpdaterVisitor extends NodeVisitorAbstract
             } else {
                 $this->updateMethod($newMethod);
             }
+
         }
     }
 
@@ -116,7 +187,7 @@ class UpdaterVisitor extends NodeVisitorAbstract
         $class = $this->getClassByName($newMethod['class']);
 
         if ($class) {
-            $class->stmts[] = $newMethod['node'];
+            $class['node']->stmts[] = $newMethod['node'];
         }
     }
 
@@ -125,13 +196,15 @@ class UpdaterVisitor extends NodeVisitorAbstract
         $class = $this->getClassByName($newMethod['class']);
 
         if ($class) {
-            foreach ($class->stmts as $key => $methodStatementsNode) {
+            foreach ($class['node']->stmts as $key => $methodStatementsNode) {
                 $methodName = $methodStatementsNode->name->name ?? null;
 
                 if(!$methodName) continue;
 
                 if ($methodStatementsNode instanceof ClassMethod && $methodStatementsNode->name->name === $newMethod['name']) {
-                    $currentMethodBody = $this->methods[$methodName]['body'];
+                    $currentMethod = $this->getMethodByName($methodName);
+
+                    $currentMethodBody = $currentMethod['body'];
 
                     $newMethodIsDifferentFromCurrent = $newMethod['body'] !== $currentMethodBody;
 
@@ -139,7 +212,28 @@ class UpdaterVisitor extends NodeVisitorAbstract
                         $this->registerConflict($currentMethodBody, $newMethod['body']);
                     }
 
-                    $class->stmts[$key] = $newMethod['node'];
+                    $class['node']->stmts[$key] = $newMethod['node'];
+                }
+            }
+        }
+    }
+
+    // remove methods using the newfile removedMethods property as reference
+    protected function removeMethods()
+    {
+        foreach ($this->newFileVisitor->removedMethods as $removedMethod) {
+            $removedMethodName = $removedMethod['name'];
+            $class = $this->getClassByName($removedMethod['class']);
+
+            if ($class) {
+                foreach ($class['node']->stmts as $key => $methodStatementsNode) {
+                    $methodName = $methodStatementsNode->name->name ?? null;
+
+                    if(!$methodName) continue;
+
+                    if ($methodStatementsNode instanceof ClassMethod && $methodStatementsNode->name->name === $removedMethodName) {
+                        unset($class['node']->stmts[$key]);
+                    }
                 }
             }
         }
@@ -162,17 +256,5 @@ class UpdaterVisitor extends NodeVisitorAbstract
     public function hasConflicts()
     {
         return !empty($this->conflicts);
-    }
-
-    protected function getClassByName(string $name) {
-        $class = null;
-
-        foreach ($this->classes as $currentClass) {
-            if ($currentClass->name->name === $name) {
-                $class = $currentClass;
-            }
-        }
-
-        return $class;
     }
 }

@@ -47,8 +47,6 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
 
         this.save()
 
-        this.markAsChanged()
-
         if(creating) CreateDefaultTableColumns.setTable(this).create()
         if(addModel) CreateDefaultTableModel.setTable(this).create()
 
@@ -63,16 +61,12 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         this.removed = true
 
         this.save()
-
-        this.markAsChanged()
     }
 
     undoRemove() {
         this.removed = false
 
         this.save()
-
-        this.markAsChanged()
     }
 
     hasSchemaChanges(comparisonData: any): boolean {
@@ -94,6 +88,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         this.migrations = data.migrations
         this.oldNames = data.oldNames
         this.createdFromInterface = false
+        this.labelColumnId = null
 
         this.fillSchemaState()
 
@@ -149,7 +144,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
 
     isDirty(): boolean {
         const hasDirtyColumns = this.columns.some((column) => column.isDirty()),
-            hasDirtyIndexes = this.columns.some((index) => index.isDirty())
+            hasDirtyIndexes = this.indexes.some((index) => index.isDirty())
 
         return !this.isRemoved() && (this.hasLocalChanges() || hasDirtyColumns || hasDirtyIndexes)
     }
@@ -319,13 +314,17 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     getIndexes(): Index[] {
         return this.indexes.filter((index) => !index.isRemoved())
     }
-
+    
     hasRelatedTables(): boolean {
         return !! this.getRelatedTables().length
     }
 
     getRelatedTables(): Table[] {
-        let relatedTables: Table[] = [],
+        return this.getRelatedTablesRelations().map((relation) => relation.table)
+    }
+
+    getRelatedTablesRelations(): any[] {
+        let relatedTables: any = {},
             relatedTablesIds: string[] = []
 
         this.getForeignIndexes().forEach((index) => {
@@ -336,7 +335,12 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
             let relatedTable = this.project.findTableByName(foreignTable.name)
 
             if(relatedTable && !relatedTablesIds.includes(relatedTable.id)) {
-                relatedTables.push(relatedTable)
+                
+                relatedTables[relatedTable.id] = {
+                    table: relatedTable,
+                    type: 'foreign',
+                }
+
                 relatedTablesIds.push(relatedTable.id)
             }
         })
@@ -346,20 +350,27 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
 
             if(relationship.pivot) {
                 relatedTable = relationship.pivot
+            }
 
-                if(relatedTable && !relatedTablesIds.includes(relatedTable.id)) {
-                    relatedTables.push(relatedTable)
+            if(relatedTable) {
+                if(relatedTablesIds.includes(relatedTable.id)) {
+                    const existingTable = relatedTables[relatedTable.id]
+
+                    if(existingTable) {
+                        existingTable.type = 'both'
+                    }
+                } else {
+                    relatedTables[relatedTable.id] = {
+                        table: relatedTable,
+                        type: 'relationship',
+                    }
+
                     relatedTablesIds.push(relatedTable.id)
                 }
             }
-
-            if(relatedTable && !relatedTablesIds.includes(relatedTable.id)) {
-                relatedTables.push(relatedTable)
-                relatedTablesIds.push(relatedTable.id)
-            }
         })
 
-        return relatedTables
+        return Object.values(relatedTables)
     }
 
     getModels(): Model[] {
@@ -385,11 +396,6 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
 
     hasSoftDeletes(): boolean {
         return this.hasColumn('deleted_at')
-    }
-
-    markAsChanged() {
-        this.project.markTableAsChanged(this)
-        return this
     }
 
     hasMigrations(): boolean {
