@@ -235,10 +235,11 @@ import RenderableModel from "@Renderer/codegen/sequential/services/model/Rendera
 
         modelSettings.modelContent = await new RenderableModel(model).compileWithErrorThreatment()
 
-        // 1 - Verificar se tem conflitos usando a API
+        // 1 - Verificar se tem conflitos usando a API (precisa passar o novo conteúdo)
         // 2 - Se tiver conflitos, mostrar a opção para tratar conflitos
         // 3 - na modal de conflitos, oferecer opções para tratar e resolver os conflitos
         // 4 - ao gravar o model, precisa chamar a função adequada que o salva e seta o previous-generated-content
+        // 5 - salvar na RenderableQueue já com o estado Rendered (sem necessidade de gerar novamente)
 
     }
 
