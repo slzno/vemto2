@@ -71,6 +71,12 @@ export default class ColumnsDefaultDataList {
                 faker: "fake()->word()",
             },
 
+            remember_token: {
+                type: "string",
+                nullable: true,
+                faker: "Str::random(10)",
+            },
+
             phone: {
                 type: "string",
                 faker: "fake()->phoneNumber()",
@@ -227,8 +233,14 @@ export default class ColumnsDefaultDataList {
 
             email: {
                 type: "string",
-                faker: "fake()->email()",
+                faker: "fake()->unique()->safeEmail()",
                 inputType: "email",
+            },
+
+            email_verified_at: {
+                type: "timestamp",
+                nullable: true,
+                faker: "now()",
             },
 
             slug: {
@@ -238,7 +250,7 @@ export default class ColumnsDefaultDataList {
 
             password: {
                 type: "string",
-                faker: "fake()->password()",
+                faker: "Hash::make('password')",
                 inputType: "password",
                 validationRules: ["required", "string", "min:6"],
                 updateValidationRules: ["nullable", "string", "min:6"],

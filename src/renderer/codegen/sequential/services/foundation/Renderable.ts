@@ -98,6 +98,23 @@ export default abstract class Renderable {
         }
     }
 
+    async compileWithErrorThreatment() {
+        try {
+            return await this.compile()
+        } catch (error: any) {
+            if(error.hasTemplateError) {
+                console.error(`Error compiling ${this.getTemplateFile()} at line ${error.templateLine}: ${error.message}`)
+
+                error.hasTemplateError = true
+                error.templateErrorLine = error.templateLine
+            } else {
+                console.error(`Error compiling ${this.getTemplateFile()}: ${error.message}`)
+            }
+
+            throw error
+        }
+    }
+
     async compile() {
         if(!this.project) {
             throw new Error(`Renderable for ${this.getTemplateFile()} doesn't has the project associated. Please set it with setProject() before calling render().`)

@@ -14,6 +14,7 @@
     import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
     import SchemaBuilder from "@Renderer/services/schema/SchemaBuilder"
     import UiLoading from "@Renderer/components/ui/UiLoading.vue"
+import RenderableModel from "@Renderer/codegen/sequential/services/model/RenderableModel"
 
     const projectStore = useProjectStore(),
         showingModal = ref(false),
@@ -66,6 +67,11 @@
         if(!selectedTable.value) return null
         return tablesSettings[selectedTable.value.name]
     })
+
+    const selectedModelSettings = computed(() => {
+        if(!selectedModel.value) return null
+        return modelsSettings[selectedModel.value.id]
+    })
     
     const buildSettings = async () => {
         await buildTablesSettings()
@@ -80,17 +86,6 @@
         createdTables.value = tablesChangesCalculator.getAddedTables()
         changedTables.value = tablesChangesCalculator.getChangedTables()
         removedTables.value = tablesChangesCalculator.getRemovedTables()
-
-        if(createdTables.value.length) {
-            selectedTable.value = createdTables.value[0]
-            selectedTableMode.value = "created"
-        } else if(changedTables.value.length) {
-            selectedTable.value = changedTables.value[0]
-            selectedTableMode.value = "updated"
-        } else if(removedTables.value.length) {
-            selectedTable.value = removedTables.value[0]
-            selectedTableMode.value = "removed"
-        }
 
         for (const change of allChanges) {
             const table = change.table
@@ -124,22 +119,13 @@
         changedModels.value = modelsChangesCalculator.getChangedModels()
         removedModels.value = modelsChangesCalculator.getRemovedModels()
 
-        if(createdModels.value.length) {
-            selectedModel.value = createdModels.value[0]
-            selectedModelMode.value = "created"
-        } else if(changedModels.value.length) {
-            selectedModel.value = changedModels.value[0]
-            selectedModelMode.value = "updated"
-        } else if(removedModels.value.length) {
-            selectedModel.value = removedModels.value[0]
-            selectedModelMode.value = "removed"
-        }
-
         for (const change of allChanges) {
             const model = change.model
 
-            modelsSettings[model.name] = {
+            modelsSettings[model.id] = {
                 instance: model,
+                hasConflicts: false,
+                loadModelContent: "",
             }
 
             await loadMigrationContent(model.name)
@@ -147,8 +133,8 @@
     }
 
     const resetModelsSettings = () => {
-        Object.keys(modelsSettings).forEach((tableName) => {
-            delete modelsSettings[tableName]
+        Object.keys(modelsSettings).forEach((modelId) => {
+            delete modelsSettings[modelId]
         })
     }
 
@@ -156,10 +142,16 @@
         return selectedTable.value && selectedTable.value.id === table.id
     }
 
+    const isSelectedModel = (model: Model) => {
+        return selectedModel.value && selectedModel.value.id === model.id
+    }
+
     const selectTable = async (table: Table, mode: "created"|"updated"|"removed") => {
         currentReviewingMode.value = "table"
         selectedTable.value = table
         selectedTableMode.value = mode
+
+        selectedModel.value = null
 
         await loadMigrationContent(table.name)
     }
@@ -169,7 +161,9 @@
         selectedModel.value = model
         selectedModelMode.value = mode
 
-        // await loadModelContent(model.name)
+        selectedTable.value = null
+
+        await loadModelContent(model)
     }
 
     const saveMigrations = async () => {
@@ -231,6 +225,14 @@
             table.migrationName = migrationData.name
             table.migrationContent = migrationData.content
         }
+    }
+
+    const loadModelContent = async (model: any) => {
+        const modelSettings = modelsSettings[model.id]
+
+        console.log(model)
+
+        modelSettings.modelContent = await new RenderableModel(model).compileWithErrorThreatment()
     }
 
     const undoTableChanges = async (table: Table) => {
@@ -380,7 +382,7 @@
                             <PlusIcon class="w-4 h-4 mr-2" />
                             Created Models
                         </div>
-                        <div class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer flex justify-between items-center" v-for="model in createdModels" :key="model.id">
+                        <div @click.stop="selectModel(model, 'created')" :class="{'text-red-400 bg-slate-800': isSelectedModel(model)}" class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer flex justify-between items-center" v-for="model in createdModels" :key="model.id">
                             <div>
                                 <div title="Model was renamed" class="flex items-center space-x-1" v-if="model.wasRenamed()">
                                     <span class="text-slate-500">{{ model.schemaState.name }}</span>
@@ -447,13 +449,13 @@
                     </div>
 
                     <!-- Migrations -->
-                    <div class="w-4/5">
+                    <div v-if="currentReviewingMode === 'table'" class="w-4/5">
                         <div
                             v-if="selectedTableSettings"
                             class="bg-slate-800 w-full h-full overflow-y-scroll"
                         >
                             <div class="flex p-4">
-                                <div class="w-56 p-4 space-y-4">
+                                <div class="w-56 p-2 space-y-4">
                                     <div v-if="selectedTableSettings.canCreateNewMigration">
                                         <input
                                             class="rounded-full bg-slate-950 border-0 text-red-500 shadow-sm focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300 mr-2"
@@ -486,6 +488,20 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Model -->
+                    <div v-if="currentReviewingMode === 'model'" class="w-4/5">
+                        <div
+                            v-if="selectedModelSettings"
+                            class="bg-slate-800 w-full h-full overflow-y-scroll"
+                        >
+                            <div class="flex p-4">
+                                <pre class="p-2">
+                                    {{ selectedModelSettings.modelContent }}
+                                </pre>
+                            </div>
+                        </div>
+                    </div>
                 </section>
 
                 <template #footer>
@@ -503,4 +519,3 @@
         </div>
     </Transition>
 </template>
-@Common/models/services/project/CalculateSchemaTablesChanges
