@@ -3,6 +3,7 @@
     import { useRouter } from "vue-router"
     import { ProjectSettings } from "@Common/models/Project"
     import Main from "@Renderer/services/wrappers/Main"
+    import { compareVersions } from 'compare-versions'
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import ProjectManager from "@Renderer/services/project/ProjectManager"
@@ -84,6 +85,11 @@
 
         if(!projectInfo.isLaravelProject) {
             Alert.error("This folder is not a Laravel project")
+            return
+        }
+
+        if(compareVersions(projectInfo.laravelVersion, "9.0.0") < 0) {
+            Alert.error("Vemto only supports Laravel 9+ projects. Please upgrade your Laravel version before connecting it to Vemto")
             return
         }
 
