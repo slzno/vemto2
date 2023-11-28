@@ -7,6 +7,7 @@ import PhpFormatter from "@Renderer/codegen/formatters/PhpFormatter"
 import RenderableFile, { RenderableFileStatus, RenderableFileType } from "../common/models/RenderableFile"
 import CommandExecutor from "./base/CommandExecutor"
 import TextUtil from "../common/util/TextUtil"
+import ConflictManager from "./services/ConflictManager"
 
 export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
     let project = null,
@@ -98,20 +99,11 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
                 return true
             }
 
-            const userModifiedFile = currentFileContent && currentFileContent.trim() !== previousFileContent.trim(),
-                generatedFileIsEqual = file.content.trim() === currentFileContent.trim()
+            const conflictManager = new ConflictManager(project, relativeFilePath)
+            conflictManager.setFileContent(file.content)
 
-            if(userModifiedFile && !generatedFileIsEqual) {
-                const conflictsFileName = TextUtil.random(32) + '.json',
-                    conflictsFilePath = path.join(project.getPath(), ".vemto", "conflicts", conflictsFileName)
-                
-                FileSystem.writeConflictsFile(conflictsFilePath, [
-                    {
-                        id: uuid(),
-                        currentContent: currentFileContent,
-                        newContent: file.content,
-                    }
-                ])
+            if(conflictManager.hasConflict()) {
+                const conflictsFileName = conflictManager.writeConflictFile()
 
                 setFileStatus(file, RenderableFileStatus.CONFLICT, {
                     conflictFileName: conflictsFileName

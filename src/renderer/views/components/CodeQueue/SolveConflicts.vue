@@ -153,6 +153,11 @@
             <div class="flex justify-end space-x-2">
                 <UiButton @click="mergeCode()">
                     <UiLoading v-show="calculatingMerge" class="mr-1 scale-75"></UiLoading>
+                    Merge
+                </UiButton>
+
+                <UiButton @click="mergeCode()">
+                    <UiLoading v-show="calculatingMerge" class="mr-1 scale-75"></UiLoading>
                     Merge with AI
                 </UiButton>
 

@@ -204,6 +204,7 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     buildSchemaState() {
         return {
             name: this.name,
+            fileName: this.fileName,
             tableName: this.tableName,
             class: this.class,
             namespace: this.namespace,

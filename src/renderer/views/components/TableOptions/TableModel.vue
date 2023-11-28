@@ -101,7 +101,6 @@
 
     const log = (data: any): void => {
         console.log(data)
-        console.log(data.tableNameIsDifferentFromDefault())
     }
 </script>
 
@@ -204,6 +203,7 @@
 
             <div class="mt-4" v-if="onDevelopment">
                 <UiButton @click="log(model)">Log details</UiButton>
+                <UiButton @click="model.logDataComparison()">Log data comparison</UiButton>
             </div>
         </div>
 

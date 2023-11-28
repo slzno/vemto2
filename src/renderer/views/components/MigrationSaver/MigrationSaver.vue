@@ -125,10 +125,11 @@ import RenderableModel from "@Renderer/codegen/sequential/services/model/Rendera
             modelsSettings[model.id] = {
                 instance: model,
                 hasConflicts: false,
-                loadModelContent: "",
+                modelContent: "",
+                acceptedContent: "",
             }
 
-            await loadMigrationContent(model.name)
+            await loadModelContent(model)
         }
     }
 
@@ -233,6 +234,12 @@ import RenderableModel from "@Renderer/codegen/sequential/services/model/Rendera
         console.log(model)
 
         modelSettings.modelContent = await new RenderableModel(model).compileWithErrorThreatment()
+
+        // 1 - Verificar se tem conflitos usando a API
+        // 2 - Se tiver conflitos, mostrar a opção para tratar conflitos
+        // 3 - na modal de conflitos, oferecer opções para tratar e resolver os conflitos
+        // 4 - ao gravar o model, precisa chamar a função adequada que o salva e seta o previous-generated-content
+
     }
 
     const undoTableChanges = async (table: Table) => {
@@ -394,18 +401,18 @@ import RenderableModel from "@Renderer/codegen/sequential/services/model/Rendera
                                 </div>
                             </div>
 
-                            <div title="Undo table changes">
+                            <!-- <div title="Undo table changes">
                                 <ArrowUturnDownIcon
                                     class="w-5 h-5  cursor-pointer text-slate-400 hover:text-red-500"
                                     @click.stop.prevent="undoTableChanges(table)" />
-                            </div>
+                            </div> -->
                         </div>
                         
                         <div class="flex items-center p-2 bg-slate-950 text-slate-500">
                             <CircleStackIcon class="w-4 h-4 mr-2" />
                             Changed Models
                         </div>
-                        <div class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer flex justify-between items-center" v-for="model in changedModels" :key="model.id">
+                        <div @click.stop="selectModel(model, 'updated')" :class="{'text-red-400 bg-slate-800': isSelectedModel(model)}" class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer flex justify-between items-center" v-for="model in changedModels" :key="model.id">
                             <div>
                                 <div title="Model was renamed" class="flex items-center space-x-1" v-if="model.wasRenamed()">
                                     <span class="text-slate-500">{{ model.schemaState.name }}</span>
@@ -416,12 +423,12 @@ import RenderableModel from "@Renderer/codegen/sequential/services/model/Rendera
                                     {{ model.name }}
                                 </div>
                             </div>
-
+<!-- 
                             <div title="Undo table changes">
                                 <ArrowUturnDownIcon
                                     class="w-5 h-5  cursor-pointer text-slate-400 hover:text-red-500"
                                     @click.stop.prevent="undoTableChanges(table)" />
-                            </div>
+                            </div> -->
                         </div>
 
                         <div class="flex items-center p-2 bg-slate-950 text-slate-500">
@@ -440,11 +447,11 @@ import RenderableModel from "@Renderer/codegen/sequential/services/model/Rendera
                                 </div>
                             </div>
 
-                            <div title="Undo table changes">
+                            <!-- <div title="Undo table changes">
                                 <ArrowUturnDownIcon
                                     class="w-5 h-5  cursor-pointer text-slate-400 hover:text-red-500"
                                     @click.stop.prevent="undoTableChanges(table)" />
-                            </div>
+                            </div> -->
                         </div>
                     </div>
 
@@ -495,10 +502,8 @@ import RenderableModel from "@Renderer/codegen/sequential/services/model/Rendera
                             v-if="selectedModelSettings"
                             class="bg-slate-800 w-full h-full overflow-y-scroll"
                         >
-                            <div class="flex p-4">
-                                <pre class="p-2">
-                                    {{ selectedModelSettings.modelContent }}
-                                </pre>
+                            <div class="p-2 flex-grow space-y-2">
+                                <highlightjs class="h-full" language="php" :code="selectedModelSettings.modelContent" />
                             </div>
                         </div>
                     </div>

@@ -5,9 +5,9 @@ import phpPlugin from "@prettier/plugin-php/standalone"
 class PhpFormatter extends BaseFormatter {
     
     format() {
-        this.formatWithPrettierPhpParser()
-
         this.sortUseStatementsByLength()
+        
+        this.formatWithPrettierPhpParser()
 
         return this.content
     }
