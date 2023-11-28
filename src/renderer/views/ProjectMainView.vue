@@ -87,8 +87,8 @@
 
             setTimeout(() => {
                 appStore.finishGeneratingCode()
-                const elapsedTime =
-                    SequentialGenerator.getElapsedTimeInSeconds()
+                const elapsedTime = SequentialGenerator.getElapsedTimeInSeconds()
+                
                 Alert.success(
                     `Code generated successfully in ${elapsedTime} seconds`,
                     2000
@@ -156,9 +156,16 @@
                         >
                             <CommandLineIcon class="w-7 h-7 stroke-1" />
                         </button>
-                        <div @click="errorsDialog.toggle()" class="relative cursor-pointer">
+                        <div
+                            @click="errorsDialog.toggle()"
+                            class="relative cursor-pointer"
+                        >
                             <!-- Errors alert animation -->
-                            <div v-show="errorsStore.hasErrors" class="absolute rounded-full w-3 h-3 bg-red-600 animate-ping" style="left: 25px; bottom: 20px;"></div>
+                            <div
+                                v-show="errorsStore.hasErrors"
+                                class="absolute rounded-full w-3 h-3 bg-red-600 animate-ping"
+                                style="left: 25px; bottom: 20px"
+                            ></div>
                             <ShieldExclamationIcon
                                 :class="{
                                     'text-red-500': errorsStore.hasErrors,
