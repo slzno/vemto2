@@ -33,7 +33,13 @@ export default class RenderableLivewireCreateFormComponent extends Renderable {
     }
 
     getFilename(): string {
-        return 'CreateForm.php'
+        let filename = 'CreateForm.php'
+
+        if(this.crud.isHasManyDetail) {
+            filename = `CreateDetailForm.php`
+        }
+
+        return filename
     }
 
     getFormatter(): RenderableFileFormatter {
@@ -41,7 +47,13 @@ export default class RenderableLivewireCreateFormComponent extends Renderable {
     }
 
     hooks() {
-        return this.crud.getHooks('createFormComponent')
+        let hookName = 'createFormComponent'
+
+        if(this.crud.isHasManyDetail) {
+            hookName = 'createDetailFormComponent'
+        }
+
+        return this.crud.getHooks(hookName)
     }
 
     getData() {

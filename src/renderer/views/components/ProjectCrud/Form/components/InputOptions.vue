@@ -6,6 +6,7 @@
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiNumber from "@Renderer/components/ui/UiNumber.vue"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
+    import { capitalCase } from "change-case"
 
     const props = defineProps({
         show: Boolean,
@@ -32,6 +33,14 @@
     const removeEmptyItems = () => {
         input.value.items = input.value.items.filter(item => item.value !== "" || item.label !== "")
 
+        saveInput()
+    }
+
+    const onItemKeyChanged = (item: any) => {
+        if(!item.label.length) {
+            item.label = capitalCase(item.value)
+        }
+        
         saveInput()
     }
 
@@ -101,7 +110,7 @@
                                     <template v-for="(item, index) in input.items" :key="index">
                                         <div class="flex gap-2 my-1 justify-center items-center" @keyup.esc="removeEmptyItems()">
                                             <div class="w-2/4">
-                                                <UiText v-model="item.value" placeholder="Item Value" @input="saveInput()" />
+                                                <UiText v-model="item.value" placeholder="Item Value" @blur="onItemKeyChanged(item)" @input="saveInput()" />
                                             </div>
                                             <div class="w-2/4">
                                                 <UiText v-model="item.label" placeholder="Item Label" @input="saveInput()" />

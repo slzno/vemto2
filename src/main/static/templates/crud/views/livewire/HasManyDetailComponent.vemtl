@@ -30,8 +30,8 @@ use App\Models\<$ parentModelName $>;
 <% for (let input of detailCrud.getBelongsToInputs()) { %>
 use App\Models\<$ input.getRelatedModelName() $>;
 <% } %>
-use <$ detailCrud.livewireFormsNamespace $>\CreateForm;
-use <$ detailCrud.livewireFormsNamespace $>\UpdateForm;
+use <$ detailCrud.livewireFormsNamespace $>\CreateDetailForm;
+use <$ detailCrud.livewireFormsNamespace $>\UpdateDetailForm;
 // hook:IMPORTS
 
 class <$ this.filenameWithoutExtension $> extends Component
@@ -39,7 +39,7 @@ class <$ this.filenameWithoutExtension $> extends Component
     use WithFileUploads, WithPagination;
     // hook:TRAITS
 
-    public CreateForm|UpdateForm $form;
+    public CreateDetailForm|UpdateDetailForm $form;
 
     // hook:BEFORE_VARIABLES
     public <$ modelName $> $<$ itemVarName $>;
@@ -65,7 +65,7 @@ class <$ this.filenameWithoutExtension $> extends Component
 
     public function mount()
     {
-        $this->form = new CreateForm($this, 'form');
+        $this->form = new CreateDetailForm($this, 'form');
 
         // hook:BEFORE_MOUNT
         <% for (let input of detailCrud.getBelongsToInputs()) { %>
@@ -81,14 +81,14 @@ class <$ this.filenameWithoutExtension $> extends Component
 
     public function new<$ pascalCase(itemVarName) $>()
     {
-        $this->form = new CreateForm($this, 'form');
+        $this->form = new CreateDetailForm($this, 'form');
 
         $this->showModal();
     }
 
     public function edit<$ pascalCase(itemVarName) $>(<$ modelName $> $<$ itemVarName $>)
     {
-        $this->form = new UpdateForm($this, 'form');
+        $this->form = new UpdateDetailForm($this, 'form');
         $this->form->set<$ modelName $>($<$ itemVarName $>);
 
         $this->showModal();

@@ -33,7 +33,13 @@ export default class RenderableLivewireUpdateFormComponent extends Renderable {
     }
 
     getFilename(): string {
-        return 'UpdateForm.php'
+        let filename = 'UpdateForm.php'
+
+        if(this.crud.isHasManyDetail) {
+            filename = `UpdateDetailForm.php`
+        }
+
+        return filename
     }
 
     getFormatter(): RenderableFileFormatter {
@@ -41,7 +47,13 @@ export default class RenderableLivewireUpdateFormComponent extends Renderable {
     }
 
     hooks() {
-        return this.crud.getHooks('updateFormComponent')
+        let hookName = 'updateFormComponent'
+
+        if(this.crud.isHasManyDetail) {
+            hookName = 'updateDetailFormComponent'
+        }
+
+        return this.crud.getHooks(hookName)
     }
 
     getData() {

@@ -1,7 +1,7 @@
 import Crud from './Crud'
 import Relationship from '../Relationship'
 import RelaDB from '@tiago_silva_pereira/reladb'
-import { camelCase, paramCase } from 'change-case'
+import { camelCase, capitalCase, paramCase } from 'change-case'
 
 export default class HasManyDetail extends RelaDB.Model {
     id: string
@@ -38,6 +38,7 @@ export default class HasManyDetail extends RelaDB.Model {
             excludedColumns,
         )
 
+        detailCrud.basePath = `${capitalCase(crud.name)}${capitalCase(detailCrud.plural)}Detail`
         detailCrud.isHasManyDetail = true
         detailCrud.save()
 

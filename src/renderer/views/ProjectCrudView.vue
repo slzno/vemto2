@@ -84,11 +84,19 @@
                 </div>
 
                 <div>
-                    <UiText v-model="crud.name" label="Item Name" @input="crud.save()" />
+                    <UiText v-model="crud.name" label="Name" @input="crud.save()" />
                 </div>
 
                 <div>
-                    <UiText v-model="crud.plural" label="Collection Name" @input="crud.save()" />
+                    <UiText v-model="crud.plural" label="Plural" @input="crud.save()" />
+                </div>
+
+                <div>
+                    <UiText v-model="crud.settings.itemName" label="Item Name" @input="crud.save()" />
+                </div>
+
+                <div>
+                    <UiText v-model="crud.settings.collectionName" label="Collection Name" @input="crud.save()" />
                 </div>
 
                 <div>
