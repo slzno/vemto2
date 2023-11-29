@@ -4,6 +4,7 @@ import PhpFormatter from "@Renderer/codegen/formatters/PhpFormatter"
 import TemplateCompiler from "@Renderer/codegen/templates/base/TemplateCompiler"
 import { RenderableFileFormatter, RenderableFileType } from "@Common/models/RenderableFile"
 import BladeFormatter from "@Renderer/codegen/formatters/BladeFormatter"
+import PathUtil from "@Renderer/util/PathUtil"
 
 export default abstract class Renderable {
     project: Project
@@ -82,11 +83,11 @@ export default abstract class Renderable {
         }
     }
 
-    getFullFilePath() {
-        return `${this.getPath()}/${this.getFilename()}`
+    getFullFilePath(): string {
+        return PathUtil.join(this.getPath(), this.getFilename())
     }
 
-    getFilenameWithoutExtension() {
+    getFilenameWithoutExtension(): string {
         return this.getFilename().replace(/\.[^/.]+$/, "")
     }
 

@@ -89,7 +89,7 @@
         }
 
         if(compareVersions(projectInfo.laravelVersion, "9.0.0") < 0) {
-            Alert.error("Vemto only supports Laravel 9+ projects. Please upgrade your Laravel version before connecting it to Vemto")
+            Alert.error("Vemto only supports <b>Laravel 9+</b> projects. Please upgrade your Laravel version before connecting it")
             return
         }
 

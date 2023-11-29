@@ -25,6 +25,7 @@ export default interface ElectronApi {
     openProjectFolder: (path: string) => Promise<void>,
     clearProjectFolder: (path: string) => Promise<void>,
     openProjectFolderOnTerminal: (path: string) => Promise<void>,
+    fileHasConflicts: (relativePath: string, newContent: string) => Promise<boolean>,
     readConflictsFile: (path: string) => Promise<string>,
     solveConflictReplacingCode: (fileId: string, conflictId: string, content: string) => Promise<void>,
     readProjectFolder: (path: string, removeBasePath?: boolean) => Promise<string[]>,

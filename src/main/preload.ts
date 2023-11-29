@@ -83,6 +83,9 @@ contextBridge.exposeInMainWorld("api", {
     clearProjectFolder: (path: string) => {
         return ipcRenderer.invoke("folder:project:clear", path)
     },
+    fileHasConflicts: (relativePath: string, newContent: string) => {
+        return ipcRenderer.invoke("file:has:conflicts", relativePath, newContent)
+    },
     readConflictsFile: (path: string) => {
         return ipcRenderer.invoke("file:conflicts:read", path)
     },

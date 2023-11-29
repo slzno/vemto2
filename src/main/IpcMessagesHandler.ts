@@ -7,6 +7,7 @@ import ReadProjectSchema from "./services/ReadProjectSchema"
 import RenderableFile from "../common/models/RenderableFile"
 import Terminal from "./base/Terminal"
 import ProjectPathResolver from "@Common/services/ProjectPathResolver"
+import ConflictManager from "./services/ConflictManager"
 
 export function HandleIpcMessages() {
     ipcMain.handle("confirm", (event, message: string) => {
@@ -132,6 +133,17 @@ export function HandleIpcMessages() {
         })
     })
 
+    ipcMain.handle("file:has:conflicts", (event, relativePath, newContent) => {
+        const project = Project.find(1)
+        if(!project) return null
+
+        return handleError(event, () => {
+            const conflictsManager = new ConflictManager(project, relativePath)
+            conflictsManager.setFileContent(newContent)
+
+            return conflictsManager.hasConflict()
+        })
+    })
 
     ipcMain.handle("file:conflicts:read", (event, filePath) => {
         const project = Project.find(1)

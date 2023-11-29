@@ -14,7 +14,9 @@
     import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
     import SchemaBuilder from "@Renderer/services/schema/SchemaBuilder"
     import UiLoading from "@Renderer/components/ui/UiLoading.vue"
-import RenderableModel from "@Renderer/codegen/sequential/services/model/RenderableModel"
+    import RenderableModel from "@Renderer/codegen/sequential/services/model/RenderableModel"
+    import Main from "@Renderer/services/wrappers/Main"
+import ConflictsSolver from "../CodeQueue/ConflictsSolver.vue"
 
     const projectStore = useProjectStore(),
         showingModal = ref(false),
@@ -125,8 +127,9 @@ import RenderableModel from "@Renderer/codegen/sequential/services/model/Rendera
             modelsSettings[model.id] = {
                 instance: model,
                 hasConflicts: false,
-                modelContent: "",
-                acceptedContent: "",
+                currentModelContent: "",
+                newModelContent: "",
+                acceptedModelContent: null,
             }
 
             await loadModelContent(model)
@@ -231,16 +234,26 @@ import RenderableModel from "@Renderer/codegen/sequential/services/model/Rendera
     const loadModelContent = async (model: any) => {
         const modelSettings = modelsSettings[model.id]
 
-        console.log(model)
+        const renderableModel = new RenderableModel(model),
+            modelPath = renderableModel.getFullFilePath(), 
+            currentModelContent = await Main.API.readProjectFile(modelPath),
+            newModelContent = await new RenderableModel(model).compileWithErrorThreatment()
 
-        modelSettings.modelContent = await new RenderableModel(model).compileWithErrorThreatment()
+        modelSettings.newModelContent = newModelContent
+        modelSettings.currentModelContent = currentModelContent
 
-        // 1 - Verificar se tem conflitos usando a API (precisa passar o novo conteúdo)
+        const hasConflicts = await Main.API.fileHasConflicts(modelPath, newModelContent)
+        modelSettings.hasConflicts = hasConflicts
+
         // 2 - Se tiver conflitos, mostrar a opção para tratar conflitos
         // 3 - na modal de conflitos, oferecer opções para tratar e resolver os conflitos
         // 4 - ao gravar o model, precisa chamar a função adequada que o salva e seta o previous-generated-content
         // 5 - salvar na RenderableQueue já com o estado Rendered (sem necessidade de gerar novamente)
 
+    }
+
+    const solveConflicts = async () => {
+        
     }
 
     const undoTableChanges = async (table: Table) => {
@@ -504,7 +517,15 @@ import RenderableModel from "@Renderer/codegen/sequential/services/model/Rendera
                             class="bg-slate-800 w-full h-full overflow-y-scroll"
                         >
                             <div class="p-2 flex-grow space-y-2">
-                                <highlightjs class="h-full" language="php" :code="selectedModelSettings.modelContent" />
+                                <div class="flex" v-if="selectedModelSettings.hasConflicts">
+                                    Has conflict
+                                    <ConflictsSolver 
+                                        :currentFileContent="selectedModelSettings.currentModelContent"
+                                        :newFileContent="selectedModelSettings.newModelContent"
+                                    />
+                                    <UiButton @click="solveConflicts">Reset</UiButton>
+                                </div>
+                                <highlightjs class="h-full" language="php" :code="selectedModelSettings.newModelContent" />
                             </div>
                         </div>
                     </div>

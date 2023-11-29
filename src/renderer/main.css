@@ -24,6 +24,28 @@
 }
 
 /* Diff to HTML */
+.d2h-diff-table {
+  @apply font-mono;
+  font-size: 0.9rem;
+}
+.d2h-code-side-linenumber {
+  position: relative;
+}
+.d2h-code-side-line {
+  padding-left: 1rem;
+}
+.d2h-code-side-linenumber {
+  @apply border-none;
+  @apply text-sm;
+  opacity: 0.3;
+}
+.d2h-code-side-linenumber:hover {
+  opacity: 1;
+}
+.d2h-info {
+  display: none;
+}
+
 .dark .d2h-wrapper {
   @apply bg-slate-900;
   @apply text-slate-200;
@@ -43,7 +65,7 @@
 .dark .d2h-info,
 .dark .d2h-emptyplaceholder,
 .dark .d2h-code-side-emptyplaceholder {
-  @apply bg-slate-900;
+  @apply bg-slate-950;
   @apply text-slate-200;
   @apply border-none;
 }
@@ -51,16 +73,16 @@
   content: none;
 }
 .dark .d2h-code-side-linenumber {
-  @apply bg-slate-800;
+  /* @apply bg-slate-800; */
   @apply text-slate-200;
   @apply border-none;
 }
 .dark .d2h-del {
-  @apply text-red-400;
+  @apply text-red-450;
   @apply bg-slate-900;
 }
 .dark .d2h-ins {
-  @apply text-green-400;
+  @apply text-green-500;
   @apply bg-slate-900;
 }
 .dark .d2h-code-line-ctn del {
