@@ -125,13 +125,15 @@
                                 </div>
                             </div>
 
-                            <UiCheckbox v-model="input.showOnCreation" label="On Create" @input="saveInput()" />
+                            <div class="mt-2 flex gap-2 flex-col">
+                                <UiCheckbox v-model="input.showOnCreation" label="On Create" @input="saveInput()" />
 
-                            <UiCheckbox v-model="input.showOnUpdate" label="On Update" @input="saveInput()" />
+                                <UiCheckbox v-model="input.showOnUpdate" label="On Update" @input="saveInput()" />
 
-                            <UiCheckbox v-model="input.showOnDetails" label="On Details" @input="saveInput()" />
+                                <UiCheckbox v-model="input.showOnDetails" label="On Details" @input="saveInput()" />
 
-                            <UiCheckbox v-model="input.showOnIndex" label="On Index" @input="saveInput()" />
+                                <UiCheckbox v-model="input.showOnIndex" label="On Index" @input="saveInput()" />
+                            </div>
                         </div>
                     </div>
                 </div>
