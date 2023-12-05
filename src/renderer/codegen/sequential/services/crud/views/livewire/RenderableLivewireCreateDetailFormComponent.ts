@@ -6,14 +6,15 @@ import {
     RenderableFileType,
 } from "@Common/models/RenderableFile"
 import Namespace from "@Renderer/codegen/util/Namespace"
+import HasManyDetail from "@Common/models/crud/HasManyDetail"
 
-export default class RenderableLivewireUpdateFormComponent extends Renderable {
-    crud: Crud
+export default class RenderableLivewireCreateDetailFormComponent extends Renderable {
+    detail: HasManyDetail
 
-    constructor(crud: Crud) {
+    constructor(detail: HasManyDetail) {
         super()
 
-        this.crud = crud
+        this.detail = detail
     }
 
     canRender(): boolean {
@@ -25,15 +26,15 @@ export default class RenderableLivewireUpdateFormComponent extends Renderable {
     }
 
     getTemplateFile(): string {
-        return "crud/views/livewire/UpdateFormComponent.vemtl"
+        return "crud/views/livewire/CreateDetailFormComponent.vemtl"
     }
 
     getPath(): string {
-        return Namespace.from(this.crud.livewireFormsNamespace).toPath()
+        return Namespace.from(this.detail.detailCrud.livewireFormsNamespace).toPath()
     }
 
     getFilename(): string {
-        return 'UpdateForm.php'
+        return 'CreateDetailForm.php'
     }
 
     getFormatter(): RenderableFileFormatter {
@@ -41,12 +42,13 @@ export default class RenderableLivewireUpdateFormComponent extends Renderable {
     }
 
     hooks() {
-        return this.crud.getHooks('updateFormComponent')
+        return this.detail.detailCrud.getHooks('createDetailFormComponent')
     }
 
     getData() {
         return {
-            crud: this.crud,
+            detail: this.detail,
+            crud: this.detail.detailCrud,
         }
     }
 }

@@ -1,0 +1,85 @@
+<?php
+
+<% const crud = this.crud %>
+<% const modelName = crud.model.name %>
+<% const camelCase = this.require('camelCase') %>
+<% const pascalCase = this.require('pascalCase') %>
+<% const paramCase = this.require('paramCase') %>
+<% const itemVarName = crud.settings.itemName %>
+<% const collectionVarName = crud.settings.collectionName %>
+
+namespace <$ crud.livewireFormsNamespace $>;
+ 
+use Livewire\Form;
+use Livewire\Attributes\Rule;
+use App\Models\<$ modelName $>;
+// hook:IMPORTS
+ 
+class <$ this.filenameWithoutExtension $> extends Form
+{
+    // hook:TRAITS
+
+    // hook:BEFORE_VARIABLES
+    public ?<$ modelName $> $<$ itemVarName $>;
+
+    <% for (let input of crud.inputs) { %>
+        #[Rule('<$ input.getUpdateRulesForTemplate() $>')]
+        <# --- #>
+        public $<$ input.column.name $> = '<$ input.defaultValue || '' $>';
+        
+        <% if (input.isFileOrImage()) { %>
+        public $<$ input.getNewPropertyName() $> = null;
+        <% } %>
+
+    <% } %>
+    // hook:AFTER_VARIABLES
+
+    public function set<$ modelName $>(<$ modelName $> $<$ itemVarName $>)
+    {
+        $this-><$ itemVarName $> = $<$ itemVarName $>;
+        
+        <% for (let input of crud.getFillableInputs()) { %>
+            <# --- #>
+            $this-><$ input.column.name $> = $<$ itemVarName $>-><$ input.column.name $>;
+        <% } %>
+    }
+
+    public function save()
+    {
+        // hook:BEFORE_UPDATE_VALIDATE
+        $this->validate();
+        // hook:AFTER_UPDATE_VALIDATE
+
+        <% for (let input of crud.getFileInputs()) { %>
+        $this->process<$ pascalCase(input.name) $>();
+        <% } %>
+
+        $this-><$ itemVarName $>->update($this->except([
+            '<$ itemVarName $>',
+            <# --- #>
+            <% for(let input of crud.getBelongsToInputs()) { %>
+                '<$ input.column.name $>',
+            <% } %>
+            <# --- #>
+            <% for(let input of crud.getFileInputs()) { %>
+            '<$ input.getNewPropertyName() $>',
+            <% } %>
+        ]));
+    }
+
+    <% for (let input of crud.getFileInputs()) { %>
+    <% const fieldName = input.column?.name || input.name %>
+    public function process<$ pascalCase(input.name) $>()
+    {
+        if (empty($this-><$ input.getNewPropertyName() $>)) return;
+        
+        $this-><$ itemVarName $>-><$ fieldName $> = $this-><$ input.getNewPropertyName() $>->store('<$ input.getFileDiskName() $>', 'public');
+    }
+
+    public function delete<$ pascalCase(input.name) $>()
+    {
+        $this-><$ input.getNewPropertyName() $> = null;
+    }
+    <% } %>
+    // hook:METHODS
+}
