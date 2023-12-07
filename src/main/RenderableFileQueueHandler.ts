@@ -6,7 +6,6 @@ import Project, { ProjectFilesQueueStatus } from "../common/models/Project"
 import PhpFormatter from "@Renderer/codegen/formatters/PhpFormatter"
 import RenderableFile, { RenderableFileStatus, RenderableFileType } from "../common/models/RenderableFile"
 import CommandExecutor from "./base/CommandExecutor"
-import TextUtil from "../common/util/TextUtil"
 import ConflictManager from "./services/ConflictManager"
 
 export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
@@ -71,9 +70,6 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
             
             // Write the Vemto version for future comparison or merge
             FileSystem.writeFile(vemtoFilePath, file.content)
-
-            const currentFileContent = FileSystem.readFileIfExists(projectFilePath) || '',
-                previousFileContent = FileSystem.readFileIfExists(previousFilePath) || ''
 
             if(file.type === RenderableFileType.PHP_CLASS) {
                 let mergedFileData = await mergeFiles(vemtoFilePath, projectFilePath, previousFilePath)

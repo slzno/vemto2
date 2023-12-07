@@ -73,6 +73,7 @@ class Vemto
         file_put_contents($processedFilePath, $fileContent);
 
         return [
+            'relativePath' => str_replace(getcwd(), '', $processedFilePath),
             'path' => $processedFilePath,
             'name' => $processedFileName,
         ];
@@ -93,6 +94,7 @@ class Vemto
         file_put_contents($conflictsFilePath, $conflictsFileContent);
 
         return [
+            'relativePath' => str_replace(getcwd(), '', $conflictsFilePath),
             'path' => $conflictsFilePath,
             'name' => $conflictsFileName,
         ];

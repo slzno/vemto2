@@ -113,6 +113,7 @@
                 enabled: false,
             },
             theme: "vemto-dark",
+            fontSize: 16,
         })
     }
 

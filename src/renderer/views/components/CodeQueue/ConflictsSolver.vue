@@ -1,28 +1,37 @@
 <script setup lang="ts">
-    import { ref, toRef, nextTick } from 'vue'
+    import { ref, toRef, nextTick, Ref, defineEmits } from 'vue'
     import UiModal from '@Renderer/components/ui/UiModal.vue'
     import UiButton from '@Renderer/components/ui/UiButton.vue'
     import UiLoading from '@Renderer/components/ui/UiLoading.vue'
+    import MergeIcon from '@Renderer/components/icons/MergeIcon.vue'
+
+    import InternalFiles from '@Renderer/util/InternalFiles'
 
     import { createTwoFilesPatch } from 'diff'
     import { html as Diff2Html } from 'diff2html'
-    import { CodeBracketIcon } from '@heroicons/vue/24/outline'
+    import { ArrowDownTrayIcon, CheckCircleIcon, CodeBracketIcon, NoSymbolIcon } from '@heroicons/vue/24/outline'
+    import BasicEditor from '@Renderer/components/editors/BasicEditor.vue'
+    import Main from '@Renderer/services/wrappers/Main'
 
     const showingModal = ref(false),
         showingResultModal = ref(false),
-        showingManualModal = ref(false),
+        showingEditorModal = ref(false),
         calculatingMerge = ref(false),
-        resultCode = ref('')
+        calculatingAIMerge = ref(false),
+        resultCode = ref('') as Ref<string>
 
     const diffViewerContainer = ref(null)
 
     // get props, including file that is a RenderableFile
-    const props = defineProps<{
-        currentFileContent: string,
-        newFileContent: string,
-    }>()
+    const emit = defineEmits(["solved"]), 
+        props = defineProps<{
+            relativeFilePath: string,
+            currentFileContent: string,
+            newFileContent: string,
+        }>()
 
-    const currentFileContent = toRef(props, 'currentFileContent'),
+    const relativeFilePath = toRef(props, 'relativeFilePath'), 
+        currentFileContent = toRef(props, 'currentFileContent'),
         newFileContent = toRef(props, 'newFileContent')
 
     const show = async () => {
@@ -41,22 +50,36 @@
         const diff = createTwoFilesPatch('01', '02', currentFileContent.value, newFileContent.value)
 
         const html = Diff2Html(diff, {
-            // inputFormat: 'diff',
             outputFormat: 'side-by-side',
             matching: 'lines',
             drawFileList: false,
-            // showFiles: false,
             matchingMaxComparisons: 10000,
         })
-
-        console.log(diffViewerContainer.value)
 
         diffViewerContainer.value.innerHTML = html
     }
 
     const mergeCode = async () => {
+        calculatingMerge.value = true
+
+        await InternalFiles.writeGeneratedFile(relativeFilePath.value, newFileContent.value)
+
+        const mergedFile = await Main.API.mergePHPFile(relativeFilePath.value)
+
+        console.log(mergedFile)
+
+        const resultingFile = await Main.API.readProjectFile(mergedFile.file.relativePath)
+
+        resultCode.value = resultingFile
+
+        showResultModal()
+
+        calculatingMerge.value = false
+    }
+
+    const mergeCodeWithAI = async () => {
         try {
-            calculatingMerge.value = true
+            calculatingAIMerge.value = true
 
             const response = await fetch('http://localhost/api/php/merge', {
                 method: 'POST',
@@ -68,27 +91,26 @@
                     first_code: currentFileContent.value,
                     second_code: newFileContent.value,
                 }),
-            }).then(response => response.json()).catch(() => calculatingMerge.value = false)
+            }).then(response => response.json()).catch(() => calculatingAIMerge.value = false)
 
             resultCode.value = response.result
 
-            calculatingMerge.value = false
+            calculatingAIMerge.value = false
 
             showResultModal()
         } catch (error) {
             console.error(error)
-            calculatingMerge.value = false
+            calculatingAIMerge.value = false
         }
     }
 
     const solveConflict = async () => {
         try {
-            // await Main.API.solveConflictReplacingCode(file.value.id, conflictId, resultCode.value)
 
             closeResultModal()
-            closeManualModal()
+            closeEditorModal()
             
-            readConflicts()
+            emit('solved', resultCode.value)
         } catch (error) {
             console.error(error)
         }
@@ -105,15 +127,15 @@
     const solveManually = () => {
         resultCode.value = newFileContent.value
 
-        showManualModal()
+        showEditorModal()
     }
 
-    const showManualModal = () => {
-        showingManualModal.value = true
+    const showEditorModal = () => {
+        showingEditorModal.value = true
     }
 
-    const closeManualModal = () => {
-        showingManualModal.value = false
+    const closeEditorModal = () => {
+        showingEditorModal.value = false
     }
 </script>
 
@@ -135,23 +157,32 @@
     >
         <section class="p-4 space-y-4">
             <div class="flex justify-end space-x-2">
-                <UiButton @click="mergeCode()">
-                    <UiLoading v-show="calculatingMerge" class="mr-1 scale-75"></UiLoading>
-                    Merge
-                </UiButton>
-
-                <UiButton @click="mergeCode()">
-                    <UiLoading v-show="calculatingMerge" class="mr-1 scale-75"></UiLoading>
+                <UiButton @click="mergeCodeWithAI()">
+                    <UiLoading v-show="calculatingAIMerge" class="mr-1 scale-75"></UiLoading>
+                    <MergeIcon v-show="!calculatingAIMerge" class="w-4 h-4 mr-1 text-blue-500" />
                     Merge with AI
                 </UiButton>
 
+                <UiButton @click="mergeCode()">
+                    <UiLoading v-show="calculatingMerge" class="mr-1 scale-75"></UiLoading>
+                    <MergeIcon v-show="!calculatingMerge" class="w-4 h-4 mr-1 text-red-500" />
+                    Merge
+                </UiButton>
+
                 <UiButton @click="solveManually()">
+                    <CodeBracketIcon class="w-4 h-4 mr-1 stroke-2 text-red-500" />
                     Solve manually
                 </UiButton>
 
-                <UiButton>Ignore</UiButton>
-                
-                <UiButton>Overwrite</UiButton>
+                <UiButton>
+                    <ArrowDownTrayIcon class="w-4 h-4 mr-1 stroke-2 text-red-500" />
+                    Overwrite
+                </UiButton>
+
+                <UiButton>
+                    <NoSymbolIcon class="w-4 h-4 mr-1 stroke-2 text-red-500" />
+                    Ignore
+                </UiButton>
             </div>
             
             <div ref="diffViewerContainer" id="diffViewerContainer" class="border border-slate-700 rounded overflow-y-auto" style="height: calc(100vh - 210px)"></div>
@@ -162,29 +193,36 @@
         title="Resulting Code"
         :show="showingResultModal"
         @close="closeResultModal()"
-        width="750px"
+        width="calc(100vw - 50px)"
+        height="calc(100vh - 50px)"
     >
-        <highlightjs language="php" :code="resultCode" />
+        <BasicEditor v-model="resultCode" />
 
         <template #footer>
             <div class="flex justify-end p-2">
-                <UiButton @click="solveConflict()">Save</UiButton>
+                <UiButton @click="solveConflict()">
+                    <CheckCircleIcon class="w-4 h-4 mr-1 text-green-500" />
+                    Accept
+                </UiButton>
             </div>
         </template>
     </UiModal>
 
     <UiModal
         title="Edit Code"
-        :show="showingManualModal"
-        @close="closeManualModal()"
-        width="1000px"
-        height="600px"
+        :show="showingEditorModal"
+        @close="closeEditorModal()"
+        width="calc(100vw - 50px)"
+        height="calc(100vh - 50px)"
     >
-        <textarea class="w-full bg-slate-900 border-none h-full font-mono" v-model="resultCode" />
+        <BasicEditor v-model="resultCode" />
 
         <template #footer>
             <div class="flex justify-end p-2">
-                <UiButton @click="solveConflict()">Save</UiButton>
+                <UiButton @click="solveConflict()">
+                    <CheckCircleIcon class="w-4 h-4 mr-1 text-green-500" />
+                    Accept
+                </UiButton>
             </div>
         </template>
     </UiModal>

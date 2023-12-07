@@ -8,6 +8,7 @@ import RenderableFile from "../common/models/RenderableFile"
 import Terminal from "./base/Terminal"
 import ProjectPathResolver from "@Common/services/ProjectPathResolver"
 import ConflictManager from "./services/ConflictManager"
+import PHPMerger from "./services/PHPMerger"
 
 export function HandleIpcMessages() {
     ipcMain.handle("confirm", (event, message: string) => {
@@ -258,6 +259,17 @@ export function HandleIpcMessages() {
                 completeDestination = path.join(ProjectPathResolver.getPath(), destination)
 
             return FileSystem.copyFolderIfNotExists(completePath, completeDestination)
+        })
+    })
+
+    ipcMain.handle("php:file:merge", (event, relativePath) => {
+        const project = Project.find(1)
+        if(!project) return null
+
+        return handleError(event, () => {
+            const phpMerger = new PHPMerger(project, relativePath)
+
+            return phpMerger.merge()
         })
     })
 }

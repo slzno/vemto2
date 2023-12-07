@@ -104,4 +104,7 @@ contextBridge.exposeInMainWorld("api", {
     copyInternalFolderIfNotExists: (path: string, destination: string) => {
         return ipcRenderer.invoke("folder:internal:copy:if-not-exists", path, destination)
     },
+    mergePHPFile: (relativePath: string) => {
+        return ipcRenderer.invoke("php:file:merge", relativePath)
+    },
 })

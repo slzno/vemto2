@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref, defineProps, onMounted, toRef, Ref, defineEmits } from "vue"
+    import { ref, defineProps, onMounted, computed, defineEmits } from "vue"
     import * as monaco from "monaco-editor"
     import { BuiltinTheme } from "monaco-editor"
     import editorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker"
@@ -9,11 +9,6 @@
     import tsWorker from "monaco-editor/esm/vs/language/typescript/ts.worker?worker"
 
     const props = defineProps({
-        content: {
-            type: String,
-            required: true,
-        },
-
         modelValue: {
             type: String,
             required: true,
@@ -21,8 +16,16 @@
     })
 
     const editorElement = ref(null),
-        content = toRef(props, "content") as Ref<string>,
-        emit = defineEmits(["update:modelValue", "change"])
+        emit = defineEmits(["update:modelValue", "change"]),
+        localValue = computed({
+            get(): any {
+                return props.modelValue
+            },
+            
+            set(value: any): void {
+                emit('update:modelValue', value)
+            },
+        })
 
     onMounted(async () => {
         createEditor()
@@ -52,24 +55,26 @@
             inherit: true,
             rules: [],
             colors: {
-                "editor.background": "#0f172a",
+                "editor.background": "#091023",
             },
         }
 
         monaco.editor.defineTheme("vemto-dark", theme)
 
         const editor = monaco.editor.create(editorElement.value, {
-            value: content.value,
+            value: localValue.value,
             language: "php",
             automaticLayout: true,
             minimap: {
                 enabled: false,
             },
             theme: "vemto-dark",
+            fontSize: 16,
         })
 
         editor.getModel()?.onDidChangeContent(() => {
-            emit("update:modelValue", editor.getValue())
+            localValue.value = editor.getValue()
+            emit("change", localValue.value)
         })
     }
 </script>

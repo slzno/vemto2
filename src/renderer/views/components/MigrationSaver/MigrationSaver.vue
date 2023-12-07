@@ -16,7 +16,7 @@
     import UiLoading from "@Renderer/components/ui/UiLoading.vue"
     import RenderableModel from "@Renderer/codegen/sequential/services/model/RenderableModel"
     import Main from "@Renderer/services/wrappers/Main"
-import ConflictsSolver from "../CodeQueue/ConflictsSolver.vue"
+    import ConflictsSolver from "../CodeQueue/ConflictsSolver.vue"
 
     const projectStore = useProjectStore(),
         showingModal = ref(false),
@@ -122,10 +122,12 @@ import ConflictsSolver from "../CodeQueue/ConflictsSolver.vue"
         removedModels.value = modelsChangesCalculator.getRemovedModels()
 
         for (const change of allChanges) {
-            const model = change.model
+            const model = change.model,
+                renderable = new RenderableModel(model)
 
             modelsSettings[model.id] = {
                 instance: model,
+                renderable: renderable,
                 hasConflicts: false,
                 currentModelContent: "",
                 newModelContent: "",
@@ -520,6 +522,7 @@ import ConflictsSolver from "../CodeQueue/ConflictsSolver.vue"
                                 <div class="flex" v-if="selectedModelSettings.hasConflicts">
                                     Has conflict
                                     <ConflictsSolver 
+                                        :relativeFilePath="selectedModelSettings.renderable.getFullFilePath()"
                                         :currentFileContent="selectedModelSettings.currentModelContent"
                                         :newFileContent="selectedModelSettings.newModelContent"
                                     />

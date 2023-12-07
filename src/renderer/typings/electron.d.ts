@@ -32,6 +32,7 @@ export default interface ElectronApi {
     readInternalFolder: (path: string, removeBasePath?: boolean) => Promise<string[]>,
     copyInternalFolderToProject: (path: string, destination: string) => Promise<void>,
     copyInternalFolderIfNotExists: (path: string, destination: string) => Promise<void>,
+    mergePHPFile: (relativePath: string) => Promise<any>,
 }
 
 declare global {
