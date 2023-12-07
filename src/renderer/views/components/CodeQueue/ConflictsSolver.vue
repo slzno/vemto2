@@ -12,7 +12,8 @@
     import { ArrowDownTrayIcon, CheckCircleIcon, CodeBracketIcon, NoSymbolIcon } from '@heroicons/vue/24/outline'
     import BasicEditor from '@Renderer/components/editors/BasicEditor.vue'
     import Main from '@Renderer/services/wrappers/Main'
-import UiConfirm from '@Renderer/components/ui/UiConfirm.vue'
+    import UiConfirm from '@Renderer/components/ui/UiConfirm.vue'
+import UiWarning from '@Renderer/components/ui/UiWarning.vue'
 
     const showingModal = ref(false),
         showingResultModal = ref(false),
@@ -20,12 +21,13 @@ import UiConfirm from '@Renderer/components/ui/UiConfirm.vue'
         calculatingMerge = ref(false),
         calculatingAIMerge = ref(false),
         resultCode = ref('') as Ref<string>,
-        confirmOverwriteDialog = ref(null)
+        confirmOverwriteDialog = ref(null),
+        confirmIgnoreDialog = ref(null)
 
     const diffViewerContainer = ref(null)
 
     // get props, including file that is a RenderableFile
-    const emit = defineEmits(["solved"]), 
+    const emit = defineEmits(["solved", "ignored"]), 
         props = defineProps<{
             relativeFilePath: string,
             currentFileContent: string,
@@ -148,6 +150,13 @@ import UiConfirm from '@Renderer/components/ui/UiConfirm.vue'
 
         solveConflictWithContent(newFileContent.value)
     }
+
+    const ignoreFile = async () => {
+        const confirmed = await confirmIgnoreDialog.value.confirm()
+        if(!confirmed) return
+
+        emit('ignored')
+    }
 </script>
 
 <template>
@@ -155,12 +164,19 @@ import UiConfirm from '@Renderer/components/ui/UiConfirm.vue'
         class="flex items-center justify-between"
         @click="show()"
     >
-        <CodeBracketIcon class="w-4 h-4 mr-1 text-orange-500" />
+        <CodeBracketIcon class="w-4 h-4 mr-1 stroke-2 text-red-500" />
         Solve Conflicts
     </UiButton>
 
     <UiConfirm ref="confirmOverwriteDialog" title="Overwrite file content">
-        Are you sure you want to overwrite the file content?
+        Are you sure you want to overwrite the current content with the generated code?
+    </UiConfirm>
+
+    <UiConfirm ref="confirmIgnoreDialog" title="Ignore file">
+        Are you sure you want to ignore this file?
+        <UiWarning class="mt-2">
+            All future changes to this file will be ignored (you can undo this behavior in the Ignored Files screen)
+        </UiWarning>
     </UiConfirm>
 
     <UiModal
@@ -194,7 +210,7 @@ import UiConfirm from '@Renderer/components/ui/UiConfirm.vue'
                     Overwrite
                 </UiButton>
 
-                <UiButton>
+                <UiButton @click="ignoreFile()">
                     <NoSymbolIcon class="w-4 h-4 mr-1 stroke-2 text-red-500" />
                     Ignore
                 </UiButton>

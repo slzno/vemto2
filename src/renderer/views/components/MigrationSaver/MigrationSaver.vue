@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
-    import { ArrowDownTrayIcon, ArrowRightIcon, ArrowUturnDownIcon, CircleStackIcon, DocumentIcon, MinusIcon, PlusIcon, TableCellsIcon, TrashIcon } from "@heroicons/vue/24/outline"
+    import { ArrowDownOnSquareIcon, ArrowDownTrayIcon, ArrowPathIcon, ArrowRightIcon, ArrowUturnDownIcon, CircleStackIcon, DocumentIcon, MinusIcon, PlusIcon, TableCellsIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import UiModal from "@Renderer/components/ui/UiModal.vue"
     import { Ref, computed, onMounted, onUnmounted, reactive, ref, watch } from "vue"
@@ -519,15 +519,17 @@
                             class="bg-slate-800 w-full h-full overflow-y-scroll"
                         >
                             <div class="p-2 flex-grow space-y-2">
-                                <div class="flex" v-if="selectedModelSettings.hasConflicts">
-                                    Has conflict
+                                <div class="flex justify-end space-x-0.5" v-if="selectedModelSettings.hasConflicts">
                                     <ConflictsSolver 
                                         :relativeFilePath="selectedModelSettings.renderable.getFullFilePath()"
                                         :currentFileContent="selectedModelSettings.currentModelContent"
                                         :newFileContent="selectedModelSettings.newModelContent"
                                         @solved="modelConflictSolved"
                                     />
-                                    <UiButton>Reset</UiButton>
+                                    <UiButton>
+                                        <ArrowPathIcon class="w-4 h-4 mr-1 stroke-2 text-red-500" />
+                                        Reset
+                                    </UiButton>
                                 </div>
                                 <highlightjs class="h-full" language="php" :code="selectedModelSettings.newModelContent" />
                             </div>
@@ -542,7 +544,10 @@
                                 <UiLoading></UiLoading> 
                                 <div>Saving...</div>
                             </div>
-                            <div v-else>Save</div>
+                            <div class="flex items-center" v-else>
+                                <ArrowDownTrayIcon class="w-4 h-4 mr-1 stroke-2 text-red-500" />
+                                Save changes to disk
+                            </div>
                         </UiButton>
                     </div>
                 </template>
