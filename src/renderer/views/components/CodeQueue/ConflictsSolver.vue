@@ -12,13 +12,15 @@
     import { ArrowDownTrayIcon, CheckCircleIcon, CodeBracketIcon, NoSymbolIcon } from '@heroicons/vue/24/outline'
     import BasicEditor from '@Renderer/components/editors/BasicEditor.vue'
     import Main from '@Renderer/services/wrappers/Main'
+import UiConfirm from '@Renderer/components/ui/UiConfirm.vue'
 
     const showingModal = ref(false),
         showingResultModal = ref(false),
         showingEditorModal = ref(false),
         calculatingMerge = ref(false),
         calculatingAIMerge = ref(false),
-        resultCode = ref('') as Ref<string>
+        resultCode = ref('') as Ref<string>,
+        confirmOverwriteDialog = ref(null)
 
     const diffViewerContainer = ref(null)
 
@@ -66,8 +68,6 @@
 
         const mergedFile = await Main.API.mergePHPFile(relativeFilePath.value)
 
-        console.log(mergedFile)
-
         const resultingFile = await Main.API.readProjectFile(mergedFile.file.relativePath)
 
         resultCode.value = resultingFile
@@ -106,14 +106,18 @@
 
     const solveConflict = async () => {
         try {
-
-            closeResultModal()
-            closeEditorModal()
-            
-            emit('solved', resultCode.value)
+            solveConflictWithContent(resultCode.value)
         } catch (error) {
             console.error(error)
         }
+    }
+
+    const solveConflictWithContent = async (content) => {
+        closeResultModal()
+        closeEditorModal()
+        close()
+        
+        emit('solved', content)
     }
 
     const showResultModal = () => {
@@ -137,6 +141,13 @@
     const closeEditorModal = () => {
         showingEditorModal.value = false
     }
+
+    const overwriteFile = async () => {
+        const confirmed = await confirmOverwriteDialog.value.confirm()
+        if(!confirmed) return
+
+        solveConflictWithContent(newFileContent.value)
+    }
 </script>
 
 <template>
@@ -147,6 +158,10 @@
         <CodeBracketIcon class="w-4 h-4 mr-1 text-orange-500" />
         Solve Conflicts
     </UiButton>
+
+    <UiConfirm ref="confirmOverwriteDialog" title="Overwrite file content">
+        Are you sure you want to overwrite the file content?
+    </UiConfirm>
 
     <UiModal
         title="Solve Conflicts"
@@ -174,7 +189,7 @@
                     Solve manually
                 </UiButton>
 
-                <UiButton>
+                <UiButton @click="overwriteFile()">
                     <ArrowDownTrayIcon class="w-4 h-4 mr-1 stroke-2 text-red-500" />
                     Overwrite
                 </UiButton>

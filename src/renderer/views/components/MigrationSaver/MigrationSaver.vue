@@ -254,8 +254,8 @@
 
     }
 
-    const solveConflicts = async () => {
-        
+    const modelConflictSolved = async (content) => {
+        console.log(content)
     }
 
     const undoTableChanges = async (table: Table) => {
@@ -525,8 +525,9 @@
                                         :relativeFilePath="selectedModelSettings.renderable.getFullFilePath()"
                                         :currentFileContent="selectedModelSettings.currentModelContent"
                                         :newFileContent="selectedModelSettings.newModelContent"
+                                        @solved="modelConflictSolved"
                                     />
-                                    <UiButton @click="solveConflicts">Reset</UiButton>
+                                    <UiButton>Reset</UiButton>
                                 </div>
                                 <highlightjs class="h-full" language="php" :code="selectedModelSettings.newModelContent" />
                             </div>

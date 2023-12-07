@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { toRef, useSlots } from "vue"
+    import { toRef, useSlots, onMounted, defineEmits } from "vue"
     import { XMarkIcon } from "@heroicons/vue/24/outline"
 
     const props = defineProps({
@@ -25,7 +25,17 @@
 
     const show = toRef(props, "show"),
         onTopOfEverything = toRef(props, "onTopOfEverything"),
+        emit = defineEmits(["close"]),
         slots = useSlots()
+
+    onMounted(() => {
+        // window.addEventListener("keydown", (e) => {
+        //     console.log("escape")
+        //     if (e.key === "Escape") {
+        //         if (show.value) emit("close")
+        //     }
+        // })
+    })
 </script>
 
 <template>
@@ -39,6 +49,7 @@
         >
             
             <div
+                @keydown.escape="$emit('close')"
                 style="z-index: 70;"
                 :style="onTopOfEverything ? 'z-index: 10000 !important' : ''"
                 :class="{
