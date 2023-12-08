@@ -14,7 +14,7 @@
     import UiSelect from '@Renderer/components/ui/UiSelect.vue'
     import HasManyDetail from '@Common/models/crud/HasManyDetail'
     import { defineProps, ref, toRef, onMounted, reactive } from 'vue'
-import Relationship from '@Common/models/Relationship'
+    import Relationship from '@Common/models/Relationship'
 
     const props = defineProps({
         crud: {

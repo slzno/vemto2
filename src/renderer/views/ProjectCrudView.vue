@@ -8,7 +8,8 @@
     import UiTabs from '@Renderer/components/ui/UiTabs.vue'
     import UiSelect from '@Renderer/components/ui/UiSelect.vue'
     import CrudLogic from './components/ProjectCrud/CrudLogic.vue'
-    import IndexView from './components/ProjectCrud/Form/IndexView.vue'
+    import CrudForm from './components/ProjectCrud/Form/CrudForm.vue'
+    import CrudValidation from './components/ProjectCrud/Validation/CrudValidation.vue'
 
     const projectStore = useProjectStore()
 
@@ -46,29 +47,11 @@
             />
 
             <section v-if="selectedTab === 'form'">
-                <IndexView :crud="crud" />
+                <CrudForm :crud="crud" />
             </section>
 
             <section class="flex flex-col w-full h-screen space-y-4 mt-2 px-2" v-if="selectedTab === 'validation'">
-                <div>
-                    <table>
-                        <tr>
-                            <th></th>
-                            <th>Creation Validation</th>
-                            <th>Update Validation</th>
-                        </tr>
-
-                        <tr v-for="input in crud.inputs" :key="input.id">
-                            <td>{{ input.name }}</td>
-                            <td>
-                                {{ input.creationRules }}
-                            </td>
-                            <td>
-                                {{ input.updateRules }}
-                            </td>
-                        </tr>
-                    </table>
-                </div>
+                <CrudValidation :crud="crud" />
             </section>
 
             <section v-if="selectedTab === 'logic'">
