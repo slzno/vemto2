@@ -39,24 +39,32 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     /**
      * Laravel related properties
      */
-    casts: any
-
-    fillable: string[]
-    fillableColumns: Column[]
-
-    dates: string[]
-    hidden: string[]
-    appends: string[]
     methods: string[]
 
+    hasGuarded: boolean
     guarded: string[]
     guardedColumns: Column[]
 
-    hasGuarded: boolean
-    hasHidden: boolean
     hasFillable: boolean
+    fillable: string[]
+    fillableColumns: Column[]
+
+    hasHidden: boolean
+    hidden: string[]
+    hiddenColumns: Column[]
+
+    dates: string[]
+    datesColumns: Column[]
+
+    appends: string[]
+    appendsColumns: Column[]
+
+    casts: any
+    castsColumns: Column[]
+
     hasTimestamps: boolean
     hasSoftDeletes: boolean
+
     isAuthenticatable: boolean
 
     relationships() {

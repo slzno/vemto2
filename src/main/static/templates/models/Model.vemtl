@@ -46,6 +46,39 @@ class <$ this.model.name $> extends <$ extendsFrom $>
     ];
     <% } %>
 
+    <% if(this.model.hidden.length) { %>
+    protected $hidden = [
+        <% for(let column of this.model.hidden) { %>
+        '<$ column $>',
+        <% } %>
+    ];
+    <% } %>
+
+    <% if(this.model.appends.length) { %>
+    protected $appends = [
+        <% for(let column of this.model.appends) { %>
+        '<$ column $>',
+        <% } %>
+    ];
+    <% } %>
+
+    <% if(this.model.dates.length) { %>
+    protected $dates = [
+        <% for(let column of this.model.dates) { %>
+        '<$ column $>',
+        <% } %>
+    ];
+    <% } %>
+
+    <% const castsColumns = Object.keys(this.model.casts) %>
+    <% if(castsColumns.length) { %>
+    protected $casts = [
+        <% for(let column of castsColumns) { %>
+        '<$ column $>' => '<$ this.model.casts[column] $>',
+        <% } %>
+    ];
+    <% } %>
+
     <% if(this.model.ownRelationships.length) { %>
         <# Relationships #>
         <% for (let relationship of this.model.ownRelationships) { %>
