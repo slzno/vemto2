@@ -131,11 +131,15 @@
                 hasConflicts: false,
                 currentModelContent: "",
                 newModelContent: "",
-                acceptedModelContent: null,
+                acceptedModelContent: "",
             }
 
             await loadModelContent(model)
         }
+    }
+
+    const modelHasConflicts = (model: Model) => {
+        return modelsSettings[model.id].hasConflicts
     }
 
     const resetModelsSettings = () => {
@@ -242,20 +246,22 @@
             newModelContent = await new RenderableModel(model).compileWithErrorThreatment()
 
         modelSettings.newModelContent = newModelContent
+        modelSettings.acceptedModelContent = newModelContent
         modelSettings.currentModelContent = currentModelContent
 
         const hasConflicts = await Main.API.fileHasConflicts(modelPath, newModelContent)
         modelSettings.hasConflicts = hasConflicts
+    }
 
-        // 2 - Se tiver conflitos, mostrar a opção para tratar conflitos
-        // 3 - na modal de conflitos, oferecer opções para tratar e resolver os conflitos
-        // 4 - ao gravar o model, precisa chamar a função adequada que o salva e seta o previous-generated-content
-        // 5 - salvar na RenderableQueue já com o estado Rendered (sem necessidade de gerar novamente)
-
+    const resetModel = async () => {
+        loadModelContent(selectedModel.value)
     }
 
     const modelConflictSolved = async (content) => {
         console.log(content)
+
+        selectedModelSettings.value.acceptedModelContent = content
+        selectedModelSettings.value.hasConflicts = false
     }
 
     const undoTableChanges = async (table: Table) => {
@@ -438,6 +444,10 @@
                                 <div v-else>
                                     {{ model.name }}
                                 </div>
+
+                                <div class="text-xs text-slate-400" v-if="modelHasConflicts(model)">
+                                    (Conflicts)
+                                </div>
                             </div>
 <!-- 
                             <div title="Undo table changes">
@@ -519,19 +529,20 @@
                             class="bg-slate-800 w-full h-full overflow-y-scroll"
                         >
                             <div class="p-2 flex-grow space-y-2">
-                                <div class="flex justify-end space-x-0.5" v-if="selectedModelSettings.hasConflicts">
+                                <div class="flex justify-end space-x-0.5">
                                     <ConflictsSolver 
+                                        v-if="selectedModelSettings.hasConflicts"
                                         :relativeFilePath="selectedModelSettings.renderable.getFullFilePath()"
                                         :currentFileContent="selectedModelSettings.currentModelContent"
                                         :newFileContent="selectedModelSettings.newModelContent"
                                         @solved="modelConflictSolved"
                                     />
-                                    <UiButton>
+                                    <UiButton @click="resetModel()">
                                         <ArrowPathIcon class="w-4 h-4 mr-1 stroke-2 text-red-500" />
                                         Reset
                                     </UiButton>
                                 </div>
-                                <highlightjs class="h-full" language="php" :code="selectedModelSettings.newModelContent" />
+                                <highlightjs class="h-full" language="php" :code="selectedModelSettings.acceptedModelContent" />
                             </div>
                         </div>
                     </div>

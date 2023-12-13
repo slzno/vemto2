@@ -194,10 +194,10 @@ import UiWarning from '@Renderer/components/ui/UiWarning.vue'
                     Merge with AI
                 </UiButton>
 
-                <UiButton @click="mergeCode()">
+                <UiButton title="Merge is currently in Alpha and may have weird results. If you need better results, use Merge with AI" @click="mergeCode()">
                     <UiLoading v-show="calculatingMerge" class="mr-1 scale-75"></UiLoading>
                     <MergeIcon v-show="!calculatingMerge" class="w-4 h-4 mr-1 text-red-500" />
-                    Merge
+                    Merge&nbsp;<small>(Alpha)</small>
                 </UiButton>
 
                 <UiButton @click="solveManually()">
