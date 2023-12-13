@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref, toRef, nextTick, Ref, defineEmits } from 'vue'
+    import { ref, toRef, nextTick, Ref, defineEmits, defineExpose } from 'vue'
     import UiModal from '@Renderer/components/ui/UiModal.vue'
     import UiButton from '@Renderer/components/ui/UiButton.vue'
     import UiLoading from '@Renderer/components/ui/UiLoading.vue'
@@ -13,7 +13,7 @@
     import BasicEditor from '@Renderer/components/editors/BasicEditor.vue'
     import Main from '@Renderer/services/wrappers/Main'
     import UiConfirm from '@Renderer/components/ui/UiConfirm.vue'
-import UiWarning from '@Renderer/components/ui/UiWarning.vue'
+    import UiWarning from '@Renderer/components/ui/UiWarning.vue'
 
     const showingModal = ref(false),
         showingResultModal = ref(false),
@@ -49,6 +49,11 @@ import UiWarning from '@Renderer/components/ui/UiWarning.vue'
     const close = () => {
         showingModal.value = false
     }
+
+    defineExpose({
+        show,
+        close,
+    })
 
     const readConflicts = () => {
         const diff = createTwoFilesPatch('01', '02', currentFileContent.value, newFileContent.value)
@@ -160,14 +165,6 @@ import UiWarning from '@Renderer/components/ui/UiWarning.vue'
 </script>
 
 <template>
-    <UiButton
-        class="flex items-center justify-between"
-        @click="show()"
-    >
-        <CodeBracketIcon class="w-4 h-4 mr-1 stroke-2 text-red-500" />
-        Solve Conflicts
-    </UiButton>
-
     <UiConfirm ref="confirmOverwriteDialog" title="Overwrite file content">
         Are you sure you want to overwrite the current content with the generated code?
     </UiConfirm>

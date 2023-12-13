@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
-    import { ArrowDownOnSquareIcon, ArrowDownTrayIcon, ArrowPathIcon, ArrowRightIcon, ArrowUturnDownIcon, CircleStackIcon, DocumentIcon, MinusIcon, PlusIcon, TableCellsIcon, TrashIcon } from "@heroicons/vue/24/outline"
+    import { ArrowDownOnSquareIcon, ArrowDownTrayIcon, ArrowPathIcon, ArrowRightIcon, ArrowUturnDownIcon, CircleStackIcon, CodeBracketIcon, DocumentIcon, MinusIcon, PlusIcon, TableCellsIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import UiModal from "@Renderer/components/ui/UiModal.vue"
     import { Ref, computed, onMounted, onUnmounted, reactive, ref, watch } from "vue"
@@ -24,7 +24,8 @@
         confirmUndoDialog = ref(null),
         confirmDeleteDialog = ref(null),
         savingMigrations = ref(false),
-        currentReviewingMode = ref("table") as Ref<"table"|"model">
+        currentReviewingMode = ref("table") as Ref<"table"|"model">,
+        conflictsSolver = ref(null)
 
     const tablesSettings = reactive({} as any),
         modelsSettings = reactive({} as any)
@@ -530,8 +531,17 @@
                         >
                             <div class="p-2 flex-grow space-y-2">
                                 <div class="flex justify-end space-x-0.5">
+                                    <UiButton
+                                        :disabled="!selectedModelSettings.hasConflicts"
+                                        class="flex items-center justify-between"
+                                        @click="conflictsSolver.show()"
+                                    >
+                                        <CodeBracketIcon class="w-4 h-4 mr-1 stroke-2 text-red-500" />
+                                        Solve Conflicts
+                                    </UiButton>
+
                                     <ConflictsSolver 
-                                        v-if="selectedModelSettings.hasConflicts"
+                                        ref="conflictsSolver"
                                         :relativeFilePath="selectedModelSettings.renderable.getFullFilePath()"
                                         :currentFileContent="selectedModelSettings.currentModelContent"
                                         :newFileContent="selectedModelSettings.newModelContent"
