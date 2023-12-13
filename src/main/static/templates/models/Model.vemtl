@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 <% extendsFrom = 'Authenticatable' %>
 use Illuminate\Foundation\Auth\User as Authenticatable;
 <% } %>
+// hook:IMPORTS
 
 class <$ this.model.name $> extends <$ extendsFrom $> 
 {
@@ -21,7 +22,9 @@ class <$ this.model.name $> extends <$ extendsFrom $>
     <% if(this.model.hasSoftDeletes) { %>
     use SoftDeletes;
     <% } %>
+    // hook:TRAITS
 
+    // hook:BEFORE_VARIABLES
     <% if(this.model.tableNameIsDifferentFromDefault()) { %>
     protected $table = '<$ this.model.table.name $>';
     <% } %>
@@ -46,7 +49,7 @@ class <$ this.model.name $> extends <$ extendsFrom $>
     ];
     <% } %>
 
-    <% if(this.model.hidden.length) { %>
+    <% if(this.model.hidden && this.model.hidden.length) { %>
     protected $hidden = [
         <% for(let column of this.model.hidden) { %>
         '<$ column $>',
@@ -54,7 +57,7 @@ class <$ this.model.name $> extends <$ extendsFrom $>
     ];
     <% } %>
 
-    <% if(this.model.appends.length) { %>
+    <% if(this.model.appends && this.model.appends.length) { %>
     protected $appends = [
         <% for(let column of this.model.appends) { %>
         '<$ column $>',
@@ -62,7 +65,7 @@ class <$ this.model.name $> extends <$ extendsFrom $>
     ];
     <% } %>
 
-    <% if(this.model.dates.length) { %>
+    <% if(this.model.dates && this.model.dates.length) { %>
     protected $dates = [
         <% for(let column of this.model.dates) { %>
         '<$ column $>',
@@ -70,7 +73,7 @@ class <$ this.model.name $> extends <$ extendsFrom $>
     ];
     <% } %>
 
-    <% const castsColumns = Object.keys(this.model.casts) %>
+    <% const castsColumns = Object.keys(this.model.casts || {}) %>
     <% if(castsColumns.length) { %>
     protected $casts = [
         <% for(let column of castsColumns) { %>
@@ -78,7 +81,9 @@ class <$ this.model.name $> extends <$ extendsFrom $>
         <% } %>
     ];
     <% } %>
+    // hook:AFTER_VARIABLES
 
+    // hook:BEFORE_METHODS
     <% if(this.model.ownRelationships.length) { %>
         <# Relationships #>
         <% for (let relationship of this.model.ownRelationships) { %>
@@ -202,4 +207,6 @@ class <$ this.model.name $> extends <$ extendsFrom $>
     <% for(let relationship of this.model.getRenamedRelationships()) { %>
     // remove_method:<% relationship.getOldName() %>
     <% } %>
+
+    // hook:AFTER_METHODS
 }

@@ -35,6 +35,10 @@ export default class RenderableModel extends Renderable {
         return RenderableFileFormatter.PHP
     }
 
+    hooks() {
+        return this.model.getHooks('model')
+    }
+
     getData() {
         return {
             model: this.model,

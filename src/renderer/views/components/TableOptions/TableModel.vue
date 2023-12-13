@@ -14,6 +14,9 @@
     import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
     import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
+import UiModal from "@Renderer/components/ui/UiModal.vue"
+import RenderableModel from "@Renderer/codegen/sequential/services/model/RenderableModel"
+import HookEditor from "@Renderer/components/editors/HookEditor.vue"
 
     const onDevelopment = Main.API.onDevelopment()
 
@@ -28,21 +31,28 @@
         model = toRef(props, "model") as Ref<Model>,
         emit = defineEmits(['removeModel']),
         modelPluralReference = ref(null),
-        selectedTab = ref("data")
+        selectedTab = ref("data"),
+        showingHooksModal = ref(false),
+        modelHooksContent = ref("")
     
     let models: Ref<Array<Model>> = ref([])
 
     const tabs = [
         { label: "Data", value: "data" },
         { label: "Relationships", value: "relationships" },
-        { label: "Code", value: "code" },
+        { label: "Code Hooks", value: "code" },
         { label: "Settings", value: "settings" },
     ]
 
-    onMounted((): void => {
+    onMounted(async () => {
         const project = model.value.project
         
         models.value = project.models
+
+        const renderableModel = new RenderableModel(model.value)
+        renderableModel.disableHooks()
+
+        modelHooksContent.value = await renderableModel.compile()
     })
 
     const saveModelData = (nameWasChanged: boolean = false) => {
@@ -99,6 +109,11 @@
         })
     }
 
+    const showHooksModal = (): void => {
+        console.log('showing hooks modal')
+        showingHooksModal.value = true
+    }
+
     const log = (data: any): void => {
         console.log(data)
     }
@@ -118,10 +133,6 @@
         </div>
 
         <div v-show="selectedTab === 'data'">
-            <UiWarning class="mb-2" v-if="model.isNew()">
-                <span>This model was not saved to the filesystem yet. Please generate the code pressing F5 to save it</span>
-            </UiWarning>
-
             <div class="flex justify-between gap-2">
                 <UiText
                     v-model="model.namespace"
@@ -212,6 +223,30 @@
                 :model="model"
                 :models="models"
             />
+        </div>
+
+        <div v-show="selectedTab === 'code'">
+
+            <UiModal 
+                title="Edit Hooks"
+                width="1300px"
+                height="calc(100vh - 5rem)"
+                :show="showingHooksModal"
+                @close="showingHooksModal = false"
+            >
+                <HookEditor
+                    :content="modelHooksContent"
+                    :hooks="model.getHooks('model')"
+                    @hooksUpdated="hooks => model.saveHooks('model', hooks)"
+                />
+            </UiModal>
+
+            <div class="p-2 space-y-2">
+                <UiButton @click="showHooksModal()">Model</UiButton>
+                <UiButton>Policy</UiButton>
+                <UiButton>Seeder</UiButton>
+                <UiButton>Factory</UiButton>
+            </div>
         </div>
     </div>
 </template>

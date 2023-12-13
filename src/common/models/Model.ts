@@ -33,6 +33,7 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     createdFromInterface: boolean
     ownRelationships: Relationship[]
     relatedRelationships: Relationship[]
+    hooks: any
 
     pluralAndSingularAreSame: boolean
 
@@ -512,5 +513,20 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
 
     undoAllOwnRelationshipsChanges() {
         this.ownRelationships.forEach(rel => rel.undoChanges())
+    }
+
+    getHooks(type: string): any {
+        return this.hooks ? this.hooks[type] || {} : {}
+    }
+
+    getHookByName(type: string, name: string): any {
+        return this.getHooks(type)[name] || {}
+    }
+
+    saveHooks(type: string, hooks: any) {
+        this.hooks = this.hooks || {}
+        this.hooks[type] = hooks
+
+        this.save()
     }
 }

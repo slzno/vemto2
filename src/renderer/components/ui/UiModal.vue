@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { toRef, useSlots, onMounted, defineEmits } from "vue"
+    import { toRef, useSlots, onMounted, defineEmits, watch } from "vue"
     import { XMarkIcon } from "@heroicons/vue/24/outline"
 
     const props = defineProps({
@@ -25,8 +25,13 @@
 
     const show = toRef(props, "show"),
         onTopOfEverything = toRef(props, "onTopOfEverything"),
-        emit = defineEmits(["close"]),
+        emit = defineEmits(["show", "close"]),
         slots = useSlots()
+
+    // watch show prop and emit show event when it changes to true
+    watch(show, (value) => {
+        if (value) emit("show")
+    })
 
     onMounted(() => {
         // window.addEventListener("keydown", (e) => {

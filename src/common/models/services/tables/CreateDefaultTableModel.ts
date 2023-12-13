@@ -17,6 +17,7 @@ export default new class CreateDefaultTableModel {
             projectId: this.table.project.id,
             namespace: "App\\Models",
             hasGuarded: true,
+            hasTimestamps: true,
             guarded: []
         })
         

@@ -17,13 +17,15 @@
     import RenderableModel from "@Renderer/codegen/sequential/services/model/RenderableModel"
     import Main from "@Renderer/services/wrappers/Main"
     import ConflictsSolver from "../CodeQueue/ConflictsSolver.vue"
+    import Alert from "@Renderer/components/utils/Alert"
+    import InternalFiles from "@Renderer/util/InternalFiles"
 
     const projectStore = useProjectStore(),
         showingModal = ref(false),
         confirmSaveDialog = ref(null),
         confirmUndoDialog = ref(null),
         confirmDeleteDialog = ref(null),
-        savingMigrations = ref(false),
+        savingSchemaChanges = ref(false),
         currentReviewingMode = ref("table") as Ref<"table"|"model">,
         conflictsSolver = ref(null)
 
@@ -57,7 +59,7 @@
         if(!willShowModal) return
         
         await buildSettings()
-        await loadFirstTableMigrationContent()
+        await selectFirstTableOrModel()
 
         SchemaBuilder.disableSchemaChangesCheck()
     })
@@ -140,6 +142,8 @@
     }
 
     const modelHasConflicts = (model: Model) => {
+        if(!modelsSettings[model.id]) return false
+
         return modelsSettings[model.id].hasConflicts
     }
 
@@ -177,12 +181,34 @@
         await loadModelContent(model)
     }
 
-    const saveMigrations = async () => {
+    const saveSchemaChanges = async () => {
+        if(hasConflicts()) {
+            Alert.error("There are conflicts in your files. Please solve them before saving.")
+            return
+        }
+
         const confirmed = await confirmSaveDialog.value.confirm()
         if(!confirmed) return
 
-        savingMigrations.value = true
+        savingSchemaChanges.value = true
 
+        await saveMigrations()
+        await saveModels()
+
+        await readSchema()
+
+        savingSchemaChanges.value = false
+
+        close()
+    }
+
+    const hasConflicts = () => {
+        return Object.values(modelsSettings).some((modelSettings: any) => {
+            return modelSettings.hasConflicts
+        })
+    }
+
+    const saveMigrations = async () => {
         const tables: any[] = Object.values(tablesSettings)
 
         for(const table of tables) {
@@ -196,12 +222,17 @@
                 await migrationCreator.run()
             }
         }
+    }
 
-        await readSchema()
+    const saveModels = async () => {
+        const models: any[] = Object.values(modelsSettings)
 
-        savingMigrations.value = false
+        for(const model of models) {
+            const renderable = model.renderable
 
-        close()
+            await InternalFiles.writeGeneratedFile(renderable.getFullFilePath(), model.newModelContent)
+            await Main.API.writeProjectFile(renderable.getFullFilePath(), model.acceptedModelContent)
+        }
     }
 
     const readSchema = async () => {
@@ -210,12 +241,24 @@
         const schemaBuilder = new SchemaBuilder(projectStore.project)
 
         await schemaBuilder.buildTables()
+        await schemaBuilder.buildModels()
     }
 
-    const loadFirstTableMigrationContent = async () => {
-        const firstTable = Object.keys(tablesSettings)[0]
+    const selectFirstTableOrModel = async () => {
+        const firstTable = Object.keys(tablesSettings)[0],
+            firstModel = Object.keys(modelsSettings)[0]
 
-        await loadMigrationContent(firstTable)
+        if(firstTable) {
+            await loadMigrationContent(firstTable)
+            await selectTable(tablesSettings[firstTable].instance, "created")
+            return
+        }
+
+        if(firstModel) {
+            await loadModelContent(modelsSettings[firstModel].instance)
+            await selectModel(modelsSettings[firstModel].instance, "created")
+            return
+        }
     }
 
     const loadMigrationContent = async (tableName: any) => {
@@ -259,8 +302,6 @@
     }
 
     const modelConflictSolved = async (content) => {
-        console.log(content)
-
         selectedModelSettings.value.acceptedModelContent = content
         selectedModelSettings.value.hasConflicts = false
     }
@@ -283,6 +324,9 @@
 
     const close = () => {
         showingModal.value = false
+        currentReviewingMode.value = "table"
+        selectedTable.value = null
+        selectedModel.value = null
 
         SchemaBuilder.enableSchemaChangesCheck()
     }
@@ -337,7 +381,7 @@
             >
                 <section
                     :class="{
-                        'opacity-30 pointer-events-none': savingMigrations,
+                        'opacity-30 pointer-events-none': savingSchemaChanges,
                     }"
                     class="flex h-full"
                 >
@@ -560,14 +604,14 @@
 
                 <template #footer>
                     <div class="flex justify-end p-2">
-                        <UiButton :disabled="savingMigrations" @click="saveMigrations">
-                            <div class="flex space-x-1" v-if="savingMigrations">
+                        <UiButton :disabled="savingSchemaChanges" @click="saveSchemaChanges">
+                            <div class="flex space-x-1" v-if="savingSchemaChanges">
                                 <UiLoading></UiLoading> 
                                 <div>Saving...</div>
                             </div>
                             <div class="flex items-center" v-else>
                                 <ArrowDownTrayIcon class="w-4 h-4 mr-1 stroke-2 text-red-500" />
-                                Save changes to disk
+                                Save changes
                             </div>
                         </UiButton>
                     </div>
