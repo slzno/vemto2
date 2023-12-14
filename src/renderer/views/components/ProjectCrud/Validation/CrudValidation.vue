@@ -1,12 +1,15 @@
 <script lang="ts" setup>
     import Vue3TagsInput from 'vue3-tags-input';
-    import Input from '@Common/models/crud/Input';
+    import Input, { InputValidationRule, InputValidationRuleType } from '@Common/models/crud/Input';
     import { defineProps, toRef, onMounted, ref } from 'vue';
+    import ValidationTypes from '@Common/models/static/ValidationTypes';
+    import Main from '@Renderer/services/wrappers/Main';
 
     const props = defineProps(['crud']),
         crud = toRef(props, 'crud'),
         creationValidations = ref({}),
-        updateValidations = ref({})
+        updateValidations = ref({}),
+        validationTypes = ValidationTypes.get();
 
     const loadCrudValidations = () => {
         crud.value.inputs.forEach((input: Input) => {
@@ -15,7 +18,7 @@
         })
     }
 
-    const tagsFromValidation = (input: Input, type = 'creationRules') => {
+    const tagsFromValidation = (input: Input, type: string = 'creationRules') => {
         let validation = input[type]
 
         if (!validation) return []
@@ -26,30 +29,36 @@
         return validation.filter((item: any) => item.length > 0)
     }
 
-    const onCreationRuleManuallyChanged = (event: any, index: number, input: Input) => {
-        const value = event.target.innerText
-
-        if (!value.length) {
-            delete creationValidations.value[input.id][index]
-            return
-        }
-
-        creationValidations.value[input.id][index] = value
+    const openURL = (url: string) => {
+        Main.API.openURL(url)
     }
 
-    const onUpdateRuleManuallyChanged = (event: any, index: number, input: Input) => {
-        const value = event.target.innerText
+    const saveRules = (rules: any, input: Input, type: string = 'creationRules') => {
+        input[type] = []
 
-        if (!value.length) {
-            delete updateValidations.value[input.id][index]
-            return
-        }
+        rules.forEach((rule: string) => {
+            input[type].push(
+                { type: InputValidationRuleType.TEXTUAL, value: rule } as InputValidationRule
+            )
+        })
 
-        updateValidations.value[input.id][index] = value
+        console.log('oi')
+        input.save()
+    }
+
+    const filteredValidations = (input: Input, type = 'creationRules') => {
+        const types = input[type].map(
+            (rule: any) => rule.value
+        )
+
+        return validationTypes.filter(
+            (item: any) => !types.includes(item)
+        )
     }
 
     onMounted(() => {
         loadCrudValidations()
+        console.log(filteredValidations(crud.value.inputs[0]))
     })
 </script>
 
@@ -64,38 +73,54 @@
 
             <tr v-for="input in crud.inputs" :key="input.id">
                 <td class="px-4">{{ input.name }}</td>
-                <td class="px-4">
-                    <Vue3TagsInput
-                        :tags="creationValidations[input.id]"
-                        :allow-edit-tags="true"
-                        placeholder="Add validation rule"
-                        class="p-px flex"
-                    >
-                        <template #item="{ name, index }">
-                            <span
-                                contenteditable="true"
-                                @click.stop
-                                class="bg-transparent"
-                                :select="true"
-                                :select-items="[{ label: 'required', value: 'required' }, { label: 'min:3', value: 'min:3' }, { label: 'max:255', value: 'max:255' }]"
-                                @input="$event => onCreationRuleManuallyChanged($event, index, input)"
-                            >{{ name }}</span>
-                        </template>
-                    </Vue3TagsInput>
+                <td class="px-4 w-2/4">
+                    <div>
+                        <Vue3TagsInput
+                            :tags="tagsFromValidation(input)"
+                            :add-tag-on-blur="true"
+                            placeholder="Add validation rule"
+                            class="p-px flex text-slate-800"
+                            @onTagsChanged="saveRules($event, input)"
+                            :select="true"
+                            :select-items="filteredValidations(input)"
+                        >
+                            <template #item="{ name }">
+                                <span
+                                    contenteditable="true"
+                                    @click.stop
+                                    class="bg-transparent"
+                                    spellcheck="false"
+                                >{{ name }}</span>
+                            </template>
+                            
+                            <template #select-item="item">
+                                <div>
+                                    <div class="text-xl">{{ item.text }}</div>
+                                    <div class="text-sm" v-if="item.description">{{ item.description }}</div>
+                                    <div class="text-sm">
+                                        <a :href="item.link" class="text-teal-500" @click.prevent.stop="openURL(item.link)">See more</a>
+                                    </div>
+                                </div>
+                            </template>
+                        </Vue3TagsInput>
+                    </div>
                 </td>
-                <td class="px-4">
+                <td class="px-4 w-2/4">
                     <Vue3TagsInput
-                        :tags="updateValidations[input.id]"
-                        :allow-edit-tags="true"
+                        :tags="tagsFromValidation(input, 'updateRules')"
+                        :add-tag-on-blur="true"
                         placeholder="Add validation rule"
-                        class="p-1 flex"
+                        class="p-1 flex flex-1"
+                        @onTagsChanged="saveRules($event, input, 'updateRules')"
+                        :select="true"
+                        :select-items="filteredValidations(input, 'updateRules')"
                     >
-                        <template #item="{ name, index }">
+                        <template #item="{ name }">
                             <span
                                 contenteditable="true"
                                 @click.stop
                                 class="bg-transparent"
-                                @input="$event => onUpdateRuleManuallyChanged($event, index, input)"
+                                spellcheck="false"
                             >{{ name }}</span>
                         </template>
                     </Vue3TagsInput>

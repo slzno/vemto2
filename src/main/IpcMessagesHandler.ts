@@ -248,4 +248,10 @@ export function HandleIpcMessages() {
             return FileSystem.copyFolderIfNotExists(completePath, completeDestination)
         })
     })
+
+    ipcMain.handle("open:url", (event, url) => {
+        return handleError(event, () => {
+            shell.openExternal(url)
+        })
+    })
 }

@@ -41,6 +41,10 @@ contextBridge.exposeInMainWorld("api", {
         return ipcRenderer.invoke("dialog:folder:open")
     },
 
+    openURL: (url: string) => {
+        return ipcRenderer.invoke("open:url", url)
+    },
+
     // Files Queue
     addFileToGenerationQueue: (filePath: string, content: string) => {
         return ipcRenderer.invoke("file-queue:add", filePath, content)
