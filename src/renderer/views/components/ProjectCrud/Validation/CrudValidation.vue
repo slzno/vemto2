@@ -42,7 +42,6 @@
             )
         })
 
-        console.log('oi')
         input.save()
     }
 
@@ -56,9 +55,24 @@
         )
     }
 
+    const saveSelectedRule = (rule: any, input: Input, type: string = 'creationRules') => {
+        input[type].push(
+            { type: InputValidationRuleType.TEXTUAL, value: rule.text } as InputValidationRule
+        )
+
+        input.save()
+    }
+
+    const removeSelectedRule = (rule: any, input: Input, type: string = 'creationRules') => {
+        input[type] = input[type].filter(
+            (item: any) => item.value !== rule.text
+        )
+
+        input.save()
+    }
+
     onMounted(() => {
         loadCrudValidations()
-        console.log(filteredValidations(crud.value.inputs[0]))
     })
 </script>
 
@@ -83,6 +97,8 @@
                             @onTagsChanged="saveRules($event, input)"
                             :select="true"
                             :select-items="filteredValidations(input)"
+                            @onSelect="saveSelectedRule($event, input)"
+                            @onSelectDuplicateTag="removeSelectedRule($event, input)"
                         >
                             <template #item="{ name }">
                                 <span
