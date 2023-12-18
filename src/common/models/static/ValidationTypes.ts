@@ -295,7 +295,7 @@ export default class ValidationTypes {
                 text: 'multiple_of:value',
                 description: 'The field under validation must be a multiple of value.',
                 link: 'https://laravel.com/docs/10.x/validation#rule-multiple-of'
-            }
+            },
             {
                 text: 'missing',
                 description: 'The field under validation must not be present in the input data.',

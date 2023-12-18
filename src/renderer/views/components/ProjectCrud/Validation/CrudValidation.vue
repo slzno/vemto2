@@ -142,7 +142,7 @@
                             :duplicate-select-item="false"
                             :select="true"
                             placeholder="Add validation rule"
-                            class="p-px flex dark:text-slate-200 dark:!bg-slate-800 dark:!border-slate-700 dark:!shadow-none"
+                            class="p-px flex dark:text-slate-200 dark:!bg-slate-950 dark:!border-slate-650 dark:!shadow-none"
                             :tags="tagsFromValidation(input)"
                             @onTagsChanged="saveCreationRules($event, input)"
                             :select-items="filteredCreationValidations(input)"
@@ -177,7 +177,7 @@
                         :duplicate-select-item="false"
                         :select="true"
                         placeholder="Add validation rule"
-                        class="p-px flex text-slate-200 !bg-slate-800 !border-slate-700"
+                        class="p-px flex text-slate-200 !bg-slate-950 !border-slate-650"
                         :tags="tagsFromValidation(input, 'updateRules')"
                         @onTagsChanged="saveUpdateRules($event, input)"
                         :select-items="filteredUpdateValidations(input)"
@@ -216,7 +216,7 @@
 }
 
 .v3ti .v3ti-tag .v3ti-remove-tag {
-    color: #000000;
+    color: #222;
     transition: color .3s;
 }
 
@@ -226,6 +226,7 @@
 
 .v3ti-context-menu {
     background: #1e293b !important; /* bg-slate-800 */
+    max-height: 300px !important;
 }
 
 .v3ti .v3ti-context-menu .v3ti-context-item:hover {
