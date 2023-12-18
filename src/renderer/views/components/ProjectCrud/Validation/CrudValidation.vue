@@ -78,7 +78,7 @@
 
         if(!inputValue?.length) return validations
 
-        return validations.filter((item: any) => item.text.includes(creationRuleInputs.value[input.id]))
+        return validations.filter((item: any) => item.text.includes(inputValue))
     }
 
     const saveCreationSelectedRule = (rule: any, input: Input) => {
@@ -142,7 +142,7 @@
                             :duplicate-select-item="false"
                             :select="true"
                             placeholder="Add validation rule"
-                            class="p-px flex text-slate-800"
+                            class="p-px flex dark:text-slate-200 dark:!bg-slate-800 dark:!border-slate-700 dark:!shadow-none"
                             :tags="tagsFromValidation(input)"
                             @onTagsChanged="saveCreationRules($event, input)"
                             :select-items="filteredCreationValidations(input)"
@@ -161,10 +161,10 @@
                             
                             <template #select-item="item">
                                 <div>
-                                    <div class="text-xl">{{ item.text }}</div>
-                                    <div class="text-sm" v-if="item.description">{{ item.description }}</div>
+                                    <div class="text-xl dark:text-slate-200">{{ item.text }}</div>
+                                    <div class="text-sm dark:text-slate-400" v-if="item.description">{{ item.description }}</div>
                                     <div class="text-sm">
-                                        <a :href="item.link" class="text-teal-500" @click.prevent.stop="openURL(item.link)">See more</a>
+                                        <a :href="item.link" class="text-red-500" @click.prevent.stop="openURL(item.link)">See more</a>
                                     </div>
                                 </div>
                             </template>
@@ -177,7 +177,7 @@
                         :duplicate-select-item="false"
                         :select="true"
                         placeholder="Add validation rule"
-                        class="p-px flex text-slate-800"
+                        class="p-px flex text-slate-200 !bg-slate-800 !border-slate-700"
                         :tags="tagsFromValidation(input, 'updateRules')"
                         @onTagsChanged="saveUpdateRules($event, input)"
                         :select-items="filteredUpdateValidations(input)"
@@ -196,10 +196,10 @@
                         
                         <template #select-item="item">
                             <div>
-                                <div class="text-xl">{{ item.text }}</div>
-                                <div class="text-sm" v-if="item.description">{{ item.description }}</div>
+                                <div class="text-xl dark:text-slate-200">{{ item.text }}</div>
+                                <div class="text-sm dark:text-slate-400" v-if="item.description">{{ item.description }}</div>
                                 <div class="text-sm">
-                                    <a :href="item.link" class="text-teal-500" @click.prevent.stop="openURL(item.link)">See more</a>
+                                    <a :href="item.link" class="text-red-500" @click.prevent.stop="openURL(item.link)">See more</a>
                                 </div>
                             </div>
                         </template>
@@ -222,5 +222,13 @@
 
 .v3ti .v3ti-tag .v3ti-remove-tag:hover {
     color: #ffffff;
+}
+
+.v3ti-context-menu {
+    background: #1e293b !important; /* bg-slate-800 */
+}
+
+.v3ti .v3ti-context-menu .v3ti-context-item:hover {
+    background: #334155 !important; /* bg-slate-700 */
 }
 </style>
