@@ -134,7 +134,7 @@
             </tr>
 
             <tr v-for="input in crud.inputs" :key="input.id">
-                <td class="px-4">{{ input.name }}</td>
+                <td class="px-4 py-3">{{ input.name }}</td>
                 <td class="px-4 w-2/4">
                     <div>
                         <Vue3TagsInput
