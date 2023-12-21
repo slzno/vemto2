@@ -31,7 +31,7 @@ class TestCase extends BaseTestCase {
         // get text betweeen VEMTO_JSON_RESPONSE_START( and )VEMTO_JSON_RESPONSE_END
         $data = preg_replace('/.*VEMTO_JSON_RESPONSE_START\(/', '', $data);
         $data = preg_replace('/\)VEMTO_JSON_RESPONSE_END.*/', '', $data);
-        $data = preg_replace('/\s+/', '', $data);
+        $data = trim($data);
 
         return json_decode($data);
     }

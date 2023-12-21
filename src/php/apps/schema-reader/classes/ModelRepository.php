@@ -14,7 +14,7 @@ class ModelRepository {
         foreach ($models as $model) {
             $reflection = new \ReflectionClass($model['class']);
             
-            $parentClass = self::getImportData($model, $reflection->getParentClass());
+            $parentClass = $reflection->getParentClass();
 
             $interfaces = $reflection->getInterfaces();
             // $interfaces = collect($interfaces)->filter(function ($interface) use ($parentClass) {
@@ -117,7 +117,7 @@ class ModelRepository {
                 'class' => $model['class'],
                 'namespace' => $reflection->getNamespaceName(),
                 'path' => $model['path'],
-                'parentClass' => $parentClass,
+                'parentClass' => self::buildImportStatement($model, $parentClass),
                 'interfaces' => collect($interfaces)->map(function ($interface) {
                     return $interface->name;
                 })->toArray(),
@@ -147,14 +147,26 @@ class ModelRepository {
         return $formattedModels;
     }
 
-    public static function getImportData($modelData, $import) {
+    public static function buildImportStatement(array $modelData, $import)
+    {
+        $importData = self::getImportData($modelData, $import);
+
+        if($importData['name'] === $importData['alias']) {
+            return sprintf("use %s", $importData['import']);
+        }
+        
+        return sprintf("use %s as %s", $importData['import'], $importData['alias']);
+    }
+
+    public static function getImportData(array $modelData, $import) {
         return [
             'import' => $import->name,
+            'name' => $import->getShortName(),
             'alias' => self::getAlias($modelData['fileContent'], $import),
         ];
     }
 
-    public static function getAlias($classContent, $import) {
+    public static function getAlias(string $classContent, $import) {
         $useStatement = $import->name;
         $alias = $import->getShortName();
     
