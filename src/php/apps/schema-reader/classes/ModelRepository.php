@@ -13,6 +13,20 @@ class ModelRepository {
 
         foreach ($models as $model) {
             $reflection = new \ReflectionClass($model['class']);
+            
+            $parentClass = self::getImportData($model, $reflection->getParentClass());
+
+            $interfaces = $reflection->getInterfaces();
+            // $interfaces = collect($interfaces)->filter(function ($interface) use ($parentClass) {
+            //     return ! $parentClass || ! $parentClass->implementsInterface($interface->name);
+            // })->values()->toArray();
+
+
+            $traits = $reflection->getTraits();
+            // $traits = collect($traits)->filter(function ($trait) use ($parentClass) {
+            //     return ! $parentClass || ! $parentClass->usesTrait($trait->name);
+            // })->values()->toArray();
+            
             $properties = $reflection->getDefaultProperties();
 
             $fillable = $properties['fillable'] ?? [];
@@ -103,6 +117,13 @@ class ModelRepository {
                 'class' => $model['class'],
                 'namespace' => $reflection->getNamespaceName(),
                 'path' => $model['path'],
+                'parentClass' => $parentClass,
+                'interfaces' => collect($interfaces)->map(function ($interface) {
+                    return $interface->name;
+                })->toArray(),
+                'traits' => collect($traits)->map(function ($trait) {
+                    return $trait->name;
+                })->toArray(),
                 'hasFillable' => $hasProperty('protected', 'fillable'),
                 'fillable' => $fillable,
                 'hasCasts' => $hasProperty('protected', 'casts'),
@@ -124,6 +145,29 @@ class ModelRepository {
         }
 
         return $formattedModels;
+    }
+
+    public static function getImportData($modelData, $import) {
+        return [
+            'import' => $import->name,
+            'alias' => self::getAlias($modelData['fileContent'], $import),
+        ];
+    }
+
+    public static function getAlias($classContent, $import) {
+        $useStatement = $import->name;
+        $alias = $import->getShortName();
+    
+        // Regex to find the use statement for the specified class/interface/trait
+        $pattern = '/use\s+' . preg_quote($useStatement, '/') . '\s*(?:as\s+(.*?))?\s*;/';
+        preg_match($pattern, $classContent, $matches);
+    
+        if (!empty($matches)) {
+            // If an alias is defined, use it; otherwise, use the last part of the use statement (class/interface/trait name)
+            $alias = isset($matches[1]) ? $matches[1] : basename(str_replace('\\', '/', $useStatement));
+        }
+    
+        return $alias;
     }
 
     public static function getModels() {
@@ -150,6 +194,7 @@ class ModelRepository {
                         'path' => $path,
                         'fullPath' => $item->getPathname(),
                         'fileName' => $item->getFilename(),
+                        'fileContent' => file_get_contents($item->getPathname()),
                     ];
                 })
                 ->filter(function ($classData) {
