@@ -8,15 +8,12 @@
     import Main from "@Renderer/services/wrappers/Main"
     import Column from "@Renderer/../common/models/Column"
     import TableModelRelationships from './TableModelRelationships.vue'
-    import UiWarning from "@Renderer/components/ui/UiWarning.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
     import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
-import UiModal from "@Renderer/components/ui/UiModal.vue"
-import RenderableModel from "@Renderer/codegen/sequential/services/model/RenderableModel"
-import HookEditor from "@Renderer/components/editors/HookEditor.vue"
+    import ModelHooks from "./ModelApps/ModelHooks.vue"
 
     const onDevelopment = Main.API.onDevelopment()
 
@@ -31,9 +28,7 @@ import HookEditor from "@Renderer/components/editors/HookEditor.vue"
         model = toRef(props, "model") as Ref<Model>,
         emit = defineEmits(['removeModel']),
         modelPluralReference = ref(null),
-        selectedTab = ref("data"),
-        showingHooksModal = ref(false),
-        modelHooksContent = ref("")
+        selectedTab = ref("data")
     
     let models: Ref<Array<Model>> = ref([])
 
@@ -44,15 +39,10 @@ import HookEditor from "@Renderer/components/editors/HookEditor.vue"
         { label: "Settings", value: "settings" },
     ]
 
-    onMounted(async () => {
+    onMounted(() => {
         const project = model.value.project
         
         models.value = project.models
-
-        const renderableModel = new RenderableModel(model.value)
-        renderableModel.disableHooks()
-
-        modelHooksContent.value = await renderableModel.compile()
     })
 
     const saveModelData = (nameWasChanged: boolean = false) => {
@@ -107,11 +97,6 @@ import HookEditor from "@Renderer/components/editors/HookEditor.vue"
             model.value.remove()
             emit('removeModel')
         })
-    }
-
-    const showHooksModal = (): void => {
-        console.log('showing hooks modal')
-        showingHooksModal.value = true
     }
 
     const log = (data: any): void => {
@@ -226,27 +211,7 @@ import HookEditor from "@Renderer/components/editors/HookEditor.vue"
         </div>
 
         <div v-show="selectedTab === 'code'">
-
-            <UiModal 
-                title="Edit Hooks"
-                width="1300px"
-                height="calc(100vh - 5rem)"
-                :show="showingHooksModal"
-                @close="showingHooksModal = false"
-            >
-                <HookEditor
-                    :content="modelHooksContent"
-                    :hooks="model.getHooks('model')"
-                    @hooksUpdated="hooks => model.saveHooks('model', hooks)"
-                />
-            </UiModal>
-
-            <div class="p-2 space-y-2">
-                <UiButton @click="showHooksModal()">Model</UiButton>
-                <UiButton>Policy</UiButton>
-                <UiButton>Seeder</UiButton>
-                <UiButton>Factory</UiButton>
-            </div>
+            <ModelHooks :model="model" />
         </div>
     </div>
 </template>

@@ -11,15 +11,19 @@ namespace Database\Factories;
 use <$ model.class $>;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
+// hook:IMPORTS
 
 class <$ this.filenameWithoutExtension $> extends Factory
 {
+    // hook:TRAITS
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
     protected $model = <$ model.name $>::class;
+
+    // hook:VARIABLES
 
     /**
      * Define the model's default state.
@@ -28,6 +32,7 @@ class <$ this.filenameWithoutExtension $> extends Factory
      */
     public function definition(): array
     {
+        // hook:BEFORE_DEFINITION
         return [
             <% for (let column of model.table.getColumns()) { %>
                 <% let columnIsKey = column.isPrimaryKey() || column.isForeignKey() %>
@@ -39,4 +44,6 @@ class <$ this.filenameWithoutExtension $> extends Factory
             <% } %>
         ];
     }
+    
+    // hook:AFTER_DEFINITION
 }
