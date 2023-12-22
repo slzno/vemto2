@@ -38,6 +38,13 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     pluralAndSingularAreSame: boolean
 
     /**
+     * PHP related properties
+     */
+    parentClass: string
+    interfaces: string[]
+    traits: string[]
+
+    /**
      * Laravel related properties
      */
     methods: string[]
@@ -151,6 +158,9 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         this.appends = data.appends
         this.methods = data.methods
         this.createdFromInterface = false
+        this.parentClass = data.parentClass
+        this.interfaces = data.interfaces
+        this.traits = data.traits
         this.hasGuarded = data.hasGuarded
         this.hasHidden = data.hasHidden
         this.hasFillable = data.hasFillable
@@ -225,6 +235,9 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
             hidden: this.hidden,
             appends: this.appends,
             methods: this.methods,
+            parentClass: this.parentClass,
+            interfaces: this.interfaces,
+            traits: this.traits,
             hasGuarded: this.hasGuarded,
             hasHidden: this.hasHidden,
             hasFillable: this.hasFillable,
@@ -287,6 +300,18 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
             methods: DataComparator.arraysAreDifferent(
                 this.schemaState.methods,
                 comparisonData.methods
+            ),
+            parentClass: DataComparator.stringsAreDifferent(
+                this.schemaState.parentClass,
+                comparisonData.parentClass
+            ),
+            interfaces: DataComparator.arraysAreDifferent(
+                this.schemaState.interfaces,
+                comparisonData.interfaces
+            ),
+            traits: DataComparator.arraysAreDifferent(
+                this.schemaState.traits,
+                comparisonData.traits
             ),
             hasGuarded: DataComparator.booleansAreDifferent(
                 this.schemaState.hasGuarded,

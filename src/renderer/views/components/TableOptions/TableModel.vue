@@ -41,6 +41,7 @@ import HookEditor from "@Renderer/components/editors/HookEditor.vue"
         { label: "Data", value: "data" },
         { label: "Relationships", value: "relationships" },
         { label: "Code Hooks", value: "code" },
+        { label: "Imports", value: "imports" },
         { label: "Settings", value: "settings" },
     ]
 
@@ -226,7 +227,6 @@ import HookEditor from "@Renderer/components/editors/HookEditor.vue"
         </div>
 
         <div v-show="selectedTab === 'code'">
-
             <UiModal 
                 title="Edit Hooks"
                 width="1300px"
@@ -246,6 +246,23 @@ import HookEditor from "@Renderer/components/editors/HookEditor.vue"
                 <UiButton>Policy</UiButton>
                 <UiButton>Seeder</UiButton>
                 <UiButton>Factory</UiButton>
+            </div>
+        </div>
+
+        <div v-show="selectedTab === 'imports'">
+            <div v-if="!! model.parentClass">
+                <div class="text-slate-400">Parent Class</div>
+                <div class="w-full px-2 py-1 rounded bg-slate-900 my-1">{{ model.parentClass }}</div>
+            </div>
+
+            <div v-if="!! model.interfaces.length">
+                <div class="text-slate-400">Interfaces</div>
+                <div class="w-full px-2 py-1 rounded bg-slate-900 my-1" v-for="modelInterface in model.interfaces">{{ modelInterface }}</div>
+            </div>
+
+            <div v-if="!! model.traits.length">
+                <div class="text-slate-400">Traits</div>
+                <div class="w-full px-2 py-1 rounded bg-slate-900 my-1" v-for="modelTrait in model.traits">{{ modelTrait }}</div>
             </div>
         </div>
     </div>
