@@ -34,8 +34,14 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     ownRelationships: Relationship[]
     relatedRelationships: Relationship[]
     hooks: any
-
     pluralAndSingularAreSame: boolean
+
+    /**
+     * Settings
+     */
+    callSeeder: boolean
+    attributesComments: boolean
+    methodsComments: boolean
 
     /**
      * PHP related properties
@@ -94,9 +100,30 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
 
         this.createdFromInterface = creating
 
+        if (creating) {
+            this.generateDefaultImports()
+            this.generateDefaultSettings()
+        }
+
         this.save()
 
         return this
+    }
+
+    generateDefaultImports() {
+        this.parentClass = "Illuminate\\Database\\Eloquent\\Model"
+        
+        this.traits = [
+            "Illuminate\\Database\\Eloquent\\Factories\\HasFactory"
+        ]
+
+        this.interfaces = []
+    }
+
+    generateDefaultSettings() {
+        this.callSeeder = true
+        this.attributesComments = false
+        this.methodsComments = false
     }
 
     remove() {
@@ -553,5 +580,35 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         this.hooks[type] = hooks
 
         this.save()
+    }
+
+    hasParentClass(): boolean {
+        return !! this.parentClass
+    }
+
+    getParentClass(): string {
+        return this.parentClass || ''
+    }
+
+    hasInterfaces(): boolean {
+        return this.interfaces && this.interfaces.length > 0
+    }
+
+    getInterfaces(): string[] {
+        return this.interfaces || []
+    }
+
+    hasTraits(): boolean {
+        return this.traits && this.traits.length > 0
+    }
+
+    getTraits(): string[] {
+        return this.traits || []
+    }
+
+    getImportAlias(importName: string): string {
+        if(!importName.includes(' as ')) return importName.split('\\').pop()
+
+        return importName.split(' as ').pop()
     }
 }

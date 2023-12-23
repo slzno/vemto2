@@ -1,24 +1,49 @@
 <?php
 
-<% let extendsFrom = 'Model' %>
 <% const camelCase = this.require('camelCase') %>
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+<% if(this.model.hasParentClass()) { %>
+use <$ this.model.getParentClass() $>;
+<% } %>
+<# Traits #>
+<% if(this.model.hasTraits()) { %>
+<% for(let modelTrait of this.model.getTraits()) { %>
+use <$ modelTrait $>;
+<% } %>
+<% } %>
+<# Interfaces #>
+<% if(this.model.hasInterfaces()) { %>
+<% for(let modelInterface of this.model.getInterfaces()) { %>
+use <$ modelInterface $>;
+<% } %>
+<% } %>
+<# --- #>
 <% if(this.model.hasSoftDeletes) { %>
 use Illuminate\Database\Eloquent\SoftDeletes;
 <% } %>
-<% if(this.model.isAuthenticatable) { %>
-<% extendsFrom = 'Authenticatable' %>
-use Illuminate\Foundation\Auth\User as Authenticatable;
-<% } %>
 // hook:IMPORTS
 
-class <$ this.model.name $> extends <$ extendsFrom $> 
+class <$ this.model.name $> 
+<# Extends parent class #>
+<% if(this.model.hasParentClass()) { %>
+extends <$ this.model.getImportAlias(this.model.parentClass) $> 
+<% } %>
+<# Implements interfaces #>
+<% if(this.model.hasInterfaces()) { %>
+implements
+<% for(let modelInterface of this.model.getInterfaces()) { %>
+<$ this.model.getImportAlias(modelInterface) $>
+<% } %>
+<% } %>
 {
-    use HasFactory;
+    <# Model traits #>
+    <% if(this.model.hasTraits()) { %>
+    <% for(let modelTrait of this.model.getTraits()) { %>
+    use <$ this.model.getImportAlias(modelTrait) $>;
+    <% } %>
+    <% } %>
     <% if(this.model.hasSoftDeletes) { %>
     use SoftDeletes;
     <% } %>
@@ -34,6 +59,13 @@ class <$ this.model.name $> extends <$ extendsFrom $>
     <% } %>
 
     <% if(this.model.hasGuarded) { %>
+    <% if(this.model.attributesComments) { %>
+    /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array
+     */
+    <% } %>
     protected $guarded = [
         <% for(let column of this.model.guardedColumns) { %>
         '<$ column.name $>',
@@ -42,6 +74,13 @@ class <$ this.model.name $> extends <$ extendsFrom $>
     <% } %>
 
     <% if(this.model.hasFillable) { %>
+    <% if(this.model.attributesComments) { %>
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    <% } %>
     protected $fillable = [
         <% for(let column of this.model.fillableColumns) { %>
         '<$ column.name $>',
@@ -50,6 +89,13 @@ class <$ this.model.name $> extends <$ extendsFrom $>
     <% } %>
 
     <% if(this.model.hidden && this.model.hidden.length) { %>
+    <% if(this.model.attributesComments) { %>
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    <% } %>
     protected $hidden = [
         <% for(let column of this.model.hidden) { %>
         '<$ column $>',
@@ -58,6 +104,13 @@ class <$ this.model.name $> extends <$ extendsFrom $>
     <% } %>
 
     <% if(this.model.appends && this.model.appends.length) { %>
+    <% if(this.model.attributesComments) { %>
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    <% } %>
     protected $appends = [
         <% for(let column of this.model.appends) { %>
         '<$ column $>',
@@ -66,6 +119,13 @@ class <$ this.model.name $> extends <$ extendsFrom $>
     <% } %>
 
     <% if(this.model.dates && this.model.dates.length) { %>
+    <% if(this.model.attributesComments) { %>
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    <% } %>
     protected $dates = [
         <% for(let column of this.model.dates) { %>
         '<$ column $>',
@@ -75,6 +135,13 @@ class <$ this.model.name $> extends <$ extendsFrom $>
 
     <% const castsColumns = Object.keys(this.model.casts || {}) %>
     <% if(castsColumns.length) { %>
+    <% if(this.model.attributesComments) { %>
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    <% } %>
     protected $casts = [
         <% for(let column of castsColumns) { %>
         '<$ column $>' => '<$ this.model.casts[column] $>',
@@ -89,6 +156,13 @@ class <$ this.model.name $> extends <$ extendsFrom $>
         <% for (let relationship of this.model.ownRelationships) { %>
             <# Belongs To #>
             <% if(relationship.type == "BelongsTo") { %>
+            <% if(this.model.methodsComments) { %>
+            /**
+             * Get the <$ relationship.name $>.
+             *
+             * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+             */
+            <% } %>
             public function <$ relationship.name $>() 
             {
                 return $this->belongsTo(<$ relationship.relatedModel.name $>::class
@@ -105,6 +179,13 @@ class <$ this.model.name $> extends <$ extendsFrom $>
             <% } %>
             <# Has Many #>
             <% if(relationship.type == "HasMany") { %>
+            <% if(this.model.methodsComments) { %>
+            /**
+             * Get all of the <$ relationship.name $>.
+             *
+             * @return \Illuminate\Database\Eloquent\Relations\HasMany
+             */
+            <% } %>
             public function <$ relationship.name $>() 
             {
                 return $this->hasMany(<$ relationship.relatedModel.name $>::class
@@ -121,6 +202,13 @@ class <$ this.model.name $> extends <$ extendsFrom $>
             <% } %>
             <# Has One #>
             <% if(relationship.type == "HasOne") { %>
+            <% if(this.model.methodsComments) { %>
+            /**
+             * Get the <$ relationship.name $>.
+             *
+             * @return \Illuminate\Database\Eloquent\Relations\HasOne
+             */
+            <% } %>
             public function <$ relationship.name $>() 
             {
                 return $this->hasOne(<$ relationship.relatedModel.name $>::class
@@ -137,6 +225,13 @@ class <$ this.model.name $> extends <$ extendsFrom $>
             <% } %>
             <# Many To Many #>
             <% if(relationship.isManyToMany()) { %>
+                <% if(this.model.methodsComments) { %>
+                /**
+                * Get the <$ relationship.name $>.
+                *
+                * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+                */
+                <% } %>
                 public function <$ relationship.name $>() 
                 {
                     return $this->belongsToMany(<$ relationship.relatedModel.name $>::class
@@ -157,6 +252,13 @@ class <$ this.model.name $> extends <$ extendsFrom $>
             <% } %>
             <# Morphs #>
             <% if(relationship.isMorph()) { %>
+                <% if(this.model.methodsComments) { %>
+                /**
+                * Get the <$ relationship.name $>.
+                *
+                * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+                */
+                <% } %>
                 public function <$ relationship.name $>() 
                 {
                     return $this-><$ relationship.getTypeCamelCase() $>(<$ relationship.relatedModel.name $>::class, '<$ relationship.morphToName $>');
@@ -165,6 +267,13 @@ class <$ this.model.name $> extends <$ extendsFrom $>
             <% } %>
             <# Has Many Through #>
             <% if(relationship.isThrough()) { %>
+                <% if(this.model.methodsComments) { %>
+                /**
+                * Get the <$ relationship.name $>.
+                *
+                * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+                */
+                <% } %>
                 public function <$ relationship.name $>() 
                 {
                     return $this-><$ relationship.getTypeCamelCase() $>(<$ relationship.relatedModel.name $>::class, <$ relationship.through.name $>::class
@@ -183,6 +292,13 @@ class <$ this.model.name $> extends <$ extendsFrom $>
     <% if(this.model.relatedRelationships.length) { %>
         <# Basic Morph Inverse Relationships #>
         <% for(let relationship of this.model.getCommonMorphInverseRelationships()) { %>
+            <% if(this.model.methodsComments) { %>
+            /**
+            * Get the <$ relationship.name $>.
+            *
+            * @return \Illuminate\Database\Eloquent\Relations\<$ relationship.type $>
+            */
+            <% } %>
             public function <$ relationship.morphToName $>() 
             {
                 return $this->morphTo();
@@ -192,6 +308,13 @@ class <$ this.model.name $> extends <$ extendsFrom $>
 
         <# MorphedByMany Relationships #>
         <% for(let relationship of this.model.getMorphedToManyRelatedRelationships()) { %>
+            <% if(this.model.methodsComments) { %>
+            /**
+            * Get the <$ relationship.name $>.
+            *
+            * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+            */
+            <% } %>
             public function <$ camelCase(relationship.model.plural) $>() 
             {
                 return $this->morphedByMany(<$ relationship.model.name $>::class, '<$ relationship.morphToName $>');

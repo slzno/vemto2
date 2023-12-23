@@ -154,10 +154,10 @@ class ModelRepository {
         $importData = self::getImportData($modelData, $import);
 
         if($importData['name'] === $importData['alias']) {
-            return sprintf("use %s", $importData['import']);
+            return $importData['import'];
         }
         
-        return sprintf("use %s as %s", $importData['import'], $importData['alias']);
+        return sprintf("%s as %s", $importData['import'], $importData['alias']);
     }
 
     public static function getImportData(array $modelData, $import) {

@@ -250,19 +250,42 @@ import HookEditor from "@Renderer/components/editors/HookEditor.vue"
         </div>
 
         <div v-show="selectedTab === 'imports'">
-            <div v-if="!! model.parentClass">
+            <div v-if="model.hasParentClass()">
                 <div class="text-slate-400">Parent Class</div>
                 <div class="w-full px-2 py-1 rounded bg-slate-900 my-1">{{ model.parentClass }}</div>
             </div>
 
-            <div v-if="!! model.interfaces.length">
+            <div v-if="model.hasTraits()">
+                <div class="text-slate-400">Traits</div>
+                <div class="w-full px-2 py-1 rounded bg-slate-900 my-1" v-for="modelTrait in model.traits">{{ modelTrait }}</div>
+            </div>
+
+            <div v-if="model.hasInterfaces()">
                 <div class="text-slate-400">Interfaces</div>
                 <div class="w-full px-2 py-1 rounded bg-slate-900 my-1" v-for="modelInterface in model.interfaces">{{ modelInterface }}</div>
             </div>
+        </div>
 
-            <div v-if="!! model.traits.length">
-                <div class="text-slate-400">Traits</div>
-                <div class="w-full px-2 py-1 rounded bg-slate-900 my-1" v-for="modelTrait in model.traits">{{ modelTrait }}</div>
+        <div v-show="selectedTab === 'settings'">
+            <div class="flex flex-col p-2 space-y-1">
+                <UiCheckbox
+                    label="Execute Seeder"
+                    v-model="model.callSeeder"
+                    @change="saveModelData()"
+                />
+    
+                <UiCheckbox
+                    label="Comment Attributes"
+                    v-model="model.attributesComments"
+                    @change="saveModelData()"
+                />
+    
+                
+                <UiCheckbox
+                    label="Comment Methods"
+                    v-model="model.methodsComments"
+                    @change="saveModelData()"
+                />
             </div>
         </div>
     </div>
