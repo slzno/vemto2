@@ -3,6 +3,7 @@ import WordManipulator from '@Common/util/WordManipulator'
 import CalculateRelationshipService from '../base/CalculateRelationshipService'
 import Index from "@Common/models/Index"
 import Model from "@Common/models/Model"
+import { camelCase } from "change-case"
 
 class CalculateCommonRelationshipsData extends CalculateRelationshipService {
     relationship: Relationship
@@ -70,10 +71,10 @@ class CalculateCommonRelationshipsData extends CalculateRelationshipService {
         const nameIsPlural = WordManipulator.isPlural(this.relationship.name)
 
         if(nameIsPlural) {
-            return WordManipulator.singularize(this.relationship.name)
+            return camelCase(this.relationship.model.name)
         }
 
-        return WordManipulator.pluralize(this.relationship.name)
+        return camelCase(this.relationship.model.plural)
     }
 
     addForeign(): Index {
