@@ -14,7 +14,7 @@
     import AppThemes from "./components/ProjectApps/AppThemes.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
-import { PlusIcon } from "@heroicons/vue/24/outline"
+    import { PlusIcon } from "@heroicons/vue/24/outline"
 
     const router = useRouter(),
         projectStore = useProjectStore(),
@@ -86,6 +86,14 @@ import { PlusIcon } from "@heroicons/vue/24/outline"
                 <UiButton disabled>
                     <PlusIcon class="w-4 h-4 mr-1" />
                     Nova Resource
+                </UiButton>
+                <UiButton disabled>
+                    <PlusIcon class="w-4 h-4 mr-1" />
+                    Report
+                </UiButton>
+                <UiButton disabled>
+                    <PlusIcon class="w-4 h-4 mr-1" />
+                    Dashboard
                 </UiButton>
                 <!-- <UiButton @click="projectStore.project.deleteAllApplications()">Delete All</UiButton> -->
             </div>
