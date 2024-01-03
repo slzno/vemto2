@@ -7,6 +7,7 @@ import GeneratePageFiles from "./services/page/GeneratePageFiles"
 import GenerateUiComponentsFiles from "./services/blade/ui/GenerateUiComponentsFiles"
 import SchemaBuilder from "@Renderer/services/schema/SchemaBuilder"
 import Main from "@Renderer/services/wrappers/Main"
+import GenerateDatabaseSeeder from "./services/database/GenerateDatabaseSeeder"
 
 export default class SequentialGenerator {
     static startTime: number = 0
@@ -36,6 +37,8 @@ export default class SequentialGenerator {
         await new GenerateModelFiles().start()
         await new GenerateCrudFiles().start()
         await new GeneratePageFiles().start()
+        
+        await new GenerateDatabaseSeeder().start()
 
         this.project.processRemovableFiles()
 
