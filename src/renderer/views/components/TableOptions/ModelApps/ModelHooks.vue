@@ -5,7 +5,9 @@
     import { defineProps, ref, PropType, toRef } from "vue"
     import HookEditor from "@Renderer/components/editors/HookEditor.vue"
     import RenderableModel from "@Renderer/codegen/sequential/services/model/RenderableModel"
+    import RenderableSeeder from "@Renderer/codegen/sequential/services/model/RenderableSeeder"
     import RenderableFactory from "@Renderer/codegen/sequential/services/model/RenderableFactory"
+    import RenderablePolicy from "@Renderer/codegen/sequential/services/model/RenderablePolicy"
     
     const props = defineProps({
             model: {
@@ -34,7 +36,9 @@
     const setModelHookContent = async () => {
         const renderableClasses = {
             'model': RenderableModel,
-            'factory': RenderableFactory
+            'factory': RenderableFactory,
+            'seeder': RenderableSeeder,
+            'policy': RenderablePolicy
         }
 
         if(! renderableClasses[activeHookName.value]) return
@@ -63,8 +67,8 @@
 
         <div class="p-2 space-y-2">
             <UiButton @click="showHooksModal('model')">Model</UiButton>
-            <UiButton>Policy</UiButton>
-            <UiButton>Seeder</UiButton>
+            <UiButton @click="showHooksModal('policy')">Policy</UiButton>
+            <UiButton @click="showHooksModal('seeder')">Seeder</UiButton>
             <UiButton @click="showHooksModal('factory')">Factory</UiButton>
         </div>
     </div>

@@ -378,6 +378,10 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         return this.relatedRelationships.filter((relationship) => relationship.wasRenamed())
     }
 
+    isAuthModel() {
+        return this.isAuthenticatable
+    }
+
     getValidRelationships(): Relationship[] {
         return this.ownRelationships.filter((relationship) => relationship.isValid())
     }

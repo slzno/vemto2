@@ -173,6 +173,10 @@ export default class Project extends RelaDB.Model {
         return [...this.cruds, ...this.pages]
     }
 
+    getAuthModel(): Model {
+        return this.models.find((model) => model.isAuthModel())
+    }
+
     deleteAllApplications() {
         this.cruds.forEach((crud) => crud.delete())
         this.pages.forEach((page) => page.delete())

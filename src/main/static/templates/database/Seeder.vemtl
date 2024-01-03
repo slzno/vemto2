@@ -1,0 +1,28 @@
+<?php
+<# TEMPLATE VARIABLES #>
+<% const model = this.model %>
+<% const modelName = this.model.name %>
+<####>
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use App\Models\<$ modelName $>;
+// hook:IMPORTS
+
+class <$ this.filenameWithoutExtension $> extends Seeder
+{
+    // hook:TRAITS
+
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        // hook:BEFORE_SEEDER_RUN
+        factory(<$ modelName $>::class, 5)->create();
+        // hook:AFTER_SEEDER_RUN
+    }
+
+    // hook:METHODS
+}
