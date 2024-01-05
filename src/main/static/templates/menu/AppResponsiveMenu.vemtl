@@ -2,6 +2,7 @@
 <% for (let nav of this.project.getRootNavs()) { %>
     <% for (let childrenNav of nav.children) { %>
     <# Let's check if the nav item has custom link #>
+    @can('view-any', <$ childrenNav.getModel().class $>::class)
     <% if (childrenNav.hasCustomLink()) { %>
     <x-responsive-nav-link href="<$ childrenNav.getCustomLink() $>">
     <% } else { %>
@@ -10,5 +11,6 @@
     <% } %>
         <$ childrenNav.name $>
     </x-responsive-nav-link>
+    @endcan
     <% } %>
 <% } %>

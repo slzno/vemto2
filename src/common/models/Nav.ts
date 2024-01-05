@@ -13,6 +13,7 @@ export default class Nav extends RelaDB.Model {
     children: Nav[]
     tag: string
     customLink: string
+    navigable: any
 
     relationships() {
         return {
@@ -37,5 +38,17 @@ export default class Nav extends RelaDB.Model {
 
     getCustomLink(): string {
         return this.customLink
+    }
+
+    getModel() {
+        if(this.navigableType === "Crud") {
+            return this.navigable.model
+        }
+
+        if(this.navigableType === "Page") {
+            return this.navigable.section.crud.model
+        }
+
+        return null
     }
 }

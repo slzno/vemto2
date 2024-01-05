@@ -53,6 +53,8 @@ class <$ this.filenameWithoutExtension $> extends Component
 
     public function mount(<$ modelName $> $<$ itemVarName $>)
     {
+        $this->authorize('view-any', <$ modelName $>::class);
+
         // hook:BEFORE_MOUNT
         $this-><$ itemVarName $> = $<$ itemVarName $>;
 
@@ -69,6 +71,8 @@ class <$ this.filenameWithoutExtension $> extends Component
 
     public function save()
     {
+        $this->authorize('update', $this-><$ itemVarName $>);
+        
         // hook:BEFORE_SAVE
         $this->validate();
         // hook:AFTER_VALIDATE

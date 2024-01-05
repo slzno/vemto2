@@ -22,9 +22,11 @@
     <div class="vtheme(crud.index.tools)">
         <x-ui.input wire:model="<$ collectionVarName $>Search" type="text" placeholder="Search <$ detailCrud.settings.collectionTitle $>..." />
 
+        @can('create', <$ detailCrudModel.class $>::class)
         <a wire:click="new<$ pascalCase(itemVarName) $>()">
             <x-ui.button>New</x-ui.button>
         </a>
+        @endcan
     </div>
 
     {{-- Modal --}}
@@ -87,8 +89,12 @@
                         <x-ui.table.column for-detailCrud>{{ $<$ itemVarName $>-><$ input.column.name $> }}</x-ui.table.column>
                     <% } %>
                     <x-ui.table.action-column>
+                        @can('update', $<$ itemVarName $>)
                         <x-ui.action wire:click="edit<$ pascalCase(itemVarName) $>({{ $<$ itemVarName $>->id }})">Edit</x-ui.action>
+                        @endcan
+                        @can('delete', $<$ itemVarName $>)
                         <x-ui.action.danger wire:click="confirm<$ pascalCase(itemVarName) $>Deletion({{ $<$ itemVarName $>->id }})">Delete</x-ui.action.danger>
+                        @endcan
                     </x-ui.table.action-column>
                 </x-ui.table.row>
                 @empty

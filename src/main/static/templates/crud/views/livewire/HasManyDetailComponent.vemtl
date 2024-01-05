@@ -119,8 +119,10 @@ class <$ this.filenameWithoutExtension $> extends Component
         $this->confirming<$ pascalCase(itemVarName) $>Deletion = true;
     }
 
-    public function delete<$ pascalCase(itemVarName) $>(<$ modelName $> $comment)
+    public function delete<$ pascalCase(itemVarName) $>(<$ modelName $> $<$ itemVarName $>)
     {
+        $this->authorize('delete', $<$ itemVarName $>);
+
         $comment->delete();
 
         $this->confirming<$ pascalCase(itemVarName) $>Deletion = false;
@@ -131,6 +133,12 @@ class <$ this.filenameWithoutExtension $> extends Component
     public function save()
     {
         $this->validate();
+
+        if(!this-><$ itemVarName $>-><$ hasManyDetail.relationship.foreignKey.name $>) {
+            $this->authorize('create', <$ modelName $>::class);
+        } else {
+            $this->authorize('update', $this-><$ itemVarName $>);
+        }
 
         $this-><$ itemVarName $>-><$ hasManyDetail.relationship.foreignKey.name $> = $this-><$ parentCrudItemVarName $>-><$ parentCrudModel.table.getPrimaryKeyName() $>;
 

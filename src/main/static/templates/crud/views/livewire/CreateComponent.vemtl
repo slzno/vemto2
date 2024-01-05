@@ -68,6 +68,8 @@ class <$ this.filenameWithoutExtension $> extends Component
 
     public function save()
     {
+        $this->authorize('create', <$ modelName $>::class);
+
         // hook:BEFORE_SAVE
         $this->validate();
         // hook:AFTER_VALIDATE
