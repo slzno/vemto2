@@ -113,13 +113,9 @@ class <$ this.filenameWithoutExtension $> extends Component
 
     public function delete<$ pascalCase(itemVarName) $>(<$ modelName $> $<$ itemVarName $>)
     {
-<<<<<<< HEAD
         $this->authorize('delete', $<$ itemVarName $>);
 
         $comment->delete();
-=======
-        $<$ itemVarName $>->delete();
->>>>>>> improve-navigations
 
         $this->confirming<$ pascalCase(itemVarName) $>Deletion = false;
     }
@@ -128,7 +124,6 @@ class <$ this.filenameWithoutExtension $> extends Component
     {
         $this->form-><$ hasManyDetail.relationship.foreignKey.name $> = $this-><$ parentCrudItemVarName $>-><$ parentCrudModel.table.getPrimaryKeyName() $>;
 
-<<<<<<< HEAD
         if(!this-><$ itemVarName $>-><$ hasManyDetail.relationship.foreignKey.name $>) {
             $this->authorize('create', <$ modelName $>::class);
         } else {
@@ -138,9 +133,6 @@ class <$ this.filenameWithoutExtension $> extends Component
         $this-><$ itemVarName $>-><$ hasManyDetail.relationship.foreignKey.name $> = $this-><$ parentCrudItemVarName $>-><$ parentCrudModel.table.getPrimaryKeyName() $>;
 
         $this-><$ itemVarName $>->save();
-=======
-        $this->form->save();
->>>>>>> improve-navigations
 
         $this->closeModal();
     }

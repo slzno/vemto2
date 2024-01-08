@@ -50,17 +50,11 @@ class <$ this.filenameWithoutExtension $> extends Component
 
     public function save()
     {
-<<<<<<< HEAD
         $this->authorize('create', <$ modelName $>::class);
 
         // hook:BEFORE_SAVE
         $this->validate();
         // hook:AFTER_VALIDATE
-=======
-        // hook:BEFORE_SAVE_CALL
-        $<$ itemVarName $> = $this->form->save();
-        // hook:AFTER_SAVE_CALL
->>>>>>> improve-navigations
 
         return redirect()->route('<$ crud.getRouteNameByTag('edit') $>', $<$ itemVarName $>);
     }
