@@ -1,0 +1,71 @@
+<?php
+
+<% const crud = this.crud %>
+<% const modelName = crud.model.name %>
+<% const camelCase = this.require('camelCase') %>
+<% const pascalCase = this.require('pascalCase') %>
+<% const paramCase = this.require('paramCase') %>
+<% const itemVarName = camelCase(crud.name) %>
+<% const collectionVarName = camelCase(crud.plural) %>
+
+namespace <$ crud.livewireFormsNamespace $>;
+ 
+use Livewire\Form;
+use Livewire\Attributes\Rule;
+use App\Models\<$ modelName $>;
+// hook:IMPORTS
+ 
+class <$ this.filenameWithoutExtension $> extends Form
+{
+    // hook:TRAITS
+
+    // hook:BEFORE_VARIABLES
+    <% for (let input of crud.inputs) { %>
+        #[Rule('<$ input.getCreationRulesForTemplate() $>')]
+        <# --- #>
+        public $<$ input.column.name $> = '<$ input.defaultValue || '' $>';
+        
+        <% if (input.isFileOrImage()) { %>
+        public $<$ input.getNewPropertyName() $> = null;
+        <% } %>
+
+    <% } %>
+    // hook:AFTER_VARIABLES
+
+    public function save()
+    {
+        // hook:BEFORE_STORE_VALIDATE
+        $this->validate();
+        // hook:AFTER_STORE_VALIDATE
+
+        <% for (let input of crud.getFileInputs()) { %>
+        $this->process<$ pascalCase(input.name) $>();
+        <% } %>
+
+        $<$ itemVarName $> = <$ modelName $>::create($this->except([
+            <% for(let input of crud.getFileInputs()) { %>
+            '<$ input.getNewPropertyName() $>',
+            <% } %>
+        ]));
+        // hook:BEFORE_RESET
+        $this->reset();
+        // hook:AFTER_STORE
+
+        return $<$ itemVarName $>;
+    }
+
+    <% for (let input of crud.getFileInputs()) { %>
+    public function process<$ pascalCase(input.name) $>()
+    {
+        if (empty($this-><$ input.getNewPropertyName() $>)) return;
+        
+        $this-><$ input.column.name $> = $this-><$ input.getNewPropertyName() $>->store('<$ input.getFileDiskName() $>', 'public');
+    }
+
+    public function delete<$ pascalCase(input.name) $>()
+    {
+        $this-><$ input.getNewPropertyName() $> = null;
+    }
+    <% } %>
+    // hook:METHODS
+}

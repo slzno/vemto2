@@ -1,4 +1,4 @@
-export interface InputType {
+export interface InputSettings {
     name: string
     label: string
     disableDefault?: boolean
@@ -11,13 +11,13 @@ export interface InputType {
     updateValidationRules?: string[]
 }
 
-export default class InputTypeList {
-    static getType(type: string): InputType {
+export default class InputSettingsList {
+    static getFromType(type: string): InputSettings {
         let column = this.get()[type]
 
         if (!column) return null
 
-        return column as InputType
+        return column as InputSettings
     }
 
     static get(): Object {
@@ -94,6 +94,7 @@ export default class InputTypeList {
                 disablePlaceholder: true,
                 disableMax: true,
                 disableMin: true,
+                allowsItems: true,
             },
             radioGroup: {
                 name: "Radio",
@@ -101,6 +102,7 @@ export default class InputTypeList {
                 disablePlaceholder: true,
                 disableMax: true,
                 disableMin: true,
+                allowsItems: true
             },
             url: {
                 name: "Url",

@@ -10,46 +10,29 @@
 <% const viewsFolderName = `${crud.section.getFolderName()}.${paramCase(crud.plural)}` %>
 
 namespace <$ crud.livewireNamespace $>;
- 
+  
 use Livewire\Component;
-use Livewire\WithFileUploads;
-use Illuminate\Support\Collection;
 use App\Models\<$ modelName $>;
+use Illuminate\Support\Collection;
+use <$ crud.livewireFormsNamespace $>\UpdateForm;
 <% for (let input of crud.getBelongsToInputs()) { %>
 use App\Models\<$ input.getRelatedModelName() $>;
 <% } %>
-use Illuminate\Support\Facades\Storage;
 // hook:IMPORTS
  
 class <$ this.filenameWithoutExtension $> extends Component
 {
-    use WithFileUploads;
     // hook:TRAITS
+    public ?<$ modelName $> $<$ itemVarName $> = null;
 
     // hook:BEFORE_VARIABLES
-    public <$ modelName $> $<$ itemVarName $>;
-    <% for (let input of crud.getFileInputs()) { %>
-    public $<$ input.getNewPropertyName() $>;
-    <% } %>
+    public UpdateForm $form;
+    <# --- #>
     <% for (let input of crud.getBelongsToInputs()) { %>
     <% const model = input.getRelatedModel() %>
     public Collection $<$ camelCase(model.plural) $>;
     <% } %>
     // hook:AFTER_VARIABLES
-
-    public function rules()
-    {
-        // hook:BEFORE_RULES
-        return [
-            <% for (let input of crud.getBasicInputs()) { %>
-            '<$ itemVarName $>.<$ input.column.name $>' => <$ input.getUpdateRulesForTemplate() $>,
-            <% } %>
-            <% for (let input of crud.getFileInputs()) { %>
-            '<$ input.getNewPropertyName() $>' => <$ input.getCreationRulesForTemplate() $>,
-            <% } %>
-            // hook:RULES
-        ];
-    }
 
     public function mount(<$ modelName $> $<$ itemVarName $>)
     {
@@ -58,6 +41,8 @@ class <$ this.filenameWithoutExtension $> extends Component
         // hook:BEFORE_MOUNT
         $this-><$ itemVarName $> = $<$ itemVarName $>;
 
+        $this->form->set<$ modelName $>($<$ itemVarName $>);
+        <# --- #>
         <% for (let input of crud.getBelongsToInputs()) { %>
         <# --- #>
         <% const model = input.getRelatedModel() %>
@@ -71,54 +56,25 @@ class <$ this.filenameWithoutExtension $> extends Component
 
     public function save()
     {
+<<<<<<< HEAD
         $this->authorize('update', $this-><$ itemVarName $>);
         
         // hook:BEFORE_SAVE
         $this->validate();
         // hook:AFTER_VALIDATE
+=======
+        // hook:BEFORE_SAVE_CALL
+        $this->form->save();
+        // hook:AFTER_SAVE_CALL
+>>>>>>> improve-navigations
 
-        <% for (let input of crud.getFileInputs()) { %>
-        $this->process<$ pascalCase(input.name) $>();
-        <% } %>
-
-        $this-><$ itemVarName $>->save();
-        // hook:AFTER_SAVE
-
-        $this->emit('saved');
+        $this->dispatch('saved');
     }
-
-    <% for (let input of crud.getFileInputs()) { %>
-    <% const fieldName = input.column?.name || input.name %>
-    public function process<$ pascalCase(input.name) $>()
-    {
-        if (empty($this-><$ input.getNewPropertyName() $>)) return;
- 
-        if ($this->post-><$ fieldName $>) {
-            Storage::disk('public')->delete($this-><$ itemVarName $>-><$ fieldName $>);
-        }
-        
-        $this-><$ itemVarName $>-><$ fieldName $> = $this-><$ input.getNewPropertyName() $>->store('<$ input.getFileDiskName() $>', 'public');
-        $this-><$ input.getNewPropertyName() $> = null;
-    }
-
-    public function delete<$ pascalCase(input.name) $>()
-    {
-        if (empty($this-><$ itemVarName $>-><$ fieldName $>)) return;
-
-        Storage::disk('public')->delete($this-><$ itemVarName $>-><$ fieldName $>);
-        $this-><$ itemVarName $>-><$ fieldName $> = null;
-
-        $this-><$ itemVarName $>->save();
-
-        $this-><$ input.getNewPropertyName() $> = null;
-    }
-    <% } %>
 
     public function render()
     {
         // hook:BEFORE_RENDER
         return view('livewire.<$ viewsFolderName $>.edit', [
-            '<$ itemVarName $>' => $this-><$ itemVarName $>,
             // hook:RENDER_PARAMETERS
         ]);
     }

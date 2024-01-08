@@ -1,0 +1,7 @@
+@props(['disabled' => false])
+
+<input 
+    :disabled="$disabled" 
+    type="radio"
+    {!! $attributes->merge(['class' => 'vtheme(ui.input.radio)']) !!}
+/>

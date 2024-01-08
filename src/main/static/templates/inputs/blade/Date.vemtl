@@ -8,6 +8,14 @@
 
 <div class="vtheme(crud.form.input.group)">
     <x-ui.label for="<$ input.name $>"><$ input.label $></x-ui.label>
-    <x-ui.input.textarea class="vtheme(crud.form.input.extra)" wire:model="form.<$ input.column.name $>" rows="6" name="<$ input.name $>" id="<$ input.name $>" placeholder="<$ input.placeholder $>" />
+    <x-ui.input.date
+        class="vtheme(crud.form.input.extra)"
+        wire:model="form.<$ input.column.name $>"
+        name="<$ input.name $>"
+        id="<$ input.name $>"
+        <$ input.min ? `min="${input.min}"` : '' $>
+        <$ input.max ? `max="${input.max}"` : '' $>
+        <$ input.step ? `step="${input.step}"` : '' $>
+    />
     <x-ui.input.error for="form.<$ input.column.name $>" />
 </div>

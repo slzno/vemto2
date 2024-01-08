@@ -5,5 +5,15 @@ export enum InputType {
     NUMBER = "number",
     FILE = "file",
     IMAGE = "image",
-    BELONGS_TO = "belongsTo"
+    BELONGS_TO = "belongsTo",
+    CHECKBOX = "checkbox",
+    SELECT = "select",
+    HIDDEN = "hidden",
+    PASSWORD = "password",
+    EMAIL = "email",
+    DATE = "date",
+    DATETIME = "dateTime",
+    TIME = "time",
+    RADIO = "radio",
+    COLOR = "color"
 }

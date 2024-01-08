@@ -30,7 +30,7 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
     places: number
     autoIncrement: boolean
     faker: string
-    options: any
+    options: any[]
     inputs: Input[]
     referencedIndexes: Index[]
     columnIndexes: Index[]
@@ -445,6 +445,7 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         if(defaultColumnData.length) this.length = defaultColumnData.length
         if(defaultColumnData.nullable) this.nullable = defaultColumnData.nullable
         if(defaultColumnData.faker) this.faker = defaultColumnData.faker
+        if(defaultColumnData.inputOptions) this.options = defaultColumnData.inputOptions
     }
 
     getFakerForTemplate() {

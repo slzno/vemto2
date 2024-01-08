@@ -6,13 +6,12 @@
 <% const crud = input.crud %>
 <% const camelCase = this.require("camelCase") %>
 <% const pascalCase = this.require("pascalCase") %>
-<% const itemVarName = camelCase(crud.name) %>
 <% const fieldName = input.column?.name || input.name %>
 
 <div class="vtheme(crud.form.input.group)">
     <x-ui.label for="<$ input.name $>"><$ input.label $></x-ui.label>
     <x-ui.input.select
-        wire:model="<$ input.getNewPropertyName() $>"
+        wire:model="form.<$ input.column.name $>"
         class="vtheme(crud.form.input.extra)" id="<$ input.name $>" name="<$ input.name $>">
         <# Select options #>
         <% if(input.isBelongsTo()) { %>
@@ -25,6 +24,9 @@
             @endforeach
         <% } else { %>
             <option value="">Select</option>
+            <% for (let item of input.items) { %>
+                <option value="<$ item.value $>"><$ item.label $></option>
+            <% } %>
         <% } %>
         <# --- #>
     </x-ui.input.select>

@@ -20,8 +20,12 @@
     <div class="vtheme(crud.index.tools)">
         <x-ui.input wire:model="search" type="text" placeholder="Search <$ crud.settings.collectionTitle $>..." />
 
+<<<<<<< HEAD
         <a href="{{ route('<$ crud.getRouteNameByTag('create') $>') }}">
             @can('create', <$ model.class $>::class)
+=======
+        <a wire:navigate href="{{ route('<$ crud.getRouteNameByTag('create') $>') }}">
+>>>>>>> improve-navigations
             <x-ui.button>New</x-ui.button>
             @endcan
         </a>

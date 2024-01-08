@@ -52,11 +52,17 @@ import Year from "../Year";
 export default class ColumnTypeList {
 
     static getByIdentifier(identifier: string): any {
-        return this.get()[identifier]
+        const type = ColumnTypeList.get()[identifier]
+
+        if (type == undefined) {
+            throw new Error(`Column type '${identifier}' not found`)
+        }
+
+        return type
     }
 
     static getArray(): any[] {
-        return Object.values(this.get())
+        return Object.values(ColumnTypeList.get())
     }
 
     static get() {

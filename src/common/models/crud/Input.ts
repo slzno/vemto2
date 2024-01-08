@@ -7,6 +7,7 @@ import RelaDB from "@tiago_silva_pereira/reladb"
 import GenerateInputValidation, { ValidationRuleType } from "./services/GenerateInputValidation"
 import Model from "../Model"
 import { InputType } from "./InputType"
+import InputSettingsList from "../data/InputSettingsList"
 
 export enum InputValidationRuleType {
     TEXTUAL = "textual",
@@ -58,7 +59,7 @@ export default class Input extends RelaDB.Model {
         }
     }
 
-    static createFromColumn(crud: Crud, column: Column) {
+    static createFromColumn(crud: Crud, column: Column, forceType?: InputType | null) {
         const input = new Input()
         input.crudId = crud.id
         input.columnId = column.id
@@ -81,6 +82,11 @@ export default class Input extends RelaDB.Model {
 
         input.calculateType(column)
 
+        if (forceType) {
+            input.type = forceType
+        }
+
+        input.generateColumnParities()
         input.generateValidationRules()
 
         return input
@@ -156,7 +162,7 @@ export default class Input extends RelaDB.Model {
     }
 
     needsMinValidation() {
-        return [InputType.NUMBER].includes(this.type) && this.min
+        return [InputType.NUMBER, InputType.TEXT, InputType.TEXTAREA].includes(this.type) && this.min
     }
 
     generateValidationRules() {
@@ -164,6 +170,20 @@ export default class Input extends RelaDB.Model {
 
         this.creationRules = validationGenerator.get(ValidationRuleType.CREATION)
         this.updateRules = validationGenerator.get(ValidationRuleType.UPDATE)
+    }
+
+    generateColumnParities() {
+        if (this.type === InputType.NUMBER) {
+            this.step = 1
+        }
+
+        if(['set', 'enum'].includes(this.column.type)) {
+            const options = this.column.options
+
+            if(options && Array.isArray(options)) {
+                options.forEach(option => this.items.push({ value: option, label: changeCase.capitalCase(option), }))
+            }
+        }
     }
 
     getCreationRulesForTemplate() {
@@ -174,16 +194,52 @@ export default class Input extends RelaDB.Model {
         return this.getRulesForTemplate(this.updateRules)
     }
 
+    allowsPlaceholder() {
+        const typeSettings = this.getTypeSettings()
+
+        return typeSettings && !typeSettings.disablePlaceholder
+    }
+
+    allowsDefaultValue() {
+        const typeSettings = this.getTypeSettings()
+
+        return typeSettings && !typeSettings.disableDefault
+    }
+
+    allowsItems() {
+        const typeSettings = this.getTypeSettings()
+
+        return typeSettings && typeSettings.allowsItems
+    }
+
+    allowsMinimumLength() {
+        const typeSettings = this.getTypeSettings()
+
+        return typeSettings && !typeSettings.disableMin
+    }
+
+    allowsMaximumLength() {
+        const typeSettings = this.getTypeSettings()
+
+        return typeSettings && !typeSettings.disableMax
+    }
+
+    allowsStep() {
+        const typeSettings = this.getTypeSettings()
+
+        return typeSettings && typeSettings.hasStep
+    }
+
+    isDateOrDateTime() {
+        return [InputType.DATE, InputType.DATETIME].includes(this.type)
+    }
+
     getRulesForTemplate(rules: InputValidationRule[]) {
-        const templateRules = rules.map((rule) => {
-            if (rule.type === InputValidationRuleType.CODE) {
-                return rule.value
-            }
+        return rules.map((rule) => rule.value).join("|")
+    }
 
-            return `'${rule.value}'`
-        })
-
-        return `[${templateRules.join(", ")}]`
+    getTypeSettings() {
+        return InputSettingsList.getFromType(this.type)
     }
 
     getTemplate() {

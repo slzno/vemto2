@@ -10,10 +10,13 @@
 
 <div class="vtheme(crud.form.input.group)">
     <x-ui.label for="<$ input.name $>"><$ input.label $></x-ui.label>
-    <x-ui.input.image
+    <x-ui.input.file
         :src="$form-><$ fieldName $> ? Storage::url($form-><$ fieldName $>) : ''" 
         wire:model="form.<$ fieldName $>"
         x-on:removed="$form->delete<$ pascalCase(input.name) $>()"
-        class="vtheme(crud.form.input.extra)" id="<$ input.name $>" name="<$ input.name $>" />
+        class="vtheme(crud.form.input.extra)"
+        id="<$ input.name $>"
+        name="<$ input.name $>"
+    />
     <x-ui.input.error for="form.<$ fieldName $>" />
 </div>
