@@ -6,7 +6,7 @@
     import IndexTypes from '@Common/models/static/IndexTypes'
     import UiDropdownSelect from '@Renderer/components/ui/UiDropdownSelect.vue'
     import UiMultiSelect from '@Renderer/components/ui/UiMultiSelect.vue'
-    import { PlusCircleIcon, EllipsisVerticalIcon, TrashIcon } from "@heroicons/vue/24/outline"
+    import { PlusCircleIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import Main from "@Renderer/services/wrappers/Main"
     import UiButton from '@Renderer/components/ui/UiButton.vue'
     import UiOptionsDropdown from '@Renderer/components/ui/UiOptionsDropdown.vue'

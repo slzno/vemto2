@@ -8,7 +8,10 @@ import RenderableLivewireEditComponent from "./views/livewire/RenderableLivewire
 import RenderableLivewireHasManyDetailComponent from "./views/livewire/RenderableLivewireHasManyDetailComponent"
 import RenderableLivewireHasManyDetailView from "./views/livewire/RenderableLivewireHasManyDetailView"
 import RenderableLivewireCreateFormComponent from "./views/livewire/RenderableLivewireCreateFormComponent"
+import RenderableLivewireCreateDetailFormComponent from "./views/livewire/RenderableLivewireCreateDetailFormComponent"
 import RenderableLivewireUpdateFormComponent from "./views/livewire/RenderableLivewireUpdateFormComponent"
+import RenderableLivewireUpdateDetailFormComponent from "./views/livewire/RenderableLivewireUpdateDetailFormComponent"
+import HasManyDetail from "@Common/models/crud/HasManyDetail"
 
 export default class GenerateCrudFiles {
     async start() {
@@ -27,9 +30,12 @@ export default class GenerateCrudFiles {
             await new RenderableLivewireCreateFormComponent(crud).render()
             await new RenderableLivewireUpdateFormComponent(crud).render()
 
-            crud.hasManyDetails.forEach(async hasManyDetail => {
+            crud.hasManyDetails.forEach(async (hasManyDetail: HasManyDetail) => {
                 await new RenderableLivewireHasManyDetailView(hasManyDetail).render()
                 await new RenderableLivewireHasManyDetailComponent(hasManyDetail).render()
+
+                await new RenderableLivewireCreateDetailFormComponent(hasManyDetail).render()
+                await new RenderableLivewireUpdateDetailFormComponent(hasManyDetail).render()
             })
         }
     }

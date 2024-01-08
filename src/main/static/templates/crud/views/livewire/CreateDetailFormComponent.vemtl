@@ -1,6 +1,7 @@
 <?php
 
 <% const crud = this.crud %>
+<% const detail = this.detail %>
 <% const modelName = crud.model.name %>
 <% const camelCase = this.require('camelCase') %>
 <% const pascalCase = this.require('pascalCase') %>
@@ -20,6 +21,8 @@ class <$ this.filenameWithoutExtension $> extends Form
     // hook:TRAITS
 
     // hook:BEFORE_VARIABLES
+    public $<$ detail.relationship.foreignKey.name $> = null;
+
     <% for (let input of crud.inputs) { %>
         #[Rule('<$ input.getCreationRulesForTemplate() $>')]
         <# --- #>

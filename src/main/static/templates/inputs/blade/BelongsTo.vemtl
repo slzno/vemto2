@@ -6,7 +6,7 @@
 <% const crud = input.crud %>
 <% const camelCase = this.require("camelCase") %>
 <% const pascalCase = this.require("pascalCase") %>
-<% const itemVarName = camelCase(crud.name) %>
+<% const itemVarName = crud.settings.itemName %>
 <% const fieldName = input.column?.name || input.name %>
 
 <div class="vtheme(crud.form.input.group)">
