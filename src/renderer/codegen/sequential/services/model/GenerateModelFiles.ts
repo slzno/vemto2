@@ -7,7 +7,7 @@ export default class GenerateModelFiles {
         const models = Model.getValid()
 
         for (const model of models) {
-            await new RenderableModel(model).render()
+            // await new RenderableModel(model).render()
             await new RenderableFactory(model).render()
         }
     }
