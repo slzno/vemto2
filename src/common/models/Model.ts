@@ -11,6 +11,14 @@ import DataComparisonLogger from "./services/DataComparisonLogger"
 import FillFillableColumns from "./services/models/Fillers/FillFillableColumns"
 import FillGuardedColumns from "./services/models/Fillers/FillGuardedColumns"
 import AbstractSchemaModel from "./composition/AbstractSchemaModel"
+import HiddenModelColumn from "./HiddenModelColumn"
+import FillHiddenColumns from "./services/models/Fillers/FillHiddenColumns"
+import DatesModelColumn from "./DatesModelColumn"
+import FillDatesColumns from "./services/models/Fillers/FillDatesColumns"
+import AppendsModelColumn from "./AppendsModelColumn"
+import FillAppendsColumns from "./services/models/Fillers/FillAppendsColumns"
+import CastsModelColumn from "./CastsModelColumn"
+import FillCastsColumns from "./services/models/Fillers/FillCastsColumns"
 
 import { uniq } from 'lodash'
 import { snakeCase } from "change-case"
@@ -63,7 +71,6 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     fillable: string[]
     fillableColumns: Column[]
 
-    hasHidden: boolean
     hidden: string[]
     hiddenColumns: Column[]
 
@@ -90,6 +97,10 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
 
             fillableColumns: () => this.belongsToMany(Column, FillableModelColumn).cascadeDetach(),
             guardedColumns: () => this.belongsToMany(Column, GuardedModelColumn).cascadeDetach(),
+            hiddenColumns: () => this.belongsToMany(Column, HiddenModelColumn).cascadeDetach(),
+            datesColumns: () => this.belongsToMany(Column, DatesModelColumn).cascadeDetach(),
+            appendsColumns: () => this.belongsToMany(Column, AppendsModelColumn).cascadeDetach(),
+            castsColumns: () => this.belongsToMany(Column, CastsModelColumn).cascadeDetach(),
         }
     }
 
@@ -197,7 +208,6 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         this.interfaces = data.interfaces
         this.traits = data.traits
         this.hasGuarded = data.hasGuarded
-        this.hasHidden = data.hasHidden
         this.hasFillable = data.hasFillable
         this.hasTimestamps = data.hasTimestamps
         this.hasSoftDeletes = data.hasSoftDeletes
@@ -227,6 +237,10 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         // Depends on a table
         FillFillableColumns.onModel(this)
         FillGuardedColumns.onModel(this)
+        FillHiddenColumns.onModel(this)
+        FillDatesColumns.onModel(this)
+        FillAppendsColumns.onModel(this)
+        FillCastsColumns.onModel(this)
 
         this.save()
     }
@@ -274,7 +288,6 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
             interfaces: this.interfaces,
             traits: this.traits,
             hasGuarded: this.hasGuarded,
-            hasHidden: this.hasHidden,
             hasFillable: this.hasFillable,
             hasTimestamps: this.hasTimestamps,
             hasSoftDeletes: this.hasSoftDeletes,
@@ -351,10 +364,6 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
             hasGuarded: DataComparator.booleansAreDifferent(
                 this.schemaState.hasGuarded,
                 comparisonData.hasGuarded
-            ),
-            hasHidden: DataComparator.booleansAreDifferent(
-                this.schemaState.hasHidden,
-                comparisonData.hasHidden
             ),
             hasFillable: DataComparator.booleansAreDifferent(
                 this.schemaState.hasFillable,
@@ -538,6 +547,18 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
 
     saveGuardedColumns(columnsNames: string[]): void {
         this.saveColumnsProperty(columnsNames, 'guarded', 'guardedColumns')
+    }
+    
+    saveHiddenColumns(columnsNames: string[]): void {
+        this.saveColumnsProperty(columnsNames, 'hidden', 'hiddenColumns')
+    }
+
+    saveDatesColumns(columnsNames: string[]): void {
+        this.saveColumnsProperty(columnsNames, 'dates', 'datesColumns')
+    }
+
+    saveAppendsColumns(columnsNames: string[]): void {
+        this.saveColumnsProperty(columnsNames, 'appends', 'appendsColumns')
     }
 
     saveColumnsProperty(

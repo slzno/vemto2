@@ -5,18 +5,19 @@
     import { TrashIcon } from "@heroicons/vue/24/outline"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import UiMultiSelect from "@Renderer/components/ui/UiMultiSelect.vue"
+    import UiSelect from "@Renderer/components/ui/UiSelect.vue"
     import Main from "@Renderer/services/wrappers/Main"
     import Column from "@Renderer/../common/models/Column"
     import TableModelRelationships from './TableModelRelationships.vue'
-    import UiWarning from "@Renderer/components/ui/UiWarning.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
     import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
-import UiModal from "@Renderer/components/ui/UiModal.vue"
-import RenderableModel from "@Renderer/codegen/sequential/services/model/RenderableModel"
-import HookEditor from "@Renderer/components/editors/HookEditor.vue"
+    import UiModal from "@Renderer/components/ui/UiModal.vue"
+    import RenderableModel from "@Renderer/codegen/sequential/services/model/RenderableModel"
+    import HookEditor from "@Renderer/components/editors/HookEditor.vue"
+    import { PlusCircleIcon } from "@heroicons/vue/24/outline"
 
     const onDevelopment = Main.API.onDevelopment()
 
@@ -33,7 +34,8 @@ import HookEditor from "@Renderer/components/editors/HookEditor.vue"
         modelPluralReference = ref(null),
         selectedTab = ref("data"),
         showingHooksModal = ref(false),
-        modelHooksContent = ref("")
+        modelHooksContent = ref(""),
+        modelCasts = ref([])
     
     let models: Ref<Array<Model>> = ref([])
 
@@ -54,7 +56,78 @@ import HookEditor from "@Renderer/components/editors/HookEditor.vue"
         renderableModel.disableHooks()
 
         modelHooksContent.value = await renderableModel.compile()
+        
+        loadModelCasts()
     })
+
+    const loadModelCasts = () => {
+        model.value.castsColumns.forEach((column: Column) => {
+            const pivot = model.value.relation('castsColumns').getPivotItem(column)
+            modelCasts.value.push([column.id, pivot.type, column.id])
+        })
+    }
+
+    const addModelCast = () => {
+        modelCasts.value.push([null, null])
+    }
+
+    const saveModelCast = (index: number) => {
+        const castData = modelCasts.value[index],
+            columnId = castData[0],
+            type = castData[1],
+            oldColumnId = castData[2]
+
+        if(!columnId || !type) return
+
+        if(oldColumnId) {
+            saveExistingModelCast(columnId, type, oldColumnId)
+            return
+        }
+
+        const column = model.value.table.findColumnById(columnId)
+
+        if(!column) return
+
+        let pivot = model.value.relation('castsColumns').getPivotItem(column)
+
+        if(!pivot) {
+            pivot = model.value.relation('castsColumns').attachUnique(column)
+        }
+
+        pivot.type = type
+        pivot.save()
+    }
+
+    const deleteModelCast = (index: number) => {
+        const castData = modelCasts.value[index],
+            columnId = castData[0]
+
+        if(!columnId) return
+
+        const column = model.value.table.findColumnById(columnId)
+
+        if(!column) return
+
+        model.value.relation('castsColumns').detach(column)
+
+        modelCasts.value.splice(index, 1)
+    }
+
+    const saveExistingModelCast = (columnId: string, type: string, oldColumnId: string) => {
+        const oldColumn = model.value.table.findColumnById(oldColumnId)
+
+        if(!oldColumn) return
+
+        const pivot = model.value.relation('castsColumns').getPivotItem(oldColumn)
+
+        if(!pivot) return
+
+        pivot.columnId = columnId
+        pivot.type = type
+        pivot.save()
+        
+        return
+    }
 
     const saveModelData = (nameWasChanged: boolean = false) => {
         if(nameWasChanged) {
@@ -89,7 +162,7 @@ import HookEditor from "@Renderer/components/editors/HookEditor.vue"
         })
     }
 
-    const saveFillableColumns= (selectValue: Array<Object>): void => {
+    const saveFillableColumns = (selectValue: Array<Object>): void => {
         const columnsNames = selectValue.map((item: any) => item.value)
 
         model.value.saveFillableColumns(columnsNames)
@@ -99,6 +172,19 @@ import HookEditor from "@Renderer/components/editors/HookEditor.vue"
         const columnsNames = selectValue.map((item: any) => item.value)
 
         model.value.saveGuardedColumns(columnsNames)
+    }
+
+    const saveHiddenColumns = (selectValue: Array<Object>): void => {
+        const columnsNames = selectValue.map((item: any) => item.value)
+        model.value.saveHiddenColumns(columnsNames)
+    }
+    const saveDatesColumns = (selectValue: Array<Object>): void => {
+        const columnsNames = selectValue.map((item: any) => item.value)
+        model.value.saveDatesColumns(columnsNames)
+    }
+    const saveAppendsColumns = (selectValue: Array<Object>): void => {
+        const columnsNames = selectValue.map((item: any) => item.value)
+        model.value.saveAppendsColumns(columnsNames)
     }
 
     const deleteModel = (): void => {
@@ -211,6 +297,69 @@ import HookEditor from "@Renderer/components/editors/HookEditor.vue"
                         :options="getSelectDataForLayout(model.table.getColumns())"
                     />
                 </div>
+            </div>
+
+            <div class="mt-4 text-sm underline underline-offset-4 decoration-slate-600 text-slate-500 text-center">
+                Model Properties
+            </div>
+
+            <div class="mt-4 bg-slate-850 rounded-md space-y-1 p-2 flex flex-col gap-1">
+                <UiMultiSelect
+                    inputLabel="Hidden"
+                    :default-value="getSelectDataForLayout(model.hiddenColumns)"
+                    @change="$event => saveHiddenColumns($event)"
+                    :options="getSelectDataForLayout(model.table.getColumns())"
+                />
+            </div>
+
+            <div class="mt-4 bg-slate-850 rounded-md space-y-1 p-2 flex flex-col gap-1">
+                <UiMultiSelect
+                    inputLabel="Dates"
+                    :default-value="getSelectDataForLayout(model.datesColumns)"
+                    @change="$event => saveDatesColumns($event)"
+                    :options="getSelectDataForLayout(model.table.getColumns())"
+                />
+            </div>
+
+            <div class="mt-4 bg-slate-850 rounded-md space-y-1 p-2 flex flex-col gap-1">
+                <UiMultiSelect
+                    inputLabel="Appends"
+                    :default-value="getSelectDataForLayout(model.appendsColumns)"
+                    @change="$event => saveAppendsColumns($event)"
+                    :options="getSelectDataForLayout(model.table.getColumns())"
+                />
+            </div>
+
+            <div class="mt-4 bg-slate-850 rounded-md space-y-1 p-2 flex flex-col gap-2">
+                <span class="text-xs text-slate-400">Casts</span>
+                <div class="flex flex-col gap-3">
+                    <div class="flex gap-3" v-for="(modelCast, index) in modelCasts" :key="index">
+                        <div class="w-1/2">
+                            <UiSelect v-model="modelCasts[index][0]" label="Column" @change="saveModelCast(index)">
+                                <template v-for="column in model.table.getColumns()">
+                                    <option :value="column.id">{{ column.name }}</option>
+                                </template>
+                            </UiSelect>
+                        </div>
+                        <div class="w-1/2 mt-1">
+                            <UiText v-model="modelCasts[index][1]" label="Type" @input="saveModelCast(index)" />
+                        </div>
+                        <UiOptionsDropdown>
+                            <UiDropdownItem @click="deleteModelCast(index)">
+                                <TrashIcon class="h-5 w-5 mr-1 text-red-400" /> Delete
+                            </UiDropdownItem>
+                        </UiOptionsDropdown>
+                    </div>
+                </div>
+
+                <section
+                    class="flex w-full justify-center text-slate-400 hover:text-red-500 cursor-pointer text-sm"
+                >
+                    <div class="flex items-center" @click="addModelCast()">
+                        <PlusCircleIcon class="w-6 h-6" />
+                        <span class="px-1.5">Add Column</span>
+                    </div>
+                </section>
             </div>
 
             <div class="mt-4" v-if="onDevelopment">

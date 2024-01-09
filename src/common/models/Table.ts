@@ -204,6 +204,10 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     findColumnByName(columnName: string): Column {
         return this.getColumns().find((column) => column.name === columnName)
     }
+    
+    findColumnById(id: string): Column {
+        return this.getColumns().find((column) => column.id === id)
+    }
 
     getRenamedColumns(): Column[] {
         return this.getColumns().filter((column) => column.wasRenamed())

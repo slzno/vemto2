@@ -88,37 +88,39 @@ implements
     ];
     <% } %>
 
-    <% if(this.model.hidden && this.model.hidden.length) { %>
-    <% if(this.model.attributesComments) { %>
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    <% } %>
+    <% if(this.model.hiddenColumns.length) { %>
+        <###>
+        <% if(this.model.attributesComments) { %>
+        /**
+        * The attributes that should be hidden for serialization.
+        *
+        * @var array<int, string>
+        */
+        <% } %>
     protected $hidden = [
-        <% for(let column of this.model.hidden) { %>
-        '<$ column $>',
+        <% for(let column of this.model.hiddenColumns) { %>
+        '<$ column.name $>',
         <% } %>
     ];
     <% } %>
 
-    <% if(this.model.appends && this.model.appends.length) { %>
-    <% if(this.model.attributesComments) { %>
-    /**
-     * The accessors to append to the model's array form.
-     *
-     * @var array<int, string>
-     */
-    <% } %>
+    <% if(this.model.appendsColumns.length) { %>
+        <###>
+        <% if(this.model.attributesComments) { %>
+        /**
+        * The accessors to append to the model's array form.
+        *
+        * @var array<int, string>
+        */
+        <% } %>
     protected $appends = [
-        <% for(let column of this.model.appends) { %>
-        '<$ column $>',
+        <% for(let column of this.model.appendsColumns) { %>
+        '<$ column.name $>',
         <% } %>
     ];
     <% } %>
 
-    <% if(this.model.dates && this.model.dates.length) { %>
+    <% if(this.model.datesColumns.length) { %>
     <% if(this.model.attributesComments) { %>
     /**
      * The attributes that should be mutated to dates.
@@ -127,24 +129,26 @@ implements
      */
     <% } %>
     protected $dates = [
-        <% for(let column of this.model.dates) { %>
-        '<$ column $>',
+        <% for(let column of this.model.datesColumns) { %>
+        '<$ column.name $>',
         <% } %>
     ];
     <% } %>
 
-    <% const castsColumns = Object.keys(this.model.casts || {}) %>
-    <% if(castsColumns.length) { %>
-    <% if(this.model.attributesComments) { %>
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    <% } %>
+    <% if(this.model.castsColumns.length) { %>
+        <###>
+        <% if(this.model.attributesComments) { %>
+        /**
+        * The attributes that should be cast.
+        *
+        * @var array<string, string>
+        */
+        <% } %>
     protected $casts = [
-        <% for(let column of castsColumns) { %>
-        '<$ column $>' => '<$ this.model.casts[column] $>',
+        <% for(let column of this.model.castsColumns) { %>
+        <% const pivot = this.model.relation('castsColumns').getPivotItem(column) %>
+        <###>
+        '<$ column.name $>' => '<$ pivot.type $>',
         <% } %>
     ];
     <% } %>
