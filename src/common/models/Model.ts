@@ -126,6 +126,14 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         this.methodsComments = false
     }
 
+    generateDefaultData() {
+        if(!this.isAuthenticatable) return
+        if(this.name !== 'User') return
+
+        this.attributesComments = true
+        this.methodsComments = true
+    }
+
     remove() {
         if (this.isNew()) {
             return this.delete()
