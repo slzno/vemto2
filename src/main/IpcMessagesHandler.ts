@@ -272,4 +272,10 @@ export function HandleIpcMessages() {
             return phpMerger.merge()
         })
     })
+    
+    ipcMain.handle("open:url", (event, url) => {
+        return handleError(event, () => {
+            shell.openExternal(url)
+        })
+    })
 }
