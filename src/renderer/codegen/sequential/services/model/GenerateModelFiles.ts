@@ -1,5 +1,4 @@
 import Model from "@Common/models/Model"
-import RenderableModel from "./RenderableModel"
 import RenderableFactory from "./RenderableFactory"
 import RenderableSeeder from "./RenderableSeeder"
 import RenderablePolicy from "./RenderablePolicy"
@@ -9,7 +8,6 @@ export default class GenerateModelFiles {
         const models = Model.getValid()
 
         for (const model of models) {
-            await new RenderableModel(model).render()
             await new RenderableFactory(model).render()
             await new RenderableSeeder(model).render()
             await new RenderablePolicy(model).render()

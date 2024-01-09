@@ -14,18 +14,24 @@ class ModelRepository {
         foreach ($models as $model) {
             $reflection = new \ReflectionClass($model['class']);
             
+            // get the model parent class
             $parentClass = $reflection->getParentClass();
 
+            // get the model interfaces
             $interfaces = $reflection->getInterfaces();
-            // $interfaces = collect($interfaces)->filter(function ($interface) use ($parentClass) {
-            //     return ! $parentClass || ! $parentClass->implementsInterface($interface->name);
-            // })->values()->toArray();
 
+            // remove interfaces that are implemented by the parent class
+            $interfaces = collect($interfaces)->filter(function ($interface) use ($parentClass) {
+                return ! $parentClass || ! $parentClass->implementsInterface($interface->name);
+            })->values()->toArray();
+            $interfaces = collect($interfaces)->map(function ($interface) use ($model) {
+                return self::buildImportStatement($model, $interface);
+            })->values()->toArray();
 
-            $traits = $reflection->getTraits();
-            // $traits = collect($traits)->filter(function ($trait) use ($parentClass) {
-            //     return ! $parentClass || ! $parentClass->usesTrait($trait->name);
-            // })->values()->toArray();
+            // get the model traits
+            $traits = collect($reflection->getTraits())->map(function ($trait) use ($model) {
+                return self::buildImportStatement($model, $trait);
+            })->values()->toArray();
             
             $properties = $reflection->getDefaultProperties();
 
@@ -118,12 +124,8 @@ class ModelRepository {
                 'namespace' => $reflection->getNamespaceName(),
                 'path' => $model['path'],
                 'parentClass' => self::buildImportStatement($model, $parentClass),
-                'interfaces' => collect($interfaces)->map(function ($interface) {
-                    return $interface->name;
-                })->toArray(),
-                'traits' => collect($traits)->map(function ($trait) {
-                    return $trait->name;
-                })->toArray(),
+                'interfaces' => $interfaces,
+                'traits' => $traits,
                 'hasFillable' => $hasProperty('protected', 'fillable'),
                 'fillable' => $fillable,
                 'hasCasts' => $hasProperty('protected', 'casts'),
@@ -152,10 +154,10 @@ class ModelRepository {
         $importData = self::getImportData($modelData, $import);
 
         if($importData['name'] === $importData['alias']) {
-            return sprintf("use %s", $importData['import']);
+            return $importData['import'];
         }
         
-        return sprintf("use %s as %s", $importData['import'], $importData['alias']);
+        return sprintf("%s as %s", $importData['import'], $importData['alias']);
     }
 
     public static function getImportData(array $modelData, $import) {

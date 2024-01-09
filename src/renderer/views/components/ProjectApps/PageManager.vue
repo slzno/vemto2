@@ -5,6 +5,7 @@
     import UiModal from '@Renderer/components/ui/UiModal.vue'
     import UiButton from '@Renderer/components/ui/UiButton.vue'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
+import { PlusIcon } from '@heroicons/vue/24/outline'
 
     const showingModal = ref(false),
         pageName = ref(''),
@@ -36,21 +37,26 @@
 
 <template>
     <div>
-        <UiButton @click="show()">Add Page</UiButton>
+        <UiButton @click="show()">
+            <PlusIcon class="w-4 h-4 mr-1" />
+            Page
+        </UiButton>
 
         <UiModal
             title="Add Page"
             :show="showingModal"
             @close="close()"
-            width="calc(100vw - 100px)"
+            width="700px"
         >
-            <UiText v-model="pageName" label="Page Name" />
-
-            <UiText v-model="pageRoute" label="Page Route" />
+            <div class="p-4 space-y-4">
+                <UiText v-model="pageName" label="Page Name" />
+    
+                <UiText v-model="pageRoute" label="Page Route" />
+            </div>
 
             <template #footer>
                 <div class="flex justify-end p-2">
-                    <UiButton @click=" save()">Save</UiButton>
+                    <UiButton @click=" save()">Create</UiButton>
                 </div>
             </template>
         </UiModal>

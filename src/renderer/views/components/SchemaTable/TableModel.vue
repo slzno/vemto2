@@ -27,7 +27,8 @@
                     </div>
                 </div>
                 <div class="text-xs text-slate-700">
-                    <span class="text-slate-500 text-xs">{{ model.class }}</span>
+                    <span v-if="model.isNew()" class="text-slate-600 text-xs">(Draft)</span>
+                    <span v-else class="text-slate-500 text-xs">{{ model.class }}</span>
                 </div>
             </div>
 

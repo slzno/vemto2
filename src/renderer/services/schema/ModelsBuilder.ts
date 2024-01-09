@@ -79,6 +79,12 @@ export default class ModelsBuilder {
     
                 Model.savingInternally()
                 model.applyChanges(modelData)
+                
+                if(isCreating) {
+                    model.generateDefaultData()
+                    model.save()
+                }
+
                 Model.notSavingInternally()
     
                 this.readRelationships(modelData, model)

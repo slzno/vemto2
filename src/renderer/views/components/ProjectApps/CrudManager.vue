@@ -5,6 +5,7 @@
     import UiButton from '@Renderer/components/ui/UiButton.vue'
     import UiSelect from '@Renderer/components/ui/UiSelect.vue'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
+import { PlusIcon } from '@heroicons/vue/24/outline'
 
     const showingModal = ref(false),
         selectedModelId = ref(null),
@@ -44,27 +45,32 @@
 
 <template>
     <div>
-        <UiButton @click="show()">Add CRUD</UiButton>
+        <UiButton @click="show()">
+            <PlusIcon class="w-4 h-4 mr-1" />
+            CRUD
+        </UiButton>
 
         <UiModal
             title="Add CRUD"
             :show="showingModal"
             @close="close()"
-            width="calc(100vw - 100px)"
+            width="700px"
         >
-            <UiSelect v-model="selectedModelId">
-                <option
-                    v-for="model in projectStore.project.models"
-                    :key="model.id"
-                    :value="model.id"
-                >
-                    {{ model.name }}
-                </option>
-            </UiSelect>
+            <div class="p-4">
+                <UiSelect v-model="selectedModelId" label="For Model">
+                    <option
+                        v-for="model in projectStore.project.models"
+                        :key="model.id"
+                        :value="model.id"
+                    >
+                        {{ model.name }}
+                    </option>
+                </UiSelect>
+            </div>
 
             <template #footer>
                 <div class="flex justify-end p-2">
-                    <UiButton @click=" save()">Save</UiButton>
+                    <UiButton @click=" save()">Create</UiButton>
                 </div>
             </template>
         </UiModal>
