@@ -56,7 +56,7 @@ class <$ this.filenameWithoutExtension $> extends Component
         $this->validate();
         // hook:AFTER_VALIDATE
 
-        $<$ itemVarName $> = $form->save();
+        $<$ itemVarName $> = $this->form->save();
 
         return redirect()->route('<$ crud.getRouteNameByTag('edit') $>', $<$ itemVarName $>);
     }

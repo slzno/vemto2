@@ -42,7 +42,7 @@ class <$ this.filenameWithoutExtension $> extends Component
     public CreateDetailForm|UpdateDetailForm $form;
 
     // hook:BEFORE_VARIABLES
-    public <$ modelName $> $<$ itemVarName $>;
+    public ?<$ modelName $> $<$ itemVarName $>;
     public <$ parentModelName $> $<$ parentCrudItemVarName $>;
 
     <% for (let input of detailCrud.getBelongsToInputs()) { %>
@@ -82,6 +82,7 @@ class <$ this.filenameWithoutExtension $> extends Component
     public function new<$ pascalCase(itemVarName) $>()
     {
         $this->form = new CreateDetailForm($this, 'form');
+        $this-><$ itemVarName $> = null;
 
         $this->showModal();
     }
@@ -90,6 +91,7 @@ class <$ this.filenameWithoutExtension $> extends Component
     {
         $this->form = new UpdateDetailForm($this, 'form');
         $this->form->set<$ modelName $>($<$ itemVarName $>);
+        $this-><$ itemVarName $> = $<$ itemVarName $>;
 
         $this->showModal();
     }
@@ -115,24 +117,21 @@ class <$ this.filenameWithoutExtension $> extends Component
     {
         $this->authorize('delete', $<$ itemVarName $>);
 
-        $comment->delete();
+        $<$ itemVarName $>->delete();
 
         $this->confirming<$ pascalCase(itemVarName) $>Deletion = false;
     }
 
     public function save()
     {
-        $this->form-><$ hasManyDetail.relationship.foreignKey.name $> = $this-><$ parentCrudItemVarName $>-><$ parentCrudModel.table.getPrimaryKeyName() $>;
-
-        if(!this-><$ itemVarName $>-><$ hasManyDetail.relationship.foreignKey.name $>) {
+        if(empty($this-><$ itemVarName $>)) {
             $this->authorize('create', <$ modelName $>::class);
         } else {
             $this->authorize('update', $this-><$ itemVarName $>);
         }
 
-        $this-><$ itemVarName $>-><$ hasManyDetail.relationship.foreignKey.name $> = $this-><$ parentCrudItemVarName $>-><$ parentCrudModel.table.getPrimaryKeyName() $>;
-
-        $this-><$ itemVarName $>->save();
+        $this->form-><$ hasManyDetail.relationship.foreignKey.name $> = $this-><$ parentCrudItemVarName $>-><$ parentCrudModel.table.getPrimaryKeyName() $>;
+        $this->form->save();
 
         $this->closeModal();
     }

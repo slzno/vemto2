@@ -62,6 +62,8 @@ class <$ this.filenameWithoutExtension $> extends Component
         $this->validate();
         // hook:AFTER_VALIDATE
 
+        $this->form->save();
+
         $this->dispatch('saved');
     }
 
