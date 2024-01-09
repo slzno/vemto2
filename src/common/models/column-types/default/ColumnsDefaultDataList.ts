@@ -250,7 +250,7 @@ export default class ColumnsDefaultDataList {
 
             password: {
                 type: "string",
-                faker: "Hash::make('password')",
+                faker: "\Hash::make('password')",
                 inputType: "password",
                 validationRules: ["required", "string", "min:6"],
                 updateValidationRules: ["nullable", "string", "min:6"],

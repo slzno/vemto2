@@ -46,7 +46,7 @@
     </div>
 
     <% for (let hasManyDetail of crud.hasManyDetails) { %>
-    @can('view-any', <$ hasManyDetail.detailCrud.class $>::class)
+    @can('view-any', <$ hasManyDetail.detailCrud.model.class $>::class)
     <div class="vtheme(crud.form.container)">
         <div class="vtheme(crud.form)">
             <div class="vtheme(crud.form.inputs.container)">
