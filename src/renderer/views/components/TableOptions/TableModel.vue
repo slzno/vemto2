@@ -2,7 +2,7 @@
     import { PropType, Ref, toRef, ref, onMounted, defineEmits } from "vue"
     import Model from "@Common/models/Model"
     import UiText from "@Renderer/components/ui/UiText.vue"
-    import { TrashIcon } from "@heroicons/vue/24/outline"
+    import { TrashIcon, PlusCircleIcon } from "@heroicons/vue/24/outline"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import UiMultiSelect from "@Renderer/components/ui/UiMultiSelect.vue"
     import Main from "@Renderer/services/wrappers/Main"
@@ -14,9 +14,9 @@
     import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
     import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
-import UiModal from "@Renderer/components/ui/UiModal.vue"
-import RenderableModel from "@Renderer/codegen/sequential/services/model/RenderableModel"
-import HookEditor from "@Renderer/components/editors/HookEditor.vue"
+    import UiModal from "@Renderer/components/ui/UiModal.vue"
+    import RenderableModel from "@Renderer/codegen/sequential/services/model/RenderableModel"
+    import HookEditor from "@Renderer/components/editors/HookEditor.vue"
 
     const onDevelopment = Main.API.onDevelopment()
 
@@ -108,6 +108,32 @@ import HookEditor from "@Renderer/components/editors/HookEditor.vue"
             model.value.remove()
             emit('removeModel')
         })
+    }
+
+    const deleteTrait = (traitIndex: number): void => {
+        Main.API.confirm("Are you sure you want to remove this trait?").then((confirmed: boolean) => {
+            if(!confirmed) return
+
+            model.value.traits.splice(traitIndex, 1)
+            saveModelData()
+        })
+    }
+
+    const deleteInterface = (interfaceIndex: number): void => {
+        Main.API.confirm("Are you sure you want to remove this interface?").then((confirmed: boolean) => {
+            if(!confirmed) return
+
+            model.value.interfaces.splice(interfaceIndex, 1)
+            saveModelData()
+        })
+    }
+
+    const newTrait = (): void => {
+        model.value.traits.push("")
+    }
+
+    const newInterface = (): void => {
+        model.value.interfaces.push("")
     }
 
     const showHooksModal = (): void => {
@@ -250,19 +276,75 @@ import HookEditor from "@Renderer/components/editors/HookEditor.vue"
         </div>
 
         <div v-show="selectedTab === 'imports'">
-            <div v-if="model.hasParentClass()">
                 <div class="text-slate-400">Parent Class</div>
-                <div class="w-full px-2 py-1 rounded bg-slate-900 my-1">{{ model.parentClass }}</div>
+            <div v-if="model.hasParentClass()">
+                <UiText
+                    v-model="model.parentClass"
+                    placeholder="Parent Class"
+                    @input="saveModelData()"
+                />
             </div>
 
-            <div v-if="model.hasTraits()">
+            <div class="mt-4">
                 <div class="text-slate-400">Traits</div>
-                <div class="w-full px-2 py-1 rounded bg-slate-900 my-1" v-for="modelTrait in model.traits">{{ modelTrait }}</div>
+                <div class="flex flex-col gap-1" v-if="model.hasTraits()">
+                    <template v-for="(modelTrait, index) in model.traits">
+                        <div class="flex justify-center items-center">
+                            <UiText
+                                v-model="model.traits[index]"
+                                placeholder="Trait"
+                                @input="saveModelData()"
+                            />
+
+                            <UiOptionsDropdown>
+                                <UiDropdownItem @click="deleteTrait(index)">
+                                    <TrashIcon class="h-5 w-5 mr-1 text-red-400" /> Delete
+                                </UiDropdownItem>
+                            </UiOptionsDropdown>
+                        </div>
+                    </template>
+                </div>
+
+                <div class="mt-1">
+                    <UiButton
+                        @click="newTrait()"
+                    >
+                        <span class="flex items-center">
+                            <PlusCircleIcon class="h-5 w-5 mr-1" /> Add Trait
+                        </span>
+                    </UiButton>
+                </div>
             </div>
 
-            <div v-if="model.hasInterfaces()">
+            <div class="mt-4">
                 <div class="text-slate-400">Interfaces</div>
-                <div class="w-full px-2 py-1 rounded bg-slate-900 my-1" v-for="modelInterface in model.interfaces">{{ modelInterface }}</div>
+                <div class="flex flex-col gap-1" v-if="model.hasInterfaces()">
+                    <template v-for="(modelInterface, index) in model.interfaces">
+                        <div class="flex justify-center items-center">
+                            <UiText
+                                v-model="model.interfaces[index]"
+                                placeholder="Interface"
+                                @input="saveModelData()"
+                            />
+
+                            <UiOptionsDropdown>
+                                <UiDropdownItem @click="deleteInterface(index)">
+                                    <TrashIcon class="h-5 w-5 mr-1 text-red-400" /> Delete
+                                </UiDropdownItem>
+                            </UiOptionsDropdown>
+                        </div>
+                    </template>
+                </div>
+
+                <div class="mt-1">
+                    <UiButton
+                        @click="newInterface()"
+                    >
+                        <span class="flex items-center">
+                            <PlusCircleIcon class="h-5 w-5 mr-1" /> Add Interface
+                        </span>
+                    </UiButton>
+                </div>
             </div>
         </div>
 
