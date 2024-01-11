@@ -2,11 +2,15 @@
     import { toRef } from "vue"
     import Input from "@Common/models/crud/Input"
     import debounce from "@Common/tools/debounce"
-    import { XMarkIcon, TrashIcon } from "@heroicons/vue/24/outline"
+    import { XMarkIcon, TrashIcon, PlusCircleIcon } from "@heroicons/vue/24/outline"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiNumber from "@Renderer/components/ui/UiNumber.vue"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import { capitalCase } from "change-case"
+import UiButton from "@Renderer/components/ui/UiButton.vue"
+import UiSmallButton from "@Renderer/components/ui/UiSmallButton.vue"
+import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
+import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
 
     const props = defineProps({
         show: Boolean,
@@ -25,8 +29,6 @@
     }
 
     const deleteItem = (deleteItem: any) => {
-        if(!window.confirm("Are you sure you want to delete this item?")) return
-
         input.value.items.splice(input.value.items.indexOf(deleteItem), 1)
     }
 
@@ -104,7 +106,15 @@
                             </div>
 
                             <div v-if="input.allowsItems()">
-                                <label class="text-xs text-slate-400">Items</label>
+                                <div class="flex justify-between">
+                                    <label class="text-xs text-slate-400">Items</label>
+
+                                    <div>
+                                        <UiOptionsDropdown>
+                                            <UiDropdownItem @click="input.resetItemsFromColumn()">Reset from Column Options</UiDropdownItem>
+                                        </UiOptionsDropdown>
+                                    </div>
+                                </div>
 
                                 <div class="max-h-[300px] overflow-y-auto">
                                     <template v-for="(item, index) in input.items" :key="index">
@@ -120,9 +130,12 @@
                                     </template>
                                 </div>
 
-                                <div class="underline underline-offset-4 text-slate-300 hover:text-slate-100 text-sm gap-2 cursor-pointer mt-2" @click="addItem()">
-                                    + Add Item
-                                </div>
+                                <UiSmallButton @click="addItem()">
+                                    <span class="flex items-center">
+                                        <PlusCircleIcon class="w-5 h-5 mr-1" />
+                                        Add Item
+                                    </span>
+                                </UiSmallButton>
                             </div>
 
                             <div class="mt-2 flex gap-2 flex-col">

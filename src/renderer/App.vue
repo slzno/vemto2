@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { onMounted, watch } from "vue"
+    import { onMounted, watch, ref } from "vue"
     import { RouterView, useRouter, useRoute } from "vue-router"
     import Main from "@Renderer/services/wrappers/Main"
     import Alert from "@Renderer/components/utils/Alert"
@@ -9,7 +9,8 @@
     const router = useRouter(),
         currentRoute = useRoute(),
         projectStore = useProjectStore(),
-        errorsStore = useErrorsStore()
+        errorsStore = useErrorsStore(),
+        titlebarColor = ref("bg-transparent")
 
     onMounted(() => {
         Main.API.onDefaultError((error) => {
@@ -61,8 +62,9 @@
 
 <template>
     <div
-        class="titlebar bg-transparent fixed top-0 right-0 z-50 bg-slate-900 border-slate-800 hover:bg-slate-950 cursor-move text-slate-700 flex items-center justify-center px-2"
-        style="height: 15px; width: 100%"
+        :class="titlebarColor"
+        class="titlebar fixed top-0 right-0 z-50 cursor-move text-slate-700 flex items-center justify-center px-2"
+        style="height: 20px; width: 100%"
     >
         <div>
             <!-- Current Project: vemto-test-01 -->

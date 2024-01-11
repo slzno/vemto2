@@ -10,6 +10,7 @@
     import CrudLogic from './components/ProjectCrud/CrudLogic.vue'
     import CrudForm from './components/ProjectCrud/Form/CrudForm.vue'
     import CrudValidation from './components/ProjectCrud/Validation/CrudValidation.vue'
+import UiEmptyMessage from '@Renderer/components/ui/UiEmptyMessage.vue'
 
     const projectStore = useProjectStore()
 
@@ -21,10 +22,10 @@
     const selectedTab = ref("form")
 
     const tabs = [
-        { label: "Form", value: "form" },
-        { label: "Data Table", value: "datatable" },
+        { label: "Inputs", value: "form" },
         { label: "Validation", value: "validation" },
         { label: "Code", value: "logic" },
+        { label: "Data Table", value: "datatable" },
         { label: "Settings", value: "settings" },
     ]
 
@@ -56,6 +57,12 @@
 
             <section v-if="selectedTab === 'logic'">
                 <CrudLogic :crud="crud" />
+            </section>
+
+            <section v-if="selectedTab === 'datatable'">
+                <UiEmptyMessage>
+                    Under Development... Coming Soon!
+                </UiEmptyMessage>
             </section>
 
             <section class="flex flex-col w-full h-screen space-y-4 mt-2 px-2 pb-40 overflow-scroll" v-if="selectedTab === 'settings'">

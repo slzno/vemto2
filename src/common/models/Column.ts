@@ -30,7 +30,7 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
     places: number
     autoIncrement: boolean
     faker: string
-    options: any[]
+    options: string[]
     inputs: Input[]
     referencedIndexes: Index[]
     columnIndexes: Index[]
@@ -42,7 +42,6 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
     relationshipsByRelatedPivotKey: Relationship[]
     relationshipsByMorphIdColumn: Relationship[]
     relationshipsByMorphTypeColumn: Relationship[]
-
 
     constructor(data: any = {}) {
         const columnData = Object.assign(ColumnData.getDefault(), data)
@@ -363,6 +362,18 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         return this.table.columns.find((column) => column.order === this.order - 1)
     }
 
+    mustHaveOptions(): boolean {
+        return this.isEnum() || this.isSet()
+    }
+
+    isEnum(): boolean {
+        return this.type === 'enum'
+    }
+
+    isSet(): boolean {
+        return this.type === 'set'
+    }
+
     old(): Column {
         const oldColumn = new Column(this.schemaState)
 
@@ -401,6 +412,32 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         if(type && type.inputType) return type.inputType
     }
 
+    cannotGenerateDefaultInputByOptions(): boolean {
+        return !this.canGenerateDefaultInputByOptions()
+    }
+
+    canGenerateDefaultInputByOptions(): boolean {
+        let defaultSettingsByName = this.getDefaultSettingsByName() as any
+    
+        if(defaultSettingsByName && defaultSettingsByName.avoidInputGenerationByDefault) return false
+    
+        return true
+    }
+
+    generateDefaultOptions(): void {
+        if(!this.mustHaveOptions()) return
+
+        this.options = this.getDefaultOptions()
+    }
+
+    getDefaultOptions(): string[] {
+        let defaultSettingsByName = this.getDefaultSettingsByName()
+
+        if(defaultSettingsByName && typeof defaultSettingsByName.inputOptions !== 'undefined') return defaultSettingsByName.inputOptions
+
+        return []
+    }
+
     getDefaultSettingsByName(name?: string): ColumnDefaultData {
         if(!name) name = this.name
 
@@ -428,7 +465,11 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
     }
 
     getType(): any {
-        return ColumnTypeList.getByIdentifier(this.type)
+        try {
+            return ColumnTypeList.getByIdentifier(this.type)
+        } catch {
+            return null
+        }
     }
 
     isInvalid(): boolean {
@@ -445,13 +486,14 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         if(defaultColumnData.length) this.length = defaultColumnData.length
         if(defaultColumnData.nullable) this.nullable = defaultColumnData.nullable
         if(defaultColumnData.faker) this.faker = defaultColumnData.faker
-        if(defaultColumnData.inputOptions) this.options = defaultColumnData.inputOptions
+
+        this.generateDefaultOptions()
     }
 
     getFakerForTemplate() {
         let faker: string = this.faker,
             length = this.length || 255,
-            defaultOrFirst: string = this.default
+            defaultOrFirst: string = this.default || (this.options?.length ? this.options[0] : '')
 
         faker = faker.replace('{LENGTH}', String(length))
         faker = faker.replace('{DEFAULT_OR_FIRST}', defaultOrFirst)

@@ -22,6 +22,7 @@ import FillCastsColumns from "./services/models/Fillers/FillCastsColumns"
 
 import { uniq } from 'lodash'
 import { snakeCase } from "change-case"
+import Crud from "./crud/Crud"
 
 export default class Model extends AbstractSchemaModel implements SchemaModel {
     id: string
@@ -43,6 +44,7 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     relatedRelationships: Relationship[]
     hooks: any
     pluralAndSingularAreSame: boolean
+    cruds: Crud[]
 
     /**
      * Settings
@@ -92,6 +94,7 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         return {
             table: () => this.belongsTo(Table),
             project: () => this.belongsTo(Project),
+            cruds: () => this.hasMany(Crud).cascadeDelete(),
             ownRelationships: () => this.hasMany(Relationship).cascadeDelete(),
             relatedRelationships: () => this.hasMany(Relationship, "relatedModelId").cascadeDelete(),
 
@@ -643,5 +646,15 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         if(!importName.includes(' as ')) return importName.split('\\').pop()
 
         return importName.split(' as ').pop()
+    }
+
+    columnIsHiddenForCrudCreation(column: Column): boolean {
+        if(column.name === 'password') return false
+
+        if(column.cannotGenerateDefaultInputByOptions()) return true
+
+        if(!this.hidden) return false
+
+        return this.hidden.includes(column.name)
     }
 }

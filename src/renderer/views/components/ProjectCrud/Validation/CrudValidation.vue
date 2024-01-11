@@ -78,7 +78,7 @@
 
         if(!inputValue?.length) return validations
 
-        return validations.filter((item: any) => item.text.includes(inputValue))
+        return validations.filter((item: any) => item.text && item.text.includes(inputValue))
     }
 
     const saveCreationSelectedRule = (rule: any, input: Input) => {

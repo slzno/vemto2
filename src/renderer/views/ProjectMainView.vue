@@ -118,8 +118,7 @@
             <RouterView />
 
             <div
-                class="fixed flex justify-end bottom-0 z-50"
-                style="width: calc(100% - 5rem)"
+                class="fixed flex justify-end bottom-0 right-0 z-50 w-[194px]"
             >
                 <ErrorsDialog ref="errorsDialog" />
 

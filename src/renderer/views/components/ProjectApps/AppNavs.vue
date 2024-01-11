@@ -113,7 +113,7 @@
     </div>
 
     <UiModal
-        title="Create Navigation"
+        title="Add Menu Item"
         :show="showingCreateNavigationModal"
         @close="close()"
         width="25%"

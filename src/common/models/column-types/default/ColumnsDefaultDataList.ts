@@ -241,6 +241,7 @@ export default class ColumnsDefaultDataList {
                 type: "timestamp",
                 nullable: true,
                 faker: "now()",
+                avoidInputGenerationByDefault: true,
             },
 
             slug: {
@@ -483,7 +484,7 @@ export default class ColumnsDefaultDataList {
                 type: "enum",
                 faker: "\\Arr::random(['male', 'female', 'other'])",
                 inputType: "select",
-                inputOptions: ['male', 'female', 'other'],
+                inputOptions: ['male', 'female', 'other', 'other2'],
                 validationRules: [
                     'in:{IMPLODED_OPTIONS}'
                 ]
@@ -741,6 +742,24 @@ export default class ColumnsDefaultDataList {
                 type: "enum",
                 faker: "fake()->monthName()",
                 inputOptions: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            },
+
+            current_team_id: {
+                type: "bigInteger",
+                nullable: true,
+                avoidInputGenerationByDefault: true, 
+            },
+
+            two_factor_confirmed_at: {
+                type: "timestamp",
+                nullable: true,
+                avoidInputGenerationByDefault: true, 
+            },
+
+            profile_photo_path: {
+                type: "string",
+                nullable: true,
+                avoidInputGenerationByDefault: true, 
             },
         }
     }

@@ -77,8 +77,11 @@ export default class Input extends RelaDB.Model {
         input.items = []
         input.showOnCreation = true
         input.showOnUpdate = true
-        input.showOnDetails = true
-        input.showOnIndex = true
+
+        const columnIsHidden = crud.model.hidden && crud.model.hidden.indexOf(column.name) !== -1
+
+        input.showOnDetails = !columnIsHidden
+        input.showOnIndex = !columnIsHidden
 
         input.calculateType(column)
 
@@ -86,7 +89,8 @@ export default class Input extends RelaDB.Model {
             input.type = forceType
         }
 
-        input.generateColumnParities()
+        input.calculateInputParamsByType()
+        input.generateItemsFromColumn()
         input.generateValidationRules()
 
         return input
@@ -172,18 +176,31 @@ export default class Input extends RelaDB.Model {
         this.updateRules = validationGenerator.get(ValidationRuleType.UPDATE)
     }
 
-    generateColumnParities() {
+    calculateInputParamsByType() {
         if (this.type === InputType.NUMBER) {
             this.step = 1
         }
+    }
 
-        if(['set', 'enum'].includes(this.column.type)) {
-            const options = this.column.options
+    resetItemsFromColumn() {
+        this.items = []
 
-            if(options && Array.isArray(options)) {
-                options.forEach(option => this.items.push({ value: option, label: changeCase.capitalCase(option), }))
-            }
-        }
+        this.generateItemsFromColumn()
+
+        this.save()
+    }
+
+    generateItemsFromColumn() {
+        if(!this.column.mustHaveOptions()) return;
+
+        this.items = this.items || []
+
+        this.column.options.forEach((option) => {
+            this.items.push({
+                label: changeCase.sentenceCase(option),
+                value: option,
+            })
+        })
     }
 
     getCreationRulesForTemplate() {

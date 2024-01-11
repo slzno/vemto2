@@ -173,6 +173,22 @@ export default class Crud extends RelaDB.Model {
         return this.inputs.filter((input) => input.defaultValue?.length)
     }
 
+    getInputsForIndex(): Input[] {
+        return this.inputs.filter((input) => input.showOnIndex)
+    }
+
+    getInputsForCreate(): Input[] {
+        return this.inputs.filter((input) => input.showOnCreation)
+    }
+
+    getInputsForUpdate(): Input[] {
+        return this.inputs.filter((input) => input.showOnUpdate)
+    }
+
+    getInputsForDetails(): Input[] {
+        return this.inputs.filter((input) => input.showOnDetails)
+    }
+
     calculateSettings() {
         this.settings = {
             itemName: camelCase(this.model.name),
@@ -207,6 +223,8 @@ export default class Crud extends RelaDB.Model {
             if(excludedColumnsIds.includes(column.id)) return
             if(column.isPrimaryKey()) return
             if(column.isDefaultLaravelTimestamp()) return
+
+            if(model.columnIsHiddenForCrudCreation(column)) return
 
             const input = Input.createFromColumn(this, column)
             input.panelId = panel.id
