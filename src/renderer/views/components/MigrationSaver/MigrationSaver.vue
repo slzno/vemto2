@@ -286,7 +286,7 @@
 
         const renderableModel = new RenderableModel(model),
             modelPath = renderableModel.getFullFilePath(), 
-            currentModelContent = await Main.API.readProjectFile(modelPath),
+            currentModelContent = model.isNew() ? "" : await Main.API.readProjectFile(modelPath),
             newModelContent = await new RenderableModel(model).compileWithErrorThreatment()
 
         modelSettings.newModelContent = newModelContent
