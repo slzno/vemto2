@@ -33,8 +33,10 @@ extends <$ this.model.getImportAlias(this.model.parentClass) $>
 <# Implements interfaces #>
 <% if(this.model.hasInterfaces()) { %>
 implements
-<% for(let modelInterface of this.model.getInterfaces()) { %>
-<$ this.model.getImportAlias(modelInterface) $>
+<% const interfaces = this.model.getInterfaces() %>
+<% for(let modelInterface of interfaces) { %>
+<% const isLast = interfaces.indexOf(modelInterface) === interfaces.length - 1 %>
+<$ this.model.getImportAlias(modelInterface) $><% if(!isLast) { %>,<% } %>
 <% } %>
 <% } %>
 {
