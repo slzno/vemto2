@@ -80,7 +80,7 @@ export default class Input extends RelaDB.Model {
         input.showOnIndex = true
 
         input.calculateType(column)
-
+        input.generateItemsFromField(column)
         input.generateValidationRules()
 
         return input
@@ -157,6 +157,19 @@ export default class Input extends RelaDB.Model {
 
     needsMinValidation() {
         return [InputType.NUMBER].includes(this.type) && this.min
+    }
+
+    generateItemsFromField(column: Column) {
+        if(!column.mustHaveOptions()) return;
+
+        this.items = this.items || []
+
+        column.options.forEach((option) => {
+            this.items.push({
+                label: changeCase.sentenceCase(option),
+                value: option,
+            })
+        })
     }
 
     generateValidationRules() {

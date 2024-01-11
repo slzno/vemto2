@@ -5,5 +5,6 @@ export enum InputType {
     NUMBER = "number",
     FILE = "file",
     IMAGE = "image",
-    BELONGS_TO = "belongsTo"
+    BELONGS_TO = "belongsTo",
+    SELECT = "select"
 }

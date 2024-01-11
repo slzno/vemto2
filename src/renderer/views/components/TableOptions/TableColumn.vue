@@ -4,13 +4,15 @@
     import ColumnTypeList from "@Common/models/column-types/base/ColumnTypeList"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiNumber from "@Renderer/components/ui/UiNumber.vue"
-    import { Bars3Icon, ChevronDownIcon, ChevronUpIcon, TrashIcon } from "@heroicons/vue/24/outline"
+    import { Bars3Icon, ChevronDownIcon, ChevronUpIcon, TrashIcon, PlusCircleIcon } from "@heroicons/vue/24/outline"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import Alert from "@Renderer/components/utils/Alert"
     import Main from "@Renderer/services/wrappers/Main"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import UiDropdownSelect from "@Renderer/components/ui/UiDropdownSelect.vue"
     import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
+    import UiOptionsDropdown from '@Renderer/components/ui/UiOptionsDropdown.vue'
+    import UiDropdownItem from '@Renderer/components/ui/UiDropdownItem.vue'
 
     const onDevelopment = Main.API.onDevelopment()
 
@@ -74,6 +76,21 @@
                 label: columnType.label,
                 description: columnType.help
             }
+        })
+    }
+
+    const newColumnOption = () => {
+        if(!column.value.options) column.value.options = []
+
+        column.value.options.push('')
+    }
+
+    const removeColumnOptions = (index: number) => {
+        Main.API.confirm('Are you sure you want to remove this option?').then(confirmed => {
+            if(!confirmed) return
+
+            column.value.options.splice(index, 1)
+            column.value.saveFromInterface()
         })
     }
 
@@ -170,6 +187,30 @@
             <div class="flex gap-3">
                 <div class="m-1 flex-1">
                     <UiText label="Faker" v-model="column.faker" :placeholder="column.faker" @input="column.saveFromInterface()"  />
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2 m-1" v-if="column.mustHaveOptions()">
+                <label class="text-xs text-slate-400">Options</label>
+
+                <div class="flex-1 flex gap-2 items-center" v-for="(option, index) of column.options">
+                    <UiText v-model="column.options[index]" @input="column.saveFromInterface()" />
+
+                    <UiOptionsDropdown>
+                        <UiDropdownItem @click="removeColumnOptions(index)">
+                            <TrashIcon class="h-5 w-5 mr-1 text-red-400" /> Delete
+                        </UiDropdownItem>
+                    </UiOptionsDropdown>
+                </div>
+                
+                <div>
+                    <UiButton
+                        @click="newColumnOption()"
+                    >
+                        <span class="flex items-center">
+                            <PlusCircleIcon class="h-5 w-5 mr-1" /> Add Option
+                        </span>
+                    </UiButton>
                 </div>
             </div>
             

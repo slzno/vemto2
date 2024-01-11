@@ -483,7 +483,7 @@ export default class ColumnsDefaultDataList {
                 type: "enum",
                 faker: "\\Arr::random(['male', 'female', 'other'])",
                 inputType: "select",
-                inputOptions: ['male', 'female', 'other'],
+                inputOptions: ['male', 'female', 'other', 'other2'],
                 validationRules: [
                     'in:{IMPLODED_OPTIONS}'
                 ]
