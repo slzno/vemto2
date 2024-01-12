@@ -7,7 +7,6 @@
     import { sentenceCase } from "change-case"
     import { ref, Ref, defineProps } from "vue"
     import TemplateErrorViewer from "../Common/TemplateErrorViewer.vue"
-    import SolveConflicts from "./SolveConflicts.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import { CodeBracketIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import ConflictsSolver from "./ConflictsSolver.vue"
@@ -125,11 +124,6 @@
                     <CodeBracketIcon class="w-4 h-4 mr-1 stroke-2 text-red-500" />
                     Solve Conflicts
                 </UiButton>
-                
-                <!-- <SolveConflicts
-                    v-if="file.status === RenderableFileStatus.CONFLICT"
-                    :file="file"
-                /> -->
 
                 <UiButton @click="file.delete()">
                     <TrashIcon class="w-4 h-4 mr-1 text-red-500" />
