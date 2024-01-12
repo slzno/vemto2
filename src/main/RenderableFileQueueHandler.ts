@@ -3,10 +3,9 @@ import { v4 as uuid } from "uuid"
 import { app, BrowserWindow } from "electron"
 import FileSystem from "./base/FileSystem"
 import Project, { ProjectFilesQueueStatus } from "../common/models/Project"
-import PhpFormatter from "@Renderer/codegen/formatters/PhpFormatter"
-import RenderableFile, { RenderableFileStatus, RenderableFileType } from "../common/models/RenderableFile"
-import CommandExecutor from "./base/CommandExecutor"
+import RenderableFile, { RenderableFileStatus } from "../common/models/RenderableFile"
 import ConflictManager from "./services/ConflictManager"
+import BackgroundVemtoFiles from "./base/BackgroundVemtoFiles"
 
 export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
     let project = null,
@@ -64,36 +63,9 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
     const processFile = async (file: RenderableFile) => {
         try {
             const relativeFilePath = path.join(file.path, file.name),
-                projectFilePath = path.join(project.getPath(), relativeFilePath),
-                vemtoFilePath = path.join(project.getPath(), ".vemto", "generated-files", relativeFilePath),
-                previousFilePath = path.join(project.getPath(), ".vemto", "previous-generated-files", relativeFilePath)
-            
-            // Write the Vemto version for future comparison or merge
-            FileSystem.writeFile(vemtoFilePath, file.content)
+                vemtoFiles = new BackgroundVemtoFiles(project)
 
-            if(file.type === RenderableFileType.PHP_CLASS) {
-                let mergedFileData = await mergeFiles(vemtoFilePath, projectFilePath, previousFilePath)
-
-                if(mergedFileData.status === 'conflict') {
-                    setFileStatus(file, RenderableFileStatus.CONFLICT, {
-                        conflictFileName: mergedFileData.conflictsFile.name
-                    })
-
-                    return false
-                }
-                
-                const mergedFileContent = FileSystem.readFileIfExists(mergedFileData.file.path)
-
-                const formattedMergedFileContent = PhpFormatter.setContent(
-                    mergedFileContent
-                ).addLineBreaksToParsedContent().format()
-
-                writeProjectFile(relativeFilePath, formattedMergedFileContent)
-
-                setFileStatus(file, RenderableFileStatus.RENDERED)
-
-                return true
-            }
+            vemtoFiles.writeGeneratedFile(relativeFilePath, file.content)
 
             const conflictManager = new ConflictManager(project, relativeFilePath)
             conflictManager.setFileContent(file.content)
@@ -125,14 +97,6 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
 
     const writeProjectFile = (relativeFilePath: string, formattedContent: string) => {
         return FileSystem.writeProjectFile(project.getPath(), relativeFilePath, formattedContent)
-    }
-
-    const mergeFiles = async (newFilePath: string, currentFilePath: string, previousFilePath: string): Promise<any> => {
-        const apiFilePath = path.join(app.getAppPath(), "static", "php-merger.phar")
-
-        const command = `php ${apiFilePath} ${newFilePath} ${currentFilePath} ${previousFilePath}`
-        
-        return await CommandExecutor.executeOnPath(project.getPath(), command)
     }
 
     const setFileStatus = (file: RenderableFile, status: RenderableFileStatus, customData: any = {}) => {

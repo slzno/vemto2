@@ -3,7 +3,6 @@ import Project from './Project'
 import RelaDB from '@tiago_silva_pereira/reladb'
 
 export enum RenderableFileType {
-    PHP_CLASS = 'php-class',
     HTML = 'html',
     PHP = 'php',
     BLADE = 'blade',

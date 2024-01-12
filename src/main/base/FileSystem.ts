@@ -2,6 +2,7 @@ import fs from "fs"
 import path from "path"
 import shell from "shelljs"
 import { app } from "electron"
+import BackgroundVemtoFiles from "./BackgroundVemtoFiles"
 
 class FileSystem {
 
@@ -66,7 +67,8 @@ class FileSystem {
 
     writeProjectFile(projectPath: string, filePath: string, content: string, log = true): FileSystem {
         const projectFilePath = path.join(projectPath, filePath),
-            previousGeneratedFilePath = path.join(projectPath, ".vemto", "previous-generated-files", filePath)
+            previousFileBasePath = BackgroundVemtoFiles.getPreviousGeneratedFileBasePath(filePath),
+            previousGeneratedFilePath = path.join(projectPath, previousFileBasePath)
 
         this.writeFile(projectFilePath, content)
         this.writeFile(previousGeneratedFilePath, content)

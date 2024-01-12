@@ -3,6 +3,7 @@ import { v4 as uuid } from "uuid"
 import Project from "@Common/models/Project"
 import FileSystem from "@Main/base/FileSystem"
 import TextUtil from "@Common/util/TextUtil"
+import BackgroundVemtoFiles from "@Main/base/BackgroundVemtoFiles"
 
 export default class ConflictManager {
 
@@ -20,7 +21,9 @@ export default class ConflictManager {
         this.relativePath = relativePath
 
         this.currentFilePath = path.join(this.project.getPath(), this.relativePath)
-        this.previousFilePath = path.join(this.project.getPath(), ".vemto", "previous-generated-files", this.relativePath)
+
+        const previousFileBasePath = BackgroundVemtoFiles.getPreviousGeneratedFileBasePath(this.relativePath)
+        this.previousFilePath = path.join(this.project.getPath(), previousFileBasePath)
 
         this.currentFileContent = FileSystem.readFileIfExists(this.currentFilePath) || ''
         this.previousFileContent = FileSystem.readFileIfExists(this.previousFilePath) || ''

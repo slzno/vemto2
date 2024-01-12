@@ -11,6 +11,7 @@
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import { CodeBracketIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import ConflictsSolver from "./ConflictsSolver.vue"
+import InternalFiles from "@Renderer/util/InternalFiles"
 
     const props = defineProps<{
         file: RenderableFile
@@ -24,6 +25,7 @@
     const showConflictsSolver = async (file: RenderableFile): Promise<void> => {
         conflictsFilePath.value = file.getRelativeFilePath()
         conflictsFileContent.value = await Main.API.readProjectFile(conflictsFilePath.value)
+        conflictsNewFileContent.value = await InternalFiles.readGeneratedFile(conflictsFilePath.value)
         
         conflictsSolver.value.show()
     }
@@ -36,6 +38,20 @@
 
         Main.API.openProjectFile(file.getRelativeFilePath())
     }
+
+    const conflictsSolved = async (content) => {
+        if (!conflictsFilePath.value) {
+            return
+        }
+        
+        await Main.API.writeProjectFile(conflictsFilePath.value, content)
+
+        conflictsFilePath.value = ""
+        conflictsFileContent.value = ""
+        conflictsNewFileContent.value = ""
+
+        conflictsSolver.value.close()
+    }
 </script>
 
 <template>
@@ -44,7 +60,7 @@
         :relativeFilePath="conflictsFilePath"
         :currentFileContent="conflictsFileContent"
         :newFileContent="conflictsNewFileContent"
-        @solved=""
+        @solved="conflictsSolved"
     />
 
     <div
