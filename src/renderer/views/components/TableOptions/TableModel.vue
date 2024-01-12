@@ -16,6 +16,7 @@
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import ModelHooks from "./ModelApps/ModelHooks.vue"
     import RenderableModel from "@Renderer/codegen/sequential/services/model/RenderableModel"
+    import UiNumber from "@Renderer/components/ui/UiNumber.vue"
 
     const onDevelopment = Main.API.onDevelopment()
 
@@ -472,11 +473,18 @@
 
         <div v-show="selectedTab === 'settings'">
             <div class="flex flex-col p-2 space-y-1">
+                <UiNumber
+                    label="Seeder Quantity"
+                    v-model="model.seederQuantity"
+                    @input="saveModelData()"
+                />
+                
                 <UiCheckbox
                     label="Execute Seeder"
                     v-model="model.callSeeder"
                     @change="saveModelData()"
                 />
+
     
                 <UiCheckbox
                     label="Comment Attributes"

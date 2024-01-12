@@ -5,7 +5,8 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-use App\Models\<$ this.project.getAuthModel().name $>;
+<% const authModel = this.project.getAuthModel() %>
+use App\Models\<$ authModel.name $>;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,16 +15,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        <% if(authModel) { %>
+        <$ authModel.name $>::factory()->count(1)->create([
+            'email' => 'admin@admin.com',
+            'password' => \Hash::make('admin')
+        ]);
+        <% } %>
+
         <% for(let model of this.project.models) { %>
-            <% if(model.isAuthModel()) { %>
-                $user = <$ model.name $>::factory()->count(1)->create([
-                    'email' => 'admin@admin.com',
-                    'password' => \Hash::make('admin')
-                ]);
-            <% } else { %>
+            <% if(model.callSeeder) { %>
                 $this->call(<$ model.name $>Seeder::class);
             <% } %>
-
         <% } %>
     }
 }

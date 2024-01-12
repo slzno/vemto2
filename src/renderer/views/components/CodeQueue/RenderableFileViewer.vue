@@ -21,8 +21,9 @@
         conflictsFileContent = ref(""),
         conflictsNewFileContent = ref("")
 
-    const showConflictsSolver = (file: RenderableFile): void => {
+    const showConflictsSolver = async (file: RenderableFile): Promise<void> => {
         conflictsFilePath.value = file.getRelativeFilePath()
+        conflictsFileContent.value = await Main.API.readProjectFile(conflictsFilePath.value)
         
         conflictsSolver.value.show()
     }

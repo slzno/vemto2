@@ -50,6 +50,7 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
      * Settings
      */
     callSeeder: boolean
+    seederQuantity: number
     attributesComments: boolean
     methodsComments: boolean
 
@@ -136,6 +137,7 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
 
     generateDefaultSettings() {
         this.callSeeder = true
+        this.seederQuantity = 5
         this.attributesComments = false
         this.methodsComments = false
     }
@@ -144,6 +146,7 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         if(!this.isAuthenticatable) return
         if(this.name !== 'User') return
 
+        this.callSeeder = false
         this.attributesComments = true
         this.methodsComments = true
     }
@@ -656,5 +659,9 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         if(!this.hidden) return false
 
         return this.hidden.includes(column.name)
+    }
+
+    getSeederQuantity(): number {
+        return this.seederQuantity || 5
     }
 }

@@ -31,7 +31,7 @@
         }
     })
 
-    const emit = defineEmits(["update:modelValue", "input", "blur"]),
+    const emit = defineEmits(["update:modelValue", "input", "blur", "focus"]),
         localValue = computed({
             get(): any {
                 return props.modelValue

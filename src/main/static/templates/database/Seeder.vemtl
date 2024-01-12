@@ -20,7 +20,7 @@ class <$ this.filenameWithoutExtension $> extends Seeder
     public function run(): void
     {
         // hook:BEFORE_SEEDER_RUN
-        <$ modelName $>::factory()->count(5)->create();
+        <$ modelName $>::factory()->count(<$ model.getSeederQuantity() $>)->create();
         // hook:AFTER_SEEDER_RUN
     }
 
