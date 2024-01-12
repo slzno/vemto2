@@ -22,6 +22,7 @@ export enum RenderableFileFormatter {
 }
 
 export enum RenderableFileStatus {
+    IDLE = 'idle',
     PREPARING = 'preparing',
     PENDING = 'pending',
     RENDERING = 'rendering',
