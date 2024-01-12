@@ -77,15 +77,15 @@
                 <PageManager />
                 <UiButton disabled>
                     <PlusIcon class="w-4 h-4 mr-1" />
-                    API Resource
-                </UiButton>
-                <UiButton disabled>
-                    <PlusIcon class="w-4 h-4 mr-1" />
                     Filament Resource
                 </UiButton>
                 <UiButton disabled>
                     <PlusIcon class="w-4 h-4 mr-1" />
                     Nova Resource
+                </UiButton>
+                <UiButton disabled>
+                    <PlusIcon class="w-4 h-4 mr-1" />
+                    API Resource
                 </UiButton>
                 <UiButton disabled>
                     <PlusIcon class="w-4 h-4 mr-1" />
