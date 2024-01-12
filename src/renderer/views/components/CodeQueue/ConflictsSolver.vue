@@ -28,11 +28,27 @@
 
     // get props, including file that is a RenderableFile
     const emit = defineEmits(["solved", "ignored"]), 
-        props = defineProps<{
-            relativeFilePath: string,
-            currentFileContent: string,
-            newFileContent: string,
-        }>()
+        props = defineProps({
+            relativeFilePath: {
+                type: String,
+                required: true,
+            },
+
+            currentFileContent: {
+                type: String,
+                required: true,
+            },
+
+            newFileContent: {
+                type: String,
+                required: true,
+            },
+
+            canIgnore: {
+                type: Boolean,
+                required: false,
+            }
+        })
 
     const relativeFilePath = toRef(props, 'relativeFilePath'), 
         currentFileContent = toRef(props, 'currentFileContent'),
@@ -211,7 +227,7 @@
                         Overwrite
                     </UiButton>
     
-                    <UiButton @click="ignoreFile()">
+                    <UiButton v-if="canIgnore" @click="ignoreFile()">
                         <NoSymbolIcon class="w-4 h-4 mr-1 stroke-2 text-red-500" />
                         Ignore
                     </UiButton>

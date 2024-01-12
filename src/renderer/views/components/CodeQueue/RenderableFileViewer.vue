@@ -8,9 +8,11 @@
     import { ref, Ref, defineProps } from "vue"
     import TemplateErrorViewer from "../Common/TemplateErrorViewer.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
-    import { CodeBracketIcon, TrashIcon } from "@heroicons/vue/24/outline"
+    import { CodeBracketIcon, DocumentMinusIcon, MinusCircleIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import ConflictsSolver from "./ConflictsSolver.vue"
     import InternalFiles from "@Renderer/util/InternalFiles"
+    import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
+    import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
 
     const props = defineProps<{
         file: RenderableFile
@@ -56,19 +58,29 @@
 
         Alert.success("Conflicts solved successfully")
     }
+
+    const ignoreFile = async (file: RenderableFile) => {
+        file.setAsIgnored()
+    }
+
+    const clearFile = async (file: RenderableFile) => {
+        file.delete()
+    }
 </script>
 
 <template>
     <ConflictsSolver 
+        can-ignore
         :ref="`conflictsSolver`"
         :relativeFilePath="conflictsFilePath"
         :currentFileContent="conflictsFileContent"
         :newFileContent="conflictsNewFileContent"
         @solved="conflictsSolved"
+        @ignored="ignoreFile(currentConflictsFile)"
     />
 
     <div
-        class="flex flex-col bg-slate-200 dark:bg-slate-850 dark:hover:bg-slate-800 w-full rounded-lg mb-2 p-2 px-2"
+        class="flex flex-col justify-center bg-slate-200 dark:bg-slate-850 dark:hover:bg-slate-800 w-full h-14 rounded-lg mb-2 p-2 px-2"
     >
         <div class="flex items-center justify-between">
             <div class="flex cursor-pointer" @click="openFile(file)">
@@ -98,7 +110,7 @@
                                         RenderableFileStatus.CAN_REMOVE,
                                     'bg-gray-500':
                                         file.status ===
-                                        RenderableFileStatus.REMOVED,
+                                        RenderableFileStatus.REMOVED || file.status === RenderableFileStatus.IGNORED,
                                 }"
                             ></div>
                             <div>{{ sentenceCase(file.status) }}</div>
@@ -125,10 +137,22 @@
                     Solve Conflicts
                 </UiButton>
 
-                <UiButton @click="file.delete()">
+                <!-- <UiButton @click="file.delete()">
                     <TrashIcon class="w-4 h-4 mr-1 text-red-500" />
                     Clear
-                </UiButton>
+                </UiButton> -->
+
+                <UiOptionsDropdown>
+                    <UiDropdownItem @click="ignoreFile(file)">
+                        <MinusCircleIcon class="w-4 h-4 mr-1 text-red-500" />
+                        Ignore
+                    </UiDropdownItem>
+
+                    <UiDropdownItem @click="clearFile(file)">
+                        <DocumentMinusIcon class="w-4 h-4 mr-1 text-red-500" />
+                        Clear Status
+                    </UiDropdownItem>
+                </UiOptionsDropdown>
             </div>
         </div>
 

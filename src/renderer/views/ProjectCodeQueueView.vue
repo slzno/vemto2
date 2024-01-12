@@ -31,7 +31,7 @@
         {
             label: "Ignored",
             value: "ignored",
-            badge: () => 0,
+            badge: () => projectStore.project.getIgnoredRenderableFiles(false).length,
         },
         {
             label: "Removed",
@@ -70,6 +70,15 @@
 
             return filterBySearch(
                 projectStore.project.getConflictRenderableFiles(),
+                search
+            )
+        }),
+        ignoredFiles = computed(() => {
+            if (!projectStore.project || !projectStore.project.renderableFiles)
+                return []
+
+            return filterBySearch(
+                projectStore.project.getIgnoredRenderableFiles(),
                 search
             )
         })
@@ -157,9 +166,28 @@
         </div>
 
         <div class="p-4" v-if="selectedTab === 'ignored'">
-            <UiEmptyMessage>
+            <UiEmptyMessage v-if="!ignoredFiles.length">
                 <span>There are no ignored files</span>
             </UiEmptyMessage>
+
+            <div class="flex top-0 left-0 space-x-2 text-sm z-20 mb-4">
+                <div>
+                    <!-- Search -->
+                    <div class="flex items-center">
+                        <UiText
+                            v-model="search"
+                            placeholder="Search files..."
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <RenderableFileViewer
+                v-for="file in ignoredFiles"
+                :key="file.id"
+                :file="file"
+            >
+            </RenderableFileViewer>
         </div>
 
         <div class="p-4" v-if="selectedTab === 'removed'">

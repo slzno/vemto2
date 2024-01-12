@@ -383,6 +383,14 @@ export default class Project extends RelaDB.Model {
         )
     }
 
+    getIgnoredRenderableFiles(ordered: boolean = true): RenderableFile[] {
+        const renderableFiles = ordered ? this.getOrderedRenderableFiles() : this.renderableFiles
+
+        return renderableFiles.filter(
+            (renderableFile) => renderableFile.wasIgnored()
+        )
+    }
+
     getConflictRenderableFiles(ordered: boolean = true): RenderableFile[] {
         const renderableFiles = ordered ? this.getOrderedRenderableFiles() : this.renderableFiles
 
