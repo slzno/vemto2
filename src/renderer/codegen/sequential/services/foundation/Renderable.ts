@@ -65,6 +65,14 @@ export default abstract class Renderable {
             this.getTemplateFile(), 
             this.getType(),
         )
+
+        if(file.wasIgnored()) {
+            if(this.logEnabled) {
+                console.log(`Ignoring ${this.getTemplateFile()} for file ${this.getFullFilePath()}...`)
+            }
+            
+            return
+        }
         
         try {
             const compiledTemplate = await this.compile()

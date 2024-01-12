@@ -446,6 +446,10 @@ export default class Project extends RelaDB.Model {
             renderableFile = new RenderableFile()
         }
 
+        if (renderableFile.wasIgnored()) {
+            return renderableFile
+        }
+
         renderableFile.path = path
         renderableFile.name = name
         renderableFile.fullPath = fullPath
