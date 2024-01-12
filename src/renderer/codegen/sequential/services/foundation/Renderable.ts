@@ -4,7 +4,7 @@ import PhpFormatter from "@Renderer/codegen/formatters/PhpFormatter"
 import TemplateCompiler from "@Renderer/codegen/templates/base/TemplateCompiler"
 import { RenderableFileFormatter, RenderableFileType } from "@Common/models/RenderableFile"
 import BladeFormatter from "@Renderer/codegen/formatters/BladeFormatter"
-import PathUtil from "@Renderer/util/PathUtil"
+import PathUtil from "@Common/util/PathUtil"
 
 export default abstract class Renderable {
     project: Project

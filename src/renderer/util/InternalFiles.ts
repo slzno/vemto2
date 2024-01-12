@@ -1,5 +1,5 @@
-import Main from "@Renderer/services/wrappers/Main";
-import PathUtil from "./PathUtil";
+import PathUtil from "@Common/util/PathUtil"
+import Main from "@Renderer/services/wrappers/Main"
 
 export default class InternalFiles {
 

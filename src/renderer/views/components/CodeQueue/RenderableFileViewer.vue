@@ -9,11 +9,23 @@
     import TemplateErrorViewer from "../Common/TemplateErrorViewer.vue"
     import SolveConflicts from "./SolveConflicts.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
-import { TrashIcon } from "@heroicons/vue/24/outline"
+    import { CodeBracketIcon, TrashIcon } from "@heroicons/vue/24/outline"
+    import ConflictsSolver from "./ConflictsSolver.vue"
 
     const props = defineProps<{
         file: RenderableFile
     }>()
+
+    const conflictsSolver = ref(null),
+        conflictsFilePath = ref(""),
+        conflictsFileContent = ref(""),
+        conflictsNewFileContent = ref("")
+
+    const showConflictsSolver = (file: RenderableFile): void => {
+        conflictsFilePath.value = file.getRelativeFilePath()
+        
+        conflictsSolver.value.show()
+    }
 
     const openFile = (file: RenderableFile): void => {
         if (file.wasRemoved()) {
@@ -26,6 +38,14 @@ import { TrashIcon } from "@heroicons/vue/24/outline"
 </script>
 
 <template>
+    <ConflictsSolver 
+        :ref="`conflictsSolver`"
+        :relativeFilePath="conflictsFilePath"
+        :currentFileContent="conflictsFileContent"
+        :newFileContent="conflictsNewFileContent"
+        @solved=""
+    />
+
     <div
         class="flex flex-col bg-slate-200 dark:bg-slate-850 dark:hover:bg-slate-800 w-full rounded-lg mb-2 p-2 px-2"
     >
@@ -75,10 +95,19 @@ import { TrashIcon } from "@heroicons/vue/24/outline"
                 </div>
             </div>
             <div class="flex items-center space-x-2">
-                <SolveConflicts
+                <UiButton
+                    v-show="file.status === RenderableFileStatus.CONFLICT"
+                    class="flex items-center justify-between"
+                    @click="showConflictsSolver(file)"
+                >
+                    <CodeBracketIcon class="w-4 h-4 mr-1 stroke-2 text-red-500" />
+                    Solve Conflicts
+                </UiButton>
+                
+                <!-- <SolveConflicts
                     v-if="file.status === RenderableFileStatus.CONFLICT"
                     :file="file"
-                />
+                /> -->
 
                 <UiButton @click="file.delete()">
                     <TrashIcon class="w-4 h-4 mr-1 text-red-500" />

@@ -1,3 +1,4 @@
+import PathUtil from '@Common/util/PathUtil'
 import Project from './Project'
 import RelaDB from '@tiago_silva_pereira/reladb'
 
@@ -94,7 +95,7 @@ export default class RenderableFile extends RelaDB.Model {
     }
 
     getRelativeFilePath(): string {
-        return this.path + '/' + this.name
+        return PathUtil.join(this.path, this.name)
     }
 
     setAsNotRemovable() {

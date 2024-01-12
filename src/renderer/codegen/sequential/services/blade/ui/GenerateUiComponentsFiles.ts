@@ -1,5 +1,5 @@
 import { paramCase } from "change-case"
-import PathUtil from "@Renderer/util/PathUtil"
+import PathUtil from "@Common/util/PathUtil"
 import Main from "@Renderer/services/wrappers/Main"
 import RenderableUiComponent from "./RenderableUiComponent"
 

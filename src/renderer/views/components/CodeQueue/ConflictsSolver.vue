@@ -184,33 +184,38 @@
         height="calc(100vh - 50px)"
     >
         <section class="p-4 space-y-4">
-            <div class="flex justify-end space-x-2">
-                <UiButton @click="mergeCodeWithAI()">
-                    <UiLoading v-show="calculatingAIMerge" class="mr-1 scale-75"></UiLoading>
-                    <MergeIcon v-show="!calculatingAIMerge" class="w-4 h-4 mr-1 text-blue-500" />
-                    Merge with AI
-                </UiButton>
-
-                <UiButton title="Merge is currently in Alpha and may have weird results. If you need better results, use Merge with AI" @click="mergeCode()">
-                    <UiLoading v-show="calculatingMerge" class="mr-1 scale-75"></UiLoading>
-                    <MergeIcon v-show="!calculatingMerge" class="w-4 h-4 mr-1 text-red-500" />
-                    Merge&nbsp;<small>(Alpha)</small>
-                </UiButton>
-
-                <UiButton @click="solveManually()">
-                    <CodeBracketIcon class="w-4 h-4 mr-1 stroke-2 text-red-500" />
-                    Solve manually
-                </UiButton>
-
-                <UiButton @click="overwriteFile()">
-                    <ArrowDownTrayIcon class="w-4 h-4 mr-1 stroke-2 text-red-500" />
-                    Overwrite
-                </UiButton>
-
-                <UiButton @click="ignoreFile()">
-                    <NoSymbolIcon class="w-4 h-4 mr-1 stroke-2 text-red-500" />
-                    Ignore
-                </UiButton>
+            <div class="flex justify-between">
+                <div class="text-slate-500 italic text-sm">
+                    {{ relativeFilePath }}
+                </div>
+                <div class="flex space-x-2">
+                    <UiButton @click="mergeCodeWithAI()">
+                        <UiLoading v-show="calculatingAIMerge" class="mr-1 scale-75"></UiLoading>
+                        <MergeIcon v-show="!calculatingAIMerge" class="w-4 h-4 mr-1 text-blue-500" />
+                        Merge with AI
+                    </UiButton>
+    
+                    <UiButton title="Merge is currently in Alpha and may have weird results. If you need better results, use Merge with AI" @click="mergeCode()">
+                        <UiLoading v-show="calculatingMerge" class="mr-1 scale-75"></UiLoading>
+                        <MergeIcon v-show="!calculatingMerge" class="w-4 h-4 mr-1 text-red-500" />
+                        Merge&nbsp;<small>(Alpha)</small>
+                    </UiButton>
+    
+                    <UiButton @click="solveManually()">
+                        <CodeBracketIcon class="w-4 h-4 mr-1 stroke-2 text-red-500" />
+                        Solve manually
+                    </UiButton>
+    
+                    <UiButton @click="overwriteFile()">
+                        <ArrowDownTrayIcon class="w-4 h-4 mr-1 stroke-2 text-red-500" />
+                        Overwrite
+                    </UiButton>
+    
+                    <UiButton @click="ignoreFile()">
+                        <NoSymbolIcon class="w-4 h-4 mr-1 stroke-2 text-red-500" />
+                        Ignore
+                    </UiButton>
+                </div>
             </div>
             
             <div ref="diffViewerContainer" id="diffViewerContainer" class="border border-slate-700 rounded overflow-y-auto" style="height: calc(100vh - 210px)"></div>

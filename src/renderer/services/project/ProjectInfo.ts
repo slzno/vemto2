@@ -1,5 +1,5 @@
 import Main from "../wrappers/Main"
-import PathUtil from "@Renderer/util/PathUtil"
+import PathUtil from "@Common/util/PathUtil"
 import { ProjectCssFramework, ProjectUIStarterKit } from "@Common/models/Project"
 
 export default class ProjectInfo {
