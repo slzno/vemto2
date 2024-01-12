@@ -5,24 +5,26 @@
     import Alert from "@Renderer/components/utils/Alert"
     import Main from "@Renderer/services/wrappers/Main"
     import { sentenceCase } from "change-case"
-    import { ref, toRef, defineProps } from "vue"
+    import { ref, Ref, defineProps } from "vue"
     import TemplateErrorViewer from "../Common/TemplateErrorViewer.vue"
     import SolveConflicts from "./SolveConflicts.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import { CodeBracketIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import ConflictsSolver from "./ConflictsSolver.vue"
-import InternalFiles from "@Renderer/util/InternalFiles"
+    import InternalFiles from "@Renderer/util/InternalFiles"
 
     const props = defineProps<{
         file: RenderableFile
     }>()
 
     const conflictsSolver = ref(null),
+        currentConflictsFile = ref(null) as Ref<RenderableFile>,
         conflictsFilePath = ref(""),
         conflictsFileContent = ref(""),
         conflictsNewFileContent = ref("")
 
     const showConflictsSolver = async (file: RenderableFile): Promise<void> => {
+        currentConflictsFile.value = file
         conflictsFilePath.value = file.getRelativeFilePath()
         conflictsFileContent.value = await Main.API.readProjectFile(conflictsFilePath.value)
         conflictsNewFileContent.value = await InternalFiles.readGeneratedFile(conflictsFilePath.value)
@@ -46,11 +48,14 @@ import InternalFiles from "@Renderer/util/InternalFiles"
         
         await Main.API.writeProjectFile(conflictsFilePath.value, content)
 
+
+        currentConflictsFile.value.solveConflicts()
+
         conflictsFilePath.value = ""
         conflictsFileContent.value = ""
         conflictsNewFileContent.value = ""
 
-        conflictsSolver.value.close()
+        Alert.success("Conflicts solved successfully")
     }
 </script>
 

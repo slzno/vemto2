@@ -128,4 +128,11 @@ export default class RenderableFile extends RelaDB.Model {
     hasConflict() {
         return this.status === RenderableFileStatus.CONFLICT
     }
+
+    solveConflicts() {
+        this.status = RenderableFileStatus.RENDERED
+        this.conflictFileName = null
+
+        this.save()
+    }
 }
