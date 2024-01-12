@@ -2,7 +2,7 @@ import path from "path"
 import FileSystem from "./FileSystem"
 import Project from "@Common/models/Project"
 
-export default class BackgroundVemtoFiles {
+export default class BackgroundInternalFiles {
 
     project: Project
 
@@ -28,7 +28,7 @@ export default class BackgroundVemtoFiles {
     }
 
     getGeneratedFilePath(relativePath: string): string {
-        const basePath = BackgroundVemtoFiles.getGeneratedFileBasePath(relativePath)
+        const basePath = BackgroundInternalFiles.getGeneratedFileBasePath(relativePath)
         return path.join(this.project.getPath(), basePath)
     }
 
@@ -50,7 +50,7 @@ export default class BackgroundVemtoFiles {
     }
 
     getPreviousGeneratedFilePath(relativePath: string): string {
-        const basePath = BackgroundVemtoFiles.getPreviousGeneratedFileBasePath(relativePath)
+        const basePath = BackgroundInternalFiles.getPreviousGeneratedFileBasePath(relativePath)
         return path.join(this.project.getPath(), basePath)
     }
 

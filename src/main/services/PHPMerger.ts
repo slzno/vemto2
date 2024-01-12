@@ -3,7 +3,7 @@ import { app } from "electron"
 import Project from "@Common/models/Project"
 import FileSystem from "@Main/base/FileSystem"
 import CommandExecutor from "@Main/base/CommandExecutor"
-import BackgroundVemtoFiles from "@Main/base/BackgroundVemtoFiles"
+import BackgroundInternalFiles from "@Main/base/BackgroundInternalFiles"
 
 export default class PHPMerger {
 
@@ -24,12 +24,12 @@ export default class PHPMerger {
         this.project = project
         this.relativePath = relativePath
 
-        const generatedFileBasePath = BackgroundVemtoFiles.getGeneratedFileBasePath(this.relativePath)
+        const generatedFileBasePath = BackgroundInternalFiles.getGeneratedFileBasePath(this.relativePath)
         this.newFilePath = path.join(this.project.getPath(), generatedFileBasePath)
 
         this.currentFilePath = path.join(this.project.getPath(), this.relativePath)
 
-        const previousFileBasePath = BackgroundVemtoFiles.getPreviousGeneratedFileBasePath(this.relativePath)
+        const previousFileBasePath = BackgroundInternalFiles.getPreviousGeneratedFileBasePath(this.relativePath)
         this.previousFilePath = path.join(this.project.getPath(), previousFileBasePath)
 
         this.currentFileContent = FileSystem.readFileIfExists(this.currentFilePath) || ''

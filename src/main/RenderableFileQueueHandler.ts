@@ -5,7 +5,7 @@ import FileSystem from "./base/FileSystem"
 import Project, { ProjectFilesQueueStatus } from "../common/models/Project"
 import RenderableFile, { RenderableFileStatus } from "../common/models/RenderableFile"
 import ConflictManager from "./services/ConflictManager"
-import BackgroundVemtoFiles from "./base/BackgroundVemtoFiles"
+import BackgroundInternalFiles from "./base/BackgroundInternalFiles"
 
 export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
     let project = null,
@@ -63,7 +63,7 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
     const processFile = async (file: RenderableFile) => {
         try {
             const relativeFilePath = path.join(file.path, file.name),
-                vemtoFiles = new BackgroundVemtoFiles(project)
+                vemtoFiles = new BackgroundInternalFiles(project)
 
             vemtoFiles.writeGeneratedFile(relativeFilePath, file.content)
 
