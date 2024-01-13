@@ -28,6 +28,7 @@ export default class SequentialGenerator {
 
         this.project.setFilesQueueStatusProcessing()
         this.project.clearCurrentRenderedFilesPaths()
+        this.project.clearRemovedRenderableFiles()
 
         await new GenerateUiComponentsFiles().start()
 

@@ -469,6 +469,12 @@ export default class Project extends RelaDB.Model {
         )
     }
 
+    clearRemovedRenderableFiles() {
+        this.getRemovedRenderableFiles(false).forEach((renderableFile) =>
+            renderableFile.delete()
+        )
+    }
+
     clearCurrentRenderedFilesPaths() {
         this.currentRenderedFilesPaths = []
         this.save()
