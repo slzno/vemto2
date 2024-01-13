@@ -8,7 +8,7 @@
     >
         <div class="p-4">
             <UiEmptyMessage>
-                <span>👀👀👀... COMING SOON!</span>
+                <span>Tools... COMING SOON!</span>
             </UiEmptyMessage>
         </div>
     </div>

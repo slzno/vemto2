@@ -8,6 +8,9 @@ import ProjectAppsView from "../views/ProjectAppsView.vue"
 import ProjectCrudView from "../views/ProjectCrudView.vue"
 import ProjectPageView from "../views/ProjectPageView.vue"
 import ProjectBotView from "../views/ProjectBotView.vue"
+import ProjectPluginsView from "@Renderer/views/ProjectPluginsView.vue"
+import ProjectToolsView from "@Renderer/views/ProjectToolsView.vue"
+import ProjectSettingsView from "@Renderer/views/ProjectSettingsView.vue"
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -57,6 +60,24 @@ const router = createRouter({
                     path: "bot",
                     name: "project-bot",
                     component: ProjectBotView,
+                },
+
+                {
+                    path: "plugins",
+                    name: "project-plugins",
+                    component: ProjectPluginsView,
+                },
+
+                {
+                    path: "tools",
+                    name: "project-tools",
+                    component: ProjectToolsView,
+                },
+
+                {
+                    path: "settings",
+                    name: "project-settings",
+                    component: ProjectSettingsView,
                 },
             ],
         },

@@ -95,23 +95,44 @@
         </ul>
 
         <ul>
-            <li
-                class="w-full h-12 outline-none flex justify-center items-center py-6 text-slate-500 dark:text-slate-700  hover:text-slate-800 dark:hover:text-slate-400"
+            <RouterLink
+                @click="navigationStore.setActiveTab('plugins')"
+                :class="{
+                    'text-red-500': navigationStore.activeTabIs('plugins'),
+                    'text-slate-400 dark:text-slate-600  hover:text-slate-800 dark:hover:text-slate-400': navigationStore.activeTabIsNot('plugins'),
+                }"
+                class="w-full h-12 outline-none flex justify-center items-center py-6 relative"
+                as="li"
+                to="/project/plugins"
             >
                 <PuzzlePieceIcon class="w-6 h-6 stroke-2" />
-            </li>
+            </RouterLink>
 
-            <li
-                class="w-full h-12 outline-none flex justify-center items-center py-6 text-slate-500 dark:text-slate-700  hover:text-slate-800 dark:hover:text-slate-400"
+            <RouterLink
+                @click="navigationStore.setActiveTab('tools')"
+                :class="{
+                    'text-red-500': navigationStore.activeTabIs('tools'),
+                    'text-slate-400 dark:text-slate-600  hover:text-slate-800 dark:hover:text-slate-400': navigationStore.activeTabIsNot('tools'),
+                }"
+                class="w-full h-12 outline-none flex justify-center items-center py-6 relative"
+                as="li"
+                to="/project/tools"
             >
                 <WrenchScrewdriverIcon class="w-6 h-6 stroke-1.7" />
-            </li>
+            </RouterLink>
 
-            <li
-                class="w-full h-12 outline-none flex justify-center items-center py-6 mb-3 text-slate-500 dark:text-slate-700  hover:text-slate-800 dark:hover:text-slate-400"
+            <RouterLink
+                @click="navigationStore.setActiveTab('settings')"
+                :class="{
+                    'text-red-500': navigationStore.activeTabIs('settings'),
+                    'text-slate-400 dark:text-slate-600  hover:text-slate-800 dark:hover:text-slate-400': navigationStore.activeTabIsNot('settings'),
+                }"
+                class="w-full h-12 outline-none flex justify-center items-center py-6 relative"
+                as="li"
+                to="/project/settings"
             >
                 <Cog8ToothIcon class="w-6 h-6 stroke-2" />
-            </li>
+            </RouterLink>
         </ul>
     </nav>
 </template>

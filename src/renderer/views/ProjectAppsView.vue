@@ -145,13 +145,13 @@
         </div>
 
         <div class="space-y-2 p-4" v-if="selectedTab === 'templates'">
-            <UiEmptyMessage development>
+            <UiEmptyMessage>
                 <span>Under development... COMING SOON!</span>
             </UiEmptyMessage>
         </div>
 
         <div class="space-y-2 p-4" v-if="selectedTab === 'settings'">
-            <UiEmptyMessage development>
+            <UiEmptyMessage>
                 <span>Also under development... COMING SOON!</span>
             </UiEmptyMessage>
         </div>
