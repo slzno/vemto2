@@ -16,15 +16,13 @@ class BladeFormatter extends BaseFormatter {
     problematicSections: Array<any> = []
 
     async format() {
+        this.removeProblematicSections()
+
+        this.formatWithPrettierHtmlParser()
+
+        this.addProblematicSectionsAgain()
+
         return this.content
-
-        // this.removeProblematicSections()
-
-        // this.formatWithPrettierHtmlParser()
-
-        // this.addProblematicSectionsAgain()
-
-        // return this.content
     }
 
     removeProblematicSections() {

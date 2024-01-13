@@ -33,7 +33,7 @@ export default class RenderableUiComponent extends Renderable {
     }
 
     getFormatter(): RenderableFileFormatter {
-        return RenderableFileFormatter.BLADE
+        return RenderableFileFormatter.NONE
     }
 
     getData() {
