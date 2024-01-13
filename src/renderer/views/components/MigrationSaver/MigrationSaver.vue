@@ -574,27 +574,32 @@
                             class="bg-slate-800 w-full h-full overflow-y-scroll"
                         >
                             <div class="p-2 flex-grow space-y-2">
-                                <div class="flex justify-end space-x-0.5">
-                                    <UiButton
-                                        :disabled="!selectedModelSettings.hasConflicts"
-                                        class="flex items-center justify-between"
-                                        @click="conflictsSolver.show()"
-                                    >
-                                        <CodeBracketIcon class="w-4 h-4 mr-1 stroke-2 text-red-500" />
-                                        Solve Conflicts
-                                    </UiButton>
-
-                                    <ConflictsSolver 
-                                        ref="conflictsSolver"
-                                        :relativeFilePath="selectedModelSettings.renderable.getFullFilePath()"
-                                        :currentFileContent="selectedModelSettings.currentModelContent"
-                                        :newFileContent="selectedModelSettings.newModelContent"
-                                        @solved="modelConflictSolved"
-                                    />
-                                    <UiButton @click="resetModel()">
-                                        <ArrowPathIcon class="w-4 h-4 mr-1 stroke-2 text-red-500" />
-                                        Reset
-                                    </UiButton>
+                                <div class="flex items-center justify-between">
+                                    <div class="text-slate-500 italic text-sm">
+                                        {{ selectedModelSettings.instance.getClassString() }}
+                                    </div>
+                                    <div class="flex justify-end space-x-0.5">
+                                        <UiButton
+                                            :disabled="!selectedModelSettings.hasConflicts"
+                                            class="flex items-center justify-between"
+                                            @click="conflictsSolver.show()"
+                                        >
+                                            <CodeBracketIcon class="w-4 h-4 mr-1 stroke-2 text-red-500" />
+                                            Solve Conflicts
+                                        </UiButton>
+    
+                                        <ConflictsSolver 
+                                            ref="conflictsSolver"
+                                            :relativeFilePath="selectedModelSettings.renderable.getFullFilePath()"
+                                            :currentFileContent="selectedModelSettings.currentModelContent"
+                                            :newFileContent="selectedModelSettings.newModelContent"
+                                            @solved="modelConflictSolved"
+                                        />
+                                        <UiButton @click="resetModel()">
+                                            <ArrowPathIcon class="w-4 h-4 mr-1 stroke-2 text-red-500" />
+                                            Reset
+                                        </UiButton>
+                                    </div>
                                 </div>
                                 <highlightjs class="h-full" language="php" :code="selectedModelSettings.acceptedModelContent" />
                             </div>

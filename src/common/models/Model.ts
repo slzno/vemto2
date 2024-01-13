@@ -518,6 +518,10 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         this.fileName = `${this.name}.php`
     }
 
+    getClassString(): string {
+        return `${this.namespace}\\${this.name}`
+    }
+    
     getCommonMorphInverseRelationships(): Relationship[] {
         const commonRelationships = this.getCommonMorphRelatedRelationships(),
             groupedRelationships = [],
