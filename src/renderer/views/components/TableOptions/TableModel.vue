@@ -175,13 +175,17 @@
         const columnsNames = selectValue.map((item: any) => item.value)
         model.value.saveHiddenColumns(columnsNames)
     }
+
     const saveDatesColumns = (selectValue: Array<Object>): void => {
         const columnsNames = selectValue.map((item: any) => item.value)
         model.value.saveDatesColumns(columnsNames)
     }
+
     const saveAppendsColumns = (selectValue: Array<Object>): void => {
         const columnsNames = selectValue.map((item: any) => item.value)
-        model.value.saveAppendsColumns(columnsNames)
+
+        model.value.appends = columnsNames
+        saveModelData()
     }
 
     const deleteModel = (): void => {
@@ -342,7 +346,7 @@
             <div class="mt-4 bg-slate-850 rounded-md space-y-1 p-2 flex flex-col gap-1">
                 <UiMultiSelect
                     inputLabel="Appends"
-                    :default-value="getSelectDataForLayout(model.appendsColumns)"
+                    :default-value="getSelectDataForLayout(model.appends)"
                     @change="$event => saveAppendsColumns($event)"
                     :options="getSelectDataForLayout(model.table.getColumns())"
                 />
