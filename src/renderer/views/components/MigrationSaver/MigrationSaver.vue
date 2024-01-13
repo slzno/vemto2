@@ -183,7 +183,7 @@
 
     const saveSchemaChanges = async () => {
         if(hasConflicts()) {
-            Alert.error("There are conflicts in your files. Please solve them before saving.")
+            Alert.warning("There are conflicts in your files. Please solve them before saving.")
             return
         }
 
@@ -387,7 +387,7 @@
                 >
                     <!-- Changes Selector -->
                     <div class="w-1/5 text-slate-300 bg-slate-950">
-                        <div class="flex items-center p-2 bg-slate-950 text-slate-200">
+                        <div class="flex items-center p-2 bg-slate-990 text-slate-200">
                             <TableCellsIcon class="w-4 h-4 mr-2" />
                             Tables
                         </div>
@@ -448,7 +448,7 @@
                         </div>
 
                         <!-- Models -->
-                        <div class="flex items-center p-2 bg-slate-950 text-slate-200 border-t border-slate-800">
+                        <div class="flex items-center p-2 bg-slate-990 text-slate-200 border-t border-slate-800">
                             <DocumentIcon class="w-4 h-4 mr-2" />
                             Models
                         </div>
