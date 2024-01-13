@@ -480,7 +480,7 @@
                             Changed Models
                         </div>
                         <div @click.stop="selectModel(model, 'updated')" :class="{'text-red-400 bg-slate-800': isSelectedModel(model)}" class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer flex justify-between items-center" v-for="model in changedModels" :key="model.id">
-                            <div>
+                            <div class="flex w-full items-center justify-between">
                                 <div title="Model was renamed" class="flex items-center space-x-1" v-if="model.wasRenamed()">
                                     <span class="text-slate-500">{{ model.schemaState.name }}</span>
                                     <ArrowRightIcon class="w-4 h-4" />
@@ -490,8 +490,8 @@
                                     {{ model.name }}
                                 </div>
 
-                                <div class="text-xs text-slate-400" v-if="modelHasConflicts(model)">
-                                    (Conflicts)
+                                <div class="text-xs text-slate-300 bg-slate-950 py-1 px-2 rounded-md" v-if="modelHasConflicts(model)">
+                                    Has conflicts
                                 </div>
                             </div>
 <!-- 
