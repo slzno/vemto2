@@ -1,0 +1,133 @@
+
+<script setup lang="ts">
+    import Draggable from "vuedraggable"
+    import Main from '@Renderer/services/wrappers/Main'
+    import { ref, computed, onMounted } from "vue"
+    import { useProjectStore } from "@Renderer/stores/useProjectStore"
+    import UiText from '@Renderer/components/ui/UiText.vue'
+    import UiButton from '@Renderer/components/ui/UiButton.vue'
+    import { ArrowDownTrayIcon, Bars2Icon, Bars3Icon, ClipboardDocumentListIcon } from '@heroicons/vue/24/outline'
+
+    const projectStore = useProjectStore(),
+        envSettings = ref([])
+    
+    let currentEnvSettings = null
+
+    onMounted(async () => {
+        await readEnvSettings()
+    })
+
+    // computed has changes
+    const hasChanges = computed(() => {
+        return JSON.stringify(envSettings.value) !== JSON.stringify(currentEnvSettings)
+    })
+
+    const readEnvSettings = async () => {
+        const fileContent = await Main.API.readProjectFile(".env")
+
+        const parsed = parseEnv(fileContent)
+
+        envSettings.value = cloneObject(parsed)
+        currentEnvSettings = cloneObject(parsed)
+    }
+
+    const cloneObject = (obj) => {
+        return JSON.parse(JSON.stringify(obj))
+    }
+
+    const addValue = () => {
+        envSettings.value.unshift({ key: "", value: "" })
+    }
+
+    const addLineBreak = () => {
+        envSettings.value.unshift({ key: "ENV_LINE_SEPARATOR", value: "ENV_LINE_SEPARATOR" })
+    }
+
+    const saveEnvSettings = async () => {
+        const content = envSettings.value.map(setting => {
+            if (setting.key === "ENV_LINE_SEPARATOR") {
+                return "\n"
+            }
+
+            return `${setting.key}=${setting.value}\n`
+        }).join("")
+
+        await Main.API.writeProjectFile(".env", content)
+
+        currentEnvSettings = cloneObject(envSettings.value)
+    }
+
+    const parseEnv = (envContent) => {
+        const lines = envContent.split(/\r?\n/) // Split the content by line breaks
+        const result = []
+
+        lines.forEach(line => {
+            // Check for empty line (line break)
+            if (line.trim() === '') {
+                result.push({ key: "ENV_LINE_SEPARATOR", value: "ENV_LINE_SEPARATOR" })
+            } else {
+                let [key, value] = line.split('=')
+
+                // remove any line breaks from the value
+                value = value.replace(/\r?\n|\r/g, "")
+
+                result.push({ key: key.trim(), value: value.trim() })
+            }
+        })
+
+        return result
+    }
+</script>
+
+<template>
+    <div
+        class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-scroll"
+    >
+        <div class="flex space-x-2 sticky py-2">
+            <UiButton @click="addValue()">
+                <ClipboardDocumentListIcon class="w-5 h-5 mr-1 text-red-500" />
+                Add Value
+            </UiButton>
+
+            <UiButton @click="addLineBreak()">
+                <Bars2Icon class="w-5 h-5 mr-1 text-red-500" />
+                Add Separator
+            </UiButton>
+
+            <UiButton :disabled="!hasChanges" @click="saveEnvSettings">
+                <ArrowDownTrayIcon class="w-5 h-5 mr-1 text-red-500" />
+                Save
+            </UiButton>
+        </div>
+
+        <div class="h-[calc(100vh-150px)] overflow-y-auto">
+            <Draggable
+                class="space-y-2"
+                handle=".handle"
+                :list="envSettings"
+                item-key="columns-draggable"
+            >
+                <template #item="{ element: setting }">
+                    <div class="flex space-x-2 items-center">
+                        <div class="px-2 handle">
+                            <Bars3Icon
+                                class="w-4 h-4 text-slate-600 hover:text-red-500 cursor-move"
+                            />
+                        </div>
+                        <div class="flex-1">
+                            <div v-if="setting.key === 'ENV_LINE_SEPARATOR'" class="flex justify-center py-4">
+                                <div class="border-t-2 border-slate-800 w-20 h-1"></div>
+                            </div>
+                            <div v-else class="flex flex-row items-center space-x-2 py-2">
+                                <div class="w-1/3">
+                                    <UiText class="font-bold" v-model="setting.key" />
+                                </div>
+                                <UiText v-model="setting.value" />
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </Draggable>
+        </div>
+    </div>
+</template>

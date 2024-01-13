@@ -1,15 +1,34 @@
 <script setup lang="ts">
-    import UiEmptyMessage from '@Renderer/components/ui/UiEmptyMessage.vue'
+    import { ref } from "vue"
+    import UiTabs from "@Renderer/components/ui/UiTabs.vue"
+    import { useProjectStore } from "@Renderer/stores/useProjectStore"
+    import DotEnvEditor from "@Renderer/views/components/ProjectSettings/DotEnvEditor.vue"
+
+    const projectStore = useProjectStore()
+    const selectedTab = ref("env")
+
+
+    const tabs = [
+        { label: "Environment", value: "env" },
+        { label: "Code", value: "code" },
+        { label: "Paths", value: "paths" },
+    ]
 </script>
 
 <template>
     <div
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-scroll"
     >
-        <div class="p-4">
-            <UiEmptyMessage>
-                <span>Settings... COMING SOON!</span>
-            </UiEmptyMessage>
+        <div class="mt-2">
+            <UiTabs 
+                :name="projectStore.project.getTabNameFor('env')" 
+                :tabs="tabs" 
+                v-model="selectedTab" 
+            />
+        </div>
+
+        <div class="p-4" v-if="selectedTab === 'env'">
+            <DotEnvEditor />
         </div>
     </div>
 </template>
