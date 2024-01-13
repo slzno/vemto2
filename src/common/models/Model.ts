@@ -428,6 +428,10 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         return this.ownRelationships.filter(relationship => relationship.type === 'HasMany') || []
     }
 
+    getBelongsToRelations(): Relationship[] {
+        return this.ownRelationships.filter(relationship => relationship.type === 'BelongsTo') || []
+    }
+
     getRelationshipsNames(): string[] {
         return this.ownRelationships.map((relationship) => relationship.name)
     }
@@ -448,6 +452,42 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
 
     getRenamedRelationships(): Relationship[] {
         return this.relatedRelationships.filter((relationship) => relationship.wasRenamed())
+    }
+
+    isObligatoryParentOfAnotherEntity(model: Model): boolean {
+        let hasMany = false
+
+        model.table.columns.forEach((column: Column) => {
+            hasMany = column.referencesModel(this) && !column.nullable
+        })
+
+        model.getBelongsToRelations().forEach((relation: Relationship) => {
+            hasMany = relation.modelId == this.id && !relation.foreignKey.nullable
+        })
+
+        return hasMany
+    }
+
+    getSelfRelationshipsForeignsNames(): string[] {
+        let foreigns = this.getSelfRelationshipsForeigns().map(foreign => {
+            return foreign.name
+        })
+
+        return [...new Set(foreigns)]
+    }
+
+    getSelfRelationshipsForeigns(): Column[] {
+        const foreigns = []
+
+        this.getSelfRelationships().forEach((relationship) => {
+            foreigns.push(relationship.foreignKey)
+        })
+
+        return foreigns
+    }
+
+    getSelfRelationships(): Relationship[] {
+        return this.ownRelationships.filter((relationship) => relationship.isCommon() && relationship.modelId == this.id)
     }
 
     isAuthModel() {

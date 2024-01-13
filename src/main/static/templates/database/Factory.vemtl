@@ -42,8 +42,70 @@ class <$ this.filenameWithoutExtension $> extends Factory
                 '<$ column.name $>' => <$ column.getFakerForTemplate() $>,
                 <% } %>
             <% } %>
+            <# --- #>
+            <% const modelBelongsToRelations = this.model.getBelongsToRelations() %>
+            <# --- #>
+            <% if(modelBelongsToRelations.length) { %>
+                <# --- #>
+                <% for(let relation of modelBelongsToRelations) { %>
+                    <# --- #>
+                        <% if(relation.relatedModelId != this.model.id) { %>
+                            <# --- #>
+                            <% if(this.model.isObligatoryParentOfAnotherEntity(relation.relatedModel)) { %>
+                                // Circular relation... please check the relationship
+                                //'<$ relation.foreignKey.name $>' => \<$ relation.relatedModel.class $>::factory(), 
+                            <% } else { %>
+                                '<$ relation.foreignKey.name $>' => \<$ relation.relatedModel.class $>::factory(),
+                            <% } %>
+                        <% } else { %>
+                            '<$ relation.foreignKey.name $>' => function () {
+                                return \<$ relation.relatedModel.class $>::factory()
+                                    ->create([
+                                        <% let foreignsNames = this.model.getSelfRelationshipsForeignsNames() %>
+                                        <# --- #>
+                                        <% for(let foreignName of foreignsNames) { %>
+                                            '<$ foreignName $>' => null,
+                                        <% } %>
+                                    ])
+                                    -><$ relation.relatedModel.table.getPrimaryKeyName() $>;
+                            },
+                        <% } %>
+                <% } %>
+            <% } %>
+            <# Polymorphic relationships faker #>
+            <% const commonInverseMorphs = this.model.getCommonMorphInverseRelationships() %>
+            <% if(commonInverseMorphs.length) { %>
+                <# --- #>
+                <% for(let relation of commonInverseMorphs) { %>
+                    '<% relation.morphToName %>_type' => fake()->randomElement([
+                        <% for (let relatedRelation of this.model.getCommonMorphRelatedRelationships()) { %>
+                            <# --- #>
+                            <% if(relatedRelation.morphToName == relation.morphToName) { %>
+                                \<% relatedRelation.model.class %>::class,
+                            <% } %>
+                        <% } %>
+                    ]),
+                    '<% relation.morphToName %>_id' => function (array $item) {
+                        return app($item['<% relation.morphToName %>_type'])->factory();
+                    },
+                <% } %>
+            <% } %>
         ];
     }
+
+    <% if(this.model.isAuthModel()) { %>
+        /**
+        * Indicate that the model's email address should be unverified.
+        */
+        public function unverified(): Factory
+        {
+            return $this->state(function (array $attributes) {
+                return [
+                    'email_verified_at' => null,
+                ];
+            });
+        }
+    <% } %>
     
     // hook:AFTER_DEFINITION
 }
