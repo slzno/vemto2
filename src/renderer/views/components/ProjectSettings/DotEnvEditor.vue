@@ -7,6 +7,8 @@
     import UiText from '@Renderer/components/ui/UiText.vue'
     import UiButton from '@Renderer/components/ui/UiButton.vue'
     import { ArrowDownTrayIcon, ArrowPathIcon, Bars2Icon, Bars3Icon, ClipboardDocumentListIcon } from '@heroicons/vue/24/outline'
+import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
+import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
 
     const projectStore = useProjectStore(),
         envSettings = ref([])
@@ -47,18 +49,26 @@
         envSettings.value.unshift({ key: "ENV_LINE_SEPARATOR", value: "ENV_LINE_SEPARATOR" })
     }
 
+    const dropSetting = (setting) => {
+        const index = envSettings.value.indexOf(setting)
+
+        envSettings.value.splice(index, 1)
+    }
+
     const saveEnvSettings = async () => {
-        const content = envSettings.value.map(setting => {
+        let content = envSettings.value.map(setting => {
             if (setting.key === "ENV_LINE_SEPARATOR") {
                 return "\n"
             }
-
+            
             return `${setting.key}=${setting.value}\n`
         }).join("")
 
+        content = content.slice(0, -1)
+
         await Main.API.writeProjectFile(".env", content)
 
-        currentEnvSettings = cloneObject(envSettings.value)
+        await readEnvSettings()
     }
 
     const parseEnv = (envContent) => {
@@ -109,7 +119,7 @@
             </UiButton>
         </div>
 
-        <div class="h-[calc(100vh-150px)] overflow-y-auto">
+        <div class="h-[calc(100vh-150px)] overflow-y-auto pr-4 pb-52">
             <Draggable
                 class="space-y-2"
                 handle=".handle"
@@ -133,6 +143,13 @@
                                 </div>
                                 <UiText v-model="setting.value" />
                             </div>
+                        </div>
+                        <div>
+                            <UiOptionsDropdown>
+                                <UiDropdownItem @click="dropSetting(setting)">
+                                    Delete
+                                </UiDropdownItem>
+                            </UiOptionsDropdown>
                         </div>
                     </div>
                 </template>
