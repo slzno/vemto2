@@ -9,6 +9,8 @@ export default class ReadProjectSchema {
         
         const command = `php ${apiFilePath}`
 
+        console.log(`Running ${command} on ${projectPath}`)
+
         return CommandExecutor.executeOnPath(projectPath, command)
     }
 

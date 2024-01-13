@@ -178,12 +178,12 @@
 </script>
 <template>
     <div class="flex w-full h-screen space-x-4 mt-2 px-2">
-        <div class="space-y-2">
+        <div class="space-y-2 w-36">
             <template v-for="input in inputTypes()" :key="input">
                 <UiButton @click="addInput(input)" class="w-full">{{ changeCase.pascalCase(input) }}</UiButton>
             </template>
-            <h2>Master Details</h2>
-            <UiButton @click="showingCreateDetailModal = true" class="w-full">Add Has Many Detail</UiButton>
+            <h2>Detail Components</h2>
+            <UiButton @click="showingCreateDetailModal = true" class="w-full">Has Many Detail</UiButton>
         </div>
 
         <!-- Input's Modal -->

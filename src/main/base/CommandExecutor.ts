@@ -54,15 +54,25 @@ export default class CommandExecutor {
                     }
 
                     if (error) { 
-                        console.error("(error) FAILED to execute command: " + command)
+                        const errorMessage = "(error) FAILED to execute command: " + command
+
+                        console.error(errorMessage)
                         console.log(stdout)
                         console.error(error)
-                        reject(error)
+
+                        let errorData = {
+                            message: errorMessage,
+                            error: stdout,
+                            stack: stdout
+                        }
+
+                        reject(errorData)
                     }
         
                     resolve(this.parseJsonData(stdout))
                 })
             } catch (error) {
+                console.log("ENTREI AQUIIIIIIIIIIIIIIIIII")
                 console.error("(execution error) FAILED to execute command: " + command)
                 console.error(error)
                 reject(error)

@@ -490,7 +490,7 @@
                                     {{ model.name }}
                                 </div>
 
-                                <div class="text-xs text-slate-300 bg-slate-950 py-1 px-2 rounded-md" v-if="modelHasConflicts(model)">
+                                <div class="text-xs text-slate-300 bg-slate-990 py-1 px-2 rounded-md" v-if="modelHasConflicts(model)">
                                     Has conflicts
                                 </div>
                             </div>
