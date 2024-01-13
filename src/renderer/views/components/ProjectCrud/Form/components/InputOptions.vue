@@ -6,11 +6,12 @@
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiNumber from "@Renderer/components/ui/UiNumber.vue"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
+    import UiSimpleCheckbox from "@Renderer/components/ui/UiSimpleCheckbox.vue"
     import { capitalCase } from "change-case"
-import UiButton from "@Renderer/components/ui/UiButton.vue"
-import UiSmallButton from "@Renderer/components/ui/UiSmallButton.vue"
-import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
-import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
+    import UiButton from "@Renderer/components/ui/UiButton.vue"
+    import UiSmallButton from "@Renderer/components/ui/UiSmallButton.vue"
+    import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
+    import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
 
     const props = defineProps({
         show: Boolean,
@@ -26,6 +27,12 @@ import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
             value: "",
             label: ""
         })
+    }
+
+    const toggleNumericAttribute = (attribute: string, event: any): void => {
+        input.value[attribute] = event.target.checked ? 0 : null
+
+        saveInput()
     }
 
     const deleteItem = (deleteItem: any) => {
@@ -93,16 +100,19 @@ import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
                                 <UiText v-model="input.defaultValue" placeholder="Input Default Value" label="Default Value" @input="saveInput()" />
                             </div>
 
-                            <div v-if="input.allowsMinimumLength()">
-                                <UiNumber v-model="input.min" placeholder="Input Minimum Length" label="Minimum Length" @input="saveInput()" />
+                            <div class="flex flex-col gap-1" v-if="input.allowsMinimumLength()">
+                                <UiSimpleCheckbox :checked="input.min !== null" label="Minimum Length" @input="$event => toggleNumericAttribute('min', $event)" />
+                                <UiNumber v-model="input.min" placeholder="Input Minimum Length" @input="saveInput()" :disabled="input.min === null" />
                             </div>
 
-                            <div v-if="input.allowsMaximumLength()">
-                                <UiNumber v-model="input.max" placeholder="Input Maximum Length" label="Maximum Length" @input="saveInput()" />
+                            <div class="flex flex-col gap-1" v-if="input.allowsMaximumLength()">
+                                <UiSimpleCheckbox :checked="input.max !== null" label="Maximum Length" @input="$event => toggleNumericAttribute('max', $event)" />
+                                <UiNumber v-model="input.max" placeholder="Input Maximum Length" @input="saveInput()" :disabled="input.max === null" />
                             </div>
 
-                            <div v-if="input.allowsStep()">
-                                <UiNumber v-model="input.step" placeholder="Input Step" label="Step" @input="saveInput()" />
+                            <div class="flex flex-col gap-1" v-if="input.allowsStep()">
+                                <UiSimpleCheckbox :checked="input.step !== null" label="Step" @input="$event => toggleNumericAttribute('step', $event)" />
+                                <UiNumber v-model="input.step" placeholder="Input Step" @input="saveInput()" :disabled="input.step === null" />
                             </div>
 
                             <div v-if="input.allowsItems()">
