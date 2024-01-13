@@ -6,7 +6,7 @@
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import UiText from '@Renderer/components/ui/UiText.vue'
     import UiButton from '@Renderer/components/ui/UiButton.vue'
-    import { ArrowDownTrayIcon, Bars2Icon, Bars3Icon, ClipboardDocumentListIcon } from '@heroicons/vue/24/outline'
+    import { ArrowDownTrayIcon, ArrowPathIcon, Bars2Icon, Bars3Icon, ClipboardDocumentListIcon } from '@heroicons/vue/24/outline'
 
     const projectStore = useProjectStore(),
         envSettings = ref([])
@@ -21,6 +21,10 @@
     const hasChanges = computed(() => {
         return JSON.stringify(envSettings.value) !== JSON.stringify(currentEnvSettings)
     })
+
+    const reloadSettings = async () => {
+        await readEnvSettings()
+    }
 
     const readEnvSettings = async () => {
         const fileContent = await Main.API.readProjectFile(".env")
@@ -92,6 +96,11 @@
             <UiButton @click="addLineBreak()">
                 <Bars2Icon class="w-5 h-5 mr-1 text-red-500" />
                 Add Separator
+            </UiButton>
+
+            <UiButton @click="reloadSettings">
+                <ArrowPathIcon class="w-5 h-5 mr-1 text-red-500" />
+                Reload
             </UiButton>
 
             <UiButton :disabled="!hasChanges" @click="saveEnvSettings">
