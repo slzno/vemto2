@@ -6,7 +6,7 @@
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import UiText from '@Renderer/components/ui/UiText.vue'
     import UiButton from '@Renderer/components/ui/UiButton.vue'
-    import { ArrowDownTrayIcon, ArrowPathIcon, Bars2Icon, Bars3Icon, ClipboardDocumentListIcon } from '@heroicons/vue/24/outline'
+    import { ArrowDownTrayIcon, ArrowPathIcon, Bars2Icon, Bars3Icon, ClipboardDocumentListIcon, TrashIcon } from '@heroicons/vue/24/outline'
 import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
 import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
 
@@ -47,6 +47,30 @@ import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
 
     const addLineBreak = () => {
         envSettings.value.unshift({ key: "ENV_LINE_SEPARATOR", value: "ENV_LINE_SEPARATOR" })
+    }
+
+    const addValueAbove = (setting) => {
+        const index = envSettings.value.indexOf(setting)
+
+        envSettings.value.splice(index, 0, { key: "", value: "" })
+    }
+
+    const addValueBelow = (setting) => {
+        const index = envSettings.value.indexOf(setting)
+
+        envSettings.value.splice(index + 1, 0, { key: "", value: "" })
+    }
+
+    const addLineBreakAbove = (setting) => {
+        const index = envSettings.value.indexOf(setting)
+
+        envSettings.value.splice(index, 0, { key: "ENV_LINE_SEPARATOR", value: "ENV_LINE_SEPARATOR" })
+    }
+
+    const addLineBreakBelow = (setting) => {
+        const index = envSettings.value.indexOf(setting)
+
+        envSettings.value.splice(index + 1, 0, { key: "ENV_LINE_SEPARATOR", value: "ENV_LINE_SEPARATOR" })
     }
 
     const dropSetting = (setting) => {
@@ -98,7 +122,7 @@ import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-scroll"
     >
         <div class="flex space-x-2 sticky py-2">
-            <UiButton @click="addValue()">
+            <!-- <UiButton @click="addValue()">
                 <ClipboardDocumentListIcon class="w-5 h-5 mr-1 text-red-500" />
                 Add Value
             </UiButton>
@@ -106,7 +130,7 @@ import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
             <UiButton @click="addLineBreak()">
                 <Bars2Icon class="w-5 h-5 mr-1 text-red-500" />
                 Add Separator
-            </UiButton>
+            </UiButton> -->
 
             <UiButton @click="reloadSettings">
                 <ArrowPathIcon class="w-5 h-5 mr-1 text-red-500" />
@@ -145,8 +169,25 @@ import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
                             </div>
                         </div>
                         <div>
-                            <UiOptionsDropdown>
+                            <UiOptionsDropdown size="w-64">
+                                <UiDropdownItem @click="addValueAbove(setting)">
+                                    <ClipboardDocumentListIcon class="w-4 h-4 mr-1 text-red-500" />
+                                    Add value above
+                                </UiDropdownItem>
+                                <UiDropdownItem @click="addLineBreakAbove(setting)">
+                                    <Bars2Icon class="w-4 h-4 mr-1 text-red-500" />
+                                    Add separator above
+                                </UiDropdownItem>
+                                <UiDropdownItem @click="addValueBelow(setting)">
+                                    <ClipboardDocumentListIcon class="w-4 h-4 mr-1 text-red-500" />
+                                    Add value below
+                                </UiDropdownItem>
+                                <UiDropdownItem @click="addLineBreakBelow(setting)">
+                                    <Bars2Icon class="w-4 h-4 mr-1 text-red-500" />
+                                    Add separator below
+                                </UiDropdownItem>
                                 <UiDropdownItem @click="dropSetting(setting)">
+                                    <TrashIcon class="w-4 h-4 mr-1 text-red-500" />
                                     Delete
                                 </UiDropdownItem>
                             </UiOptionsDropdown>

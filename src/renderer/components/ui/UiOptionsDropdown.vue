@@ -8,6 +8,13 @@
     const showing = ref(false),
         dropdown = ref(null)
 
+    const props = defineProps({
+        size: {
+            type: String,
+            default: "w-44",
+        }
+    })
+
     const show = () => {
         showing.value = true
     }
@@ -36,7 +43,11 @@
             leave-from-class="transition duration-300 opacity-100"
             leave-to-class="transition duration-300 opacity-0"
         >
-        <div v-if="showing" @click.prevent.stop="close" class="w-44 rounded-md absolute border border-gray-700 bg-slate-950 p-1" style="right: 10px; top: 18px;">
+        <div v-if="showing" @click.prevent.stop="close" 
+            :class="size"
+            class="rounded-md absolute border border-gray-700 bg-slate-950 p-1" 
+            style="right: 10px; top: 18px;"
+        >
             <ul>
                 <slot></slot>
             </ul>
