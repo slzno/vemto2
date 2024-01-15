@@ -77,17 +77,15 @@ class <$ this.filenameWithoutExtension $> extends Factory
             <% if(commonInverseMorphs.length) { %>
                 <# --- #>
                 <% for(let relation of commonInverseMorphs) { %>
-                    '<% relation.morphToName %>_type' => fake()->randomElement([
+                    '<$ relation.morphToName $>_type' => fake()->randomElement([
                         <% for (let relatedRelation of this.model.getCommonMorphRelatedRelationships()) { %>
                             <# --- #>
                             <% if(relatedRelation.morphToName == relation.morphToName) { %>
-                                \<% relatedRelation.model.class %>::class,
+                                \<$ relatedRelation.model.class $>::class,
                             <% } %>
                         <% } %>
                     ]),
-                    '<% relation.morphToName %>_id' => function (array $item) {
-                        return app($item['<% relation.morphToName %>_type'])->factory();
-                    },
+                    '<$ relation.morphToName $>_id' => \<$ relation.model.class $>::factory(),
                 <% } %>
             <% } %>
         ];

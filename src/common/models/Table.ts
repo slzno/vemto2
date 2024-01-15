@@ -502,7 +502,8 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
                 tableId: this.id,
                 modelId: this.id,
                 name: name,
-                type: primaryKey.getForeignType()
+                type: primaryKey.getForeignType(),
+                unsigned: primaryKey.unsigned,
             })
         }
 
