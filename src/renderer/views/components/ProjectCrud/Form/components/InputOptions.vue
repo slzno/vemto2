@@ -11,6 +11,7 @@ import UiButton from "@Renderer/components/ui/UiButton.vue"
 import UiSmallButton from "@Renderer/components/ui/UiSmallButton.vue"
 import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
 import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
+import UiTranslator from "@Renderer/components/ui/UiTranslator.vue"
 
     const props = defineProps({
         show: Boolean,
@@ -83,7 +84,7 @@ import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
                         <div class="p-4 space-y-4">
                             <UiText v-model="input.name" placeholder="Input Name" disabled label="Name" @input="saveInput()" />
 
-                            <UiText v-model="input.label" placeholder="Input Label" label="Label" @input="saveInput()" />
+                            <UiTranslator v-model="input.label" placeholder="Input Label" label="Label" @input="saveInput()" />
                             
                             <div v-if="input.allowsPlaceholder()">
                                 <UiText v-model="input.placeholder" placeholder="Input Placeholder" label="Placeholder" @input="saveInput()" />

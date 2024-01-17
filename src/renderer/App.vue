@@ -64,7 +64,7 @@
     <div
         :class="titlebarColor"
         class="titlebar fixed top-0 right-0 z-50 cursor-move text-slate-700 flex items-center justify-center px-2"
-        style="height: 20px; width: 100%"
+        style="height: 18px; width: 100%"
     >
         <div>
             <!-- Current Project: vemto-test-01 -->
