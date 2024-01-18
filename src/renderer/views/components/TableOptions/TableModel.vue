@@ -360,7 +360,7 @@
                                 </template>
                             </UiSelect>
                         </div>
-                        <div class="w-1/2 mt-1">
+                        <div class="w-1/2">
                             <UiText v-model="modelCasts[index][1]" label="Type" @input="saveModelCast(index)" />
                         </div>
                         <UiOptionsDropdown>

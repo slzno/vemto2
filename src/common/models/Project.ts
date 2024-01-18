@@ -102,6 +102,7 @@ export default class Project extends RelaDB.Model {
     filesQueueStatus: ProjectFilesQueueStatus
     currentZoom: number
     connectionFinished: boolean
+    translations: any
 
     relationships() {
         return {
@@ -661,6 +662,38 @@ export default class Project extends RelaDB.Model {
 
     getTabNameFor(key: string) {
         return `${this.uuid}-${key}`
+    }
+
+    getTranslation(language: string, key: string): string {
+        if (!this.translations) return null
+        if (!this.translations[language]) return null
+        if (!this.translations[language][key]) return null
+
+        return this.translations[language][key]
+    }
+
+    setTranslation(language: string, key: string, value: string) {
+        if (!this.translations) this.translations = {}
+        
+        if (!this.translations[language]) this.translations[language] = {}
+
+        this.translations[language][key] = value
+
+        this.save()
+    }
+
+    getAllKeyTranslations(key: string): { [key: string]: string } {
+        if (!this.translations) return {}
+
+        const translations = {}
+
+        Object.keys(this.translations).forEach(language => {
+            if (!this.translations[language][key]) return
+
+            translations[language] = this.translations[language][key]
+        })
+
+        return translations
     }
 
 }
