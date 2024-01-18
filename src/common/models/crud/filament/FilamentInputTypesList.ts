@@ -42,6 +42,7 @@ export class FilamentInputTypesList {
             [InputType.TIME]: FilamentInputType.DATETIME_PICKER,
             [InputType.RADIO]: FilamentInputType.RADIO,
             [InputType.COLOR]: FilamentInputType.COLOR_PICKER,
+            [InputType.URL]: FilamentInputType.TEXT_INPUT,
         }
     }
 }

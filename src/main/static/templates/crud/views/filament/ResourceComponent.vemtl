@@ -69,17 +69,22 @@ class <$ this.filenameWithoutExtension $> extends Resource
                         Grid::make(['default' => 1])
                             ->schema([
                                 <% for(let input of this.crud.getInputsForForms()) { %>
+                                <###>
+                                <% const inputRules = input.getRulesForFilamentTemplate() %>
+                                <###>
                                 <$ pascalCase(input.filamentData.inputType) $>::make('<$ input.name $>')
+                                    <% for(let rule of inputRules) { %>
+                                        <% const [methodName, args] = rule %>
+                                        <# --- #>
+                                        -><$ methodName $>(<$ args $>)
+                                    <% } %>
+                                    <# --- #>
                                     <% if(input.isEmail()) { %>
                                         ->email()
                                     <% } %>
                                     <# --- #>
                                     <% if(input.isPassword()) { %>
                                         ->password()
-                                    <% } %>
-                                    <# --- #>
-                                    <% if(input.isRequired()) { %>
-                                        ->required()
                                     <% } %>
                                     <# --- #>
                                     <% if(input.isNumber()) { %>

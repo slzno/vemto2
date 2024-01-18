@@ -11,6 +11,7 @@ import InputSettingsList from "../data/InputSettingsList"
 import FillInputFilamentData from "./fillers/FillInputFilamentData"
 import { FilamentInputType } from "./filament/FilamentInputTypesList"
 import { FilamentColumnType } from "./filament/FilamentColumnTypesList"
+import { FilamentRuleNameConversions } from "./filament/FilamentRuleNameConversions"
 
 export enum InputValidationRuleType {
     TEXTUAL = "textual",
@@ -165,35 +166,39 @@ export default class Input extends RelaDB.Model {
         return this.relationship ? this.relationship.relatedModel : null
     }
 
-    isBelongsTo() {
+    isBelongsTo(): boolean {
         return this.type === InputType.BELONGS_TO && !! this.relationshipId
     }
 
-    isCommon() {
+    isCommon(): boolean {
         return !this.isFileOrImage()
     }
 
-    isPassword() {
+    isPassword(): boolean {
         return this.name === "password"
     }
 
-    isFileOrImage() {
+    isFileOrImage(): boolean {
         return [InputType.FILE, InputType.IMAGE].includes(this.type)
     }
 
-    isEmail() {
+    isEmail(): boolean {
         return this.type === InputType.EMAIL
     }
 
-    isNumber() {
+    isNumber(): boolean {
         return this.type === InputType.NUMBER
     }
 
-    isNullable() {
+    isUrl(): boolean {
+        return this.type === InputType.URL
+    }
+
+    isNullable(): boolean {
         return !this.isRequired()
     }
 
-    isRequired() {
+    isRequired(): boolean {
         return !! this.required
     }
 
@@ -289,6 +294,33 @@ export default class Input extends RelaDB.Model {
 
     getRulesForTemplate(rules: InputValidationRule[]) {
         return rules.map((rule) => rule.value).join("|")
+    }
+
+    getRulesForFilamentTemplate() {
+        return this.creationRules.map((rule: InputValidationRule) => {
+            const [laravelRuleName, ruleArgs] = rule.value.split(':')
+
+            let methodArgs = ''
+
+            if(ruleArgs?.length) {
+                methodArgs = ruleArgs.split(',').map((ruleArg: any) => {
+                    if(Number(ruleArg)) return ruleArg
+
+                    return `"${ruleArg.trim()}"`
+                }).join(', ')
+            }
+
+            if(laravelRuleName.toLowerCase() == 'unique') {
+                methodArgs += ', ignoreRecord: true'
+            }
+
+            const filamentMethodName = FilamentRuleNameConversions.convert(laravelRuleName)
+
+            return [
+                changeCase.camelCase(filamentMethodName),
+                methodArgs
+            ];
+        });
     }
 
     getTypeSettings() {

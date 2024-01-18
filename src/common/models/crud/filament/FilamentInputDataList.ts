@@ -15,6 +15,7 @@ export class FilamentInputDataList {
             case InputType.EMAIL:
             case InputType.PASSWORD:
             case InputType.NUMBER:
+            case InputType.URL:
             default:
                 data = {
                     inputType,
