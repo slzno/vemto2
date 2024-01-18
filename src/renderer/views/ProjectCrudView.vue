@@ -10,7 +10,7 @@
     import CrudLogic from './components/ProjectCrud/CrudLogic.vue'
     import CrudForm from './components/ProjectCrud/Form/CrudForm.vue'
     import CrudValidation from './components/ProjectCrud/Validation/CrudValidation.vue'
-import UiEmptyMessage from '@Renderer/components/ui/UiEmptyMessage.vue'
+    import UiEmptyMessage from '@Renderer/components/ui/UiEmptyMessage.vue'
 
     const projectStore = useProjectStore()
 

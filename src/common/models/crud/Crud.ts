@@ -14,6 +14,7 @@ export enum CrudType {
     DEFAULT = "Default",
     VUE = "Vue",
     LIVEWIRE = "Livewire",
+    FILAMENT = "Filament"
 }
 
 export interface CrudSettings {
@@ -21,6 +22,18 @@ export interface CrudSettings {
     collectionName: string
     itemTitle: string
     collectionTitle: string
+}
+
+export interface FilamentSettings {
+    recordTitle: string
+    shouldSkipAuthorization: boolean
+    modelLabel: string
+    pluralModelLabel: string
+    navigationLabel: string
+    navigationIcon: string
+    navigationOrder: number
+    navigationGroup: string
+    slug: string
 }
 
 export default class Crud extends RelaDB.Model {
@@ -58,6 +71,8 @@ export default class Crud extends RelaDB.Model {
     livewireShowComponentName: string
     livewireCreateComponentName: string
     livewireEditComponentName: string
+
+    filamentSettings: FilamentSettings
     
     relationships() {
         return {
@@ -76,11 +91,15 @@ export default class Crud extends RelaDB.Model {
     }
 
     static getBasic() {
-        return Crud.get().filter((crud) => crud.isBasic())
+        return Crud.get().filter((crud: Crud) => crud.isBasic())
+    }
+
+    static getFilamentResources() {
+        return Crud.get().filter((crud: Crud) => crud.isForFilament())
     }
 
     isBasic() {
-        return !this.isHasManyDetail
+        return !this.isHasManyDetail && !this.isForFilament()
     }
 
     hasDefaultSearchColumn(): boolean {
@@ -91,18 +110,26 @@ export default class Crud extends RelaDB.Model {
         return !! this.defaultSortColumn
     }
 
-    static createFromModel(model: Model, excludedColumns: Column[] = [], generateDetails: boolean = false) {
-        const defaultSearchColumn = model.table.getLabelColumn()
+    static createFromModel(
+        model: Model,
+        crudType: CrudType = CrudType.LIVEWIRE,
+        excludedColumns: Column[] = [],
+        generateDetails: boolean = false
+    ) {
+        const defaultSearchColumn = model.table.getLabelColumn(),
+            crudIsForFilament = crudType == CrudType.FILAMENT
 
         const defaultSortColumn = model.table.getUpdatedAtColumn() 
             || model.table.getCreatedAtColumn()
             || model.table.getPrimaryKeyColumn()
             || defaultSearchColumn
 
-        const defaultSection = AppSection.findDefaultAdminSection()
+        const defaultSection = crudIsForFilament
+            ? AppSection.findDefaultAdminSection()
+            : AppSection.findDefaultDashboardSection()
 
         const crud = new Crud()
-        crud.type = CrudType.LIVEWIRE
+        crud.type = crudType
         crud.name = capitalCase(model.name)
         crud.plural = capitalCase(model.plural)
         crud.sectionId = defaultSection ? defaultSection.id : null
@@ -117,6 +144,8 @@ export default class Crud extends RelaDB.Model {
         if(defaultSortColumn) crud.defaultSortColumnId = defaultSortColumn.id
 
         crud.defaultSortDirection = "desc"
+
+        if(crudIsForFilament) crud.calculateFilamentSettings()
 
         crud.save()
 
@@ -142,6 +171,8 @@ export default class Crud extends RelaDB.Model {
     }
 
     getAppType(): string {
+        if(this.type === CrudType.FILAMENT) return 'FILAMENT'
+
         return 'CRUD'
     }
 
@@ -187,6 +218,10 @@ export default class Crud extends RelaDB.Model {
 
     getInputsForDetails(): Input[] {
         return this.inputs.filter((input) => input.showOnDetails)
+    }
+
+    getInputsForForms(): Input[] {
+        return this.inputs.filter((input) => input.showOnCreation || input.showOnUpdate)
     }
 
     calculateSettings() {
@@ -345,5 +380,21 @@ export default class Crud extends RelaDB.Model {
         this.hooks[type] = hooks
 
         this.save()
+    }
+
+    calculateFilamentSettings() {
+        this.filamentSettings = {
+            modelLabel: this.name,
+            pluralModelLabel: this.plural,
+            navigationLabel: this.plural,
+            navigationIcon: "heroicon-o-rectangle-stack",
+            navigationOrder: 1,
+            navigationGroup: "Admin",
+            slug: null
+        } as FilamentSettings
+    }
+
+    isForFilament(): boolean {
+        return this.type === CrudType.FILAMENT
     }
 }

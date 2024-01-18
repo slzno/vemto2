@@ -5,7 +5,7 @@
     import UiModal from '@Renderer/components/ui/UiModal.vue'
     import UiButton from '@Renderer/components/ui/UiButton.vue'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
-import { PlusIcon } from '@heroicons/vue/24/outline'
+    import { PlusIcon } from '@heroicons/vue/24/outline'
 
     const showingModal = ref(false),
         pageName = ref(''),

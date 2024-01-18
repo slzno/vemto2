@@ -1,11 +1,13 @@
 <script setup lang="ts">
     import { ref, watch } from 'vue'
-    import Crud, { CrudType } from '@Common/models/crud/Crud'
     import UiModal from '@Renderer/components/ui/UiModal.vue'
     import UiButton from '@Renderer/components/ui/UiButton.vue'
     import UiSelect from '@Renderer/components/ui/UiSelect.vue'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
-import { PlusIcon } from '@heroicons/vue/24/outline'
+    import { PlusIcon } from '@heroicons/vue/24/outline'
+    import Crud, { CrudType, FilamentSettings } from '@Common/models/crud/Crud'
+    import { paramCase } from 'change-case'
+    import AppSection from '@Common/models/AppSection'
 
     const showingModal = ref(false),
         selectedModelId = ref(null),
@@ -30,14 +32,9 @@ import { PlusIcon } from '@heroicons/vue/24/outline'
     watch(selectedModelId, modelChanged)
 
     const save = () => {
-        const excludedColumns = [],
-            generateDetails = true
-
         Crud.createFromModel(
             selectedModel.value,
-            CrudType.LIVEWIRE,
-            excludedColumns, 
-            generateDetails
+            CrudType.FILAMENT
         )
 
         close()
@@ -48,11 +45,11 @@ import { PlusIcon } from '@heroicons/vue/24/outline'
     <div>
         <UiButton @click="show()">
             <PlusIcon class="w-4 h-4 mr-1" />
-            CRUD
+            Filament Resource
         </UiButton>
 
         <UiModal
-            title="Add CRUD"
+            title="Add Filament Resource"
             :show="showingModal"
             @close="close()"
             width="700px"
@@ -71,7 +68,7 @@ import { PlusIcon } from '@heroicons/vue/24/outline'
 
             <template #footer>
                 <div class="flex justify-end p-2">
-                    <UiButton @click=" save()">Create</UiButton>
+                    <UiButton @click="save()">Create</UiButton>
                 </div>
             </template>
         </UiModal>

@@ -2,11 +2,12 @@
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import CrudManager from "./components/ProjectApps/CrudManager.vue"
+    import FilamentResourceManager from "./components/ProjectApps/FilamentResourceManager.vue"
     import { useRouter } from "vue-router"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import { ref, computed } from "vue"
     import PageManager from "./components/ProjectApps/PageManager.vue"
-    import Crud from "@Common/models/crud/Crud"
+    import Crud, { CrudType } from "@Common/models/crud/Crud"
     import Page from "@Common/models/page/Page"
     import AppRoutes from "./components/ProjectApps/AppRoutes.vue"
     import AppNavs from "./components/ProjectApps/AppNavs.vue"
@@ -27,7 +28,7 @@
     })
 
     const openApp = (app: Crud | Page) => {
-        if (app.getAppType() === "CRUD") {
+        if (["CRUD", "FILAMENT"].includes(app.getAppType())) {
             router.push({ name: "project-crud", params: { crudId: app.id } })
         } else {
             router.push({ name: "project-page", params: { pageId: app.id } })
@@ -75,13 +76,10 @@
             <div class="flex space-x-2">
                 <CrudManager />
                 <PageManager />
+                <FilamentResourceManager />
                 <UiButton disabled>
                     <PlusIcon class="w-4 h-4 mr-1" />
                     API Resource
-                </UiButton>
-                <UiButton disabled>
-                    <PlusIcon class="w-4 h-4 mr-1" />
-                    Filament Resource
                 </UiButton>
                 <UiButton disabled>
                     <PlusIcon class="w-4 h-4 mr-1" />
@@ -110,7 +108,7 @@
                 >
                     <div class="flex flex-col">
                         <span class="font-semibold">{{ app.getLabel() }}</span>
-                        <div class="text-slate-400">{{ app.getAppSubType() }}</div>
+                        <div :class="app.isForFilament() ? 'text-yellow-400' : 'text-slate-400'">{{ app.getAppSubType() }}</div>
                     </div>
 
                     <UiButton class="text-sm" @click.stop="app.delete()"

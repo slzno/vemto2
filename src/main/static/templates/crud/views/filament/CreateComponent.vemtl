@@ -1,0 +1,14 @@
+<?php
+
+<% const parentResourceName = `${this.crud.name}Resource` %>
+
+namespace App\Filament\Resources\<$ this.crud.section.name $>\<$ parentResourceName $>\Pages;
+
+use Filament\Actions;
+use Filament\Resources\Pages\CreateRecord;
+use App\Filament\Resources\<$ this.crud.section.name $>\<$ parentResourceName $>;
+
+class <$ this.filenameWithoutExtension $> extends CreateRecord
+{
+    protected static string $resource = <$ parentResourceName $>::class;
+}

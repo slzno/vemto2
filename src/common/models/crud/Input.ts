@@ -1,4 +1,4 @@
-import Crud from "./Crud"
+import Crud, { CrudType } from "./Crud"
 import Column from "../Column"
 import CrudPanel from "./CrudPanel"
 import Relationship from "../Relationship"
@@ -8,6 +8,9 @@ import GenerateInputValidation, { ValidationRuleType } from "./services/Generate
 import Model from "../Model"
 import { InputType } from "./InputType"
 import InputSettingsList from "../data/InputSettingsList"
+import FillInputFilamentData from "./fillers/FillInputFilamentData"
+import { FilamentInputType } from "./filament/FilamentInputTypesList"
+import { FilamentColumnType } from "./filament/FilamentColumnTypesList"
 
 export enum InputValidationRuleType {
     TEXTUAL = "textual",
@@ -17,6 +20,25 @@ export enum InputValidationRuleType {
 export interface InputValidationRule {
     type: InputValidationRuleType,
     value: string,
+}
+
+export interface FilamentInputData {
+    // Common params
+    inputType: FilamentInputType
+    columnType: FilamentColumnType
+    autofocus?: boolean
+    helperText?: string
+
+    // Text input params
+    autoComplete?: boolean
+    dataList?: string[]
+
+    // Select params
+    allowHtml?: boolean
+    canBePreloaded?: boolean
+    canBeSearchable?: boolean
+    canSelectPlaceholder?: boolean
+    loadingMessage?: string
 }
 
 export default class Input extends RelaDB.Model {
@@ -50,6 +72,8 @@ export default class Input extends RelaDB.Model {
     showOnDetails: boolean
     showOnIndex: boolean
 
+    filamentData: FilamentInputData
+
     relationships() {
         return {
             crud: () => this.belongsTo(Crud),
@@ -67,7 +91,7 @@ export default class Input extends RelaDB.Model {
         input.label = changeCase.sentenceCase(column.name)
         input.placeholder = changeCase.sentenceCase(column.name)
         input.readOnly = false
-        input.required = false
+        input.required = !column.nullable
         input.hidden = false
         input.defaultValue = ""
         input.checked = false
@@ -92,6 +116,10 @@ export default class Input extends RelaDB.Model {
         input.calculateInputParamsByType()
         input.generateItemsFromColumn()
         input.generateValidationRules()
+
+        if(crud.isForFilament()) {
+            FillInputFilamentData.onInput(input)
+        }
 
         return input
     }
@@ -151,6 +179,14 @@ export default class Input extends RelaDB.Model {
 
     isFileOrImage() {
         return [InputType.FILE, InputType.IMAGE].includes(this.type)
+    }
+
+    isEmail() {
+        return this.type === InputType.EMAIL
+    }
+
+    isNumber() {
+        return this.type === InputType.NUMBER
     }
 
     isNullable() {

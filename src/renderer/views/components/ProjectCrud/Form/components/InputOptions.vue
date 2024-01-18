@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-    import { toRef } from "vue"
+    import { toRef, ref } from "vue"
     import Input from "@Common/models/crud/Input"
     import debounce from "@Common/tools/debounce"
     import { XMarkIcon, TrashIcon, PlusCircleIcon } from "@heroicons/vue/24/outline"
@@ -7,10 +7,10 @@
     import UiNumber from "@Renderer/components/ui/UiNumber.vue"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import { capitalCase } from "change-case"
-import UiButton from "@Renderer/components/ui/UiButton.vue"
-import UiSmallButton from "@Renderer/components/ui/UiSmallButton.vue"
-import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
-import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
+    import UiButton from "@Renderer/components/ui/UiButton.vue"
+    import UiSmallButton from "@Renderer/components/ui/UiSmallButton.vue"
+    import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
+    import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
 
     const props = defineProps({
         show: Boolean,
@@ -48,6 +48,13 @@ import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
 
     const show = toRef(props, "show"),
         input = toRef(props, "input")
+
+    const selectedTab = ref("common")
+
+    const tabs = [
+        { label: "Common Data", value: "common" },
+        { label: "Filament Data", value: "filament" }
+    ]
 </script>
 <template>
     <Transition

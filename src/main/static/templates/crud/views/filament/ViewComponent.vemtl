@@ -1,0 +1,21 @@
+<?php
+
+<% const parentResourceName = `${this.crud.name}Resource` %>
+
+namespace App\Filament\Resources\<$ this.crud.section.name $>\<$ parentResourceName $>\Pages;
+
+use App\Filament\Resources\<$ this.crud.section.name $>\<$ parentResourceName $>;
+use Filament\Actions;
+use Filament\Resources\Pages\ViewRecord;
+
+class <$ this.filenameWithoutExtension $> extends ViewRecord
+{
+    protected static string $resource = <$ parentResourceName $>::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\EditAction::make(),
+        ];
+    }
+}
