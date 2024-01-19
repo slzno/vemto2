@@ -70,10 +70,15 @@ class <$ this.filenameWithoutExtension $> extends Resource
                             ->schema([
                                 <% for(let input of this.crud.getInputsForForms()) { %>
                                 <###>
-                                <% const inputRules = input.getRulesForFilamentTemplate() %>
+                                <% const [inlineRules, individualRules] = input.getRulesForFilamentTemplate() %>
                                 <###>
                                 <$ pascalCase(input.filamentData.inputType) $>::make('<$ input.name $>')
-                                    <% for(let rule of inputRules) { %>
+                                    <###>
+                                    <% if(inlineRules.length) { %>
+                                        ->rules([<$ inlineRules.join(', ') $>]) 
+                                    <% } %>
+                                    <###>
+                                    <% for(let rule of individualRules) { %>
                                         <% const [methodName, args] = rule %>
                                         <# --- #>
                                         -><$ methodName $>(<$ args $>)

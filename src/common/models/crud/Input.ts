@@ -12,6 +12,7 @@ import FillInputFilamentData from "./fillers/FillInputFilamentData"
 import { FilamentInputType } from "./filament/FilamentInputTypesList"
 import { FilamentColumnType } from "./filament/FilamentColumnTypesList"
 import { FilamentRuleNameConversions } from "./filament/FilamentRuleNameConversions"
+import { FilamentIndividualValidations } from "./filament/FilamentIndividualValidations"
 
 export enum InputValidationRuleType {
     TEXTUAL = "textual",
@@ -297,30 +298,41 @@ export default class Input extends RelaDB.Model {
     }
 
     getRulesForFilamentTemplate() {
-        return this.creationRules.map((rule: InputValidationRule) => {
-            const [laravelRuleName, ruleArgs] = rule.value.split(':')
+        const inlineRules = [],
+            individualRules = this.creationRules.map((rule: InputValidationRule) => {
+                const [laravelRuleName, ruleArgs] = rule.value.split(':'),
+                    laravelRuleNameCamelCase = changeCase.camelCase(laravelRuleName),
+                    filamentMethodName = FilamentRuleNameConversions.convert(laravelRuleNameCamelCase)
+    
+                if(!FilamentIndividualValidations.match(filamentMethodName)) {
+                    inlineRules.push(`"${rule.value}"`)
+                    return null
+                }
+    
+                let methodArgs = ''
+    
+                if(ruleArgs?.length) {
+                    methodArgs = ruleArgs.split(',').map((ruleArg: any) => {
+                        if(Number(ruleArg)) return ruleArg
+    
+                        return `"${ruleArg.trim()}"`
+                    }).join(', ')
+                }
+    
+                if(laravelRuleName.toLowerCase() == 'unique') {
+                    methodArgs += ', ignoreRecord: true'
+                }
+    
+                return [
+                    changeCase.camelCase(filamentMethodName),
+                    methodArgs
+                ];
+            }).filter(rule => rule)
 
-            let methodArgs = ''
-
-            if(ruleArgs?.length) {
-                methodArgs = ruleArgs.split(',').map((ruleArg: any) => {
-                    if(Number(ruleArg)) return ruleArg
-
-                    return `"${ruleArg.trim()}"`
-                }).join(', ')
-            }
-
-            if(laravelRuleName.toLowerCase() == 'unique') {
-                methodArgs += ', ignoreRecord: true'
-            }
-
-            const filamentMethodName = FilamentRuleNameConversions.convert(laravelRuleName)
-
-            return [
-                changeCase.camelCase(filamentMethodName),
-                methodArgs
-            ];
-        });
+        return [
+            inlineRules,
+            individualRules
+        ];
     }
 
     getTypeSettings() {
