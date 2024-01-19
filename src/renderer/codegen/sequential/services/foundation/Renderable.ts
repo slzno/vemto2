@@ -100,14 +100,9 @@ export default abstract class Renderable {
     }
 
     getFullData() {
-        const lang = (key: string) => {
-            return `{{ __("${key}") }}`
-        }
-
         return {
             ...this.getData(),
             project: this.project,
-            lang: lang,
             filenameWithoutExtension: this.getFilenameWithoutExtension(),
         }
     }

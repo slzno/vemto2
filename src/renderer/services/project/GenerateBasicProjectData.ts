@@ -13,6 +13,8 @@ export default class GenerateBasicProjectData {
     }
 
     async handle() {
+        this.project.startCodeGenerationSettings()
+
         await new GenerateBasicMenu(this.project).handle()
         await new GenerateBasicSections(this.project).handle()
         await new GenerateDefaultVthemeKeys(this.project).handle()

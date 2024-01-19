@@ -19,6 +19,10 @@ import Index from "./Index"
 import ProjectPathResolver from "@Common/services/ProjectPathResolver"
 import CalculateSchemaModelsChanges from "./services/project/CalculateSchemaModelsChanges"
 
+export enum TranslationsFormat {
+    LANG = "lang",
+    UNDERSCORE = "underscore",
+}
 interface ProjectCodeGenerationSettings {
     models: boolean,
     factories: boolean,
@@ -28,6 +32,8 @@ interface ProjectCodeGenerationSettings {
     controllers: boolean,
     routes: boolean,
     views: boolean,
+    translationsOnViews: boolean,
+    translationsFormat: TranslationsFormat,
 }
 
 interface ScheduledSchemaCheck {
@@ -144,6 +150,8 @@ export default class Project extends RelaDB.Model {
             controllers: true,
             routes: true,
             views: true,
+            translationsOnViews: true,
+            translationsFormat: TranslationsFormat.UNDERSCORE,
         }
 
         this.save()

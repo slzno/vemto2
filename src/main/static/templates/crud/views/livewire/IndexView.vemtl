@@ -53,7 +53,7 @@
         <x-ui.table>
             <x-slot name="head">
                 <% for (let input of crud.getInputsForIndex()) { %>
-                    <x-ui.table.header for-crud wire:click="sortBy('<$ input.column.name $>')"><$ input.label $></x-ui.table.header>
+                    <x-ui.table.header for-crud wire:click="sortBy('<$ input.column.name $>')"><$ this.lang(input.label) $></x-ui.table.header>
                 <% } %>
                 <x-ui.table.action-header>Actions</x-ui.table.action-header>
             </x-slot>

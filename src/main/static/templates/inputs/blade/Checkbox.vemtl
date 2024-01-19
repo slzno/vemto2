@@ -8,6 +8,6 @@
 
 <div class="vtheme(crud.form.input.group)">
     <x-ui.input.checkbox class="vtheme(crud.form.input.checkbox.extra)" wire:model="form.<$ input.column.name $>" name="<$ input.name $>" id="<$ input.name $>" />
-    <x-ui.label for="<$ input.name $>"><$ input.label $></x-ui.label>
+    <x-ui.label for="<$ input.name $>"><$ this.lang(input.label) $></x-ui.label>
     <x-ui.input.error for="form.<$ input.column.name $>" />
 </div>

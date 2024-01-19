@@ -80,7 +80,7 @@
     />
 
     <div
-        class="flex flex-col justify-center bg-slate-200 dark:bg-slate-850 dark:hover:bg-slate-800 w-full h-14 rounded-lg mb-2 p-2 px-2"
+        class="flex flex-col justify-center bg-slate-200 dark:bg-slate-850 dark:hover:bg-slate-800 w-full min-h-[3.5rem] rounded-lg mb-2 p-2 px-2"
     >
         <div class="flex items-center justify-between">
             <div class="flex cursor-pointer" @click="openFile(file)">

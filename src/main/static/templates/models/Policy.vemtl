@@ -5,7 +5,6 @@
 <# TEMPLATE VARIABLES #>
 <% const model = this.model %>
 <% const modelName = this.model.name %>
-<% const modelNameCamelCase = camelCase(modelName) %>
 <% const authModel = this.project.getAuthModel() %>
 <% const authModelNameCamelCase = camelCase(authModel.name) %>
 <####>
@@ -33,7 +32,7 @@ class <$ this.filenameWithoutExtension $>
     /**
      * Determine whether the user can view the model.
      */
-    public function view(<$ authModel.name $> $<$ authModelNameCamelCase $>, <$ modelName $> $<$ modelNameCamelCase $>): bool
+    public function view(<$ authModel.name $> $<$ authModelNameCamelCase $>, <$ modelName $> $model): bool
     {
         // hook:BEFORE_VIEW
         return true;
@@ -51,7 +50,7 @@ class <$ this.filenameWithoutExtension $>
     /**
      * Determine whether the user can update the model.
      */
-    public function update(<$ authModel.name $> $<$ authModelNameCamelCase $>, <$ modelName $> $<$ modelNameCamelCase $>): bool
+    public function update(<$ authModel.name $> $<$ authModelNameCamelCase $>, <$ modelName $> $model): bool
     {
         // hook:BEFORE_UPDATE
         return true;
@@ -60,7 +59,7 @@ class <$ this.filenameWithoutExtension $>
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(<$ authModel.name $> $<$ authModelNameCamelCase $>, <$ modelName $> $<$ modelNameCamelCase $>): bool
+    public function delete(<$ authModel.name $> $<$ authModelNameCamelCase $>, <$ modelName $> $model): bool
     {
         // hook:BEFORE_DELETE
         return true;
@@ -69,7 +68,7 @@ class <$ this.filenameWithoutExtension $>
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(<$ authModel.name $> $<$ authModelNameCamelCase $>, <$ modelName $> $<$ modelNameCamelCase $>): bool
+    public function restore(<$ authModel.name $> $<$ authModelNameCamelCase $>, <$ modelName $> $model): bool
     {
         // hook:BEFORE_RESTORE
         return true;
@@ -78,7 +77,7 @@ class <$ this.filenameWithoutExtension $>
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(<$ authModel.name $> $<$ authModelNameCamelCase $>, <$ modelName $> $<$ modelNameCamelCase $>): bool
+    public function forceDelete(<$ authModel.name $> $<$ authModelNameCamelCase $>, <$ modelName $> $model): bool
     {
         // hook:BEFORE_FORCE_DELETE
         return true;
