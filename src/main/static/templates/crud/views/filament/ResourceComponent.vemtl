@@ -138,6 +138,10 @@ class <$ this.filenameWithoutExtension $> extends Resource
                                         ->searchable()
                                     <% } %>
                                     <# --- #>
+                                    <% if(input.filamentData.useCustomInput) { %>
+                                        ->native(false)
+                                    <% } %>
+                                    <# --- #>
                                     <% if(input.filamentData.canSelectPlaceholder === false) { %>
                                         ->selectablePlaceholder(false)
                                     <% } %>
@@ -163,6 +167,14 @@ class <$ this.filenameWithoutExtension $> extends Resource
                                         ])
                                     <% } %>
                                     <# --- #>
+                                    <% if(input.filamentData.disabledDates?.length) { %>
+                                        ->disabledDates([
+                                            <% for(let date of input.filamentData.disabledDates) { %>
+                                                '<$ date $>',
+                                            <% } %>
+                                        ])
+                                    <% } %>
+                                    <# --- #>
                                     <% if(input.filamentData.inline) { %>
                                         ->inline()
                                     <% } %>
@@ -179,7 +191,7 @@ class <$ this.filenameWithoutExtension $> extends Resource
                                         ->timezone('<$ input.filamentData.timezone $>')
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.seconds === false) { %>
+                                    <% if(input.filamentData.disableSeconds) { %>
                                         ->seconds(false)
                                     <% } %>
                                     <# --- #>

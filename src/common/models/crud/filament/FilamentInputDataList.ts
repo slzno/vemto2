@@ -28,6 +28,7 @@ export class FilamentInputDataList {
                 }
                 break;
             case InputType.SELECT:
+            case InputType.BELONGS_TO:
                 data = {
                     ...data,
                     allowHtml: false,
@@ -35,6 +36,7 @@ export class FilamentInputDataList {
                     canBeSearchable: false,
                     canSelectPlaceholder: true,
                     loadingMessage: null,
+                    useCustomInput: true
                 }
                 break;
             case InputType.CHECKBOX:
@@ -55,11 +57,12 @@ export class FilamentInputDataList {
             case InputType.DATETIME:
                 data = {
                     ...data,
-                    closeOnDateSelection: true,
+                    closeOnDateSelection: false,
                     timezone: null,
                     dateFormat: null,
                     displayFormat: null,
-                    seconds: true,
+                    disableSeconds: false,
+                    useCustomInput: true
                 }
         }
 

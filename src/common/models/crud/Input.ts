@@ -30,6 +30,7 @@ export interface FilamentInputData {
     columnType: FilamentColumnType
     autofocus?: boolean
     helperText?: string
+    useCustomInput?: boolean
 
     // Text input params
     autoComplete?: boolean
@@ -52,7 +53,7 @@ export interface FilamentInputData {
     // Date, datetime and time params
     dateFormat?: string
     timezone?: string
-    seconds?: boolean // Only for datetime
+    disableSeconds?: boolean
     displayFormat?: string
     closeOnDateSelection?: boolean
     disabledDates?: string[]

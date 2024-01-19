@@ -6,13 +6,15 @@ export enum FilamentInputType {
     CHECKBOX = "checkbox",
     TOGGLE = "toggle",
     RADIO = "radio",
+    DATE_PICKER = "date-picker",
     DATETIME_PICKER = "datetime-picker",
     FILE_UPLOAD = "file-upload",
     RICH_EDITOR = "rich-editor",
     MARKDOWN_EDITOR = "markdown-editor",
     TEXTAREA = "textarea",
     HIDDEN = "hidden",
-    COLOR_PICKER = "color-picker"
+    COLOR_PICKER = "color-picker",
+    TIME_PICKER = "time-picker"
 }
 
 export class FilamentInputTypesList {
@@ -37,9 +39,9 @@ export class FilamentInputTypesList {
             [InputType.HIDDEN]: FilamentInputType.HIDDEN,
             [InputType.PASSWORD]: FilamentInputType.TEXT_INPUT,
             [InputType.EMAIL]: FilamentInputType.TEXT_INPUT,
-            [InputType.DATE]: FilamentInputType.DATETIME_PICKER,
+            [InputType.DATE]: FilamentInputType.DATE_PICKER,
             [InputType.DATETIME]: FilamentInputType.DATETIME_PICKER,
-            [InputType.TIME]: FilamentInputType.DATETIME_PICKER,
+            [InputType.TIME]: FilamentInputType.TIME_PICKER,
             [InputType.RADIO]: FilamentInputType.RADIO,
             [InputType.COLOR]: FilamentInputType.COLOR_PICKER,
             [InputType.URL]: FilamentInputType.TEXT_INPUT,
