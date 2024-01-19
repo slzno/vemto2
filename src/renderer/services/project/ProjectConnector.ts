@@ -1,4 +1,4 @@
-import GenerateBasicProjectData from "@Common/models/services/project/GenerateBasicProjectData"
+import GenerateBasicProjectData from "@Renderer/services/project/GenerateBasicProjectData"
 import SchemaBuilder from "../schema/SchemaBuilder"
 import Main from "../wrappers/Main"
 import Project, { ProjectSettings, ProjectUIStarterKit } from "@Common/models/Project"

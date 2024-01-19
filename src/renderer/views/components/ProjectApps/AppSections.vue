@@ -3,9 +3,9 @@
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import { ref } from "vue"
     import AppSection from "@Common/models/AppSection"
-import UiText from "@Renderer/components/ui/UiText.vue"
-import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
-import GenerateBasicSections from "../../../../common/models/services/project/GenerateBasicSections"
+    import UiText from "@Renderer/components/ui/UiText.vue"
+    import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
+    import GenerateBasicSections from "@Renderer/services/project/GenerateBasicSections"
 
     const projectStore = useProjectStore(),
         editingSection = ref<null | AppSection>(null)
@@ -90,3 +90,4 @@ import GenerateBasicSections from "../../../../common/models/services/project/Ge
         </div>
     </div>
 </template>
+../../../services/project/GenerateBasicSections

@@ -1,8 +1,8 @@
 import Project, { ProjectCssFramework } from "@Common/models/Project"
-import bulmaTheme from "./base/bulma.vtheme"
-import bootstrapTheme from "./base/bootstrap.vtheme"
-import tailwindTheme from "./base/tailwind.vtheme"
-import foundationTheme from "./base/foundation.vtheme"
+import bulmaTheme from "@Renderer/services/project/base/bulma.vtheme"
+import bootstrapTheme from "@Renderer/services/project/base/bootstrap.vtheme"
+import tailwindTheme from "@Renderer/services/project/base/tailwind.vtheme"
+import foundationTheme from "@Renderer/services/project/base/foundation.vtheme"
 
 export default class GenerateDefaultVthemeKeys {
 

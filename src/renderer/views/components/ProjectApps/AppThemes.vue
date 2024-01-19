@@ -3,14 +3,14 @@
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiTextarea from "@Renderer/components/ui/UiTextarea.vue"
-    import GenerateDefaultVthemeKeys from "@Common/models/services/project/GenerateDefaultVthemeKeys"
+    import GenerateDefaultVthemeKeys from "@Renderer/services/project/GenerateDefaultVthemeKeys"
     import RenderablePreview from "@Renderer/codegen/sequential/services/theme/RenderablePreview"
     import Main from "@Renderer/services/wrappers/Main"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import { onMounted, reactive, ref } from "vue"
-import UiModal from "@Renderer/components/ui/UiModal.vue"
-import UiSelect from "@Renderer/components/ui/UiSelect.vue"
-import { ProjectCssFramework } from "@Common/models/Project"
+    import UiModal from "@Renderer/components/ui/UiModal.vue"
+    import UiSelect from "@Renderer/components/ui/UiSelect.vue"
+    import { ProjectCssFramework } from "@Common/models/Project"
 
     const projectStore = useProjectStore()
 
@@ -151,4 +151,4 @@ import { ProjectCssFramework } from "@Common/models/Project"
         </div>
     </div>
 </template>
- 
+ @Renderer/services/project/GenerateDefaultVthemeKeys

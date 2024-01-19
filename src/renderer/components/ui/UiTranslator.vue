@@ -58,7 +58,7 @@
     const projectStore = useProjectStore()
     
     onMounted(() => {
-        languages.value = ["en", "pt", "es"]
+        languages.value = projectStore.project.languages || ["en"]
 
         languages.value.forEach(language => {
             translations.value[language] = projectStore.project.getTranslation(language, localValue.value)
@@ -113,17 +113,19 @@
             >
                 <div class="p-4">
                     <div class="m-1 flex flex-col gap-4">
-                        <div class="flex">
+                        <div class="flex space-x-1">
                             <div class="w-2/3">
                                 <UiLockableText label="Key" v-model="localValue" />
                             </div>
-                            <!-- <div class="w-1/3">
-                                <UiSelect label="Default Language" v-model="currentLanguage">
-                                    <option value="en">EN</option>
-                                    <option value="pt">PT-BR</option>
-                                    <option value="es">ES</option>
-                                </UiSelect>
-                            </div> -->
+                            <div class="w-1/3">
+                                <!-- <UiSelect
+                                    v-model="projectStore.project.defaultLanguage"
+                                    label="Default Language"
+                                    placeholder="Select a language"
+                                    @change="projectStore.project.save()">
+                                    <option v-for="language in projectStore.project.languages" :key="language" :value="language">{{ language }}</option>
+                                </UiSelect> -->
+                            </div>
                         </div>
                         <div class="mt-4">
                             <table class="w-full">
