@@ -177,6 +177,12 @@ class FileSystem {
         return JSON.parse(fileContent)
     }
 
+    readFolderIfExists(folderPath: string, removeBasePath: boolean): Array<string> {
+        if(!this.folderExists(folderPath)) return []
+
+        return this.readFolder(folderPath, removeBasePath)
+    }
+
     readFolder(folderPath: string, removeBasePath: boolean): Array<string> {
         const removeFromPathString = removeBasePath ? folderPath : ''
 

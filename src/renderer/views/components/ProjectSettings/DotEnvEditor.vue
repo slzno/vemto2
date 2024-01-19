@@ -7,8 +7,8 @@
     import UiText from '@Renderer/components/ui/UiText.vue'
     import UiButton from '@Renderer/components/ui/UiButton.vue'
     import { ArrowDownTrayIcon, ArrowPathIcon, Bars2Icon, Bars3Icon, ClipboardDocumentListIcon, TrashIcon } from '@heroicons/vue/24/outline'
-import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
-import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
+    import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
+    import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
 
     const projectStore = useProjectStore(),
         envSettings = ref([])

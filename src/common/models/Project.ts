@@ -103,6 +103,8 @@ export default class Project extends RelaDB.Model {
     currentZoom: number
     connectionFinished: boolean
     translations: any
+    defaultLanguage: string
+    languages: string[]
 
     relationships() {
         return {
@@ -662,6 +664,12 @@ export default class Project extends RelaDB.Model {
 
     getTabNameFor(key: string) {
         return `${this.uuid}-${key}`
+    }
+
+    getDefaultTranslation(key: string): string {
+        const defaultLanguage = 'en'
+
+        return this.getTranslation(defaultLanguage, key)
     }
 
     getTranslation(language: string, key: string): string {

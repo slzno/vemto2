@@ -3,13 +3,14 @@
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import DotEnvEditor from "@Renderer/views/components/ProjectSettings/DotEnvEditor.vue"
+import LanguagesEditor from "./components/ProjectSettings/LanguagesEditor.vue"
 
     const projectStore = useProjectStore()
     const selectedTab = ref("env")
 
-
     const tabs = [
         { label: "Environment", value: "env" },
+        { label: "Languages", value: "lang" },
         { label: "Code", value: "code" },
         { label: "Paths", value: "paths" },
     ]
@@ -29,6 +30,10 @@
 
         <div class="p-4" v-if="selectedTab === 'env'">
             <DotEnvEditor />
+        </div>
+
+        <div class="p-4" v-if="selectedTab === 'lang'">
+            <LanguagesEditor />
         </div>
     </div>
 </template>

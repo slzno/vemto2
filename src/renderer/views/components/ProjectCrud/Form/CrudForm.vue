@@ -15,6 +15,7 @@
     import HasManyDetail from '@Common/models/crud/HasManyDetail'
     import { defineProps, ref, toRef, onMounted, reactive } from 'vue'
     import Relationship from '@Common/models/Relationship'
+    import { useProjectStore } from '@Renderer/stores/useProjectStore'
 
     const props = defineProps({
         crud: {
@@ -39,6 +40,8 @@
             relationshipId: null
         }),
         newHasManyDetailRelationship = ref(null)
+
+    const projectStore = useProjectStore()
 
     const openInputModal = (input: Input) => {
         let time = 0
@@ -245,7 +248,7 @@
                             @click="openInputModal(element)"
                         >
                             <div class="flex justify-between">
-                                <span>{{ element.label }} <i class="text-slate-500 text-sm">{{ element.type }}</i></span>
+                                <span>{{ projectStore.project.getDefaultTranslation(element.label) }} <i class="text-slate-500 text-sm">{{ element.type }}</i></span>
                                 <TrashIcon
                                     class="h-5 w-5 mr-1 invisible group-hover:visible text-red-400 cursor-pointer hover:text-red-500"
                                     @click.stop="removeInput(element, element.panel)"

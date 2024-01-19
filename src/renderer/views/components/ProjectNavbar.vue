@@ -96,18 +96,18 @@
 
         <ul>
             <RouterLink
-                @click="navigationStore.setActiveTab('plugins')"
+                @click="navigationStore.setActiveTab('settings')"
                 :class="{
-                    'text-red-500': navigationStore.activeTabIs('plugins'),
-                    'text-slate-400 dark:text-slate-600  hover:text-slate-800 dark:hover:text-slate-400': navigationStore.activeTabIsNot('plugins'),
+                    'text-red-500': navigationStore.activeTabIs('settings'),
+                    'text-slate-400 dark:text-slate-600  hover:text-slate-800 dark:hover:text-slate-400': navigationStore.activeTabIsNot('settings'),
                 }"
                 class="w-full h-12 outline-none flex justify-center items-center py-6 relative"
                 as="li"
-                to="/project/plugins"
+                to="/project/settings"
             >
-                <PuzzlePieceIcon class="w-6 h-6 stroke-2" />
+                <Cog8ToothIcon class="w-6 h-6 stroke-2" />
             </RouterLink>
-
+            
             <RouterLink
                 @click="navigationStore.setActiveTab('tools')"
                 :class="{
@@ -122,16 +122,16 @@
             </RouterLink>
 
             <RouterLink
-                @click="navigationStore.setActiveTab('settings')"
+                @click="navigationStore.setActiveTab('plugins')"
                 :class="{
-                    'text-red-500': navigationStore.activeTabIs('settings'),
-                    'text-slate-400 dark:text-slate-600  hover:text-slate-800 dark:hover:text-slate-400': navigationStore.activeTabIsNot('settings'),
+                    'text-red-500': navigationStore.activeTabIs('plugins'),
+                    'text-slate-400 dark:text-slate-600  hover:text-slate-800 dark:hover:text-slate-400': navigationStore.activeTabIsNot('plugins'),
                 }"
                 class="w-full h-12 outline-none flex justify-center items-center py-6 relative"
                 as="li"
-                to="/project/settings"
+                to="/project/plugins"
             >
-                <Cog8ToothIcon class="w-6 h-6 stroke-2" />
+                <PuzzlePieceIcon class="w-6 h-6 stroke-2" />
             </RouterLink>
         </ul>
     </nav>
