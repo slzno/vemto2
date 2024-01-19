@@ -87,7 +87,7 @@ import UiTranslator from "@Renderer/components/ui/UiTranslator.vue"
                             <UiTranslator v-model="input.label" placeholder="Input Label" label="Label" @input="saveInput()" />
                             
                             <div v-if="input.allowsPlaceholder()">
-                                <UiText v-model="input.placeholder" placeholder="Input Placeholder" label="Placeholder" @input="saveInput()" />
+                                <UiTranslator v-model="input.placeholder" placeholder="Input Placeholder" label="Placeholder" @input="saveInput()" />
                             </div>
 
                             <div v-if="input.allowsDefaultValue()">

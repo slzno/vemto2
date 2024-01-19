@@ -346,4 +346,8 @@ export default class Crud extends RelaDB.Model {
 
         this.save()
     }
+
+    getBaseLangKey(): string {
+        return `crud.${this.settings.collectionName}`
+    }
 }

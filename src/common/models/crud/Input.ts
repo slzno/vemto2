@@ -64,8 +64,8 @@ export default class Input extends RelaDB.Model {
         input.crudId = crud.id
         input.columnId = column.id
         input.name = column.name
-        input.label = changeCase.sentenceCase(column.name)
-        input.placeholder = changeCase.sentenceCase(column.name)
+        input.label = input.generateTranslationForLabel()
+        input.placeholder = input.generateTranslationForPlaceholder()
         input.readOnly = false
         input.required = false
         input.hidden = false
@@ -261,5 +261,37 @@ export default class Input extends RelaDB.Model {
 
     getTemplate() {
         return `inputs/blade/${changeCase.pascalCase(this.type)}.vemtl`
+    }
+
+    generateTranslationForLabel() {
+        const key = this.getLangKeyForLabel(),
+            label = changeCase.sentenceCase(this.column.name)
+
+        this.crud.project.setTranslationOnAllLanguages(key, label)
+
+        return key
+    }
+
+    generateTranslationForPlaceholder() {
+        const key = this.getLangKeyForPlaceholder(),
+            placeholder = changeCase.sentenceCase(this.column.name)
+
+        this.crud.project.setTranslationOnAllLanguages(key, placeholder)
+
+        return key
+    }
+
+    getLangKeyForLabel() {
+        return `${this.getBaseLangKey()}.label`
+    }
+
+    getLangKeyForPlaceholder() {
+        return `${this.getBaseLangKey()}.placeholder`
+    }
+
+    getBaseLangKey() {
+        const crudKey = this.crud.getBaseLangKey()
+
+        return `${crudKey}.inputs.${this.name}`
     }
 }

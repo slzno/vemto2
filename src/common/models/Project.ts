@@ -688,18 +688,10 @@ export default class Project extends RelaDB.Model {
         this.save()
     }
 
-    getAllKeyTranslations(key: string): { [key: string]: string } {
-        if (!this.translations) return {}
-
-        const translations = {}
-
-        Object.keys(this.translations).forEach(language => {
-            if (!this.translations[language][key]) return
-
-            translations[language] = this.translations[language][key]
+    setTranslationOnAllLanguages(key: string, value: string) {
+        this.languages.forEach(language => {
+            this.setTranslation(language, key, value)
         })
-
-        return translations
     }
 
 }
