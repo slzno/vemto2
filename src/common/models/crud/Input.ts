@@ -57,6 +57,24 @@ export interface FilamentInputData {
     displayFormat?: string
     closeOnDateSelection?: boolean
     disabledDates?: string[]
+
+    // File params
+    disk?: string
+    directory?: string  
+    visibility?: string
+    preserveFilenames?: boolean
+    useAvatarMode?: boolean
+    useImageEditor?: boolean
+    imageEditorAspectRatios?: string[]
+    imageEditorMode?: number
+    imageEditorViewportWidth?: string
+    imageEditorViewportHeight?: string
+    useCircleCropper?: boolean
+    disablePreview?: boolean
+    isDownloadable?: boolean
+    canOpenFilesInNewTab?: boolean
+    canReorderFiles?: boolean
+    disableDeleteButton?: boolean
 }
 
 export default class Input extends RelaDB.Model {
@@ -318,7 +336,7 @@ export default class Input extends RelaDB.Model {
             individualRules = this.creationRules.map((rule: InputValidationRule) => {
                 const [laravelRuleName, ruleArgs] = rule.value.split(':'),
                     laravelRuleNameCamelCase = changeCase.camelCase(laravelRuleName),
-                    filamentMethodName = FilamentRuleNameConversions.convert(laravelRuleNameCamelCase)
+                    filamentMethodName = FilamentRuleNameConversions.convert(this, laravelRuleNameCamelCase)
     
                 if(!FilamentIndividualValidations.match(filamentMethodName)) {
                     inlineRules.push(`"${rule.value}"`)

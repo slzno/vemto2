@@ -1,17 +1,16 @@
 <script setup lang="ts">
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
-    import UiNumber from "@Renderer/components/ui/UiNumber.vue"
     import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
     import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
     import UiSmallButton from "@Renderer/components/ui/UiSmallButton.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiDate from "@Renderer/components/ui/UiDate.vue"
-    import { PlusCircleIcon, TrashIcon } from "@heroicons/vue/24/outline"
+    import { PlusCircleIcon, TrashIcon, ArrowLongUpIcon, ArrowLongDownIcon } from "@heroicons/vue/24/outline"
     import { toRef, defineProps } from 'vue'
     import Input from "@Common/models/crud/Input"
     import debounce from "@Common/tools/debounce"
-    import Main from "@Renderer/services/wrappers/Main"
     import { InputType } from "@Common/models/crud/InputType"
+    import UiSelect from "@Renderer/components/ui/UiSelect.vue"
     
     const props = defineProps({
             input: Input
@@ -28,34 +27,33 @@
         return type.includes(input.value.filamentData.inputType)
     }
 
-    const removeDatalistOption = (index: number) => {
-        Main.API.confirm('Are you sure you want to remove this option?').then(confirmed => {
-            if(!confirmed) return
-
-            input.value.filamentData.dataList.splice(index, 1)
-            saveInput()
-        })
+    const removeFilamentOption = (propertyName: string, index: number) => {
+        input.value.filamentData[propertyName].splice(index, 1)
+        saveInput()
     }
 
-    const removeDisabledDateOption = (index: number) => {
-        Main.API.confirm('Are you sure you want to remove this date?').then(confirmed => {
-            if(!confirmed) return
+    const newFilamentOption = (propertyName: string) => {
+        if(!input.value.filamentData[propertyName]) input.value.filamentData[propertyName] = []
 
-            input.value.filamentData.disabledDates.splice(index, 1)
-            saveInput()
-        })
+        input.value.filamentData[propertyName].push('')
     }
 
-    const newDatalistOption = () => {
-        if(!input.value.filamentData.dataList) input.value.filamentData.dataList = []
+    const moveUpOption = (propertyName: string, index: number) => {
+        if(index === 0) return
 
-        input.value.filamentData.dataList.push('')
+        const option = input.value.filamentData[propertyName][index]
+        input.value.filamentData[propertyName].splice(index, 1)
+        input.value.filamentData[propertyName].splice(index - 1, 0, option)
+        saveInput()
     }
 
-    const newDisabledDateOption = () => {
-        if(!input.value.filamentData.disabledDates) input.value.filamentData.disabledDates = []
+    const moveDownOption = (propertyName: string, index: number) => {
+        if(index === input.value.filamentData[propertyName].length - 1) return
 
-        input.value.filamentData.disabledDates.push('')
+        const option = input.value.filamentData[propertyName][index]
+        input.value.filamentData[propertyName].splice(index, 1)
+        input.value.filamentData[propertyName].splice(index + 1, 0, option)
+        saveInput()
     }
 </script>
 <template>
@@ -89,6 +87,21 @@
                 <UiText v-model="input.filamentData.displayFormat" placeholder="Date format for display" label="Display Form" @input="saveInput()" />
             </div>
 
+            <div v-if="inputFilamentTypeIs('file-upload')">
+                <UiText v-model="input.filamentData.disk" placeholder="Disk name" label="Disk" @input="saveInput()" />
+            </div>
+
+            <div v-if="inputFilamentTypeIs('file-upload')">
+                <UiText v-model="input.filamentData.directory" placeholder="Directory name" label="Directory" @input="saveInput()" />
+            </div>
+
+            <div v-if="inputFilamentTypeIs('file-upload')">
+                <UiSelect v-model="input.filamentData.visibility" label="Visibility" @change="saveInput()">
+                    <option value="public">Public</option>  
+                    <option value="private">Private</option>
+                </UiSelect>
+            </div>
+
             <div class="flex flex-col gap-2" v-if="inputFilamentTypeIs(['text-input', 'datetime-picker', 'date-picker'])">
                 <label class="text-xs text-slate-400">Datalist</label>
 
@@ -96,14 +109,20 @@
                     <component :is="inputFilamentTypeIs('text-input') ? UiText : UiDate" v-model="input.filamentData.dataList[index]" @input="saveInput()" />
 
                     <UiOptionsDropdown>
-                        <UiDropdownItem @click="removeDatalistOption(index)">
+                        <UiDropdownItem @click="moveUpOption('dataList', index)">
+                            <ArrowLongUpIcon class="h-5 w-5 mr-1" /> Move Up
+                        </UiDropdownItem>
+                        <UiDropdownItem @click="moveDownOption('dataList', index)">
+                            <ArrowLongDownIcon class="h-5 w-5 mr-1" /> Move Down
+                        </UiDropdownItem>
+                        <UiDropdownItem @click="removeFilamentOption('dataList', index)">
                             <TrashIcon class="h-5 w-5 mr-1 text-red-400" /> Delete
                         </UiDropdownItem>
                     </UiOptionsDropdown>
                 </div>
                 
                 <div>
-                    <UiSmallButton @click="newDatalistOption()">
+                    <UiSmallButton @click="newFilamentOption('dataList')">
                         <span class="flex items-center">
                             <PlusCircleIcon class="h-5 w-5 mr-1" /> Add Option
                         </span>
@@ -118,29 +137,69 @@
                     <UiDate v-model="input.filamentData.disabledDates[index]" @input="saveInput()" />
 
                     <UiOptionsDropdown>
-                        <UiDropdownItem @click="removeDisabledDateOption(index)">
+                        <UiDropdownItem @click="moveUpOption('disabledDates', index)">
+                            <ArrowLongUpIcon class="h-5 w-5 mr-1" /> Move Up
+                        </UiDropdownItem>
+                        <UiDropdownItem @click="moveDownOption('disabledDates', index)">
+                            <ArrowLongDownIcon class="h-5 w-5 mr-1" /> Move Down
+                        </UiDropdownItem>
+                        <UiDropdownItem @click="removeFilamentOption('disabledDates', index)">
                             <TrashIcon class="h-5 w-5 mr-1 text-red-400" /> Delete
                         </UiDropdownItem>
                     </UiOptionsDropdown>
                 </div>
                 
                 <div>
-                    <UiSmallButton @click="newDisabledDateOption()">
+                    <UiSmallButton @click="newFilamentOption('disabledDates')">
                         <span class="flex items-center">
                             <PlusCircleIcon class="h-5 w-5 mr-1" /> Add Date
                         </span>
                     </UiSmallButton>
                 </div>
             </div>
+
+            <div class="flex flex-col gap-2" v-if="inputFilamentTypeIs('file-upload') && input.filamentData.useImageEditor">
+                <label class="text-xs text-slate-400">Aspect Ratios (Image Editor)</label>
+
+                <div class="flex-1 flex gap-2 items-center" v-for="(option, index) of input.filamentData.imageEditorAspectRatios">
+                    <UiText v-model="input.filamentData.imageEditorAspectRatios[index]" @input="saveInput()" />
+
+                    <UiOptionsDropdown>
+                        <UiDropdownItem @click="moveUpOption('imageEditorAspectRatios', index)">
+                            <ArrowLongUpIcon class="h-5 w-5 mr-1" /> Move Up
+                        </UiDropdownItem>
+                        <UiDropdownItem @click="moveDownOption('imageEditorAspectRatios', index)">
+                            <ArrowLongDownIcon class="h-5 w-5 mr-1" /> Move Down
+                        </UiDropdownItem>
+                        <UiDropdownItem @click="removeFilamentOption('imageEditorAspectRatios', index)">
+                            <TrashIcon class="h-5 w-5 mr-1 text-red-400" /> Delete
+                        </UiDropdownItem>
+                    </UiOptionsDropdown>
+                </div>
+                
+                <div>
+                    <UiSmallButton @click="newFilamentOption('imageEditorAspectRatios')">
+                        <span class="flex items-center">
+                            <PlusCircleIcon class="h-5 w-5 mr-1" /> Add Ratio
+                        </span>
+                    </UiSmallButton>
+                </div>
+            </div>
             
             <div class="mt-2 flex gap-2 flex-col">
-                <UiCheckbox v-model="input.filamentData.autofocus" label="Auto Focus" @input="saveInput()" />
+                <UiCheckbox v-if="!inputFilamentTypeIs(['file-upload'])" v-model="input.filamentData.autofocus" label="Auto Focus" @input="saveInput()" />
+
+                <UiCheckbox v-if="inputFilamentTypeIs('file-upload')" v-model="input.filamentData.preserveFilenames" label="Preserve filenames" @input="saveInput()" />
+
+                <UiCheckbox v-if="inputFilamentTypeIs('file-upload')" v-model="input.filamentData.useAvatarMode" label="Enable avatar mode" @input="saveInput()" />
+
+                <UiCheckbox v-if="inputFilamentTypeIs('file-upload')" v-model="input.filamentData.useImageEditor" label="Enable image editor" @input="saveInput()" />
 
                 <UiCheckbox v-if="inputFilamentTypeIs('text-input')" v-model="input.filamentData.autoComplete" label="Auto Complete" @input="saveInput()" />
 
                 <UiCheckbox v-if="inputFilamentTypeIs('select')" v-model="input.filamentData.allowHtml" label="Allow HTML in option labels" @input="saveInput()" />
 
-                <UiCheckbox v-if="inputFilamentTypeIs('select')" v-model="input.filamentData.isMultiple" label="Allow selecting multiple values" @input="saveInput()" />
+                <UiCheckbox v-if="inputFilamentTypeIs(['select', 'file-upload'])" v-model="input.filamentData.isMultiple" label="Allow selecting multiple" @input="saveInput()" />
 
                 <UiCheckbox v-if="inputFilamentTypeIs('select')" v-model="input.filamentData.canSelectPlaceholder" label="Allow select the placeholder" @input="saveInput()" />
                 

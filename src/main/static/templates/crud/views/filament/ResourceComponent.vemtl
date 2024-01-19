@@ -205,6 +205,77 @@ class <$ this.filenameWithoutExtension $> extends Resource
                                     <# --- #>
                                     <% if(input.readOnly && ['textarea', 'text-input', 'datetime-picker'].includes(input.filamentData.inputType)) { %>
                                         ->readonly()
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.filamentData.disk) { %>
+                                        ->disk('<$ input.filamentData.disk $>')
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.filamentData.directory) { %>
+                                        ->directory('<$ input.filamentData.directory $>')
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.filamentData.visibility) { %>
+                                        ->visibility('<$ input.filamentData.visibility $>')
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.filamentData.preserveFilenames) { %>
+                                        ->preserveFilenames()
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.filamentData.useAvatarMode) { %>
+                                        ->avatar()
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.filamentData.useImageEditor) { %>
+                                        ->image()
+                                        ->imageEditor()
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.filamentData.imageEditorAspectRatios?.length) { %>
+                                        ->imageEditorAspectRatios([
+                                            <% for(let ratio of input.filamentData.imageEditorAspectRatios) { %>
+                                                <% ratio = ratio == 'null' ? ratio : `'${ratio}'` %>
+                                                <$ ratio $>,
+                                            <% } %>
+                                        ])
+                                    <% } %>
+                                    <# --- #>
+                                    <% if([0, 1, 2, 3].includes(input.filamentData.imageEditorMode)) { %>
+                                        ->imageEditorMode(<$ input.filamentData.imageEditorMode $>)
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.filamentData.imageEditorViewportWidth) { %>
+                                        ->imageEditorViewportWidth('<$ input.filamentData.imageEditorViewportWidth $>')
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.filamentData.imageEditorViewportHeight) { %>
+                                        ->imageEditorViewportHeight('<$ input.filamentData.imageEditorViewportHeight $>')
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.filamentData.useCircleCropper) { %>
+                                        ->circleCropper()
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.filamentData.disablePreview) { %>
+                                        ->previewable(false)
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.filamentData.isDownloadable) { %>
+                                        ->downloadable()
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.filamentData.canOpenFilesInNewTab) { %>
+                                        ->openable()
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.filamentData.canReorderFiles) { %>
+                                        ->reorderable()
+                                        ->appendFiles()
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.filamentData.disableDeleteButton) { %>
+                                        ->deleteable(false)
                                     <% } %>,
                                     
                                 <% } %>

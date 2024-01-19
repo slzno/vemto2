@@ -28,6 +28,8 @@ export class FilamentIndividualValidations {
             'ipv4',
             'ipv6',
             'json',
+            'minSize',
+            'maxSize',
             'macAddress',
             'multipleOf',
             'minLength',

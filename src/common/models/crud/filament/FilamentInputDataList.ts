@@ -64,6 +64,23 @@ export class FilamentInputDataList {
                     disableSeconds: false,
                     useCustomInput: true
                 }
+            case InputType.FILE:
+            case InputType.IMAGE:
+                data = {
+                    ...data,
+                    disk: null,
+                    directory: null,
+                    visibility: 'public',
+                    preserveFilenames: false,
+                    useAvatarMode: false,
+                    useImageEditor: input.type === InputType.IMAGE,
+                    imageEditorAspectRatios: input.type === InputType.IMAGE ? ['16:9', '4:3', '1:1'] : null,
+                    useCircleCropper: false,
+                    disablePreview: false,
+                    isDownloadable: false,
+                    canReorderFiles: false,
+                    disableDeleteButton: false,
+                }
         }
 
         return data
