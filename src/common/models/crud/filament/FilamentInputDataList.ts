@@ -5,10 +5,13 @@ import { FilamentInputTypesList } from "./FilamentInputTypesList";
 
 export class FilamentInputDataList {
     static getFromInput(input: Input): FilamentInputData {
-        let data: FilamentInputData = {} as FilamentInputData
-
         const inputType = FilamentInputTypesList.getFromInputType(input.type),
             columnType = FilamentColumnTypesList.getFromInputType(input.type)
+        
+        let data: FilamentInputData = {
+            inputType,
+            columnType,
+        } as FilamentInputData
 
         switch (input.type) {
             case InputType.TEXT:
@@ -18,8 +21,7 @@ export class FilamentInputDataList {
             case InputType.URL:
             default:
                 data = {
-                    inputType,
-                    columnType,
+                    ...data,
                     autofocus: !input.crud.inputs.length, // Autofocus on first input
                     helperText: null,
                     autoComplete: true,
@@ -27,13 +29,37 @@ export class FilamentInputDataList {
                 break;
             case InputType.SELECT:
                 data = {
-                    inputType,
-                    columnType,
+                    ...data,
                     allowHtml: false,
                     canBePreloaded: false,
                     canBeSearchable: false,
                     canSelectPlaceholder: true,
                     loadingMessage: null,
+                }
+                break;
+            case InputType.CHECKBOX:
+                data = {
+                    ...data,
+                    inline: true
+                }
+                break;
+            case InputType.RADIO:
+                data = {
+                    ...data,
+                    inline: false,
+                    inlineLabel: true,
+                }
+                break;
+            case InputType.DATE:
+            case InputType.TIME:
+            case InputType.DATETIME:
+                data = {
+                    ...data,
+                    closeOnDateSelection: true,
+                    timezone: null,
+                    dateFormat: null,
+                    displayFormat: null,
+                    seconds: true,
                 }
         }
 

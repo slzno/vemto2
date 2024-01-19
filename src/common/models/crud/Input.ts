@@ -38,9 +38,24 @@ export interface FilamentInputData {
     // Select params
     allowHtml?: boolean
     canBePreloaded?: boolean
+    isMultiple?: boolean
     canBeSearchable?: boolean
     canSelectPlaceholder?: boolean
     loadingMessage?: string
+    noResultMessage?: string
+    searchMessage?: string
+
+    // Checkbox & radio params
+    inline?: boolean
+    inlineLabel?: boolean
+
+    // Date, datetime and time params
+    dateFormat?: string
+    timezone?: string
+    seconds?: boolean // Only for datetime
+    displayFormat?: string
+    closeOnDateSelection?: boolean
+    disabledDates?: string[]
 }
 
 export default class Input extends RelaDB.Model {
@@ -319,8 +334,14 @@ export default class Input extends RelaDB.Model {
                     }).join(', ')
                 }
     
+                // Ignore record for unique rule
                 if(laravelRuleName.toLowerCase() == 'unique') {
                     methodArgs += ', ignoreRecord: true'
+                }
+
+                // Methods where arguments need to be passed by array
+                if(['in', 'doesntStartWith', 'doesntEndWith', 'endsWith', 'notIn', 'prohibits', 'startsWith'].includes(laravelRuleName.toLowerCase())) {
+                    methodArgs = `[${methodArgs}]`
                 }
     
                 return [

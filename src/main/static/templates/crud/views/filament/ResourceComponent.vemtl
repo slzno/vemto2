@@ -90,12 +90,14 @@ class <$ this.filenameWithoutExtension $> extends Resource
                                     <# --- #>
                                     <% if(input.isPassword()) { %>
                                         ->password()
+                                        ->revealable()
                                     <% } %>
                                     <# --- #>
                                     <% if(input.isNumber()) { %>
                                         ->numeric()
                                         ->step(<$ input.step $>)
                                     <% } %>
+                                    <# --- #>
                                     <% if(!input.showOnCreation) { %>
                                         ->hiddenOn('create')
                                     <% } %>
@@ -112,8 +114,12 @@ class <$ this.filenameWithoutExtension $> extends Resource
                                         ->helperText('<$ input.filamentData.helperText $>')
                                     <% } %>
                                     <# --- #>
-                                    <% if(!input.filamentData.autoComplete) { %>
+                                    <% if(input.filamentData.autoComplete === false) { %>
                                         ->autocomplete(false)
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.defaultValue) { %>
+                                        ->default('<$ input.defaultValue $>')
                                     <% } %>
                                     <# --- #>
                                     <% if(input.filamentData.dataList && input.filamentData.dataList.length) { %>
@@ -122,6 +128,71 @@ class <$ this.filenameWithoutExtension $> extends Resource
                                                 '<$ option $>',
                                             <% } %>
                                         ])
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.filamentData.isMultiple) { %>
+                                        ->multiple()
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.filamentData.canBeSearchable) { %>
+                                        ->searchable()
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.filamentData.canSelectPlaceholder === false) { %>
+                                        ->selectablePlaceholder(false)
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.filamentData.loadingMessage?.length) { %>
+                                        ->loadingMessage('<$ input.filamentData.loadingMessage $>')
+                                        ->searchingMessage('<$ input.filamentData.loadingMessage $>')
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.filamentData.noResultMessage?.length) { %>
+                                        ->noSearchResultsMessage('<$ input.filamentData.noResultMessage $>')
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.filamentData.searchMessage?.length) { %>
+                                        ->searchPrompt('<$ input.filamentData.searchMessage $>')
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.items?.length) { %>
+                                        ->options([
+                                            <% for(let option of input.items) { %>
+                                                '<$ option.value $>' => '<$ option.label $>',
+                                            <% } %>
+                                        ])
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.filamentData.inline) { %>
+                                        ->inline()
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.filamentData.inlineLabel) { %>
+                                        ->inlineLabel()
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.filamentData.dateFormat) { %>
+                                        ->format('<$ input.filamentData.dateFormat $>')
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.filamentData.timezone) { %>
+                                        ->timezone('<$ input.filamentData.timezone $>')
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.filamentData.seconds === false) { %>
+                                        ->seconds(false)
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.filamentData.displayFormat) { %>
+                                        ->displayFormat('<$ input.filamentData.displayFormat $>')
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.filamentData.closeOnDateSelection) { %>
+                                        ->closeOnDateSelection()
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(input.readOnly && ['textarea', 'text-input', 'datetime-picker'].includes(input.filamentData.inputType)) { %>
+                                        ->readonly()
                                     <% } %>,
                                     
                                 <% } %>
@@ -136,7 +207,7 @@ class <$ this.filenameWithoutExtension $> extends Resource
             ->poll('60s')
             ->columns([
                 <% for(let input of this.crud.getInputsForIndex()) { %>
-                <$ pascalCase(input.filamentData.columnType) $>::make('<$ input.name $>'),
+                    <$ pascalCase(input.filamentData.columnType) $>::make('<$ input.name $>'),
                 <% } %>
             ])
             ->filters([
