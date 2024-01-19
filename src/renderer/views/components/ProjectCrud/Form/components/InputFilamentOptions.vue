@@ -11,6 +11,7 @@
     import debounce from "@Common/tools/debounce"
     import { InputType } from "@Common/models/crud/InputType"
     import UiSelect from "@Renderer/components/ui/UiSelect.vue"
+import Main from "@Renderer/services/wrappers/Main"
     
     const props = defineProps({
             input: Input
@@ -55,6 +56,10 @@
         input.value.filamentData[propertyName].splice(index + 1, 0, option)
         saveInput()
     }
+
+    const openImageEditorModeDocumentation = () => {
+        Main.API.openURL('https://github.com/fengyuanchen/cropperjs#viewmode')
+    }
 </script>
 <template>
     <div class="flex-grow overflow-auto pb-40">
@@ -96,10 +101,32 @@
             </div>
 
             <div v-if="inputFilamentTypeIs('file-upload')">
+                <UiText :disabled="!input.filamentData.useImageEditor" v-model="input.filamentData.imageEditorViewportWidth" placeholder="Width" label="Viewport Width (Image Editor)" @input="saveInput()" />
+            </div>
+            
+            <div v-if="inputFilamentTypeIs('file-upload')">
+                <UiText :disabled="!input.filamentData.useImageEditor" v-model="input.filamentData.imageEditorViewportHeight" placeholder="Height" label="Viewport Height (Image Editor)" @input="saveInput()" />
+            </div>
+
+            <div v-if="inputFilamentTypeIs('file-upload')">
                 <UiSelect v-model="input.filamentData.visibility" label="Visibility" @change="saveInput()">
                     <option value="public">Public</option>  
                     <option value="private">Private</option>
                 </UiSelect>
+            </div>
+            
+            <div v-if="inputFilamentTypeIs('file-upload')">
+                <UiSelect :disabled="!input.filamentData.useImageEditor" v-model="input.filamentData.imageEditorMode" label="Image Editor Mode" @change="saveInput()">
+                    <option :value="undefined">Default</option>  
+                    <option value="0">No restrictions</option>  
+                    <option value="1">Restrict the crop box not to exceed the size of the canvas</option>
+                    <option value="2">Restrict the minimum canvas size to fit within the container</option>
+                    <option value="3">Restrict the minimum canvas size to fill fit the container</option>
+                </UiSelect>
+                <small class="text-slate-400">
+                    These options are explained in the
+                    <b @click="openImageEditorModeDocumentation()" class="cursor-pointer underline underline-offset-2 decoration-red-400">Cropper.js documentation</b>
+                </small>
             </div>
 
             <div class="flex flex-col gap-2" v-if="inputFilamentTypeIs(['text-input', 'datetime-picker', 'date-picker'])">
@@ -189,11 +216,23 @@
             <div class="mt-2 flex gap-2 flex-col">
                 <UiCheckbox v-if="!inputFilamentTypeIs(['file-upload'])" v-model="input.filamentData.autofocus" label="Auto Focus" @input="saveInput()" />
 
-                <UiCheckbox v-if="inputFilamentTypeIs('file-upload')" v-model="input.filamentData.preserveFilenames" label="Preserve filenames" @input="saveInput()" />
+                <div class="mt-2 flex gap-2 flex-col" v-if="inputFilamentTypeIs('file-upload')">
+                    <UiCheckbox v-model="input.filamentData.useAvatarMode" label="Enable avatar mode" @input="saveInput()" />
 
-                <UiCheckbox v-if="inputFilamentTypeIs('file-upload')" v-model="input.filamentData.useAvatarMode" label="Enable avatar mode" @input="saveInput()" />
+                    <UiCheckbox v-model="input.filamentData.canReorderFiles" label="Allow reorder files" @input="saveInput()" />
 
-                <UiCheckbox v-if="inputFilamentTypeIs('file-upload')" v-model="input.filamentData.useImageEditor" label="Enable image editor" @input="saveInput()" />
+                    <UiCheckbox v-model="input.filamentData.useCircleCropper" label="Allow crop images as a circle" @input="saveInput()" />
+
+                    <UiCheckbox v-model="input.filamentData.isDownloadable" label="Allow download files" @input="saveInput()" />
+
+                    <UiCheckbox v-model="input.filamentData.canOpenFilesInNewTab" label="Allow open files in a new tab" @input="saveInput()" />
+
+                    <UiCheckbox v-model="input.filamentData.disablePreview" label="Disable file preview" @input="saveInput()" />
+
+                    <UiCheckbox v-model="input.filamentData.useImageEditor" label="Enable image editor" @input="saveInput()" />
+                </div>
+
+                <UiCheckbox v-model="input.filamentData.preserveFilenames" label="Preserve filenames" @input="saveInput()" />
 
                 <UiCheckbox v-if="inputFilamentTypeIs('text-input')" v-model="input.filamentData.autoComplete" label="Auto Complete" @input="saveInput()" />
 

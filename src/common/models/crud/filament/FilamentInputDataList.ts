@@ -74,7 +74,7 @@ export class FilamentInputDataList {
                     preserveFilenames: false,
                     useAvatarMode: false,
                     useImageEditor: input.type === InputType.IMAGE,
-                    imageEditorAspectRatios: input.type === InputType.IMAGE ? ['16:9', '4:3', '1:1'] : null,
+                    imageEditorAspectRatios: input.type === InputType.IMAGE ? ['null', '16:9', '4:3', '1:1'] : null,
                     useCircleCropper: false,
                     disablePreview: false,
                     isDownloadable: false,

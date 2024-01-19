@@ -59,11 +59,11 @@
                         </button>
                     </div>
 
-                    <div v-if="selectedTab == 'common'">
+                    <div class="overflow-y-auto" v-if="selectedTab == 'common'">
                         <InputCommonOptions :input="input" />
                     </div>
 
-                    <div v-if="selectedTab == 'filament'">
+                    <div class="overflow-y-auto" v-if="selectedTab == 'filament'">
                         <InputFilamentOptions :input="input" />
                     </div>
                 </div>

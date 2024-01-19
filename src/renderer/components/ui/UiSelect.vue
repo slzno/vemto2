@@ -10,6 +10,11 @@ import { defineProps, defineEmits, computed } from "vue"
         label: {
             type: String,
         },
+
+        disabled: {
+            type: Boolean,
+            default: false,
+        },
     })
 
     const emit = defineEmits(["update:modelValue", "change"]),
@@ -28,7 +33,8 @@ import { defineProps, defineEmits, computed } from "vue"
 <template>
     <label v-if="label" class="text-xs text-slate-400">{{ label }}</label>
     <select
-        class="w-full border border-slate-650 focus:border-red-500 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg focus:ring-transparent"
+        :disabled="disabled"
+        class="w-full border border-slate-650 focus:border-red-500 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg focus:ring-transparent disabled:opacity-60"
         v-model="localValue"
     >
         <slot></slot>
