@@ -1,8 +1,4 @@
-/**
- *  This file contains the Laravel validations that do not have a individual method in Filament.
- *  For this reason, they must be added to the rules->([]) method
- */ 
-export class FilamentIndividualValidations {
+export default class FilamentIndividualValidations {
     static match(ruleName: string): boolean {
         return FilamentIndividualValidations.get()
             .some(filamentRuleName => filamentRuleName === ruleName)

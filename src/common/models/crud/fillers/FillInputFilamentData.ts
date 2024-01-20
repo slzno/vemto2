@@ -1,7 +1,6 @@
-import { FilamentInputDataList } from "../filament/FilamentInputDataList"
-import { FilamentInputType } from "../filament/FilamentInputTypesList"
-import Input, { FilamentInputData } from "../Input"
-import { InputType } from "../InputType"
+import FilamentInputData from "../filament/FilamentInputData"
+import FilamentInputDataList from "../filament/FilamentInputDataList"
+import Input from "../Input"
 
 export default new class FillInputFilamentData {
     input: Input

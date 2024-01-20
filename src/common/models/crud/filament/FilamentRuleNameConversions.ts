@@ -1,7 +1,7 @@
 import Input from "../Input"
 import { FilamentInputType } from "./FilamentInputTypesList"
 
-export class FilamentRuleNameConversions {
+export default class FilamentRuleNameConversions {
     static convert(input: Input, ruleName: string): string {
         let commonConverted = FilamentRuleNameConversions.getCommon()[ruleName],
             fromTypeConversions = FilamentRuleNameConversions.getFromType()[input.filamentData.inputType]
