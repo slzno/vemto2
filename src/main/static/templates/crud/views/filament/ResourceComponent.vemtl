@@ -84,6 +84,10 @@ class <$ this.filenameWithoutExtension $> extends Resource
                                         -><$ methodName $>(<$ args $>)
                                     <% } %>
                                     <# --- #>
+                                    <% if(input.isBelongsTo()) { %>
+                                        ->relationship('<$ input.relationship.name $>', '<$ input.relationship.relatedModel.table.getLabelColumnName() $>')
+                                    <% } %>
+                                    <# --- #>
                                     <% if(input.isEmail()) { %>
                                         ->email()
                                     <% } %>
@@ -290,7 +294,28 @@ class <$ this.filenameWithoutExtension $> extends Resource
             ->poll('60s')
             ->columns([
                 <% for(let input of this.crud.getInputsForIndex()) { %>
-                    <$ pascalCase(input.filamentData.columnType) $>::make('<$ input.name $>'),
+                    <% const columnName = !input.isBelongsTo() ? input.name : `${input.relationship.name}.${input.relationship.relatedModel.table.getLabelColumnName()}` %>
+                    <# --- #>
+                    <$ pascalCase(input.filamentData.columnType) $>::make('<$ columnName $>')
+                        <% if(input.filamentData.disk) { %>
+                            ->disk('<$ input.filamentData.disk $>')
+                        <% } %>
+                        <# --- #>
+                        <% if(input.filamentData.visibility) { %>
+                            ->visibility('<$ input.filamentData.visibility $>')
+                        <% } %>
+                        <# --- #>
+                        <% if(input.isTextarea()) { %>
+                            ->limit(50)
+                        <% } %>
+                        <% if(input.filamentData.allowHtml) { %>
+                            ->html()
+                        <% } %>
+                        <# --- #>
+                        <% if(input.isDateOrDateTime()) { %>
+                            ->since()
+                        <% } %>,
+
                 <% } %>
             ])
             ->filters([

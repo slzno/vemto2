@@ -163,6 +163,14 @@ export default class Input extends RelaDB.Model {
         return [InputType.FILE, InputType.IMAGE].includes(this.type)
     }
 
+    isImage(): boolean {
+        return this.type === InputType.IMAGE
+    }
+
+    isTextarea(): boolean {
+        return this.type === InputType.TEXTAREA
+    }
+
     isEmail(): boolean {
         return this.type === InputType.EMAIL
     }

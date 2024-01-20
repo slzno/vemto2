@@ -241,6 +241,8 @@ import Main from "@Renderer/services/wrappers/Main"
                 <UiCheckbox v-if="inputFilamentTypeIs(['select', 'file-upload'])" v-model="input.filamentData.isMultiple" label="Allow selecting multiple" @input="saveInput()" />
 
                 <UiCheckbox v-if="inputFilamentTypeIs('select')" v-model="input.filamentData.canSelectPlaceholder" label="Allow select the placeholder" @input="saveInput()" />
+
+                <UiCheckbox v-if="inputFilamentTypeIs('select')" v-model="input.filamentData.canBeSearchable" label="Allow search options" @input="saveInput()" />
                 
                 <UiCheckbox v-if="input.type === InputType.BELONGS_TO && inputFilamentTypeIs('select')" v-model="input.filamentData.canBePreloaded" label="Preload relationship options" @input="saveInput()" />
                 

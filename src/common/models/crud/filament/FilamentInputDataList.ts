@@ -34,7 +34,7 @@ export default class FilamentInputDataList {
                     ...data,
                     allowHtml: false,
                     canBePreloaded: false,
-                    canBeSearchable: false,
+                    canBeSearchable: true,
                     canSelectPlaceholder: true,
                     loadingMessage: null,
                     useCustomInput: true
@@ -65,6 +65,7 @@ export default class FilamentInputDataList {
                     disableSeconds: false,
                     useCustomInput: true
                 }
+                break;
             case InputType.FILE:
             case InputType.IMAGE:
                 data = {
@@ -82,6 +83,7 @@ export default class FilamentInputDataList {
                     canReorderFiles: false,
                     disableDeleteButton: false,
                 }
+                break;
         }
 
         return data
