@@ -24,6 +24,10 @@ export default interface FilamentInputData {
     // Checkbox & radio params
     inline?: boolean
     inlineLabel?: boolean
+    onIcon?: string
+    offIcon?: string
+    onColor?: string
+    offColor?: string
 
     // Date, datetime and time params
     dateFormat?: string

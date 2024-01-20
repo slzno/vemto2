@@ -18,6 +18,38 @@
         ->html()
     <% } %>
     <# --- #>
+    <% if(input.filamentSettings.columnData.description) { %>
+        ->description('<$ input.filamentSettings.columnData.description $>')
+    <% } %>
+    <# --- #>
+    <% if(input.filamentSettings.columnData.label) { %>
+        ->label('<$ input.filamentSettings.columnData.label $>')
+    <% } %>
+    <# --- #>
+    <% if(input.filamentSettings.columnData.canBeSortable) { %>
+        ->sortable()
+    <% } %>
+    <# --- #>
+    <% if(input.filamentSettings.columnData.canBeToggled) { %>
+        ->toggleable()
+    <% } %>
+    <# --- #>
+    <% if(input.filamentSettings.columnData.canBeSearchable) { %>
+        ->searchable()
+    <% } %>
+    <# --- #>
+    <% if(input.filamentSettings.columnData.showAsBadge) { %>
+        ->badge()
+    <% } %>
+    <# --- #>
+    <% if(input.filamentSettings.columnData.prefix) { %>
+        ->prefix('<$ input.filamentSettings.columnData.prefix $>')
+    <% } %>
+    <# --- #>
+    <% if(input.filamentSettings.columnData.suffix) { %>
+        ->suffix('<$ input.filamentSettings.columnData.suffix $>')
+    <% } %>
+    <# --- #>
     <% if(input.isDateOrDateTime()) { %>
         ->since()
     <% } %>,

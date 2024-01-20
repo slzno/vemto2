@@ -43,6 +43,22 @@
         ->autofocus()
     <% } %>
     <# --- #>
+    <% if(inputFormData.onIcon) { %>
+        ->onIcon('<$ inputFormData.onIcon $>')
+    <% } %>
+    <# --- #>
+    <% if(inputFormData.offIcon) { %>
+        ->offIcon('<$ inputFormData.offIcon $>')
+    <% } %>
+    <# --- #>
+    <% if(inputFormData.onColor) { %>
+        ->onColor('<$ inputFormData.onColor $>')
+    <% } %>
+    <# --- #>
+    <% if(inputFormData.offColor) { %>
+        ->offColor('<$ inputFormData.offColor $>')
+    <% } %>
+    <# --- #>
     <% if(inputFormData.helperText) { %>
         ->helperText('<$ inputFormData.helperText $>')
     <% } %>

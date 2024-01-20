@@ -5,7 +5,7 @@
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
     import UiTabs from '@Renderer/components/ui/UiTabs.vue'
     import InputCommonOptions from "./InputCommonOptions.vue"
-    import InputFilamentOptions from "./InputFilamentOptions.vue"
+    import FilamentInputOptions from "./filament/FilamentInputOptions.vue"
 
     const props = defineProps({
         show: Boolean,
@@ -64,7 +64,7 @@
                     </div>
 
                     <div class="overflow-y-auto" v-if="selectedTab == 'filament'">
-                        <InputFilamentOptions :input="input" />
+                        <FilamentInputOptions :input="input" />
                     </div>
                 </div>
             </div>

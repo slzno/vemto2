@@ -17,7 +17,24 @@ export default class FilamentColumnTypesList {
 
         if(!columnType) return FilamentColumnType.TEXT_COLUMN
 
+        // If the input type is an array, we'll use the first type
+        if(columnType instanceof Array) {
+            columnType = columnType[0]
+        }
+
         return columnType
+    }
+
+    static getSuggestionsFromInputType(type: InputType): FilamentColumnType[] {
+        let inputType = this.get()[type]
+
+        if(!inputType) return [FilamentColumnType.TEXT_COLUMN]
+
+        if(!(inputType instanceof Array)) {
+            inputType = [inputType]
+        }
+
+        return inputType
     }
 
     static get() {
@@ -28,13 +45,17 @@ export default class FilamentColumnTypesList {
             [InputType.FILE]: FilamentColumnType.TEXT_COLUMN,
             [InputType.IMAGE]: FilamentColumnType.IMAGE_COLUMN,
             [InputType.BELONGS_TO]: FilamentColumnType.TEXT_COLUMN,
-            [InputType.CHECKBOX]: FilamentColumnType.CHECKBOX_COLUMN,
+            [InputType.CHECKBOX]: [
+                FilamentColumnType.CHECKBOX_COLUMN, FilamentColumnType.TOGGLE_COLUMN
+            ],
             [InputType.SELECT]: FilamentColumnType.TEXT_COLUMN,
             [InputType.EMAIL]: FilamentColumnType.TEXT_COLUMN,
             [InputType.DATE]: FilamentColumnType.TEXT_COLUMN,
             [InputType.DATETIME]: FilamentColumnType.TEXT_COLUMN,
             [InputType.TIME]: FilamentColumnType.TEXT_COLUMN,
-            [InputType.COLOR]: FilamentColumnType.COLOR_COLUMN,
+            [InputType.COLOR]: [
+                FilamentColumnType.COLOR_COLUMN, FilamentColumnType.TEXT_COLUMN
+            ],
         }
     }
 }
