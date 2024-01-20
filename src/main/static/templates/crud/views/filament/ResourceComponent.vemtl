@@ -294,6 +294,18 @@ class <$ this.filenameWithoutExtension $> extends Resource
                                         ->cols(<$ inputFormData.cols $>)
                                     <% } %>
                                     <# --- #>
+                                    <% if(inputFormData.hsl) { %>
+                                        ->hsl()
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(inputFormData.rgb) { %>
+                                        ->rgb()
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(inputFormData.rgba) { %>
+                                        ->rgba()
+                                    <% } %>
+                                    <# --- #>
                                     <% if(inputFormData.autosize && inputFormData.inputType === 'textarea') { %>
                                         ->autosize()
                                     <% } %>

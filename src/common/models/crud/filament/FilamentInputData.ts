@@ -1,4 +1,3 @@
-import { FilamentColumnType } from "./FilamentColumnTypesList"
 import { FilamentInputType } from "./FilamentInputTypesList"
 
 export default interface FilamentInputData {
@@ -59,4 +58,9 @@ export default interface FilamentInputData {
     cols?: number
     autosize?: boolean
     exactLength?: number
+
+    // Color params
+    isHsl?: boolean
+    isRgb?: boolean
+    isRgba?: boolean
 }

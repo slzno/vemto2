@@ -71,7 +71,7 @@
 <template>
     <div class="flex-grow overflow-auto pb-40">
         <div class="p-4 space-y-4">
-            <div>
+            <div v-if="!inputFilamentTypeIs('hidden')">
                 <UiSelect v-model="input.filamentSettings.formData.inputType" label="Input Type" @change="saveInput()">
                     <template v-for="suggestion in getFilamentTypeSuggestions()">
                         <option :value="suggestion">{{ capitalCase(suggestion) }}</option>
@@ -79,7 +79,7 @@
                 </UiSelect>
             </div>
 
-            <div>
+            <div v-if="!inputFilamentTypeIs('hidden')">
                 <UiText v-model="input.filamentSettings.formData.helperText" placeholder="Input Helper Text" label="Helper Text" @input="saveInput()" />
             </div>
 
@@ -297,7 +297,7 @@
             </div>
             
             <div class="mt-2 flex gap-2 flex-col">
-                <UiCheckbox v-if="!inputFilamentTypeIs('file-upload')" v-model="input.filamentSettings.formData.autofocus" label="Auto Focus" @input="saveInput()" />
+                <UiCheckbox v-if="!inputFilamentTypeIs(['hidden', 'file-upload'])" v-model="input.filamentSettings.formData.autofocus" label="Auto Focus" @input="saveInput()" />
 
                 <UiCheckbox v-if="inputFilamentTypeIs('textarea')" v-model="input.filamentSettings.formData.autosize" label="Autosize" @input="saveInput()" />
 
@@ -325,6 +325,14 @@
                     <UiCheckbox v-model="input.filamentSettings.formData.canSelectPlaceholder" label="Allow select the placeholder" @input="saveInput()" />
 
                     <UiCheckbox v-model="input.filamentSettings.formData.canBeSearchable" label="Allow search options" @input="saveInput()" />
+                </div>
+
+                <div class="flex gap-2 flex-col" v-if="inputFilamentTypeIs('color-picker')">
+                    <UiCheckbox v-model="input.filamentSettings.formData.isHsl" label="Use HSL color format" @input="saveInput()" />
+
+                    <UiCheckbox v-model="input.filamentSettings.formData.isRgb" label="Use RGB color format" @input="saveInput()" />
+
+                    <UiCheckbox v-model="input.filamentSettings.formData.isRgba" label="Use RGBA color format" @input="saveInput()" />
                 </div>
 
                 <UiCheckbox v-if="inputFilamentTypeIs('text-input')" v-model="input.filamentSettings.formData.autoComplete" label="Auto Complete" @input="saveInput()" />

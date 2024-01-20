@@ -95,6 +95,14 @@ export default class FilamentInputDataList {
                     exactLength: null
                 }
                 break;
+            case InputType.COLOR:
+                data = {
+                    ...data,
+                    isHsl: false,
+                    isRgb: false,
+                    isRgba: true
+                }
+                break;
         }
 
         return data
