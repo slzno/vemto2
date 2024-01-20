@@ -76,7 +76,7 @@ class <$ this.filenameWithoutExtension $> extends Resource
                                 <$ pascalCase(inputFormData.inputType) $>::make('<$ input.name $>')
                                     <###>
                                     <% if(inlineRules.length) { %>
-                                        ->rules([<$ inlineRules.join(', ') $>]) 
+                                        ->rules([<$ inlineRules.join(', ') $>])
                                     <% } %>
                                     <###>
                                     <% for(let rule of individualRules) { %>
@@ -212,16 +212,19 @@ class <$ this.filenameWithoutExtension $> extends Resource
                                         ->readonly()
                                     <% } %>
                                     <# --- #>
-                                    <% if(inputFormData.disk) { %>
-                                        ->disk('<$ inputFormData.disk $>')
+                                    <% if(inputFormData.disk && ['markdown-editor', 'rich-editor'].includes(inputFormData.inputType)) { %>
+                                        <% const methodName = input.isTextarea() ? 'fileAttachmentsDisk' : 'disk' %>
+                                        -><$ methodName $>('<$ inputFormData.disk $>')
                                     <% } %>
                                     <# --- #>
-                                    <% if(inputFormData.directory) { %>
-                                        ->directory('<$ inputFormData.directory $>')
+                                    <% if(inputFormData.directory && ['markdown-editor', 'rich-editor'].includes(inputFormData.inputType)) { %>
+                                        <% const methodName = input.isTextarea() ? 'fileAttachmentsDirectory' : 'directory' %>
+                                        -><$ methodName $>('<$ inputFormData.directory $>')
                                     <% } %>
                                     <# --- #>
-                                    <% if(inputFormData.visibility) { %>
-                                        ->visibility('<$ inputFormData.visibility $>')
+                                    <% if(inputFormData.visibility && ['markdown-editor', 'rich-editor'].includes(inputFormData.inputType)) { %>
+                                        <% const methodName = input.isTextarea() ? 'fileAttachmentsVisibility' : 'visibility' %>
+                                        -><$ methodName $>('<$ inputFormData.visibility $>')
                                     <% } %>
                                     <# --- #>
                                     <% if(inputFormData.preserveFilenames) { %>
@@ -281,6 +284,38 @@ class <$ this.filenameWithoutExtension $> extends Resource
                                     <# --- #>
                                     <% if(inputFormData.disableDeleteButton) { %>
                                         ->deleteable(false)
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(inputFormData.rows && inputFormData.inputType === 'textarea') { %>
+                                        ->rows(<$ inputFormData.rows $>)
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(inputFormData.cols && inputFormData.inputType === 'textarea') { %>
+                                        ->cols(<$ inputFormData.cols $>)
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(inputFormData.autosize && inputFormData.inputType === 'textarea') { %>
+                                        ->autosize()
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(inputFormData.exactLength && inputFormData.inputType === 'textarea') { %>
+                                        ->length(<$ inputFormData.exactLength $>)
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(inputFormData.toolbarButtons?.length) { %>
+                                        ->toolbarButtons([
+                                            <% for(let buttonName of inputFormData.toolbarButtons) { %>
+                                                '<$ buttonName $>',
+                                            <% } %>
+                                        ])
+                                    <% } %>
+                                    <# --- #>
+                                    <% if(inputFormData.disableToolbarButtons?.length) { %>
+                                        ->disableToolbarButtons([
+                                            <% for(let buttonName of inputFormData.disableToolbarButtons) { %>
+                                                '<$ buttonName $>',
+                                            <% } %>
+                                        ])
                                     <% } %>,
                                     
                                 <% } %>
@@ -300,17 +335,18 @@ class <$ this.filenameWithoutExtension $> extends Resource
                     <% const columnName = !input.isBelongsTo() ? input.name : `${input.relationship.name}.${input.relationship.relatedModel.table.getLabelColumnName()}` %>
                     <###>
                     <$ pascalCase(inputColumnData.columnType) $>::make('<$ columnName $>')
-                        <% if(input.filamentSettings.formData.disk) { %>
+                        <% if(input.isImage() && input.filamentSettings.formData.disk) { %>
                             ->disk('<$ input.filamentSettings.formData.disk $>')
                         <% } %>
                         <# --- #>
-                        <% if(input.filamentSettings.formData.visibility) { %>
+                        <% if(input.isImage() && input.filamentSettings.formData.visibility) { %>
                             ->visibility('<$ input.filamentSettings.formData.visibility $>')
                         <% } %>
                         <# --- #>
                         <% if(input.isTextarea()) { %>
                             ->limit(50)
                         <% } %>
+                        <# --- #>
                         <% if(input.filamentSettings.formData.allowHtml) { %>
                             ->html()
                         <% } %>

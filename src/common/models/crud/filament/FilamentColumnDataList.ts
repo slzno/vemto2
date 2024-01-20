@@ -51,6 +51,11 @@ export default class FilamentColumnDataList {
                     ...data
                 }
                 break;
+            case InputType.TEXTAREA:
+                data = {
+                    ...data
+                }
+                break;
         }
 
         return data

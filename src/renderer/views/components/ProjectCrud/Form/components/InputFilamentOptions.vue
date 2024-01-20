@@ -4,14 +4,17 @@
     import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
     import UiSmallButton from "@Renderer/components/ui/UiSmallButton.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
+    import UiNumber from "@Renderer/components/ui/UiNumber.vue"
     import UiDate from "@Renderer/components/ui/UiDate.vue"
     import { PlusCircleIcon, TrashIcon, ArrowLongUpIcon, ArrowLongDownIcon } from "@heroicons/vue/24/outline"
     import { toRef, defineProps } from 'vue'
     import Input from "@Common/models/crud/Input"
     import debounce from "@Common/tools/debounce"
     import { InputType } from "@Common/models/crud/InputType"
+    import FilamentInputTypesList from "@Common/models/crud/filament/FilamentInputTypesList"
     import UiSelect from "@Renderer/components/ui/UiSelect.vue"
     import Main from "@Renderer/services/wrappers/Main"
+    import { capitalCase } from "change-case"
     
     const props = defineProps({
             input: Input
@@ -60,10 +63,22 @@
     const openImageEditorModeDocumentation = () => {
         Main.API.openURL('https://github.com/fengyuanchen/cropperjs#viewmode')
     }
+
+    const getFilamentTypeSuggestions = () => {
+        return FilamentInputTypesList.getSuggestionsFromInputType(input.value.type)
+    }
 </script>
 <template>
     <div class="flex-grow overflow-auto pb-40">
         <div class="p-4 space-y-4">
+            <div>
+                <UiSelect v-model="input.filamentSettings.formData.inputType" label="Input Type" @change="saveInput()">
+                    <template v-for="suggestion in getFilamentTypeSuggestions()">
+                        <option :value="suggestion">{{ capitalCase(suggestion) }}</option>
+                    </template>
+                </UiSelect>
+            </div>
+
             <div>
                 <UiText v-model="input.filamentSettings.formData.helperText" placeholder="Input Helper Text" label="Helper Text" @input="saveInput()" />
             </div>
@@ -92,11 +107,11 @@
                 <UiText v-model="input.filamentSettings.formData.displayFormat" placeholder="Date format for display" label="Display Form" @input="saveInput()" />
             </div>
 
-            <div v-if="inputFilamentTypeIs('file-upload')">
+            <div v-if="inputFilamentTypeIs(['file-upload', 'rich-editor', 'markdown-editor'])">
                 <UiText v-model="input.filamentSettings.formData.disk" placeholder="Disk name" label="Disk" @input="saveInput()" />
             </div>
 
-            <div v-if="inputFilamentTypeIs('file-upload')">
+            <div v-if="inputFilamentTypeIs(['file-upload', 'rich-editor', 'markdown-editor'])">
                 <UiText v-model="input.filamentSettings.formData.directory" placeholder="Directory name" label="Directory" @input="saveInput()" />
             </div>
 
@@ -108,11 +123,23 @@
                 <UiText :disabled="!input.filamentSettings.formData.useImageEditor" v-model="input.filamentSettings.formData.imageEditorViewportHeight" placeholder="Height" label="Viewport Height (Image Editor)" @input="saveInput()" />
             </div>
 
-            <div v-if="inputFilamentTypeIs('file-upload')">
+            <div v-if="inputFilamentTypeIs(['file-upload', 'rich-editor', 'markdown-editor'])">
                 <UiSelect v-model="input.filamentSettings.formData.visibility" label="Visibility" @change="saveInput()">
                     <option value="public">Public</option>  
                     <option value="private">Private</option>
                 </UiSelect>
+            </div>
+
+            <div v-if="input.isTextarea()">
+                <UiNumber :disabled="!inputFilamentTypeIs('textarea')" v-model="input.filamentSettings.formData.rows" placeholder="Rows" label="Textarea Rows" @input="saveInput()" />
+            </div>
+
+            <div v-if="input.isTextarea()">
+                <UiNumber :disabled="!inputFilamentTypeIs('textarea')" v-model="input.filamentSettings.formData.cols" placeholder="Cols" label="Textarea Cols" @input="saveInput()" />
+            </div>
+
+            <div v-if="input.isTextarea()">
+                <UiNumber :disabled="!inputFilamentTypeIs('textarea')" v-model="input.filamentSettings.formData.exactLength" placeholder="Exact Length" label="Textarea Exact Length" @input="saveInput()" />
             </div>
             
             <div v-if="inputFilamentTypeIs('file-upload')">
@@ -212,9 +239,67 @@
                     </UiSmallButton>
                 </div>
             </div>
+
+            <div class="flex flex-col gap-2" v-if="inputFilamentTypeIs(['rich-editor', 'markdown-editor'])">
+                <label class="text-xs text-slate-400">Toolbar Buttons</label>
+
+                <div class="flex-1 flex gap-2 items-center" v-for="(option, index) of input.filamentSettings.formData.toolbarButtons">
+                    <UiText v-model="input.filamentSettings.formData.toolbarButtons[index]" @input="saveInput()" />
+
+                    <UiOptionsDropdown>
+                        <UiDropdownItem @click="moveUpOption('toolbarButtons', index)">
+                            <ArrowLongUpIcon class="h-5 w-5 mr-1" /> Move Up
+                        </UiDropdownItem>
+                        <UiDropdownItem @click="moveDownOption('toolbarButtons', index)">
+                            <ArrowLongDownIcon class="h-5 w-5 mr-1" /> Move Down
+                        </UiDropdownItem>
+                        <UiDropdownItem @click="removeFilamentOption('toolbarButtons', index)">
+                            <TrashIcon class="h-5 w-5 mr-1 text-red-400" /> Delete
+                        </UiDropdownItem>
+                    </UiOptionsDropdown>
+                </div>
+                
+                <div>
+                    <UiSmallButton @click="newFilamentOption('toolbarButtons')">
+                        <span class="flex items-center">
+                            <PlusCircleIcon class="h-5 w-5 mr-1" /> Add Toolbar Button
+                        </span>
+                    </UiSmallButton>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2" v-if="inputFilamentTypeIs(['rich-editor', 'markdown-editor'])">
+                <label class="text-xs text-slate-400">Disabled Toolbar Buttons</label>
+
+                <div class="flex-1 flex gap-2 items-center" v-for="(option, index) of input.filamentSettings.formData.disableToolbarButtons">
+                    <UiText v-model="input.filamentSettings.formData.disableToolbarButtons[index]" @input="saveInput()" />
+
+                    <UiOptionsDropdown>
+                        <UiDropdownItem @click="moveUpOption('disableToolbarButtons', index)">
+                            <ArrowLongUpIcon class="h-5 w-5 mr-1" /> Move Up
+                        </UiDropdownItem>
+                        <UiDropdownItem @click="moveDownOption('disableToolbarButtons', index)">
+                            <ArrowLongDownIcon class="h-5 w-5 mr-1" /> Move Down
+                        </UiDropdownItem>
+                        <UiDropdownItem @click="removeFilamentOption('disableToolbarButtons', index)">
+                            <TrashIcon class="h-5 w-5 mr-1 text-red-400" /> Delete
+                        </UiDropdownItem>
+                    </UiOptionsDropdown>
+                </div>
+                
+                <div>
+                    <UiSmallButton @click="newFilamentOption('disableToolbarButtons')">
+                        <span class="flex items-center">
+                            <PlusCircleIcon class="h-5 w-5 mr-1" /> Add Disabled Toolbar Button
+                        </span>
+                    </UiSmallButton>
+                </div>
+            </div>
             
             <div class="mt-2 flex gap-2 flex-col">
-                <UiCheckbox v-if="!inputFilamentTypeIs(['file-upload'])" v-model="input.filamentSettings.formData.autofocus" label="Auto Focus" @input="saveInput()" />
+                <UiCheckbox v-if="!inputFilamentTypeIs('file-upload')" v-model="input.filamentSettings.formData.autofocus" label="Auto Focus" @input="saveInput()" />
+
+                <UiCheckbox v-if="inputFilamentTypeIs('textarea')" v-model="input.filamentSettings.formData.autosize" label="Autosize" @input="saveInput()" />
 
                 <div class="flex gap-2 flex-col" v-if="inputFilamentTypeIs('file-upload')">
                     <UiCheckbox v-model="input.filamentSettings.formData.useAvatarMode" label="Enable avatar mode" @input="saveInput()" />

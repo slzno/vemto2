@@ -205,23 +205,27 @@ export default class Crud extends RelaDB.Model {
     }
 
     getInputsForIndex(): Input[] {
-        return this.inputs.filter((input) => input.showOnIndex)
+        return this.getOrderedInputs().filter((input) => input.showOnIndex)
     }
 
     getInputsForCreate(): Input[] {
-        return this.inputs.filter((input) => input.showOnCreation)
+        return this.getOrderedInputs().filter((input) => input.showOnCreation)
     }
 
     getInputsForUpdate(): Input[] {
-        return this.inputs.filter((input) => input.showOnUpdate)
+        return this.getOrderedInputs().filter((input) => input.showOnUpdate)
     }
 
     getInputsForDetails(): Input[] {
-        return this.inputs.filter((input) => input.showOnDetails)
+        return this.getOrderedInputs().filter((input) => input.showOnDetails)
+    }
+
+    getOrderedInputs(): Input[] {
+        return this.inputs.sort((a, b) => a.order - b.order)
     }
 
     getInputsForForms(): Input[] {
-        return this.inputs.filter((input) => input.showOnCreation || input.showOnUpdate)
+        return this.getOrderedInputs().filter((input) => input.showOnCreation || input.showOnUpdate)
     }
 
     calculateSettings() {
@@ -391,7 +395,7 @@ export default class Crud extends RelaDB.Model {
             navigationOrder: 1,
             navigationGroup: "Admin",
             slug: null
-        } as FilamentSettings
+        } as FilamentCrudSettings
     }
 
     isForFilament(): boolean {

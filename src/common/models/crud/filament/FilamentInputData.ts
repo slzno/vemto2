@@ -51,4 +51,12 @@ export default interface FilamentInputData {
     canOpenFilesInNewTab?: boolean
     canReorderFiles?: boolean
     disableDeleteButton?: boolean
+
+    // Textarea params
+    toolbarButtons?: string[]
+    disableToolbarButtons?: string[]
+    rows?: number
+    cols?: number
+    autosize?: boolean
+    exactLength?: number
 }

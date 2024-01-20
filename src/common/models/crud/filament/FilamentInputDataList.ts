@@ -81,6 +81,20 @@ export default class FilamentInputDataList {
                     disableDeleteButton: false,
                 }
                 break;
+            case InputType.TEXTAREA:
+                data = {
+                    ...data,
+                    toolbarButtons: null,
+                    disableToolbarButtons: null,
+                    disk: null,
+                    directory: null,
+                    visibility: 'public',
+                    rows: null,
+                    cols: null,
+                    autosize: false,
+                    exactLength: null
+                }
+                break;
         }
 
         return data

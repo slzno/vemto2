@@ -22,6 +22,23 @@ export default class FilamentInputTypesList {
         let inputType = this.get()[type]
 
         if(!inputType) return FilamentInputType.TEXT_INPUT
+        
+        // If the input type is an array, we'll use the first type
+        if(inputType instanceof Array) {
+            inputType = inputType[0]
+        }
+
+        return inputType
+    }
+
+    static getSuggestionsFromInputType(type: InputType): FilamentInputType[] {
+        let inputType = this.get()[type]
+
+        if(!inputType) return [FilamentInputType.TEXT_INPUT]
+
+        if(!(inputType instanceof Array)) {
+            inputType = [inputType]
+        }
 
         return inputType
     }
@@ -29,12 +46,16 @@ export default class FilamentInputTypesList {
     static get() {
         return {
             [InputType.TEXT]: FilamentInputType.TEXT_INPUT,
-            [InputType.TEXTAREA]: FilamentInputType.MARKDOWN_EDITOR,
+            [InputType.TEXTAREA]: [
+                FilamentInputType.RICH_EDITOR, FilamentInputType.MARKDOWN_EDITOR, FilamentInputType.TEXTAREA
+            ],
             [InputType.NUMBER]: FilamentInputType.TEXT_INPUT,
             [InputType.FILE]: FilamentInputType.FILE_UPLOAD,
             [InputType.IMAGE]: FilamentInputType.FILE_UPLOAD,
             [InputType.BELONGS_TO]: FilamentInputType.SELECT,
-            [InputType.CHECKBOX]: FilamentInputType.CHECKBOX,
+            [InputType.CHECKBOX]: [
+                FilamentInputType.CHECKBOX, FilamentInputType.TOGGLE
+            ],
             [InputType.SELECT]: FilamentInputType.SELECT,
             [InputType.HIDDEN]: FilamentInputType.HIDDEN,
             [InputType.PASSWORD]: FilamentInputType.TEXT_INPUT,
