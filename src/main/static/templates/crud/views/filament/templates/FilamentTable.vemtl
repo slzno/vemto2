@@ -1,0 +1,23 @@
+<% const inputColumnData = input.filamentSettings.columnData %>
+<% const columnName = !input.isBelongsTo() ? input.name : `${input.relationship.name}.${input.relationship.relatedModel.table.getLabelColumnName()}` %>
+<###>
+<$ pascalCase(inputColumnData.columnType) $>::make('<$ columnName $>')
+    <% if(input.isImage() && input.filamentSettings.formData.disk) { %>
+        ->disk('<$ input.filamentSettings.formData.disk $>')
+    <% } %>
+    <# --- #>
+    <% if(input.isImage() && input.filamentSettings.formData.visibility) { %>
+        ->visibility('<$ input.filamentSettings.formData.visibility $>')
+    <% } %>
+    <# --- #>
+    <% if(input.isTextarea()) { %>
+        ->limit(50)
+    <% } %>
+    <# --- #>
+    <% if(input.filamentSettings.formData.allowHtml) { %>
+        ->html()
+    <% } %>
+    <# --- #>
+    <% if(input.isDateOrDateTime()) { %>
+        ->since()
+    <% } %>,

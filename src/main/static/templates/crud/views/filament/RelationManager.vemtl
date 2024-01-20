@@ -1,0 +1,80 @@
+<?php
+<% const pascalCase = this.require('pascalCase') %>
+<% const parentResourceName = `${this.detail.crud.name}Resource` %>
+<% const modelIsSoftDeletes = this.detail.detailCrud.model.hasSoftDeletes %>
+
+namespace App\Filament\Resources\<$ this.detail.crud.section.name $>\<$ parentResourceName $>\RelationManagers;
+
+use Filament\Forms;
+use Filament\Tables;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
+use Filament\Forms\Components\Grid;
+use Illuminate\Database\Eloquent\Builder;
+<% if(modelIsSoftDeletes) { %>
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+<% } %>
+use Filament\Resources\RelationManagers\RelationManager;
+use App\Filament\Resources\<$ this.detail.crud.section.name $>\<$ this.detail.crud.model.name $>Resource;
+<% for(let input of this.detail.detailCrud.getInputsForForms()) { %>
+use Filament\Forms\Components\<$ pascalCase(input.filamentSettings.formData.inputType) $>;
+use Filament\Tables\Columns\<$ pascalCase(input.filamentSettings.columnData.columnType) $>;
+<% } %>
+
+class <$ this.filenameWithoutExtension $> extends RelationManager
+{
+    protected static string $relationship = '<$ this.detail.relationship.name $>';
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Grid::make(['default' => 1])->schema([
+                    <% for(let input of this.detail.detailCrud.getInputsForForms()) { %>
+                        <import template="crud/views/filament/templates/FilamentForm.vemtl">
+                    <% } %>
+                ])
+            ]);
+    }
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->recordTitleAttribute('title')
+            ->columns([
+                <% for(let input of this.detail.detailCrud.getInputsForIndex()) { %>
+                    <import template="crud/views/filament/templates/FilamentTable.vemtl">
+                <% } %>
+            ])
+            ->filters([
+                <% if(modelIsSoftDeletes) { %>
+                    Tables\Filters\TrashedFilter::make(),
+                <% } %>
+            ])
+            ->headerActions([
+                Tables\Actions\CreateAction::make(),
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+                <% if(modelIsSoftDeletes) { %>
+                    Tables\Actions\ForceDeleteAction::make(),
+                    Tables\Actions\RestoreAction::make(),
+                <% } %>
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                    <% if(modelIsSoftDeletes) { %>
+                        Tables\Actions\RestoreBulkAction::make(),
+                        Tables\Actions\ForceDeleteBulkAction::make(),
+                    <% } %>
+                ]),
+            ])
+            <% if(modelIsSoftDeletes) { %>
+            ->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]))
+            <% } %>;
+    }
+}

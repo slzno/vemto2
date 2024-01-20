@@ -35,7 +35,7 @@ export default class HasManyDetail extends RelaDB.Model {
 
         const detailCrud = Crud.createFromModel(
             relationship.relatedModel,
-            CrudType.LIVEWIRE,
+            crud.type,
             excludedColumns,
         )
 

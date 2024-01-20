@@ -4,6 +4,8 @@ import RenderableFilamentCreateComponent from "./views/filament/RenderableFilame
 import RenderableFilamentEditComponent from "./views/filament/RenderableFilamentEditComponent"
 import RenderableFilamentListComponent from "./views/filament/RenderableFilamentListComponent"
 import RenderableFilamentViewComponent from "./views/filament/RenderableFilamentViewComponent"
+import HasManyDetail from "@Common/models/crud/HasManyDetail"
+import RenderableFilamentRelationManager from "./views/filament/RenderableFilamentRelationManager"
 
 export default class GenerateFilamentResources {
     async start() {
@@ -15,6 +17,11 @@ export default class GenerateFilamentResources {
             await new RenderableFilamentViewComponent(resource).render()
             await new RenderableFilamentEditComponent(resource).render()
             await new RenderableFilamentListComponent(resource).render()
+
+            resource.hasManyDetails.forEach(async (hasManyDetail: HasManyDetail) => {
+                console.log(hasManyDetail.detailCrud.getInputsForForms())
+                await new RenderableFilamentRelationManager(hasManyDetail).render()
+            })
         }
     }
 }
