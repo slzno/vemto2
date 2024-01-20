@@ -24,7 +24,7 @@ export interface CrudSettings {
     collectionTitle: string
 }
 
-export interface FilamentSettings {
+export interface FilamentCrudSettings {
     recordTitle: string
     shouldSkipAuthorization: boolean
     modelLabel: string
@@ -72,7 +72,7 @@ export default class Crud extends RelaDB.Model {
     livewireCreateComponentName: string
     livewireEditComponentName: string
 
-    filamentSettings: FilamentSettings
+    filamentSettings: FilamentCrudSettings
     
     relationships() {
         return {

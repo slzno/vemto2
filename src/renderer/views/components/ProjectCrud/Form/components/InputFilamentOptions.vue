@@ -11,7 +11,7 @@
     import debounce from "@Common/tools/debounce"
     import { InputType } from "@Common/models/crud/InputType"
     import UiSelect from "@Renderer/components/ui/UiSelect.vue"
-import Main from "@Renderer/services/wrappers/Main"
+    import Main from "@Renderer/services/wrappers/Main"
     
     const props = defineProps({
             input: Input
@@ -25,35 +25,35 @@ import Main from "@Renderer/services/wrappers/Main"
     const inputFilamentTypeIs = (type: string | string[]) => {
         if(!Array.isArray(type)) type = [type]
 
-        return type.includes(input.value.filamentData.inputType)
+        return type.includes(input.value.filamentSettings.formData.inputType)
     }
 
     const removeFilamentOption = (propertyName: string, index: number) => {
-        input.value.filamentData[propertyName].splice(index, 1)
+        input.value.filamentSettings.formData[propertyName].splice(index, 1)
         saveInput()
     }
 
     const newFilamentOption = (propertyName: string) => {
-        if(!input.value.filamentData[propertyName]) input.value.filamentData[propertyName] = []
+        if(!input.value.filamentSettings.formData[propertyName]) input.value.filamentSettings.formData[propertyName] = []
 
-        input.value.filamentData[propertyName].push('')
+        input.value.filamentSettings.formData[propertyName].push('')
     }
 
     const moveUpOption = (propertyName: string, index: number) => {
         if(index === 0) return
 
-        const option = input.value.filamentData[propertyName][index]
-        input.value.filamentData[propertyName].splice(index, 1)
-        input.value.filamentData[propertyName].splice(index - 1, 0, option)
+        const option = input.value.filamentSettings.formData[propertyName][index]
+        input.value.filamentSettings.formData[propertyName].splice(index, 1)
+        input.value.filamentSettings.formData[propertyName].splice(index - 1, 0, option)
         saveInput()
     }
 
     const moveDownOption = (propertyName: string, index: number) => {
-        if(index === input.value.filamentData[propertyName].length - 1) return
+        if(index === input.value.filamentSettings.formData[propertyName].length - 1) return
 
-        const option = input.value.filamentData[propertyName][index]
-        input.value.filamentData[propertyName].splice(index, 1)
-        input.value.filamentData[propertyName].splice(index + 1, 0, option)
+        const option = input.value.filamentSettings.formData[propertyName][index]
+        input.value.filamentSettings.formData[propertyName].splice(index, 1)
+        input.value.filamentSettings.formData[propertyName].splice(index + 1, 0, option)
         saveInput()
     }
 
@@ -65,58 +65,58 @@ import Main from "@Renderer/services/wrappers/Main"
     <div class="flex-grow overflow-auto pb-40">
         <div class="p-4 space-y-4">
             <div>
-                <UiText v-model="input.filamentData.helperText" placeholder="Input Helper Text" label="Helper Text" @input="saveInput()" />
+                <UiText v-model="input.filamentSettings.formData.helperText" placeholder="Input Helper Text" label="Helper Text" @input="saveInput()" />
             </div>
 
             <div v-if="inputFilamentTypeIs('select')">
-                <UiText v-model="input.filamentData.loadingMessage" placeholder="Message while the options are loading" label="Loading Message" @input="saveInput()" />
+                <UiText v-model="input.filamentSettings.formData.loadingMessage" placeholder="Message while the options are loading" label="Loading Message" @input="saveInput()" />
             </div>
 
             <div v-if="inputFilamentTypeIs('select')">
-                <UiText v-model="input.filamentData.noResultMessage" placeholder="Shown when there are no results" label="No Results Message" @input="saveInput()" />
+                <UiText v-model="input.filamentSettings.formData.noResultMessage" placeholder="Shown when there are no results" label="No Results Message" @input="saveInput()" />
             </div>
 
             <div v-if="inputFilamentTypeIs('select')">
-                <UiText v-model="input.filamentData.searchMessage" placeholder="Shown when the search field is empty" label="Search Message" @input="saveInput()" />
+                <UiText v-model="input.filamentSettings.formData.searchMessage" placeholder="Shown when the search field is empty" label="Search Message" @input="saveInput()" />
             </div>
 
             <div v-if="inputFilamentTypeIs(['date-picker', 'datetime-picker', 'time-picker'])">
-                <UiText v-model="input.filamentData.timezone" placeholder="Timezone" label="Timezone" @input="saveInput()" />
+                <UiText v-model="input.filamentSettings.formData.timezone" placeholder="Timezone" label="Timezone" @input="saveInput()" />
             </div>
 
             <div v-if="inputFilamentTypeIs(['date-picker', 'datetime-picker', 'time-picker'])">
-                <UiText v-model="input.filamentData.dateFormat" placeholder="Date format for storing" label="Date Format" @input="saveInput()" />
+                <UiText v-model="input.filamentSettings.formData.dateFormat" placeholder="Date format for storing" label="Date Format" @input="saveInput()" />
             </div>
 
             <div v-if="inputFilamentTypeIs(['date-picker', 'datetime-picker', 'time-picker'])">
-                <UiText v-model="input.filamentData.displayFormat" placeholder="Date format for display" label="Display Form" @input="saveInput()" />
+                <UiText v-model="input.filamentSettings.formData.displayFormat" placeholder="Date format for display" label="Display Form" @input="saveInput()" />
             </div>
 
             <div v-if="inputFilamentTypeIs('file-upload')">
-                <UiText v-model="input.filamentData.disk" placeholder="Disk name" label="Disk" @input="saveInput()" />
+                <UiText v-model="input.filamentSettings.formData.disk" placeholder="Disk name" label="Disk" @input="saveInput()" />
             </div>
 
             <div v-if="inputFilamentTypeIs('file-upload')">
-                <UiText v-model="input.filamentData.directory" placeholder="Directory name" label="Directory" @input="saveInput()" />
+                <UiText v-model="input.filamentSettings.formData.directory" placeholder="Directory name" label="Directory" @input="saveInput()" />
             </div>
 
             <div v-if="inputFilamentTypeIs('file-upload')">
-                <UiText :disabled="!input.filamentData.useImageEditor" v-model="input.filamentData.imageEditorViewportWidth" placeholder="Width" label="Viewport Width (Image Editor)" @input="saveInput()" />
+                <UiText :disabled="!input.filamentSettings.formData.useImageEditor" v-model="input.filamentSettings.formData.imageEditorViewportWidth" placeholder="Width" label="Viewport Width (Image Editor)" @input="saveInput()" />
             </div>
             
             <div v-if="inputFilamentTypeIs('file-upload')">
-                <UiText :disabled="!input.filamentData.useImageEditor" v-model="input.filamentData.imageEditorViewportHeight" placeholder="Height" label="Viewport Height (Image Editor)" @input="saveInput()" />
+                <UiText :disabled="!input.filamentSettings.formData.useImageEditor" v-model="input.filamentSettings.formData.imageEditorViewportHeight" placeholder="Height" label="Viewport Height (Image Editor)" @input="saveInput()" />
             </div>
 
             <div v-if="inputFilamentTypeIs('file-upload')">
-                <UiSelect v-model="input.filamentData.visibility" label="Visibility" @change="saveInput()">
+                <UiSelect v-model="input.filamentSettings.formData.visibility" label="Visibility" @change="saveInput()">
                     <option value="public">Public</option>  
                     <option value="private">Private</option>
                 </UiSelect>
             </div>
             
             <div v-if="inputFilamentTypeIs('file-upload')">
-                <UiSelect :disabled="!input.filamentData.useImageEditor" v-model="input.filamentData.imageEditorMode" label="Image Editor Mode" @change="saveInput()">
+                <UiSelect :disabled="!input.filamentSettings.formData.useImageEditor" v-model="input.filamentSettings.formData.imageEditorMode" label="Image Editor Mode" @change="saveInput()">
                     <option :value="undefined">Default</option>  
                     <option value="0">No restrictions</option>  
                     <option value="1">Restrict the crop box not to exceed the size of the canvas</option>
@@ -132,8 +132,8 @@ import Main from "@Renderer/services/wrappers/Main"
             <div class="flex flex-col gap-2" v-if="inputFilamentTypeIs(['text-input', 'datetime-picker', 'date-picker'])">
                 <label class="text-xs text-slate-400">Datalist</label>
 
-                <div class="flex-1 flex gap-2 items-center" v-for="(option, index) of input.filamentData.dataList">
-                    <component :is="inputFilamentTypeIs('text-input') ? UiText : UiDate" v-model="input.filamentData.dataList[index]" @input="saveInput()" />
+                <div class="flex-1 flex gap-2 items-center" v-for="(option, index) of input.filamentSettings.formData.dataList">
+                    <component :is="inputFilamentTypeIs('text-input') ? UiText : UiDate" v-model="input.filamentSettings.formData.dataList[index]" @input="saveInput()" />
 
                     <UiOptionsDropdown>
                         <UiDropdownItem @click="moveUpOption('dataList', index)">
@@ -160,8 +160,8 @@ import Main from "@Renderer/services/wrappers/Main"
             <div class="flex flex-col gap-2" v-if="inputFilamentTypeIs(['date-picker', 'datetime-picker'])">
                 <label class="text-xs text-slate-400">Disabled Dates</label>
 
-                <div class="flex-1 flex gap-2 items-center" v-for="(option, index) of input.filamentData.disabledDates">
-                    <UiDate v-model="input.filamentData.disabledDates[index]" @input="saveInput()" />
+                <div class="flex-1 flex gap-2 items-center" v-for="(option, index) of input.filamentSettings.formData.disabledDates">
+                    <UiDate v-model="input.filamentSettings.formData.disabledDates[index]" @input="saveInput()" />
 
                     <UiOptionsDropdown>
                         <UiDropdownItem @click="moveUpOption('disabledDates', index)">
@@ -185,11 +185,11 @@ import Main from "@Renderer/services/wrappers/Main"
                 </div>
             </div>
 
-            <div class="flex flex-col gap-2" v-if="inputFilamentTypeIs('file-upload') && input.filamentData.useImageEditor">
+            <div class="flex flex-col gap-2" v-if="inputFilamentTypeIs('file-upload') && input.filamentSettings.formData.useImageEditor">
                 <label class="text-xs text-slate-400">Aspect Ratios (Image Editor)</label>
 
-                <div class="flex-1 flex gap-2 items-center" v-for="(option, index) of input.filamentData.imageEditorAspectRatios">
-                    <UiText v-model="input.filamentData.imageEditorAspectRatios[index]" @input="saveInput()" />
+                <div class="flex-1 flex gap-2 items-center" v-for="(option, index) of input.filamentSettings.formData.imageEditorAspectRatios">
+                    <UiText v-model="input.filamentSettings.formData.imageEditorAspectRatios[index]" @input="saveInput()" />
 
                     <UiOptionsDropdown>
                         <UiDropdownItem @click="moveUpOption('imageEditorAspectRatios', index)">
@@ -214,47 +214,49 @@ import Main from "@Renderer/services/wrappers/Main"
             </div>
             
             <div class="mt-2 flex gap-2 flex-col">
-                <UiCheckbox v-if="!inputFilamentTypeIs(['file-upload'])" v-model="input.filamentData.autofocus" label="Auto Focus" @input="saveInput()" />
+                <UiCheckbox v-if="!inputFilamentTypeIs(['file-upload'])" v-model="input.filamentSettings.formData.autofocus" label="Auto Focus" @input="saveInput()" />
 
-                <div class="mt-2 flex gap-2 flex-col" v-if="inputFilamentTypeIs('file-upload')">
-                    <UiCheckbox v-model="input.filamentData.useAvatarMode" label="Enable avatar mode" @input="saveInput()" />
+                <div class="flex gap-2 flex-col" v-if="inputFilamentTypeIs('file-upload')">
+                    <UiCheckbox v-model="input.filamentSettings.formData.useAvatarMode" label="Enable avatar mode" @input="saveInput()" />
 
-                    <UiCheckbox v-model="input.filamentData.canReorderFiles" label="Allow reorder files" @input="saveInput()" />
+                    <UiCheckbox v-model="input.filamentSettings.formData.canReorderFiles" label="Allow reorder files" @input="saveInput()" />
 
-                    <UiCheckbox v-model="input.filamentData.useCircleCropper" label="Allow crop images as a circle" @input="saveInput()" />
+                    <UiCheckbox v-model="input.filamentSettings.formData.useCircleCropper" label="Allow crop images as a circle" @input="saveInput()" />
 
-                    <UiCheckbox v-model="input.filamentData.isDownloadable" label="Allow download files" @input="saveInput()" />
+                    <UiCheckbox v-model="input.filamentSettings.formData.isDownloadable" label="Allow download files" @input="saveInput()" />
 
-                    <UiCheckbox v-model="input.filamentData.canOpenFilesInNewTab" label="Allow open files in a new tab" @input="saveInput()" />
+                    <UiCheckbox v-model="input.filamentSettings.formData.canOpenFilesInNewTab" label="Allow open files in a new tab" @input="saveInput()" />
 
-                    <UiCheckbox v-model="input.filamentData.disablePreview" label="Disable file preview" @input="saveInput()" />
+                    <UiCheckbox v-model="input.filamentSettings.formData.disablePreview" label="Disable file preview" @input="saveInput()" />
 
-                    <UiCheckbox v-model="input.filamentData.useImageEditor" label="Enable image editor" @input="saveInput()" />
+                    <UiCheckbox v-model="input.filamentSettings.formData.useImageEditor" label="Enable image editor" @input="saveInput()" />
+
+                    <UiCheckbox v-model="input.filamentSettings.formData.preserveFilenames" label="Preserve filenames" @input="saveInput()" />
                 </div>
 
-                <UiCheckbox v-model="input.filamentData.preserveFilenames" label="Preserve filenames" @input="saveInput()" />
+                <div class="flex gap-2 flex-col" v-if="inputFilamentTypeIs('select')">
+                    <UiCheckbox v-model="input.filamentSettings.formData.allowHtml" label="Allow HTML in option labels" @input="saveInput()" />
 
-                <UiCheckbox v-if="inputFilamentTypeIs('text-input')" v-model="input.filamentData.autoComplete" label="Auto Complete" @input="saveInput()" />
+                    <UiCheckbox v-model="input.filamentSettings.formData.canSelectPlaceholder" label="Allow select the placeholder" @input="saveInput()" />
 
-                <UiCheckbox v-if="inputFilamentTypeIs('select')" v-model="input.filamentData.allowHtml" label="Allow HTML in option labels" @input="saveInput()" />
+                    <UiCheckbox v-model="input.filamentSettings.formData.canBeSearchable" label="Allow search options" @input="saveInput()" />
+                </div>
 
-                <UiCheckbox v-if="inputFilamentTypeIs(['select', 'file-upload'])" v-model="input.filamentData.isMultiple" label="Allow selecting multiple" @input="saveInput()" />
+                <UiCheckbox v-if="inputFilamentTypeIs('text-input')" v-model="input.filamentSettings.formData.autoComplete" label="Auto Complete" @input="saveInput()" />
 
-                <UiCheckbox v-if="inputFilamentTypeIs('select')" v-model="input.filamentData.canSelectPlaceholder" label="Allow select the placeholder" @input="saveInput()" />
-
-                <UiCheckbox v-if="inputFilamentTypeIs('select')" v-model="input.filamentData.canBeSearchable" label="Allow search options" @input="saveInput()" />
+                <UiCheckbox v-if="inputFilamentTypeIs(['select', 'file-upload'])" v-model="input.filamentSettings.formData.isMultiple" label="Allow selecting multiple" @input="saveInput()" />
                 
-                <UiCheckbox v-if="input.type === InputType.BELONGS_TO && inputFilamentTypeIs('select')" v-model="input.filamentData.canBePreloaded" label="Preload relationship options" @input="saveInput()" />
+                <UiCheckbox v-if="input.type === InputType.BELONGS_TO && inputFilamentTypeIs('select')" v-model="input.filamentSettings.formData.canBePreloaded" label="Preload relationship options" @input="saveInput()" />
                 
-                <UiCheckbox v-if="inputFilamentTypeIs(['checkbox', 'radio'])" v-model="input.filamentData.inline" label="Inline Component" @input="saveInput()" />
+                <UiCheckbox v-if="inputFilamentTypeIs(['checkbox', 'radio'])" v-model="input.filamentSettings.formData.inline" label="Inline Component" @input="saveInput()" />
                 
-                <UiCheckbox v-if="inputFilamentTypeIs('radio')" v-model="input.filamentData.inlineLabel" label="Inline Label" @input="saveInput()" />
+                <UiCheckbox v-if="inputFilamentTypeIs('radio')" v-model="input.filamentSettings.formData.inlineLabel" label="Inline Label" @input="saveInput()" />
 
-                <UiCheckbox v-if="inputFilamentTypeIs(['select', 'datetime-picker', 'date-picker', 'time-picker'])" v-model="input.filamentData.useCustomInput" label="Use custom input (not HTML5)" @input="saveInput()" />
+                <UiCheckbox v-if="inputFilamentTypeIs(['select', 'datetime-picker', 'date-picker', 'time-picker'])" v-model="input.filamentSettings.formData.useCustomInput" label="Use custom input (not HTML5)" @input="saveInput()" />
 
-                <UiCheckbox v-if="inputFilamentTypeIs(['datetime-picker', 'time-picker'])" v-model="input.filamentData.disableSeconds" label="Disable seconds on input" @input="saveInput()" />
+                <UiCheckbox v-if="inputFilamentTypeIs(['datetime-picker', 'time-picker'])" v-model="input.filamentSettings.formData.disableSeconds" label="Disable seconds on input" @input="saveInput()" />
 
-                <UiCheckbox v-if="inputFilamentTypeIs(['datetime-picker', 'date-picker', 'time-picker'])" v-model="input.filamentData.closeOnDateSelection" label="Close on date selection" @input="saveInput()" />
+                <UiCheckbox v-if="inputFilamentTypeIs(['datetime-picker', 'date-picker', 'time-picker'])" v-model="input.filamentSettings.formData.closeOnDateSelection" label="Close on date selection" @input="saveInput()" />
             </div>
         </div>
     </div>

@@ -1,17 +1,17 @@
-import Crud, { CrudType } from "./Crud"
+import Crud from "./Crud"
+import Model from "../Model"
 import Column from "../Column"
 import CrudPanel from "./CrudPanel"
-import Relationship from "../Relationship"
-import * as changeCase from "change-case"
-import RelaDB from "@tiago_silva_pereira/reladb"
-import GenerateInputValidation, { ValidationRuleType } from "./services/GenerateInputValidation"
-import Model from "../Model"
 import { InputType } from "./InputType"
+import * as changeCase from "change-case"
+import Relationship from "../Relationship"
+import RelaDB from "@tiago_silva_pereira/reladb"
 import InputSettingsList from "../data/InputSettingsList"
 import FillInputFilamentData from "./fillers/FillInputFilamentData"
+import FilamentInputSettings from "./filament/FilamentInputSettings"
 import FilamentRuleNameConversions from "./filament/FilamentRuleNameConversions"
 import FilamentIndividualValidations from "./filament/FilamentIndividualValidations"
-import FilamentInputData from "./filament/FilamentInputData"
+import GenerateInputValidation, { ValidationRuleType } from "./services/GenerateInputValidation"
 
 export enum InputValidationRuleType {
     TEXTUAL = "textual",
@@ -54,7 +54,7 @@ export default class Input extends RelaDB.Model {
     showOnDetails: boolean
     showOnIndex: boolean
 
-    filamentData: FilamentInputData
+    filamentSettings: FilamentInputSettings
 
     relationships() {
         return {

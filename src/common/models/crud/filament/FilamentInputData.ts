@@ -4,7 +4,6 @@ import { FilamentInputType } from "./FilamentInputTypesList"
 export default interface FilamentInputData {
     // Common params
     inputType: FilamentInputType
-    columnType: FilamentColumnType
     autofocus?: boolean
     helperText?: string
     useCustomInput?: boolean

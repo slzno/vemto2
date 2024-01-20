@@ -11,7 +11,7 @@ export enum FilamentColumnType {
     CHECKBOX_COLUMN = "checkbox-column"
 }
 
-export class FilamentColumnTypesList {
+export default class FilamentColumnTypesList {
     static getFromInputType(inputType: InputType): FilamentColumnType {
         let columnType = this.get()[inputType]
 

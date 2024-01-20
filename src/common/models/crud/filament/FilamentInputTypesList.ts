@@ -17,7 +17,7 @@ export enum FilamentInputType {
     TIME_PICKER = "time-picker"
 }
 
-export class FilamentInputTypesList {
+export default class FilamentInputTypesList {
     static getFromInputType(type: InputType): FilamentInputType {
         let inputType = this.get()[type]
 

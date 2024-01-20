@@ -1,17 +1,14 @@
 import Input from "../Input";
 import { InputType } from "../InputType";
-import { FilamentColumnTypesList } from "./FilamentColumnTypesList";
 import FilamentInputData from "./FilamentInputData";
-import { FilamentInputTypesList } from "./FilamentInputTypesList";
+import FilamentInputTypesList from "./FilamentInputTypesList";
 
 export default class FilamentInputDataList {
     static getFromInput(input: Input): FilamentInputData {
-        const inputType = FilamentInputTypesList.getFromInputType(input.type),
-            columnType = FilamentColumnTypesList.getFromInputType(input.type)
+        const inputType = FilamentInputTypesList.getFromInputType(input.type)
         
         let data: FilamentInputData = {
-            inputType,
-            columnType,
+            inputType
         } as FilamentInputData
 
         switch (input.type) {

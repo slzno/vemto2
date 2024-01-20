@@ -1,5 +1,7 @@
-import FilamentInputData from "../filament/FilamentInputData"
+import FilamentColumnData from "../filament/FilamentColumnData"
+import FilamentColumnDataList from "../filament/FilamentColumnDataList"
 import FilamentInputDataList from "../filament/FilamentInputDataList"
+import FilamentInputSettings from "../filament/FilamentInputSettings"
 import Input from "../Input"
 
 export default new class FillInputFilamentData {
@@ -17,10 +19,14 @@ export default new class FillInputFilamentData {
     }
 
     fill() {
-        const filamentData = FilamentInputDataList.getFromInput(this.input)
+        const formData = FilamentInputDataList.getFromInput(this.input),
+            columnData = FilamentColumnDataList.getFromInput(this.input)
 
-        if(!filamentData) return
+        if(!formData) return
 
-        this.input.filamentData = filamentData as FilamentInputData
+        this.input.filamentSettings = {
+            formData,
+            columnData,
+        } as FilamentInputSettings
     }
 }

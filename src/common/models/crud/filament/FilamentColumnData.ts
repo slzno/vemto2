@@ -1,3 +1,5 @@
-export default interface FilamentColumnData {
+import { FilamentColumnType } from "./FilamentColumnTypesList";
 
+export default interface FilamentColumnData {
+    columnType: FilamentColumnType
 }

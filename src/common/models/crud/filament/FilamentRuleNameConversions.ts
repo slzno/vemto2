@@ -4,7 +4,7 @@ import { FilamentInputType } from "./FilamentInputTypesList"
 export default class FilamentRuleNameConversions {
     static convert(input: Input, ruleName: string): string {
         let commonConverted = FilamentRuleNameConversions.getCommon()[ruleName],
-            fromTypeConversions = FilamentRuleNameConversions.getFromType()[input.filamentData.inputType]
+            fromTypeConversions = FilamentRuleNameConversions.getFromType()[input.filamentSettings.formData.inputType]
         
         if (fromTypeConversions && fromTypeConversions[ruleName]) {
             return fromTypeConversions[ruleName]

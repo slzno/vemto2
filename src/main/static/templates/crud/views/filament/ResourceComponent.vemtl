@@ -18,8 +18,8 @@ use App\Filament\Resources\<$ this.crud.section.name $>\<$ this.filenameWithoutE
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 <% for(let input of this.crud.inputs) { %>
-use Filament\Forms\Components\<$ pascalCase(input.filamentData.inputType) $>;
-use Filament\Tables\Columns\<$ pascalCase(input.filamentData.columnType) $>;
+use Filament\Forms\Components\<$ pascalCase(input.filamentSettings.formData.inputType) $>;
+use Filament\Tables\Columns\<$ pascalCase(input.filamentSettings.columnData.columnType) $>;
 <% } %>
 
 class <$ this.filenameWithoutExtension $> extends Resource
@@ -70,9 +70,10 @@ class <$ this.filenameWithoutExtension $> extends Resource
                             ->schema([
                                 <% for(let input of this.crud.getInputsForForms()) { %>
                                 <###>
+                                <% const inputFormData = input.filamentSettings.formData %>
                                 <% const [inlineRules, individualRules] = input.getRulesForFilamentTemplate() %>
                                 <###>
-                                <$ pascalCase(input.filamentData.inputType) $>::make('<$ input.name $>')
+                                <$ pascalCase(inputFormData.inputType) $>::make('<$ input.name $>')
                                     <###>
                                     <% if(inlineRules.length) { %>
                                         ->rules([<$ inlineRules.join(', ') $>]) 
@@ -110,15 +111,15 @@ class <$ this.filenameWithoutExtension $> extends Resource
                                         ->hiddenOn('edit')
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.autofocus) { %>
+                                    <% if(inputFormData.autofocus) { %>
                                         ->autofocus()
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.helperText) { %>
-                                        ->helperText('<$ input.filamentData.helperText $>')
+                                    <% if(inputFormData.helperText) { %>
+                                        ->helperText('<$ inputFormData.helperText $>')
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.autoComplete === false) { %>
+                                    <% if(inputFormData.autoComplete === false) { %>
                                         ->autocomplete(false)
                                     <% } %>
                                     <# --- #>
@@ -126,41 +127,41 @@ class <$ this.filenameWithoutExtension $> extends Resource
                                         ->default('<$ input.defaultValue $>')
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.dataList && input.filamentData.dataList.length) { %>
+                                    <% if(inputFormData.dataList && inputFormData.dataList.length) { %>
                                         ->datalist([
-                                            <% for(let option of input.filamentData.dataList) { %>
+                                            <% for(let option of inputFormData.dataList) { %>
                                                 '<$ option $>',
                                             <% } %>
                                         ])
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.isMultiple) { %>
+                                    <% if(inputFormData.isMultiple) { %>
                                         ->multiple()
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.canBeSearchable) { %>
+                                    <% if(inputFormData.canBeSearchable) { %>
                                         ->searchable()
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.useCustomInput) { %>
+                                    <% if(inputFormData.useCustomInput) { %>
                                         ->native(false)
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.canSelectPlaceholder === false) { %>
+                                    <% if(inputFormData.canSelectPlaceholder === false) { %>
                                         ->selectablePlaceholder(false)
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.loadingMessage?.length) { %>
-                                        ->loadingMessage('<$ input.filamentData.loadingMessage $>')
-                                        ->searchingMessage('<$ input.filamentData.loadingMessage $>')
+                                    <% if(inputFormData.loadingMessage?.length) { %>
+                                        ->loadingMessage('<$ inputFormData.loadingMessage $>')
+                                        ->searchingMessage('<$ inputFormData.loadingMessage $>')
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.noResultMessage?.length) { %>
-                                        ->noSearchResultsMessage('<$ input.filamentData.noResultMessage $>')
+                                    <% if(inputFormData.noResultMessage?.length) { %>
+                                        ->noSearchResultsMessage('<$ inputFormData.noResultMessage $>')
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.searchMessage?.length) { %>
-                                        ->searchPrompt('<$ input.filamentData.searchMessage $>')
+                                    <% if(inputFormData.searchMessage?.length) { %>
+                                        ->searchPrompt('<$ inputFormData.searchMessage $>')
                                     <% } %>
                                     <# --- #>
                                     <% if(input.items?.length) { %>
@@ -171,114 +172,114 @@ class <$ this.filenameWithoutExtension $> extends Resource
                                         ])
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.disabledDates?.length) { %>
+                                    <% if(inputFormData.disabledDates?.length) { %>
                                         ->disabledDates([
-                                            <% for(let date of input.filamentData.disabledDates) { %>
+                                            <% for(let date of inputFormData.disabledDates) { %>
                                                 '<$ date $>',
                                             <% } %>
                                         ])
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.inline) { %>
+                                    <% if(inputFormData.inline) { %>
                                         ->inline()
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.inlineLabel) { %>
+                                    <% if(inputFormData.inlineLabel) { %>
                                         ->inlineLabel()
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.dateFormat) { %>
-                                        ->format('<$ input.filamentData.dateFormat $>')
+                                    <% if(inputFormData.dateFormat) { %>
+                                        ->format('<$ inputFormData.dateFormat $>')
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.timezone) { %>
-                                        ->timezone('<$ input.filamentData.timezone $>')
+                                    <% if(inputFormData.timezone) { %>
+                                        ->timezone('<$ inputFormData.timezone $>')
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.disableSeconds) { %>
+                                    <% if(inputFormData.disableSeconds) { %>
                                         ->seconds(false)
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.displayFormat) { %>
-                                        ->displayFormat('<$ input.filamentData.displayFormat $>')
+                                    <% if(inputFormData.displayFormat) { %>
+                                        ->displayFormat('<$ inputFormData.displayFormat $>')
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.closeOnDateSelection) { %>
+                                    <% if(inputFormData.closeOnDateSelection) { %>
                                         ->closeOnDateSelection()
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.readOnly && ['textarea', 'text-input', 'datetime-picker'].includes(input.filamentData.inputType)) { %>
+                                    <% if(input.readOnly && ['textarea', 'text-input', 'datetime-picker'].includes(inputFormData.inputType)) { %>
                                         ->readonly()
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.disk) { %>
-                                        ->disk('<$ input.filamentData.disk $>')
+                                    <% if(inputFormData.disk) { %>
+                                        ->disk('<$ inputFormData.disk $>')
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.directory) { %>
-                                        ->directory('<$ input.filamentData.directory $>')
+                                    <% if(inputFormData.directory) { %>
+                                        ->directory('<$ inputFormData.directory $>')
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.visibility) { %>
-                                        ->visibility('<$ input.filamentData.visibility $>')
+                                    <% if(inputFormData.visibility) { %>
+                                        ->visibility('<$ inputFormData.visibility $>')
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.preserveFilenames) { %>
+                                    <% if(inputFormData.preserveFilenames) { %>
                                         ->preserveFilenames()
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.useAvatarMode) { %>
+                                    <% if(inputFormData.useAvatarMode) { %>
                                         ->avatar()
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.useImageEditor) { %>
+                                    <% if(inputFormData.useImageEditor) { %>
                                         ->image()
                                         ->imageEditor()
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.imageEditorAspectRatios?.length) { %>
+                                    <% if(inputFormData.imageEditorAspectRatios?.length) { %>
                                         ->imageEditorAspectRatios([
-                                            <% for(let ratio of input.filamentData.imageEditorAspectRatios) { %>
+                                            <% for(let ratio of inputFormData.imageEditorAspectRatios) { %>
                                                 <% ratio = ratio == 'null' ? ratio : `'${ratio}'` %>
                                                 <$ ratio $>,
                                             <% } %>
                                         ])
                                     <% } %>
                                     <# --- #>
-                                    <% if([0, 1, 2, 3].includes(input.filamentData.imageEditorMode)) { %>
-                                        ->imageEditorMode(<$ input.filamentData.imageEditorMode $>)
+                                    <% if([0, 1, 2, 3].includes(inputFormData.imageEditorMode)) { %>
+                                        ->imageEditorMode(<$ inputFormData.imageEditorMode $>)
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.imageEditorViewportWidth) { %>
-                                        ->imageEditorViewportWidth('<$ input.filamentData.imageEditorViewportWidth $>')
+                                    <% if(inputFormData.imageEditorViewportWidth) { %>
+                                        ->imageEditorViewportWidth('<$ inputFormData.imageEditorViewportWidth $>')
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.imageEditorViewportHeight) { %>
-                                        ->imageEditorViewportHeight('<$ input.filamentData.imageEditorViewportHeight $>')
+                                    <% if(inputFormData.imageEditorViewportHeight) { %>
+                                        ->imageEditorViewportHeight('<$ inputFormData.imageEditorViewportHeight $>')
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.useCircleCropper) { %>
+                                    <% if(inputFormData.useCircleCropper) { %>
                                         ->circleCropper()
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.disablePreview) { %>
+                                    <% if(inputFormData.disablePreview) { %>
                                         ->previewable(false)
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.isDownloadable) { %>
+                                    <% if(inputFormData.isDownloadable) { %>
                                         ->downloadable()
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.canOpenFilesInNewTab) { %>
+                                    <% if(inputFormData.canOpenFilesInNewTab) { %>
                                         ->openable()
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.canReorderFiles) { %>
+                                    <% if(inputFormData.canReorderFiles) { %>
                                         ->reorderable()
                                         ->appendFiles()
                                     <% } %>
                                     <# --- #>
-                                    <% if(input.filamentData.disableDeleteButton) { %>
+                                    <% if(inputFormData.disableDeleteButton) { %>
                                         ->deleteable(false)
                                     <% } %>,
                                     
@@ -294,21 +295,23 @@ class <$ this.filenameWithoutExtension $> extends Resource
             ->poll('60s')
             ->columns([
                 <% for(let input of this.crud.getInputsForIndex()) { %>
+                    <###>
+                    <% const inputColumnData = input.filamentSettings.columnData %>
                     <% const columnName = !input.isBelongsTo() ? input.name : `${input.relationship.name}.${input.relationship.relatedModel.table.getLabelColumnName()}` %>
-                    <# --- #>
-                    <$ pascalCase(input.filamentData.columnType) $>::make('<$ columnName $>')
-                        <% if(input.filamentData.disk) { %>
-                            ->disk('<$ input.filamentData.disk $>')
+                    <###>
+                    <$ pascalCase(inputColumnData.columnType) $>::make('<$ columnName $>')
+                        <% if(input.filamentSettings.formData.disk) { %>
+                            ->disk('<$ input.filamentSettings.formData.disk $>')
                         <% } %>
                         <# --- #>
-                        <% if(input.filamentData.visibility) { %>
-                            ->visibility('<$ input.filamentData.visibility $>')
+                        <% if(input.filamentSettings.formData.visibility) { %>
+                            ->visibility('<$ input.filamentSettings.formData.visibility $>')
                         <% } %>
                         <# --- #>
                         <% if(input.isTextarea()) { %>
                             ->limit(50)
                         <% } %>
-                        <% if(input.filamentData.allowHtml) { %>
+                        <% if(input.filamentSettings.formData.allowHtml) { %>
                             ->html()
                         <% } %>
                         <# --- #>
