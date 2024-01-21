@@ -61,6 +61,22 @@
         saveInput()
     }
 
+    const removeEmptyBadgeColors = () => {
+        input.value.filamentSettings.columnData.badgeColors = input.value.filamentSettings.columnData.badgeColors
+            .filter(item => item.label !== "" || item.color !== "")
+
+        saveInput()
+    }
+
+    const addItem = () => {
+        if(!input.value.filamentSettings.columnData.badgeColors) input.value.filamentSettings.columnData.badgeColors = []
+
+        input.value.filamentSettings.columnData.badgeColors.push({
+            label: "",
+            color: ""
+        })
+    }
+
     const getFilamentTypeSuggestions = () => {
         return FilamentColumnTypesList.getSuggestionsFromInputType(input.value.type)
     }
@@ -75,36 +91,99 @@
             </UiSelect>
         </div>
 
+        <div>
+            <UiText v-model="input.filamentSettings.columnData.label" placeholder="Label" label="Column Label" @input="saveInput()" />
+        </div>
+
         <div v-if="filamentColumnTypeIs('text-column')">
             <UiText v-model="input.filamentSettings.columnData.description" placeholder="Description" label="Column Description" @input="saveInput()" />
         </div>
 
-        <div v-if="filamentColumnTypeIs('text-column')">
-            <UiText v-model="input.filamentSettings.columnData.prefix" placeholder="Prefix" label="Column Prefix" @input="saveInput()" />
+        <div class="grid grid-cols-2 gap-2">
+            <div v-if="filamentColumnTypeIs('text-column')">
+                <UiText v-model="input.filamentSettings.columnData.iconName" placeholder="Icon Name" label="Column Icon Name" @input="saveInput()" />
+            </div>
+
+            <div v-if="filamentColumnTypeIs('text-column')">
+                <UiText v-model="input.filamentSettings.columnData.iconColor" placeholder="Icon Color" label="Column Icon Color" @input="saveInput()" />
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+            <div v-if="filamentColumnTypeIs('text-column')">
+                <UiText v-model="input.filamentSettings.columnData.prefix" placeholder="Prefix" label="Column Prefix" @input="saveInput()" />
+            </div>
+
+            <div v-if="filamentColumnTypeIs('text-column')">
+                <UiText v-model="input.filamentSettings.columnData.suffix" placeholder="Suffix" label="Column Suffix" @input="saveInput()" />
+            </div>
         </div>
 
         <div v-if="filamentColumnTypeIs('text-column')">
-            <UiText v-model="input.filamentSettings.columnData.suffix" placeholder="Suffix" label="Column Suffix" @input="saveInput()" />
+            <UiNumber v-model="input.filamentSettings.columnData.textLimit" placeholder="Limit" label="Text Limit" @input="saveInput()" />
         </div>
 
-        <div>
-            <UiText v-model="input.filamentSettings.columnData.label" placeholder="Label" label="Column Label" @input="saveInput()" />
+        <div class="flex gap-4 flex-col" v-if="filamentColumnTypeIs('text-column')">
+            <div>
+                <UiCheckbox v-model="input.filamentSettings.columnData.showAsBadge" label="Show as badge" @input="saveInput()" />
+                <small v-if="input.filamentSettings.columnData.showAsBadge" class="text-slate-400 underline">It is recommended that you add the <b>'default'</b> key if you cannot list all options here.</small>
+            </div>
+            
+            <div class="-mt-2" :class="{ 'opacity-60': !input.filamentSettings.columnData.showAsBadge }">
+                <div class="max-h-[300px] overflow-y-auto">
+                    <template v-for="(item, index) in input.filamentSettings.columnData.badgeColors" :key="index">
+                        <div class="flex gap-2 my-1 justify-center items-center" @keyup.esc="removeEmptyBadgeColors()">
+                            <div class="w-2/4">
+                                <UiText :disabled="!input.filamentSettings.columnData.showAsBadge" v-model="item.label" placeholder="Item Label" @input="saveInput()" />
+                            </div>
+                            <div class="w-2/4">
+                                <UiText :disabled="!input.filamentSettings.columnData.showAsBadge" v-model="item.color" placeholder="Item Color" @input="saveInput()" />
+                            </div>
+                            <TrashIcon class="w-5 h-5 text-red-400 hover:text-red-500 cursor-pointer" @click="removeFilamentOption('badgeColors', index)" />
+                        </div>
+                    </template>
+                </div>
+
+                <UiSmallButton :disabled="!input.filamentSettings.columnData.showAsBadge" @click="addItem()">
+                    <span class="flex items-center">
+                        <PlusCircleIcon class="w-5 h-5 mr-1" />
+                        Add Color
+                    </span>
+                </UiSmallButton>
+            </div>
+
+            <div>
+                <UiCheckbox v-model="input.filamentSettings.columnData.showAsNumeric" label="Show as Numeric" @input="saveInput()" />
+                
+                <div class="grid grid-cols-3 gap-2 mt-2">
+                    <UiNumber :disabled="!input.filamentSettings.columnData.showAsNumeric" v-model="input.filamentSettings.columnData.decimalPlaces" label="Decimal Places" @input="saveInput()" />
+                    <UiText :disabled="!input.filamentSettings.columnData.showAsNumeric" v-model="input.filamentSettings.columnData.decimalSeparator" label="Decimal Separator" @input="saveInput()" />
+                    <UiText :disabled="!input.filamentSettings.columnData.showAsNumeric" v-model="input.filamentSettings.columnData.thousandsSeparator" label="Thousands Separator" @input="saveInput()" />
+                </div>
+            </div>
+
+            <div>
+                <UiCheckbox v-model="input.filamentSettings.columnData.showAsCurrency" label="Show as Currency" @input="saveInput()" />
+                
+                <div class="grid grid-cols-2 gap-2 mt-2">
+                    <UiText :disabled="!input.filamentSettings.columnData.showAsCurrency" v-model="input.filamentSettings.columnData.currencySymbol" label="Currency Symbol" @input="saveInput()" />
+                    <UiNumber :disabled="!input.filamentSettings.columnData.showAsCurrency" v-model="input.filamentSettings.columnData.divideBy" label="Divide By" @input="saveInput()" />
+                </div>
+            </div>
+
+            <UiCheckbox v-model="input.filamentSettings.columnData.isMarkdown" label="Show as Markdown" @input="saveInput()" />
         </div>
         
         <div>
-            <UiCheckbox v-model="input.filamentSettings.columnData.canBeSortable" label="Can be sortable" @input="saveInput()" />
+            <UiCheckbox v-model="input.filamentSettings.columnData.canBeSortable" label="Can be Sortable" @input="saveInput()" />
         </div>
         
         <div>
-            <UiCheckbox v-model="input.filamentSettings.columnData.canBeSearchable" label="Can be searchable" @input="saveInput()" />
+            <UiCheckbox v-model="input.filamentSettings.columnData.canBeSearchable" label="Can be Searchable" @input="saveInput()" />
         </div>
 
         <div>
-            <UiCheckbox v-model="input.filamentSettings.columnData.canBeToggled" label="Can be toggled" @input="saveInput()" />
-        </div>
-
-        <div v-if="filamentColumnTypeIs('text-column')">
-            <UiCheckbox v-model="input.filamentSettings.columnData.showAsBadge" label="Show as badge" @input="saveInput()" />
+            <UiCheckbox v-model="input.filamentSettings.columnData.canBeToggled" label="Can be Toggled" @input="saveInput()" />
         </div>
     </div>
 </template>

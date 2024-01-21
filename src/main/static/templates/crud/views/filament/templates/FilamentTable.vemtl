@@ -10,44 +10,83 @@
         ->visibility('<$ input.filamentSettings.formData.visibility $>')
     <% } %>
     <# --- #>
-    <% if(input.isTextarea()) { %>
-        ->limit(50)
+    <% if(input.isTextarea() || input.filamentSettings.columnData.textLimit) { %>
+        ->limit(<$ input.filamentSettings.columnData.textLimit || 255 $>)
     <% } %>
     <# --- #>
     <% if(input.filamentSettings.formData.allowHtml) { %>
         ->html()
     <% } %>
     <# --- #>
-    <% if(input.filamentSettings.columnData.description) { %>
-        ->description('<$ input.filamentSettings.columnData.description $>')
+    <% if(inputColumnData.description) { %>
+        ->description('<$ inputColumnData.description $>')
     <% } %>
     <# --- #>
-    <% if(input.filamentSettings.columnData.label) { %>
-        ->label('<$ input.filamentSettings.columnData.label $>')
+    <% if(inputColumnData.label) { %>
+        ->label('<$ inputColumnData.label $>')
     <% } %>
     <# --- #>
-    <% if(input.filamentSettings.columnData.canBeSortable) { %>
+    <% if(inputColumnData.canBeSortable) { %>
         ->sortable()
     <% } %>
     <# --- #>
-    <% if(input.filamentSettings.columnData.canBeToggled) { %>
+    <% if(inputColumnData.canBeToggled) { %>
         ->toggleable()
     <% } %>
     <# --- #>
-    <% if(input.filamentSettings.columnData.canBeSearchable) { %>
+    <% if(inputColumnData.isMarkdown) { %>
+        ->markdown()
+    <% } %>
+    <# --- #>
+    <% if(inputColumnData.iconName) { %>
+        ->icon('<$ inputColumnData.iconName $>')
+        <###>
+        <% if(inputColumnData.iconColor) { %>
+            ->iconColor('<$ inputColumnData.iconColor $>')
+        <% } %>
+    <% } %>
+    <# --- #>
+    <% if(inputColumnData.canBeSearchable) { %>
         ->searchable()
     <% } %>
     <# --- #>
-    <% if(input.filamentSettings.columnData.showAsBadge) { %>
+    <% if(inputColumnData.showAsNumeric) { %>
+        ->numeric(
+            <% if(inputColumnData.decimalPlaces) { %>
+                decimalPlaces: <$ inputColumnData.decimalPlaces $>,
+            <% } %>
+            <###>
+            <% if(inputColumnData.decimalSeparator) { %>
+                decimalSeparator: '<$ inputColumnData.decimalSeparator $>',
+            <% } %>
+            <###>
+            <% if(inputColumnData.thousandsSeparator) { %>
+                thousandsSeparator: '<$ inputColumnData.thousandsSeparator $>',
+            <% } %>
+        )
+    <% } %>
+    <# --- #>
+    <% if(inputColumnData.showAsBadge) { %>
         ->badge()
     <% } %>
     <# --- #>
-    <% if(input.filamentSettings.columnData.prefix) { %>
-        ->prefix('<$ input.filamentSettings.columnData.prefix $>')
+    <% if(inputColumnData.badgeColors?.length) { %>
+        ->color(fn (string $state): string => match ($state) {
+            <###>
+            <% for(let badgeColor of inputColumnData.badgeColors) { %>
+                <% const badgeColorLabel = badgeColor.label === 'default' ? badgeColor.label : `'${badgeColor.label}'` %>
+                <###>
+                <$ badgeColorLabel $> => '<$ badgeColor.color $>',
+            <% } %>
+        })
     <% } %>
     <# --- #>
-    <% if(input.filamentSettings.columnData.suffix) { %>
-        ->suffix('<$ input.filamentSettings.columnData.suffix $>')
+    <% if(inputColumnData.prefix) { %>
+        ->prefix('<$ inputColumnData.prefix $>')
+    <% } %>
+    <# --- #>
+    <% if(inputColumnData.suffix) { %>
+        ->suffix('<$ inputColumnData.suffix $>')
     <% } %>
     <# --- #>
     <% if(input.isDateOrDateTime()) { %>
