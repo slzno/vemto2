@@ -45,7 +45,9 @@ export default class FilamentInputTypesList {
 
     static get() {
         return {
-            [InputType.TEXT]: FilamentInputType.TEXT_INPUT,
+            [InputType.TEXT]: [
+                FilamentInputType.TEXT_INPUT, FilamentInputType.TEXTAREA, FilamentInputType.RICH_EDITOR, FilamentInputType.MARKDOWN_EDITOR, FilamentInputType.COLOR_PICKER
+            ],
             [InputType.TEXTAREA]: [
                 FilamentInputType.RICH_EDITOR, FilamentInputType.MARKDOWN_EDITOR, FilamentInputType.TEXTAREA
             ],

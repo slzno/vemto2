@@ -5,12 +5,18 @@ export interface FilamentColumnBadgeColor {
     color: string
 }
 
+export interface FilamentIconColumnData {
+    label: string
+    iconName: string
+}
+
 export default interface FilamentColumnData {
     columnType: FilamentColumnType
 
     description?: string
     label?: string
 
+    // Text column icon
     iconName?: string
     iconColor?: string
 
@@ -35,4 +41,6 @@ export default interface FilamentColumnData {
     showAsCurrency?: boolean
     currencySymbol?: string
     divideBy?: number
+
+    icons?: FilamentIconColumnData[]
 }

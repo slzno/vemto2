@@ -61,17 +61,17 @@
         saveInput()
     }
 
-    const removeEmptyBadgeColors = () => {
-        input.value.filamentSettings.columnData.badgeColors = input.value.filamentSettings.columnData.badgeColors
+    const removeEmptyColumnPropertyData = (propertyName: string) => {
+        input.value.filamentSettings.columnData[propertyName] = input.value.filamentSettings.columnData[propertyName]
             .filter(item => item.label !== "" || item.color !== "")
 
         saveInput()
     }
 
-    const addItem = () => {
-        if(!input.value.filamentSettings.columnData.badgeColors) input.value.filamentSettings.columnData.badgeColors = []
+    const addItemForProperty = (propertyName: string) => {
+        if(!input.value.filamentSettings.columnData[propertyName]) input.value.filamentSettings.columnData[propertyName] = []
 
-        input.value.filamentSettings.columnData.badgeColors.push({
+        input.value.filamentSettings.columnData[propertyName].push({
             label: "",
             color: ""
         })
@@ -99,22 +99,22 @@
             <UiText v-model="input.filamentSettings.columnData.description" placeholder="Description" label="Column Description" @input="saveInput()" />
         </div>
 
-        <div class="grid grid-cols-2 gap-2">
-            <div v-if="filamentColumnTypeIs('text-column')">
+        <div class="grid grid-cols-2 gap-2" v-if="filamentColumnTypeIs('text-column')">
+            <div>
                 <UiText v-model="input.filamentSettings.columnData.iconName" placeholder="Icon Name" label="Column Icon Name" @input="saveInput()" />
             </div>
 
-            <div v-if="filamentColumnTypeIs('text-column')">
+            <div>
                 <UiText v-model="input.filamentSettings.columnData.iconColor" placeholder="Icon Color" label="Column Icon Color" @input="saveInput()" />
             </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-2">
-            <div v-if="filamentColumnTypeIs('text-column')">
+        <div class="grid grid-cols-2 gap-2" v-if="filamentColumnTypeIs('text-column')">
+            <div>
                 <UiText v-model="input.filamentSettings.columnData.prefix" placeholder="Prefix" label="Column Prefix" @input="saveInput()" />
             </div>
 
-            <div v-if="filamentColumnTypeIs('text-column')">
+            <div>
                 <UiText v-model="input.filamentSettings.columnData.suffix" placeholder="Suffix" label="Column Suffix" @input="saveInput()" />
             </div>
         </div>
@@ -123,6 +123,7 @@
             <UiNumber v-model="input.filamentSettings.columnData.textLimit" placeholder="Limit" label="Text Limit" @input="saveInput()" />
         </div>
 
+        <!-- TextColumn badge colors -->
         <div class="flex gap-4 flex-col" v-if="filamentColumnTypeIs('text-column')">
             <div>
                 <UiCheckbox v-model="input.filamentSettings.columnData.showAsBadge" label="Show as badge" @input="saveInput()" />
@@ -132,7 +133,7 @@
             <div class="-mt-2" :class="{ 'opacity-60': !input.filamentSettings.columnData.showAsBadge }">
                 <div class="max-h-[300px] overflow-y-auto">
                     <template v-for="(item, index) in input.filamentSettings.columnData.badgeColors" :key="index">
-                        <div class="flex gap-2 my-1 justify-center items-center" @keyup.esc="removeEmptyBadgeColors()">
+                        <div class="flex gap-2 my-1 justify-center items-center" @keyup.esc="removeEmptyColumnPropertyData('badgeColors')">
                             <div class="w-2/4">
                                 <UiText :disabled="!input.filamentSettings.columnData.showAsBadge" v-model="item.label" placeholder="Item Label" @input="saveInput()" />
                             </div>
@@ -144,7 +145,7 @@
                     </template>
                 </div>
 
-                <UiSmallButton :disabled="!input.filamentSettings.columnData.showAsBadge" @click="addItem()">
+                <UiSmallButton :disabled="!input.filamentSettings.columnData.showAsBadge" @click="addItemForProperty('badgeColors')">
                     <span class="flex items-center">
                         <PlusCircleIcon class="w-5 h-5 mr-1" />
                         Add Color
@@ -174,6 +175,61 @@
             <UiCheckbox v-model="input.filamentSettings.columnData.isMarkdown" label="Show as Markdown" @input="saveInput()" />
         </div>
         
+        <!-- IconColumn badge colors -->
+        <div v-if="filamentColumnTypeIs('icon-column')">
+            <div class="flex justify-between mb-2">
+                <label class="text-xs text-slate-400">Badge Colors</label>
+            </div>
+
+            <div class="max-h-[300px] overflow-y-auto">
+                <template v-for="(item, index) in input.filamentSettings.columnData.badgeColors" :key="index">
+                    <div class="flex gap-2 my-1 justify-center items-center" @keyup.esc="removeEmptyColumnPropertyData('badgeColors')">
+                        <div class="w-2/4">
+                            <UiText v-model="item.label" placeholder="Item Label" @input="saveInput()" />
+                        </div>
+                        <div class="w-2/4">
+                            <UiText v-model="item.color" placeholder="Item Color" @input="saveInput()" />
+                        </div>
+                        <TrashIcon class="w-5 h-5 text-red-400 hover:text-red-500 cursor-pointer" @click="removeFilamentOption('badgeColors', index)" />
+                    </div>
+                </template>
+            </div>
+
+            <UiSmallButton @click="addItemForProperty('badgeColors')">
+                <span class="flex items-center">
+                    <PlusCircleIcon class="w-5 h-5 mr-1" />
+                    Add Color
+                </span>
+            </UiSmallButton>
+        </div>
+
+        <div v-if="filamentColumnTypeIs('icon-column')">
+            <div class="flex justify-between mb-2">
+                <label class="text-xs text-slate-400">Icons</label>
+            </div>
+
+            <div class="max-h-[300px] overflow-y-auto">
+                <template v-for="(item, index) in input.filamentSettings.columnData.icons" :key="index">
+                    <div class="flex gap-2 my-1 justify-center items-center" @keyup.esc="removeEmptyColumnPropertyData('icons')">
+                        <div class="w-2/4">
+                            <UiText v-model="item.label" placeholder="Item Label" @input="saveInput()" />
+                        </div>
+                        <div class="w-2/4">
+                            <UiText v-model="item.iconName" placeholder="Icon Name" @input="saveInput()" />
+                        </div>
+                        <TrashIcon class="w-5 h-5 text-red-400 hover:text-red-500 cursor-pointer" @click="removeFilamentOption('icons', index)" />
+                    </div>
+                </template>
+            </div>
+
+            <UiSmallButton @click="addItemForProperty('icons')">
+                <span class="flex items-center">
+                    <PlusCircleIcon class="w-5 h-5 mr-1" />
+                    Add Color
+                </span>
+            </UiSmallButton>
+        </div>
+
         <div>
             <UiCheckbox v-model="input.filamentSettings.columnData.canBeSortable" label="Can be Sortable" @input="saveInput()" />
         </div>

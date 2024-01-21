@@ -18,6 +18,26 @@
         ->html()
     <% } %>
     <# --- #>
+    <% if(['select-column'].includes(inputColumnData.columnType) && input.items?.length) { %>
+        ->options([
+            <% for(let option of input.items) { %>
+                '<$ option.value $>' => '<$ option.label $>',
+            <% } %>
+        ])
+        <###>
+        <% if(input.filamentSettings.formData.canSelectPlaceholder === false) { %>
+            ->selectablePlaceholder(false)
+        <% } %>
+    <% } %>
+    <# --- #>
+    <% if(['icon-column'].includes(inputColumnData.columnType) && inputColumnData.icons?.length) { %>
+        ->icon(fn (string $state): string => match ($state) {
+            <% for(let option of inputColumnData.icons) { %>
+                '<$ option.label $>' => '<$ option.iconName $>',
+            <% } %>
+        })
+    <% } %>
+    <# --- #>
     <% if(inputColumnData.description) { %>
         ->description('<$ inputColumnData.description $>')
     <% } %>

@@ -39,16 +39,25 @@ export default class FilamentColumnTypesList {
 
     static get() {
         return {
-            [InputType.TEXT]: FilamentColumnType.TEXT_COLUMN,
+            [InputType.TEXT]: [
+                FilamentColumnType.TEXT_COLUMN, FilamentColumnType.TEXT_INPUT_COLUMN, FilamentColumnType.ICON_COLUMN, FilamentColumnType.COLOR_COLUMN
+            ],
+            [InputType.URL]: [
+                FilamentColumnType.TEXT_COLUMN, FilamentColumnType.TEXT_INPUT_COLUMN
+            ],
             [InputType.TEXTAREA]: FilamentColumnType.TEXT_COLUMN,
-            [InputType.NUMBER]: FilamentColumnType.TEXT_COLUMN,
+            [InputType.NUMBER]: [
+                FilamentColumnType.TEXT_COLUMN, FilamentColumnType.TEXT_INPUT_COLUMN
+            ],
             [InputType.FILE]: FilamentColumnType.TEXT_COLUMN,
             [InputType.IMAGE]: FilamentColumnType.IMAGE_COLUMN,
             [InputType.BELONGS_TO]: FilamentColumnType.TEXT_COLUMN,
             [InputType.CHECKBOX]: [
                 FilamentColumnType.CHECKBOX_COLUMN, FilamentColumnType.TOGGLE_COLUMN
             ],
-            [InputType.SELECT]: FilamentColumnType.TEXT_COLUMN,
+            [InputType.SELECT]: [
+                FilamentColumnType.TEXT_COLUMN, FilamentColumnType.SELECT_COLUMN, FilamentColumnType.ICON_COLUMN
+            ],
             [InputType.EMAIL]: FilamentColumnType.TEXT_COLUMN,
             [InputType.DATE]: FilamentColumnType.TEXT_COLUMN,
             [InputType.DATETIME]: FilamentColumnType.TEXT_COLUMN,
