@@ -9,7 +9,7 @@
     import RenderableFilamentEditComponent from "@Renderer/codegen/sequential/services/crud/views/filament/RenderableFilamentEditComponent"
     import RenderableFilamentListComponent from "@Renderer/codegen/sequential/services/crud/views/filament/RenderableFilamentListComponent"
     import RenderableFilamentViewComponent from "@Renderer/codegen/sequential/services/crud/views/filament/RenderableFilamentViewComponent"
-    import RenderableFilamentRelationManager from "@Renderer/codegen/sequential/services/crud/views/filament/RenderableFilamentRelationManager"
+    import RenderableFilamentCommonRelationManager from "@Renderer/codegen/sequential/services/crud/views/filament/RenderableFilamentCommonRelationManager"
     import HasManyDetail from "@Common/models/crud/HasManyDetail"
 
     const props = defineProps({

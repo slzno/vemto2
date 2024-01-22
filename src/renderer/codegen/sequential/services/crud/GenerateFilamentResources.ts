@@ -1,12 +1,14 @@
 import Crud from "@Common/models/crud/Crud"
+import HasManyDetail from "@Common/models/crud/HasManyDetail"
+import MorphManyDetail from "@Common/models/crud/MorphManyDetail"
 import RenderableFilamentResource from "./views/filament/RenderableFilamentResource"
-import RenderableFilamentCreateComponent from "./views/filament/RenderableFilamentCreateComponent"
 import RenderableFilamentEditComponent from "./views/filament/RenderableFilamentEditComponent"
 import RenderableFilamentListComponent from "./views/filament/RenderableFilamentListComponent"
 import RenderableFilamentViewComponent from "./views/filament/RenderableFilamentViewComponent"
-import HasManyDetail from "@Common/models/crud/HasManyDetail"
-import RenderableFilamentRelationManager from "./views/filament/RenderableFilamentRelationManager"
-import MorphManyDetail from "@Common/models/crud/MorphManyDetail"
+import RenderableFilamentCreateComponent from "./views/filament/RenderableFilamentCreateComponent"
+import RenderableFilamentCommonRelationManager from "./views/filament/RenderableFilamentCommonRelationManager"
+import RenderableFilamentBelongsToManyRelationManager from "./views/filament/RenderableFilamentBelongsToManyRelationManager"
+import BelongsToManyDetail from "@Common/models/crud/BelongsToManyDetail"
 
 export default class GenerateFilamentResources {
     async start() {
@@ -20,11 +22,15 @@ export default class GenerateFilamentResources {
             await new RenderableFilamentListComponent(resource).render()
 
             resource.hasManyDetails.forEach(async (hasManyDetail: HasManyDetail) => {
-                await new RenderableFilamentRelationManager(hasManyDetail).render()
+                await new RenderableFilamentCommonRelationManager(hasManyDetail).render()
             })
 
             resource.morphManyDetails.forEach(async (morphManyDetail: MorphManyDetail) => {
-                await new RenderableFilamentRelationManager(morphManyDetail).render()
+                await new RenderableFilamentCommonRelationManager(morphManyDetail).render()
+            })
+
+            resource.belongsToManyDetails.forEach(async (belongsToManyDetail: BelongsToManyDetail) => {
+                await new RenderableFilamentBelongsToManyRelationManager(belongsToManyDetail).render()
             })
         }
     }

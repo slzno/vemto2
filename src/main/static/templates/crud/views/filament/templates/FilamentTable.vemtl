@@ -1,5 +1,6 @@
 <% const inputColumnData = input.filamentSettings.columnData %>
-<% const columnName = !input.isBelongsTo() ? input.name : `${input.relationship.name}.${input.relationship.relatedModel.table.getLabelColumnName()}` %>
+<% const inputIsForBelongsToMany = typeof isBelongsToManyRelation !== 'undefined' && isBelongsToManyRelation %>
+<% const columnName = input.getColumnNameForFilament(inputIsForBelongsToMany) %>
 <###>
 <$ pascalCase(inputColumnData.columnType) $>::make('<$ columnName $>')
     <% if(input.isImage() && input.filamentSettings.formData.disk) { %>

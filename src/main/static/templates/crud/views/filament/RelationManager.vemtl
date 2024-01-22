@@ -1,7 +1,8 @@
 <?php
 <% const pascalCase = this.require('pascalCase') %>
 <% const parentResourceName = `${this.detail.crud.name}Resource` %>
-<% const modelIsSoftDeletes = this.detail.detailCrud.model.hasSoftDeletes %>
+<% const tableIsSoftDeletes = this.detail.detailCrud.table.hasSoftDeletes() %>
+<% const isBelongsToManyRelation = this.detail.detailCrud.isBelongsToManyDetail %>
 
 namespace App\Filament\Resources\<$ this.detail.crud.section.name $>\<$ parentResourceName $>\RelationManagers;
 
@@ -11,7 +12,7 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Forms\Components\Grid;
 use Illuminate\Database\Eloquent\Builder;
-<% if(modelIsSoftDeletes) { %>
+<% if(tableIsSoftDeletes) { %>
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 <% } %>
 use Filament\Resources\RelationManagers\RelationManager;
@@ -47,7 +48,6 @@ class <$ this.filenameWithoutExtension $> extends RelationManager
     {
         // hook:BEFORE_TABLE
         return $table
-            ->recordTitleAttribute('title')
             ->columns([
                 <% for(let input of this.detail.detailCrud.getInputsForIndex()) { %>
                     <import template="crud/views/filament/templates/FilamentTable.vemtl">
@@ -56,34 +56,43 @@ class <$ this.filenameWithoutExtension $> extends RelationManager
             ])
             ->filters([
                 // hook:TABLE_FILTERS
-                <% if(modelIsSoftDeletes) { %>
+                <% if(tableIsSoftDeletes) { %>
                     Tables\Filters\TrashedFilter::make(),
                 <% } %>
             ])
             ->headerActions([
                 // hook:TABLE_HEADER_ACTIONS
                 Tables\Actions\CreateAction::make(),
+                <% if(isBelongsToManyRelation) { %>
+                    Tables\Actions\AttachAction::make(),
+                <% } %>
             ])
             ->actions([
                 // hook:TABLE_ACTIONS
                 Tables\Actions\EditAction::make(),
+                <% if(isBelongsToManyRelation) { %>
+                    Tables\Actions\DetachAction::make(),
+                <% } %>
                 Tables\Actions\DeleteAction::make(),
-                <% if(modelIsSoftDeletes) { %>
+                <% if(tableIsSoftDeletes) { %>
                     Tables\Actions\ForceDeleteAction::make(),
                     Tables\Actions\RestoreAction::make(),
                 <% } %>
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    <% if(isBelongsToManyRelation) { %>
+                        Tables\Actions\DetachBulkAction::make(),
+                    <% } %>
                     Tables\Actions\DeleteBulkAction::make(),
                     // hook:TABLE_BULK_ACTIONS
-                    <% if(modelIsSoftDeletes) { %>
+                    <% if(tableIsSoftDeletes) { %>
                         Tables\Actions\RestoreBulkAction::make(),
                         Tables\Actions\ForceDeleteBulkAction::make(),
                     <% } %>
                 ]),
             ])
-            <% if(modelIsSoftDeletes) { %>
+            <% if(tableIsSoftDeletes) { %>
             ->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]))

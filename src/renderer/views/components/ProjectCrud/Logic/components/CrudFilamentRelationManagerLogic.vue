@@ -4,7 +4,7 @@
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import HookEditor from "@Renderer/components/editors/HookEditor.vue"
     import { ref, defineProps, onMounted, PropType, toRef, Ref } from "vue"
-    import RenderableFilamentRelationManager from "@Renderer/codegen/sequential/services/crud/views/filament/RenderableFilamentRelationManager"
+    import RenderableFilamentCommonRelationManager from "@Renderer/codegen/sequential/services/crud/views/filament/RenderableFilamentCommonRelationManager"
 
     const props = defineProps({
             crud: {
@@ -29,6 +29,10 @@
         if(crud.value.isMorphManyDetail) {
             return crud.value.getFirstRelatedMorphManyDetail()
         }
+
+        if(crud.value.isBelongsToManyDetail) {
+            return crud.value.getFirstRelatedBelongsToManyDetail()
+        }
     }
 
     onMounted(async () => {
@@ -36,7 +40,7 @@
 
         if(!firstCrudDetail) return
 
-        relationManagerComponentContent.value = await new RenderableFilamentRelationManager(
+        relationManagerComponentContent.value = await new RenderableFilamentCommonRelationManager(
             firstCrudDetail
         ).disableHooks().compile()
     })
