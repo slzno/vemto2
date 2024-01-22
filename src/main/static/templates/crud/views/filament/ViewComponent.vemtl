@@ -4,18 +4,23 @@
 
 namespace App\Filament\Resources\<$ this.crud.section.name $>\<$ parentResourceName $>\Pages;
 
-use App\Filament\Resources\<$ this.crud.section.name $>\<$ parentResourceName $>;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
+use App\Filament\Resources\<$ this.crud.section.name $>\<$ parentResourceName $>;
+// hook:IMPORTS
 
 class <$ this.filenameWithoutExtension $> extends ViewRecord
 {
+    // hook:TRAITS
     protected static string $resource = <$ parentResourceName $>::class;
+
+    // hook:METHODS
 
     protected function getHeaderActions(): array
     {
         return [
             Actions\EditAction::make(),
+            // hook:HEADER_ACTIONS
         ];
     }
 }

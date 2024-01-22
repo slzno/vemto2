@@ -25,9 +25,13 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\<$ pascalCase(input.filamentSettings.formData.inputType) $>;
 use Filament\Tables\Columns\<$ pascalCase(input.filamentSettings.columnData.columnType) $>;
 <% } %>
+// hook:IMPORTS
 
 class <$ this.filenameWithoutExtension $> extends Resource
 {
+    // hook:TRAITS
+
+    // hook:BEFORE_VARIABLES
     protected static ?string $model = <$ this.crud.model.name $>::class;
 
     protected static ?string $navigationIcon = '<$ navigationIcon $>';
@@ -67,9 +71,11 @@ class <$ this.filenameWithoutExtension $> extends Resource
     <% if(this.crud.filamentSettings.slug && this.crud.filamentSettings.slug != pascalCase(this.crud.plural)) { %>
     protected static ?string $slug = '<$ this.crud.filamentSettings.slug $>';
     <% } %>
+    // hook:AFTER_VARIABLES
 
     public static function form(Form $form): Form
     {
+        // hook:BEFORE_FORM
         return $form
             ->schema([
                 Section::make()
@@ -79,6 +85,7 @@ class <$ this.filenameWithoutExtension $> extends Resource
                                 <% for(let input of this.crud.getInputsForForms()) { %>
                                     <import template="crud/views/filament/templates/FilamentForm.vemtl">
                                 <% } %>
+                                // hook:FORM_FIELDS
                             ])
                     ])
             ]);
@@ -86,25 +93,30 @@ class <$ this.filenameWithoutExtension $> extends Resource
 
     public static function table(Table $table): Table
     {
+        // hook:BEFORE_TABLE
         return $table
             ->poll('60s')
             ->columns([
                 <% for(let input of this.crud.getInputsForIndex()) { %>
                     <import template="crud/views/filament/templates/FilamentTable.vemtl">
                 <% } %>
+                // hook:TABLE_COLUMNS
             ])
             ->filters([
                 <% if(modelIsSoftDeletes) { %>
                     Tables\Filters\TrashedFilter::make(),
                 <% } %>
+                // hook:TABLE_FILTERS
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\ViewAction::make(),
+                // hook:TABLE_ACTIONS
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    // hook:TABLE_BULK_ACTIONS
                     <% if(modelIsSoftDeletes) { %>
                         Tables\Actions\ForceDeleteBulkAction::make(),
                         Tables\Actions\RestoreBulkAction::make(),
@@ -115,20 +127,24 @@ class <$ this.filenameWithoutExtension $> extends Resource
 
     public static function getRelations(): array
     {
+        // hook:BEFORE_RELATIONS
         return [
             <% for(let detail of this.crud.hasManyDetails) { %>
                 RelationManagers\<$ detail.relationship.relatedModel.plural $>RelationManager::class,
             <% } %>
+            // hook:RELATIONS
         ];
     }
 
     public static function getPages(): array
     {
+        // hook:BEFORE_PAGES
         return [
             'index' => Pages\List<$ this.crud.plural $>::route('/'),
             'create' => Pages\Create<$ this.crud.name $>::route('/create'),
             'view' => Pages\View<$ this.crud.name $>::route('/{record}'),
             'edit' => Pages\Edit<$ this.crud.name $>::route('/{record}/edit'),
+            // hook:PAGES
         ];
     }
 

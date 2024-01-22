@@ -7,15 +7,20 @@ namespace App\Filament\Resources\<$ this.crud.section.name $>\<$ parentResourceN
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use App\Filament\Resources\<$ this.crud.section.name $>\<$ parentResourceName $>;
+// hook:IMPORTS
 
 class <$ this.filenameWithoutExtension $> extends EditRecord
 {
+    // hook:TRAITS
     protected static string $resource = <$ parentResourceName $>::class;
+
+    // hook:METHODS
 
     protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make(),
+            // hook:HEADER_ACTIONS
         ];
     }
 }

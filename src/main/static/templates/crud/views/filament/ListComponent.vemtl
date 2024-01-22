@@ -7,15 +7,20 @@ namespace App\Filament\Resources\<$ this.crud.section.name $>\<$ parentResourceN
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use App\Filament\Resources\<$ this.crud.section.name $>\<$ parentResourceName $>;
+// hook:IMPORTS
 
 class <$ this.filenameWithoutExtension $> extends ListRecords
 {
+    // hook:TRAITS
     protected static string $resource = <$ parentResourceName $>::class;
+
+    // hook:METHODS
 
     protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),
+            // hook:HEADER_ACTIONS
         ];
     }
 }
