@@ -225,7 +225,7 @@
             <UiSmallButton @click="addItemForProperty('icons')">
                 <span class="flex items-center">
                     <PlusCircleIcon class="w-5 h-5 mr-1" />
-                    Add Color
+                    Add Icon
                 </span>
             </UiSmallButton>
         </div>

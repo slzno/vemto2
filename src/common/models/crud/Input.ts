@@ -301,7 +301,7 @@ export default class Input extends RelaDB.Model {
     
                 if(ruleArgs?.length) {
                     methodArgs = ruleArgs.split(',').map((ruleArg: any) => {
-                        if(Number(ruleArg)) return ruleArg
+                        if(Number(ruleArg) >= 0) return ruleArg
     
                         return `"${ruleArg.trim()}"`
                     }).join(', ')

@@ -11,6 +11,20 @@ export default interface FilamentInputData {
     autoComplete?: boolean
     dataList?: string[]
 
+    prefix?: string
+    prefixIcon?: string
+    prefixIconColor?: string
+
+    suffix?: string
+    suffixIcon?: string
+    suffixIconColor?: string
+    
+    inputMode?: string
+    autoCompleteName?: string
+    autocapitalize?: string
+    isRevealable?: boolean
+    mask?: string
+
     // Select params
     allowHtml?: boolean
     canBePreloaded?: boolean

@@ -1,5 +1,6 @@
 <% const inputFormData = input.filamentSettings.formData %>
 <% const [inlineRules, individualRules] = input.getRulesForFilamentTemplate() %>
+<% const inputTypeIs = (type) => inputFormData.inputType === type %>
 
 <$ pascalCase(inputFormData.inputType) $>::make('<$ input.name $>')
     <###>
@@ -23,7 +24,9 @@
     <# --- #>
     <% if(input.isPassword()) { %>
         ->password()
-        ->revealable()
+        <% if(inputFormData.isRevealable) { %>
+            ->revealable()
+        <% } %>
     <% } %>
     <# --- #>
     <% if(input.isNumber()) { %>
@@ -39,23 +42,55 @@
         ->hiddenOn('edit')
     <% } %>
     <# --- #>
-    <% if(inputFormData.autofocus) { %>
+    <% if(inputTypeIs('text-input') && inputFormData.autofocus) { %>
         ->autofocus()
     <% } %>
     <# --- #>
-    <% if(inputFormData.onIcon) { %>
+    <% if(inputTypeIs('text-input') && inputFormData.prefix) { %>
+        ->prefix('<$ inputFormData.prefix $>')
+    <% } %>
+    <# --- #>
+    <% if(inputTypeIs('text-input') && inputFormData.prefixIcon) { %>
+        ->prefixIcon('<$ inputFormData.prefixIcon $>')
+    <% } %>
+    <# --- #>
+    <% if(inputTypeIs('text-input') && inputFormData.prefixIconColor) { %>
+        ->prefixIconColor('<$ inputFormData.prefixIconColor $>')
+    <% } %>
+    <# --- #>
+    <% if(inputTypeIs('text-input') && inputFormData.suffix) { %>
+        ->suffix('<$ inputFormData.suffix $>')
+    <% } %>
+    <# --- #>
+    <% if(inputTypeIs('text-input') && inputFormData.suffixIcon) { %>
+        ->suffixIcon('<$ inputFormData.suffixIcon $>')
+    <% } %>
+    <# --- #>
+    <% if(inputTypeIs('text-input') && inputFormData.suffixIconColor) { %>
+        ->suffixIconColor('<$ inputFormData.suffixIconColor $>')
+    <% } %>
+    <# --- #>
+    <% if(inputTypeIs('text-input') && inputFormData.mask) { %>
+        ->mask('<$ inputFormData.mask $>')
+    <% } %>
+    <# --- #>
+    <% if(inputTypeIs('text-input') && inputFormData.inputMode) { %>
+        ->inputMode('<$ inputFormData.inputMode $>')
+    <% } %>
+    <# --- #>
+    <% if(inputTypeIs('toggle') && inputFormData.onIcon) { %>
         ->onIcon('<$ inputFormData.onIcon $>')
     <% } %>
     <# --- #>
-    <% if(inputFormData.offIcon) { %>
+    <% if(inputTypeIs('toggle') && inputFormData.offIcon) { %>
         ->offIcon('<$ inputFormData.offIcon $>')
     <% } %>
     <# --- #>
-    <% if(inputFormData.onColor) { %>
+    <% if(inputTypeIs('toggle') && inputFormData.onColor) { %>
         ->onColor('<$ inputFormData.onColor $>')
     <% } %>
     <# --- #>
-    <% if(inputFormData.offColor) { %>
+    <% if(inputTypeIs('toggle') && inputFormData.offColor) { %>
         ->offColor('<$ inputFormData.offColor $>')
     <% } %>
     <# --- #>
@@ -63,15 +98,20 @@
         ->helperText('<$ inputFormData.helperText $>')
     <% } %>
     <# --- #>
-    <% if(inputFormData.autoComplete === false) { %>
-        ->autocomplete(false)
+    <% if(inputTypeIs('text-input') && inputFormData.autocapitalize) { %>
+        ->autocapitalize('<$ inputFormData.autocapitalize $>')
+    <% } %>
+    <# --- #>
+    <% if(inputFormData.autoComplete === false || inputFormData.autoCompleteName) { %>
+        <% const autoCompleteParam = inputFormData.autoComplete === false ? false : `'${inputFormData.autoCompleteName}'` %>
+        ->autocomplete(<$ autoCompleteParam $>)
     <% } %>
     <# --- #>
     <% if(input.defaultValue) { %>
         ->default('<$ input.defaultValue $>')
     <% } %>
     <# --- #>
-    <% if(inputFormData.dataList && inputFormData.dataList.length) { %>
+    <% if(['text-input', 'datetime-picker'].includes(inputFormData.inputType) && inputFormData.dataList && inputFormData.dataList.length) { %>
         ->datalist([
             <% for(let option of inputFormData.dataList) { %>
                 '<$ option $>',

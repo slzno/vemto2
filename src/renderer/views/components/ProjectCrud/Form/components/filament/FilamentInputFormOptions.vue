@@ -78,8 +78,61 @@
             </UiSelect>
         </div>
 
+        <div class="grid grid-cols-3 gap-2" v-if="filamentInputTypeIs('text-input')">
+            <div>
+                <UiText v-model="input.filamentSettings.formData.prefix" placeholder="Input Prefix" label="Prefix Text" @input="saveInput()" />
+            </div>
+
+            <div>
+                <UiText v-model="input.filamentSettings.formData.prefixIcon" placeholder="Input Prefix Icon" label="Prefix Icon" @input="saveInput()" />
+            </div>
+
+            <div>
+                <UiText v-model="input.filamentSettings.formData.prefixIconColor" placeholder="Prefix Icon Color" label="Prefix Icon Color" @input="saveInput()" />
+            </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2" v-if="filamentInputTypeIs('text-input')">
+            <div>
+                <UiText v-model="input.filamentSettings.formData.suffix" placeholder="Input Suffix" label="Suffix Text" @input="saveInput()" />
+            </div>
+
+            <div>
+                <UiText v-model="input.filamentSettings.formData.suffixIcon" placeholder="Input Suffix Icon" label="Suffix Icon" @input="saveInput()" />
+            </div>
+
+            <div>
+                <UiText v-model="input.filamentSettings.formData.suffixIconColor" placeholder="Suffix Icon Color" label="Suffix Icon Color" @input="saveInput()" />
+            </div>
+        </div>
+
+        <div v-if="filamentInputTypeIs('text-input') && !input.isPassword()">
+            <UiSelect v-model="input.filamentSettings.formData.inputMode" label="Input Mode" @change="saveInput()">
+                <option :value="undefined">Default</option>
+                <option value="decimal">Decimal</option>  
+                <option value="numeric">Numeric</option>  
+                <option value="tel">Tel</option>  
+                <option value="search">Search</option>  
+                <option value="email">Email</option>  
+                <option value="url">Url</option>  
+            </UiSelect>
+        </div>
+
+        <div v-if="filamentInputTypeIs('text-input') && !input.isPassword()">
+            <UiSelect v-model="input.filamentSettings.formData.autocapitalize" label="Auto Capitalize" @change="saveInput()">
+                <option :value="undefined">Default</option>
+                <option value="sentences">Sentences</option>  
+                <option value="words">Words</option>  
+                <option value="characters">Characters</option>
+            </UiSelect>
+        </div>
+
         <div v-if="!filamentInputTypeIs('hidden')">
             <UiText v-model="input.filamentSettings.formData.helperText" placeholder="Input Helper Text" label="Helper Text" @input="saveInput()" />
+        </div>
+
+        <div v-if="filamentInputTypeIs('text-input') && !input.isPassword()">
+            <UiText v-model="input.filamentSettings.formData.mask" placeholder="Input Mask" label="Mask" @input="saveInput()" />
         </div>
 
         <div v-if="filamentInputTypeIs('select')">
@@ -308,7 +361,12 @@
         </div>
         
         <div class="mt-2 flex gap-2 flex-col">
+            <UiCheckbox v-if="filamentInputTypeIs('text-input') && !input.isPassword()" v-model="input.filamentSettings.formData.autoComplete" label="Auto Complete" @input="saveInput()" />
+            <UiText v-if="filamentInputTypeIs('text-input') && !input.isPassword()" :disabled="!input.filamentSettings.formData.autoComplete" v-model="input.filamentSettings.formData.autoCompleteName" placeholder="Auto complete name" @input="saveInput()" />
+                        
             <UiCheckbox v-if="!filamentInputTypeIs(['hidden', 'file-upload'])" v-model="input.filamentSettings.formData.autofocus" label="Auto Focus" @input="saveInput()" />
+            
+            <UiCheckbox v-if="input.isPassword()" v-model="input.filamentSettings.formData.isRevealable" label="Is Revealable" @input="saveInput()" />
 
             <UiCheckbox v-if="filamentInputTypeIs('textarea')" v-model="input.filamentSettings.formData.autosize" label="Autosize" @input="saveInput()" />
 
@@ -345,8 +403,6 @@
 
                 <UiCheckbox v-model="input.filamentSettings.formData.isRgba" label="Use RGBA color format" @input="saveInput()" />
             </div>
-
-            <UiCheckbox v-if="filamentInputTypeIs('text-input')" v-model="input.filamentSettings.formData.autoComplete" label="Auto Complete" @input="saveInput()" />
 
             <UiCheckbox v-if="filamentInputTypeIs(['select', 'file-upload'])" v-model="input.filamentSettings.formData.isMultiple" label="Allow selecting multiple" @input="saveInput()" />
             
