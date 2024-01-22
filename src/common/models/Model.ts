@@ -428,6 +428,18 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         return this.ownRelationships.filter(relationship => relationship.type === 'HasMany') || []
     }
 
+    getMorphManyRelations(): Relationship[] {
+        return this.ownRelationships.filter(relationship => relationship.type === 'MorphMany') || []
+    }
+
+    getBelongsToManyRelations(): Relationship[] {
+        return this.ownRelationships.filter(relationship => relationship.type === 'BelongsToMany') || []
+    }
+
+    getMorphToManyRelations(): Relationship[] {
+        return this.ownRelationships.filter(relationship => relationship.type === 'MorphToMany') || []
+    }
+
     getRelationshipsNames(): string[] {
         return this.ownRelationships.map((relationship) => relationship.name)
     }

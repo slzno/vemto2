@@ -5,13 +5,13 @@ import {
     RenderableFileType,
 } from "@Common/models/RenderableFile"
 import Namespace from "@Renderer/codegen/util/Namespace"
-import Relationship from "@Common/models/Relationship"
 import HasManyDetail from "@Common/models/crud/HasManyDetail"
+import MorphManyDetail from "@Common/models/crud/MorphManyDetail"
 
 export default class RenderableFilamentRelationManager extends Renderable {
-    detail: HasManyDetail
+    detail: HasManyDetail | MorphManyDetail
 
-    constructor(detail: HasManyDetail) {
+    constructor(detail: HasManyDetail | MorphManyDetail) {
         super()
 
         this.detail = detail
@@ -32,7 +32,7 @@ export default class RenderableFilamentRelationManager extends Renderable {
     getPath(): string {
         const crud = this.detail.crud
 
-        return Namespace.from(`App\\Filament\\Resources\\${crud.section.name}\\${crud.model.name}Resource\\RelationManagers`).toPath()
+        return Namespace.from(`App\\Filament\\Resources\\${crud.section.name}\\${crud.name}Resource\\RelationManagers`).toPath()
     }
 
     getFilename(): string {

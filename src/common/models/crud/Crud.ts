@@ -9,12 +9,19 @@ import Project from "@Common/models/Project"
 import RelaDB from "@tiago_silva_pereira/reladb"
 import AppSection from "../AppSection"
 import HasManyDetail from "./HasManyDetail"
+import MorphManyDetail from "./MorphManyDetail"
 
 export enum CrudType {
     DEFAULT = "Default",
     VUE = "Vue",
     LIVEWIRE = "Livewire",
     FILAMENT = "Filament"
+}
+
+export enum CrudSubType {
+    DEFAULT = "Default",
+    HAS_MANY_DETAIL = "Has Many Detail",
+    MORPH_MANY_DETAIL = "Morph Many Detail"
 }
 
 export interface CrudSettings {
@@ -60,9 +67,14 @@ export default class Crud extends RelaDB.Model {
     routes: Route[]
     navs: Nav[]
     hooks: any
+
     hasManyDetails: HasManyDetail[]
     relatedHasManyDetails: HasManyDetail[]
     isHasManyDetail: boolean
+
+    morphManyDetails: MorphManyDetail[]
+    relatedMorphManyDetails: MorphManyDetail[]
+    isMorphManyDetail: boolean
 
     basePath: string
 
@@ -87,8 +99,12 @@ export default class Crud extends RelaDB.Model {
             routes: () => this.morphMany(Route, "routable").cascadeDelete(),
             defaultSearchColumn: () => this.belongsTo(Column, "defaultSearchColumnId"),
             defaultSortColumn: () => this.belongsTo(Column, "defaultSortColumnId"),
+
             hasManyDetails: () => this.hasMany(HasManyDetail).cascadeDelete(),
             relatedHasManyDetails: () => this.hasMany(HasManyDetail, "detailCrudId").cascadeDelete(),
+
+            morphManyDetails: () => this.hasMany(MorphManyDetail).cascadeDelete(),
+            relatedMorphManyDetails: () => this.hasMany(MorphManyDetail, "detailCrudId").cascadeDelete(),
         }
     }
 
@@ -97,11 +113,15 @@ export default class Crud extends RelaDB.Model {
     }
 
     static getFilamentResources() {
-        return Crud.get().filter((crud: Crud) => crud.isForFilament() && !crud.isHasManyDetail)
+        return Crud.get().filter((crud: Crud) => crud.isForFilament() && !crud.isDetail())
     }
 
     isBasic() {
-        return !this.isHasManyDetail && !this.isForFilament()
+        return !this.isDetail() && !this.isForFilament()
+    }
+
+    isDetail() {
+        return this.isHasManyDetail || this.isMorphManyDetail
     }
 
     hasDefaultSearchColumn(): boolean {
@@ -152,8 +172,11 @@ export default class Crud extends RelaDB.Model {
         crud.save()
 
         crud.addInputsFromModel(model, excludedColumns)
-        crud.addRoutes()
-        crud.addNavs()
+
+        if(!crudIsForFilament) {
+            crud.addRoutes()
+            crud.addNavs()
+        }
 
         if(generateDetails) {
             crud.addHasManyDetails()
@@ -167,7 +190,8 @@ export default class Crud extends RelaDB.Model {
     }
 
     getAppSubType(): string {
-        if(this.isHasManyDetail) return 'Has Many Detail'
+        if(this.isHasManyDetail) return CrudSubType.HAS_MANY_DETAIL
+        if(this.isMorphManyDetail) return CrudSubType.MORPH_MANY_DETAIL
 
         return this.getAppType()
     }
@@ -352,6 +376,12 @@ export default class Crud extends RelaDB.Model {
         if(!this.relatedHasManyDetails.length) return null
 
         return this.relatedHasManyDetails[0]
+    }
+
+    getFirstRelatedMorphManyDetail(): MorphManyDetail {
+        if(!this.relatedMorphManyDetails.length) return null
+
+        return this.relatedMorphManyDetails[0]
     }
 
     getLivewireRouteContent(route: Route): string {

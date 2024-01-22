@@ -60,8 +60,8 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
     morphType: string
     morphToName: string
     
-    typeFieldId: string
-    typeField: Column
+    typeColumnId: string
+    typeColumn: Column
 
     //-- HasManyThrough
     firstKeyName: string // relatedModelId

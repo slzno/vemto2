@@ -21,6 +21,7 @@ import HiddenModelColumn from "./models/HiddenModelColumn"
 import DatesModelColumn from "./models/DatesModelColumn"
 import AppendsModelColumn from "./models/AppendsModelColumn"
 import CastsModelColumn from "./models/CastsModelColumn"
+import MorphManyDetail from "./models/crud/MorphManyDetail"
 
 export default new class ModelRegistry {
     registerModels() {
@@ -47,6 +48,7 @@ export default new class ModelRegistry {
             RelaDB.Resolver.db().registerModel(IndexColumn, "IndexColumn", "index_column")
             RelaDB.Resolver.db().registerModel(AppSection, "AppSection")
             RelaDB.Resolver.db().registerModel(HasManyDetail, "HasManyDetail")
+            RelaDB.Resolver.db().registerModel(MorphManyDetail, "MorphManyDetail")
         })
     }
 }

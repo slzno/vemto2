@@ -21,9 +21,23 @@
         { label: "Relation Manager", value: "relationManagerComponent" },
     ]
 
+    const getFirstCrudDetail = () => {
+        if(crud.value.isHasManyDetail) {
+            return crud.value.getFirstRelatedHasManyDetail()
+        }
+
+        if(crud.value.isMorphManyDetail) {
+            return crud.value.getFirstRelatedMorphManyDetail()
+        }
+    }
+
     onMounted(async () => {
+        const firstCrudDetail = getFirstCrudDetail()
+
+        if(!firstCrudDetail) return
+
         relationManagerComponentContent.value = await new RenderableFilamentRelationManager(
-            crud.value.getFirstRelatedHasManyDetail()
+            firstCrudDetail
         ).disableHooks().compile()
     })
 </script>

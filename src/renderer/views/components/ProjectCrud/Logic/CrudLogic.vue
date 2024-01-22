@@ -20,11 +20,11 @@
             <CrudLivewireLogic :crud="crud" />
         </div>
 
-        <div v-if="crud.isForFilament() && !crud.isHasManyDetail">
+        <div v-if="crud.isForFilament() && !crud.isDetail()">
             <CrudFilamentCommonLogic :crud="crud" />
         </div>
 
-        <div v-if="crud.isForFilament() && crud.isHasManyDetail">
+        <div v-if="crud.isForFilament() && crud.isDetail()">
             <CrudFilamentRelationManagerLogic :crud="crud" />
         </div>
     </div>

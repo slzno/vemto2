@@ -6,6 +6,7 @@ import RenderableFilamentListComponent from "./views/filament/RenderableFilament
 import RenderableFilamentViewComponent from "./views/filament/RenderableFilamentViewComponent"
 import HasManyDetail from "@Common/models/crud/HasManyDetail"
 import RenderableFilamentRelationManager from "./views/filament/RenderableFilamentRelationManager"
+import MorphManyDetail from "@Common/models/crud/MorphManyDetail"
 
 export default class GenerateFilamentResources {
     async start() {
@@ -20,6 +21,10 @@ export default class GenerateFilamentResources {
 
             resource.hasManyDetails.forEach(async (hasManyDetail: HasManyDetail) => {
                 await new RenderableFilamentRelationManager(hasManyDetail).render()
+            })
+
+            resource.morphManyDetails.forEach(async (morphManyDetail: MorphManyDetail) => {
+                await new RenderableFilamentRelationManager(morphManyDetail).render()
             })
         }
     }

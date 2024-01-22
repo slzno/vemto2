@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 <% } %>
 use Filament\Resources\RelationManagers\RelationManager;
-use App\Filament\Resources\<$ this.detail.crud.section.name $>\<$ this.detail.crud.model.name $>Resource;
+use App\Filament\Resources\<$ this.detail.crud.section.name $>\<$ this.detail.crud.name $>Resource;
 <% for(let input of this.detail.detailCrud.getInputsForForms()) { %>
 use Filament\Forms\Components\<$ pascalCase(input.filamentSettings.formData.inputType) $>;
 use Filament\Tables\Columns\<$ pascalCase(input.filamentSettings.columnData.columnType) $>;

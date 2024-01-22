@@ -32,7 +32,7 @@ export default class RenderableFilamentResource extends Renderable {
     }
 
     getFilename(): string {
-        return `${this.crud.model.name}Resource.php`
+        return `${this.crud.name}Resource.php`
     }
 
     getFormatter(): RenderableFileFormatter {

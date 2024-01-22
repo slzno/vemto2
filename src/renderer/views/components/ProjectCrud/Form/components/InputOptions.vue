@@ -20,11 +20,14 @@
     watch(input, (value) => {
         if(!value) return
 
-        if(value.crud.isForFilament()) {
-            tabs.push({ label: "Filament Data", value: "filament" })
-        } else {
+        if(!value.crud.isForFilament()) {
             tabs.splice(1, 1)
+            return
         }
+
+        if(tabs[1] && tabs[1].value == "filament") return
+
+        tabs.push({ label: "Filament Data", value: "filament" })
     })
 
     const tabs = [
