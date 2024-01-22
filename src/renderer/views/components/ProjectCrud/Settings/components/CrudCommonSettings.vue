@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { defineProps } from 'vue'
+    import { defineProps, PropType, toRef } from 'vue'
     import Crud from '@Common/models/crud/Crud'
     import UiText from '@Renderer/components/ui/UiText.vue'
     import UiSelect from '@Renderer/components/ui/UiSelect.vue'
@@ -7,11 +7,12 @@
 
     const projectStore = useProjectStore(),
         props = defineProps({
-        crud: {
-            type: Crud,
-            required: true
-        }
-    })
+            crud: {
+                type: Object as PropType<Crud>,
+                required: true
+            }
+        }),
+        crud = toRef(props, "crud")
 </script>
 <template>
     <div class="space-y-4">

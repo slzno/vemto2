@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref, defineProps, onMounted } from 'vue'
+    import { ref, defineProps, onMounted, PropType, toRef } from 'vue'
     import Crud from '@Common/models/crud/Crud'
     import UiTabs from '@Renderer/components/ui/UiTabs.vue'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
@@ -8,11 +8,12 @@
     import CrudFilamentSettings from './components/CrudFilamentSettings.vue'
 
     const props = defineProps({
-        crud: {
-            type: Crud,
-            required: true
-        }
-    })
+            crud: {
+                type: Object as PropType<Crud>,
+                required: true
+            }
+        }),
+        crud = toRef(props, "crud")
 
     const projectStore = useProjectStore(),
         selectedTab = ref("common"),
@@ -21,11 +22,11 @@
         ]
 
     onMounted(() => {
-        if(props.crud.isForFilament()) {
+        if(crud.value.isForFilament()) {
             tabs.push({ label: "Filament", value: "filament" })
         }
 
-        if(props.crud.isForLivewire()) {
+        if(crud.value.isForLivewire()) {
             tabs.push({ label: "Livewire", value: "livewire" })
         }
     })

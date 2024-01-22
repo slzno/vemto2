@@ -1,13 +1,13 @@
 <script setup lang="ts">
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
-    import { toRef, defineProps, ref } from 'vue'
+    import { toRef, defineProps, ref, PropType } from 'vue'
     import Input from "@Common/models/crud/Input"
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
     import FilamentInputFormOptions from "./FilamentInputFormOptions.vue"
     import FilamentInputColumnOptions from "./FilamentInputColumnOptions.vue"
     
     const props = defineProps({
-            input: Input
+            input: Object as PropType<Input>
         }),
         input = toRef(props, "input")
 

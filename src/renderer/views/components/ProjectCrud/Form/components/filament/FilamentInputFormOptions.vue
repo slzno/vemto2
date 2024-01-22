@@ -13,11 +13,11 @@
     import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
     import UiSmallButton from "@Renderer/components/ui/UiSmallButton.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
-    import { defineProps, toRef } from 'vue'
+    import { defineProps, toRef, PropType } from 'vue'
     import Input from "@Common/models/crud/Input"
 
     const props = defineProps({
-            input: Input
+            input: Object as PropType<Input>
         }),
         input = toRef(props, "input")
 

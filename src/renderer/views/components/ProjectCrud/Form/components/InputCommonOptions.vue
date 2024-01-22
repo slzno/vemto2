@@ -6,13 +6,13 @@
     import UiSmallButton from "@Renderer/components/ui/UiSmallButton.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import { PlusCircleIcon, TrashIcon } from "@heroicons/vue/24/outline"
-    import { toRef, defineProps } from 'vue'
+    import { toRef, defineProps, PropType } from 'vue'
     import Input from "@Common/models/crud/Input"
     import debounce from "@Common/tools/debounce"
     import { capitalCase } from "change-case"
     
     const props = defineProps({
-            input: Input
+            input: Object as PropType<Input>
         }),
         input = toRef(props, "input")
 

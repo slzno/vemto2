@@ -1,14 +1,15 @@
 <script setup lang="ts">
-    import { defineProps } from 'vue'
+    import { defineProps, toRef, PropType } from 'vue'
     import Crud from '@Common/models/crud/Crud'
     import UiText from '@Renderer/components/ui/UiText.vue'
 
     const props = defineProps({
             crud: {
-                type: Crud,
+                type: Object as PropType<Crud>,
                 required: true
             }
-        })
+        }),
+        crud = toRef(props, "crud")
 </script>
 <template>
     <div class="space-y-4">

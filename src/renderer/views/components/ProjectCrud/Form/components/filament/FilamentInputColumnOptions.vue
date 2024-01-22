@@ -1,24 +1,19 @@
 <script setup lang="ts">
     import debounce from "@Common/tools/debounce"
-    import { InputType } from "@Common/models/crud/InputType"
-    import FilamentInputTypesList from "@Common/models/crud/filament/FilamentInputTypesList"
     import UiSelect from "@Renderer/components/ui/UiSelect.vue"
-    import Main from "@Renderer/services/wrappers/Main"
     import { capitalCase } from "change-case"
     import UiNumber from "@Renderer/components/ui/UiNumber.vue"
     import UiDate from "@Renderer/components/ui/UiDate.vue"
-    import { PlusCircleIcon, TrashIcon, ArrowLongUpIcon, ArrowLongDownIcon } from "@heroicons/vue/24/outline"
+    import { PlusCircleIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
-    import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
-    import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
     import UiSmallButton from "@Renderer/components/ui/UiSmallButton.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
-    import { defineProps, toRef } from 'vue'
+    import { defineProps, toRef, PropType } from 'vue'
     import Input from "@Common/models/crud/Input"
     import FilamentColumnTypesList from "@Common/models/crud/filament/FilamentColumnTypesList"
 
     const props = defineProps({
-            input: Input
+            input: Object as PropType<Input>
         }),
         input = toRef(props, "input")
 

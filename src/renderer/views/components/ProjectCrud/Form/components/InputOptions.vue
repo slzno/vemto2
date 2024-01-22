@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-    import { toRef, ref } from "vue"
+    import { toRef, ref, PropType } from "vue"
     import Input from "@Common/models/crud/Input"
     import { XMarkIcon } from "@heroicons/vue/24/outline"
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
@@ -9,7 +9,7 @@
 
     const props = defineProps({
         show: Boolean,
-        input: Input
+        input: Object as PropType<Input>
     })
 
     const show = toRef(props, "show"),
