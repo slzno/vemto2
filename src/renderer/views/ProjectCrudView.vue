@@ -9,6 +9,7 @@
     import UiSelect from '@Renderer/components/ui/UiSelect.vue'
     import CrudLogic from './components/ProjectCrud/CrudLogic.vue'
     import CrudForm from './components/ProjectCrud/Form/CrudForm.vue'
+    import CrudSettings from './components/ProjectCrud/Settings/CrudSettings.vue'
     import CrudValidation from './components/ProjectCrud/Validation/CrudValidation.vue'
     import UiEmptyMessage from '@Renderer/components/ui/UiEmptyMessage.vue'
 
@@ -65,82 +66,8 @@
                 </UiEmptyMessage>
             </section>
 
-            <section class="flex flex-col w-full h-screen space-y-4 mt-2 px-2 pb-40 overflow-scroll" v-if="selectedTab === 'settings'">
-                <div>
-                    <UiSelect v-model="crud.sectionId" label="Section" @change="crud.save()" >
-                        <option :value="null" disabled>Select a section</option>
-                        <option v-for="section in projectStore.project.appSections" :value="section.id" :key="section.id">{{ section.name }}</option>
-                    </UiSelect>
-                </div>
-
-                <div>
-                    <UiText v-model="crud.name" label="Name" @input="crud.save()" />
-                </div>
-
-                <div>
-                    <UiText v-model="crud.plural" label="Plural" @input="crud.save()" />
-                </div>
-
-                <div>
-                    <UiText v-model="crud.settings.itemName" label="Item Name" @input="crud.save()" />
-                </div>
-
-                <div>
-                    <UiText v-model="crud.settings.collectionName" label="Collection Name" @input="crud.save()" />
-                </div>
-
-                <div>
-                    <UiText v-model="crud.settings.itemTitle" label="Item Title" @input="crud.save()" />
-                </div>
-
-                <div>
-                    <UiText v-model="crud.settings.collectionTitle" label="Collection Title" @input="crud.save()" />
-                </div>
-
-                <div>
-                    <UiSelect v-model="crud.defaultSearchColumnId" label="Default search column" @change="crud.save()" >
-                        <option :value="null" disabled>Select a column</option>
-                        <option v-for="column in crud.model.table.columns" :value="column.id" :key="column.id">{{ column.name }}</option>
-                    </UiSelect>
-                </div>
-
-                <div>
-                    <UiSelect v-model="crud.defaultSortColumnId" label="Default sort column" @change="crud.save()" >
-                        <option :value="null" disabled>Select a column</option>
-                        <option v-for="column in crud.model.table.columns" :value="column.id" :key="column.id">{{ column.name }}</option>
-                    </UiSelect>
-                </div>
-
-                <div>
-                    <UiSelect v-model="crud.defaultSortDirection" label="Default sort direction" @change="crud.save()" >
-                        <option :value="null" disabled>Select a direction</option>
-                        <option value="asc">Ascending</option>
-                        <option value="desc">Descending</option>
-                    </UiSelect>
-                </div>
-
-                
-                <b>Livewire specific</b>
-
-                <div>
-                    <UiText v-model="crud.livewireNamespace" label="Namespace" @input="crud.save()" />
-                </div>
-
-                <div>
-                    <UiText v-model="crud.livewireIndexComponentName" label="Index Component name" @input="crud.save()" />
-                </div>
-
-                <div>
-                    <UiText v-model="crud.livewireShowComponentName" label="Show Component name" @input="crud.save()" />
-                </div>
-
-                <div>
-                    <UiText v-model="crud.livewireCreateComponentName" label="Create Component name" @input="crud.save()" />
-                </div>
-
-                <div>
-                    <UiText v-model="crud.livewireEditComponentName" label="Edit Component name" @input="crud.save()" />
-                </div>
+            <section v-if="selectedTab === 'settings'">
+                <CrudSettings :crud="crud" />
             </section>
         </div>
     </div>

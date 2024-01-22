@@ -19,7 +19,6 @@ export default class GenerateFilamentResources {
             await new RenderableFilamentListComponent(resource).render()
 
             resource.hasManyDetails.forEach(async (hasManyDetail: HasManyDetail) => {
-                console.log(hasManyDetail.detailCrud.getInputsForForms())
                 await new RenderableFilamentRelationManager(hasManyDetail).render()
             })
         }

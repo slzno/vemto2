@@ -184,6 +184,7 @@
             </template>
             <h2>Master Details</h2>
             <UiButton @click="showingCreateDetailModal = true" class="w-full">Add Has Many Detail</UiButton>
+            <UiButton @click="showingCreateDetailModal = true" class="w-full">Add Belongs To Many Detail</UiButton>
         </div>
 
         <!-- Input's Modal -->

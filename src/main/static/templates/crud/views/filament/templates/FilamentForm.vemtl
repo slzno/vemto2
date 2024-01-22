@@ -12,6 +12,10 @@
         <% const [methodName, args] = rule %>
         <# --- #>
         -><$ methodName $>(<$ args $>)
+        <###>
+        <% if(['required', 'nullable'].includes(methodName) && args.includes('$context')) { %>
+            ->dehydrated(fn ($state) => filled($state))
+        <% } %>
     <% } %>
     <# --- #>
     <% if(input.isBelongsTo()) { %>

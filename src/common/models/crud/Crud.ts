@@ -32,6 +32,8 @@ export interface FilamentCrudSettings {
     navigationLabel: string
     navigationIcon: string
     navigationOrder: number
+    hasTitleCaseModelLabel: boolean
+    navigationParentItem: string
     navigationGroup: string
     slug: string
 }
@@ -393,6 +395,8 @@ export default class Crud extends RelaDB.Model {
             navigationLabel: this.plural,
             navigationIcon: "heroicon-o-rectangle-stack",
             navigationOrder: 1,
+            navigationParentItem: null,
+            hasTitleCaseModelLabel: true,
             navigationGroup: "Admin",
             slug: null
         } as FilamentCrudSettings
@@ -400,5 +404,9 @@ export default class Crud extends RelaDB.Model {
 
     isForFilament(): boolean {
         return this.type === CrudType.FILAMENT
+    }
+
+    isForLivewire(): boolean {
+        return this.type === CrudType.LIVEWIRE
     }
 }

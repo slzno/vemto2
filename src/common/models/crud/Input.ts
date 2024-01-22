@@ -312,6 +312,14 @@ export default class Input extends RelaDB.Model {
                     methodArgs += ', ignoreRecord: true'
                 }
 
+                const hasRequiredRuleInUpdate = this.updateRules.find((rule: InputValidationRule) => rule.value.toLowerCase() == 'required'),
+                    isRequiredOnlyOnCreate = laravelRuleName.toLowerCase() == 'required' && !hasRequiredRuleInUpdate,
+                    isNullableOnlyOnCreate = laravelRuleName.toLowerCase() == 'nullable' && hasRequiredRuleInUpdate
+
+                if(isRequiredOnlyOnCreate || isNullableOnlyOnCreate) {
+                    methodArgs += `fn (string $context): bool => $context === 'create'`
+                }
+
                 // Methods where arguments need to be passed by array
                 if(['in', 'doesntStartWith', 'doesntEndWith', 'endsWith', 'notIn', 'prohibits', 'startsWith'].includes(laravelRuleName.toLowerCase())) {
                     methodArgs = `[${methodArgs}]`

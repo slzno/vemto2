@@ -10,6 +10,7 @@ use Filament\Forms;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Livewire\Component;
 use <$ this.crud.model.class $>;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
@@ -36,7 +37,11 @@ class <$ this.filenameWithoutExtension $> extends Resource
     <% } %>
 
     <% if(this.crud.filamentSettings.shouldSkipAuthorization) { %>
-    protected static bool $shouldSkipAuthorization = '<$ this.crud.filamentSettings.shouldSkipAuthorization $>';
+    protected static bool $shouldSkipAuthorization = true;
+    <% } %>
+
+    <% if(!this.crud.filamentSettings.hasTitleCaseModelLabel) { %>
+    protected static bool $hasTitleCaseModelLabel = false;
     <% } %>
 
     <% if(this.crud.filamentSettings.modelLabel) { %>
