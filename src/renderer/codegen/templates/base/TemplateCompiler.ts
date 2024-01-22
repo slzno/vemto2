@@ -93,11 +93,6 @@ export default class TemplateCompiler {
     setData(data: any) {
         this.data = data
 
-        // Add defaults
-        this.data.lang = (key: string) => {
-            return `{{ __('${key}') }}`
-        }
-
         return this
     }
 

@@ -1,1 +1,1 @@
-<small><$ this.settings.content $></small>
+<small><$ this.component.settings.content $></small>

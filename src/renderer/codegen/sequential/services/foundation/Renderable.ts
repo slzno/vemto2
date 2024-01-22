@@ -5,6 +5,7 @@ import TemplateCompiler from "@Renderer/codegen/templates/base/TemplateCompiler"
 import { RenderableFileFormatter, RenderableFileType } from "@Common/models/RenderableFile"
 import BladeFormatter from "@Renderer/codegen/formatters/BladeFormatter"
 import PathUtil from "@Common/util/PathUtil"
+import TemplateHelpers from "../helpers/TemplateHelpers"
 
 export default abstract class Renderable {
     project: Project
@@ -100,9 +101,12 @@ export default abstract class Renderable {
     }
 
     getFullData() {
+        const helpers = new TemplateHelpers(this.project)
+
         return {
             ...this.getData(),
             project: this.project,
+            helpers,
             filenameWithoutExtension: this.getFilenameWithoutExtension(),
         }
     }

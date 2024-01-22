@@ -1,1 +1,1 @@
-<$ this.settings.content $>
+<$ this.component.settings.content $>

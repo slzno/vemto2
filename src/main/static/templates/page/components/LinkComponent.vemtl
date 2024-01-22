@@ -2,11 +2,11 @@
 <% const ComponentRenderer = this.require("ComponentRenderer") %>
 
 <# - #>
-<a wire:navigate target="<$ this.settings.target $>" href="<$ this.settings.href $>">
-    <% if (this.settings.mode === 'text') { %>
-    <$ this.settings.content $>
+<a wire:navigate target="<$ this.component.settings.target $>" href="<$ this.component.settings.href $>">
+    <% if (this.component.settings.mode === 'text') { %>
+    <$ this.component.settings.content $>
     <% } else { %>
-        <% for (const component of this.getNestedComponents('nestedComponents')) { %>
+        <% for (const component of this.component.getNestedComponents('nestedComponents')) { %>
             <$ await ComponentRenderer.render(component) $>
         <% } %>
     <% } %>

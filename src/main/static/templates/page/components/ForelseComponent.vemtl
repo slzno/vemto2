@@ -1,12 +1,12 @@
 <# Template Variables #>
 <% const ComponentRenderer = this.require("ComponentRenderer") %>
 <# - #>
-@forelse(<$ this.settings.content $>)
-<% for (const component of this.getNestedComponents('foreachComponents')) { %>
+@forelse(<$ this.component.settings.content $>)
+<% for (const component of this.component.getNestedComponents('foreachComponents')) { %>
     <$ await ComponentRenderer.render(component) $>
 <% } %>
 @empty
-<% for (const component of this.getNestedComponents('emptyComponents')) { %>
+<% for (const component of this.component.getNestedComponents('emptyComponents')) { %>
     <$ await ComponentRenderer.render(component) $>
 <% } %>
 @endforelse

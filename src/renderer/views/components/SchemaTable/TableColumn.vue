@@ -32,7 +32,7 @@
                 }"
                 class="w-2 h-2 mr-2 rounded-full"
             ></div>
-            {{ column.name }}
+            <span class="pr-6">{{ column.name }}</span>
         </span>
         <span class="text-xs text-slate-400 display:none flex items-center"
             >{{ column.type }}

@@ -1,6 +1,6 @@
 import Project, { TranslationsFormat } from "@Common/models/Project";
 
-export default class TranslationHelper {
+export default class TemplateHelpers {
 
     private project: Project
 
@@ -8,7 +8,7 @@ export default class TranslationHelper {
         this.project = project
     }
 
-    getCorrectLaravelTranslation(key: string) {
+    lang(key: string) {
         if(!this.project.codeGenerationSettings.translationsOnViews) {
             return this.project.getDefaultTranslation(key)
         }
@@ -19,4 +19,5 @@ export default class TranslationHelper {
 
         return `{{ __('${key}') }}`
     }
+    
 }

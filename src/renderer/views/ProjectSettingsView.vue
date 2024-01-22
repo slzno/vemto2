@@ -1,4 +1,4 @@
-<script setup readonly="ts">
+<script setup lang="ts">
     import { ref } from "vue"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
@@ -10,7 +10,7 @@ import LanguagesEditor from "./components/ProjectSettings/LanguagesEditor.vue"
 
     const tabs = [
         { label: "Environment", value: "env" },
-        { label: "Readonly", value: "readonly" },
+        { label: "Translations", value: "lang" },
         { label: "Code", value: "code" },
         { label: "Paths", value: "paths" },
     ]
@@ -32,7 +32,7 @@ import LanguagesEditor from "./components/ProjectSettings/LanguagesEditor.vue"
             <DotEnvEditor />
         </div>
 
-        <div class="p-4" v-if="selectedTab === 'readonly'">
+        <div class="p-4" v-if="selectedTab === 'lang'">
             <div class="w-96">
                 <LanguagesEditor />
             </div>
