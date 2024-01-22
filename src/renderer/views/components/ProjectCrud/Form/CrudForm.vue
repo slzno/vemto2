@@ -306,6 +306,14 @@
                     This is a Has Many Detail
                 </div>
             </div>
+
+            <div class="border border-dotted border-slate-600 rounded-md p-4" v-for="detail in crud.morphManyDetails" :key="detail.id">
+                <h1 class="font-bold text-lg text-slate-500 mb-4">Has Many Detail: {{ detail.detailCrud.settings.collectionTitle }}</h1>
+
+                <div class="space-y-1">
+                    This is a Morph Many Detail
+                </div>
+            </div>
         </div>
 
         <InputOptions
