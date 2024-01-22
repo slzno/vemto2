@@ -212,7 +212,7 @@
 
 <style lang="css">
 .v3ti .v3ti-tag {
-    background: #f87171; /* bg-red-500 */
+    background: #ef4444; /* bg-red-500 */
 }
 
 .v3ti .v3ti-tag .v3ti-remove-tag {

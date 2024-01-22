@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-    import { toRef, ref, PropType } from "vue"
+    import { toRef, ref, PropType, watch } from "vue"
     import Input from "@Common/models/crud/Input"
     import { XMarkIcon } from "@heroicons/vue/24/outline"
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
@@ -8,19 +8,27 @@
     import FilamentInputOptions from "./filament/FilamentInputOptions.vue"
 
     const props = defineProps({
-        show: Boolean,
-        input: Object as PropType<Input>
-    })
-
-    const show = toRef(props, "show"),
+            show: Boolean,
+            input: Object as PropType<Input>
+        }),
+        show = toRef(props, "show"),
         input = toRef(props, "input")
 
     const selectedTab = ref("common"),
         projectStore = useProjectStore()
 
+    watch(input, (value) => {
+        if(!value) return
+
+        if(value.crud.isForFilament()) {
+            tabs.push({ label: "Filament Data", value: "filament" })
+        } else {
+            tabs.splice(1, 1)
+        }
+    })
+
     const tabs = [
-        { label: "Common Data", value: "common" },
-        { label: "Filament Data", value: "filament" }
+        { label: "Common Data", value: "common" }
     ]
 </script>
 <template>

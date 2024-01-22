@@ -61,7 +61,7 @@ export default class Crud extends RelaDB.Model {
     navs: Nav[]
     hooks: any
     hasManyDetails: HasManyDetail[]
-    detailHasManyDetails: HasManyDetail[]
+    relatedHasManyDetails: HasManyDetail[]
     isHasManyDetail: boolean
 
     basePath: string
@@ -88,7 +88,7 @@ export default class Crud extends RelaDB.Model {
             defaultSearchColumn: () => this.belongsTo(Column, "defaultSearchColumnId"),
             defaultSortColumn: () => this.belongsTo(Column, "defaultSortColumnId"),
             hasManyDetails: () => this.hasMany(HasManyDetail).cascadeDelete(),
-            detailHasManyDetails: () => this.hasMany(HasManyDetail, "detailCrudId").cascadeDelete(),
+            relatedHasManyDetails: () => this.hasMany(HasManyDetail, "detailCrudId").cascadeDelete(),
         }
     }
 
@@ -346,6 +346,12 @@ export default class Crud extends RelaDB.Model {
         }
 
         return ''
+    }
+
+    getFirstRelatedHasManyDetail(): HasManyDetail {
+        if(!this.relatedHasManyDetails.length) return null
+
+        return this.relatedHasManyDetails[0]
     }
 
     getLivewireRouteContent(route: Route): string {

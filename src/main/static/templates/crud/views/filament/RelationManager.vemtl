@@ -20,41 +20,52 @@ use App\Filament\Resources\<$ this.detail.crud.section.name $>\<$ this.detail.cr
 use Filament\Forms\Components\<$ pascalCase(input.filamentSettings.formData.inputType) $>;
 use Filament\Tables\Columns\<$ pascalCase(input.filamentSettings.columnData.columnType) $>;
 <% } %>
+// hook:IMPORTS
 
 class <$ this.filenameWithoutExtension $> extends RelationManager
 {
+    // hook:TRAITS
     protected static string $relationship = '<$ this.detail.relationship.name $>';
+
+    // hook:METHODS
 
     public function form(Form $form): Form
     {
+        // hook:BEFORE_FORM
         return $form
             ->schema([
                 Grid::make(['default' => 1])->schema([
                     <% for(let input of this.detail.detailCrud.getInputsForForms()) { %>
                         <import template="crud/views/filament/templates/FilamentForm.vemtl">
                     <% } %>
+                    // hook:FORM_FIELDS
                 ])
             ]);
     }
 
     public function table(Table $table): Table
     {
+        // hook:BEFORE_TABLE
         return $table
             ->recordTitleAttribute('title')
             ->columns([
                 <% for(let input of this.detail.detailCrud.getInputsForIndex()) { %>
                     <import template="crud/views/filament/templates/FilamentTable.vemtl">
                 <% } %>
+                // hook:TABLE_COLUMNS
             ])
             ->filters([
+                // hook:TABLE_FILTERS
                 <% if(modelIsSoftDeletes) { %>
                     Tables\Filters\TrashedFilter::make(),
                 <% } %>
             ])
             ->headerActions([
+                // hook:TABLE_HEADER_ACTIONS
                 Tables\Actions\CreateAction::make(),
             ])
             ->actions([
+                // hook:TABLE_ACTIONS
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
                 <% if(modelIsSoftDeletes) { %>
@@ -65,6 +76,7 @@ class <$ this.filenameWithoutExtension $> extends RelationManager
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    // hook:TABLE_BULK_ACTIONS
                     <% if(modelIsSoftDeletes) { %>
                         Tables\Actions\RestoreBulkAction::make(),
                         Tables\Actions\ForceDeleteBulkAction::make(),

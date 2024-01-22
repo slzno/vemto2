@@ -268,6 +268,11 @@
             </div>
         </div>
 
-        <InputOptions ref="inputOptionsWindow" :show="showingOptions && selectedInput" :input="selectedInput" @close="inputOptionsClosed()" />
+        <InputOptions
+            ref="inputOptionsWindow"
+            :show="showingOptions && selectedInput"
+            :input="selectedInput"
+            @close="inputOptionsClosed()"
+        />
     </div>
 </template>

@@ -2,7 +2,8 @@
     import Crud from "@Common/models/crud/Crud"
     import { defineProps, PropType, toRef, Ref } from "vue"
     import CrudLivewireLogic from './components/CrudLivewireLogic.vue'
-    import CrudFilamentLogic from "./components/CrudFilamentLogic.vue"
+    import CrudFilamentCommonLogic from "./components/CrudFilamentCommonLogic.vue"
+    import CrudFilamentRelationManagerLogic from "./components/CrudFilamentRelationManagerLogic.vue"
 
     const props = defineProps({
             crud: {
@@ -20,7 +21,11 @@
         </div>
 
         <div v-if="crud.isForFilament() && !crud.isHasManyDetail">
-            <CrudFilamentLogic :crud="crud" />
+            <CrudFilamentCommonLogic :crud="crud" />
+        </div>
+
+        <div v-if="crud.isForFilament() && crud.isHasManyDetail">
+            <CrudFilamentRelationManagerLogic :crud="crud" />
         </div>
     </div>
 </template>
