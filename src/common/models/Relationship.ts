@@ -93,6 +93,8 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
     projectId: string
     createdFromInterface: boolean
 
+    withPivotColumns: boolean
+
     relationships() {
         return {
             inverse: () => this.belongsTo(Relationship, 'inverseId'),

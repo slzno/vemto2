@@ -661,9 +661,7 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     }
 
     columnIsHiddenForCrudCreation(column: Column): boolean {
-        if(column.name === 'password') return false
-
-        if(column.cannotGenerateDefaultInputByOptions()) return true
+        if(column.isHiddenForCrudCreation()) return true
 
         if(!this.hidden) return false
 

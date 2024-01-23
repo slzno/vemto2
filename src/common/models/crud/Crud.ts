@@ -394,6 +394,8 @@ export default class Crud extends RelaDB.Model {
             if(column.isPrimaryKey()) return
             if(column.isDefaultLaravelTimestamp()) return
 
+            if(column.isHiddenForCrudCreation()) return
+
             const input = Input.createFromColumn(this, column, null, true)
             input.panelId = panel.id
             input.save()
