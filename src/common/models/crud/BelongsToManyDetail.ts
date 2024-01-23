@@ -32,8 +32,12 @@ export default class BelongsToManyDetail extends RelaDB.Model {
         belongsToManyDetail.relationshipId = relationship.id
 
         const excludedColumns = [
-            relationship.foreignPivotKey
+            relationship.foreignPivotKey,
         ]
+
+        if(crud.isForFilament()) {
+            excludedColumns.push(relationship.relatedPivotKey)
+        }
 
         const detailCrud = Crud.createFromTable(
             relationship.pivot,

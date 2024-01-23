@@ -84,7 +84,11 @@ export default class Input extends RelaDB.Model {
         input.showOnCreation = true
         input.showOnUpdate = true
 
-        const columnIsHidden = ignoreColumnHidden ? false : crud.model.hidden && crud.model.hidden.indexOf(column.name) !== -1
+        let columnIsHidden = false
+        
+        if(crud.model) {
+            columnIsHidden = ignoreColumnHidden ? false : crud.model.hidden && crud.model.hidden.indexOf(column.name) !== -1
+        }
 
         input.showOnDetails = !columnIsHidden
         input.showOnIndex = !columnIsHidden
@@ -157,8 +161,8 @@ export default class Input extends RelaDB.Model {
         return this.type === InputType.BELONGS_TO && !! this.relationshipId
     }
 
-    getColumnNameForFilament(isBelongsToManyDetail: boolean = false): string {
-        if(isBelongsToManyDetail) {
+    getColumnNameForFilament(isBelongsToManyDetail: boolean = false, manyToManyRelationshipInputKey: Column): string {
+        if((isBelongsToManyDetail && manyToManyRelationshipInputKey) && this.name === manyToManyRelationshipInputKey.name) {
             return this.getRelatedModelLabel()
         }
 

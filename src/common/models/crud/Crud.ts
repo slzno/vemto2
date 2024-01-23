@@ -315,6 +315,18 @@ export default class Crud extends RelaDB.Model {
         return this.getOrderedInputs().filter((input) => input.showOnIndex)
     }
 
+    getInputsForIndexExcept(excludedInputs: Input | Input[]): Input[] {
+        let excludedInputIds = []
+
+        if(!Array.isArray(excludedInputs)) {
+            excludedInputIds = [excludedInputs.id]
+        } else {
+            excludedInputIds = excludedInputs.map((input) => input.id)
+        }
+
+        return this.getInputsForIndex().filter((input) => !excludedInputIds.includes(input.id))
+    }
+
     getInputsForCreate(): Input[] {
         return this.getOrderedInputs().filter((input) => input.showOnCreation)
     }
@@ -333,6 +345,18 @@ export default class Crud extends RelaDB.Model {
 
     getInputsForForms(): Input[] {
         return this.getOrderedInputs().filter((input) => input.showOnCreation || input.showOnUpdate)
+    }
+
+    getInputsForFormsExcept(excludedInputs: Input | Input[]): Input[] {
+        let excludedInputIds = []
+
+        if(!Array.isArray(excludedInputs)) {
+            excludedInputIds = [excludedInputs.id]
+        } else {
+            excludedInputIds = excludedInputs.map((input) => input.id)
+        }
+
+        return this.getInputsForForms().filter((input) => !excludedInputIds.includes(input.id))
     }
 
     calculateSettings(name: string = null, plural: string = null) {

@@ -240,7 +240,7 @@
 
                     <UiSelect v-model="newInputData.columnId" label="Column" @change="findNewInputColumn">
                         <option :value="null" disabled>Select a column</option>
-                        <option v-for="column in crud.model.table.columns" :value="column.id" :key="column.id">{{ column.name }}</option>
+                        <option v-for="column in crud.table.columns" :value="column.id" :key="column.id">{{ column.name }}</option>
                     </UiSelect>
 
                     <template v-if="needsSelectRelationship && newInputData.column">
