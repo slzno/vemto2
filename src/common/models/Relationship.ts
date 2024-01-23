@@ -93,6 +93,8 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
     projectId: string
     createdFromInterface: boolean
 
+    withPivotColumns: boolean
+
     relationships() {
         return {
             inverse: () => this.belongsTo(Relationship, 'inverseId'),
@@ -377,6 +379,8 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
         this.firstKeyName = data.firstKeyName
         this.secondKeyName = data.secondKeyName
 
+        this.withPivotColumns = data.withPivotColumns
+
         this.fillSchemaState()
 
         this.save()
@@ -418,6 +422,7 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
             pivotTableName: this.pivotTableName,
             firstKeyName: this.firstKeyName,
             secondKeyName: this.secondKeyName,
+            withPivotColumns: this.withPivotColumns
         }
     }
 
@@ -440,6 +445,7 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
             localKeyName: DataComparator.stringsAreDifferent(this.schemaState.localKeyName, comparisonData.localKeyName),
             firstKeyName: DataComparator.stringsAreDifferent(this.schemaState.firstKeyName, comparisonData.firstKeyName),
             secondKeyName: DataComparator.stringsAreDifferent(this.schemaState.secondKeyName, comparisonData.secondKeyName),
+            withPivotColumns: DataComparator.booleansAreDifferent(this.schemaState.withPivotColumns, comparisonData.withPivotColumns)
         }
     }
 
@@ -516,6 +522,19 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
         if(this.type === 'HasManyThrough') return ['HasManyThrough']
 
         return []
+    }
+
+    getPivotTableColumns(ignoreKeyColumns: boolean = true): Column[] {
+        let exceptColumnsName = [
+            this.foreignPivotKeyName,
+            this.relatedPivotKeyName
+        ]
+
+        if(!ignoreKeyColumns) {
+            return this.pivot.columns
+        }
+
+        return this.pivot.columns.filter((column: Column) => !exceptColumnsName.includes(column.name))
     }
 
 }

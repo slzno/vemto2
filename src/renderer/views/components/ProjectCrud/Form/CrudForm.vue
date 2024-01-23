@@ -14,6 +14,7 @@
     import UiSelect from '@Renderer/components/ui/UiSelect.vue'
     import HasManyDetail from '@Common/models/crud/HasManyDetail'
     import MorphManyDetail from '@Common/models/crud/MorphManyDetail'
+    import BelongsToManyDetail from '@Common/models/crud/BelongsToManyDetail'
     import { defineProps, ref, toRef, onMounted, reactive } from 'vue'
     import Relationship from '@Common/models/Relationship'
 
@@ -196,6 +197,7 @@
                 MorphManyDetail.createFromRelation(crud.value, relationship)
                 break
             case 'belongsToMany':
+                BelongsToManyDetail.createFromRelation(crud.value, relationship)
                 break
             case 'morphToMany':
                 break
@@ -308,10 +310,18 @@
             </div>
 
             <div class="border border-dotted border-slate-600 rounded-md p-4" v-for="detail in crud.morphManyDetails" :key="detail.id">
-                <h1 class="font-bold text-lg text-slate-500 mb-4">Has Many Detail: {{ detail.detailCrud.settings.collectionTitle }}</h1>
+                <h1 class="font-bold text-lg text-slate-500 mb-4">Morph Many Detail: {{ detail.detailCrud.settings.collectionTitle }}</h1>
 
                 <div class="space-y-1">
                     This is a Morph Many Detail
+                </div>
+            </div>
+
+            <div class="border border-dotted border-slate-600 rounded-md p-4" v-for="detail in crud.belongsToManyDetails" :key="detail.id">
+                <h1 class="font-bold text-lg text-slate-500 mb-4">Morph Many Detail: {{ detail.detailCrud.settings.collectionTitle }}</h1>
+
+                <div class="space-y-1">
+                    This is a Belongs To Many Detail
                 </div>
             </div>
         </div>

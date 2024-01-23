@@ -8,7 +8,7 @@ import Namespace from "@Renderer/codegen/util/Namespace"
 import HasManyDetail from "@Common/models/crud/HasManyDetail"
 import MorphManyDetail from "@Common/models/crud/MorphManyDetail"
 
-export default class RenderableFilamentRelationManager extends Renderable {
+export default class RenderableFilamentCommonRelationManager extends Renderable {
     detail: HasManyDetail | MorphManyDetail
 
     constructor(detail: HasManyDetail | MorphManyDetail) {

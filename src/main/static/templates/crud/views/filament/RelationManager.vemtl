@@ -1,9 +1,15 @@
 <?php
+<% const parentCrud = this.detail.crud %>
+<% const relationshipDetailCrud = this.detail.detailCrud %>
 <% const pascalCase = this.require('pascalCase') %>
-<% const parentResourceName = `${this.detail.crud.name}Resource` %>
-<% const modelIsSoftDeletes = this.detail.detailCrud.model.hasSoftDeletes %>
+<% const parentResourceName = `${parentCrud.name}Resource` %>
+<% const tableIsSoftDeletes = relationshipDetailCrud.table.hasSoftDeletes() %>
+<# ManyToMany Variables #>
+<% const isManyToManyDetail = relationshipDetailCrud.isManyToManyDetail() %>
+<% const firstCrudOfRelatedModel = this.detail.relationship.relatedModel.getFirstCrud() %>
+<% const detailCrud = isManyToManyDetail && firstCrudOfRelatedModel ? firstCrudOfRelatedModel : relationshipDetailCrud %>
 
-namespace App\Filament\Resources\<$ this.detail.crud.section.name $>\<$ parentResourceName $>\RelationManagers;
+namespace App\Filament\Resources\<$ parentCrud.section.name $>\<$ parentResourceName $>\RelationManagers;
 
 use Filament\Forms;
 use Filament\Tables;
@@ -11,13 +17,15 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Forms\Components\Grid;
 use Illuminate\Database\Eloquent\Builder;
-<% if(modelIsSoftDeletes) { %>
+<% if(tableIsSoftDeletes) { %>
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 <% } %>
 use Filament\Resources\RelationManagers\RelationManager;
-use App\Filament\Resources\<$ this.detail.crud.section.name $>\<$ this.detail.crud.name $>Resource;
-<% for(let input of this.detail.detailCrud.getInputsForForms()) { %>
+use App\Filament\Resources\<$ parentCrud.section.name $>\<$ parentCrud.name $>Resource;
+<% for(let input of detailCrud.getInputsForForms()) { %>
 use Filament\Forms\Components\<$ pascalCase(input.filamentSettings.formData.inputType) $>;
+<% } %>
+<% for(let input of relationshipDetailCrud.getInputsForIndex()) { %>
 use Filament\Tables\Columns\<$ pascalCase(input.filamentSettings.columnData.columnType) $>;
 <% } %>
 // hook:IMPORTS
@@ -27,6 +35,8 @@ class <$ this.filenameWithoutExtension $> extends RelationManager
     // hook:TRAITS
     protected static string $relationship = '<$ this.detail.relationship.name $>';
 
+    protected static ?string $recordTitleAttribute = '<$ this.detail.relationship.relatedModel.table.getLabelColumnName() $>';
+
     // hook:METHODS
 
     public function form(Form $form): Form
@@ -35,8 +45,10 @@ class <$ this.filenameWithoutExtension $> extends RelationManager
         return $form
             ->schema([
                 Grid::make(['default' => 1])->schema([
-                    <% for(let input of this.detail.detailCrud.getInputsForForms()) { %>
-                        <import template="crud/views/filament/templates/FilamentForm.vemtl">
+                    <% if(!isManyToManyDetail || firstCrudOfRelatedModel) { %>
+                        <% for(let input of firstCrudOfRelatedModel.getInputsForForms()) { %>
+                            <import template="crud/views/filament/templates/FilamentForm.vemtl">
+                        <% } %>
                     <% } %>
                     // hook:FORM_FIELDS
                 ])
@@ -47,43 +59,55 @@ class <$ this.filenameWithoutExtension $> extends RelationManager
     {
         // hook:BEFORE_TABLE
         return $table
-            ->recordTitleAttribute('title')
             ->columns([
-                <% for(let input of this.detail.detailCrud.getInputsForIndex()) { %>
+                <% for(let input of relationshipDetailCrud.getInputsForIndex()) { %>
                     <import template="crud/views/filament/templates/FilamentTable.vemtl">
                 <% } %>
                 // hook:TABLE_COLUMNS
             ])
             ->filters([
                 // hook:TABLE_FILTERS
-                <% if(modelIsSoftDeletes) { %>
+                <% if(tableIsSoftDeletes) { %>
                     Tables\Filters\TrashedFilter::make(),
                 <% } %>
             ])
             ->headerActions([
                 // hook:TABLE_HEADER_ACTIONS
-                Tables\Actions\CreateAction::make(),
+                <% if(!isManyToManyDetail || this.detail.relationship.relatedModel.cruds.length) { %>
+                    Tables\Actions\CreateAction::make()
+                <% } %>,
+                <% if(isManyToManyDetail) { %>
+                    Tables\Actions\AttachAction::make(),
+                <% } %>
             ])
             ->actions([
                 // hook:TABLE_ACTIONS
-                Tables\Actions\EditAction::make(),
+                <% if(!isManyToManyDetail || this.detail.relationship.relatedModel.cruds.length) { %>
+                Tables\Actions\EditAction::make()
+                <% } %>,
+                <% if(isManyToManyDetail) { %>
+                    Tables\Actions\DetachAction::make(),
+                <% } %>
                 Tables\Actions\DeleteAction::make(),
-                <% if(modelIsSoftDeletes) { %>
+                <% if(tableIsSoftDeletes) { %>
                     Tables\Actions\ForceDeleteAction::make(),
                     Tables\Actions\RestoreAction::make(),
                 <% } %>
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    <% if(isManyToManyDetail) { %>
+                        Tables\Actions\DetachBulkAction::make(),
+                    <% } %>
                     Tables\Actions\DeleteBulkAction::make(),
                     // hook:TABLE_BULK_ACTIONS
-                    <% if(modelIsSoftDeletes) { %>
+                    <% if(tableIsSoftDeletes) { %>
                         Tables\Actions\RestoreBulkAction::make(),
                         Tables\Actions\ForceDeleteBulkAction::make(),
                     <% } %>
                 ]),
             ])
-            <% if(modelIsSoftDeletes) { %>
+            <% if(tableIsSoftDeletes) { %>
             ->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]))

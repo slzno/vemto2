@@ -65,7 +65,7 @@ export default class Input extends RelaDB.Model {
         }
     }
 
-    static createFromColumn(crud: Crud, column: Column, forceType?: InputType | null) {
+    static createFromColumn(crud: Crud, column: Column, forceType?: InputType | null, ignoreColumnHidden: boolean = false) {
         const input = new Input()
         input.crudId = crud.id
         input.columnId = column.id
@@ -84,7 +84,7 @@ export default class Input extends RelaDB.Model {
         input.showOnCreation = true
         input.showOnUpdate = true
 
-        const columnIsHidden = crud.model.hidden && crud.model.hidden.indexOf(column.name) !== -1
+        const columnIsHidden = ignoreColumnHidden ? false : crud.model.hidden && crud.model.hidden.indexOf(column.name) !== -1
 
         input.showOnDetails = !columnIsHidden
         input.showOnIndex = !columnIsHidden
@@ -143,12 +143,30 @@ export default class Input extends RelaDB.Model {
         return relatedModel ? relatedModel.name : ""
     }
 
+    getRelatedModelLabel(): string {
+        const relatedModel = this.getRelatedModel()
+
+        return relatedModel ? relatedModel.table.getLabelColumnName() : ""
+    }
+
     getRelatedModel(): Model {
         return this.relationship ? this.relationship.relatedModel : null
     }
 
     isBelongsTo(): boolean {
         return this.type === InputType.BELONGS_TO && !! this.relationshipId
+    }
+
+    getColumnNameForFilament(isBelongsToManyDetail: boolean = false): string {
+        if(isBelongsToManyDetail) {
+            return this.getRelatedModelLabel()
+        }
+
+        if(this.isBelongsTo()) {
+            return `${this.relationship.name}.${this.relationship.relatedModel.table.getLabelColumnName()}`
+        }
+
+        return this.name
     }
 
     isCommon(): boolean {

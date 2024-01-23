@@ -1,15 +1,18 @@
 import Input from "./Input"
+import Table from "../Table"
 import CrudPanel from "./CrudPanel"
 import Nav from "@Common/models/Nav"
-import Model from "@Common/models/Model"
-import Route, { RouteType } from "@Common/models/Route"
-import { camelCase, capitalCase, paramCase, pascalCase } from "change-case"
-import Column from "@Common/models/Column"
-import Project from "@Common/models/Project"
-import RelaDB from "@tiago_silva_pereira/reladb"
 import AppSection from "../AppSection"
+import Model from "@Common/models/Model"
+import Column from "@Common/models/Column"
 import HasManyDetail from "./HasManyDetail"
+import Project from "@Common/models/Project"
 import MorphManyDetail from "./MorphManyDetail"
+import RelaDB from "@tiago_silva_pereira/reladb"
+import BelongsToManyDetail from "./BelongsToManyDetail"
+import Route, { RouteType } from "@Common/models/Route"
+import WordManipulator from "@Common/util/WordManipulator"
+import { camelCase, capitalCase, paramCase, pascalCase } from "change-case"
 
 export enum CrudType {
     DEFAULT = "Default",
@@ -21,7 +24,8 @@ export enum CrudType {
 export enum CrudSubType {
     DEFAULT = "Default",
     HAS_MANY_DETAIL = "Has Many Detail",
-    MORPH_MANY_DETAIL = "Morph Many Detail"
+    MORPH_MANY_DETAIL = "Morph Many Detail",
+    BELONGS_TO_MANY_DETAIL = "Belongs To Many Detail"
 }
 
 export interface CrudSettings {
@@ -52,6 +56,8 @@ export default class Crud extends RelaDB.Model {
     type: CrudType
     section: AppSection
     sectionId: string
+    tableId: string
+    table: Table
     model: Model
     modelId: string
     project: Project
@@ -76,6 +82,10 @@ export default class Crud extends RelaDB.Model {
     relatedMorphManyDetails: MorphManyDetail[]
     isMorphManyDetail: boolean
 
+    belongsToManyDetails: BelongsToManyDetail[]
+    relatedBelongsToManyDetails: BelongsToManyDetail[]
+    isBelongsToManyDetail: boolean
+
     basePath: string
 
     // Livewire specific
@@ -91,6 +101,7 @@ export default class Crud extends RelaDB.Model {
     relationships() {
         return {
             model: () => this.belongsTo(Model),
+            table: () => this.belongsTo(Table),
             project: () => this.belongsTo(Project),
             section: () => this.belongsTo(AppSection, "sectionId"),
             inputs: () => this.hasMany(Input).cascadeDelete(),
@@ -105,6 +116,9 @@ export default class Crud extends RelaDB.Model {
 
             morphManyDetails: () => this.hasMany(MorphManyDetail).cascadeDelete(),
             relatedMorphManyDetails: () => this.hasMany(MorphManyDetail, "detailCrudId").cascadeDelete(),
+
+            belongsToManyDetails: () => this.hasMany(BelongsToManyDetail).cascadeDelete(),
+            relatedBelongsToManyDetails: () => this.hasMany(BelongsToManyDetail, "detailCrudId").cascadeDelete(),
         }
     }
 
@@ -121,7 +135,7 @@ export default class Crud extends RelaDB.Model {
     }
 
     isDetail() {
-        return this.isHasManyDetail || this.isMorphManyDetail
+        return this.isHasManyDetail || this.isMorphManyDetail || this.isBelongsToManyDetail
     }
 
     hasDefaultSearchColumn(): boolean {
@@ -156,6 +170,7 @@ export default class Crud extends RelaDB.Model {
         crud.plural = capitalCase(model.plural)
         crud.sectionId = defaultSection ? defaultSection.id : null
         crud.modelId = model.id
+        crud.tableId = model.tableId
         crud.projectId = model.projectId
         crud.basePath = capitalCase(model.plural)
 
@@ -185,6 +200,63 @@ export default class Crud extends RelaDB.Model {
         return crud
     }
 
+    static createFromTable(
+        table: Table,
+        crudType: CrudType = CrudType.LIVEWIRE,
+        excludedColumns: Column[] = []
+    ) {
+        const defaultSearchColumn = table.getLabelColumn(),
+            crudIsForFilament = crudType == CrudType.FILAMENT
+
+        const defaultSortColumn = table.getUpdatedAtColumn() 
+            || table.getCreatedAtColumn()
+            || table.getPrimaryKeyColumn()
+            || defaultSearchColumn
+
+        const defaultSection = crudIsForFilament
+            ? AppSection.findDefaultAdminSection()
+            : AppSection.findDefaultDashboardSection()
+
+        const crudName = WordManipulator.runMultiple(
+            ['singularize', 'pascalCase'],
+            this.table.name
+        )
+
+        const crud = new Crud()
+        crud.type = crudType
+        crud.name = capitalCase(crudName)
+        crud.plural = capitalCase(table.name)
+        crud.sectionId = defaultSection ? defaultSection.id : null
+        crud.tableId = table.id
+        crud.projectId = table.projectId
+        crud.basePath = capitalCase(table.name)
+
+        crud.calculateSettings(crudName, table.name)
+        crud.calculateLivewireSpecificData()
+        
+        if(defaultSearchColumn) crud.defaultSearchColumnId = defaultSearchColumn.id
+        if(defaultSortColumn) crud.defaultSortColumnId = defaultSortColumn.id
+
+        crud.defaultSortDirection = "desc"
+
+        if(crudIsForFilament) crud.calculateFilamentSettings()
+
+        crud.save()
+
+        crud.addInputsFromTable(table, excludedColumns)
+
+        if(!crudIsForFilament) {
+            crud.addRoutes()
+            crud.addNavs()
+        }
+
+        return crud
+    }
+
+    isOnlyTableCrud(): boolean {
+        return !this.modelId && !!this.tableId
+    }
+
     getLabel(): string {
         return this.settings.collectionTitle
     }
@@ -192,6 +264,7 @@ export default class Crud extends RelaDB.Model {
     getAppSubType(): string {
         if(this.isHasManyDetail) return CrudSubType.HAS_MANY_DETAIL
         if(this.isMorphManyDetail) return CrudSubType.MORPH_MANY_DETAIL
+        if(this.isBelongsToManyDetail) return CrudSubType.BELONGS_TO_MANY_DETAIL
 
         return this.getAppType()
     }
@@ -200,6 +273,14 @@ export default class Crud extends RelaDB.Model {
         if(this.type === CrudType.FILAMENT) return 'FILAMENT'
 
         return 'CRUD'
+    }
+
+    isManyToManyDetail(): boolean {
+        return this.isBelongsToManyDetail
+    }
+
+    isCommonDetail(): boolean {
+        return this.isHasManyDetail || this.isMorphManyDetail
     }
 
     getBasicInputs(): Input[] {
@@ -254,12 +335,20 @@ export default class Crud extends RelaDB.Model {
         return this.getOrderedInputs().filter((input) => input.showOnCreation || input.showOnUpdate)
     }
 
-    calculateSettings() {
+    calculateSettings(name: string = null, plural: string = null) {
+        if(!name) {
+            name = this.isOnlyTableCrud() ? WordManipulator.singularize(this.table.name) : this.model.name
+        }
+
+        if(!plural) {
+            plural = this.isOnlyTableCrud() ? this.table.name : this.model.plural
+        }
+
         this.settings = {
-            itemName: camelCase(this.model.name),
-            collectionName: camelCase(this.model.plural),
-            itemTitle: capitalCase(this.model.name),
-            collectionTitle: capitalCase(this.model.plural),
+            itemName: camelCase(name),
+            collectionName: camelCase(plural),
+            itemTitle: capitalCase(name),
+            collectionTitle: capitalCase(plural),
         }
     }
 
@@ -292,6 +381,30 @@ export default class Crud extends RelaDB.Model {
             if(model.columnIsHiddenForCrudCreation(column)) return
 
             const input = Input.createFromColumn(this, column)
+            input.panelId = panel.id
+            input.save()
+        })
+    }
+
+    addInputsFromTable(table: Table, excludedColumns: Column[] = []) {
+        const panel = new CrudPanel()
+        panel.title = 'Main'
+        panel.crudId = this.id
+        panel.order = 0
+        panel.save()
+
+        const excludedColumnsIds = excludedColumns
+            .filter((column) => column)
+            .map((column: Column) => column.id)
+
+        table.getColumns().forEach((column: Column) => {
+            if(excludedColumnsIds.includes(column.id)) return
+            if(column.isPrimaryKey()) return
+            if(column.isDefaultLaravelTimestamp()) return
+
+            if(column.isHiddenForCrudCreation()) return
+
+            const input = Input.createFromColumn(this, column, null, true)
             input.panelId = panel.id
             input.save()
         })
@@ -382,6 +495,12 @@ export default class Crud extends RelaDB.Model {
         if(!this.relatedMorphManyDetails.length) return null
 
         return this.relatedMorphManyDetails[0]
+    }
+
+    getFirstRelatedBelongsToManyDetail(): BelongsToManyDetail {
+        if(!this.relatedBelongsToManyDetails.length) return null
+
+        return this.relatedBelongsToManyDetails[0]
     }
 
     getLivewireRouteContent(route: Route): string {

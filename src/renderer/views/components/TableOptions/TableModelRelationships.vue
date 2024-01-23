@@ -13,6 +13,7 @@
     import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
     import UiOptionsDropdown from '@Renderer/components/ui/UiOptionsDropdown.vue'
     import UiDropdownItem from '@Renderer/components/ui/UiDropdownItem.vue'
+import UiCheckbox from '@Renderer/components/ui/UiCheckbox.vue'
 
     const props = defineProps(['model', 'models']),
         models = toRef(props, 'models'),
@@ -237,6 +238,9 @@
                     />
                 </template>
                 
+                <div v-if="relationship.isManyToMany()">
+                    <UiCheckbox v-model="relationship.withPivotColumns" label="With Pivot Columns" @input="$emit('save')" />
+                </div>
                 <div class="flex justify-end items-center space-x-2">
                     <small class="text-slate-500" v-show="relationship.hasUnsavedData()">
                         There are unsaved changes

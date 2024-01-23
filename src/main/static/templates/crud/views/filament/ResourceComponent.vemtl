@@ -1,7 +1,7 @@
 <?php
 
 <% const pascalCase = this.require('pascalCase') %>
-<% const modelIsSoftDeletes = this.crud.model.hasSoftDeletes %>
+<% const tableIsSoftDeletes = this.crud.table.hasSoftDeletes() %>
 <% const navigationIcon = this.crud.filamentSettings.navigationIcon ?? 'heroicon-o-rectangle-stack' %>
 
 namespace App\Filament\Resources\<$ this.crud.section.name $>;
@@ -15,7 +15,7 @@ use <$ this.crud.model.class $>;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\<$ this.crud.section.name $>\<$ this.filenameWithoutExtension $>\Pages;
-<% if(modelIsSoftDeletes) { %>
+<% if(tableIsSoftDeletes) { %>
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 <% } %>
 use App\Filament\Resources\<$ this.crud.section.name $>\<$ this.filenameWithoutExtension $>\RelationManagers;
@@ -103,7 +103,7 @@ class <$ this.filenameWithoutExtension $> extends Resource
                 // hook:TABLE_COLUMNS
             ])
             ->filters([
-                <% if(modelIsSoftDeletes) { %>
+                <% if(tableIsSoftDeletes) { %>
                     Tables\Filters\TrashedFilter::make(),
                 <% } %>
                 // hook:TABLE_FILTERS
@@ -117,7 +117,7 @@ class <$ this.filenameWithoutExtension $> extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                     // hook:TABLE_BULK_ACTIONS
-                    <% if(modelIsSoftDeletes) { %>
+                    <% if(tableIsSoftDeletes) { %>
                         Tables\Actions\ForceDeleteBulkAction::make(),
                         Tables\Actions\RestoreBulkAction::make(),
                     <% } %>
@@ -136,6 +136,10 @@ class <$ this.filenameWithoutExtension $> extends Resource
             <% for(let detail of this.crud.morphManyDetails) { %>
                 RelationManagers\<$ detail.relationship.relatedModel.plural $>RelationManager::class,
             <% } %>
+            <# --- #>
+            <% for(let detail of this.crud.belongsToManyDetails) { %>
+                RelationManagers\<$ detail.relationship.relatedModel.plural $>RelationManager::class,
+            <% } %>
             // hook:RELATIONS
         ];
     }
@@ -152,7 +156,7 @@ class <$ this.filenameWithoutExtension $> extends Resource
         ];
     }
 
-    <% if(modelIsSoftDeletes) { %>
+    <% if(tableIsSoftDeletes) { %>
         public static function getEloquentQuery(): Builder
         {
             return parent::getEloquentQuery()

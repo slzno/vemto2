@@ -95,6 +95,8 @@ class ModelRepository {
 
                             'relatedKeyName' => method_exists($return, 'getRelatedKeyName') ? $return->getRelatedKeyName() : null,
                             'method' => $methodContent,
+
+                            'withPivotColumns' => str_contains($methodContent, '->withPivot'),
                         ];
                     }
                 }

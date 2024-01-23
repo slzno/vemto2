@@ -252,7 +252,16 @@ implements
                     <# --- #>
                     <up if(relationship.getServiceFromType().hasDifferentRelatedPivot()) { up>
                     , '<$ relationship.relatedPivotKey.name $>'
-                    <up } up>);
+                    <up } up>)
+                    <# --- #>
+                    <% if(relationship.withPivotColumns) { %>
+                        ->withPivot(
+                        <###>
+                        <% for(let column of relationship.getPivotTableColumns()) { %>
+                            '<$ column.name $>', 
+                        <% } %>
+                        )
+                    <% } %>;
                 }
 
             <% } %>
