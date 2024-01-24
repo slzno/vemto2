@@ -276,7 +276,16 @@ implements
                 <% } %>
                 public function <$ relationship.name $>() 
                 {
-                    return $this-><$ relationship.getTypeCamelCase() $>(<$ relationship.relatedModel.name $>::class, '<$ relationship.morphToName $>');
+                    return $this-><$ relationship.getTypeCamelCase() $>(<$ relationship.relatedModel.name $>::class, '<$ relationship.morphToName $>')
+                        <% if(relationship.isManyToManyMorph() && relationship.withPivotColumns) { %>
+                            <# --- #>
+                            ->withPivot(
+                            <###>
+                            <% for(let columnName of relationship.includedPivotColumns) { %>
+                                '<$ columnName $>', 
+                            <% } %>
+                            )
+                        <% } %>;
                 }
 
             <% } %>

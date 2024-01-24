@@ -9,6 +9,8 @@ import RenderableFilamentCreateComponent from "./views/filament/RenderableFilame
 import RenderableFilamentCommonRelationManager from "./views/filament/RenderableFilamentCommonRelationManager"
 import RenderableFilamentBelongsToManyRelationManager from "./views/filament/RenderableFilamentBelongsToManyRelationManager"
 import BelongsToManyDetail from "@Common/models/crud/BelongsToManyDetail"
+import MorphToManyDetail from "@Common/models/crud/MorphToManyDetail"
+import RenderableFilamentMorphToManyRelationManager from "./views/filament/RenderableFilamentMorphToManyRelationManager"
 
 export default class GenerateFilamentResources {
     async start() {
@@ -31,6 +33,10 @@ export default class GenerateFilamentResources {
 
             resource.belongsToManyDetails.forEach(async (belongsToManyDetail: BelongsToManyDetail) => {
                 await new RenderableFilamentBelongsToManyRelationManager(belongsToManyDetail).render()
+            })
+
+            resource.morphToManyDetails.forEach(async (morphToManyDetail: MorphToManyDetail) => {
+                await new RenderableFilamentMorphToManyRelationManager(morphToManyDetail).render()
             })
         }
     }

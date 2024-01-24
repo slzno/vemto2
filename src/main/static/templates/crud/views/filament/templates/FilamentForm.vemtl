@@ -131,6 +131,10 @@
         ->searchable()
     <% } %>
     <# --- #>
+    <% if(inputFormData.canBePreloaded) { %>
+        ->preload()
+    <% } %>
+    <# --- #>
     <% if(inputFormData.useCustomInput) { %>
         ->native(false)
     <% } %>

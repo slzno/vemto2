@@ -140,6 +140,10 @@ class <$ this.filenameWithoutExtension $> extends Resource
             <% for(let detail of this.crud.belongsToManyDetails) { %>
                 RelationManagers\<$ detail.relationship.relatedModel.plural $>RelationManager::class,
             <% } %>
+            <# --- #>
+            <% for(let detail of this.crud.morphToManyDetails) { %>
+                RelationManagers\<$ detail.relationship.relatedModel.plural $>RelationManager::class,
+            <% } %>
             // hook:RELATIONS
         ];
     }

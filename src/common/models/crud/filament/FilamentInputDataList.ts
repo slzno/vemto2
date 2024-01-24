@@ -30,7 +30,7 @@ export default class FilamentInputDataList {
                 data = {
                     ...data,
                     allowHtml: false,
-                    canBePreloaded: false,
+                    canBePreloaded: true,
                     canBeSearchable: true,
                     canSelectPlaceholder: true,
                     loadingMessage: null,

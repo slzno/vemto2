@@ -261,7 +261,7 @@
                     />
                 </template>
                 
-                <div class="flex flex-col gap-2" v-if="relationship.isManyToMany()">
+                <div class="flex flex-col gap-2" v-if="relationship.isManyToMany() || relationship.isManyToManyMorph()">
                     <UiCheckbox v-model="relationship.withPivotColumns" label="With Pivot Columns" @input="$emit('save')" />
 
                     <div v-if="relationship.withPivotColumns">

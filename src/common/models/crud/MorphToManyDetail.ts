@@ -5,7 +5,7 @@ import { capitalCase } from 'change-case'
 import { InputType } from './InputType'
 import { FilamentInputType } from './filament/FilamentInputTypesList'
 
-export default class BelongsToManyDetail extends RelaDB.Model {
+export default class MorphToManyDetail extends RelaDB.Model {
     id: string
     crud: Crud
     crudId: string
@@ -27,17 +27,14 @@ export default class BelongsToManyDetail extends RelaDB.Model {
     }
 
     static createFromRelation(crud: Crud, relationship: Relationship) {
-        let belongsToManyDetail = new BelongsToManyDetail()
-        belongsToManyDetail.crudId = crud.id
-        belongsToManyDetail.relationshipId = relationship.id
+        let morphToManyDetail = new MorphToManyDetail()
+        morphToManyDetail.crudId = crud.id
+        morphToManyDetail.relationshipId = relationship.id
 
         const excludedColumns = [
-            relationship.foreignPivotKey
+            relationship.idColumn,
+            relationship.typeColumn,
         ]
-
-        if(crud.isForFilament()) {
-            excludedColumns.push(relationship.relatedPivotKey)
-        }
 
         const detailCrud = Crud.createFromTable(
             relationship.pivot,
@@ -46,24 +43,26 @@ export default class BelongsToManyDetail extends RelaDB.Model {
         )
 
         detailCrud.basePath = `${capitalCase(crud.name)}${capitalCase(detailCrud.plural)}Detail`
-        detailCrud.isBelongsToManyDetail = true
+        detailCrud.isMorphToManyDetail = true
         detailCrud.save()
 
-        belongsToManyDetail.detailCrudId = detailCrud.id
+        morphToManyDetail.detailCrudId = detailCrud.id
 
-        belongsToManyDetail.save()
+        morphToManyDetail.save()
 
-        const input = detailCrud.inputs.find(input => input.name === relationship.relatedPivotKey.name)
+        const input = detailCrud.inputs.find(input => input.name === relationship.relatedPivotKeyName)
+
+        if(input && crud.isForFilament()) {
+            // Filament generates a new input for the pivot table automatically
+            input.delete()
+        }
 
         if (input) {
-            input.filamentSettings.formData.canBeSearchable = true
-            input.filamentSettings.formData.inputType = FilamentInputType.SELECT
-
             input.type = InputType.BELONGS_TO
             input.relationshipId = relationship.id
             input.save()
         }
         
-        return belongsToManyDetail
+        return morphToManyDetail
     }
 }

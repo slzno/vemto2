@@ -25,7 +25,7 @@ export default class FilamentColumnDataList {
             case InputType.SELECT:
             case InputType.BELONGS_TO:
                 data = {
-                    ...data,
+                    ...data
                 }
                 break;
             case InputType.CHECKBOX:

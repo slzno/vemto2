@@ -33,6 +33,12 @@
         if(crud.value.isBelongsToManyDetail) {
             return crud.value.getFirstRelatedBelongsToManyDetail()
         }
+
+        if(crud.value.isMorphToManyDetail) {
+            return crud.value.getFirstRelatedMorphToManyDetail()
+        }
+
+        return null
     }
 
     onMounted(async () => {
