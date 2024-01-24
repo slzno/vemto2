@@ -1,6 +1,7 @@
 import Project from "@Common/models/Project"
 import GenerateMenu from "./services/menu/GenerateMenu"
 import GenerateRoutes from "./services/routes/GenerateRoutes"
+import GenerateTranslations from "./services/translations/GenerateTranslations"
 import GenerateCrudFiles from "./services/crud/GenerateCrudFiles"
 import GenerateModelFiles from "./services/model/GenerateModelFiles"
 import GeneratePageFiles from "./services/page/GeneratePageFiles"
@@ -34,6 +35,7 @@ export default class SequentialGenerator {
 
         await new GenerateMenu().start()
         await new GenerateRoutes().start()
+        await new GenerateTranslations().start()
         
         await new GenerateModelFiles().start()
         await new GenerateCrudFiles().start()
