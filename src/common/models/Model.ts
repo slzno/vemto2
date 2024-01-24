@@ -649,6 +649,14 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         return this.traits || []
     }
 
+    hasMethods(): boolean {
+        return this.methods && this.methods.length > 0
+    }
+
+    getMethods(): string[] {
+        return this.methods || []
+    }
+
     getImportAlias(importName: string): string {
         if(!importName.includes(' as ')) return importName.split('\\').pop()
 

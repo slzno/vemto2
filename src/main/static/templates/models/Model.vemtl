@@ -329,12 +329,11 @@ implements
         <% } %>
     <% } %>
 
-    <# The following code is used by PHP-Merger to remove methods #>
-    <% for(let relationship of this.model.getRemovedRelationships()) { %>
-    // remove_method:<% relationship.name %>
-    <% } %>
-    <% for(let relationship of this.model.getRenamedRelationships()) { %>
-    // remove_method:<% relationship.getOldName() %>
+    <% if(this.model.hasMethods()) { %>
+        <# Methods #>
+        <% for(let method of this.model.getMethods()) { %>
+            <$ method.content $>
+        <% } %>
     <% } %>
 
     // hook:AFTER_METHODS

@@ -49,6 +49,7 @@ class ModelRepository {
                 return $method->getFileName() == $model['fullPath'];
             });
 
+            $methods = [];
             $relationships = [];
 
             foreach ($classMethods as $method) {
@@ -60,6 +61,7 @@ class ModelRepository {
                     $methodContent .= $lines[$i] . PHP_EOL;
                 }
 
+                // If the method is a relationship
                 if (preg_match('/return \$this->(hasOne|hasMany|belongsTo|belongsToMany|hasOneThrough|hasManyThrough|morphOne|morphMany|morphTo|morphToMany|through)/', $methodContent)) {
                     $return = $method->invoke(new $model['class']);
                     
@@ -97,6 +99,11 @@ class ModelRepository {
                             'method' => $methodContent,
                         ];
                     }
+                } else {
+                    $methods[] = [
+                        'name' => $method->getName(),
+                        'content' => $methodContent,
+                    ];
                 }
             }
 
@@ -139,7 +146,7 @@ class ModelRepository {
                 'hasAppends' => $hasProperty('protected', 'appends'),
                 'appends' => $appends,
                 'relationships' => $relationships,
-                'methods' => $classMethods,
+                'methods' => $methods,
                 'hasTimestamps' => $properties['timestamps'] ?? true,
                 'hasSoftDeletes' => in_array('Illuminate\Database\Eloquent\SoftDeletes', $allTraitNames),
                 'isAuthenticatable' => $extendsClass ? $extendsClass->name === 'Illuminate\Foundation\Auth\User' : false,
