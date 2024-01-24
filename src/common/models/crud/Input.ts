@@ -59,6 +59,11 @@ export default class Input extends RelaDB.Model {
         }
     }
 
+    static deleting(input: Input) {
+        input.crud.project.deleteTranslationOnAllLanguages(input.getLangKeyForLabel())
+        input.crud.project.deleteTranslationOnAllLanguages(input.getLangKeyForPlaceholder())
+    }
+
     static createFromColumn(crud: Crud, column: Column, forceType?: InputType | null) {
         const input = new Input()
         input.crudId = crud.id
