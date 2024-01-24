@@ -25,6 +25,14 @@ export default class GenerateBasicSections {
             projectId: this.project.id,
             requiresAuth: false,
         })
+
+        AppSection.create({
+            name: "Admin",
+            routePrefix: "admin",
+            routeBasePath: "admin",
+            projectId: this.project.id,
+            requiresAuth: false,
+        })
     }
 
 }

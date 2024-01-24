@@ -60,8 +60,8 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
     morphType: string
     morphToName: string
     
-    typeFieldId: string
-    typeField: Column
+    typeColumnId: string
+    typeColumn: Column
 
     //-- HasManyThrough
     firstKeyName: string // relatedModelId
@@ -92,6 +92,9 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
     project: Project
     projectId: string
     createdFromInterface: boolean
+
+    withPivotColumns: boolean
+    includedPivotColumns: string[]
 
     relationships() {
         return {
@@ -377,6 +380,9 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
         this.firstKeyName = data.firstKeyName
         this.secondKeyName = data.secondKeyName
 
+        this.withPivotColumns = data.withPivotColumns
+        this.includedPivotColumns = data.includedPivotColumns
+
         this.fillSchemaState()
 
         this.save()
@@ -418,6 +424,8 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
             pivotTableName: this.pivotTableName,
             firstKeyName: this.firstKeyName,
             secondKeyName: this.secondKeyName,
+            withPivotColumns: this.withPivotColumns,
+            includedPivotColumns: this.includedPivotColumns
         }
     }
 
@@ -440,6 +448,8 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
             localKeyName: DataComparator.stringsAreDifferent(this.schemaState.localKeyName, comparisonData.localKeyName),
             firstKeyName: DataComparator.stringsAreDifferent(this.schemaState.firstKeyName, comparisonData.firstKeyName),
             secondKeyName: DataComparator.stringsAreDifferent(this.schemaState.secondKeyName, comparisonData.secondKeyName),
+            withPivotColumns: DataComparator.booleansAreDifferent(this.schemaState.withPivotColumns, comparisonData.withPivotColumns),
+            includedPivotColumns: DataComparator.arraysAreDifferent(this.schemaState.includedPivotColumns, comparisonData.includedPivotColumns)
         }
     }
 
@@ -516,6 +526,19 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
         if(this.type === 'HasManyThrough') return ['HasManyThrough']
 
         return []
+    }
+
+    getPivotTableColumns(ignoreKeyColumns: boolean = true): Column[] {
+        let exceptColumnsName = [
+            this.foreignPivotKeyName,
+            this.relatedPivotKeyName
+        ]
+
+        if(!ignoreKeyColumns) {
+            return this.pivot.columns
+        }
+
+        return this.pivot.columns.filter((column: Column) => !exceptColumnsName.includes(column.name))
     }
 
 }

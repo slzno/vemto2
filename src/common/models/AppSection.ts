@@ -47,13 +47,18 @@ export default class AppSection extends RelaDB.Model {
         return paramCase(this.name)
     }
 
-    static findDefaultAdminSection(): AppSection {
+    static findDefaultDashboardSection(): AppSection {
         return AppSection.findSectionByName('Dashboard')
             || AppSection.findFirstSectionWhichRequiresAuth()
     }
 
     static findDefaultSiteSection(): AppSection {
         return AppSection.findSectionByName('Site')
+            || AppSection.findFirstSectionWhichDoesNotRequireAuth()
+    }
+
+    static findDefaultAdminSection(): AppSection {
+        return AppSection.findSectionByName('Admin')
             || AppSection.findFirstSectionWhichDoesNotRequireAuth()
     }
 

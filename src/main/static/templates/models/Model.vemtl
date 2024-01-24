@@ -252,7 +252,16 @@ implements
                     <# --- #>
                     <up if(relationship.getServiceFromType().hasDifferentRelatedPivot()) { up>
                     , '<$ relationship.relatedPivotKey.name $>'
-                    <up } up>);
+                    <up } up>)
+                    <# --- #>
+                    <% if(relationship.withPivotColumns) { %>
+                        ->withPivot(
+                        <###>
+                        <% for(let columnName of relationship.includedPivotColumns) { %>
+                            '<$ columnName $>', 
+                        <% } %>
+                        )
+                    <% } %>;
                 }
 
             <% } %>
@@ -267,7 +276,16 @@ implements
                 <% } %>
                 public function <$ relationship.name $>() 
                 {
-                    return $this-><$ relationship.getTypeCamelCase() $>(<$ relationship.relatedModel.name $>::class, '<$ relationship.morphToName $>');
+                    return $this-><$ relationship.getTypeCamelCase() $>(<$ relationship.relatedModel.name $>::class, '<$ relationship.morphToName $>')
+                        <% if(relationship.isManyToManyMorph() && relationship.withPivotColumns) { %>
+                            <# --- #>
+                            ->withPivot(
+                            <###>
+                            <% for(let columnName of relationship.includedPivotColumns) { %>
+                                '<$ columnName $>', 
+                            <% } %>
+                            )
+                        <% } %>;
                 }
 
             <% } %>

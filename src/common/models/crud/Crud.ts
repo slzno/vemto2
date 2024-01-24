@@ -1,19 +1,33 @@
 import Input from "./Input"
+import Table from "../Table"
 import CrudPanel from "./CrudPanel"
 import Nav from "@Common/models/Nav"
-import Model from "@Common/models/Model"
-import Route, { RouteType } from "@Common/models/Route"
-import { camelCase, capitalCase, paramCase, pascalCase } from "change-case"
-import Column from "@Common/models/Column"
-import Project from "@Common/models/Project"
-import RelaDB from "@tiago_silva_pereira/reladb"
 import AppSection from "../AppSection"
+import Model from "@Common/models/Model"
+import Column from "@Common/models/Column"
 import HasManyDetail from "./HasManyDetail"
+import Project from "@Common/models/Project"
+import MorphManyDetail from "./MorphManyDetail"
+import RelaDB from "@tiago_silva_pereira/reladb"
+import MorphToManyDetail from "./MorphToManyDetail"
+import BelongsToManyDetail from "./BelongsToManyDetail"
+import Route, { RouteType } from "@Common/models/Route"
+import WordManipulator from "@Common/util/WordManipulator"
+import { camelCase, capitalCase, paramCase, pascalCase } from "change-case"
 
 export enum CrudType {
     DEFAULT = "Default",
     VUE = "Vue",
     LIVEWIRE = "Livewire",
+    FILAMENT = "Filament"
+}
+
+export enum CrudSubType {
+    DEFAULT = "Default",
+    HAS_MANY_DETAIL = "Has Many Detail",
+    MORPH_MANY_DETAIL = "Morph Many Detail",
+    BELONGS_TO_MANY_DETAIL = "Belongs To Many Detail",
+    MORPH_TO_MANY_DETAIL = "Morph To Many Detail"
 }
 
 export interface CrudSettings {
@@ -23,6 +37,20 @@ export interface CrudSettings {
     collectionTitle: string
 }
 
+export interface FilamentCrudSettings {
+    recordTitle: string
+    shouldSkipAuthorization: boolean
+    modelLabel: string
+    pluralModelLabel: string
+    navigationLabel: string
+    navigationIcon: string
+    navigationOrder: number
+    hasTitleCaseModelLabel: boolean
+    navigationParentItem: string
+    navigationGroup: string
+    slug: string
+}
+
 export default class Crud extends RelaDB.Model {
     id: string
     name: string
@@ -30,6 +58,8 @@ export default class Crud extends RelaDB.Model {
     type: CrudType
     section: AppSection
     sectionId: string
+    tableId: string
+    table: Table
     model: Model
     modelId: string
     project: Project
@@ -45,9 +75,22 @@ export default class Crud extends RelaDB.Model {
     routes: Route[]
     navs: Nav[]
     hooks: any
+
     hasManyDetails: HasManyDetail[]
-    detailHasManyDetails: HasManyDetail[]
+    relatedHasManyDetails: HasManyDetail[]
     isHasManyDetail: boolean
+
+    morphManyDetails: MorphManyDetail[]
+    relatedMorphManyDetails: MorphManyDetail[]
+    isMorphManyDetail: boolean
+
+    belongsToManyDetails: BelongsToManyDetail[]
+    relatedBelongsToManyDetails: BelongsToManyDetail[]
+    isBelongsToManyDetail: boolean
+
+    morphToManyDetails: MorphToManyDetail[]
+    relatedMorphToManyDetails: MorphToManyDetail[]
+    isMorphToManyDetail: boolean
 
     basePath: string
 
@@ -58,10 +101,13 @@ export default class Crud extends RelaDB.Model {
     livewireShowComponentName: string
     livewireCreateComponentName: string
     livewireEditComponentName: string
+
+    filamentSettings: FilamentCrudSettings
     
     relationships() {
         return {
             model: () => this.belongsTo(Model),
+            table: () => this.belongsTo(Table),
             project: () => this.belongsTo(Project),
             section: () => this.belongsTo(AppSection, "sectionId"),
             inputs: () => this.hasMany(Input).cascadeDelete(),
@@ -70,17 +116,35 @@ export default class Crud extends RelaDB.Model {
             routes: () => this.morphMany(Route, "routable").cascadeDelete(),
             defaultSearchColumn: () => this.belongsTo(Column, "defaultSearchColumnId"),
             defaultSortColumn: () => this.belongsTo(Column, "defaultSortColumnId"),
+
             hasManyDetails: () => this.hasMany(HasManyDetail).cascadeDelete(),
-            detailHasManyDetails: () => this.hasMany(HasManyDetail, "detailCrudId").cascadeDelete(),
+            relatedHasManyDetails: () => this.hasMany(HasManyDetail, "detailCrudId").cascadeDelete(),
+
+            morphManyDetails: () => this.hasMany(MorphManyDetail).cascadeDelete(),
+            relatedMorphManyDetails: () => this.hasMany(MorphManyDetail, "detailCrudId").cascadeDelete(),
+
+            belongsToManyDetails: () => this.hasMany(BelongsToManyDetail).cascadeDelete(),
+            relatedBelongsToManyDetails: () => this.hasMany(BelongsToManyDetail, "detailCrudId").cascadeDelete(),
+
+            morphToManyDetails: () => this.hasMany(MorphToManyDetail).cascadeDelete(),
+            relatedMorphToManyDetails: () => this.hasMany(MorphToManyDetail, "detailCrudId").cascadeDelete(),
         }
     }
 
     static getBasic() {
-        return Crud.get().filter((crud) => crud.isBasic())
+        return Crud.get().filter((crud: Crud) => crud.isBasic())
+    }
+
+    static getFilamentResources() {
+        return Crud.get().filter((crud: Crud) => crud.isForFilament() && !crud.isDetail())
     }
 
     isBasic() {
-        return !this.isHasManyDetail
+        return !this.isDetail() && !this.isForFilament()
+    }
+
+    isDetail() {
+        return this.isHasManyDetail || this.isMorphManyDetail || this.isBelongsToManyDetail || this.isMorphToManyDetail
     }
 
     hasDefaultSearchColumn(): boolean {
@@ -91,22 +155,31 @@ export default class Crud extends RelaDB.Model {
         return !! this.defaultSortColumn
     }
 
-    static createFromModel(model: Model, excludedColumns: Column[] = [], generateDetails: boolean = false) {
-        const defaultSearchColumn = model.table.getLabelColumn()
+    static createFromModel(
+        model: Model,
+        crudType: CrudType = CrudType.LIVEWIRE,
+        excludedColumns: Column[] = [],
+        generateDetails: boolean = false
+    ) {
+        const defaultSearchColumn = model.table.getLabelColumn(),
+            crudIsForFilament = crudType == CrudType.FILAMENT
 
         const defaultSortColumn = model.table.getUpdatedAtColumn() 
             || model.table.getCreatedAtColumn()
             || model.table.getPrimaryKeyColumn()
             || defaultSearchColumn
 
-        const defaultSection = AppSection.findDefaultAdminSection()
+        const defaultSection = crudIsForFilament
+            ? AppSection.findDefaultAdminSection()
+            : AppSection.findDefaultDashboardSection()
 
         const crud = new Crud()
-        crud.type = CrudType.LIVEWIRE
+        crud.type = crudType
         crud.name = capitalCase(model.name)
         crud.plural = capitalCase(model.plural)
         crud.sectionId = defaultSection ? defaultSection.id : null
         crud.modelId = model.id
+        crud.tableId = model.tableId
         crud.projectId = model.projectId
         crud.basePath = capitalCase(model.plural)
 
@@ -118,11 +191,16 @@ export default class Crud extends RelaDB.Model {
 
         crud.defaultSortDirection = "desc"
 
+        if(crudIsForFilament) crud.calculateFilamentSettings()
+
         crud.save()
 
         crud.addInputsFromModel(model, excludedColumns)
-        crud.addRoutes()
-        crud.addNavs()
+
+        if(!crudIsForFilament) {
+            crud.addRoutes()
+            crud.addNavs()
+        }
 
         if(generateDetails) {
             crud.addHasManyDetails()
@@ -131,18 +209,88 @@ export default class Crud extends RelaDB.Model {
         return crud
     }
 
+    static createFromTable(
+        table: Table,
+        crudType: CrudType = CrudType.LIVEWIRE,
+        excludedColumns: Column[] = []
+    ) {
+        const defaultSearchColumn = table.getLabelColumn(),
+            crudIsForFilament = crudType == CrudType.FILAMENT
+
+        const defaultSortColumn = table.getUpdatedAtColumn() 
+            || table.getCreatedAtColumn()
+            || table.getPrimaryKeyColumn()
+            || defaultSearchColumn
+
+        const defaultSection = crudIsForFilament
+            ? AppSection.findDefaultAdminSection()
+            : AppSection.findDefaultDashboardSection()
+
+        const crudName = WordManipulator.runMultiple(
+            ['singularize', 'pascalCase'],
+            this.table.name
+        )
+
+        const crud = new Crud()
+        crud.type = crudType
+        crud.name = capitalCase(crudName)
+        crud.plural = capitalCase(table.name)
+        crud.sectionId = defaultSection ? defaultSection.id : null
+        crud.tableId = table.id
+        crud.projectId = table.projectId
+        crud.basePath = capitalCase(table.name)
+
+        crud.calculateSettings(crudName, table.name)
+        crud.calculateLivewireSpecificData()
+        
+        if(defaultSearchColumn) crud.defaultSearchColumnId = defaultSearchColumn.id
+        if(defaultSortColumn) crud.defaultSortColumnId = defaultSortColumn.id
+
+        crud.defaultSortDirection = "desc"
+
+        if(crudIsForFilament) crud.calculateFilamentSettings()
+
+        crud.save()
+
+        crud.addInputsFromTable(table, excludedColumns)
+
+        if(!crudIsForFilament) {
+            crud.addRoutes()
+            crud.addNavs()
+        }
+
+        return crud
+    }
+
+    isOnlyTableCrud(): boolean {
+        return !this.modelId && !!this.tableId
+    }
+
     getLabel(): string {
         return this.settings.collectionTitle
     }
 
     getAppSubType(): string {
-        if(this.isHasManyDetail) return 'Has Many Detail'
+        if(this.isHasManyDetail) return CrudSubType.HAS_MANY_DETAIL
+        if(this.isMorphManyDetail) return CrudSubType.MORPH_MANY_DETAIL
+        if(this.isBelongsToManyDetail) return CrudSubType.BELONGS_TO_MANY_DETAIL
+        if(this.isMorphToManyDetail) return CrudSubType.MORPH_TO_MANY_DETAIL
 
         return this.getAppType()
     }
 
     getAppType(): string {
+        if(this.type === CrudType.FILAMENT) return 'FILAMENT'
+
         return 'CRUD'
+    }
+
+    isManyToManyDetail(): boolean {
+        return this.isBelongsToManyDetail || this.isMorphToManyDetail
+    }
+
+    isCommonDetail(): boolean {
+        return this.isHasManyDetail || this.isMorphManyDetail
     }
 
     getBasicInputs(): Input[] {
@@ -174,27 +322,67 @@ export default class Crud extends RelaDB.Model {
     }
 
     getInputsForIndex(): Input[] {
-        return this.inputs.filter((input) => input.showOnIndex)
+        return this.getOrderedInputs().filter((input) => input.showOnIndex)
+    }
+
+    getInputsForIndexExcept(excludedInputs: Input | Input[]): Input[] {
+        let excludedInputIds = []
+
+        if(!Array.isArray(excludedInputs)) {
+            excludedInputIds = [excludedInputs.id]
+        } else {
+            excludedInputIds = excludedInputs.map((input) => input.id)
+        }
+
+        return this.getInputsForIndex().filter((input) => !excludedInputIds.includes(input.id))
     }
 
     getInputsForCreate(): Input[] {
-        return this.inputs.filter((input) => input.showOnCreation)
+        return this.getOrderedInputs().filter((input) => input.showOnCreation)
     }
 
     getInputsForUpdate(): Input[] {
-        return this.inputs.filter((input) => input.showOnUpdate)
+        return this.getOrderedInputs().filter((input) => input.showOnUpdate)
     }
 
     getInputsForDetails(): Input[] {
-        return this.inputs.filter((input) => input.showOnDetails)
+        return this.getOrderedInputs().filter((input) => input.showOnDetails)
     }
 
-    calculateSettings() {
+    getOrderedInputs(): Input[] {
+        return this.inputs.sort((a, b) => a.order - b.order)
+    }
+
+    getInputsForForms(): Input[] {
+        return this.getOrderedInputs().filter((input) => input.showOnCreation || input.showOnUpdate)
+    }
+
+    getInputsForFormsExcept(excludedInputs: Input | Input[]): Input[] {
+        let excludedInputIds = []
+
+        if(!Array.isArray(excludedInputs)) {
+            excludedInputIds = [excludedInputs.id]
+        } else {
+            excludedInputIds = excludedInputs.map((input) => input.id)
+        }
+
+        return this.getInputsForForms().filter((input) => !excludedInputIds.includes(input.id))
+    }
+
+    calculateSettings(name: string = null, plural: string = null) {
+        if(!name) {
+            name = this.isOnlyTableCrud() ? WordManipulator.singularize(this.table.name) : this.model.name
+        }
+
+        if(!plural) {
+            plural = this.isOnlyTableCrud() ? this.table.name : this.model.plural
+        }
+
         this.settings = {
-            itemName: camelCase(this.model.name),
-            collectionName: camelCase(this.model.plural),
-            itemTitle: capitalCase(this.model.name),
-            collectionTitle: capitalCase(this.model.plural),
+            itemName: camelCase(name),
+            collectionName: camelCase(plural),
+            itemTitle: capitalCase(name),
+            collectionTitle: capitalCase(plural),
         }
     }
 
@@ -227,6 +415,30 @@ export default class Crud extends RelaDB.Model {
             if(model.columnIsHiddenForCrudCreation(column)) return
 
             const input = Input.createFromColumn(this, column)
+            input.panelId = panel.id
+            input.save()
+        })
+    }
+
+    addInputsFromTable(table: Table, excludedColumns: Column[] = []) {
+        const panel = new CrudPanel()
+        panel.title = 'Main'
+        panel.crudId = this.id
+        panel.order = 0
+        panel.save()
+
+        const excludedColumnsIds = excludedColumns
+            .filter((column) => column)
+            .map((column: Column) => column.id)
+
+        table.getColumns().forEach((column: Column) => {
+            if(excludedColumnsIds.includes(column.id)) return
+            if(column.isPrimaryKey()) return
+            if(column.isDefaultLaravelTimestamp()) return
+
+            if(column.isHiddenForCrudCreation()) return
+
+            const input = Input.createFromColumn(this, column, null, true)
             input.panelId = panel.id
             input.save()
         })
@@ -307,6 +519,30 @@ export default class Crud extends RelaDB.Model {
         return ''
     }
 
+    getFirstRelatedHasManyDetail(): HasManyDetail {
+        if(!this.relatedHasManyDetails.length) return null
+
+        return this.relatedHasManyDetails[0]
+    }
+
+    getFirstRelatedMorphManyDetail(): MorphManyDetail {
+        if(!this.relatedMorphManyDetails.length) return null
+
+        return this.relatedMorphManyDetails[0]
+    }
+
+    getFirstRelatedBelongsToManyDetail(): BelongsToManyDetail {
+        if(!this.relatedBelongsToManyDetails.length) return null
+
+        return this.relatedBelongsToManyDetails[0]
+    }
+
+    getFirstRelatedMorphToManyDetail(): MorphToManyDetail {
+        if(!this.relatedMorphToManyDetails.length) return null
+
+        return this.relatedMorphToManyDetails[0]
+    }
+
     getLivewireRouteContent(route: Route): string {
         const componentName = this.getLivewireComponentName(route)
 
@@ -349,5 +585,27 @@ export default class Crud extends RelaDB.Model {
 
     getBaseLangKey(): string {
         return `crud.${this.settings.collectionName}`
+    }
+    
+    calculateFilamentSettings() {
+        this.filamentSettings = {
+            modelLabel: this.name,
+            pluralModelLabel: this.plural,
+            navigationLabel: this.plural,
+            navigationIcon: "heroicon-o-rectangle-stack",
+            navigationOrder: 1,
+            navigationParentItem: null,
+            hasTitleCaseModelLabel: true,
+            navigationGroup: "Admin",
+            slug: null
+        } as FilamentCrudSettings
+    }
+
+    isForFilament(): boolean {
+        return this.type === CrudType.FILAMENT
+    }
+
+    isForLivewire(): boolean {
+        return this.type === CrudType.LIVEWIRE
     }
 }

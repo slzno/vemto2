@@ -33,6 +33,8 @@
     onMounted(async () => {
         page.value = Page.find(pageId)
 
+        if(!page.value) return
+
         loadComponents()
     })
 
