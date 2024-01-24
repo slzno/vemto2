@@ -13,7 +13,9 @@
     import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
     import UiOptionsDropdown from '@Renderer/components/ui/UiOptionsDropdown.vue'
     import UiDropdownItem from '@Renderer/components/ui/UiDropdownItem.vue'
-import UiCheckbox from '@Renderer/components/ui/UiCheckbox.vue'
+    import UiCheckbox from '@Renderer/components/ui/UiCheckbox.vue'
+    import UiMultiSelect from '@Renderer/components/ui/UiMultiSelect.vue'
+    import Column from '@Common/models/Column'
 
     const props = defineProps(['model', 'models']),
         models = toRef(props, 'models'),
@@ -44,6 +46,27 @@ import UiCheckbox from '@Renderer/components/ui/UiCheckbox.vue'
                 label: rel.getLabel()
             }
         })
+    }
+
+    const getSelectDataForLayout = (property: Array<string>|Column[]): Array<Object> => {
+        if(!property || !Array.isArray(property)) return []
+
+        return property.map((guarded: string|Column) => {
+            if(typeof guarded === "object") {
+                guarded = guarded.name
+            }
+
+            return {
+                label: guarded,
+                value: guarded.toLowerCase(),
+            }
+        })
+    }
+
+    const saveWithPivotColumns = (selectValue: Array<string>, relationship: Relationship) => {
+        const columnsNames = selectValue.map((item: any) => item.value)
+
+        relationship.includedPivotColumns = columnsNames
     }
         
     const newRelationship = (): void => {
@@ -161,7 +184,7 @@ import UiCheckbox from '@Renderer/components/ui/UiCheckbox.vue'
                 </div>
             </div>
 
-            <div class="flex flex-col gap-1 space-y-1.5">
+            <div class="flex flex-col gap-2 space-y-1.5">
 
                     <div class="space-x-1 flex justify-between">
                         <!-- <UiButton @click="relationship.logDataComparison()">Log data comparison</UiButton> -->
@@ -238,8 +261,17 @@ import UiCheckbox from '@Renderer/components/ui/UiCheckbox.vue'
                     />
                 </template>
                 
-                <div v-if="relationship.isManyToMany()">
+                <div class="flex flex-col gap-2" v-if="relationship.isManyToMany()">
                     <UiCheckbox v-model="relationship.withPivotColumns" label="With Pivot Columns" @input="$emit('save')" />
+
+                    <div v-if="relationship.withPivotColumns">
+                        <UiMultiSelect
+                            inputLabel="Included Pivot Columns"
+                            :default-value="getSelectDataForLayout(relationship.includedPivotColumns)"
+                            @change="$event => saveWithPivotColumns($event, relationship)"
+                            :options="getSelectDataForLayout(relationship.pivot.columns)"
+                        />
+                    </div>
                 </div>
                 <div class="flex justify-end items-center space-x-2">
                     <small class="text-slate-500" v-show="relationship.hasUnsavedData()">

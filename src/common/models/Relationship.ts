@@ -94,6 +94,7 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
     createdFromInterface: boolean
 
     withPivotColumns: boolean
+    includedPivotColumns: string[]
 
     relationships() {
         return {
@@ -380,6 +381,7 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
         this.secondKeyName = data.secondKeyName
 
         this.withPivotColumns = data.withPivotColumns
+        this.includedPivotColumns = data.includedPivotColumns
 
         this.fillSchemaState()
 
@@ -422,7 +424,8 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
             pivotTableName: this.pivotTableName,
             firstKeyName: this.firstKeyName,
             secondKeyName: this.secondKeyName,
-            withPivotColumns: this.withPivotColumns
+            withPivotColumns: this.withPivotColumns,
+            includedPivotColumns: this.includedPivotColumns
         }
     }
 
@@ -445,7 +448,8 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
             localKeyName: DataComparator.stringsAreDifferent(this.schemaState.localKeyName, comparisonData.localKeyName),
             firstKeyName: DataComparator.stringsAreDifferent(this.schemaState.firstKeyName, comparisonData.firstKeyName),
             secondKeyName: DataComparator.stringsAreDifferent(this.schemaState.secondKeyName, comparisonData.secondKeyName),
-            withPivotColumns: DataComparator.booleansAreDifferent(this.schemaState.withPivotColumns, comparisonData.withPivotColumns)
+            withPivotColumns: DataComparator.booleansAreDifferent(this.schemaState.withPivotColumns, comparisonData.withPivotColumns),
+            includedPivotColumns: DataComparator.arraysAreDifferent(this.schemaState.includedPivotColumns, comparisonData.includedPivotColumns)
         }
     }
 

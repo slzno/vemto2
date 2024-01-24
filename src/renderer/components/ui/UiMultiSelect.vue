@@ -28,6 +28,10 @@
             defaultValue: {
                 type: Array,
                 default: () => []
+            },
+            disabled: {
+                type: Boolean,
+                default: false
             }
         })
 
@@ -55,6 +59,7 @@
         <Multiselect
             v-model="localValue"
             mode="tags"
+            :disabled="disabled"
             :close-on-select="closeOnSelect"
             :options="options"
             :create-option="true"

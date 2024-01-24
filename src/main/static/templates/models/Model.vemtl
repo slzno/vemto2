@@ -257,8 +257,8 @@ implements
                     <% if(relationship.withPivotColumns) { %>
                         ->withPivot(
                         <###>
-                        <% for(let column of relationship.getPivotTableColumns()) { %>
-                            '<$ column.name $>', 
+                        <% for(let columnName of relationship.includedPivotColumns) { %>
+                            '<$ columnName $>', 
                         <% } %>
                         )
                     <% } %>;

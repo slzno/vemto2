@@ -97,6 +97,7 @@ class ModelRepository {
                             'method' => $methodContent,
 
                             'withPivotColumns' => str_contains($methodContent, '->withPivot'),
+                            'includedPivotColumns' => method_exists($return, 'getPivotColumns') ? $return->getPivotColumns() : [],
                         ];
                     }
                 }
