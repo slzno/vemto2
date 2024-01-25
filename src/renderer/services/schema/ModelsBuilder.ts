@@ -129,7 +129,6 @@ export default class ModelsBuilder {
                     relationship.markAsNotRemoved()
                 }
                 
-                console.log(relationshipData)
                 relationship.projectId = this.project.id
     
                 Relationship.savingInternally()

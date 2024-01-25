@@ -131,6 +131,11 @@ export default class Crud extends RelaDB.Model {
         }
     }
 
+    static deleting(crud: Crud) {
+        crud.project.deleteTranslationOnAllLanguages(crud.getLangKeyForItemTitle())
+        crud.project.deleteTranslationOnAllLanguages(crud.getLangKeyForCollectionTitle())
+    }
+
     static getBasic() {
         return Crud.get().filter((crud: Crud) => crud.isBasic())
     }
@@ -267,7 +272,11 @@ export default class Crud extends RelaDB.Model {
     }
 
     getLabel(): string {
-        return this.settings.collectionTitle
+        return this.project.getDefaultTranslation(this.settings.collectionTitle)
+    }
+
+    getSingularLabel(): string {
+        return this.project.getDefaultTranslation(this.settings.itemTitle)
     }
 
     getAppSubType(): string {
@@ -381,9 +390,12 @@ export default class Crud extends RelaDB.Model {
         this.settings = {
             itemName: camelCase(name),
             collectionName: camelCase(plural),
-            itemTitle: capitalCase(name),
-            collectionTitle: capitalCase(plural),
+            itemTitle: null,
+            collectionTitle: null,
         }
+        
+        this.settings.itemTitle = this.generateTranslationForItemTitle(capitalCase(name))
+        this.settings.collectionTitle = this.generateTranslationForCollectionTitle(capitalCase(plural))
     }
 
     calculateLivewireSpecificData() {
@@ -483,7 +495,7 @@ export default class Crud extends RelaDB.Model {
         const rootTag = Nav.findByTag("apps")
 
         const nav = Nav.create({
-            name: this.settings.collectionTitle,
+            name: this.getLabel(),
             navigableId: this.id,
             navigableType: "Crud",
             projectId: this.projectId,
@@ -607,5 +619,29 @@ export default class Crud extends RelaDB.Model {
 
     isForLivewire(): boolean {
         return this.type === CrudType.LIVEWIRE
+    }
+
+    generateTranslationForItemTitle(defaultItemTitle: string) {
+        const key = this.getLangKeyForItemTitle()
+
+        this.project.setTranslationOnAllLanguages(key, defaultItemTitle)
+
+        return key
+    }
+
+    generateTranslationForCollectionTitle(defaultCollectionTitle: string) {
+        const key = this.getLangKeyForCollectionTitle()
+
+        this.project.setTranslationOnAllLanguages(key, defaultCollectionTitle)
+
+        return key
+    }
+
+    getLangKeyForItemTitle(): string {
+        return `${this.getBaseLangKey()}.itemTitle`
+    }
+    
+    getLangKeyForCollectionTitle(): string {
+        return `${this.getBaseLangKey()}.collectionTitle`
     }
 }

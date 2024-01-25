@@ -4,6 +4,7 @@
     import UiText from '@Renderer/components/ui/UiText.vue'
     import UiSelect from '@Renderer/components/ui/UiSelect.vue'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
+import UiTranslator from '@Renderer/components/ui/UiTranslator.vue'
 
     const projectStore = useProjectStore(),
         props = defineProps({
@@ -40,11 +41,11 @@
         </div>
 
         <div>
-            <UiText v-model="crud.settings.itemTitle" label="Item Title" @input="crud.save()" />
+            <UiTranslator v-model="crud.settings.itemTitle" label="Item Title" @input="crud.save()" />
         </div>
 
         <div>
-            <UiText v-model="crud.settings.collectionTitle" label="Collection Title" @input="crud.save()" />
+            <UiTranslator v-model="crud.settings.collectionTitle" label="Collection Title" @input="crud.save()" />
         </div>
 
         <div>

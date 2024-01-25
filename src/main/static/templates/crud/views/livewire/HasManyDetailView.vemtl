@@ -20,7 +20,7 @@
 <# --- #>
 <div>
     <div class="vtheme(crud.index.tools)">
-        <x-ui.input wire:model.live="<$ collectionVarName $>Search" type="text" placeholder="Search <$ detailCrud.settings.collectionTitle $>..." />
+        <x-ui.input wire:model.live="<$ collectionVarName $>Search" type="text" placeholder="Search <$ detailCrud.getLabel() $>..." />
 
         @can('create', <$ detailCrudModel.class $>::class)
         <a wire:click="new<$ pascalCase(itemVarName) $>()">
@@ -99,7 +99,7 @@
                 </x-ui.table.row>
                 @empty
                 <x-ui.table.row>
-                    <x-ui.table.column colspan="<$ colspanSize $>">No <$ detailCrud.settings.collectionTitle $> found.</x-ui.table.column>
+                    <x-ui.table.column colspan="<$ colspanSize $>">No <$ detailCrud.getLabel() $> found.</x-ui.table.column>
                 </x-ui.table.row>
                 @endforelse
             </x-slot>

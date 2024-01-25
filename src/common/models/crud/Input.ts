@@ -143,7 +143,7 @@ export default class Input extends RelaDB.Model {
     }
 
     getFileDiskName(): string {
-        return changeCase.snakeCase(this.crud.settings.collectionTitle)
+        return changeCase.snakeCase(this.crud.getLabel())
     }
 
     getRelatedModelName(): string {
