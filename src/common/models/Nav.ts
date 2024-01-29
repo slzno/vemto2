@@ -16,9 +16,7 @@ export default class Nav extends RelaDB.Model {
     customLink: string
     navigable: any
     isCustom: boolean
-    
-    defaultTranslateName: string // Used to generate the translation key
-    
+
     relationships() {
         return {
             project: () => this.belongsTo(Project),
@@ -42,9 +40,7 @@ export default class Nav extends RelaDB.Model {
         nav.projectId = projectId
         nav.navigableType = navigableType
         nav.navigableId = navigableId
-        nav.defaultTranslateName = name
-        nav.name = nav.generateTranslationForName()
-
+        nav.name = name
         nav.save()
 
         return nav
@@ -53,42 +49,10 @@ export default class Nav extends RelaDB.Model {
     static createFromProject(name: string, projectId: string): Nav {
         let nav = new Nav()
         nav.projectId = projectId
-        nav.defaultTranslateName = name
-        nav.name = nav.generateTranslationForName()
-
+        nav.name = name
         nav.save()
 
         return nav
-    }
-
-    static deleting(nav: Nav) {
-        nav.project.deleteTranslationOnAllLanguages(nav.getLangKeyForName())
-    }
-
-    generateTranslationForName(): string {
-        const key = this.getLangKeyForName()
-
-        this.project.setTranslationOnAllLanguages(key, this.defaultTranslateName)
-
-        return key
-    }
-
-    getBaseLangKey(): string {
-        if(this.parentNav) {
-            const defaultParentNavName = this.project.getDefaultTranslation(this.parentNav.name)
-
-            if(defaultParentNavName) {
-                return `navigation.${changeCase.snakeCase(defaultParentNavName)}`
-            }
-        }
-
-        return `navigation`
-    }
-
-    getLangKeyForName() {
-        const name = changeCase.snakeCase(this.defaultTranslateName)
-
-        return `${this.getBaseLangKey()}.${name}.name`
     }
 
     isRoot(): boolean {

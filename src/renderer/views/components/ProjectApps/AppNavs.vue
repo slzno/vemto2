@@ -37,12 +37,14 @@
     const createNavigation = () => {
         if(!navigableId.value || !navigableType.value || !name.value) return
 
-        Nav.createFromNavigable(
+        const nav = Nav.createFromNavigable(
             name.value,
             projectStore.project.id,
             navigableId.value,
             navigableType.value
         )
+
+        nav.save()
 
         close()
         resetModalData()

@@ -57,10 +57,10 @@
         >
             <template v-if="editingNavigation?.id != nav.id">
                 <component class="w-4 h-4 mr-2 text-slate-600" :is="isChildren ? ChevronDoubleRightIcon : Bars4Icon" />
-                {{ projectStore.project.getDefaultTranslation(nav.name) }}
+                {{ nav.name }}
             </template>
             <div class="p-1 w-full" v-else>
-                <UiTranslator id="name" class="mb-3" v-model="nav.name" label="Name" />
+                <UiText id="name" class="mb-3" v-model="nav.name" label="Name" />
 
                 <div class="mb-3">
                     <UiSelect v-model="nav.navigableType" label="Navigable Type">

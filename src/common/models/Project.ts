@@ -698,8 +698,6 @@ export default class Project extends RelaDB.Model {
     }
 
     setTranslationOnAllLanguages(key: string, value: string) {
-        if(!this.languages || !Array.isArray(this.languages)) this.languages = []
-
         this.languages.forEach(language => {
             this.setTranslation(language, key, value)
         })
