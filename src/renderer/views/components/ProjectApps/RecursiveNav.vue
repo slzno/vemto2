@@ -6,6 +6,8 @@
     import UiCheckbox from '@Renderer/components/ui/UiCheckbox.vue';
     import { ChevronDoubleRightIcon, Bars4Icon } from '@heroicons/vue/24/outline'
     import { defineProps, PropType, toRef, Ref, ref, onMounted, defineEmits } from 'vue';
+    import UiTranslator from '@Renderer/components/ui/UiTranslator.vue';
+    import { useProjectStore } from '@Renderer/stores/useProjectStore';
 
     const props = defineProps({
             nav: {
@@ -24,7 +26,8 @@
         }),
         nav = toRef(props, 'nav') as Ref<Nav | null>,
         navigations = ref<Nav[]>([]),
-        emit = defineEmits(['childrenNavigationUpdated', 'editNavigation', 'saveNavigation', 'cancelEditing'])
+        emit = defineEmits(['childrenNavigationUpdated', 'editNavigation', 'saveNavigation', 'cancelEditing']),
+        projectStore = useProjectStore()
 
     const deleteNavigation = (navigation: Nav) => {
         if(!confirm("Are you sure you want to delete this navigation?")) return
@@ -54,10 +57,10 @@
         >
             <template v-if="editingNavigation?.id != nav.id">
                 <component class="w-4 h-4 mr-2 text-slate-600" :is="isChildren ? ChevronDoubleRightIcon : Bars4Icon" />
-                {{ nav.name }}
+                {{ projectStore.project.getDefaultTranslation(nav.name) }}
             </template>
             <div class="p-1 w-full" v-else>
-                <UiText id="name" class="mb-3" v-model="nav.name" label="Name" />
+                <UiTranslator id="name" class="mb-3" v-model="nav.name" label="Name" />
 
                 <div class="mb-3">
                     <UiSelect v-model="nav.navigableType" label="Navigable Type">

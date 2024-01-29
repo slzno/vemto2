@@ -9,7 +9,7 @@
     <% let route = childrenNav.navigable.getIndexRouteName() %>
     <x-responsive-nav-link href="{{ route('<$ route $>') }}" :active="request()->routeIs('<$ route $>')">
     <% } %>
-        <$ childrenNav.name $>
+        <$ this.project.getDefaultTranslation(childrenNav.name) $>
     </x-responsive-nav-link>
     @endcan
     <% } %>

@@ -2,18 +2,19 @@
     import { ref, onMounted } from "vue";
     import Nav from "@Common/models/Nav";
     import RecursiveNav from "./RecursiveNav.vue"
-    import UiText from "@Renderer/components/ui/UiText.vue";
     import UiModal from "@Renderer/components/ui/UiModal.vue";
     import UiButton from "@Renderer/components/ui/UiButton.vue";
     import UiSelect from "@Renderer/components/ui/UiSelect.vue";
     import { useProjectStore } from "@Renderer/stores/useProjectStore";
+    import UiText from "@Renderer/components/ui/UiText.vue";
+    import GenerateBasicMenu from "@Renderer/services/project/GenerateBasicMenu";
 
     const projectStore = useProjectStore(),
         editingNavigation = ref<null | Nav>(null),
         showingCreateNavigationModal = ref<boolean>(false),
         navigations = ref<Nav[]>([])
 
-    const navigableId = ref<number | null>(null),
+    const navigableId = ref<string | null>(null),
         navigableType = ref<string | null>("Crud"),
         name = ref<string | null>(null)
 
@@ -36,14 +37,12 @@
     const createNavigation = () => {
         if(!navigableId.value || !navigableType.value || !name.value) return
 
-        const nav = new Nav({
-            name: name.value,
-            navigableId: navigableId.value,
-            navigableType: navigableType.value,
-            projectId: projectStore.project.id
-        })
-
-        nav.save()
+        Nav.createFromNavigable(
+            name.value,
+            projectStore.project.id,
+            navigableId.value,
+            navigableType.value
+        )
 
         close()
         resetModalData()
@@ -102,14 +101,21 @@
         reloadNavigations()
     }
 
+    const createBasicNavs = () => {
+        new GenerateBasicMenu(projectStore.project).handle()
+
+        reloadNavigations()
+    }
+
     onMounted(() => {
         reloadNavigations()
     })
 </script>
 
 <template>
-    <div class="mb-3">
+    <div class="mb-3 flex gap-2">
         <UiButton @click="showingCreateNavigationModal = true">Add Menu Item</UiButton>
+        <UiButton @click="createBasicNavs">Add Basic Navs</UiButton>
     </div>
 
     <UiModal

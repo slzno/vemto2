@@ -403,4 +403,28 @@ export default class Input extends RelaDB.Model {
 
         return `${crudKey}.inputs.${this.name}`
     }
+
+    getFilamentBaseLangKey() {
+        const crudKey = this.crud.getBaseLangKey()
+
+        return `${crudKey}.filament.inputs.${this.name}`
+    }
+
+    getFilamentLangKeyFor(name: string) {
+        name = changeCase.snakeCase(name)
+
+        return `${this.getFilamentBaseLangKey()}.${name}`
+    }
+
+    generateFilamentTranslationFor(name: string, defaultValue: string) {
+        const methodName = 'getFilamentLangKeyFor' + changeCase.pascalCase(name)
+
+        if(typeof this[methodName] !== 'function') return null
+        
+        const key = this[methodName]()
+
+        this.crud.project.setTranslationOnAllLanguages(key, defaultValue)
+
+        return key
+    }
 }

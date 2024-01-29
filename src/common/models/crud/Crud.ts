@@ -494,15 +494,16 @@ export default class Crud extends RelaDB.Model {
     addNavs() {
         const rootTag = Nav.findByTag("apps")
 
-        const nav = Nav.create({
-            name: this.getLabel(),
-            navigableId: this.id,
-            navigableType: "Crud",
-            projectId: this.projectId,
-        })
+        const nav = Nav.createFromNavigable(
+            this.getLabel(),
+            this.projectId,
+            this.id,
+            "Crud"
+        )
 
         if(rootTag) {
             nav.parentNavId = rootTag.id
+            nav.name = nav.generateTranslationForName()
             nav.save()
         }
     }
@@ -601,9 +602,9 @@ export default class Crud extends RelaDB.Model {
     
     calculateFilamentSettings() {
         this.filamentSettings = {
-            modelLabel: this.name,
-            pluralModelLabel: this.plural,
-            navigationLabel: this.plural,
+            modelLabel: this.settings.collectionTitle,
+            pluralModelLabel: this.settings.itemTitle,
+            navigationLabel: this.settings.itemTitle,
             navigationIcon: "heroicon-o-rectangle-stack",
             navigationOrder: 1,
             navigationParentItem: null,

@@ -10,17 +10,15 @@ export default class GenerateBasicMenu {
     }
 
     async handle() {
-        Nav.create({
-            name: "Home",
-            tag: "home",
-            projectId: this.project.id,
-        })
+        const homeNav = Nav.createFromProject('Home', this.project.id)
 
-        Nav.create({
-            name: "Apps",
-            tag: "apps",
-            projectId: this.project.id,
-        })
+        homeNav.tag = 'home'
+        homeNav.save()
+
+        const appsNav = Nav.createFromProject('Apps', this.project.id)
+
+        appsNav.tag = 'apps'
+        appsNav.save()
     }
 
 }
