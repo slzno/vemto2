@@ -38,12 +38,12 @@
         })
     <% } %>
     <# --- #>
-    <% if(inputColumnData.description) { %>
-        ->description('<$ inputColumnData.description $>')
+    <% if(inputColumnData.description && this.project.getDefaultTranslation(inputColumnData.description)?.length) { %>
+        ->description(<$ this.helpers.toTranslatableFormat(inputColumnData.description) $>)
     <% } %>
     <# --- #>
-    <% if(inputColumnData.label) { %>
-        ->label('<$ inputColumnData.label $>')
+    <% if(inputColumnData.label && this.project.getDefaultTranslation(inputColumnData.label)?.length) { %>
+        ->label(<$ this.helpers.toTranslatableFormat(inputColumnData.label) $>)
     <% } %>
     <# --- #>
     <% if(inputColumnData.canBeSortable) { %>

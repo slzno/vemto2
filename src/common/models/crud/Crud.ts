@@ -503,10 +503,8 @@ export default class Crud extends RelaDB.Model {
 
         if(rootTag) {
             nav.parentNavId = rootTag.id
-            nav.generateTranslationForName()
+            nav.save()
         }
-        
-        nav.save()
     }
 
     getIndexRouteName(): string {

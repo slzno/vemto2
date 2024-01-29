@@ -48,18 +48,6 @@ class <$ this.filenameWithoutExtension $> extends Resource
     protected static bool $hasTitleCaseModelLabel = false;
     <% } %>
 
-    <% if(this.crud.filamentSettings.modelLabel) { %>
-    protected static ?string $modelLabel = '<$ this.crud.filamentSettings.modelLabel $>';
-    <% } %>
-    
-    <% if(this.crud.filamentSettings.pluralModelLabel) { %>
-    protected static ?string $pluralModelLabel = '<$ this.crud.filamentSettings.pluralModelLabel $>';
-    <% } %>
-    
-    <% if(this.crud.filamentSettings.navigationLabel) { %>
-    protected static ?string $navigationLabel = '<$ this.crud.filamentSettings.navigationLabel $>';
-    <% } %>
-
     <% if(this.crud.filamentSettings.navigationOrder) { %>
     protected static ?int $navigationSort = <$ this.crud.filamentSettings.navigationOrder $>;
     <% } %>
@@ -70,6 +58,27 @@ class <$ this.filenameWithoutExtension $> extends Resource
 
     <% if(this.crud.filamentSettings.slug && this.crud.filamentSettings.slug != pascalCase(this.crud.plural)) { %>
     protected static ?string $slug = '<$ this.crud.filamentSettings.slug $>';
+    <% } %>
+
+    <% if(this.crud.filamentSettings.modelLabel && this.project.getDefaultTranslation(this.crud.filamentSettings.modelLabel)?.length) { %>
+        public static function getModelLabel(): string
+        {
+            return <$ this.helpers.toTranslatableFormat(this.crud.filamentSettings.modelLabel) $>;
+        }
+    <% } %>
+    
+    <% if(this.crud.filamentSettings.pluralModelLabel && this.project.getDefaultTranslation(this.crud.filamentSettings.pluralModelLabel)?.length) { %>
+        public static function getPluralModelLabel(): string
+        {
+            return <$ this.helpers.toTranslatableFormat(this.crud.filamentSettings.pluralModelLabel) $>;
+        }
+    <% } %>
+    
+    <% if(this.crud.filamentSettings.navigationLabel && this.project.getDefaultTranslation(this.crud.filamentSettings.navigationLabel)?.length) { %>
+        public static function getNavigationLabel(): string
+        {
+            return <$ this.helpers.toTranslatableFormat(this.crud.filamentSettings.navigationLabel) $>;
+        }
     <% } %>
     // hook:AFTER_VARIABLES
 

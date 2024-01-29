@@ -12,6 +12,7 @@ import FilamentInputSettings from "./filament/FilamentInputSettings"
 import FilamentRuleNameConversions from "./filament/FilamentRuleNameConversions"
 import FilamentIndividualValidations from "./filament/FilamentIndividualValidations"
 import GenerateInputValidation, { ValidationRuleType } from "./services/GenerateInputValidation"
+import FilamentInputData from "./filament/FilamentInputData"
 
 export enum InputValidationRuleType {
     TEXTUAL = "textual",
@@ -404,24 +405,20 @@ export default class Input extends RelaDB.Model {
         return `${crudKey}.inputs.${this.name}`
     }
 
-    getFilamentBaseLangKey() {
+    getFilamentBaseLangKey(filamentData: string): string {
         const crudKey = this.crud.getBaseLangKey()
 
-        return `${crudKey}.filament.inputs.${this.name}`
+        return `${crudKey}.filament.${this.name}`
     }
 
-    getFilamentLangKeyFor(name: string) {
-        name = changeCase.snakeCase(name)
+    getFilamentLangKeyFor(filamentData: string): string {
+        filamentData = changeCase.snakeCase(filamentData)
 
-        return `${this.getFilamentBaseLangKey()}.${name}`
+        return `${this.getFilamentBaseLangKey(filamentData)}.${filamentData}`
     }
 
-    generateFilamentTranslationFor(name: string, defaultValue: string) {
-        const methodName = 'getFilamentLangKeyFor' + changeCase.pascalCase(name)
-
-        if(typeof this[methodName] !== 'function') return null
-        
-        const key = this[methodName]()
+    generateFilamentTranslationFor(filamentData: string, defaultValue: string): string {
+        const key = this.getFilamentLangKeyFor(filamentData)
 
         this.crud.project.setTranslationOnAllLanguages(key, defaultValue)
 

@@ -3,7 +3,7 @@
     import UiSelect from "@Renderer/components/ui/UiSelect.vue"
     import { capitalCase } from "change-case"
     import UiNumber from "@Renderer/components/ui/UiNumber.vue"
-    import UiDate from "@Renderer/components/ui/UiDate.vue"
+    import UiTranslator from "@Renderer/components/ui/UiTranslator.vue"
     import { PlusCircleIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import UiSmallButton from "@Renderer/components/ui/UiSmallButton.vue"
@@ -87,11 +87,11 @@
         </div>
 
         <div>
-            <UiText v-model="input.filamentSettings.columnData.label" placeholder="Label" label="Column Label" @input="saveInput()" />
+            <UiTranslator v-model="input.filamentSettings.columnData.label" placeholder="Label" label="Column Label" @input="saveInput()" />
         </div>
 
         <div v-if="filamentColumnTypeIs('text-column')">
-            <UiText v-model="input.filamentSettings.columnData.description" placeholder="Description" label="Column Description" @input="saveInput()" />
+            <UiTranslator v-model="input.filamentSettings.columnData.description" placeholder="Description" label="Column Description" @input="saveInput()" />
         </div>
 
         <div class="grid grid-cols-2 gap-2" v-if="filamentColumnTypeIs('text-column')">

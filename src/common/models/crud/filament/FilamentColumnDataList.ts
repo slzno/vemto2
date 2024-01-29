@@ -8,7 +8,8 @@ export default class FilamentColumnDataList {
         const columnType = FilamentColumnTypesList.getFromInputType(input.type)
         
         let data: FilamentColumnData = {
-            columnType
+            columnType,
+            label: input.generateFilamentTranslationFor('label', '')
         } as FilamentColumnData
 
         switch (input.type) {
@@ -20,6 +21,7 @@ export default class FilamentColumnDataList {
             default:
                 data = {
                     ...data,
+                    description: input.generateFilamentTranslationFor('description', ''),
                 }
                 break;
             case InputType.SELECT:

@@ -8,7 +8,8 @@ export default class FilamentInputDataList {
         const inputType = FilamentInputTypesList.getFromInputType(input.type)
         
         let data: FilamentInputData = {
-            inputType
+            inputType,
+            helperText: input.generateFilamentTranslationFor('helperText', ''),
         } as FilamentInputData
 
         switch (input.type) {
@@ -21,7 +22,6 @@ export default class FilamentInputDataList {
                 data = {
                     ...data,
                     autofocus: !input.crud.inputs.length, // Autofocus on first input
-                    helperText: null,
                     autoComplete: true,
                 }
                 break;
@@ -33,7 +33,9 @@ export default class FilamentInputDataList {
                     canBePreloaded: true,
                     canBeSearchable: true,
                     canSelectPlaceholder: true,
-                    loadingMessage: null,
+                    loadingMessage: input.generateFilamentTranslationFor('loadingMessage', ''),
+                    noResultMessage: input.generateFilamentTranslationFor('noResultMessage', ''),
+                    searchMessage: input.generateFilamentTranslationFor('searchMessage', ''),
                     useCustomInput: true
                 }
                 break;
