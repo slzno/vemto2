@@ -63,22 +63,30 @@ export default class Nav extends RelaDB.Model {
         nav.project.deleteTranslationOnAllLanguages(nav.getLangKeyForName())
     }
 
-    generateTranslationForName() {
-        const key = this.getLangKeyForName()
+    static updating(data: any) {
+        data.generateTranslationForName(data.project.getDefaultTranslation(data.name))
+    }
 
-        this.project.setTranslationOnAllLanguages(key, this.name)
+    generateTranslationForName(defaultName: string = '') {
+        if(!defaultName.length) defaultName = this.name
+
+        const key = this.getLangKeyForName(defaultName)
+
+        this.project.setTranslationOnAllLanguages(key, defaultName)
 
         this.name = key
     }
 
-    getLangKeyForName() {
+    getLangKeyForName(defaultName: string = '') {
+        if(!defaultName.length) defaultName = this.name
+
         const navKey = this.getBaseLangKey()
 
-        return `${navKey}.${changeCase.snakeCase(this.name)}`
+        return `${navKey}.${changeCase.snakeCase(defaultName)}`
     }
 
     getBaseLangKey(): string {
-        if(this.isRoot() || !this.parentNav) {
+        if(this.isRoot() || !this.parentNav || !this.parentNav.getModel()) {
             return 'navigation'
         }
 

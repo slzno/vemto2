@@ -60,7 +60,7 @@
                 {{ projectStore.project.getDefaultTranslation(nav.name) }}
             </template>
             <div class="p-1 w-full" v-else>
-                <UiText id="name" class="mb-3" v-model="nav.name" label="Name" />
+                <UiTranslator id="name" class="mb-3" v-model="nav.name" label="Name" />
 
                 <div class="mb-3">
                     <UiSelect v-model="nav.navigableType" label="Navigable Type">
