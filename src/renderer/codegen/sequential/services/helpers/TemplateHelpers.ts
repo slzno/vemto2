@@ -23,5 +23,4 @@ export default class TemplateHelpers {
     toTranslatableFormat(key: string) {
         return `__('${key}')`
     }
-    
 }

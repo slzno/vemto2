@@ -41,6 +41,8 @@ export default class Nav extends RelaDB.Model {
         nav.navigableType = navigableType
         nav.navigableId = navigableId
         nav.name = name
+
+        nav.generateTranslationForName()
         nav.save()
 
         return nav
@@ -50,9 +52,37 @@ export default class Nav extends RelaDB.Model {
         let nav = new Nav()
         nav.projectId = projectId
         nav.name = name
+
+        nav.generateTranslationForName()
         nav.save()
 
         return nav
+    }
+
+    static deleting(nav: Nav) {
+        nav.project.deleteTranslationOnAllLanguages(nav.getLangKeyForName())
+    }
+
+    generateTranslationForName() {
+        const key = this.getLangKeyForName()
+
+        this.project.setTranslationOnAllLanguages(key, this.name)
+
+        this.name = key
+    }
+
+    getLangKeyForName() {
+        const navKey = this.getBaseLangKey()
+
+        return `${navKey}.${changeCase.snakeCase(this.name)}`
+    }
+
+    getBaseLangKey(): string {
+        if(this.isRoot() || !this.parentNav) {
+            return 'navigation'
+        }
+
+        return `navigation.${changeCase.snakeCase(this.parentNav.getModel().name)}`
     }
 
     isRoot(): boolean {

@@ -12,8 +12,6 @@ export default class GenerateLanguagesData {
     async handle() {
         this.project.languages = await ProjectLanguages.getLanguages()
         this.project.defaultLanguage = await ProjectLanguages.getDefaultLanguage()
-
-        this.project.save()
     }
 
 }

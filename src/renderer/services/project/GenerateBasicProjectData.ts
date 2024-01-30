@@ -16,9 +16,9 @@ export default class GenerateBasicProjectData {
         this.project.startCodeGenerationSettings()
 
         await new GenerateLanguagesData(this.project).handle()
-        await new GenerateBasicMenu(this.project).handle()
         await new GenerateBasicSections(this.project).handle()
         await new GenerateDefaultVthemeKeys(this.project).handle()
+        await new GenerateBasicMenu(this.project).handle()
     }
 
 }
