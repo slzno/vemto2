@@ -13,9 +13,9 @@
     <x-ui.breadcrumbs>
         <x-ui.breadcrumbs.link href="/<$ crud.section.routeBasePath $>"><$ crud.section.name $></x-ui.breadcrumbs.link>
         <x-ui.breadcrumbs.separator/>
-        <x-ui.breadcrumbs.link href="{{ route('<$ crud.getIndexRouteName() $>') }}"><$ crud.getLabel() $></x-ui.breadcrumbs.link>
+        <x-ui.breadcrumbs.link href="{{ route('<$ crud.getIndexRouteName() $>') }}"><$ this.helpers.lang(crud.settings.collectionTitle) $></x-ui.breadcrumbs.link>
         <x-ui.breadcrumbs.separator/>
-        <x-ui.breadcrumbs.link active>Edit <$ crud.getSingularLabel() $></x-ui.breadcrumbs.link>
+        <x-ui.breadcrumbs.link active>Edit <$ this.helpers.lang(crud.settings.itemTitle) $></x-ui.breadcrumbs.link>
     </x-ui.breadcrumbs>
 
     <x-ui.toast on="saved">
@@ -23,7 +23,7 @@
     </x-ui.toast>
 
     <div class="vtheme(crud.header)">
-        <h1>Edit <$ crud.getSingularLabel() $></h1>
+        <h1>Edit <$ this.helpers.lang(crud.settings.itemTitle) $></h1>
     </div>
 
     <div class="vtheme(crud.form.container)">
@@ -51,7 +51,7 @@
         <div class="vtheme(crud.form)">
             <div class="vtheme(crud.form.inputs.container)">
                 <div class="vtheme(crud.header)">
-                    <h2><$ hasManyDetail.detailCrud.getLabel() $></h2>
+                    <h2><$ this.helpers.lang(hasManyDetail.detailCrud.settings.collectionTitle) $></h2>
                 </div>
     
                 <$ hasManyDetail.getLivewireBladeTag() $>

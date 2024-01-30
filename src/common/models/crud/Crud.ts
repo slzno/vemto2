@@ -400,7 +400,7 @@ export default class Crud extends RelaDB.Model {
 
     calculateLivewireSpecificData() {
         this.livewireNamespace = `App\\Livewire\\${pascalCase(this.section.name)}`
-        this.livewireFormsNamespace = `${this.livewireNamespace}\\${this.basePath}\\Forms`
+        this.livewireFormsNamespace = `${this.livewireNamespace}\\${pascalCase(this.basePath)}\\Forms`
 
         this.livewireIndexComponentName = `${pascalCase(this.name)}Index`
         this.livewireShowComponentName = `${pascalCase(this.name)}Show`

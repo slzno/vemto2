@@ -13,13 +13,13 @@
     <x-ui.breadcrumbs>
         <x-ui.breadcrumbs.link href="/<$ crud.section.routeBasePath $>"><$ crud.section.name $></x-ui.breadcrumbs.link>
         <x-ui.breadcrumbs.separator/>
-        <x-ui.breadcrumbs.link href="{{ route('<$ crud.getIndexRouteName() $>') }}"><$ crud.getLabel() $></x-ui.breadcrumbs.link>
+        <x-ui.breadcrumbs.link href="{{ route('<$ crud.getIndexRouteName() $>') }}"><$ this.helpers.lang(crud.settings.collectionTitle) $></x-ui.breadcrumbs.link>
         <x-ui.breadcrumbs.separator/>
-        <x-ui.breadcrumbs.link active>Create <$ crud.getSingularLabel() $></x-ui.breadcrumbs.link>
+        <x-ui.breadcrumbs.link active>Create <$ this.helpers.lang(crud.settings.itemTitle) $></x-ui.breadcrumbs.link>
     </x-ui.breadcrumbs>
 
     <div class="vtheme(crud.header)">
-        <h1>Create <$ crud.getSingularLabel() $></h1>
+        <h1>Create <$ this.helpers.lang(crud.settings.itemTitle) $></h1>
     </div>
 
     <div class="vtheme(crud.form.container)">
