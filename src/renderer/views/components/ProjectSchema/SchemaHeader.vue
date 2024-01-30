@@ -457,10 +457,15 @@
             
             <div v-for="section in projectStore.project.schemaSections">
                 <div
+                    @click="schemaStore.selectSchemaSection(section)"
                     class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-700 h-6"
                 >
                     <div
-                        class="px-5 cursor-pointer text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-500"
+                        :class="{
+                            'text-red-500 dark:text-red-400': schemaStore.selectedSchemaSectionIs(section),
+                            'text-slate-400': !schemaStore.selectedSchemaSectionIs(section),
+                        }"
+                        class="px-5 cursor-pointer hover:text-red-600 dark:hover:text-red-500"
                     >
                         {{ section.name }}
                     </div>

@@ -44,6 +44,10 @@ export const useSchemaStore = defineStore("schema", {
 
         hasSelectedTable(state): boolean {
             return !! state.selectedTable.id
-        }
+        },
+
+        selectedSchemaSectionIs(state) {
+            return (section: SchemaSection) => state.selectedSchemaSection.id === section.id
+        },
     }
 })

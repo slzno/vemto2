@@ -1,13 +1,15 @@
 <script setup lang="ts">
     import 'animate.css'
-    import { onMounted, watch } from "vue"
+    import Table from '@Common/models/Table'
+    import { onMounted, watch, ref, Ref } from "vue"
     import SchemaTable from "../SchemaTable/SchemaTable.vue"
     import TableOptions from "../TableOptions/TableOptions.vue"
     import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
 
     const projectStore = useProjectStore(),
-        schemaStore = useSchemaStore()
+        schemaStore = useSchemaStore(),
+        tables = ref([]) as Ref<Table[]>
 
     let positionTracking: any = { top: 0, left: 0, x: 0, y: 0 }
 
@@ -15,6 +17,10 @@
         if(!table) return
 
         centerOnTable(table)
+    })
+
+    watch(() => schemaStore.selectedSchemaSection, () => {
+        loadTables()
     })
 
     onMounted(() => {
@@ -29,7 +35,13 @@
         tablesCanvas.scrollTop = projectStore.project.scrollY
 
         tablesCanvas.addEventListener('mousedown', mouseDownHandler)
+
+        loadTables()
     })
+
+    const loadTables = () => {
+        tables.value = projectStore.project.getTablesBySection(schemaStore.selectedSchemaSection)
+    }
 
     /**
      * Center the scroll on the given table
@@ -182,7 +194,7 @@
                 class="relative bg-transparent"
             >
                 <SchemaTable
-                    v-for="table in projectStore.project.tables"
+                    v-for="table in tables"
                     :key="table.id"
                     :table="table"
                 />
