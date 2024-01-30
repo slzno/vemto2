@@ -3,24 +3,28 @@
     import Table from "@Common/models/Table"
     import TableModel from "./TableModel.vue"
     import TableColumn from "./TableColumn.vue"
-    import { ArrowUturnDownIcon, ExclamationCircleIcon, TrashIcon } from "@heroicons/vue/24/outline"
+    import { ArrowRightIcon, ArrowUturnDownIcon, ExclamationCircleIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
     import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
+    import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
+    import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
+    import UiDropdownSeparator from "@Renderer/components/ui/UiDropdownSeparator.vue"
+    import { useProjectStore } from "@Renderer/stores/useProjectStore"
 
     const props = defineProps(["table"]),
         table = toRef(props, "table"),
         confirmDeleteDialog = ref(null),
-        schemaStore = useSchemaStore()
+        schemaStore = useSchemaStore(),
+        projectStore = useProjectStore()
 
     const emit = defineEmits(["highlight"])
     
     let clickedQuickly = false,
-        isRemoving = false
+        isClickingOptions = false
 
 
     const removeTable = async () => {
-        isRemoving = true
-        setTimeout(() => isRemoving = false, 500)
+        itIsClickingOptions()
 
         const confirmed = await confirmDeleteDialog.value.confirm()
         if(!confirmed) return
@@ -31,10 +35,14 @@
     }
 
     const undoRemoveTable = (): void => {
-        isRemoving = true
-        setTimeout(() => isRemoving = false, 500)
+        itIsClickingOptions()
 
         table.value.undoRemove()
+    }
+
+    const itIsClickingOptions = () => {
+        isClickingOptions = true
+        setTimeout(() => isClickingOptions = false, 500)
     }
 
     const getTablePosition = (table: Table) => {
@@ -58,7 +66,7 @@
         }
 
         setTimeout(() => {
-            if(isRemoving) return
+            if(isClickingOptions) return
 
             schemaStore.selectTable(table.value)
 
@@ -66,6 +74,12 @@
                 emit("highlight", table.value)
             })
         }, 1);
+    }
+
+    const moveTableToSection = (section) => {
+        itIsClickingOptions()
+
+        table.value.moveToSection(section)
     }
 </script>
 
@@ -113,16 +127,28 @@
                     (Changed)
                 </div>
             </span>
-            <TrashIcon
-                v-show="!table.isRemoved()"
-                title="Remove table"
-                class="w-5 h-5 group-hover:visible invisible cursor-pointer text-slate-400 hover:text-red-500"
-                @click.stop.prevent="removeTable()" />
-            <ArrowUturnDownIcon
-                v-show="table.isRemoved()"
-                title="Undo remove table"
-                class="w-5 h-5 group-hover:visible invisible cursor-pointer text-slate-400 hover:text-red-500"
-                @click.stop.prevent="undoRemoveTable()" />
+
+            <div class="flex ">
+                <ArrowUturnDownIcon
+                    v-show="table.isRemoved()"
+                    title="Undo remove table"
+                    class="w-5 h-5 group-hover:visible invisible cursor-pointer text-slate-400 hover:text-red-500"
+                    @click.stop.prevent="undoRemoveTable()" />
+
+                <UiOptionsDropdown @clicked="itIsClickingOptions" size="w-72">
+                    <UiDropdownItem @click="moveTableToSection(section)" v-for="section in projectStore.project.schemaSections">
+                        <ArrowRightIcon class="w-5 h-5 mr-2 text-red-400"/>
+                        Move to {{ section.name }} schema
+                    </UiDropdownItem>
+
+                    <UiDropdownSeparator />
+
+                    <UiDropdownItem @click.stop.prevent="removeTable()">
+                        <TrashIcon class="w-5 h-5 mr-2 text-red-400"/> Remove
+                    </UiDropdownItem>
+                </UiOptionsDropdown>
+            </div>
+
         </div>
 
         <div

@@ -18,6 +18,7 @@ import Column from "./Column"
 import Index from "./Index"
 import ProjectPathResolver from "@Common/services/ProjectPathResolver"
 import CalculateSchemaModelsChanges from "./services/project/CalculateSchemaModelsChanges"
+import SchemaSection from "./SchemaSection"
 
 export enum TranslationsFormat {
     LANG = "lang",
@@ -86,6 +87,7 @@ export default class Project extends RelaDB.Model {
     routes: Route[]
     ownRelationships: Relationship[]
     appSections: AppSection[]
+    schemaSections: SchemaSection[]
     laravelVersion: Number
     schemaDataHash: string
     lastReadSchemaDataHash: string
@@ -123,6 +125,7 @@ export default class Project extends RelaDB.Model {
             models: () => this.hasMany(Model).cascadeDelete(),
             routes: () => this.hasMany(Route).cascadeDelete(),
             appSections: () => this.hasMany(AppSection).cascadeDelete(),
+            schemaSections: () => this.hasMany(SchemaSection).cascadeDelete(),
             ownRelationships: () => this.hasMany(Relationship).cascadeDelete(),
             renderableFiles: () => this.hasMany(RenderableFile).cascadeDelete(),
         }
@@ -717,6 +720,41 @@ export default class Project extends RelaDB.Model {
         this.languages.forEach(language => {
             this.deleteTranslation(language, key)
         })
+    }
+
+    getDefaultSchemaSection(): SchemaSection {
+        const defaultSchemaSection = this.schemaSections.find(section => section.isDefault())
+
+        if (defaultSchemaSection) return defaultSchemaSection
+
+        return this.schemaSections[0]
+    }
+
+    hasSection(sectionName: string): boolean {
+        return this.schemaSections.some(section => section.name === sectionName)
+    }
+
+    moveTableToSectionByName(table: Table, sectionName: string) {
+        const section = this.schemaSections.find(section => section.name === sectionName)
+
+        if (!section) return
+
+        this.moveTableToSection(table, section)
+    }
+
+    moveTableToDefaultSection(table: Table) {
+        const defaultSection = this.getDefaultSchemaSection()
+
+        this.moveTableToSection(table, defaultSection)
+    }
+
+    moveTableToSection(table: Table, section: SchemaSection) {
+        table.sectionId = section.id
+        table.save()
+    }
+
+    getTablesBySection(section: SchemaSection): Table[] {
+        return this.tables.filter(table => table.sectionId === section.id)
     }
 
 }

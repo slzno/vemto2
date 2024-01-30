@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref } from "vue"
+    import { ref, defineEmits } from "vue"
     import { onClickOutside } from '@vueuse/core'
     import {
         EllipsisVerticalIcon,
@@ -7,6 +7,8 @@
 
     const showing = ref(false),
         dropdown = ref(null)
+
+    const emit = defineEmits(["clicked"])
 
     const props = defineProps({
         size: {
@@ -17,6 +19,11 @@
 
     const show = () => {
         showing.value = true
+    }
+
+    const clicked = () => {
+        showing.value = !showing.value
+        emit("clicked")
     }
 
     const close = () => {
@@ -35,7 +42,7 @@
 
 <template>
     <div class="relative overflow-visible" ref="dropdown">
-        <EllipsisVerticalIcon @click.prevent.stop="showing = !showing" class="h-5 w-5 text-slate-400 cursor-pointer select-none hover:text-slate-300" />
+        <EllipsisVerticalIcon @click.prevent.stop="clicked()" class="h-5 w-5 text-slate-400 cursor-pointer select-none hover:text-slate-300" />
 
         <Transition
             enter-from-class="transition duration-300 opacity-0"

@@ -9,6 +9,7 @@ import WordManipulator from '@Common/util/WordManipulator'
 import AbstractSchemaModel from './composition/AbstractSchemaModel'
 import CreateDefaultTableColumns from './services/tables/CreateDefaultTableColumns'
 import CreateDefaultTableModel from './services/tables/CreateDefaultTableModel'
+import SchemaSection from './SchemaSection'
 
 export default class Table extends AbstractSchemaModel implements SchemaModel {
     id: string
@@ -25,6 +26,8 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     positionY: number
     labelColumn: Column
     labelColumnId: string
+    section: SchemaSection
+    sectionId: string
     createdFromInterface: boolean
 
     relationships() {
@@ -34,7 +37,8 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
             indexes: () => this.hasMany(Index).cascadeDelete(),
             labelColumn: () => this.belongsTo(Column, "labelColumnId"),
             columns: () => this.hasMany(Column).cascadeDelete().orderBy('order'),
-            pivotRelationships: () => this.hasMany(Relationship, 'pivotId').cascadeDelete()
+            pivotRelationships: () => this.hasMany(Relationship, 'pivotId').cascadeDelete(),
+            section: () => this.belongsTo(SchemaSection, "sectionId"),
         }
     }
 
@@ -545,5 +549,11 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
 
     undoAllIndexesChanges() {
         this.indexes.forEach(index => index.undoChanges())
+    }
+
+    moveToSection(section: SchemaSection) {
+        this.sectionId = section.id
+
+        this.save()
     }
 }

@@ -1,10 +1,12 @@
 import { defineStore } from "pinia"
 import Table from "@Common/models/Table"
+import SchemaSection from "@Common/models/SchemaSection"
 
 export const useSchemaStore = defineStore("schema", {
     state: () => ({ 
         focusedTable: {} as Table,
-        selectedTable: {} as Table
+        selectedTable: {} as Table,
+        selectedSchemaSection: {} as SchemaSection
     }),
 
     actions: {
@@ -20,7 +22,15 @@ export const useSchemaStore = defineStore("schema", {
 
         focusTable(table: Table): void {
             this.focusedTable = table
-        }
+        },
+
+        selectSchemaSection(section: SchemaSection): void {
+            this.selectedSchemaSection = section
+        },
+
+        deselectSchemaSection(): void {
+            this.selectedSchemaSection = {} as SchemaSection
+        },
     },
 
     getters: {

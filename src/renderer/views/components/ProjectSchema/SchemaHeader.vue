@@ -1,6 +1,7 @@
 <script setup lang="ts">
     import { ref, onMounted, nextTick, defineEmits, computed } from 'vue'
     import Table from "@Common/models/Table"
+    import SchemaSection from "@Common/models/SchemaSection"
     import { ArrowDownTrayIcon, ArrowPathIcon, ChatBubbleLeftEllipsisIcon, MagnifyingGlassMinusIcon, MagnifyingGlassPlusIcon, PhotoIcon, PlusCircleIcon, PlusIcon, XMarkIcon } from "@heroicons/vue/24/outline"
     import UiModal from '@Renderer/components/ui/UiModal.vue'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
@@ -14,9 +15,11 @@
     import { useSchemaStore } from '@Renderer/stores/useSchemaStore'
 
     const showingCreateTableModal = ref(false),
+        showingCreateSectionModal = ref(false),
         projectStore = useProjectStore(),
         schemaStore = useSchemaStore(),
         newTable = ref<Table>(null),
+        newSection = ref<SchemaSection>(null),
         addModelForNewTable = ref(true),
         confirmDialog = ref(null),
         search = ref(''),
@@ -48,7 +51,7 @@
     }
 
     const createTable = (): void => {
-        validate().then(isValid => {
+        validateTable().then(isValid => {
             if(!isValid) return
 
             newTable.value.saveFromInterface(
@@ -57,7 +60,7 @@
 
             updateTablePosition(newTable.value)
 
-            close()
+            closeTableModal()
 
             emit('tableAdded', newTable.value)
 
@@ -67,19 +70,7 @@
         })
     }
 
-    const highlightTable = (table) => {
-        const tableElement = document.getElementById(`table_${table.id}`)
-
-        if(!tableElement) return
-
-        tableElement.classList.add('animate__animated','animate__pulse', 'animate__faster')
-
-        setTimeout(() => {
-            tableElement.classList.remove('animate__animated','animate__pulse', 'animate__faster')
-        }, 500)
-    }
-
-    const validate = async (): Promise<boolean> => {
+    const validateTable = async (): Promise<boolean> => {
         const rules = {
             name: 'required|string'
         }
@@ -100,6 +91,55 @@
         }
 
         return !tableNameExists && !hasErrors
+    }
+
+    const createSection = (): void => {
+        validateSection().then(isValid => {
+            if(!isValid) return
+
+            newSection.value.save()
+
+            closeSectionModal()
+
+            setTimeout(() => {
+                highlightTable(newSection.value)
+            }, 350)
+        })
+    }
+
+    const validateSection = async (): Promise<boolean> => {
+        const rules = {
+            name: 'required|string'
+        }
+
+        const validator = new Validator(newSection.value, rules),
+            hasErrors = await validator.fails()
+
+        if(hasErrors) {
+            Alert.error('Please enter a valid section name')
+            return false
+        }
+
+        const sectionNameExists = projectStore.project.hasSection(newSection.value.name)
+
+        if(sectionNameExists) {
+            Alert.error('This section name is already in use')
+            return false
+        }
+
+        return !sectionNameExists && !hasErrors
+    }
+
+    const highlightTable = (table) => {
+        const tableElement = document.getElementById(`table_${table.id}`)
+
+        if(!tableElement) return
+
+        tableElement.classList.add('animate__animated','animate__pulse', 'animate__faster')
+
+        setTimeout(() => {
+            tableElement.classList.remove('animate__animated','animate__pulse', 'animate__faster')
+        }, 500)
     }
 
     const updateTablePosition = (table: Table): void => {
@@ -141,7 +181,7 @@
         return { x: centerX, y: centerY };
     }
 
-    const show = (): void => {
+    const showTableModal = (): void => {
         reset()
         showingCreateTableModal.value = true
 
@@ -150,12 +190,29 @@
         })
     }
 
-    const close = (): void => {
+    const closeTableModal = (): void => {
         showingCreateTableModal.value = false
+    }
+
+    const showSectionModal = (): void => {
+        reset()
+        showingCreateSectionModal.value = true
+
+        nextTick(() => {
+            document.getElementById('new-section-name')?.focus()
+        })
+    }
+
+    const closeSectionModal = (): void => {
+        showingCreateSectionModal.value = false
     }
 
     const reset = (): void => {
         newTable.value = new Table({
+            projectId: projectStore.project.id,
+        })
+
+        newSection.value = new SchemaSection({
             projectId: projectStore.project.id,
         })
     }
@@ -191,7 +248,7 @@
     }
 
     const newSchema = async () => {
-        Alert.info('Multiple Schemas: Coming soon...')
+        showSectionModal()
     }
 </script>
 
@@ -241,13 +298,12 @@
         <div
             class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow px-1 border border-slate-700"
         >
-            <!-- {{ projectStore.project.uuid }} -->
             <!-- Tools and Icons -->
             <div class="flex">
                 <div
                     title="Add table"
                     class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
-                    @click="show()"
+                    @click="showTableModal()"
                 >
                     <PlusCircleIcon class="w-7 h-7" />
                 </div>
@@ -257,7 +313,7 @@
                     width="25%"
                     title="Create Table"
                     :show="showingCreateTableModal"
-                    @close="close()"
+                    @close="closeTableModal()"
                 >
                     <div class="m-2">
                         <div class="m-1 flex flex-col gap-2" @keyup.enter="createTable()">
@@ -269,6 +325,26 @@
                     <template #footer>
                         <div class="flex justify-end p-2">
                             <UiButton @click="createTable()">Create</UiButton>
+                        </div>
+                    </template>
+                </UiModal>
+
+                <!-- New section/schema modal -->
+                <UiModal
+                    width="25%"
+                    title="Create Schema Section"
+                    :show="showingCreateSectionModal"
+                    @close="closeSectionModal()"
+                >
+                    <div class="m-2">
+                        <div class="m-1 flex flex-col gap-2" @keyup.enter="createTable()">
+                            <UiText v-model="newSection.name" id="new-section-name" placeholder="Schema Section Name"></UiText>
+                        </div>
+                    </div>
+
+                    <template #footer>
+                        <div class="flex justify-end p-2">
+                            <UiButton @click="createSection()">Create</UiButton>
                         </div>
                     </template>
                 </UiModal>
@@ -379,29 +455,17 @@
                 </div>
             </div>
             
-            <div>
+            <div v-for="section in projectStore.project.schemaSections">
                 <div
                     class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-700 h-6"
                 >
                     <div
                         class="px-5 cursor-pointer text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-500"
                     >
-                        App
+                        {{ section.name }}
                     </div>
                 </div>
             </div>
-            
-            <!-- <div>
-                <div
-                    class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-700 h-6"
-                >
-                    <div
-                        class="px-5 cursor-pointer text-slate-600 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-500"
-                    >
-                        Laravel
-                    </div>
-                </div>
-            </div> -->
         </div>
     </div>
 </template>

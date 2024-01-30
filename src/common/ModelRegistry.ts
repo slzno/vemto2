@@ -16,6 +16,7 @@ import FillableModelColumn from "./models/FillableModelColumn"
 import GuardedModelColumn from "./models/GuardedModelColumn"
 import IndexColumn from "./models/IndexColumn"
 import AppSection from "./models/AppSection"
+import SchemaSection from "./models/SchemaSection"
 import HasManyDetail from "./models/crud/HasManyDetail"
 import HiddenModelColumn from "./models/HiddenModelColumn"
 import DatesModelColumn from "./models/DatesModelColumn"
@@ -46,6 +47,7 @@ export default new class ModelRegistry {
             RelaDB.Resolver.db().registerModel(CastsModelColumn, "CastsModelColumn", "casts_model_column")
             RelaDB.Resolver.db().registerModel(IndexColumn, "IndexColumn", "index_column")
             RelaDB.Resolver.db().registerModel(AppSection, "AppSection")
+            RelaDB.Resolver.db().registerModel(SchemaSection, "SchemaSection")
             RelaDB.Resolver.db().registerModel(HasManyDetail, "HasManyDetail")
         })
     }

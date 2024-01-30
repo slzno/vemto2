@@ -15,8 +15,10 @@
     import { BezierConnector } from "@jsplumb/connector-bezier"
     import SchemaHeader from "./components/ProjectSchema/SchemaHeader.vue"
     import MigrationSaver from "./components/MigrationSaver/MigrationSaver.vue"
+import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
 
-    const projectStore = useProjectStore()
+    const projectStore = useProjectStore(),
+        schemaStore = useSchemaStore()
 
     let isDragging = false,
         currentConnections = {},
@@ -27,6 +29,9 @@
     onMounted(async () => {
         setTimeout(() => {
             canDrawTables.value = true
+
+            const defaultSchemaSection = projectStore.project.getDefaultSchemaSection()
+            schemaStore.selectSchemaSection(defaultSchemaSection)
 
             nextTick(() => {
                 drawConnections()
@@ -80,6 +85,8 @@
         jsPlumbInstance.deleteEveryConnection()
         currentConnections = {}
 
+        // const tables = projectStore.project.getTablesBySection(schemaStore.selectedSchemaSection)
+
         projectStore.project.tables.forEach((table: Table) => {
             if(!table || !table.id) return
 
@@ -116,7 +123,7 @@
                             connector: {
                                 type: BezierConnector.type,
                                 options: {
-                                    curviness: 100,
+                                    curviness: 70,
                                 },
                             },
                             // paintStyle: { dashstyle: "4 4 4 4" },
@@ -135,6 +142,12 @@
 
         jsPlumbInstance = newInstance({
             container: document.getElementById("tablesReference")!,
+            dragOptions: {
+                grid: {
+                    w: 25,
+                    h: 25,
+                },
+            }
         })
 
         jsPlumbInstance.bind(EVENT_DRAG_START, () => {
