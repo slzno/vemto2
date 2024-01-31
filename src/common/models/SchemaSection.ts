@@ -8,6 +8,8 @@ export default class SchemaSection extends RelaDB.Model {
     tables: Table[]
     project: Project
     projectId: string
+    scrollX: number
+    scrollY: number
 
     relationships() {
         return {
@@ -16,10 +18,10 @@ export default class SchemaSection extends RelaDB.Model {
         }
     }
 
-    deleting() {
-        const defaultSection = this.project.getDefaultSchemaSection()
+    static deleting(section: SchemaSection) {
+        const defaultSection = section.project.getDefaultSchemaSection()
 
-        this.tables.forEach(table => {
+        section.tables.forEach(table => {
             table.sectionId = defaultSection.id
             table.save()
         })
@@ -33,5 +35,21 @@ export default class SchemaSection extends RelaDB.Model {
         if(this.project.schemaSections.length <= 1) return false
 
         return !this.isDefault()
+    }
+
+    hasScroll(): boolean {
+        return !! this.scrollX && !! this.scrollY
+    }
+
+    centerScroll(canvasWidth, canvasHeight, baseSize: number = 50000) {
+        this.scrollX = (baseSize / 2) - (canvasWidth / 2)
+        this.scrollY = (baseSize / 2) - (canvasHeight / 2)
+        this.save()
+    }
+
+    saveScroll(x: number, y: number) {
+        this.scrollX = x
+        this.scrollY = y
+        this.save()
     }
 }

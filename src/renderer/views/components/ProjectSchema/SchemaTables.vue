@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import 'animate.css'
     import Table from '@Common/models/Table'
-    import { onMounted, watch, ref, Ref } from "vue"
+    import { onMounted, watch, ref, Ref, defineEmits, nextTick } from "vue"
     import SchemaTable from "../SchemaTable/SchemaTable.vue"
     import TableOptions from "../TableOptions/TableOptions.vue"
     import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
@@ -10,6 +10,8 @@
     const projectStore = useProjectStore(),
         schemaStore = useSchemaStore(),
         tables = ref([]) as Ref<Table[]>
+
+    const emit = defineEmits(["tablesLoaded"])
 
     let positionTracking: any = { top: 0, left: 0, x: 0, y: 0 }
 
@@ -21,6 +23,10 @@
 
     watch(() => schemaStore.selectedSchemaSection, () => {
         loadTables()
+
+        nextTick(() => {
+            emit('tablesLoaded')
+        })
     })
 
     onMounted(() => {

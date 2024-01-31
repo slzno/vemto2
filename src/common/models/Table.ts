@@ -42,6 +42,16 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         }
     }
 
+    static updating(data: any): any {
+        const defaultSchemaSection = data.project.getDefaultSchemaSection()
+
+        if(!data.sectionId) {
+            data.sectionId = defaultSchemaSection.id
+        }
+
+        return data
+    }
+
     saveFromInterface(addModel: boolean = false) {
         let creating = false
 
@@ -329,6 +339,11 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
 
     getRelatedTables(): Table[] {
         return this.getRelatedTablesRelations().map((relation) => relation.table)
+    }
+
+    getRelatedTablesRelationsOnSection(section: SchemaSection): any[] {
+        return this.getRelatedTablesRelations()
+            .filter((relation) => relation.table.sectionId === section.id)
     }
 
     getRelatedTablesRelations(): any[] {

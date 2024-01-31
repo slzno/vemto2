@@ -15,7 +15,7 @@
     import { BezierConnector } from "@jsplumb/connector-bezier"
     import SchemaHeader from "./components/ProjectSchema/SchemaHeader.vue"
     import MigrationSaver from "./components/MigrationSaver/MigrationSaver.vue"
-import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
+    import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
 
     const projectStore = useProjectStore(),
         schemaStore = useSchemaStore()
@@ -41,7 +41,8 @@ import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
     })
 
     watch(() => projectStore.project.currentZoom, () => changeSchemaZoom())
-    watch(() => projectStore.project.tables, () => nextTick(() => drawConnections()))
+    // watch(() => schemaStore.selectedSchemaSection, () => nextTick(() => drawConnections()))
+    // watch(() => projectStore.project.tables, () => nextTick(() => drawConnections()))
 
     const zoomWithMouseWheel = () => {
         document.getElementById('tablesCanvas').addEventListener('mousewheel', (e: any) => { 
@@ -80,14 +81,17 @@ import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
     const drawConnections = () => {
         if(projectStore.projectIsEmpty) return
 
-        initJsPlumbIfNotExists()
+        const jsplumbStarted = initJsPlumbIfNotExists()
 
-        jsPlumbInstance.deleteEveryConnection()
+        if (!jsplumbStarted) return
+
+        currentNodes = {}
         currentConnections = {}
+        jsPlumbInstance.reset()
 
-        // const tables = projectStore.project.getTablesBySection(schemaStore.selectedSchemaSection)
+        const tables = projectStore.project.getTablesBySection(schemaStore.selectedSchemaSection)
 
-        projectStore.project.tables.forEach((table: Table) => {
+        tables.forEach((table: Table) => {
             if(!table || !table.id) return
 
             if(!currentNodes[table.id]) {
@@ -97,7 +101,9 @@ import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
             }
             
             const node = currentNodes[table.id],
-                relatedTablesRelations = table.getRelatedTablesRelations()
+                relatedTablesRelations = table.getRelatedTablesRelationsOnSection(
+                    schemaStore.selectedSchemaSection
+                )
 
             // connect tables
             if (relatedTablesRelations.length > 0) {
@@ -110,6 +116,8 @@ import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
                         connectionName = table.name + "_" + relation.table.name,
                         connectionNameReverse =
                             relation.table.name + "_" + table.name
+
+                    // console.log(node, relatedNode)
 
                     if (relatedNode && !currentConnections[connectionName]) {
                         const cssClass = relation.type === "relationship" ? "connector" : "connector dotted"
@@ -138,7 +146,11 @@ import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
     }
 
     const initJsPlumbIfNotExists = () => {
-        if (jsPlumbInstance) return
+        if (jsPlumbInstance) return true
+
+        const containerElement = document.getElementById("tablesReference")
+
+        if (!containerElement) return false
 
         jsPlumbInstance = newInstance({
             container: document.getElementById("tablesReference")!,
@@ -166,6 +178,8 @@ import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
         })
 
         changeSchemaZoom()
+
+        return true
     }
 
     const changeSchemaZoom = () => {
@@ -189,7 +203,7 @@ import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
             @syncSchema="syncSchema" 
         />
 
-        <SchemaTables v-if="canDrawTables" />
+        <SchemaTables v-if="canDrawTables" @tablesLoaded="drawConnections()" />
 
         <MigrationSaver />
 
