@@ -13,6 +13,7 @@
     import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
     import UiSmallButton from "@Renderer/components/ui/UiSmallButton.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
+    import UiTranslator from "@Renderer/components/ui/UiTranslator.vue"
     import { defineProps, toRef, PropType } from 'vue'
     import Input from "@Common/models/crud/Input"
 
@@ -128,7 +129,7 @@
         </div>
 
         <div v-if="!filamentInputTypeIs('hidden')">
-            <UiText v-model="input.filamentSettings.formData.helperText" placeholder="Input Helper Text" label="Helper Text" @input="saveInput()" />
+            <UiTranslator v-model="input.filamentSettings.formData.helperText" placeholder="Input Helper Text" label="Helper Text" @input="saveInput()" />
         </div>
 
         <div v-if="filamentInputTypeIs('text-input') && !input.isPassword()">
@@ -136,15 +137,15 @@
         </div>
 
         <div v-if="filamentInputTypeIs('select')">
-            <UiText v-model="input.filamentSettings.formData.loadingMessage" placeholder="Message while the options are loading" label="Loading Message" @input="saveInput()" />
+            <UiTranslator v-model="input.filamentSettings.formData.loadingMessage" placeholder="Message while the options are loading" label="Loading Message" @input="saveInput()" />
         </div>
 
         <div v-if="filamentInputTypeIs('select')">
-            <UiText v-model="input.filamentSettings.formData.noResultMessage" placeholder="Shown when there are no results" label="No Results Message" @input="saveInput()" />
+            <UiTranslator v-model="input.filamentSettings.formData.noResultMessage" placeholder="Shown when there are no results" label="No Results Message" @input="saveInput()" />
         </div>
 
         <div v-if="filamentInputTypeIs('select')">
-            <UiText v-model="input.filamentSettings.formData.searchMessage" placeholder="Shown when the search field is empty" label="Search Message" @input="saveInput()" />
+            <UiTranslator v-model="input.filamentSettings.formData.searchMessage" placeholder="Shown when the search field is empty" label="Search Message" @input="saveInput()" />
         </div>
 
         <div v-if="filamentInputTypeIs('toggle')">

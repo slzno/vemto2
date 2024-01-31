@@ -4,6 +4,7 @@
     import UiText from '@Renderer/components/ui/UiText.vue'
     import UiCheckbox from '@Renderer/components/ui/UiCheckbox.vue';
     import UiNumber from '@Renderer/components/ui/UiNumber.vue';
+import UiTranslator from '@Renderer/components/ui/UiTranslator.vue';
 
     const props = defineProps({
             crud: {
@@ -20,15 +21,15 @@
         </div>
 
         <div>
-            <UiText v-model="crud.filamentSettings.modelLabel" label="Model Label" @input="crud.save()" />
+            <UiTranslator v-model="crud.filamentSettings.modelLabel" label="Model Label" @input="crud.save()" />
         </div>
 
         <div>
-            <UiText v-model="crud.filamentSettings.pluralModelLabel" label="Plural Model Label" @input="crud.save()" />
+            <UiTranslator v-model="crud.filamentSettings.pluralModelLabel" label="Plural Model Label" @input="crud.save()" />
         </div>
         
         <div>
-            <UiText v-model="crud.filamentSettings.navigationLabel" label="Navigation Label" @input="crud.save()" />
+            <UiTranslator v-model="crud.filamentSettings.navigationLabel" label="Navigation Label" @input="crud.save()" />
         </div>
         
         <div>

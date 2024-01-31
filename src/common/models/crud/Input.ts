@@ -12,6 +12,7 @@ import FilamentInputSettings from "./filament/FilamentInputSettings"
 import FilamentRuleNameConversions from "./filament/FilamentRuleNameConversions"
 import FilamentIndividualValidations from "./filament/FilamentIndividualValidations"
 import GenerateInputValidation, { ValidationRuleType } from "./services/GenerateInputValidation"
+import FilamentInputData from "./filament/FilamentInputData"
 
 export enum InputValidationRuleType {
     TEXTUAL = "textual",
@@ -143,7 +144,7 @@ export default class Input extends RelaDB.Model {
     }
 
     getFileDiskName(): string {
-        return changeCase.snakeCase(this.crud.settings.collectionTitle)
+        return changeCase.snakeCase(this.crud.getLabel())
     }
 
     getRelatedModelName(): string {
@@ -402,5 +403,25 @@ export default class Input extends RelaDB.Model {
         const crudKey = this.crud.getBaseLangKey()
 
         return `${crudKey}.inputs.${this.name}`
+    }
+
+    getFilamentBaseLangKey(filamentData: string): string {
+        const crudKey = this.crud.getBaseLangKey()
+
+        return `${crudKey}.filament.${this.name}`
+    }
+
+    getFilamentLangKeyFor(filamentData: string): string {
+        filamentData = changeCase.snakeCase(filamentData)
+
+        return `${this.getFilamentBaseLangKey(filamentData)}.${filamentData}`
+    }
+
+    generateFilamentTranslationFor(filamentData: string, defaultValue: string): string {
+        const key = this.getFilamentLangKeyFor(filamentData)
+
+        this.crud.project.setTranslationOnAllLanguages(key, defaultValue)
+
+        return key
     }
 }

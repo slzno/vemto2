@@ -17,7 +17,10 @@ export default class TemplateHelpers {
             return `@lang('${key}')`
         }
 
-        return `{{ __('${key}') }}`
+        return `{{ ${this.toTranslatableFormat(key)} }}`
     }
-    
+
+    toTranslatableFormat(key: string) {
+        return `__('${key}')`
+    }
 }

@@ -98,8 +98,8 @@
         ->offColor('<$ inputFormData.offColor $>')
     <% } %>
     <# --- #>
-    <% if(inputFormData.helperText) { %>
-        ->helperText('<$ inputFormData.helperText $>')
+    <% if(inputFormData.helperText && this.project.getDefaultTranslation(inputFormData.helperText)?.length) { %>
+        ->helperText(<$ this.helpers.toTranslatableFormat(inputFormData.helperText) $>)
     <% } %>
     <# --- #>
     <% if(inputTypeIs('text-input') && inputFormData.autocapitalize) { %>
@@ -143,17 +143,17 @@
         ->selectablePlaceholder(false)
     <% } %>
     <# --- #>
-    <% if(inputFormData.loadingMessage?.length) { %>
-        ->loadingMessage('<$ inputFormData.loadingMessage $>')
-        ->searchingMessage('<$ inputFormData.loadingMessage $>')
+    <% if(inputFormData.loadingMessage?.length && this.project.getDefaultTranslation(inputFormData.loadingMessage)?.length) { %>
+        ->loadingMessage(<$ this.helpers.toTranslatableFormat(inputFormData.loadingMessage) $>)
+        ->searchingMessage(<$ this.helpers.toTranslatableFormat(inputFormData.loadingMessage) $>)
     <% } %>
     <# --- #>
-    <% if(inputFormData.noResultMessage?.length) { %>
-        ->noSearchResultsMessage('<$ inputFormData.noResultMessage $>')
+    <% if(inputFormData.noResultMessage?.length && this.project.getDefaultTranslation(inputFormData.noResultMessage)?.length) { %>
+        ->noSearchResultsMessage(<$ this.helpers.toTranslatableFormat(inputFormData.noResultMessage) $>)
     <% } %>
     <# --- #>
-    <% if(inputFormData.searchMessage?.length) { %>
-        ->searchPrompt('<$ inputFormData.searchMessage $>')
+    <% if(inputFormData.searchMessage?.length && this.project.getDefaultTranslation(inputFormData.searchMessage)?.length) { %>
+        ->searchPrompt(<$ this.helpers.toTranslatableFormat(inputFormData.searchMessage) $>)
     <% } %>
     <# --- #>
     <% if(input.items?.length) { %>

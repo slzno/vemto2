@@ -718,6 +718,8 @@ export default class Project extends RelaDB.Model {
     }
 
     deleteTranslationOnAllLanguages(key: string) {
+        if(!this.languages) return
+        
         this.languages.forEach(language => {
             this.deleteTranslation(language, key)
         })

@@ -131,6 +131,11 @@ export default class Crud extends RelaDB.Model {
         }
     }
 
+    static deleting(crud: Crud) {
+        crud.project.deleteTranslationOnAllLanguages(crud.getLangKeyForItemTitle())
+        crud.project.deleteTranslationOnAllLanguages(crud.getLangKeyForCollectionTitle())
+    }
+
     static getBasic() {
         return Crud.get().filter((crud: Crud) => crud.isBasic())
     }
@@ -267,7 +272,11 @@ export default class Crud extends RelaDB.Model {
     }
 
     getLabel(): string {
-        return this.settings.collectionTitle
+        return this.project.getDefaultTranslation(this.settings.collectionTitle)
+    }
+
+    getSingularLabel(): string {
+        return this.project.getDefaultTranslation(this.settings.itemTitle)
     }
 
     getAppSubType(): string {
@@ -381,14 +390,17 @@ export default class Crud extends RelaDB.Model {
         this.settings = {
             itemName: camelCase(name),
             collectionName: camelCase(plural),
-            itemTitle: capitalCase(name),
-            collectionTitle: capitalCase(plural),
+            itemTitle: null,
+            collectionTitle: null,
         }
+        
+        this.settings.itemTitle = this.generateTranslationForItemTitle(capitalCase(name))
+        this.settings.collectionTitle = this.generateTranslationForCollectionTitle(capitalCase(plural))
     }
 
     calculateLivewireSpecificData() {
         this.livewireNamespace = `App\\Livewire\\${pascalCase(this.section.name)}`
-        this.livewireFormsNamespace = `${this.livewireNamespace}\\${this.basePath}\\Forms`
+        this.livewireFormsNamespace = `${this.livewireNamespace}\\${pascalCase(this.basePath)}\\Forms`
 
         this.livewireIndexComponentName = `${pascalCase(this.name)}Index`
         this.livewireShowComponentName = `${pascalCase(this.name)}Show`
@@ -482,12 +494,12 @@ export default class Crud extends RelaDB.Model {
     addNavs() {
         const rootTag = Nav.findByTag("apps")
 
-        const nav = Nav.create({
-            name: this.settings.collectionTitle,
-            navigableId: this.id,
-            navigableType: "Crud",
-            projectId: this.projectId,
-        })
+        const nav = Nav.createFromNavigable(
+            this.getLabel(),
+            this.projectId,
+            this.id,
+            "Crud"
+        )
 
         if(rootTag) {
             nav.parentNavId = rootTag.id
@@ -589,9 +601,9 @@ export default class Crud extends RelaDB.Model {
     
     calculateFilamentSettings() {
         this.filamentSettings = {
-            modelLabel: this.name,
-            pluralModelLabel: this.plural,
-            navigationLabel: this.plural,
+            modelLabel: this.settings.collectionTitle,
+            pluralModelLabel: this.settings.itemTitle,
+            navigationLabel: this.settings.itemTitle,
             navigationIcon: "heroicon-o-rectangle-stack",
             navigationOrder: 1,
             navigationParentItem: null,
@@ -607,5 +619,29 @@ export default class Crud extends RelaDB.Model {
 
     isForLivewire(): boolean {
         return this.type === CrudType.LIVEWIRE
+    }
+
+    generateTranslationForItemTitle(defaultItemTitle: string) {
+        const key = this.getLangKeyForItemTitle()
+
+        this.project.setTranslationOnAllLanguages(key, defaultItemTitle)
+
+        return key
+    }
+
+    generateTranslationForCollectionTitle(defaultCollectionTitle: string) {
+        const key = this.getLangKeyForCollectionTitle()
+
+        this.project.setTranslationOnAllLanguages(key, defaultCollectionTitle)
+
+        return key
+    }
+
+    getLangKeyForItemTitle(): string {
+        return `${this.getBaseLangKey()}.itemTitle`
+    }
+    
+    getLangKeyForCollectionTitle(): string {
+        return `${this.getBaseLangKey()}.collectionTitle`
     }
 }

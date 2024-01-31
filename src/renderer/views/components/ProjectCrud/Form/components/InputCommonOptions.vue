@@ -11,6 +11,7 @@
     import Input from "@Common/models/crud/Input"
     import debounce from "@Common/tools/debounce"
     import { capitalCase } from "change-case"
+    import UiTranslator from "@Renderer/components/ui/UiTranslator.vue"
     
     const props = defineProps({
             input: Object as PropType<Input>
@@ -51,10 +52,10 @@
         <div class="p-4 space-y-4">
             <UiText v-model="input.name" placeholder="Input Name" disabled label="Name" @input="saveInput()" />
 
-            <UiTranslatorVue v-model="input.label" placeholder="Input Label" label="Label" @input="saveInput()" />
+            <UiTranslator v-model="input.label" placeholder="Input Label" label="Label" @input="saveInput()" />
             
             <div v-if="input.allowsPlaceholder()">
-                <UiTranslatorVue v-model="input.placeholder" placeholder="Input Placeholder" label="Placeholder" @input="saveInput()" />
+                <UiTranslator v-model="input.placeholder" placeholder="Input Placeholder" label="Placeholder" @input="saveInput()" />
             </div>
 
             <div v-if="input.allowsDefaultValue()">

@@ -14,11 +14,11 @@
     <x-ui.breadcrumbs>
         <x-ui.breadcrumbs.link href="/<$ crud.section.routeBasePath $>"><$ crud.section.name $></x-ui.breadcrumbs.link>
         <x-ui.breadcrumbs.separator/>
-        <x-ui.breadcrumbs.link active><$ crud.settings.collectionTitle $></x-ui.breadcrumbs.link>
+        <x-ui.breadcrumbs.link active><$ this.helpers.lang(crud.settings.collectionTitle) $></x-ui.breadcrumbs.link>
     </x-ui.breadcrumbs>
 
     <div class="vtheme(crud.index.tools)">
-        <x-ui.input wire:model="search" type="text" placeholder="Search <$ crud.settings.collectionTitle $>..." />
+        <x-ui.input wire:model="search" type="text" placeholder="Search <$ this.helpers.lang(crud.settings.collectionTitle) $>..." />
 
         @can('create', <$ crud.model.class $>::class)
         <a wire:navigate href="{{ route('<$ crud.getRouteNameByTag('create') $>') }}">
@@ -75,7 +75,7 @@
                 </x-ui.table.row>
                 @empty
                 <x-ui.table.row>
-                    <x-ui.table.column colspan="<$ colspanSize $>">No <$ crud.settings.collectionTitle $> found.</x-ui.table.column>
+                    <x-ui.table.column colspan="<$ colspanSize $>">No <$ this.helpers.lang(crud.settings.collectionTitle) $> found.</x-ui.table.column>
                 </x-ui.table.row>
                 @endforelse
             </x-slot>
