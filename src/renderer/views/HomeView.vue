@@ -111,6 +111,7 @@
         connectingFolderSettings.value.usesVue = projectInfo.hasVue
         connectingFolderSettings.value.usesReact = projectInfo.hasReact
         connectingFolderSettings.value.usesSvelte = projectInfo.hasSvelte
+        connectingFolderSettings.value.laravelVersion = projectInfo.laravelVersion
     }
 
     const openSchema = async () => {

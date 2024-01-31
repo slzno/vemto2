@@ -137,7 +137,7 @@ implements
     ];
     <% } %>
 
-    <% if(this.model.castsColumns.length) { %>
+    <% if(this.model.castsColumns.length && this.project.laravelVersionLessThan('11.0')) { %>
         <###>
         <% if(this.model.attributesComments) { %>
         /**
@@ -146,15 +146,36 @@ implements
         * @var array<string, string>
         */
         <% } %>
-    protected $casts = [
-        <% for(let column of this.model.castsColumns) { %>
-        <% const pivot = this.model.relation('castsColumns').getPivotItem(column) %>
-        <###>
-        '<$ column.name $>' => '<$ pivot.type $>',
-        <% } %>
-    ];
+        protected $casts = [
+            <% for(let column of this.model.castsColumns) { %>
+                <% const pivot = this.model.relation('castsColumns').getPivotItem(column) %>
+                <###>
+                '<$ column.name $>' => '<$ pivot.type $>',
+            <% } %>
+        ];
     <% } %>
     // hook:AFTER_VARIABLES
+
+    <% if(this.model.castsColumns.length && this.project.laravelVersionGreaterThanOrEqualTo('11.0')) { %>
+        <###>
+        <% if(this.model.attributesComments) { %>
+        /**
+        * Get the attributes that should be cast.
+        *
+        * @return array<string, string>
+        */
+        <% } %>
+        protected function casts(): array
+        {
+            return [
+                <% for(let column of this.model.castsColumns) { %>
+                    <% const pivot = this.model.relation('castsColumns').getPivotItem(column) %>
+                    <###>
+                    '<$ column.name $>' => '<$ pivot.type $>',
+                <% } %>
+            ];
+        }
+    <% } %>
 
     // hook:BEFORE_METHODS
     <% if(this.model.ownRelationships.length) { %>

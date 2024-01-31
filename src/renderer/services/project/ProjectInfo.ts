@@ -1,6 +1,7 @@
 import Main from "../wrappers/Main"
 import PathUtil from "@Common/util/PathUtil"
 import { ProjectCssFramework, ProjectUIStarterKit } from "@Common/models/Project"
+import { validateAndParse as getVersionMatches } from 'compare-versions/lib/esm/utils'
 
 export default class ProjectInfo {
     path: string
@@ -101,11 +102,21 @@ export default class ProjectInfo {
     }
 
     getComposerPackageVersion(packageName: string): string {
-        if (!this.composerData.require) {
+        if (!this.composerData.require || !this.composerData.require[packageName]) {
             return ""
         }
 
-        return this.composerData.require[packageName] || ""
+        let packageVersion: string[] = [],
+            sliceLength: number = 0
+
+        try {
+            packageVersion = getVersionMatches(this.composerData.require[packageName])
+            sliceLength = packageVersion[1] !== undefined ? 2 : 1
+        } catch (error) {
+            return ""
+        }
+
+        return packageVersion.slice(0, sliceLength).join(".")
     }
 
     hasPackageDependency(packageName: string): boolean {

@@ -3,6 +3,10 @@ import Main from "../wrappers/Main"
 export default class ProjectLanguages {
 
     static async getDefaultLanguage(): Promise<string> {
+        const appConfigExists = await Main.API.projectFileExists("config/app.php")
+
+        if (!appConfigExists) return "en"
+
         const appConfig = await Main.API.readProjectFile("config/app.php")
 
         // get the locale from the app config ('locale' => 'en' or "locale" => 'en' or 'locale' => "en" or "locale" => "en")

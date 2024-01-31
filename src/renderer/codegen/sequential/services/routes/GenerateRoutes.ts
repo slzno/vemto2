@@ -2,15 +2,20 @@ import Routes from "./Routes"
 import Route from "@Common/models/Route"
 import Project from "@Common/models/Project"
 import Main from "@Renderer/services/wrappers/Main"
+import GenerateBootstrapApp from "./GenerateBootstrapApp"
 import { RenderableFileType } from "@Common/models/RenderableFile"
 
 export default class GenerateRoutes {
-    async start() {
+    async start(project: Project) {
         const routes = Route.get()
 
         await new Routes(routes).render()
 
-        await this.addRoutesToRouteServiceProvider()
+        if(project.laravelVersionLessThan('11.0')) {
+            await this.addRoutesToRouteServiceProvider()
+        } else {
+            await new GenerateBootstrapApp().start()
+        }
     }
 
     async addRoutesToRouteServiceProvider() {

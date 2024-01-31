@@ -100,10 +100,15 @@ class ModelRepository {
                         ];
                     }
                 } else {
-                    $methods[] = [
-                        'name' => $method->getName(),
-                        'content' => $methodContent,
-                    ];
+                    // After Laravel 11, the casts is a method and not a property
+                    if($method->getName() === 'casts') {
+                        $casts = $method->invoke(new $model['class']);
+                    } else {
+                        $methods[] = [
+                            'name' => $method->getName(),
+                            'content' => $methodContent,
+                        ];
+                    }
                 }
             }
 
@@ -135,7 +140,7 @@ class ModelRepository {
                 'traits' => $traits,
                 'hasFillable' => $hasProperty('protected', 'fillable'),
                 'fillable' => $fillable,
-                'hasCasts' => $hasProperty('protected', 'casts'),
+                'hasCasts' => !empty($casts) || $hasProperty('protected', 'casts'),
                 'casts' => $casts,
                 'hasGuarded' => $hasProperty('protected', 'guarded'),
                 'guarded' => $guarded,

@@ -34,7 +34,9 @@ export default class SequentialGenerator {
         await new GenerateUiComponentsFiles().start()
 
         await new GenerateMenu().start()
-        await new GenerateRoutes().start()
+
+        await new GenerateRoutes().start(this.project)
+
         await new GenerateTranslations().start()
         
         await new GenerateModelFiles().start()
