@@ -11,7 +11,6 @@
     import Input from "@Common/models/crud/Input"
     import debounce from "@Common/tools/debounce"
     import { capitalCase } from "change-case"
-    import UiTranslator from "@Renderer/components/ui/UiTranslator.vue"
     
     const props = defineProps({
             input: Object as PropType<Input>
