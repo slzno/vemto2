@@ -101,23 +101,23 @@ class CalculateMorphRelationshipsData extends CalculateRelationshipService {
     }
 
     addMorphableFieldsToTable(table: Table, idColumnType: string = 'unsignedBigInteger'): void {
-        const mophableIdName = this.relationship.morphToName + '_id',
+        const morphableIdName = this.relationship.morphToName + '_id',
             morphableTypeName = this.relationship.morphToName + '_type'
 
-        let idColumn = table.getColumnByName(mophableIdName)
-        let typeField = table.getColumnByName(morphableTypeName)
+        let idColumn = table.getColumnByName(morphableIdName)
+        let typeColumn = table.getColumnByName(morphableTypeName)
 
         if(!idColumn) {
             idColumn = new Column({
                 tableId: table.id,
-                name: mophableIdName,
+                name: morphableIdName,
                 type: idColumnType,
                 index: true
             })
         }
         
-        if(!typeField) {
-            typeField = new Column({
+        if(!typeColumn) {
+            typeColumn = new Column({
                 tableId: table.id,
                 name: morphableTypeName,
                 type: 'string',
@@ -126,10 +126,10 @@ class CalculateMorphRelationshipsData extends CalculateRelationshipService {
         }
 
         idColumn.save()
-        typeField.save()
+        typeColumn.save()
 
         this.relationship.idColumnId = idColumn.id
-        this.relationship.typeFieldId = typeField.id
+        this.relationship.typeColumnId = typeColumn.id
 
         this.relationship.save()
     }

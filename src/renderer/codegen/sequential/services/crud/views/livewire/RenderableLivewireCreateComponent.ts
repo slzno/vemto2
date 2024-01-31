@@ -41,7 +41,7 @@ export default class RenderableLivewireCreateComponent extends Renderable {
     }
 
     hooks() {
-        return this.crud.getHooks('createComponent')
+        return this.crud.getHooks('filamentCreateComponent')
     }
     
     getData() {

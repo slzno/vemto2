@@ -34,7 +34,8 @@ import { PlusIcon } from '@heroicons/vue/24/outline'
             generateDetails = true
 
         Crud.createFromModel(
-            selectedModel.value, 
+            selectedModel.value,
+            CrudType.LIVEWIRE,
             excludedColumns, 
             generateDetails
         )

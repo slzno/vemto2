@@ -1,13 +1,17 @@
 import Crud from "./Crud"
+import Model from "../Model"
 import Column from "../Column"
 import CrudPanel from "./CrudPanel"
-import Relationship from "../Relationship"
-import * as changeCase from "change-case"
-import RelaDB from "@tiago_silva_pereira/reladb"
-import GenerateInputValidation, { ValidationRuleType } from "./services/GenerateInputValidation"
-import Model from "../Model"
 import { InputType } from "./InputType"
+import * as changeCase from "change-case"
+import Relationship from "../Relationship"
+import RelaDB from "@tiago_silva_pereira/reladb"
 import InputSettingsList from "../data/InputSettingsList"
+import FillInputFilamentData from "./fillers/FillInputFilamentData"
+import FilamentInputSettings from "./filament/FilamentInputSettings"
+import FilamentRuleNameConversions from "./filament/FilamentRuleNameConversions"
+import FilamentIndividualValidations from "./filament/FilamentIndividualValidations"
+import GenerateInputValidation, { ValidationRuleType } from "./services/GenerateInputValidation"
 
 export enum InputValidationRuleType {
     TEXTUAL = "textual",
@@ -50,6 +54,8 @@ export default class Input extends RelaDB.Model {
     showOnDetails: boolean
     showOnIndex: boolean
 
+    filamentSettings: FilamentInputSettings
+
     relationships() {
         return {
             crud: () => this.belongsTo(Crud),
@@ -64,7 +70,7 @@ export default class Input extends RelaDB.Model {
         input.crud.project.deleteTranslationOnAllLanguages(input.getLangKeyForPlaceholder())
     }
 
-    static createFromColumn(crud: Crud, column: Column, forceType?: InputType | null) {
+    static createFromColumn(crud: Crud, column: Column, forceType?: InputType | null, ignoreColumnHidden: boolean = false) {
         const input = new Input()
         input.crudId = crud.id
         input.columnId = column.id
@@ -72,7 +78,7 @@ export default class Input extends RelaDB.Model {
         input.label = input.generateTranslationForLabel()
         input.placeholder = input.generateTranslationForPlaceholder()
         input.readOnly = false
-        input.required = false
+        input.required = !column.nullable
         input.hidden = false
         input.defaultValue = ""
         input.checked = false
@@ -83,7 +89,11 @@ export default class Input extends RelaDB.Model {
         input.showOnCreation = true
         input.showOnUpdate = true
 
-        const columnIsHidden = crud.model.hidden && crud.model.hidden.indexOf(column.name) !== -1
+        let columnIsHidden = false
+        
+        if(crud.model) {
+            columnIsHidden = ignoreColumnHidden ? false : crud.model.hidden && crud.model.hidden.indexOf(column.name) !== -1
+        }
 
         input.showOnDetails = !columnIsHidden
         input.showOnIndex = !columnIsHidden
@@ -97,6 +107,10 @@ export default class Input extends RelaDB.Model {
         input.calculateInputParamsByType()
         input.generateItemsFromColumn()
         input.generateValidationRules()
+
+        if(crud.isForFilament()) {
+            FillInputFilamentData.onInput(input)
+        }
 
         return input
     }
@@ -138,31 +152,69 @@ export default class Input extends RelaDB.Model {
         return relatedModel ? relatedModel.name : ""
     }
 
+    getRelatedModelLabel(): string {
+        const relatedModel = this.getRelatedModel()
+
+        return relatedModel ? relatedModel.table.getLabelColumnName() : ""
+    }
+
     getRelatedModel(): Model {
         return this.relationship ? this.relationship.relatedModel : null
     }
 
-    isBelongsTo() {
+    isBelongsTo(): boolean {
         return this.type === InputType.BELONGS_TO && !! this.relationshipId
     }
 
-    isCommon() {
+    getColumnNameForFilament(isBelongsToManyDetail: boolean = false, manyToManyRelationshipInputKey: Column): string {
+        if((isBelongsToManyDetail && manyToManyRelationshipInputKey) && this.name === manyToManyRelationshipInputKey.name) {
+            return this.getRelatedModelLabel()
+        }
+
+        if(this.isBelongsTo()) {
+            return `${this.relationship.name}.${this.relationship.relatedModel.table.getLabelColumnName()}`
+        }
+
+        return this.name
+    }
+
+    isCommon(): boolean {
         return !this.isFileOrImage()
     }
 
-    isPassword() {
+    isPassword(): boolean {
         return this.name === "password"
     }
 
-    isFileOrImage() {
+    isFileOrImage(): boolean {
         return [InputType.FILE, InputType.IMAGE].includes(this.type)
     }
 
-    isNullable() {
+    isImage(): boolean {
+        return this.type === InputType.IMAGE
+    }
+
+    isTextarea(): boolean {
+        return this.type === InputType.TEXTAREA
+    }
+
+    isEmail(): boolean {
+        return this.type === InputType.EMAIL
+    }
+
+    isNumber(): boolean {
+        return this.type === InputType.NUMBER
+    }
+
+    isUrl(): boolean {
+        return this.type === InputType.URL
+    }
+
+    isNullable(): boolean {
         return !this.isRequired()
     }
 
-    isRequired() {
+    isRequired(): boolean {
         return !! this.required
     }
 
@@ -258,6 +310,58 @@ export default class Input extends RelaDB.Model {
 
     getRulesForTemplate(rules: InputValidationRule[]) {
         return rules.map((rule) => rule.value).join("|")
+    }
+
+    getRulesForFilamentTemplate() {
+        const inlineRules = [],
+            individualRules = this.creationRules.map((rule: InputValidationRule) => {
+                const [laravelRuleName, ruleArgs] = rule.value.split(':'),
+                    laravelRuleNameCamelCase = changeCase.camelCase(laravelRuleName),
+                    filamentMethodName = FilamentRuleNameConversions.convert(this, laravelRuleNameCamelCase)
+    
+                if(!FilamentIndividualValidations.match(filamentMethodName)) {
+                    inlineRules.push(`"${rule.value}"`)
+                    return null
+                }
+    
+                let methodArgs = ''
+    
+                if(ruleArgs?.length) {
+                    methodArgs = ruleArgs.split(',').map((ruleArg: any) => {
+                        if(Number(ruleArg) >= 0) return ruleArg
+    
+                        return `"${ruleArg.trim()}"`
+                    }).join(', ')
+                }
+    
+                // Ignore record for unique rule
+                if(laravelRuleName.toLowerCase() == 'unique') {
+                    methodArgs += ', ignoreRecord: true'
+                }
+
+                const hasRequiredRuleInUpdate = this.updateRules.find((rule: InputValidationRule) => rule.value.toLowerCase() == 'required'),
+                    isRequiredOnlyOnCreate = laravelRuleName.toLowerCase() == 'required' && !hasRequiredRuleInUpdate,
+                    isNullableOnlyOnCreate = laravelRuleName.toLowerCase() == 'nullable' && hasRequiredRuleInUpdate
+
+                if(isRequiredOnlyOnCreate || isNullableOnlyOnCreate) {
+                    methodArgs += `fn (string $context): bool => $context === 'create'`
+                }
+
+                // Methods where arguments need to be passed by array
+                if(['in', 'doesntStartWith', 'doesntEndWith', 'endsWith', 'notIn', 'prohibits', 'startsWith'].includes(laravelRuleName.toLowerCase())) {
+                    methodArgs = `[${methodArgs}]`
+                }
+    
+                return [
+                    changeCase.camelCase(filamentMethodName),
+                    methodArgs
+                ];
+            }).filter(rule => rule)
+
+        return [
+            inlineRules,
+            individualRules
+        ];
     }
 
     getTypeSettings() {

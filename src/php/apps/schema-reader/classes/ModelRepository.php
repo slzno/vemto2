@@ -61,8 +61,7 @@ class ModelRepository {
                     $methodContent .= $lines[$i] . PHP_EOL;
                 }
 
-                // If the method is a relationship
-                if (preg_match('/return \$this->(hasOne|hasMany|belongsTo|belongsToMany|hasOneThrough|hasManyThrough|morphOne|morphMany|morphTo|morphToMany|through)/', $methodContent)) {
+                if (preg_match('/return \$this->(hasOne|hasMany|belongsTo|belongsToMany|hasOneThrough|hasManyThrough|morphOne|morphMany|morphToMany|through)/', $methodContent)) {
                     $return = $method->invoke(new $model['class']);
                     
                     if ($return instanceof Relation) {
@@ -97,6 +96,9 @@ class ModelRepository {
 
                             'relatedKeyName' => method_exists($return, 'getRelatedKeyName') ? $return->getRelatedKeyName() : null,
                             'method' => $methodContent,
+
+                            'withPivotColumns' => str_contains($methodContent, '->withPivot'),
+                            'includedPivotColumns' => method_exists($return, 'getPivotColumns') ? $return->getPivotColumns() : [],
                         ];
                     }
                 } else {

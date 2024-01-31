@@ -1,4 +1,4 @@
-import Crud from './Crud'
+import Crud, { CrudType } from './Crud'
 import Relationship from '../Relationship'
 import RelaDB from '@tiago_silva_pereira/reladb'
 import { camelCase, capitalCase, paramCase } from 'change-case'
@@ -35,6 +35,7 @@ export default class HasManyDetail extends RelaDB.Model {
 
         const detailCrud = Crud.createFromModel(
             relationship.relatedModel,
+            crud.type,
             excludedColumns,
         )
 

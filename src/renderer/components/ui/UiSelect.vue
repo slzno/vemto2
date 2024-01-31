@@ -14,7 +14,12 @@ import { defineProps, defineEmits, computed } from "vue"
         inlineLabel: {
             type: Boolean,
             default: false
-        }
+        },
+        
+        disabled: {
+            type: Boolean,
+            default: false,
+        },
     })
 
     const emit = defineEmits(["update:modelValue", "change"]),
@@ -34,6 +39,7 @@ import { defineProps, defineEmits, computed } from "vue"
     <div class="flex gap-1 flex-1" :class="{ 'flex-col': !inlineLabel, 'items-center': inlineLabel }">
         <label v-if="label" class="text-xs text-slate-400">{{ label }}</label>
         <select
+            :disabled="disabled"
             class="w-full border border-slate-650 focus:border-red-500 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg focus:ring-transparent"
             v-model="localValue"
         >
