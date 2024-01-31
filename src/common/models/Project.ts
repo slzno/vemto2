@@ -7,6 +7,7 @@ import Page from "./page/Page"
 import { v4 as uuid } from "uuid"
 import Relationship from "./Relationship"
 import RelaDB from "@tiago_silva_pereira/reladb"
+import { compareVersions } from "compare-versions"
 
 import RenderableFile, {
     RenderableFileStatus,
@@ -71,6 +72,7 @@ export interface ProjectSettings {
     usesReact: boolean
     usesSvelte: boolean
     isFreshLaravelProject: boolean,
+    laravelVersion: string
 }
 
 export default class Project extends RelaDB.Model {
@@ -88,7 +90,6 @@ export default class Project extends RelaDB.Model {
     ownRelationships: Relationship[]
     appSections: AppSection[]
     schemaSections: SchemaSection[]
-    laravelVersion: Number
     schemaDataHash: string
     lastReadSchemaDataHash: string
     schemaTablesDataHash: string
@@ -755,6 +756,26 @@ export default class Project extends RelaDB.Model {
 
     getTablesBySection(section: SchemaSection): Table[] {
         return this.tables.filter(table => table.sectionId === section.id)
+    }
+    
+    laravelVersionEqualTo(version: string): boolean {
+        return compareVersions(this.settings.laravelVersion, version) === 0
+    }
+
+    laravelVersionGreaterThan(version: string): boolean {
+        return compareVersions(this.settings.laravelVersion, version) === 1
+    }
+
+    laravelVersionGreaterThanOrEqualTo(version: string): boolean {
+        return compareVersions(this.settings.laravelVersion, version) >= 0
+    }
+
+    laravelVersionLessThan(version: string): boolean {
+        return compareVersions(this.settings.laravelVersion, version) === -1
+    }
+
+    laravelVersionLessThanOrEqualTo(version: string): boolean {
+        return compareVersions(this.settings.laravelVersion, version) <= 0
     }
 
 }

@@ -1,14 +1,13 @@
 <?php
 <# TEMPLATE VARIABLES #>
 <# const pascalCase = TemplateRequire('pascalCase') #>
-<% const laravelVersion = 9 %>
 <####>
 
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-<% if (laravelVersion >= 9) { %>
+<% if (this.project.laravelVersionGreaterThanOrEqualTo('9')) { %>
 return new class extends Migration
 <% } else { %>
 class ChangeTablesMigration extends Migration
@@ -43,4 +42,4 @@ class ChangeTablesMigration extends Migration
             <import template="CreationSchema.vemtl">
         <% } %>
     }
-}<% if (laravelVersion >= 9) { %>;<% } %>
+}<% if (this.project.laravelVersionGreaterThanOrEqualTo('9')) { %>;<% } %>
