@@ -53,7 +53,12 @@
 
     const focusTable = (table: Table) => {
         closeSearch()
-        schemaStore.focusTable(table)
+
+        selectSchemaSection(table.section)
+
+        setTimeout(() => {
+            schemaStore.focusTable(table)
+        }, 150)
     }
 
     const createTable = (): void => {
