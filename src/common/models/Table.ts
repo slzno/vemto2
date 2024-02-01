@@ -46,7 +46,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         const defaultSchemaSection = data.project.getDefaultSchemaSection()
 
         if(!data.sectionId) {
-            data.sectionId = defaultSchemaSection.id
+            data.sectionId = defaultSchemaSection ? defaultSchemaSection.id : null
         }
 
         return data
@@ -566,6 +566,10 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         this.indexes.forEach(index => index.undoChanges())
     }
 
+    belongsToASection(): boolean {
+        return !! this.sectionId
+    }
+
     moveToSection(section: SchemaSection) {
         this.sectionId = section.id
 
@@ -579,5 +583,23 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         this.positionY = 0
 
         this.save()
+    }
+
+    isLaravelDefaultTable(): boolean {
+        return [
+            "password_reset_tokens", 
+            "personal_access_tokens",
+            "failed_jobs", 
+            "sessions", 
+            "migrations"
+        ].includes(this.name)
+    }
+
+    isJetstreamDefaultTable(): boolean {
+        return [
+            "teams", 
+            "team_user", 
+            "team_invitations"
+        ].includes(this.name)
     }
 }

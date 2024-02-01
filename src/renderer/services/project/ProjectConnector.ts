@@ -1,7 +1,7 @@
-import GenerateBasicProjectData from "@Renderer/services/project/GenerateBasicProjectData"
 import SchemaBuilder from "../schema/SchemaBuilder"
 import Main from "../wrappers/Main"
 import Project, { ProjectSettings, ProjectUIStarterKit } from "@Common/models/Project"
+import GenerateBasicProjectData from "@Renderer/services/project/GenerateBasicProjectData"
 
 export default class ProjectConnector {
 
@@ -18,6 +18,7 @@ export default class ProjectConnector {
         }
 
         this.projectSettings = settings
+        this.setProjectSettingsDefaults(settings)
 
         await this.createVemtoFolder()
         await this.createNecessaryFiles()
@@ -78,8 +79,11 @@ export default class ProjectConnector {
         await defaultDataGenerator.handle()
     }
 
+    setProjectSettingsDefaults(settings: ProjectSettings) {
+        this.project.settings = settings
+    }
+
     async saveProject() {
-        this.project.settings = this.projectSettings
         this.project.connectionFinished = true
         this.project.canIgnoreNextSchemaSourceChanges = true
 
