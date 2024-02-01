@@ -9,7 +9,8 @@
 
     const projectStore = useProjectStore(),
         schemaStore = useSchemaStore(),
-        tables = ref([]) as Ref<Table[]>
+        tables = ref([]) as Ref<Table[]>,
+        canLoadTables = ref(false)
 
     const emit = defineEmits(["tablesLoaded"])
 
@@ -22,14 +23,18 @@
     })
 
     watch(() => schemaStore.selectedSchemaSection, () => {
+        console.log('Loading tables from schema change', schemaStore.selectedSchemaSection.name)
         loadTables()
+    })
 
-        nextTick(() => {
-            emit('tablesLoaded')
-        })
+    watch(() => projectStore.project.tables, () => {
+        console.log('Loading tables from change', schemaStore.selectedSchemaSection.name)
+        loadTables()
     })
 
     onMounted(() => {
+        canLoadTables.value = true
+
         centerScrollIfNecessary()
 
         const tablesCanvas = document.getElementById("tablesCanvas")
@@ -46,7 +51,17 @@
     })
 
     const loadTables = () => {
+        if(!canLoadTables.value) return
+
         tables.value = projectStore.project.getTablesBySection(schemaStore.selectedSchemaSection)
+
+        if(!tables.value.length) {
+            console.log('No tables to load')
+        }
+
+        nextTick(() => {
+            emit('tablesLoaded')
+        })
     }
 
     /**
@@ -189,6 +204,9 @@
         @scroll.passive="onScroll"
         class="relative block overflow-auto cursor-grab scrollbar-thin scrollbar-thumb-slate-400 scrollbar-track-slate-300 dark:scrollbar-thumb-black dark:scrollbar-track-slate-900"
     >
+        <div class="fixed top-28 rght-6">
+            Tables: {{ tables.length }}
+        </div>
         <div
             id="tablesContainer"
             class="flex justify-center items-center"

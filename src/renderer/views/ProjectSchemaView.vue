@@ -41,8 +41,30 @@
     })
 
     watch(() => projectStore.project.currentZoom, () => changeSchemaZoom())
-    // watch(() => schemaStore.selectedSchemaSection, () => nextTick(() => drawConnections()))
-    // watch(() => projectStore.project.tables, () => nextTick(() => drawConnections()))
+    watch(() => schemaStore.selectedSchemaSection, () => {
+
+        if(jsPlumbInstance) {
+            jsPlumbInstance.reset()
+            // console.log('Here')
+            // jsPlumbInstance.deleteEveryConnection({
+            //     force: true,
+            // })
+            // jsPlumbInstance.repaintEverything()
+        }
+
+    })
+
+    watch(() => projectStore.project.tables, () => {
+
+        if(jsPlumbInstance) {
+            console.log('Here')
+            jsPlumbInstance.deleteEveryConnection({
+                force: true,
+            })
+            jsPlumbInstance.repaintEverything()
+        }
+
+    })
 
     const zoomWithMouseWheel = () => {
         document.getElementById('tablesCanvas').addEventListener('mousewheel', (e: any) => { 
@@ -75,10 +97,20 @@
 
         schemaBuilder.build(syncTables, syncModels)
 
-        nextTick(() => drawConnections())
+        drawConnectionsOnNextTick()
+    }
+
+    const drawConnectionsOnNextTick = () => {
+        nextTick(() => {
+            nextTick(() => {
+                drawConnections()
+            })
+        })
     }
 
     const drawConnections = () => {
+        // console.log(document.getElementsByClassName("schema-table"))
+
         if(projectStore.projectIsEmpty) return
 
         const jsplumbStarted = initJsPlumbIfNotExists()
@@ -87,8 +119,13 @@
 
         currentNodes = {}
         currentConnections = {}
-        jsPlumbInstance.reset()
 
+        jsPlumbInstance.deleteEveryConnection({
+            force: true,
+        })
+        jsPlumbInstance.repaintEverything()
+
+        console.log('Drawing connections', schemaStore.selectedSchemaSection.name)
         const tables = projectStore.project.getTablesBySection(schemaStore.selectedSchemaSection)
 
         tables.forEach((table: Table) => {
@@ -96,7 +133,10 @@
 
             if(!currentNodes[table.id]) {
                 currentNodes[table.id] = document.getElementById("table_" + table.id)!
+                console.log("table_" + table.id, currentNodes[table.id])
 
+                // console.log(currentNodes[table.id])
+                if(!currentNodes[table.id]) return
                 jsPlumbInstance.manage(currentNodes[table.id])
             }
             
@@ -203,7 +243,7 @@
             @syncSchema="syncSchema" 
         />
 
-        <SchemaTables v-if="canDrawTables" @tablesLoaded="drawConnections()" />
+        <SchemaTables v-if="canDrawTables" @tablesLoaded="drawConnectionsOnNextTick()" />
 
         <MigrationSaver />
 
@@ -223,7 +263,7 @@
 
     svg.connector path {
         stroke: #9ca3af;
-        stroke-width: 2;
+        stroke-width: 3;
         z-index: 1;
     }
 

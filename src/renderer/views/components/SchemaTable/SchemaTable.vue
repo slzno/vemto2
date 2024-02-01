@@ -115,7 +115,7 @@
                         <ExclamationCircleIcon
                             class="w-5 h-5 text-red-500 mr-2"/>
                     </div>
-                    {{ table.name }} {{ table.sectionId }}
+                    {{ table.name }}
                 </div>
                 <div class="text-sm font-normal text-slate-500" v-if="table.isNew()">
                     (Draft)
