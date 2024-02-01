@@ -210,6 +210,7 @@
     const reset = (): void => {
         newTable.value = new Table({
             projectId: projectStore.project.id,
+            sectionId: schemaStore.selectedSchemaSection.id,
         })
 
         newSection.value = new SchemaSection({
