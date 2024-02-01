@@ -33,6 +33,7 @@
     })
 
     onMounted(() => {
+        console.log('mounted tavles')
         canLoadTables.value = true
 
         centerScrollIfNecessary()
@@ -54,10 +55,6 @@
         if(!canLoadTables.value) return
 
         tables.value = projectStore.project.getTablesBySection(schemaStore.selectedSchemaSection)
-
-        if(!tables.value.length) {
-            console.log('No tables to load')
-        }
 
         nextTick(() => {
             emit('tablesLoaded')

@@ -45,23 +45,6 @@
 
         if(jsPlumbInstance) {
             jsPlumbInstance.reset()
-            // console.log('Here')
-            // jsPlumbInstance.deleteEveryConnection({
-            //     force: true,
-            // })
-            // jsPlumbInstance.repaintEverything()
-        }
-
-    })
-
-    watch(() => projectStore.project.tables, () => {
-
-        if(jsPlumbInstance) {
-            console.log('Here')
-            jsPlumbInstance.deleteEveryConnection({
-                force: true,
-            })
-            jsPlumbInstance.repaintEverything()
         }
 
     })
@@ -102,15 +85,11 @@
 
     const drawConnectionsOnNextTick = () => {
         nextTick(() => {
-            nextTick(() => {
-                drawConnections()
-            })
+            drawConnections()
         })
     }
 
     const drawConnections = () => {
-        // console.log(document.getElementsByClassName("schema-table"))
-
         if(projectStore.projectIsEmpty) return
 
         const jsplumbStarted = initJsPlumbIfNotExists()
@@ -123,9 +102,7 @@
         jsPlumbInstance.deleteEveryConnection({
             force: true,
         })
-        jsPlumbInstance.repaintEverything()
 
-        console.log('Drawing connections', schemaStore.selectedSchemaSection.name)
         const tables = projectStore.project.getTablesBySection(schemaStore.selectedSchemaSection)
 
         tables.forEach((table: Table) => {
@@ -133,9 +110,7 @@
 
             if(!currentNodes[table.id]) {
                 currentNodes[table.id] = document.getElementById("table_" + table.id)!
-                console.log("table_" + table.id, currentNodes[table.id])
 
-                // console.log(currentNodes[table.id])
                 if(!currentNodes[table.id]) return
                 jsPlumbInstance.manage(currentNodes[table.id])
             }
@@ -157,8 +132,6 @@
                         connectionNameReverse =
                             relation.table.name + "_" + table.name
 
-                    // console.log(node, relatedNode)
-
                     if (relatedNode && !currentConnections[connectionName]) {
                         const cssClass = relation.type === "relationship" ? "connector" : "connector dotted"
 
@@ -166,7 +139,7 @@
                             source: node!,
                             target: relatedNode!,
                             anchor: "Continuous",
-                            // anchors: ["Right", "Left"],
+                            anchors: [["Right", "Left"], ["Left", "Right"]],
                             cssClass: cssClass,
                             connector: {
                                 type: BezierConnector.type,
@@ -174,7 +147,6 @@
                                     curviness: 70,
                                 },
                             },
-                            // paintStyle: { dashstyle: "4 4 4 4" },
                         })
 
                         currentConnections[connectionName] = true
@@ -194,12 +166,12 @@
 
         jsPlumbInstance = newInstance({
             container: document.getElementById("tablesReference")!,
-            dragOptions: {
-                grid: {
-                    w: 25,
-                    h: 25,
-                },
-            }
+            // dragOptions: {
+            //     grid: {
+            //         w: 25,
+            //         h: 25,
+            //     },
+            // }
         })
 
         jsPlumbInstance.bind(EVENT_DRAG_START, () => {
