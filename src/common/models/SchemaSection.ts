@@ -51,4 +51,12 @@ export default class SchemaSection extends RelaDB.Model {
         this.scrollY = y
         this.save()
     }
+
+    checkAndDelete() {
+        if(this.isDefault()) {
+            throw new Error("Cannot delete default schema section")
+        }
+
+        this.delete()
+    }
 }

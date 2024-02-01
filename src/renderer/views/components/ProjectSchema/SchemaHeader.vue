@@ -274,11 +274,15 @@
 
         if(!confirmed) return
         
-        section.delete()
-        
-        nextTick(() => {
-            schemaStore.selectDefaultSchemaSection()
-        })
+        try {
+            section.checkAndDelete()
+            
+            nextTick(() => {
+                schemaStore.selectDefaultSchemaSection()
+            })
+        } catch (error: any) {
+            Alert.error(error.message)
+        }
     }
 </script>
 
@@ -500,7 +504,7 @@
                         {{ section.name }}
                     </div>
 
-                    <div @click="removeSection(section)" class="absolute right-0 invisible group-hover:visible px-1">
+                    <div @click.prevent.stop="removeSection(section)" class="absolute right-0 invisible group-hover:visible px-1">
                         <XMarkIcon
                             class="w-3.5 h-3.5 text-slate-500 cursor-pointer hover:text-red-400 dark:hover:text-red-500"
                         />
