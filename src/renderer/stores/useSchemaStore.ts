@@ -1,6 +1,7 @@
 import { defineStore } from "pinia"
 import Table from "@Common/models/Table"
 import SchemaSection from "@Common/models/SchemaSection"
+import { useProjectStore } from "./useProjectStore"
 
 export const useSchemaStore = defineStore("schema", {
     state: () => ({ 
@@ -24,8 +25,19 @@ export const useSchemaStore = defineStore("schema", {
             this.focusedTable = table
         },
 
+        selectLatestSchemaSection(): void {
+            const projectStore = useProjectStore(),
+                defaultSchemaSection = projectStore.project.getDefaultSchemaSection()
+
+            const latestSchemaSection = SchemaSection.find(window.localStorage.getItem("selectedSchemaSection"))
+
+            this.selectSchemaSection(latestSchemaSection || defaultSchemaSection)
+        },
+
         selectSchemaSection(section: SchemaSection): void {
             this.selectedSchemaSection = section
+
+            window.localStorage.setItem("selectedSchemaSection", section.id)
         },
 
         deselectSchemaSection(): void {

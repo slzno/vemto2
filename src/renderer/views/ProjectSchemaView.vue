@@ -30,8 +30,7 @@
         setTimeout(() => {
             canDrawTables.value = true
 
-            const defaultSchemaSection = projectStore.project.getDefaultSchemaSection()
-            schemaStore.selectSchemaSection(defaultSchemaSection)
+            schemaStore.selectLatestSchemaSection()
 
             nextTick(() => {
                 drawConnections()

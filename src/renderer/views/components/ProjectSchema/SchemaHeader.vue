@@ -36,6 +36,12 @@
         })
     })
 
+    onMounted(() => {
+        reset()
+
+        addModelForNewTable.value = true
+    })
+
     const closeSearch = () => {
         searchInput.value.blur()
 
@@ -217,12 +223,6 @@
             projectId: projectStore.project.id,
         })
     }
-
-    onMounted(() => {
-        reset()
-
-        addModelForNewTable.value = true
-    })
 
     const syncSchema = async () => {
         const confirmed = await confirmDialog.value.confirm()
