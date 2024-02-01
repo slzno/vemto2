@@ -569,6 +569,15 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     moveToSection(section: SchemaSection) {
         this.sectionId = section.id
 
+        this.centerPosition()
+
+        this.save()
+    }
+
+    centerPosition() {
+        this.positionX = 0
+        this.positionY = 0
+
         this.save()
     }
 }

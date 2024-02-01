@@ -25,6 +25,12 @@ export const useSchemaStore = defineStore("schema", {
             this.focusedTable = table
         },
 
+        selectDefaultSchemaSection(): void {
+            const projectStore = useProjectStore()
+
+            this.selectSchemaSection(projectStore.project.getDefaultSchemaSection())
+        },
+
         selectLatestSchemaSection(): void {
             const projectStore = useProjectStore(),
                 defaultSchemaSection = projectStore.project.getDefaultSchemaSection()

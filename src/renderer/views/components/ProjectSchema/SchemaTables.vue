@@ -23,17 +23,16 @@
     })
 
     watch(() => schemaStore.selectedSchemaSection, () => {
-        console.log('Loading tables from schema change', schemaStore.selectedSchemaSection.name)
+        centerScrollIfNecessary()
+        setCanvasScroll()
         loadTables()
     })
 
     watch(() => projectStore.project.tables, () => {
-        console.log('Loading tables from change', schemaStore.selectedSchemaSection.name)
         loadTables()
     })
 
     onMounted(() => {
-        console.log('mounted tavles')
         canLoadTables.value = true
 
         centerScrollIfNecessary()
@@ -42,9 +41,7 @@
 
         if (!tablesCanvas) return
 
-        // set scroll from project scrollX and scrollY
-        tablesCanvas.scrollLeft = projectStore.project.scrollX
-        tablesCanvas.scrollTop = projectStore.project.scrollY
+        setCanvasScroll()
 
         tablesCanvas.addEventListener('mousedown', mouseDownHandler)
 
@@ -88,11 +85,11 @@
      */
     const centerOnPosition = (x, y) => {
         // Reference to the tableCanvas element
-        const tableCanvas = document.getElementById('tablesCanvas');
+        const tableCanvas = document.getElementById('tablesCanvas')
 
         // Calculate half of tableCanvas' width and height
-        const halfWidth: number = tableCanvas.offsetWidth / 2;
-        const halfHeight: number = tableCanvas.offsetHeight / 2;
+        const halfWidth: number = tableCanvas.offsetWidth / 2
+        const halfHeight: number = tableCanvas.offsetHeight / 2
 
         // Calculate the center of tablesContainer
         const centerTablesContainerX: number = 25000
@@ -119,7 +116,7 @@
     }
 
     const centerScrollIfNecessary = () => {
-        if(projectStore.project.hasScroll()) return
+        if(schemaStore.selectedSchemaSection.hasScroll()) return
 
         const windowWidth = window.innerWidth,
             windowHeight = window.innerHeight,
@@ -127,8 +124,14 @@
             canvasWidth = windowWidth - sidebarNavWidth,
             canvasHeight = windowHeight
 
+            schemaStore.selectedSchemaSection.centerScroll(canvasWidth, canvasHeight)
+    }
 
-        projectStore.project.centerScroll(canvasWidth, canvasHeight)
+    const setCanvasScroll = () => {
+        const tablesCanvas = document.getElementById("tablesCanvas")
+
+        tablesCanvas.scrollLeft = schemaStore.selectedSchemaSection.scrollX
+        tablesCanvas.scrollTop = schemaStore.selectedSchemaSection.scrollY
     }
 
     const onScroll = (e: Event) => {
@@ -141,7 +144,7 @@
         const scrollLeft = target.scrollLeft,
             scrollTop = target.scrollTop
 
-        projectStore.project.saveScroll(scrollLeft, scrollTop)
+        schemaStore.selectedSchemaSection.saveScroll(scrollLeft, scrollTop)
     }
 
     const mouseDownHandler = (e) => {
@@ -176,7 +179,7 @@
         element.scrollTop = positionTracking.top - dy
         element.scrollLeft = positionTracking.left - dx
 
-        projectStore.project.saveScroll(element.scrollLeft, element.scrollTop)
+        schemaStore.selectedSchemaSection.saveScroll(element.scrollLeft, element.scrollTop)
     }
 
     const mouseUpHandler = () => {

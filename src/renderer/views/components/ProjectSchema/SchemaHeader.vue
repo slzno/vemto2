@@ -257,6 +257,24 @@
 
         schemaStore.selectSchemaSection(section)
     }
+
+    const removeSection = async (section: SchemaSection) => {
+        const confirmed = await window.projectConfirm(
+            `Are you sure you want to delete <span class="text-red-500">${section.name}</span>?`,
+            "Delete Schema Section",
+            {
+                infoMessage: "All tables in this schema section will be moved to the default section."
+            }
+        )
+
+        if(!confirmed) return
+        
+        section.delete()
+        
+        nextTick(() => {
+            schemaStore.selectDefaultSchemaSection()
+        })
+    }
 </script>
 
 <template>
@@ -465,7 +483,7 @@
             <div v-for="section in projectStore.project.schemaSections">
                 <div
                     @click="selectSchemaSection(section)"
-                    class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-700 h-6"
+                    class="flex relative group items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-700 h-6"
                 >
                     <div
                         :class="{
@@ -475,6 +493,12 @@
                         class="px-5 cursor-pointer hover:text-red-600 dark:hover:text-red-500 select-none"
                     >
                         {{ section.name }}
+                    </div>
+
+                    <div @click="removeSection(section)" class="absolute right-0 invisible group-hover:visible px-1">
+                        <XMarkIcon
+                            class="w-3.5 h-3.5 text-slate-500 cursor-pointer hover:text-red-400 dark:hover:text-red-500"
+                        />
                     </div>
                 </div>
             </div>

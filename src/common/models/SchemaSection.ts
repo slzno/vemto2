@@ -22,8 +22,7 @@ export default class SchemaSection extends RelaDB.Model {
         const defaultSection = section.project.getDefaultSchemaSection()
 
         section.tables.forEach(table => {
-            table.sectionId = defaultSection.id
-            table.save()
+            table.moveToSection(defaultSection)
         })
     }
 

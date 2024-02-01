@@ -1,3 +1,10 @@
+declare global {
+    interface Window {
+        api: ElectronApi,
+        projectConfirm: (message?: string, title?: string, options?: any) => Promise<boolean>
+    }
+}
+
 /**
  * Should match main/preload.ts for typescript support in renderer
  */
@@ -34,10 +41,4 @@ export default interface ElectronApi {
     copyInternalFolderToProject: (path: string, destination: string) => Promise<void>,
     copyInternalFolderIfNotExists: (path: string, destination: string) => Promise<void>,
     mergePHPFile: (relativePath: string) => Promise<any>,
-}
-
-declare global {
-    interface Window {
-        api: ElectronApi
-    }
 }
