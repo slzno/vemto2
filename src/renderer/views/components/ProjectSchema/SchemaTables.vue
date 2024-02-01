@@ -204,9 +204,6 @@
         @scroll.passive="onScroll"
         class="relative block overflow-auto cursor-grab scrollbar-thin scrollbar-thumb-slate-400 scrollbar-track-slate-300 dark:scrollbar-thumb-black dark:scrollbar-track-slate-900"
     >
-        <div class="fixed top-28 rght-6">
-            Tables: {{ tables.length }}
-        </div>
         <div
             id="tablesContainer"
             class="flex justify-center items-center"
