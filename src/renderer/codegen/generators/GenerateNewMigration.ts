@@ -82,7 +82,7 @@ export default class GenerateNewMigration {
 
         templateCompiler
             .setContent(templateContent)
-            .setData({ table: this.table })
+            .setData({ table: this.table, project: this.project })
 
         const compiledTemplate = await templateCompiler.compileWithImports()
 
@@ -97,7 +97,7 @@ export default class GenerateNewMigration {
 
         templateCompiler
             .setContent(templateContent)
-            .setData({ table: this.table })
+            .setData({ table: this.table, project: this.project })
 
         const compiledTemplate = await templateCompiler.compileWithImports()
 
@@ -112,7 +112,7 @@ export default class GenerateNewMigration {
 
         templateCompiler
             .setContent(templateContent)
-            .setData({ table: this.table })
+            .setData({ table: this.table, project: this.project })
 
         const compiledTemplate = await templateCompiler.compileWithImports()
 
@@ -127,7 +127,7 @@ export default class GenerateNewMigration {
 
         templateCompiler
             .setContent(templateContent)
-            .setData({ table: this.table })
+            .setData({ table: this.table, project: this.project })
 
         const compiledTemplate = await templateCompiler.compileWithImports()
 

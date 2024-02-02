@@ -68,7 +68,7 @@ export default class UpdateExistingMigration {
 
         templateCompiler
             .setContent(creationSchemaTemplate)
-            .setData({ table: this.table })
+            .setData({ table: this.table, project: this.project })
 
         const compiledTemplate = await templateCompiler.compileWithImports(),
             migrationEditor = new MigrationEditor(creationMigrationContent)
@@ -91,7 +91,7 @@ export default class UpdateExistingMigration {
 
         templateCompiler
             .setContent(upColumnsTemplate)
-            .setData({ table: this.table })
+            .setData({ table: this.table, project: this.project })
 
         const migrationEditor = new MigrationEditor(latestMigrationContent)
         
@@ -101,7 +101,7 @@ export default class UpdateExistingMigration {
 
         templateCompiler
             .setContent(downColumnsTemplate)
-            .setData({ table: this.table })
+            .setData({ table: this.table, project: this.project })
 
         compiledTemplate = await templateCompiler.compileWithImports()
 

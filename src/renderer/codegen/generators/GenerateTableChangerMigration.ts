@@ -50,7 +50,7 @@ export default new class GenerateTableChangerMigration {
 
         templateCompiler
             .setContent(templateContent)
-            .setData({ table: this.table })
+            .setData({ table: this.table, project: this.project })
 
         const compiledTemplate = await templateCompiler.compileWithImports()
 

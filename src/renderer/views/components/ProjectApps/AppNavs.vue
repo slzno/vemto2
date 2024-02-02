@@ -18,6 +18,10 @@
         navigableType = ref<string | null>("Crud"),
         name = ref<string | null>(null)
 
+    onMounted(() => {
+        reloadNavigations()
+    })
+
     const editNavigation = (navigation: Nav) => {
         if(navigation.id === editingNavigation.value?.id) return
 
@@ -108,10 +112,6 @@
 
         reloadNavigations()
     }
-
-    onMounted(() => {
-        reloadNavigations()
-    })
 </script>
 
 <template>

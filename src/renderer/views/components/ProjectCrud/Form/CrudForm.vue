@@ -47,6 +47,14 @@
 
     const projectStore = useProjectStore()
 
+    onMounted(() => {
+        crud.value.panels.forEach(panel => {
+            panelInputs[panel.id] = panel.getOrderedInputs()
+        })
+
+        resetNewInputData()
+    })
+
     const openInputModal = (input: Input) => {
         let time = 0
 
@@ -214,14 +222,6 @@
 
         closeDetailModal()
     }
-
-    onMounted(() => {
-        crud.value.panels.forEach(panel => {
-            panelInputs[panel.id] = panel.getOrderedInputs()
-        })
-
-        resetNewInputData()
-    })
 </script>
 <template>
     <div class="flex w-full h-screen space-x-4 mt-2 px-2">
