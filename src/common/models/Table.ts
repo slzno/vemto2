@@ -589,9 +589,13 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         return [
             "password_reset_tokens", 
             "personal_access_tokens",
-            "failed_jobs", 
             "sessions", 
-            "migrations"
+            "migrations",
+            "cache",
+            "cache_locks",
+            "jobs",
+            "job_batches",
+            "failed_jobs", 
         ].includes(this.name)
     }
 
