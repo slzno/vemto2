@@ -35,6 +35,14 @@ export const useSchemaStore = defineStore("schema", {
             const projectStore = useProjectStore(),
                 defaultSchemaSection = projectStore.project.getDefaultSchemaSection()
 
+            const latestSchemaSectionId = window.localStorage.getItem("selectedSchemaSection")
+
+            if(!latestSchemaSectionId) {
+                this.selectSchemaSection(defaultSchemaSection)
+
+                return
+            }
+
             const latestSchemaSection = SchemaSection.find(window.localStorage.getItem("selectedSchemaSection"))
 
             this.selectSchemaSection(latestSchemaSection || defaultSchemaSection)
