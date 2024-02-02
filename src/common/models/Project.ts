@@ -733,6 +733,10 @@ export default class Project extends RelaDB.Model {
         return this.schemaSections[0]
     }
 
+    getSchemaSectionByName(sectionName: string): SchemaSection {
+        return this.schemaSections.find(section => section.name === sectionName)
+    }
+
     hasSection(sectionName: string): boolean {
         return this.schemaSections.some(section => section.name === sectionName)
     }
@@ -778,6 +782,14 @@ export default class Project extends RelaDB.Model {
 
     laravelVersionLessThanOrEqualTo(version: string): boolean {
         return compareVersions(this.settings.laravelVersion, version) <= 0
+    }
+
+    isJetstream(): boolean {
+        return this.settings.uiStarterKit === ProjectUIStarterKit.JETSTREAM
+    }
+
+    isFreshLaravelProject(): boolean {
+        return this.settings.isFreshLaravelProject
     }
 
 }

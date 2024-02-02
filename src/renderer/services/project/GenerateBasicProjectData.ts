@@ -3,6 +3,7 @@ import GenerateBasicMenu from "./GenerateBasicMenu"
 import GenerateBasicSections from "./GenerateBasicSections"
 import GenerateDefaultVthemeKeys from "./GenerateDefaultVthemeKeys"
 import GenerateLanguagesData from "./GenerateLanguagesData"
+import GenerateBasicSchemaSections from "./GenerateBasicSchemaSections"
 
 export default class GenerateBasicProjectData {
 
@@ -17,6 +18,7 @@ export default class GenerateBasicProjectData {
 
         await new GenerateLanguagesData(this.project).handle()
         await new GenerateBasicSections(this.project).handle()
+        await new GenerateBasicSchemaSections(this.project).handle()
         await new GenerateDefaultVthemeKeys(this.project).handle()
         await new GenerateBasicMenu(this.project).handle()
     }

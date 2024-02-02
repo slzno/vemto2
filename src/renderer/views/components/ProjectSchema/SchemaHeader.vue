@@ -36,6 +36,12 @@
         })
     })
 
+    onMounted(() => {
+        reset()
+
+        addModelForNewTable.value = true
+    })
+
     const closeSearch = () => {
         searchInput.value.blur()
 
@@ -47,7 +53,12 @@
 
     const focusTable = (table: Table) => {
         closeSearch()
-        schemaStore.focusTable(table)
+
+        selectSchemaSection(table.section)
+
+        setTimeout(() => {
+            schemaStore.focusTable(table)
+        }, 150)
     }
 
     const createTable = (): void => {
@@ -210,18 +221,13 @@
     const reset = (): void => {
         newTable.value = new Table({
             projectId: projectStore.project.id,
+            sectionId: schemaStore.selectedSchemaSection.id,
         })
 
         newSection.value = new SchemaSection({
             projectId: projectStore.project.id,
         })
     }
-
-    onMounted(() => {
-        reset()
-
-        addModelForNewTable.value = true
-    })
 
     const syncSchema = async () => {
         const confirmed = await confirmDialog.value.confirm()
@@ -249,6 +255,34 @@
 
     const newSchema = async () => {
         showSectionModal()
+    }
+
+    const selectSchemaSection = (section: SchemaSection) => {
+        if(schemaStore.selectedSchemaSectionIs(section)) return
+
+        schemaStore.selectSchemaSection(section)
+    }
+
+    const removeSection = async (section: SchemaSection) => {
+        const confirmed = await window.projectConfirm(
+            `Are you sure you want to delete <span class="text-red-500">${section.name}</span>?`,
+            "Delete Schema Section",
+            {
+                infoMessage: "All tables in this schema section will be moved to the default section."
+            }
+        )
+
+        if(!confirmed) return
+        
+        try {
+            section.checkAndDelete()
+            
+            nextTick(() => {
+                schemaStore.selectDefaultSchemaSection()
+            })
+        } catch (error: any) {
+            Alert.error(error.message)
+        }
     }
 </script>
 
@@ -457,12 +491,23 @@
             
             <div v-for="section in projectStore.project.schemaSections">
                 <div
-                    class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-700 h-6"
+                    @click="selectSchemaSection(section)"
+                    class="flex relative group items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-700 h-6"
                 >
                     <div
-                        class="px-5 cursor-pointer text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-500"
+                        :class="{
+                            'text-red-500 dark:text-red-400': schemaStore.selectedSchemaSectionIs(section),
+                            'text-slate-400': !schemaStore.selectedSchemaSectionIs(section),
+                        }"
+                        class="px-5 cursor-pointer hover:text-red-600 dark:hover:text-red-500 select-none"
                     >
                         {{ section.name }}
+                    </div>
+
+                    <div @click.prevent.stop="removeSection(section)" class="absolute right-0 invisible group-hover:visible px-1">
+                        <XMarkIcon
+                            class="w-3.5 h-3.5 text-slate-500 cursor-pointer hover:text-red-400 dark:hover:text-red-500"
+                        />
                     </div>
                 </div>
             </div>

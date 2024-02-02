@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { RouterView } from "vue-router"
     import ProjectNavbar from "@Renderer/views/components/ProjectNavbar.vue"
-    import { onMounted, onUnmounted, ref } from "vue"
+    import { onMounted, onUnmounted, ref, Ref } from "vue"
     import HandleProjectDatabase from "@Renderer/services/HandleProjectDatabase"
     import {
         CommandLineIcon,
@@ -18,17 +18,25 @@
     import SchemaBuilder from "@Renderer/services/schema/SchemaBuilder"
     import ErrorsDialog from "./components/ProjectMain/ErrorsDialog.vue"
     import { useErrorsStore } from "@Renderer/stores/useErrorsStore"
+    import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
+    import UiWarning from "@Renderer/components/ui/UiWarning.vue"
+    import UiInfo from "@Renderer/components/ui/UiInfo.vue"
 
     const canShow = ref(false),
         projectStore = useProjectStore(),
         errorsStore = useErrorsStore(),
         appStore = useAppStore(),
-        errorsDialog = ref(null)
+        errorsDialog = ref(null),
+        confirmDialog = ref(null),
+        confirmDialogMessage = ref(""),
+        confirmDialogTitle = ref(""),
+        confirmDialogOptions = ref({}) as Ref<any>
 
     let sourceCheckerTimeout = null
 
     onMounted(async () => {
         handleKeyInputs()
+        setupDefaultConfirmDialog()
 
         await HandleProjectDatabase.populate(() => {
             canShow.value = true
@@ -70,6 +78,21 @@
 
     const scheduleNextCheck = () => {
         sourceCheckerTimeout = setTimeout(checkSourceChanges, 750)
+    }
+
+    const setupDefaultConfirmDialog = () => {
+        window.projectConfirm = async (
+            message: string = "Are you sure?", 
+            title: string = "Confirm",
+            options: any = {}
+        ): Promise<boolean> => {
+            confirmDialogTitle.value = title
+            confirmDialogMessage.value = message
+            confirmDialogOptions.value = options
+
+            const confirmed = await confirmDialog.value.confirm()
+            return confirmed
+        }
     }
 
     const generateCode = async () => {
@@ -116,6 +139,20 @@
         <!-- Content -->
         <div v-if="canShow" class="flex-1">
             <RouterView />
+
+            <UiConfirm ref="confirmDialog" :title="confirmDialogTitle">
+                <div v-html="confirmDialogMessage"></div>
+                <div class="mt-2" v-if="confirmDialogOptions.alertMessage">
+                    <UiWarning>
+                        {{ confirmDialogOptions.alertMessage }}
+                    </UiWarning>
+                </div>
+                <div class="mt-2" v-if="confirmDialogOptions.infoMessage">
+                    <UiInfo>
+                        {{ confirmDialogOptions.infoMessage }}
+                    </UiInfo>
+                </div>
+            </UiConfirm>
 
             <div
                 class="fixed flex justify-end bottom-0 right-0 z-50 w-[194px]"

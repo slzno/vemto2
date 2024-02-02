@@ -15,7 +15,7 @@
     import { BezierConnector } from "@jsplumb/connector-bezier"
     import SchemaHeader from "./components/ProjectSchema/SchemaHeader.vue"
     import MigrationSaver from "./components/MigrationSaver/MigrationSaver.vue"
-import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
+    import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
 
     const projectStore = useProjectStore(),
         schemaStore = useSchemaStore()
@@ -30,8 +30,7 @@ import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
         setTimeout(() => {
             canDrawTables.value = true
 
-            const defaultSchemaSection = projectStore.project.getDefaultSchemaSection()
-            schemaStore.selectSchemaSection(defaultSchemaSection)
+            schemaStore.selectLatestSchemaSection()
 
             nextTick(() => {
                 drawConnections()
@@ -41,7 +40,13 @@ import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
     })
 
     watch(() => projectStore.project.currentZoom, () => changeSchemaZoom())
-    watch(() => projectStore.project.tables, () => nextTick(() => drawConnections()))
+    watch(() => schemaStore.selectedSchemaSection, () => {
+
+        if(jsPlumbInstance) {
+            jsPlumbInstance.reset()
+        }
+
+    })
 
     const zoomWithMouseWheel = () => {
         document.getElementById('tablesCanvas').addEventListener('mousewheel', (e: any) => { 
@@ -74,30 +79,45 @@ import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
 
         schemaBuilder.build(syncTables, syncModels)
 
-        nextTick(() => drawConnections())
+        drawConnectionsOnNextTick()
+    }
+
+    const drawConnectionsOnNextTick = () => {
+        nextTick(() => {
+            drawConnections()
+        })
     }
 
     const drawConnections = () => {
         if(projectStore.projectIsEmpty) return
 
-        initJsPlumbIfNotExists()
+        const jsplumbStarted = initJsPlumbIfNotExists()
 
-        jsPlumbInstance.deleteEveryConnection()
+        if (!jsplumbStarted) return
+
+        currentNodes = {}
         currentConnections = {}
 
-        // const tables = projectStore.project.getTablesBySection(schemaStore.selectedSchemaSection)
+        jsPlumbInstance.deleteEveryConnection({
+            force: true,
+        })
 
-        projectStore.project.tables.forEach((table: Table) => {
+        const tables = projectStore.project.getTablesBySection(schemaStore.selectedSchemaSection)
+
+        tables.forEach((table: Table) => {
             if(!table || !table.id) return
 
             if(!currentNodes[table.id]) {
                 currentNodes[table.id] = document.getElementById("table_" + table.id)!
 
+                if(!currentNodes[table.id]) return
                 jsPlumbInstance.manage(currentNodes[table.id])
             }
             
             const node = currentNodes[table.id],
-                relatedTablesRelations = table.getRelatedTablesRelations()
+                relatedTablesRelations = table.getRelatedTablesRelationsOnSection(
+                    schemaStore.selectedSchemaSection
+                )
 
             // connect tables
             if (relatedTablesRelations.length > 0) {
@@ -118,7 +138,7 @@ import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
                             source: node!,
                             target: relatedNode!,
                             anchor: "Continuous",
-                            // anchors: ["Right", "Left"],
+                            anchors: [["Right", "Left"], ["Left", "Right"]],
                             cssClass: cssClass,
                             connector: {
                                 type: BezierConnector.type,
@@ -126,7 +146,6 @@ import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
                                     curviness: 70,
                                 },
                             },
-                            // paintStyle: { dashstyle: "4 4 4 4" },
                         })
 
                         currentConnections[connectionName] = true
@@ -138,16 +157,20 @@ import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
     }
 
     const initJsPlumbIfNotExists = () => {
-        if (jsPlumbInstance) return
+        if (jsPlumbInstance) return true
+
+        const containerElement = document.getElementById("tablesReference")
+
+        if (!containerElement) return false
 
         jsPlumbInstance = newInstance({
             container: document.getElementById("tablesReference")!,
-            dragOptions: {
-                grid: {
-                    w: 25,
-                    h: 25,
-                },
-            }
+            // dragOptions: {
+            //     grid: {
+            //         w: 25,
+            //         h: 25,
+            //     },
+            // }
         })
 
         jsPlumbInstance.bind(EVENT_DRAG_START, () => {
@@ -166,6 +189,8 @@ import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
         })
 
         changeSchemaZoom()
+
+        return true
     }
 
     const changeSchemaZoom = () => {
@@ -189,7 +214,7 @@ import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
             @syncSchema="syncSchema" 
         />
 
-        <SchemaTables v-if="canDrawTables" />
+        <SchemaTables v-if="canDrawTables" @tablesLoaded="drawConnectionsOnNextTick()" />
 
         <MigrationSaver />
 
@@ -209,7 +234,7 @@ import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
 
     svg.connector path {
         stroke: #9ca3af;
-        stroke-width: 2;
+        stroke-width: 3;
         z-index: 1;
     }
 

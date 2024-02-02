@@ -42,6 +42,16 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         }
     }
 
+    static updating(data: any): any {
+        const defaultSchemaSection = data.project.getDefaultSchemaSection()
+
+        if(!data.sectionId) {
+            data.sectionId = defaultSchemaSection ? defaultSchemaSection.id : null
+        }
+
+        return data
+    }
+
     saveFromInterface(addModel: boolean = false) {
         let creating = false
 
@@ -331,6 +341,11 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         return this.getRelatedTablesRelations().map((relation) => relation.table)
     }
 
+    getRelatedTablesRelationsOnSection(section: SchemaSection): any[] {
+        return this.getRelatedTablesRelations()
+            .filter((relation) => relation.table.sectionId === section.id)
+    }
+
     getRelatedTablesRelations(): any[] {
         let relatedTables: any = {},
             relatedTablesIds: string[] = []
@@ -551,9 +566,40 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         this.indexes.forEach(index => index.undoChanges())
     }
 
+    belongsToASection(): boolean {
+        return !! this.sectionId
+    }
+
     moveToSection(section: SchemaSection) {
         this.sectionId = section.id
 
+        this.centerPosition()
+
         this.save()
+    }
+
+    centerPosition() {
+        this.positionX = 0
+        this.positionY = 0
+
+        this.save()
+    }
+
+    isLaravelDefaultTable(): boolean {
+        return [
+            "password_reset_tokens", 
+            "personal_access_tokens",
+            "failed_jobs", 
+            "sessions", 
+            "migrations"
+        ].includes(this.name)
+    }
+
+    isJetstreamDefaultTable(): boolean {
+        return [
+            "teams", 
+            "team_user", 
+            "team_invitations"
+        ].includes(this.name)
     }
 }

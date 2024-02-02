@@ -1,13 +1,18 @@
 <script setup lang="ts">
     import 'animate.css'
-    import { onMounted, watch } from "vue"
+    import Table from '@Common/models/Table'
+    import { onMounted, watch, ref, Ref, defineEmits, nextTick } from "vue"
     import SchemaTable from "../SchemaTable/SchemaTable.vue"
     import TableOptions from "../TableOptions/TableOptions.vue"
     import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
 
     const projectStore = useProjectStore(),
-        schemaStore = useSchemaStore()
+        schemaStore = useSchemaStore(),
+        tables = ref([]) as Ref<Table[]>,
+        canLoadTables = ref(false)
+
+    const emit = defineEmits(["tablesLoaded"])
 
     let positionTracking: any = { top: 0, left: 0, x: 0, y: 0 }
 
@@ -17,19 +22,41 @@
         centerOnTable(table)
     })
 
+    watch(() => schemaStore.selectedSchemaSection, () => {
+        centerScrollIfNecessary()
+        setCanvasScroll()
+        loadTables()
+    })
+
+    watch(() => projectStore.project.tables, () => {
+        loadTables()
+    })
+
     onMounted(() => {
+        canLoadTables.value = true
+
         centerScrollIfNecessary()
 
         const tablesCanvas = document.getElementById("tablesCanvas")
 
         if (!tablesCanvas) return
 
-        // set scroll from project scrollX and scrollY
-        tablesCanvas.scrollLeft = projectStore.project.scrollX
-        tablesCanvas.scrollTop = projectStore.project.scrollY
+        setCanvasScroll()
 
         tablesCanvas.addEventListener('mousedown', mouseDownHandler)
+
+        loadTables()
     })
+
+    const loadTables = () => {
+        if(!canLoadTables.value) return
+
+        tables.value = projectStore.project.getTablesBySection(schemaStore.selectedSchemaSection)
+
+        nextTick(() => {
+            emit('tablesLoaded')
+        })
+    }
 
     /**
      * Center the scroll on the given table
@@ -58,11 +85,11 @@
      */
     const centerOnPosition = (x, y) => {
         // Reference to the tableCanvas element
-        const tableCanvas = document.getElementById('tablesCanvas');
+        const tableCanvas = document.getElementById('tablesCanvas')
 
         // Calculate half of tableCanvas' width and height
-        const halfWidth: number = tableCanvas.offsetWidth / 2;
-        const halfHeight: number = tableCanvas.offsetHeight / 2;
+        const halfWidth: number = tableCanvas.offsetWidth / 2
+        const halfHeight: number = tableCanvas.offsetHeight / 2
 
         // Calculate the center of tablesContainer
         const centerTablesContainerX: number = 25000
@@ -89,7 +116,7 @@
     }
 
     const centerScrollIfNecessary = () => {
-        if(projectStore.project.hasScroll()) return
+        if(schemaStore.selectedSchemaSection.hasScroll()) return
 
         const windowWidth = window.innerWidth,
             windowHeight = window.innerHeight,
@@ -97,8 +124,14 @@
             canvasWidth = windowWidth - sidebarNavWidth,
             canvasHeight = windowHeight
 
+            schemaStore.selectedSchemaSection.centerScroll(canvasWidth, canvasHeight)
+    }
 
-        projectStore.project.centerScroll(canvasWidth, canvasHeight)
+    const setCanvasScroll = () => {
+        const tablesCanvas = document.getElementById("tablesCanvas")
+
+        tablesCanvas.scrollLeft = schemaStore.selectedSchemaSection.scrollX
+        tablesCanvas.scrollTop = schemaStore.selectedSchemaSection.scrollY
     }
 
     const onScroll = (e: Event) => {
@@ -111,7 +144,7 @@
         const scrollLeft = target.scrollLeft,
             scrollTop = target.scrollTop
 
-        projectStore.project.saveScroll(scrollLeft, scrollTop)
+        schemaStore.selectedSchemaSection.saveScroll(scrollLeft, scrollTop)
     }
 
     const mouseDownHandler = (e) => {
@@ -146,7 +179,7 @@
         element.scrollTop = positionTracking.top - dy
         element.scrollLeft = positionTracking.left - dx
 
-        projectStore.project.saveScroll(element.scrollLeft, element.scrollTop)
+        schemaStore.selectedSchemaSection.saveScroll(element.scrollLeft, element.scrollTop)
     }
 
     const mouseUpHandler = () => {
@@ -182,7 +215,7 @@
                 class="relative bg-transparent"
             >
                 <SchemaTable
-                    v-for="table in projectStore.project.tables"
+                    v-for="table in tables"
                     :key="table.id"
                     :table="table"
                 />
