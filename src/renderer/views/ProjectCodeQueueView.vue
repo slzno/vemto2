@@ -95,8 +95,10 @@
         })
     }
 
-    const clearRemovedFiles = (): void => {
-        if (!confirm("Are you sure you want to clear all removed files?")) return
+    const clearRemovedFiles = async () => {
+        const confirmed = await window.projectConfirm("Are you sure you want to clear all removed files?")
+
+        if(!confirmed) return
 
         projectStore.project?.clearRemovedFiles()
     }

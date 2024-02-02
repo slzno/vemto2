@@ -185,31 +185,31 @@
         model.value.saveAppendsColumns(columnsNames)
     }
 
-    const deleteModel = (): void => {
-        Main.API.confirm("Are you sure you want to remove this model?").then((confirmed: boolean) => {
-            if(!confirmed) return
+    const deleteModel = async (): Promise<void> => {
+        const confirmed = await window.projectConfirm("Are you sure you want to remove this model?")
 
-            model.value.remove()
-            emit('removeModel')
-        })
+        if(!confirmed) return
+        
+        model.value.remove()
+        emit('removeModel')
     }
 
-    const deleteTrait = (traitIndex: number): void => {
-        Main.API.confirm("Are you sure you want to remove this trait?").then((confirmed: boolean) => {
-            if(!confirmed) return
+    const deleteTrait = async (traitIndex: number): Promise<void> => {
+        const confirmed = await window.projectConfirm("Are you sure you want to remove this trait?")
 
-            model.value.traits.splice(traitIndex, 1)
-            saveModelData()
-        })
+        if(!confirmed) return
+
+        model.value.traits.splice(traitIndex, 1)
+        saveModelData()
     }
 
-    const deleteInterface = (interfaceIndex: number): void => {
-        Main.API.confirm("Are you sure you want to remove this interface?").then((confirmed: boolean) => {
-            if(!confirmed) return
+    const deleteInterface = async (interfaceIndex: number): Promise<void> => {
+        const confirmed = await window.projectConfirm("Are you sure you want to remove this interface?")
 
-            model.value.interfaces.splice(interfaceIndex, 1)
-            saveModelData()
-        })
+        if(!confirmed) return
+
+        model.value.interfaces.splice(interfaceIndex, 1)
+        saveModelData()
     }
 
     const newTrait = (): void => {

@@ -48,8 +48,11 @@
         await new GenerateBasicSections(projectStore.project).handle()
     }
 
-    const deleteSection = (section: AppSection) => {
-        if(!confirm("Are you sure you want to delete this section? This will remove all related apps.")) return
+    const deleteSection = async (section: AppSection) => {
+        const confirmed = await window.projectConfirm("Are you sure you want to delete this section? This will remove all related apps.")
+
+        if(!confirmed) return
+        
         section.delete()
     }
 </script>

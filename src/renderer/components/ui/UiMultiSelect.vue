@@ -35,12 +35,12 @@
             }
         })
 
-    const clearList = (callbackClearFunction: Function): void => {
-        Main.API.confirm('Are you sure you want to clear the list?').then(confirmed => {
-            if(!confirmed) return
+    const clearList = async (callbackClearFunction: Function): Promise<void> => {
+        const confirmed = await window.projectConfirm("Are you sure you want to clear the list?")
 
-            callbackClearFunction()
-        })
+        if(!confirmed) return
+
+        callbackClearFunction()
     }
         
     const emit = defineEmits(["change"]),

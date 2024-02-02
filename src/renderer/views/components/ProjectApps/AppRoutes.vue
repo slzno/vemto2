@@ -57,8 +57,10 @@
         selectedRoutable.value = null
     }
 
-    const deleteRoute = (route: Route) => {
-        if(!confirm("Are you sure you want to delete this route?")) return
+    const deleteRoute = async (route: Route) => {
+        const confirmed = await window.projectConfirm("Are you sure you want to delete this route?")
+
+        if(!confirmed) return
 
         route.delete()
         cancel()

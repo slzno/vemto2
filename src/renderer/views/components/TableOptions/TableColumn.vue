@@ -85,13 +85,13 @@
         column.value.options.push('')
     }
 
-    const removeColumnOptions = (index: number) => {
-        Main.API.confirm('Are you sure you want to remove this option?').then(confirmed => {
-            if(!confirmed) return
+    const removeColumnOptions = async (index: number) => {
+        const confirmed = await window.projectConfirm("Are you sure you want to remove this option?")
 
-            column.value.options.splice(index, 1)
-            column.value.saveFromInterface()
-        })
+        if(!confirmed) return
+        
+        column.value.options.splice(index, 1)
+        column.value.saveFromInterface()
     }
 
     const removeColumn = async () => {

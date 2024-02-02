@@ -75,8 +75,10 @@
         showingOptions.value = false
     }
 
-    const removeInput = (input: Input, panel: CrudPanel) => {
-        if(!input || !window.confirm('Are you sure you want to delete this input?')) return
+    const removeInput = async (input: Input, panel: CrudPanel) => {
+        const confirmed = await window.projectConfirm("Are you sure you want to delete this input?")
+
+        if(!confirmed) return
 
         input.delete()
 

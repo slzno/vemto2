@@ -29,8 +29,10 @@
         emit = defineEmits(['childrenNavigationUpdated', 'editNavigation', 'saveNavigation', 'cancelEditing']),
         projectStore = useProjectStore()
 
-    const deleteNavigation = (navigation: Nav) => {
-        if(!confirm("Are you sure you want to delete this navigation?")) return
+    const deleteNavigation = async (navigation: Nav) => {
+        const confirmed = await window.projectConfirm("Are you sure you want to delete this navigation?")
+
+        if(!confirmed) return
 
         navigation.delete()
 
