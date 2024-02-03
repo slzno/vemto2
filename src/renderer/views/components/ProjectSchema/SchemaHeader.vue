@@ -230,6 +230,8 @@
     }
 
     const syncSchema = async () => {
+        schemaStore.deselectTable()
+        
         const confirmed = await confirmDialog.value.confirm()
         if(!confirmed) return
 
