@@ -124,6 +124,10 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
         }
     }
 
+    static updated(relationship: Relationship) {
+        relationship.updateInverse()
+    }
+
     static deleting(relationship: Relationship) {
         relationship.inverses.forEach(inverse => {
             inverse.inverseId = null
@@ -173,10 +177,6 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
         return true
     }
 
-    static updated(relationship: Relationship) {
-        relationship.updateInverse()
-    }
-
     updateInverse(): void {
         let inverse = this.inverse
 
@@ -192,7 +192,11 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
     }
 
     updateCommonInverse(inverse: Relationship): void {
+        if(!this.foreignKeyId || !this.parentKeyId) return
         if(inverse.foreignKeyId === this.foreignKeyId && inverse.parentKeyId === this.parentKeyId) return
+
+        console.log('Updating inverse')
+        console.log('Inverse:', inverse.name, this.foreignKeyName, inverse.foreignKeyName, this.foreignKeyId)
 
         inverse.foreignKeyId = this.foreignKeyId
         inverse.parentKeyId = this.parentKeyId

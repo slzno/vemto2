@@ -134,9 +134,13 @@ export default class ModelsBuilder {
                 Relationship.savingInternally()
                 relationship.applyChanges(relationshipData)
                 relationship.fillRelationshipKeys()
+
+                console.log(relationship.name, relationship.foreignKeyName, relationship.foreignKeyId)
+
                 Relationship.notSavingInternally()
     
                 this.changedRelationships.push(relationship)
+
             } catch (error) {
                 if(isCreating) {
                     relationship.delete()
@@ -147,6 +151,28 @@ export default class ModelsBuilder {
 
                 return
             }
+        })
+    }
+
+    setRelatedModels() {
+        const modelsKeyedByClass = this.project.getAllModelsKeyedByClass()
+
+        console.log(this.changedRelationships.map(r => r.name))
+
+        this.changedRelationships.forEach((relationship: Relationship) => {
+            const relatedModel = modelsKeyedByClass[relationship.relatedModelName]
+
+            console.log(relationship.name, relatedModel?.name)
+
+            if(relatedModel) {
+                relationship.relatedModelId = relatedModel.id
+            }
+
+            // We need to recalculate the keys because the related model may have been 
+            // created after the relationship
+            relationship.fillRelationshipKeys()
+
+            relationship.save()
         })
     }
 
@@ -172,20 +198,6 @@ export default class ModelsBuilder {
                 relationship.inverseId = inverseRelationship.id
                 relationship.save()
             })
-        })
-    }
-
-    setRelatedModels() {
-        const modelsKeyedByClass = this.project.getAllModelsKeyedByClass()
-
-        this.changedRelationships.forEach((relationship: Relationship) => {
-            const relatedModel = modelsKeyedByClass[relationship.relatedModelName]
-
-            if(relatedModel) {
-                relationship.relatedModelId = relatedModel.id
-            }
-
-            relationship.save()
         })
     }
 
