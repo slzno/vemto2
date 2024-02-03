@@ -43,6 +43,7 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     ownRelationships: Relationship[]
     relatedRelationships: Relationship[]
     hooks: any
+    hooksWhenSchemaWasRead: any
     pluralAndSingularAreSame: boolean
     cruds: Crud[]
 
@@ -162,9 +163,17 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     }
 
     isDirty(): boolean {
+        if(this.hasHooksChanges()) return true
+
         const hasDirtyRelationships = this.ownRelationships.some((relationship) => relationship.isDirty())
 
         return !this.isRemoved() && (this.hasLocalChanges() || hasDirtyRelationships)
+    }
+
+    hasHooksChanges(): boolean {
+        console.log(this.hooks, this.hooksWhenSchemaWasRead)
+
+        return DataComparator.objectsAreDifferent(this.hooks, this.hooksWhenSchemaWasRead)
     }
 
     hasSchemaChanges(comparisonData: any): boolean {
@@ -194,6 +203,8 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     }
 
     applyChanges(data: any) {
+        this.fillHooksForFutureComparison()
+
         if (!this.hasSchemaChanges(data)) return false
 
         this.name = data.name
@@ -226,6 +237,12 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         this.calculateInternalData()
 
         return true
+    }
+
+    fillHooksForFutureComparison() {
+        this.hooksWhenSchemaWasRead = this.hooks
+
+        this.save()
     }
 
     calculateInternalData() {
