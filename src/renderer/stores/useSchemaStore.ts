@@ -35,7 +35,9 @@ export const useSchemaStore = defineStore("schema", {
             const projectStore = useProjectStore(),
                 defaultSchemaSection = projectStore.project.getDefaultSchemaSection()
 
-            const latestSchemaSectionId = window.localStorage.getItem("selectedSchemaSection")
+            const latestSchemaSectionId = window.localStorage.getItem(
+                this.getSelectedSchemaSectionKey()
+            )
 
             if(!latestSchemaSectionId) {
                 this.selectSchemaSection(defaultSchemaSection)
@@ -43,7 +45,9 @@ export const useSchemaStore = defineStore("schema", {
                 return
             }
 
-            const latestSchemaSection = SchemaSection.find(window.localStorage.getItem("selectedSchemaSection"))
+            const latestSchemaSection = SchemaSection.find(window.localStorage.getItem(
+                this.getSelectedSchemaSectionKey()
+            ))
 
             this.selectSchemaSection(latestSchemaSection || defaultSchemaSection)
         },
@@ -51,12 +55,21 @@ export const useSchemaStore = defineStore("schema", {
         selectSchemaSection(section: SchemaSection): void {
             this.selectedSchemaSection = section
 
-            window.localStorage.setItem("selectedSchemaSection", section.id)
+            window.localStorage.setItem(
+                this.getSelectedSchemaSectionKey(), 
+                section.id
+            )
         },
 
         deselectSchemaSection(): void {
             this.selectedSchemaSection = {} as SchemaSection
         },
+
+        getSelectedSchemaSectionKey(): string {
+            const projectStore = useProjectStore()
+
+            return `selectedSchemaSection_${projectStore.project.id}`
+        }
     },
 
     getters: {
