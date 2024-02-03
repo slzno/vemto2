@@ -135,8 +135,6 @@ export default class ModelsBuilder {
                 relationship.applyChanges(relationshipData)
                 relationship.fillRelationshipKeys()
 
-                console.log(relationship.name, relationship.foreignKeyName, relationship.foreignKeyId)
-
                 Relationship.notSavingInternally()
     
                 this.changedRelationships.push(relationship)
@@ -157,12 +155,8 @@ export default class ModelsBuilder {
     setRelatedModels() {
         const modelsKeyedByClass = this.project.getAllModelsKeyedByClass()
 
-        console.log(this.changedRelationships.map(r => r.name))
-
         this.changedRelationships.forEach((relationship: Relationship) => {
             const relatedModel = modelsKeyedByClass[relationship.relatedModelName]
-
-            console.log(relationship.name, relatedModel?.name)
 
             if(relatedModel) {
                 relationship.relatedModelId = relatedModel.id
@@ -187,13 +181,13 @@ export default class ModelsBuilder {
             model.ownRelationships.forEach((relationship: Relationship) => {
                 const relatedModelInstance = this.project.findModelByClass(relationship.relatedModelName),
                     inverseRelType = RelationshipTypes.getInverse(relationship.type)
-    
+
                 if(!relatedModelInstance || !inverseRelType) return
     
                 const inverseRelationship = relatedModelInstance.findRelationship(inverseRelType, model.class)
     
                 if(!(inverseRelationship instanceof Relationship)) return
-                if(inverseRelationship.hasInverse()) return
+                if(inverseRelationship.hasDifferentInverse(relationship)) return
     
                 relationship.inverseId = inverseRelationship.id
                 relationship.save()

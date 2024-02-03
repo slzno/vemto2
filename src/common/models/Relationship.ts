@@ -219,6 +219,12 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
         return !! this.inverseId
     }
 
+    hasDifferentInverse(relationship: Relationship): boolean {
+        if(!this.hasInverse()) return false
+        
+        return this.inverseId !== relationship.id
+    }
+
     hasModel(): boolean {
         return !! this.model
     }

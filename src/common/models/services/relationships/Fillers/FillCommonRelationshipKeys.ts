@@ -18,7 +18,6 @@ class FillCommonRelationshipKeys {
         this.calculateRelatedModel()
 
         const modelsNames = this.relationship.project.getModelsNames()
-        console.log(this.relationship.name, this.relationship.relatedModel?.name, modelsNames)
 
         if(! this.relationship.relatedModelId) return
         
