@@ -272,11 +272,11 @@ export default class Crud extends RelaDB.Model {
     }
 
     getLabel(): string {
-        return this.project.getDefaultTranslation(this.settings.collectionTitle)
+        return this.project.getDefaultTranslation(this.settings.collectionTitle) || this.settings.collectionTitle
     }
 
     getSingularLabel(): string {
-        return this.project.getDefaultTranslation(this.settings.itemTitle)
+        return this.project.getDefaultTranslation(this.settings.itemTitle) || this.settings.itemTitle
     }
 
     getAppSubType(): string {

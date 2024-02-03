@@ -4,6 +4,7 @@
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import DotEnvEditor from "@Renderer/views/components/ProjectSettings/DotEnvEditor.vue"
 import LanguagesEditor from "./components/ProjectSettings/LanguagesEditor.vue"
+import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
 
     const projectStore = useProjectStore()
     const selectedTab = ref("env")
@@ -36,6 +37,18 @@ import LanguagesEditor from "./components/ProjectSettings/LanguagesEditor.vue"
             <div class="w-96">
                 <LanguagesEditor />
             </div>
+        </div>
+
+        <div class="p-4" v-if="selectedTab === 'code'">
+            <UiEmptyMessage>
+                Under development
+            </UiEmptyMessage>
+        </div>
+
+        <div class="p-4" v-if="selectedTab === 'paths'">
+            <UiEmptyMessage>
+                Under development
+            </UiEmptyMessage>
         </div>
     </div>
 </template>
