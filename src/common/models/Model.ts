@@ -593,6 +593,53 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         this.saveColumnsProperty(columnsNames, 'appends', 'appendsColumns')
     }
 
+    saveCastsColumns(newCastData: any): void {
+        const changedColumnId = newCastData[0],
+            type = newCastData[1],
+            currentColumnId = newCastData[2]
+
+        if(!changedColumnId || !type) return
+
+        const column: Column = this.table.findColumnById(changedColumnId)
+
+        if(!currentColumnId || currentColumnId == changedColumnId) {
+            this.attachCastsColumn(column, type)
+            return
+        }
+
+        const oldColumn = this.table.findColumnById(currentColumnId),
+            newColumn: Column = this.table.findColumnById(changedColumnId)
+
+        if(!oldColumn || !newColumn) return
+
+        const pivot = this.relation("castsColumns").getPivotItem(oldColumn)
+        
+        if(!pivot) return
+
+        pivot.columnId = changedColumnId
+        pivot.type = type
+        pivot.save()
+
+        delete this.casts[oldColumn.name]
+        
+        this.casts[newColumn.name] = type
+        this.save()
+    }
+
+    attachCastsColumn(column: Column, type: string): void {
+        let pivot: CastsModelColumn = this.relation("castsColumns").getPivotItem(column)
+
+        if(!pivot) {
+            pivot = this.relation("castsColumns").attachUnique(column)
+        }
+
+        pivot.type = type
+        pivot.save()
+
+        this.casts[column.name] = type
+        this.save()
+    }
+
     saveColumnsProperty(
         columnsNames: string[], 
         type: string, 

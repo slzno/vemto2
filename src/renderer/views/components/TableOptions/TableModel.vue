@@ -17,7 +17,6 @@
     import ModelHooks from "./ModelApps/ModelHooks.vue"
     import RenderableModel from "@Renderer/codegen/sequential/services/model/RenderableModel"
     import UiNumber from "@Renderer/components/ui/UiNumber.vue"
-import CastsModelColumn from "@Common/models/CastsModelColumn"
 
     const onDevelopment = Main.API.onDevelopment()
 
@@ -74,35 +73,13 @@ import CastsModelColumn from "@Common/models/CastsModelColumn"
     }
 
     const saveModelCast = (index: number) => {
-        const castData = modelCasts.value[index],
-            changedColumnId = castData[0],
-            type = castData[1],
-            currentColumnId = castData[2]
+        const castData = modelCasts.value[index]
 
-        if(!changedColumnId || !type) return
+        if(!castData) return
 
-        if(currentColumnId && currentColumnId != changedColumnId) {
-            saveExistingModelCast(index, castData)
-            return
-        }
-
-        const column: Column = model.value.table.findColumnById(changedColumnId)
-
-        if(!column) return
-
-        let pivot: CastsModelColumn = model.value.relation("castsColumns").getPivotItem(column)
-
-        if(!pivot) {
-            pivot = model.value.relation("castsColumns").attachUnique(column)
-        }
-
-        pivot.type = type
-        pivot.save()
-
-        model.value.casts[column.name] = type
-        modelCasts.value[index][2] = changedColumnId
-
-        saveModelData()
+        model.value.saveCastsColumns(castData)
+        
+        modelCasts.value[index][2] = castData[0]
     }
 
     const deleteModelCast = (index: number) => {
@@ -120,31 +97,6 @@ import CastsModelColumn from "@Common/models/CastsModelColumn"
         modelCasts.value.splice(index, 1)
         
         delete model.value.casts[column.name]
-
-        saveModelData()
-    }
-
-    const saveExistingModelCast = (index: number, castData: any) => {
-        const changedColumnId = castData[0],
-            type = castData[1],
-            currentColumnId = castData[2],
-            oldColumn = model.value.table.findColumnById(currentColumnId),
-            newColumn = model.value.table.findColumnById(changedColumnId)
-
-        if(!oldColumn || !newColumn) return
-
-        const pivot = model.value.relation("castsColumns").getPivotItem(oldColumn)
-
-        if(!pivot) return
-
-        pivot.columnId = changedColumnId
-        pivot.type = type
-        pivot.save()
-
-        delete model.value.casts[oldColumn.name]
-        
-        model.value.casts[newColumn.name] = type
-        modelCasts.value[index][2] = changedColumnId
 
         saveModelData()
     }
