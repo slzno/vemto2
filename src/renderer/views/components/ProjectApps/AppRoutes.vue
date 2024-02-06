@@ -4,12 +4,14 @@
     import UiText from "@Renderer/components/ui/UiText.vue";
     import Route, { RouteType } from "@Common/models/Route";
     import UiButton from "@Renderer/components/ui/UiButton.vue";
+    import UiModal from "@Renderer/components/ui/UiModal.vue";
     import UiSelect from "@Renderer/components/ui/UiSelect.vue";
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
 
     const projectStore = useProjectStore(),
         activeRoute = ref<Route|null>(null),
-        selectedRoutable = ref(null)
+        selectedRoutable = ref(null),
+        showingCreateNavigationModal = ref<boolean>(false)
 
     const onRouteClick = (route: Route) => {
         if(activeRoute.value?.id == route.id) return
@@ -71,6 +73,34 @@
     <div class="mb-3">
         <UiButton>Add Route</UiButton>
     </div>
+
+    <UiModal
+        title="Add Menu Item"
+        :show="showingCreateNavigationModal"
+        @close="close()"
+        width="25%"
+    >
+        <div class="m-2">
+            <div class="m-1 flex flex-col gap-2">
+                <UiText id="navigation-name" v-model="name" label="Name" />
+
+                <UiSelect v-model="navigableType" label="Navigable Type">
+                    <option :value="null" disabled>Select a Navigable Type</option>
+                    <option value="Crud">Crud</option>
+                    <option value="Page">Page</option>
+                </UiSelect>
+
+                <UiSelect v-model="navigableId" label="Crud">
+                    <option :value="null" disabled>Select a Crud</option>
+                    <option v-for="crud in projectStore.project.cruds" :value="crud.id" :key="crud.id">{{ crud.name }}</option>
+                </UiSelect>
+            </div>
+
+            <div class="m-1 mt-2 flex justify-end">
+                <UiButton @click="createNavigation()">Create</UiButton>
+            </div>
+        </div>
+    </UiModal>
 
     <div class="bg-slate-950 p-3 rounded-lg border border-slate-700 h-screen">
         <div
