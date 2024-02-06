@@ -109,6 +109,24 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         }
     }
 
+    static creating(modelData: any): any {
+        if(!modelData.methods) modelData.methods = []
+
+        if(!modelData.traits) modelData.traits = []
+        if(!modelData.interfaces) modelData.interfaces = []
+
+        if(!modelData.guarded) modelData.guarded = []
+        if(!modelData.fillable) modelData.fillable = []
+        if(!modelData.hidden) modelData.hidden = []
+        if(!modelData.dates) modelData.dates = []
+        if(!modelData.casts) modelData.casts = {}
+
+        // TODO: cxheck if this is necessary
+        // if(!modelData.appends) modelData.appends = []
+
+        return modelData
+    }
+
     saveFromInterface() {
         let creating = false
 
@@ -173,8 +191,6 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     hasHooksChanges(): boolean {
         const hooks = this.getHooks('model'),
             hooksWhenSchemaWasRead = this.getHooksWhenSchemaWasRead('model')
-
-        console.log(hooks, hooksWhenSchemaWasRead)
 
         const allKeys = new Set([...Object.keys(hooks), ...Object.keys(hooksWhenSchemaWasRead)])
 
@@ -318,16 +334,19 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
             class: this.class,
             namespace: this.namespace,
             path: this.path,
-            casts: this.casts,
-            fillable: this.fillable,
-            guarded: this.guarded,
-            dates: this.dates,
-            hidden: this.hidden,
+            casts: DataComparator.cloneObject(this.casts),
+            fillable: DataComparator.cloneArray(this.fillable),
+            guarded: DataComparator.cloneArray(this.guarded),
+            dates: DataComparator.cloneArray(this.dates),
+            hidden: DataComparator.cloneArray(this.hidden),
+
+            // TODO: check if it is an array or object and add cloneArray or cloneObject
             appends: this.appends,
-            methods: this.methods,
+
+            methods: DataComparator.cloneArray(this.methods),
             parentClass: this.parentClass,
-            interfaces: this.interfaces,
-            traits: this.traits,
+            interfaces: DataComparator.cloneArray(this.interfaces),
+            traits: DataComparator.cloneArray(this.traits),
             hasGuarded: this.hasGuarded,
             hasFillable: this.hasFillable,
             hasTimestamps: this.hasTimestamps,

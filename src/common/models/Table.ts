@@ -130,8 +130,8 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     buildSchemaState() {
         return {
             name: this.name,
-            oldNames: this.oldNames,
-            migrations: this.migrations,
+            oldNames: DataComparator.cloneArray(this.oldNames),
+            migrations: DataComparator.cloneArray(this.migrations),
         }
     }
 

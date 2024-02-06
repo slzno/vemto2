@@ -231,7 +231,7 @@ export default class Index extends AbstractSchemaModel implements SchemaModel {
     buildSchemaState() {
         return {
             name: this.name,
-            columns: this.columns,
+            columns: DataComparator.cloneArray(this.columns),
             algorithm: this.algorithm,
             type: this.type,
             on: this.on,
