@@ -230,8 +230,11 @@
         for(const model of models) {
             const renderable = model.renderable
 
+            
             await InternalFiles.writeGeneratedFile(renderable.getFullFilePath(), model.newModelContent)
             await Main.API.writeProjectFile(renderable.getFullFilePath(), model.acceptedModelContent)
+            
+            model.instance.fillHooksForFutureComparison()
         }
     }
 
@@ -490,8 +493,14 @@
                                     {{ model.name }}
                                 </div>
 
-                                <div class="text-xs text-slate-300 bg-slate-990 py-1 px-2 rounded-md" v-if="modelHasConflicts(model)">
-                                    Has conflicts
+                                <div class="flex space-x-1">
+                                    <div class="text-xs text-slate-300 bg-slate-990 py-1 px-2 rounded-md" v-if="modelHasConflicts(model)">
+                                        Has conflicts
+                                    </div>
+    
+                                    <div class="text-xs text-slate-300 bg-slate-990 py-1 px-2 rounded-md" v-if="model.hasHooksChanges()">
+                                        Hooks Changed
+                                    </div>
                                 </div>
                             </div>
 <!-- 

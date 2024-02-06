@@ -171,9 +171,29 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     }
 
     hasHooksChanges(): boolean {
-        console.log(this.hooks, this.hooksWhenSchemaWasRead)
+        const hooks = this.getHooks('model'),
+            hooksWhenSchemaWasRead = this.getHooksWhenSchemaWasRead('model')
 
-        return DataComparator.objectsAreDifferent(this.hooks, this.hooksWhenSchemaWasRead)
+        console.log(hooks, hooksWhenSchemaWasRead)
+
+        const allKeys = new Set([...Object.keys(hooks), ...Object.keys(hooksWhenSchemaWasRead)])
+
+        for (let key of allKeys) {
+            const hookValue = hooks[key]
+            const prevHookValue = hooksWhenSchemaWasRead[key]
+
+            // Rule 1: Check if both values are considered "empty" and skip to the next key if so
+            const bothEmpty = [hookValue, prevHookValue].every(value => value === undefined || value === null || value.trim() === '')
+            if (bothEmpty) continue
+
+            // Rule 2: If one of the values is empty and the other is not, or if they are different, return true
+            if ((hookValue === undefined || hookValue === null || hookValue.trim() === '') !== (prevHookValue === undefined || prevHookValue === null || prevHookValue.trim() === '') || hookValue !== prevHookValue) {
+                return true // Found a difference
+            }
+        }
+
+        // If no differences are found, consider the objects equal
+        return false
     }
 
     hasSchemaChanges(comparisonData: any): boolean {
@@ -203,8 +223,6 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     }
 
     applyChanges(data: any) {
-        this.fillHooksForFutureComparison()
-
         if (!this.hasSchemaChanges(data)) return false
 
         this.name = data.name
@@ -240,7 +258,7 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     }
 
     fillHooksForFutureComparison() {
-        this.hooksWhenSchemaWasRead = this.hooks
+        this.hooksWhenSchemaWasRead = DataComparator.cloneObject(this.hooks)
 
         this.save()
     }
@@ -649,8 +667,16 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         return this.hooks ? this.hooks[type] || {} : {}
     }
 
+    getHooksWhenSchemaWasRead(type: string): any {
+        return this.hooksWhenSchemaWasRead ? this.hooksWhenSchemaWasRead[type] || {} : {}
+    }
+
     getHookByName(type: string, name: string): any {
         return this.getHooks(type)[name] || {}
+    }
+
+    getHookWhenSchemaWasReadByName(type: string, name: string): any {
+        return this.getHooksWhenSchemaWasRead(type)[name] || {}
     }
 
     saveHooks(type: string, hooks: any) {

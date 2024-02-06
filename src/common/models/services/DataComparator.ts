@@ -34,4 +34,8 @@ export default class DataComparator {
         return value || false
     }
 
+    static cloneObject(obj: any): any {
+        return JSON.parse(JSON.stringify(obj))
+    }
+
 }
