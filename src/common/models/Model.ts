@@ -283,7 +283,7 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
             class: this.class,
             namespace: this.namespace,
             path: this.path,
-            casts: this.casts,
+            casts: DataComparator.cloneObject(this.casts),
             fillable: this.fillable,
             guarded: this.guarded,
             dates: this.dates,
