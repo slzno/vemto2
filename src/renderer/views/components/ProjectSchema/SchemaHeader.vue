@@ -337,9 +337,10 @@
             <!-- Tools and Icons -->
             <div class="flex">
                 <div
-                    title="Add table"
+                    title="Add table (CTRL + Shift + T)"
                     class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
                     @click="showTableModal()"
+                    v-shortkey="['ctrl', 'shift', 't']" @shortkey="showTableModal()"
                 >
                     <PlusCircleIcon class="w-7 h-7" />
                 </div>
