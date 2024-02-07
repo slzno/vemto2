@@ -57,7 +57,7 @@
 
 <template>
     <div>
-        <section @keyup.esc="clearInvalidColumns">
+        <section @keyup.esc.prevent.stop="clearInvalidColumns">
             <Draggable
                 class="space-y-2"
                 handle=".handle"

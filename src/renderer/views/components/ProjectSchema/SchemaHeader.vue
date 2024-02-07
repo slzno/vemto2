@@ -431,7 +431,7 @@
             <!-- Control -->
             <div class="flex items-center ml-4 border-r border-l border-slate-750">
                 <button
-                    class="p-2 cursor-pointer text-slate-400 hover:text-red-500  border border-transparent focus:border-red-500 outline-none rounded"
+                    class="p-2 cursor-pointer text-slate-400 hover:text-red-500 border border-transparent focus:border-red-500 outline-none rounded"
                     title="Zoom In"
                     @click="zoomIn()"
                 >

@@ -95,6 +95,12 @@
     }
 
     const removeColumn = async () => {
+        if(column.value.isInvalid()) {
+            column.value.remove()
+            emit('removeColumn')
+            return
+        }
+
         const confirmed = await confirmDeleteDialog.value.confirm()
         if(!confirmed) return
 
