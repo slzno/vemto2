@@ -131,7 +131,8 @@ class <$ this.filenameWithoutExtension $> extends Resource
                         Tables\Actions\RestoreBulkAction::make(),
                     <% } %>
                 ]),
-            ]);
+            ])
+            ->defaultSort('<$ this.crud.model.getPrimaryKeyName() $>', 'desc');
     }
 
     public static function getRelations(): array

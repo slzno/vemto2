@@ -588,6 +588,14 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         )
     }
 
+    getPrimaryKeyName(): string {
+        const primaryKeyColumn = this.getPrimaryKeyColumn()
+
+        if (!primaryKeyColumn) return 'id'
+
+        return primaryKeyColumn.name
+    }
+
     getPrimaryKeyColumn(): Column {
         if (!this.table) return null
         return this.table.columns.find(column => column.isPrimaryKey())
