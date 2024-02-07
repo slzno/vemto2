@@ -24,8 +24,6 @@ export default class InputSettingsList {
         return {
             text: {
                 name: "Text",
-                disableMax: true,
-                disableMin: true,
             },
             select: {
                 name: "Select",
@@ -58,13 +56,9 @@ export default class InputSettingsList {
             },
             textarea: {
                 name: "Textarea",
-                disableMax: true,
-                disableMin: true,
             },
             email: {
                 name: "Email",
-                disableMax: true,
-                disableMin: true,
             },
             date: {
                 name: "Date",
@@ -76,8 +70,6 @@ export default class InputSettingsList {
             },
             password: {
                 name: "Password",
-                disableMax: true,
-                disableMin: true,
                 validationRules: ["required", "string", "min:6"],
                 updateValidationRules: ["nullable", "string", "min:6"],
             },
@@ -85,8 +77,6 @@ export default class InputSettingsList {
                 name: "Checkbox",
                 disableDefault: true,
                 disablePlaceholder: true,
-                disableMax: true,
-                disableMin: true,
             },
             radio: {
                 name: "Radio",
@@ -106,8 +96,6 @@ export default class InputSettingsList {
             },
             url: {
                 name: "Url",
-                disableMax: true,
-                disableMin: true,
                 validationRules: ["url"],
             },
             hidden: {
