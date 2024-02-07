@@ -114,8 +114,6 @@ class CalculateCommonRelationshipsData extends CalculateRelationshipService {
         
         const keys = this.getDefaultKeys()
 
-        console.log(keys)
-
         if(!keys.parentKey) {
             throw new Error(`The parent key "${this.getPrimaryKeyName()}" does not exist in the ${this.relationship.relatedModel.name} model`)
         }
@@ -132,9 +130,6 @@ class CalculateCommonRelationshipsData extends CalculateRelationshipService {
             foreignName = this.getForeignKeyName()
 
         if(['BelongsTo'].includes(this.relationship.type)) {
-            console.log("Related model: ", this.relationship.relatedModel.name, this.relationship.relatedModel.getPrimaryKeyColumn())
-            console.log("Model: ", this.relationship.model.name, foreignName, this.relationship.model.getColumnByName(foreignName))
-
             keys.parentKey = this.relationship.relatedModel.getPrimaryKeyColumn()
             keys.foreignKey = this.relationship.model.getColumnByName(foreignName)
         }

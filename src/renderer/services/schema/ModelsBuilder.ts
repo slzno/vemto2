@@ -39,6 +39,7 @@ export default class ModelsBuilder {
         ModelsBuilder.processing = true
 
         this.readModels()
+        this.dumpModels()
         this.setRelatedModels()
         this.readInverseRelationships()
 
@@ -193,6 +194,11 @@ export default class ModelsBuilder {
                 relationship.save()
             })
         })
+    }
+
+    dumpModels() {
+        // IMPORTANT: delete all existing models without tables to avoid models duplication
+        this.project.deleteAllModelsWithoutTable()
     }
 
 }
