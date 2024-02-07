@@ -1,6 +1,7 @@
 <script setup lang="ts">
     import Table from '@Common/models/Table';
-import Main from '@Renderer/services/wrappers/Main';
+import UiEmptyMessage from '@Renderer/components/ui/UiEmptyMessage.vue';
+    import Main from '@Renderer/services/wrappers/Main';
     import { defineProps, toRef, Ref } from 'vue'
 
     const props = defineProps(['table']),
@@ -32,6 +33,16 @@ import Main from '@Renderer/services/wrappers/Main';
                 </div>
                 <div>
                     {{ migration.relativePath }}
+                </div>
+            </div>
+
+            <div
+                v-if="!table.migrations || table.migrations.length === 0"
+            >
+                <div class="text-center">
+                    <UiEmptyMessage local>
+                        No migrations found
+                    </UiEmptyMessage>
                 </div>
             </div>
         </section>

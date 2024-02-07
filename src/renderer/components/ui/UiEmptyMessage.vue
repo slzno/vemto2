@@ -9,6 +9,11 @@
             type: Boolean,
             default: false,
         },
+
+        local: {
+            type: Boolean,
+            default: false,
+        },
     })
 
     const randomQuote = ref("")
@@ -105,8 +110,11 @@
 
 <template>
     <div
-        style="width: calc(100vw - 80px)"
-        class="text-sm p-2 fixed top-0 right-0 h-screen flex items-center justify-center space-x-2 pointer-events-none"
+        :style="local ? '' : 'width: calc(100vw - 80px)'"
+        class="text-sm p-2 flex items-center justify-center space-x-2 pointer-events-none"
+        :class="{
+            'fixed top-0 right-0 h-screen': !local
+        }"
     >
         <div class="flex flex-col items-center space-y-10">
             <div>

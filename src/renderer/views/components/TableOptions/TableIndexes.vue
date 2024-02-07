@@ -214,14 +214,21 @@
             </div>
         </div>
     
-        <section
+        <button
             class="mt-4 flex w-full justify-center text-slate-400 hover:text-red-500 cursor-pointer text-lg"
             @click="addIndex"
+            v-shortkey="['ctrl', 'shift', 'i']" @shortkey="addIndex"
         >
             <div class="flex items-center">
                 <PlusCircleIcon class="w-8 h-8" />
-                <span class="px-1.5">Add Index</span>
+                <span class="px-1.5 flex items-center space-x-2">
+                    <small class="rounded px-2 py-1 bg-slate-900 text-slate-300 text-xs">
+                        <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>I</kbd>
+                    </small>
+
+                    <span>Add Index</span>
+                </span>
             </div>
-        </section>
+        </button>
     </div>
 </template>
