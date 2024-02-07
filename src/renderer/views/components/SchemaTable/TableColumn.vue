@@ -8,7 +8,7 @@
 <template>
     <div :class="{
         'line-through opacity-50': column.isRemoved()
-    }" class="w-full flex items-center text-slate-700 dark:text-slate-400">
+    }" class="w-full flex items-center text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 px-1 rounded">
         <span
             :class="{
                 'text-yellow-500 dark:text-yellow-400 font-semibold':
@@ -43,11 +43,21 @@
             ></span
         >
         <span
+            title="Unsigned"
+            :class="{
+                'text-slate-500': column.unsigned,
+                'invisible': !column.unsigned,
+            }"
+            class="pl-4"
+            >U</span
+        >
+        <span
+            :title="column.nullable ? 'Nullable' : 'Not Nullable'"
             :class="{
                 'text-red-400': column.nullable,
                 'text-slate-200 dark:text-slate-700': !column.nullable,
             }"
-            class="cursor-pointer hover:text-red-500 font-bold pl-3"
+            class="font-bold pl-2"
             >N</span
         >
     </div>
