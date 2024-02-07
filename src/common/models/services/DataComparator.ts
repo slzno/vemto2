@@ -1,4 +1,5 @@
 import { isEqual } from 'lodash'
+import DataHelper from './DataHelper'
 
 export default class DataComparator {
 
@@ -35,13 +36,11 @@ export default class DataComparator {
     }
 
     static cloneArray(arr: any[]): any[] {
-        if(!arr) return []
-        return JSON.parse(JSON.stringify(arr))
+        return DataHelper.cloneArray(arr)
     }
 
     static cloneObject(obj: any): any {
-        if(!obj) return {}
-        return JSON.parse(JSON.stringify(obj))
+        return DataHelper.cloneObject(obj)
     }
 
 }

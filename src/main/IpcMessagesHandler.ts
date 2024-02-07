@@ -218,7 +218,7 @@ export function HandleIpcMessages() {
         return handleError(event, () => {
             const completePath = path.join(project.getPath(), folderPath)
 
-            return FileSystem.readFolderIfExists(completePath, removeBasePath)
+            return FileSystem.readFolderIncludingEmptyIfExists(completePath, removeBasePath)
         })
     })
 

@@ -2,6 +2,7 @@ import Project from "@Common/models/Project"
 import Main from "@Renderer/services/wrappers/Main"
 import { RenderableFileStatus, RenderableFileType } from "@Common/models/RenderableFile"
 import PhpFormatter from "@Renderer/codegen/formatters/PhpFormatter"
+import DataHelper from "@Common/models/services/DataHelper"
 
 export default class GenerateTranslations {
     project: Project
@@ -15,46 +16,58 @@ export default class GenerateTranslations {
         const translations = this.project.translations
 
         for (const language in translations) {
-            let filePath = `/lang/${language}/`
-            let fileContents = {}
-    
+            let filesToWrite = {}
+
+            // Create file contents from keys
             for (const key in translations[language]) {
-                const keyParts = key.split('.')
+                const keyParts = key.split('.'),
+                    mainKey = keyParts[0],
+                    remainingKeyParts = keyParts.slice(1)
 
-                if (keyParts.length <= 1) {
-                    continue
+                if(!filesToWrite[mainKey]) {
+                    filesToWrite[mainKey] = {
+                        filePath: `/lang/${language}/${mainKey}.php`,
+                        content: {}
+                    }
                 }
 
-                const fileName = keyParts.shift()
+                let currentLevel = filesToWrite[mainKey].content
 
-                if (!filePath.includes(fileName)) {
-                    filePath = `${filePath}/${fileName}.php`
-                }
-    
-                let currentLevel = fileContents
-    
-                keyParts.forEach((part, index) => {
+                remainingKeyParts.forEach((part, index) => {
                     if (!currentLevel[part]) {
-                        currentLevel[part] = (index === keyParts.length - 1) ? translations[language][key] : {}
+                        currentLevel[part] = (index === remainingKeyParts.length - 1) ? translations[language][key] : {}
                     }
 
                     currentLevel = currentLevel[part]
                 })
+
+                filesToWrite[mainKey].content = DataHelper.cloneObject(filesToWrite[mainKey].content)
             }
 
-            let fileContentsString = JSON.stringify(fileContents, null, 4)
-                .replace(/"([^"]+)":/g, "'$1' =>")
-                .replace(/"/g, "'")
+            // Write files for this language
+            Object.keys(filesToWrite).forEach(async mainKey => {
+                const filePath = filesToWrite[mainKey].filePath,
+                    fileContents = filesToWrite[mainKey].content
 
-            // replace json { } with php [ ]
-            fileContentsString = fileContentsString.replace(/{/g, '[').replace(/}/g, ']')
-    
-            let phpContent = `<?php\n\nreturn ${fileContentsString};`
-
-            phpContent = PhpFormatter.setContent(phpContent).format()
-    
-            await this.writeFile(filePath, phpContent)
+                await this.writePHPFile(filePath, fileContents)
+            })
         }
+
+    }
+
+    async writePHPFile(filePath: string, fileContents: any) {
+        let fileContentsString = JSON.stringify(fileContents, null, 4)
+            .replace(/"([^"]+)":/g, "'$1' =>")
+            .replace(/"/g, "'")
+
+        // replace json { } with php [ ]
+        fileContentsString = fileContentsString.replace(/{/g, '[').replace(/}/g, ']')
+
+        let phpContent = `<?php\n\nreturn ${fileContentsString};`
+
+        phpContent = PhpFormatter.setContent(phpContent).format()
+
+        await this.writeFile(filePath, phpContent)
     }
 
     async writeFile(path: string, content: string) {

@@ -601,9 +601,9 @@ export default class Crud extends RelaDB.Model {
     
     calculateFilamentSettings() {
         this.filamentSettings = {
-            modelLabel: this.settings.collectionTitle,
-            pluralModelLabel: this.settings.itemTitle,
-            navigationLabel: this.settings.itemTitle,
+            modelLabel: this.settings.itemTitle,
+            pluralModelLabel: this.settings.collectionTitle,
+            navigationLabel: this.settings.collectionTitle,
             navigationIcon: "heroicon-o-rectangle-stack",
             navigationOrder: 1,
             navigationParentItem: null,
