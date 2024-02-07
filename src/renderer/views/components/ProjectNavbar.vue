@@ -28,25 +28,33 @@
         
         projectStore.closeProject()
     }
+
+    const setActiveTab = (tab: string) => {
+        navigationStore.setActiveTab(tab)
+
+        const element = document.activeElement as HTMLElement
+
+        element.blur()
+    }
 </script>
 
 <template>
     <nav class="w-20 h-full flex flex-col items-center justify-between bg-white dark:bg-slate-900 border-r border-slate-100 dark:border-slate-800">
         <div>
             <button
-                class="w-full h-12 flex justify-center items-center py-10 text-slate-400 dark:text-slate-600 cursor-pointer hover:text-slate-800 dark:hover:text-slate-400 border border-transparent focus:border-red-500 outline-none rounded"
+                class="w-full h-12 flex justify-center items-center py-10 text-slate-400 dark:text-slate-600 cursor-pointer hover:text-slate-800 dark:hover:text-slate-400 outline-none focus:!text-slate-800 dark:focus:!text-slate-400"
                 @click="goToHome()"
             >
                 <HomeIcon class="w-5 h-5 stroke-2" />
             </button>
 
             <RouterLink
-                @click="navigationStore.setActiveTab('schema')"
+                @click="setActiveTab('schema')"
                 :class="{
                     'text-red-500': navigationStore.activeTabIs('schema'),
-                    'text-slate-400 dark:text-slate-600  hover:text-slate-800 dark:hover:text-slate-400': navigationStore.activeTabIsNot('schema'),
+                    'text-slate-400 dark:text-slate-600 hover:text-slate-800 dark:hover:text-slate-400 focus:!text-slate-800 dark:focus:!text-slate-400': navigationStore.activeTabIsNot('schema'),
                 }"
-                class="w-full h-12 flex justify-center items-center py-10 border border-transparent focus:border-red-500 outline-none rounded"
+                class="w-full h-12 flex justify-center items-center py-10 outline-none"
                 as="button"
                 to="/project/schema"
             >
@@ -54,12 +62,12 @@
             </RouterLink>
 
             <RouterLink
-                @click="navigationStore.setActiveTab('apps')"
+                @click="setActiveTab('apps')"
                 :class="{
                     'text-red-500': navigationStore.activeTabIs('apps'),
-                    'text-slate-400 dark:text-slate-600 hover:text-slate-800 dark:hover:text-slate-400': navigationStore.activeTabIsNot('apps'),
+                    'text-slate-400 dark:text-slate-600 hover:text-slate-800 dark:hover:text-slate-400 focus:!text-slate-800 dark:focus:!text-slate-400': navigationStore.activeTabIsNot('apps'),
                 }"
-                class="w-full h-12 flex justify-center items-center py-10  border border-transparent focus:border-red-500 outline-none rounded"
+                class="w-full h-12 flex justify-center items-center py-10 outline-none"
                 as="button"
                 to="/project/apps"
             >
@@ -67,12 +75,12 @@
             </RouterLink>
 
             <RouterLink
-                @click="navigationStore.setActiveTab('bot')"
+                @click="setActiveTab('bot')"
                 :class="{
                     'text-red-500': navigationStore.activeTabIs('bot'),
-                    'text-slate-400 dark:text-slate-600 hover:text-slate-800 dark:hover:text-slate-400': navigationStore.activeTabIsNot('bot'),
+                    'text-slate-400 dark:text-slate-600 hover:text-slate-800 dark:hover:text-slate-400 focus:!text-slate-800 dark:focus:!text-slate-400': navigationStore.activeTabIsNot('bot'),
                 }"
-                class="w-full h-12 flex justify-center items-center py-10 border border-transparent focus:border-red-500 outline-none rounded"
+                class="w-full h-12 flex justify-center items-center py-10 outline-none"
                 as="button"
                 to="/project/bot"
             >
@@ -80,12 +88,12 @@
             </RouterLink>
 
             <RouterLink
-                @click="navigationStore.setActiveTab('code-queue')"
+                @click="setActiveTab('code-queue')"
                 :class="{
                     'text-red-500': navigationStore.activeTabIs('code-queue'),
-                    'text-slate-400 dark:text-slate-600  hover:text-slate-800 dark:hover:text-slate-400': navigationStore.activeTabIsNot('code-queue'),
+                    'text-slate-400 dark:text-slate-600 hover:text-slate-800 dark:hover:text-slate-400 focus:!text-slate-800 dark:focus:!text-slate-400': navigationStore.activeTabIsNot('code-queue'),
                 }"
-                class="w-full h-12 flex justify-center items-center py-10 relative border border-transparent focus:border-red-500 outline-none rounded"
+                class="w-full h-12 flex justify-center items-center py-10 relative outline-none"
                 as="button"
                 to="/project/code-queue"
             >
@@ -96,12 +104,12 @@
 
         <ul>
             <RouterLink
-                @click="navigationStore.setActiveTab('settings')"
+                @click="setActiveTab('settings')"
                 :class="{
                     'text-red-500': navigationStore.activeTabIs('settings'),
-                    'text-slate-400 dark:text-slate-600  hover:text-slate-800 dark:hover:text-slate-400': navigationStore.activeTabIsNot('settings'),
+                    'text-slate-400 dark:text-slate-600 hover:text-slate-800 dark:hover:text-slate-400 focus:!text-slate-800 dark:focus:!text-slate-400': navigationStore.activeTabIsNot('settings'),
                 }"
-                class="w-full h-12 flex justify-center items-center py-6 relative border border-transparent focus:border-red-500 outline-none rounded"
+                class="w-full h-12 flex justify-center items-center py-6 relative outline-none"
                 as="button"
                 to="/project/settings"
             >
@@ -109,12 +117,12 @@
             </RouterLink>
             
             <RouterLink
-                @click="navigationStore.setActiveTab('tools')"
+                @click="setActiveTab('tools')"
                 :class="{
                     'text-red-500': navigationStore.activeTabIs('tools'),
-                    'text-slate-400 dark:text-slate-600  hover:text-slate-800 dark:hover:text-slate-400': navigationStore.activeTabIsNot('tools'),
+                    'text-slate-400 dark:text-slate-600 hover:text-slate-800 dark:hover:text-slate-400 focus:!text-slate-800 dark:focus:!text-slate-400': navigationStore.activeTabIsNot('tools'),
                 }"
-                class="w-full h-12 flex justify-center items-center py-6 relative border border-transparent focus:border-red-500 outline-none rounded"
+                class="w-full h-12 flex justify-center items-center py-6 relative outline-none"
                 as="button"
                 to="/project/tools"
             >
@@ -122,12 +130,12 @@
             </RouterLink>
 
             <RouterLink
-                @click="navigationStore.setActiveTab('plugins')"
+                @click="setActiveTab('plugins')"
                 :class="{
                     'text-red-500': navigationStore.activeTabIs('plugins'),
-                    'text-slate-400 dark:text-slate-600  hover:text-slate-800 dark:hover:text-slate-400': navigationStore.activeTabIsNot('plugins'),
+                    'text-slate-400 dark:text-slate-600 hover:text-slate-800 dark:hover:text-slate-400 focus:!text-slate-800 dark:focus:!text-slate-400': navigationStore.activeTabIsNot('plugins'),
                 }"
-                class="w-full h-12 flex justify-center items-center py-6 relative border border-transparent focus:border-red-500 outline-none rounded"
+                class="w-full h-12 flex justify-center items-center py-6 relative outline-none"
                 as="button"
                 to="/project/plugins"
             >
