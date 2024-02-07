@@ -548,7 +548,9 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     }
 
     getPrimaryKeyColumn(): Column {
+        console.log("Getting primary key column for model", this.name, this.table)
         if (!this.table) return null
+        console.log('Aqui', this.table.name, this.table.columns.find(column => column.isPrimaryKey()))
         return this.table.columns.find(column => column.isPrimaryKey())
     }
 

@@ -20,10 +20,6 @@ class CalculateCommonRelationshipsData extends CalculateRelationshipService {
     }
 
     process(createInverse: boolean = false): void {
-        if(this.relationship.type !== 'BelongsTo' && createInverse) {
-            this.createInverseRelationship()
-        }
-
         this.addForeign()
 
         if(this.relationship.type === 'BelongsTo' && createInverse) {
@@ -118,8 +114,10 @@ class CalculateCommonRelationshipsData extends CalculateRelationshipService {
         
         const keys = this.getDefaultKeys()
 
+        console.log(keys)
+
         if(!keys.parentKey) {
-            throw new Error(`The parent key ${this.getPrimaryKeyName()} does not exist in the ${this.relationship.relatedModel.name} model`)
+            throw new Error(`The parent key "${this.getPrimaryKeyName()}" does not exist in the ${this.relationship.relatedModel.name} model`)
         }
 
         this.relationship.parentKeyId = keys.parentKey.id
@@ -134,6 +132,9 @@ class CalculateCommonRelationshipsData extends CalculateRelationshipService {
             foreignName = this.getForeignKeyName()
 
         if(['BelongsTo'].includes(this.relationship.type)) {
+            console.log("Related model: ", this.relationship.relatedModel.name, this.relationship.relatedModel.getPrimaryKeyColumn())
+            console.log("Model: ", this.relationship.model.name, foreignName, this.relationship.model.getColumnByName(foreignName))
+
             keys.parentKey = this.relationship.relatedModel.getPrimaryKeyColumn()
             keys.foreignKey = this.relationship.model.getColumnByName(foreignName)
         }

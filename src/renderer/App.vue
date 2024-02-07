@@ -38,6 +38,18 @@
 
             localStorage.removeItem("lastDevelopmentRoute")
         }
+
+        // catch all uncaught errors
+        window.addEventListener("error", (event) => {
+            const error = event.error
+
+            Alert.error(error.message)
+
+            errorsStore.addError({
+                message: error.message,
+                stack: error.stack,
+            })
+        })
     })
 
     const isSchemaReaderError = (error: any): boolean => {

@@ -508,6 +508,10 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
 
         DataComparisonLogger.setInstance(this).log()
     }
+    
+    isUnsigned(): boolean {
+        return !! this.unsigned
+    }
 
     getForeignType(): string {
         const type = this.getType()
