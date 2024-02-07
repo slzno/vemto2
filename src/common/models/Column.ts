@@ -526,4 +526,10 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
 
         return false
     }
+    
+    referencesModel(model: Model): boolean {
+        if(!this.isForeign()) return false;
+
+        return this.relationshipsByForeignKey.some(relationship => relationship.relatedModelId === model.id)
+    }
 }
