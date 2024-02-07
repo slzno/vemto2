@@ -336,14 +336,14 @@
         >
             <!-- Tools and Icons -->
             <div class="flex">
-                <div
+                <button
                     title="Add table (CTRL + Shift + T)"
-                    class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
+                    class="p-2 cursor-pointer text-slate-400 hover:text-red-500 border border-transparent focus:border-red-500 outline-none rounded"
                     @click="showTableModal()"
                     v-shortkey="['ctrl', 'shift', 't']" @shortkey="showTableModal()"
                 >
                     <PlusCircleIcon class="w-7 h-7" />
-                </div>
+                </button>
 
                 <!-- New table modal -->
                 <UiModal
@@ -386,10 +386,10 @@
                     </template>
                 </UiModal>
 
-                <div
+                <button
                     @click="info('Schema Comments: Coming soon...')"
                     title="Add comment"
-                    class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
+                    class="p-2 cursor-pointer text-slate-400 hover:text-red-500 border border-transparent focus:border-red-500 outline-none"
                 >
                     <svg
                         class="w-7 h-7"
@@ -400,11 +400,11 @@
                     >
                         <ChatBubbleLeftEllipsisIcon class="w-7 h-7" />
                     </svg>
-                </div>
+                </button>
 
-                <div
+                <button
                     @click="info('Save as Image: Coming soon...')"
-                    class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
+                    class="p-2 cursor-pointer text-slate-400 hover:text-red-500 border border-transparent focus:border-red-500 outline-none rounded"
                 >
                     <svg
                         class="w-7 h-7"
@@ -415,42 +415,42 @@
                     >
                         <PhotoIcon class="w-7 h-7" />
                     </svg>
-                </div>
+                </button>
 
-                <div
-                    class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
+                <button
+                    class="p-2 cursor-pointer text-slate-400 hover:text-red-500 border border-transparent focus:border-red-500 outline-none rounded"
                     title="Sync Schema"
                     @click="syncSchema()"
                 >
                     <ArrowPathIcon
                         class="w-7 h-7"
                     />
-                </div>
+                </button>
             </div>
 
             <!-- Control -->
             <div class="flex items-center ml-4 border-r border-l border-slate-750">
-                <div
-                    class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
+                <button
+                    class="p-2 cursor-pointer text-slate-400 hover:text-red-500  border border-transparent focus:border-red-500 outline-none rounded"
                     title="Zoom In"
                     @click="zoomIn()"
                 >
                     <MagnifyingGlassPlusIcon
                         class="w-5 h-5"
                     />
-                </div>
+                </button>
                 <div class="text-xs text-slate-500 w-5 text-center select-none">
                     {{ projectStore.project.currentZoom || 100 }}
                 </div>
-                <div
-                    class="p-2 cursor-pointer text-slate-400 hover:text-red-500"
+                <button
+                    class="p-2 cursor-pointer text-slate-400 hover:text-red-500  border border-transparent focus:border-red-500 outline-none rounded"
                     title="Zoom Out"
                     @click="zoomOut()"
                 >
                     <MagnifyingGlassMinusIcon
                         class="w-5 h-5"
                     />
-                </div>
+                </button>
             </div>
 
             <!-- Search -->
@@ -479,23 +479,23 @@
         </div>
 
         <div class="flex gap-1 items-center text-xs">
-            <div @click="newSchema()">
+            <button
+                @click="newSchema()"
+                class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-700 h-6 focus:border-red-500 outline-none"
+            >
                 <div
-                    class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-700 h-6"
+                    class="py-1 px-5 cursor-pointer text-slate-400 hover:text-red-500 flex items-center justify-center"
                 >
-                    <div
-                        class="py-1 px-5 cursor-pointer text-slate-400 hover:text-red-500 flex items-center justify-center"
-                    >
-                        <PlusIcon class="w-4 h-4 mr-1" />
-                        New Schema
-                    </div>
+                    <PlusIcon class="w-4 h-4 mr-1" />
+                    New Schema
                 </div>
-            </div>
+            </button>
+
             
             <div v-for="section in projectStore.project.schemaSections">
-                <div
+                <button
                     @click="selectSchemaSection(section)"
-                    class="flex relative group items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-700 h-6"
+                    class="flex relative group items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-700 h-6 focus:border-red-500 outline-none"
                 >
                     <div
                         :class="{
@@ -512,7 +512,7 @@
                             class="w-3.5 h-3.5 text-slate-500 cursor-pointer hover:text-red-400 dark:hover:text-red-500"
                         />
                     </div>
-                </div>
+                </button>
             </div>
         </div>
     </div>
