@@ -159,13 +159,13 @@
             >
                 <ErrorsDialog ref="errorsDialog" />
 
-                <div class="p-2 bg-slate-900 rounded-l-full">
+                <div class="p-2 bg-slate-200 dark:bg-slate-900 rounded-l-full">
                     <div
-                        class="py-2 px-5 rounded-full shadow bg-slate-850 border border-slate-700 flex space-x-2"
+                        class="py-2 px-5 rounded-full shadow bg-slate-100 dark:bg-slate-850 border border-slate-300 dark:border-slate-700 flex space-x-2"
                     >
                         <div>
                             <button
-                                class="flex text-slate-300 outline-none focus:text-red-500 cursor-pointer hover:text-red-500"
+                                class="flex text-slate-600 dark:text-slate-300 outline-none focus:text-red-500 cursor-pointer hover:text-red-500"
                                 title="Generate Code (F5)"
                                 @click="generateCode()"
                             >
@@ -179,14 +179,14 @@
                             </button>
                         </div>
                         <button
-                            class="flex text-slate-300 outline-none focus:text-red-500 cursor-pointer hover:text-red-500"
+                            class="flex text-slate-600 dark:text-slate-300 outline-none focus:text-red-500 cursor-pointer hover:text-red-500"
                             title="Open Project Folder (F6)"
                             @click="openProjectFolder()"
                         >
                             <FolderIcon class="w-7 h-7 stroke-1" />
                         </button>
                         <button
-                            class="flex text-slate-300 outline-none focus:text-red-500 cursor-pointer hover:text-red-500"
+                            class="flex text-slate-600 dark:text-slate-300 outline-none focus:text-red-500 cursor-pointer hover:text-red-500"
                             title="Open Project on Command Line (F7)"
                             @click="openProjectOnTerminal()"
                         >
@@ -205,7 +205,7 @@
                             <ShieldExclamationIcon
                                 :class="{
                                     'text-red-500': errorsStore.hasErrors,
-                                    'text-slate-300': !errorsStore.hasErrors,
+                                    'text-slate-600 dark:text-slate-300': !errorsStore.hasErrors,
                                 }"
                                 class="w-7 h-7 stroke-1 hover:text-red-500"
                             />

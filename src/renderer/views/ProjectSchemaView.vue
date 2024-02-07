@@ -233,7 +233,7 @@
     }
 
     svg.connector path {
-        stroke: #9ca3af;
+        stroke: #cbd5e1;
         stroke-width: 3;
         z-index: 1;
     }
@@ -243,7 +243,7 @@
     }
 
     svg.jtk-endpoint circle {
-        fill: #9ca3af;
+        fill: #cbd5e1;
         z-index: 1;
     }
 
