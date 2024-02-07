@@ -85,7 +85,6 @@
 
                     <span>Add Column</span>
                 </span>
-                
             </div>
         </button>
     </div>

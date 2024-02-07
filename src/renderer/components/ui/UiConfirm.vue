@@ -2,7 +2,7 @@
     import UiModal from "./UiModal.vue"
     import UiButton from "./UiButton.vue"
     import UiCheckbox from "./UiCheckbox.vue"
-    import { ref, toRefs, onMounted } from "vue"
+    import { ref, toRefs, onMounted, watch } from "vue"
     import { CheckIcon, XMarkIcon } from "@heroicons/vue/24/outline"
 
     export default {
@@ -66,6 +66,15 @@
                     const optionSettings = options.value[option]
                     optionsValues.value[option] = optionSettings.value
                 })
+            })
+
+            // watch show and focus cancel button
+            watch(show, (value) => {
+                if (value) {
+                    setTimeout(() => {
+                        document.getElementById("cancelButton").focus()
+                    }, 100)
+                }
             })
 
             const confirm = () => {
@@ -138,7 +147,7 @@
 
             <template #footer>
                 <div class="flex justify-end p-2 space-x-2">
-                    <UiButton @click="cancelClicked">
+                    <UiButton id="cancelButton" @click="cancelClicked">
                         <XMarkIcon class="w-4 h-4 mr-1 text-red-400" />
                         {{ cancelText }}
                     </UiButton>

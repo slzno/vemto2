@@ -42,7 +42,9 @@
 
 <template>
     <div class="relative overflow-visible" ref="dropdown">
-        <EllipsisVerticalIcon @click.prevent.stop="clicked()" class="h-5 w-5 text-slate-400 cursor-pointer select-none hover:text-slate-300" />
+        <button @click.prevent.stop="clicked()" class="border border-transparent focus:border-red-500 outline-none rounded">
+            <EllipsisVerticalIcon  class="h-5 w-5 text-slate-400 cursor-pointer select-none hover:text-slate-300" />
+        </button>
 
         <Transition
             enter-from-class="transition duration-300 opacity-0"

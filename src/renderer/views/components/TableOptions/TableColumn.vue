@@ -146,11 +146,11 @@
                 </div>
             </div>
 
-            <div class="px-2" @click="showingOptions = !showingOptions">
+            <button class="px-2 border border-transparent focus:border-red-500 outline-none rounded" @click="showingOptions = !showingOptions">
                 <component :is="showingOptions ? ChevronUpIcon : ChevronDownIcon"
                     class="w-4 h-4 text-slate-400 hover:text-red-500 cursor-pointer"
                 />
-            </div>
+            </button>
         </div>
 
         <div class="flex m-2 flex-col" v-if="showingOptions">
