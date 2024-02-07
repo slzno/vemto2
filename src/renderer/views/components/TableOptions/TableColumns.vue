@@ -71,15 +71,23 @@
             </Draggable>
         </section>
     
-        <section
+        <button
             class="mt-4 flex w-full justify-center text-slate-400 hover:text-red-500 cursor-pointer text-lg"
             @click="addColumn"
+            v-shortkey="['ctrl', 'shift', 'c']" @shortkey="addColumn()"
         >
             <div class="flex items-center">
                 <PlusCircleIcon class="w-8 h-8" />
-                <span class="px-1.5">Add Column</span>
+                <span class="px-1.5 flex items-center space-x-2">
+                    <small class="rounded px-2 py-1 bg-slate-900 text-slate-300 text-xs">
+                        <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>C</kbd>
+                    </small>
+
+                    <span>Add Column</span>
+                </span>
+                
             </div>
-        </section>
+        </button>
     </div>
 </template>
 <style scoped>

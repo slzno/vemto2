@@ -19,6 +19,7 @@ import PhpLang from "highlight.js/lib/languages/php"
 import JavascriptLang from "highlight.js/lib/languages/javascript"
 import HandleModelDataUpdate from "./services/HandleModelDataUpdate"
 import vClickOutside from 'click-outside-vue3'
+import ShortKey from "vue3-shortkey"
 
 Hljs.registerLanguage("php", PhpLang)
 Hljs.registerLanguage("javascript", JavascriptLang)
@@ -30,6 +31,7 @@ app.use(router)
 app.use(pinia)
 app.use(HljsVuePlugin)
 app.use(vClickOutside)
+app.use(ShortKey)
 
 app.mount("#app")
 
