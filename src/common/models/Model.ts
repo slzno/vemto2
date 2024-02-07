@@ -162,6 +162,8 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     }
 
     generateDefaultData() {
+        this.generateDefaultSettings()
+
         if(!this.isAuthenticatable) return
         if(this.name !== 'User') return
 
