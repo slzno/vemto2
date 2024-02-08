@@ -502,14 +502,14 @@
                             'text-red-500 dark:text-red-400': schemaStore.selectedSchemaSectionIs(section),
                             'text-slate-470 dark:text-slate-350': !schemaStore.selectedSchemaSectionIs(section),
                         }"
-                        class="px-5 cursor-pointer hover:text-red-600 dark:hover:text-red-500 dark:hover:text-red-500 select-none"
+                        class="px-5 cursor-pointer hover:text-red-600 dark:hover:text-red-500 select-none"
                     >
                         {{ section.name }}
                     </div>
 
                     <div @click.prevent.stop="removeSection(section)" class="absolute right-0 invisible group-hover:visible px-1">
                         <XMarkIcon
-                            class="w-3.5 h-3.5 text-slate-600 dark:text-slate-500 cursor-pointer hover:text-red-400 dark:hover:text-red-500 dark:hover:text-red-500"
+                            class="w-3.5 h-3.5 text-slate-600 dark:text-slate-500 cursor-pointer hover:text-red-400 dark:hover:text-red-500"
                         />
                     </div>
                 </button>
