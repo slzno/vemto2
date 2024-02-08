@@ -233,6 +233,10 @@ export default class Project extends RelaDB.Model {
         return this.models.find((model) => model.id == modelId)
     }
 
+    getTablesWithChanges(): Table[] {
+        return this.tables.filter((table) => table.isDirty())
+    }
+
     getTablesNames(): string[] {
         return this.tables.map((table) => table.name)
     }

@@ -67,13 +67,17 @@
 
         setTimeout(() => {
             if(isClickingOptions) return
-
-            schemaStore.selectTable(table.value)
-
-            nextTick(() => {
-                emit("highlight", table.value)
-            })
+            
+            selectTable()
         }, 1);
+    }
+
+    const selectTable = () => {
+        schemaStore.selectTable(table.value.fresh())
+
+        nextTick(() => {
+            emit("highlight", table.value.fresh())
+        })
     }
 
     const moveTableToSection = (section) => {

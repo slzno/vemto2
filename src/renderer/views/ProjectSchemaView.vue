@@ -173,11 +173,16 @@
             // }
         })
 
-        jsPlumbInstance.bind(EVENT_DRAG_START, () => {
+        jsPlumbInstance.bind(EVENT_DRAG_START, (p: any) => {
             isDragging = true
+
+            const tableId = parseInt(p.el.getAttribute("data-table-id")).toString()
+            schemaStore.setDraggingTableId(tableId)
         })
 
         jsPlumbInstance.bind(EVENT_DRAG_STOP, (p: any) => {
+            schemaStore.resetDraggingTableId()
+            
             isDragging = false
 
             const tableId = parseInt(p.el.getAttribute("data-table-id")).toString(),

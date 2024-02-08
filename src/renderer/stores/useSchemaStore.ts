@@ -7,7 +7,9 @@ export const useSchemaStore = defineStore("schema", {
     state: () => ({ 
         focusedTable: {} as Table,
         selectedTable: {} as Table,
-        selectedSchemaSection: {} as SchemaSection
+        selectedSchemaSection: {} as SchemaSection,
+        draggingTableId: null as string | null,
+        lastDraggedTableId: null as string | null,
     }),
 
     actions: {
@@ -69,6 +71,20 @@ export const useSchemaStore = defineStore("schema", {
             const projectStore = useProjectStore()
 
             return `selectedSchemaSection_${projectStore.project.id}`
+        },
+
+        setDraggingTableId(tableId: string | null): void {
+            this.draggingTableId = tableId
+            this.lastDraggedTableId = tableId
+        },
+
+        resetDraggingTableId(): void {
+            this.draggingTableId = null
+        },
+
+        wasLastDraggedTable(table: Table): boolean {
+            console.log(this.lastDraggedTableId, table.id)
+            return this.lastDraggedTableId == table.id
         }
     },
 

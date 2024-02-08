@@ -46,6 +46,14 @@ export default abstract class AbstractSchemaModel extends RelaDB.Model {
         return !! this.removed
     }
 
+    wasUpdated(): boolean {
+        if(this.isNew()) return false
+
+        return this.isDirty()
+    }
+
+    abstract isDirty(): boolean
+
     markAsRemoved(): void {
         this.removed = true
         this.save()
