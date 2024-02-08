@@ -111,7 +111,7 @@
         }"
     >
         <div class="w-full dark:bg-slate-800 rounded-t-lg px-4 pt-2 pb-2 flex justify-between items-center">
-            <span class="title w-full font-bold text-lg dark:text-slate-300 flex items-center space-x-1">
+            <span class="title w-full font-bold text-lg text-slate-750 dark:text-slate-300 flex items-center space-x-1">
                 <div class="flex items-center" :class="{
                     'line-through': table.isRemoved(),
                 }">

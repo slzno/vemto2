@@ -14,25 +14,25 @@
             <div class="font-semibold text-sm flex justify-between">
                 <div class="flex items-center space-x-1 pr-4 text-slate-300">
                     <div v-if="model.isNew()" title="Model Draft">
-                        <PencilSquareIcon class="w-3.5 h-3.5 text-slate-400 animate-pulse" />
+                        <PencilSquareIcon class="w-3.5 h-3.5 text-slate-600 dark:text-slate-400 animate-pulse" />
                     </div>
                     <div v-if="!model.isNew()" title="Model">
-                        <DocumentTextIcon class="w-3.5 h-3.5 text-slate-400 animate-pulse" />
+                        <DocumentTextIcon class="w-3.5 h-3.5 text-slate-600 dark:text-slate-400 animate-pulse" />
                     </div>
                     <div v-if="model.isAuthenticatable" title="Authenticatable">
-                        <UserIcon class="w-3.5 h-3.5 text-slate-400"/>
+                        <UserIcon class="w-3.5 h-3.5 text-slate-600 dark:text-slate-400 stroke-2"/>
                     </div>
                     <div>
-                        <span class="text-slate-300">{{ model.name }}</span>
+                        <span class="text-slate-500 dark:text-slate-300">{{ model.name }}</span>
                     </div>
                 </div>
                 <div class="text-xs text-slate-700">
                     <span v-if="model.isNew()" class="text-slate-600 text-xs">(Draft)</span>
-                    <span v-else class="text-slate-500 text-xs">{{ model.getClassString() }}</span>
+                    <!-- <span v-else class="text-black dark:text-slate-400 text-xs font-thin">{{ model.getClassString() }}</span> -->
                 </div>
             </div>
 
-            <div class="px-2 my-1" v-for="relationship in model.ownRelationships" :key="relationship.id">
+            <div class="px-2 my-2" v-for="relationship in model.ownRelationships" :key="relationship.id">
                 <div class="w-full flex items-center">
                     <span
                         class="flex-grow pr-8 flex items-center text-slate-400"

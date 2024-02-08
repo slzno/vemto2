@@ -338,7 +338,7 @@
             <div class="flex">
                 <button
                     title="Add table (CTRL + Shift + T)"
-                    class="p-2 cursor-pointer text-slate-470 dark:text-slate-350 hover:text-red-500 dark:hover:text-red-500 border border-transparent focus:border-red-500 outline-none rounded"
+                    class="p-2 cursor-pointer text-slate-600 dark:text-slate-350 hover:text-red-500 dark:hover:text-red-500 border border-transparent focus:border-red-500 outline-none rounded"
                     @click="showTableModal()"
                     v-shortkey="['ctrl', 'shift', 't']" @shortkey="showTableModal()"
                 >
@@ -389,7 +389,7 @@
                 <button
                     @click="info('Schema Comments: Coming soon...')"
                     title="Add comment"
-                    class="p-2 cursor-pointer text-slate-470 dark:text-slate-350 hover:text-red-500 dark:hover:text-red-500 border border-transparent focus:border-red-500 outline-none"
+                    class="p-2 cursor-pointer text-slate-600 dark:text-slate-350 hover:text-red-500 dark:hover:text-red-500 border border-transparent focus:border-red-500 outline-none"
                 >
                     <svg
                         class="w-7 h-7 stroke-1"
@@ -404,7 +404,7 @@
 
                 <button
                     @click="info('Save as Image: Coming soon...')"
-                    class="p-2 cursor-pointer text-slate-470 dark:text-slate-350 hover:text-red-500 dark:hover:text-red-500 border border-transparent focus:border-red-500 outline-none rounded"
+                    class="p-2 cursor-pointer text-slate-600 dark:text-slate-350 hover:text-red-500 dark:hover:text-red-500 border border-transparent focus:border-red-500 outline-none rounded"
                 >
                     <svg
                         class="w-7 h-7 stroke-1"
@@ -418,7 +418,7 @@
                 </button>
 
                 <button
-                    class="p-2 cursor-pointer text-slate-470 dark:text-slate-350 hover:text-red-500 dark:hover:text-red-500 border border-transparent focus:border-red-500 outline-none rounded"
+                    class="p-2 cursor-pointer text-slate-600 dark:text-slate-350 hover:text-red-500 dark:hover:text-red-500 border border-transparent focus:border-red-500 outline-none rounded"
                     title="Sync Schema"
                     @click="syncSchema()"
                 >
@@ -462,16 +462,16 @@
                     @blur="closeSearch()"
                     @keyup.esc="closeSearch()"
                     type="text"
-                    class="bg-slate-100 dark:bg-slate-950 px-4 py-1 rounded-full focus:border-red-500 border border-transparent focus:ring-transparent placeholder-slate-350 dark:placeholder-slate-500"
+                    class="bg-slate-100 dark:bg-slate-950 px-4 py-1 rounded-full focus:border-red-500 border border-transparent focus:ring-transparent placeholder-slate-400 dark:placeholder-slate-600 placeholder:font-thin"
                     placeholder="Search..."
                 />
 
                 <div 
                     v-show="searchIsFocused"
-                    class="absolute p-4 rounded-lg shadow border border-slate-100 dark:border-slate-700 bg-slate-800 w-72"
+                    class="absolute p-4 rounded-lg shadow border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 w-72"
                     style="top: 110%; left: 0;"
                 >
-                    <div @click="focusTable(table)" class="cursor-pointer hover:bg-slate-700 rounded px-2 py-1" v-for="table in filteredTables" :key="table.id">
+                    <div @click="focusTable(table)" class="cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-700 rounded px-2 py-1" v-for="table in filteredTables" :key="table.id">
                         {{ table.name }}
                     </div>
                 </div>
@@ -484,7 +484,7 @@
                 class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-100 dark:border-slate-700 h-6 focus:border-red-500 outline-none"
             >
                 <div
-                    class="py-1 px-5 cursor-pointer text-slate-470 dark:text-slate-350 hover:text-red-500 dark:hover:text-red-500 flex items-center justify-center"
+                    class="py-1 px-5 cursor-pointer text-slate-600 dark:text-slate-350 hover:text-red-500 dark:hover:text-red-500 flex items-center justify-center"
                 >
                     <PlusIcon class="w-4 h-4 mr-1" />
                     New Schema
@@ -500,7 +500,7 @@
                     <div
                         :class="{
                             'text-red-500 dark:text-red-400': schemaStore.selectedSchemaSectionIs(section),
-                            'text-slate-470 dark:text-slate-350': !schemaStore.selectedSchemaSectionIs(section),
+                            'text-slate-600 dark:text-slate-350': !schemaStore.selectedSchemaSectionIs(section),
                         }"
                         class="px-5 cursor-pointer hover:text-red-600 dark:hover:text-red-500 select-none"
                     >
