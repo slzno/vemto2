@@ -20,7 +20,7 @@ export default class DataComparator {
     }
 
     static objectsAreDifferent(value1: any, value2: any): boolean {
-        return !isEqual(value1, value2)
+        return !isEqual(DataComparator.cloneObject(value1), DataComparator.cloneObject(value2))
     }
 
     static coalesceString(value: string): string {
