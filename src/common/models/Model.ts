@@ -116,9 +116,7 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         if(!modelData.hidden) modelData.hidden = []
         if(!modelData.dates) modelData.dates = []
         if(!modelData.casts) modelData.casts = {}
-
-        // TODO: cxheck if this is necessary
-        // if(!modelData.appends) modelData.appends = []
+        if(!modelData.appends) modelData.appends = []
 
         return modelData
     }
@@ -340,10 +338,7 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
             guarded: DataComparator.cloneArray(this.guarded),
             dates: DataComparator.cloneArray(this.dates),
             hidden: DataComparator.cloneArray(this.hidden),
-
-            // TODO: check if it is an array or object and add cloneArray or cloneObject
             appends: DataComparator.cloneArray(this.appends),
-
             methods: DataComparator.cloneArray(this.methods),
             parentClass: this.parentClass,
             interfaces: DataComparator.cloneArray(this.interfaces),
