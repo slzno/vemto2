@@ -337,28 +337,40 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         return !! this.getRelatedTables().length
     }
 
+    isParentOf(table: Table): boolean {
+        return table.isChildrenOf(this)
+    }
+
     isChildrenOf(table: Table): boolean {
         let isChildren: boolean = false
 
         this.getForeignIndexes().forEach((index) => {
             const foreignTable = index.getForeignTable()
 
-            if(!foreignTable) return false
+            if(!foreignTable) return
 
-            let relatedTable = this.project.findTableByName(foreignTable.name)
-
-            if(relatedTable && !relatedTablesIds.includes(relatedTable.id)) {
-                
-                relatedTables[relatedTable.id] = {
-                    table: relatedTable,
-                    type: 'foreign',
-                }
-
-                relatedTablesIds.push(relatedTable.id)
+            if(foreignTable.id === table.id) {
+                isChildren = true
             }
         })
 
         return isChildren
+    }
+
+    hasChildrenTables(): boolean {
+        return !! this.getChildrenTables().length
+    }
+
+    getChildrenTables(): Table[] {
+        return this.project.tables.filter((table) => table.isChildrenOf(this))
+    }
+
+    hasParentTables(): boolean {
+        return !! this.getParentTables().length
+    }
+
+    getParentTables(): Table[] {
+        return this.project.tables.filter((table) => table.isParentOf(this))
     }
 
     getRelatedTables(): Table[] {
