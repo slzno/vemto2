@@ -20,14 +20,32 @@ class CalculateCommonRelationshipsData extends CalculateRelationshipService {
     }
 
     process(createInverse: boolean = false): void {
+        if(createInverse) this.createInverseRelationshipForHasSomething()
+
         this.addForeign()
 
-        if(this.relationship.type === 'BelongsTo' && createInverse) {
-            this.createInverseRelationship()
-        }
+        if(createInverse) this.createInverseRelationshipForBelongsTo()
 
         this.calculateKeys()
         this.calculateName()
+    }
+
+    /*
+    * This method is used to generate the inverse relationship for Has Many and Has One relationships
+    */
+    createInverseRelationshipForHasSomething() {
+        if(this.relationship.type === 'BelongsTo') return
+
+        this.createInverseRelationship()
+    }
+
+    /*
+    * This method is used to generate the inverse relationship for Belongs To relationships
+    */
+    createInverseRelationshipForBelongsTo() {
+        if(this.relationship.type !== 'BelongsTo') return
+
+        this.createInverseRelationship()
     }
 
     saveAndFinish() {
