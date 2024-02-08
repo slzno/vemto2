@@ -121,13 +121,13 @@
                     </div>
                     {{ table.name }}
                 </div>
-                <div class="text-sm font-normal text-slate-500" v-if="table.isNew()">
+                <div class="text-sm font-normal text-slate-400 dark:text-slate-500" v-if="table.isNew()">
                     (Draft)
                 </div>
-                <div title="The table will be removed after saving the migration" class="text-sm font-normal text-slate-500" v-if="table.isRemoved()">
+                <div title="The table will be removed after saving the migration" class="text-sm font-normal text-slate-400 dark:text-slate-500" v-if="table.isRemoved()">
                     (Removed)
                 </div>
-                <div class="text-sm font-normal text-slate-500" v-if="table.isDirty() && !table.isNew()">
+                <div class="text-sm font-normal text-slate-400 dark:text-slate-500" v-if="table.isDirty() && !table.isNew()">
                     (Changed)
                 </div>
             </span>
