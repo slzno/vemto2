@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref } from "vue";
+    import { ref, nextTick } from "vue";
     import { capitalCase } from "change-case";
     import UiText from "@Renderer/components/ui/UiText.vue";
     import Route, { RouteType } from "@Common/models/Route";
@@ -11,7 +11,13 @@
     const projectStore = useProjectStore(),
         activeRoute = ref<Route|null>(null),
         selectedRoutable = ref(null),
-        showingCreateNavigationModal = ref<boolean>(false)
+        showingCreateRouteModal = ref<boolean>(false)
+
+    const routableData = ref(null),
+        routeMethod = ref<string | null>("get"),
+        routeName = ref<string | null>(null),
+        routePath = ref<string | null>(null),
+        routeTag = ref<string | null>(null)
 
     const onRouteClick = (route: Route) => {
         if(activeRoute.value?.id == route.id) return
@@ -54,6 +60,10 @@
         return projectStore.project.getApplications()
     }
 
+    const getProjectAppsExceptFilament = () => {
+        return projectStore.project.getApplications().filter(app => app.getAppSubType() != "FILAMENT")
+    }
+
     const cancel = () => {
         activeRoute.value = null
         selectedRoutable.value = null
@@ -67,37 +77,97 @@
         route.delete()
         cancel()
     }
+
+    const close = (clearData: boolean = false) => {
+        showingCreateRouteModal.value = false
+
+        if(clearData) {
+            routeName.value = null
+            routePath.value = null
+            routeMethod.value = 'get'
+            routableData.value = null
+            routeTag.value = null
+        }
+    }
+
+    const onApplicationChanged = () => {
+        if(!routableData.value) return
+
+        const app = projectStore.project.getApplicationById(routableData.value.id)
+
+        if(!app) return
+
+        routePath.value = app.getBaseRoutePath()
+        routeName.value = `${app.getBaseRouteName()}.`
+
+        nextTick(() => {
+            document.querySelector("#create-route-name-input")?.focus()
+        })
+    }
+
+    const createRoute = () => {
+        if(!routeName.value || !routePath.value || !routeMethod.value || !routableData.value || !routeTag.value) return
+
+        const app = projectStore.project.getApplicationById(routableData.value.id)
+
+        if(!app) return
+
+        const route = new Route({
+            name: routeName.value,
+            tag: routeTag.value,
+            method: routeMethod.value,
+            type: RouteType.ROUTE,
+            path: routePath.value,
+            routableId: app.id,
+            routableType: routableData.value.type,
+            projectId: projectStore.project.id,
+        })
+
+        route.save()
+
+        close(true)
+    }
 </script>
 
 <template>
     <div class="mb-3">
-        <UiButton>Add Route</UiButton>
+        <UiButton @click="showingCreateRouteModal = true">Add Route</UiButton>
     </div>
 
     <UiModal
         title="Add Menu Item"
-        :show="showingCreateNavigationModal"
+        :show="showingCreateRouteModal"
         @close="close()"
         width="25%"
     >
         <div class="m-2">
             <div class="m-1 flex flex-col gap-2">
-                <UiText id="navigation-name" v-model="name" label="Name" />
-
-                <UiSelect v-model="navigableType" label="Navigable Type">
-                    <option :value="null" disabled>Select a Navigable Type</option>
-                    <option value="Crud">Crud</option>
-                    <option value="Page">Page</option>
+                <UiSelect v-model="routableData" label="Application" @change="onApplicationChanged">
+                    <option
+                        v-for="app in getProjectAppsExceptFilament()"
+                        :key="app.id"
+                        :value="{ id: app.id, type: app.constructor.identifier() }"
+                    >{{ app.getAppSubType() }}: {{ app.name }}</option>
                 </UiSelect>
+                
+                <UiText id="create-route-name-input" v-model="routeName" label="Name" />
 
-                <UiSelect v-model="navigableId" label="Crud">
-                    <option :value="null" disabled>Select a Crud</option>
-                    <option v-for="crud in projectStore.project.cruds" :value="crud.id" :key="crud.id">{{ crud.name }}</option>
+                <UiText v-model="routePath" label="Path" />
+
+                <UiText v-model="routeTag" label="Tag" />
+
+                <UiSelect v-model="routeMethod" label="Route Method">
+                    <option :value="null" disabled>Select a Route Method</option>
+                    <option value="get">GET</option>
+                    <option value="post">POST</option>
+                    <option value="put">PUT</option>
+                    <option value="patch">PATCH</option>
+                    <option value="delete">DELETE</option>
                 </UiSelect>
             </div>
 
             <div class="m-1 mt-2 flex justify-end">
-                <UiButton @click="createNavigation()">Create</UiButton>
+                <UiButton @click="createRoute()">Create</UiButton>
             </div>
         </div>
     </UiModal>
@@ -161,7 +231,7 @@
                             v-for="app in getProjectApps()"
                             :key="app.id"
                             :value="{ id: app.id, type: app.constructor.identifier() }"
-                        >{{ app.constructor.identifier() }}: {{ app.name }}</option>
+                        >{{ app.getAppSubType() }}: {{ app.name }}</option>
                     </UiSelect>
                 </div>
 

@@ -61,11 +61,10 @@ export default class Page extends RelaDB.Model {
     }
 
     addRoute(defaultRoutePath: string) {
-        const path =
-            defaultRoutePath || Page.calculateDefaultRoutePath(this.name)
+        const path = defaultRoutePath || Page.calculateDefaultRoutePath(this.name)
 
         Route.create({
-            name: `${paramCase(this.name)}.index`,
+            name: `${this.getBaseRouteName()}.index`,
             tag: "index",
             method: "get",
             type: RouteType.ROUTE,
@@ -74,6 +73,14 @@ export default class Page extends RelaDB.Model {
             routableType: "Page",
             projectId: this.projectId,
         })
+    }
+
+    getBaseRoutePath() {
+        return Page.calculateDefaultRoutePath(this.name)
+    }
+
+    getBaseRouteName() {
+        return paramCase(this.name)
     }
 
     static calculateDefaultRoutePath(name: string): string {

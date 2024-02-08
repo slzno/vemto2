@@ -456,35 +456,43 @@ export default class Crud extends RelaDB.Model {
         })
     }
 
+    getBaseRoutePath() {
+        return `/${paramCase(this.settings.collectionName)}`
+    }
+
+    getBaseRouteName() {
+        return paramCase(this.settings.collectionName)
+    }
+
     addRoutes() {
         Route.create({
-            name: `${paramCase(this.settings.collectionName)}.index`,
+            name: `${this.getBaseRouteName()}.index`,
             tag: "index",
             method: "get",
             type: RouteType.ROUTE,
-            path: `/${paramCase(this.settings.collectionName)}`,
+            path: `${this.getBaseRoutePath()}`,
             routableId: this.id,
             routableType: "Crud",
             projectId: this.projectId,
         })
 
         Route.create({
-            name: `${paramCase(this.settings.collectionName)}.create`,
+            name: `${this.getBaseRouteName()}.create`,
             tag: "create",
             method: "get",
             type: RouteType.ROUTE,
-            path: `/${paramCase(this.settings.collectionName)}/create`,
+            path: `${this.getBaseRoutePath()}/create`,
             routableId: this.id,
             routableType: "Crud",
             projectId: this.projectId,
         })
 
         Route.create({
-            name: `${paramCase(this.settings.collectionName)}.edit`,
+            name: `${this.getBaseRouteName()}.edit`,
             tag: "edit",
             method: "get",
             type: RouteType.ROUTE,
-            path: `/${paramCase(this.settings.collectionName)}/{${camelCase(this.name)}}`,
+            path: `${this.getBaseRoutePath()}/{${camelCase(this.name)}}`,
             routableId: this.id,
             routableType: "Crud",
             projectId: this.projectId,
