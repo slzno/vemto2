@@ -435,7 +435,7 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
             firstKeyName: this.firstKeyName,
             secondKeyName: this.secondKeyName,
             withPivotColumns: this.withPivotColumns,
-            includedPivotColumns: this.includedPivotColumns
+            includedPivotColumns: DataComparator.cloneArray(this.includedPivotColumns),
         }
     }
 

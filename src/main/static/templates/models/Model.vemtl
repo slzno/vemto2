@@ -106,7 +106,7 @@ implements
     ];
     <% } %>
 
-    <% if(this.model.appendsColumns.length) { %>
+    <% if(this.model.appends.length) { %>
         <###>
         <% if(this.model.attributesComments) { %>
         /**
@@ -116,8 +116,8 @@ implements
         */
         <% } %>
     protected $appends = [
-        <% for(let column of this.model.appendsColumns) { %>
-        '<$ column.name $>',
+        <% for(let column of this.model.appends) { %>
+        '<$ column $>',
         <% } %>
     ];
     <% } %>

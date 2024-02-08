@@ -189,6 +189,18 @@ class FileSystem {
         return this.walkSync(folderPath, [], removeFromPathString)
     }
 
+    readFolderIncludingEmptyIfExists(folderPath: string, removeBasePath: boolean): Array<string> {
+        if(!this.folderExists(folderPath)) return []
+
+        return this.readFolderIncludingEmpty(folderPath, removeBasePath)
+    }
+
+    readFolderIncludingEmpty(folderPath: string, removeBasePath: boolean): Array<string> {
+        const removeFromPathString = removeBasePath ? folderPath : ''
+
+        return this.walkSyncIncludingEmptyFolders(folderPath, [], removeFromPathString)
+    }
+
     clearFolder(folderPath: string, removeOwnFolder: boolean = false): FileSystem {
         if(this.folderDoesNotExist(folderPath)) return this
 
@@ -230,6 +242,34 @@ class FileSystem {
             }
         })
 
+        return fileList
+    }
+
+    walkSyncIncludingEmptyFolders(
+        dir: string, 
+        fileList: Array<string> = [], 
+        removeFromPathString: string = ''
+    ): Array<string> {
+        let files = fs.readdirSync(dir)
+    
+        // Check if the directory is empty and if so, add it to the fileList
+        if (files.length === 0) {
+            let dirPath = dir.replace(removeFromPathString, '').replace(/\\/g, '/')
+            fileList.push(dirPath)
+        }
+    
+        files.forEach((file) => {
+            const fullPath = path.join(dir, file)
+            if (fs.statSync(fullPath).isDirectory()) {
+                // Recursively call walkSync for directories
+                fileList = this.walkSyncIncludingEmptyFolders(fullPath + '/', fileList, removeFromPathString)
+            } else {
+                // Process file path and add to fileList for files
+                let filePath = fullPath.replace(removeFromPathString, '').replace(/\\/g, '/')
+                fileList.push(filePath)
+            }
+        })
+    
         return fileList
     }
 

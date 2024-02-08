@@ -1,4 +1,5 @@
 import { isEqual } from 'lodash'
+import DataHelper from './DataHelper'
 
 export default class DataComparator {
 
@@ -32,6 +33,14 @@ export default class DataComparator {
 
     static coalesceBoolean(value: boolean): boolean {
         return value || false
+    }
+
+    static cloneArray(arr: any[]): any[] {
+        return DataHelper.cloneArray(arr)
+    }
+
+    static cloneObject(obj: any): any {
+        return DataHelper.cloneObject(obj)
     }
 
 }

@@ -15,8 +15,6 @@ import HiddenModelColumn from "./HiddenModelColumn"
 import FillHiddenColumns from "./services/models/Fillers/FillHiddenColumns"
 import DatesModelColumn from "./DatesModelColumn"
 import FillDatesColumns from "./services/models/Fillers/FillDatesColumns"
-import AppendsModelColumn from "./AppendsModelColumn"
-import FillAppendsColumns from "./services/models/Fillers/FillAppendsColumns"
 import CastsModelColumn from "./CastsModelColumn"
 import FillCastsColumns from "./services/models/Fillers/FillCastsColumns"
 
@@ -43,6 +41,7 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     ownRelationships: Relationship[]
     relatedRelationships: Relationship[]
     hooks: any
+    hooksWhenSchemaWasRead: any
     pluralAndSingularAreSame: boolean
     cruds: Crud[]
 
@@ -81,7 +80,6 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     datesColumns: Column[]
 
     appends: string[]
-    appendsColumns: Column[]
 
     casts: any
     castsColumns: Column[]
@@ -103,9 +101,26 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
             guardedColumns: () => this.belongsToMany(Column, GuardedModelColumn).cascadeDetach(),
             hiddenColumns: () => this.belongsToMany(Column, HiddenModelColumn).cascadeDetach(),
             datesColumns: () => this.belongsToMany(Column, DatesModelColumn).cascadeDetach(),
-            appendsColumns: () => this.belongsToMany(Column, AppendsModelColumn).cascadeDetach(),
             castsColumns: () => this.belongsToMany(Column, CastsModelColumn).cascadeDetach(),
         }
+    }
+
+    static creating(modelData: any): any {
+        if(!modelData.methods) modelData.methods = []
+
+        if(!modelData.traits) modelData.traits = []
+        if(!modelData.interfaces) modelData.interfaces = []
+
+        if(!modelData.guarded) modelData.guarded = []
+        if(!modelData.fillable) modelData.fillable = []
+        if(!modelData.hidden) modelData.hidden = []
+        if(!modelData.dates) modelData.dates = []
+        if(!modelData.casts) modelData.casts = {}
+
+        // TODO: cxheck if this is necessary
+        // if(!modelData.appends) modelData.appends = []
+
+        return modelData
     }
 
     saveFromInterface() {
@@ -162,9 +177,35 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     }
 
     isDirty(): boolean {
+        if(this.hasHooksChanges()) return true
+
         const hasDirtyRelationships = this.ownRelationships.some((relationship) => relationship.isDirty())
 
         return !this.isRemoved() && (this.hasLocalChanges() || hasDirtyRelationships)
+    }
+
+    hasHooksChanges(): boolean {
+        const hooks = this.getHooks('model'),
+            hooksWhenSchemaWasRead = this.getHooksWhenSchemaWasRead('model')
+
+        const allKeys = new Set([...Object.keys(hooks), ...Object.keys(hooksWhenSchemaWasRead)])
+
+        for (let key of allKeys) {
+            const hookValue = hooks[key]
+            const prevHookValue = hooksWhenSchemaWasRead[key]
+
+            // Rule 1: Check if both values are considered "empty" and skip to the next key if so
+            const bothEmpty = [hookValue, prevHookValue].every(value => value === undefined || value === null || value.trim() === '')
+            if (bothEmpty) continue
+
+            // Rule 2: If one of the values is empty and the other is not, or if they are different, return true
+            if ((hookValue === undefined || hookValue === null || hookValue.trim() === '') !== (prevHookValue === undefined || prevHookValue === null || prevHookValue.trim() === '') || hookValue !== prevHookValue) {
+                return true // Found a difference
+            }
+        }
+
+        // If no differences are found, consider the objects equal
+        return false
     }
 
     hasSchemaChanges(comparisonData: any): boolean {
@@ -228,6 +269,12 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         return true
     }
 
+    fillHooksForFutureComparison() {
+        this.hooksWhenSchemaWasRead = DataComparator.cloneObject(this.hooks)
+
+        this.save()
+    }
+
     calculateInternalData() {
         if (!this.plural) this.calculateDataByName(false)
 
@@ -245,7 +292,6 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         FillGuardedColumns.onModel(this)
         FillHiddenColumns.onModel(this)
         FillDatesColumns.onModel(this)
-        FillAppendsColumns.onModel(this)
         FillCastsColumns.onModel(this)
 
         this.save()
@@ -283,16 +329,19 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
             class: this.class,
             namespace: this.namespace,
             path: this.path,
-            casts: this.casts,
-            fillable: this.fillable,
-            guarded: this.guarded,
-            dates: this.dates,
-            hidden: this.hidden,
+            casts: DataComparator.cloneObject(this.casts),
+            fillable: DataComparator.cloneArray(this.fillable),
+            guarded: DataComparator.cloneArray(this.guarded),
+            dates: DataComparator.cloneArray(this.dates),
+            hidden: DataComparator.cloneArray(this.hidden),
+
+            // TODO: check if it is an array or object and add cloneArray or cloneObject
             appends: this.appends,
-            methods: this.methods,
+
+            methods: DataComparator.cloneArray(this.methods),
             parentClass: this.parentClass,
-            interfaces: this.interfaces,
-            traits: this.traits,
+            interfaces: DataComparator.cloneArray(this.interfaces),
+            traits: DataComparator.cloneArray(this.traits),
             hasGuarded: this.hasGuarded,
             hasFillable: this.hasFillable,
             hasTimestamps: this.hasTimestamps,
@@ -448,6 +497,10 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     getMorphToManyRelations(): Relationship[] {
         return this.ownRelationships.filter(relationship => relationship.type === 'MorphToMany') || []
     }
+    
+    getBelongsToRelations(): Relationship[] {
+        return this.ownRelationships.filter(relationship => relationship.type === 'BelongsTo') || []
+    }
 
     getRelationshipsNames(): string[] {
         return this.ownRelationships.map((relationship) => relationship.name)
@@ -469,6 +522,42 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
 
     getRenamedRelationships(): Relationship[] {
         return this.relatedRelationships.filter((relationship) => relationship.wasRenamed())
+    }
+
+    isObligatoryParentOfAnotherEntity(model: Model): boolean {
+        let hasMany = false
+
+        model.table.columns.forEach((column: Column) => {
+            hasMany = column.referencesModel(this) && !column.nullable
+        })
+
+        model.getBelongsToRelations().forEach((relation: Relationship) => {
+            hasMany = relation.modelId == this.id && !relation.foreignKey.nullable
+        })
+
+        return hasMany
+    }
+
+    getSelfRelationshipsForeignsNames(): string[] {
+        let foreigns = this.getSelfRelationshipsForeigns().map(foreign => {
+            return foreign.name
+        })
+
+        return [...new Set(foreigns)]
+    }
+
+    getSelfRelationshipsForeigns(): Column[] {
+        const foreigns = []
+
+        this.getSelfRelationships().forEach((relationship) => {
+            foreigns.push(relationship.foreignKey)
+        })
+
+        return foreigns
+    }
+
+    getSelfRelationships(): Relationship[] {
+        return this.ownRelationships.filter((relationship) => relationship.isCommon() && relationship.modelId == this.id)
     }
 
     isAuthModel() {
@@ -589,10 +678,6 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         this.saveColumnsProperty(columnsNames, 'dates', 'datesColumns')
     }
 
-    saveAppendsColumns(columnsNames: string[]): void {
-        this.saveColumnsProperty(columnsNames, 'appends', 'appendsColumns')
-    }
-
     saveColumnsProperty(
         columnsNames: string[], 
         type: string, 
@@ -632,8 +717,16 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         return this.hooks ? this.hooks[type] || {} : {}
     }
 
+    getHooksWhenSchemaWasRead(type: string): any {
+        return this.hooksWhenSchemaWasRead ? this.hooksWhenSchemaWasRead[type] || {} : {}
+    }
+
     getHookByName(type: string, name: string): any {
         return this.getHooks(type)[name] || {}
+    }
+
+    getHookWhenSchemaWasReadByName(type: string, name: string): any {
+        return this.getHooksWhenSchemaWasRead(type)[name] || {}
     }
 
     saveHooks(type: string, hooks: any) {
@@ -683,6 +776,8 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
 
     columnIsHiddenForCrudCreation(column: Column): boolean {
         if(column.isHiddenForCrudCreation()) return true
+
+        if(column.name == 'password') return false
 
         if(!this.hidden) return false
 
