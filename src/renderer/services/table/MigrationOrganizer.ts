@@ -8,6 +8,10 @@ export default class MigrationOrganizer {
         this.project = project
     }
 
+    getTablesNames(): string[] {
+        return this.handle().map(table => table.name)
+    }
+
     handle(): Table[] {
         const tablesWithChanges = this.project.getTablesWithChanges()
         const newTables = tablesWithChanges.filter(table => table.isNew()).sort(this.compareTables)

@@ -19,6 +19,7 @@
     import ConflictsSolver from "../CodeQueue/ConflictsSolver.vue"
     import Alert from "@Renderer/components/utils/Alert"
     import InternalFiles from "@Renderer/util/InternalFiles"
+    import MigrationOrganizer from "@Renderer/services/table/MigrationOrganizer"
 
     const projectStore = useProjectStore(),
         showingModal = ref(false),
@@ -48,6 +49,11 @@
         selectedModelMode = ref("created") as Ref<"created"|"updated"|"removed">
 
     onMounted(() => {
+
+        const organizer = new MigrationOrganizer(projectStore.project)
+        
+        console.log(organizer.getTablesNames())
+
         buildSettings()
     })
 
