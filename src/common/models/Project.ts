@@ -188,6 +188,10 @@ export default class Project extends RelaDB.Model {
         return [...this.cruds, ...this.pages]
     }
 
+    getApplicationById(applicationId: string): any {
+        return this.getApplications().find((application) => application.id === applicationId)
+    }
+
     getAuthModel(): Model {
         return this.models.find((model) => model.isAuthModel())
     }
