@@ -28,7 +28,7 @@
         inlineLabel: {
             type: Boolean,
             default: false
-        }
+        },
     })
 
     const emit = defineEmits(["update:modelValue", "input", "blur", "focus"]),

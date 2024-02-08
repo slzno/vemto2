@@ -59,41 +59,27 @@
     })
 
     const loadModelCasts = () => {
-        model.value.castsColumns.forEach((column: Column) => {
-            const pivot = model.value.relation('castsColumns').getPivotItem(column)
-            modelCasts.value.push([column.id, pivot.type, column.id])
+        Object.entries(model.value.casts).forEach(([columnName, type]) => {
+            const column = model.value.table.getColumnByName(columnName)
+
+            if(!column) return
+
+            modelCasts.value.push([column.id, type, column.id])
         })
     }
 
     const addModelCast = () => {
-        modelCasts.value.push([null, null])
+        modelCasts.value.push([null, null, null])
     }
 
     const saveModelCast = (index: number) => {
-        const castData = modelCasts.value[index],
-            columnId = castData[0],
-            type = castData[1],
-            oldColumnId = castData[2]
+        const castData = modelCasts.value[index]
 
-        if(!columnId || !type) return
+        if(!castData) return
 
-        if(oldColumnId) {
-            saveExistingModelCast(columnId, type, oldColumnId)
-            return
-        }
-
-        const column = model.value.table.findColumnById(columnId)
-
-        if(!column) return
-
-        let pivot = model.value.relation('castsColumns').getPivotItem(column)
-
-        if(!pivot) {
-            pivot = model.value.relation('castsColumns').attachUnique(column)
-        }
-
-        pivot.type = type
-        pivot.save()
+        model.value.saveCastsColumns(castData)
+        
+        modelCasts.value[index][2] = castData[0]
     }
 
     const deleteModelCast = (index: number) => {
@@ -106,25 +92,19 @@
 
         if(!column) return
 
-        model.value.relation('castsColumns').detach(column)
+        model.value.relation("castsColumns").detach(column)
 
         modelCasts.value.splice(index, 1)
+        
+        delete model.value.casts[column.name]
+
+        saveModelData()
     }
 
-    const saveExistingModelCast = (columnId: string, type: string, oldColumnId: string) => {
-        const oldColumn = model.value.table.findColumnById(oldColumnId)
-
-        if(!oldColumn) return
-
-        const pivot = model.value.relation('castsColumns').getPivotItem(oldColumn)
-
-        if(!pivot) return
-
-        pivot.columnId = columnId
-        pivot.type = type
-        pivot.save()
-        
-        return
+    const getModelColumnsForCastExcept = (columnId: string) => {
+        return model.value.table.getColumns().filter(column => {
+            return !model.value.casts[column.name] || column.id == columnId
+        })
     }
 
     const saveModelData = (nameWasChanged: boolean = false) => {
@@ -359,13 +339,13 @@
                     <div class="flex gap-3" v-for="(modelCast, index) in modelCasts" :key="index">
                         <div class="w-1/2">
                             <UiSelect v-model="modelCasts[index][0]" label="Column" @change="saveModelCast(index)">
-                                <template v-for="column in model.table.getColumns()">
+                                <template v-for="column in getModelColumnsForCastExcept(modelCasts[index][0])">
                                     <option :value="column.id">{{ column.name }}</option>
                                 </template>
                             </UiSelect>
                         </div>
                         <div class="w-1/2">
-                            <UiText v-model="modelCasts[index][1]" label="Type" @input="saveModelCast(index)" />
+                            <UiText v-model="modelCasts[index][1]" label="Type" @input.debounce="saveModelCast(index)" />
                         </div>
                         <UiOptionsDropdown>
                             <UiDropdownItem @click="deleteModelCast(index)">

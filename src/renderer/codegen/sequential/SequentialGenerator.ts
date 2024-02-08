@@ -10,6 +10,7 @@ import SchemaBuilder from "@Renderer/services/schema/SchemaBuilder"
 import Main from "@Renderer/services/wrappers/Main"
 import GenerateDatabaseSeeder from "./services/database/GenerateDatabaseSeeder"
 import GenerateFilamentResources from "./services/crud/GenerateFilamentResources"
+import GenerateLivewireLayout from "./services/crud/GenerateLivewireLayout"
 
 export default class SequentialGenerator {
     static startTime: number = 0
@@ -46,6 +47,7 @@ export default class SequentialGenerator {
         await new GeneratePageFiles().start()
         
         await new GenerateDatabaseSeeder().start()
+        await new GenerateLivewireLayout().start()
 
         this.project.processRemovableFiles()
 
