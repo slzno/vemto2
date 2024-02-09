@@ -237,6 +237,12 @@ export default class Project extends RelaDB.Model {
         return this.models.find((model) => model.id == modelId)
     }
 
+    getTablesWithChangesIncludingRemoved(): Table[] {
+        return this.tables.filter((table) => {
+            return table.isDirty() || table.isRemoved()
+        })
+    }
+
     getTablesWithChanges(): Table[] {
         return this.tables.filter((table) => table.isDirty())
     }

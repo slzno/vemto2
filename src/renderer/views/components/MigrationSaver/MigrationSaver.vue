@@ -11,6 +11,7 @@
     import CalculateSchemaModelsChanges from "@Common/models/services/project/CalculateSchemaModelsChanges"
     import Table from "@Common/models/Table"
     import Model from "@Common/models/Model"
+    import MigrationOrganizer from "@Common/services/tables/MigrationOrganizer"
     import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
     import SchemaBuilder from "@Renderer/services/schema/SchemaBuilder"
     import UiLoading from "@Renderer/components/ui/UiLoading.vue"
@@ -408,7 +409,7 @@
                         </div>
                         <div @click.stop="selectTable(table, 'created')" :class="{'text-red-400 bg-slate-800': isSelectedTable(table)}" class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer flex justify-between items-center" v-for="table in createdTables" :key="table.id">
                             <div>
-                                {{ table.name }} {{ table.id }}
+                                {{ table.name }}
                             </div>
 
                             <button class="cursor-pointer disabled:cursor-not-allowed disabled:opacity-60" title="Delete table">

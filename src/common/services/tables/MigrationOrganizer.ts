@@ -25,12 +25,13 @@ export default class MigrationOrganizer {
     }
 
     handle(): Table[] {
-        const tablesWithChanges = this.project.getTablesWithChanges()
+        const tablesWithChanges = this.project.getTablesWithChangesIncludingRemoved()
         const newTables = tablesWithChanges.filter(table => table.isNew()).sort(this.compareTables)
         const updatedTables = tablesWithChanges.filter(table => table.wasUpdated()).sort(this.compareTables)
+        const removedTables = tablesWithChanges.filter(table => table.isRemoved()).sort(this.compareTables)
 
         // Concatenate new and updated tables, as new tables take precedence
-        return [...newTables, ...updatedTables]
+        return [...newTables, ...updatedTables, ...removedTables]
     }
 
     private compareTables(a: Table, b: Table): number {
