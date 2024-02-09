@@ -1,5 +1,6 @@
 import Project from "@Common/models/Project"
 import Table from "@Common/models/Table"
+import MigrationOrganizer from "@Common/services/tables/MigrationOrganizer"
 
 interface SchemaTablesChanges {
     addedTables: Table[]
@@ -87,9 +88,9 @@ export default class CalculateSchemaTablesChanges {
     }
 
     calculate(): SchemaTablesChanges {
-        const addedTables: Table[] = []
-        const changedTables: Table[] = []
-        const removedTables: Table[] = []
+        let addedTables: Table[] = []
+        let changedTables: Table[] = []
+        let removedTables: Table[] = []
 
         for (const table of this.project.tables) {
             if (table.isNew()) {
@@ -101,10 +102,23 @@ export default class CalculateSchemaTablesChanges {
             }
         }
 
+        // addedTables = this.sortTablesByMigrationOrder(addedTables)
+
         return {
             addedTables,
             changedTables,
             removedTables,
         }
+    }
+
+    sortTablesByMigrationOrder(tables: Table[]): Table[] {
+        const migrationOrganizer = new MigrationOrganizer(this.project)
+
+        return tables.sort((a, b) => {
+            const aOrder = migrationOrganizer.getOrderForTable(a)
+            const bOrder = migrationOrganizer.getOrderForTable(b)
+
+            return aOrder - bOrder
+        })
     }
 }

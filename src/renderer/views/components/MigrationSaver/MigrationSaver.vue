@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
-    import { ArrowDownOnSquareIcon, ArrowDownTrayIcon, ArrowPathIcon, ArrowRightIcon, ArrowUturnDownIcon, CircleStackIcon, CodeBracketIcon, DocumentIcon, MinusIcon, PlusIcon, TableCellsIcon, TrashIcon } from "@heroicons/vue/24/outline"
+    import { ArrowDownTrayIcon, ArrowPathIcon, ArrowRightIcon, ArrowUturnDownIcon, CircleStackIcon, CodeBracketIcon, DocumentIcon, MinusIcon, PlusIcon, TableCellsIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import UiModal from "@Renderer/components/ui/UiModal.vue"
     import { Ref, computed, onMounted, onUnmounted, reactive, ref, watch } from "vue"
@@ -221,6 +221,8 @@
 
             if (table.selectedOption === "createMigration") {
                 const migrationCreator = new GenerateNewMigration(table.instance)
+                migrationCreator.setCustomName(table.creationMigrationName)
+                
                 await migrationCreator.run()
             }
         }
@@ -572,7 +574,7 @@
         
                                 <div class="p-2 flex-grow space-y-2">
                                     <UiText v-if="selectedTableSettings.selectedOption === 'createMigration'" v-model="selectedTableSettings.creationMigrationName" />
-                                    <UiText v-if="selectedTableSettings.selectedOption === 'updateMigration'" v-model="selectedTableSettings.updateMigrationName" />
+                                    <UiText v-if="selectedTableSettings.selectedOption === 'updateMigration'" v-model="selectedTableSettings.updateMigrationName" disabled />
                                     <highlightjs class="h-full" language="php" :code="selectedTableSettings.migrationContent" />
                                 </div>
                             </div>
@@ -636,4 +638,4 @@
             </UiModal>
         </div>
     </Transition>
-</template>
+</template>@Common/services/tables/MigrationOrganizer

@@ -256,7 +256,7 @@
                     <UiDropdownSelect
                         label="Inverse Relationship"
                         v-model="relationship.inverseId"
-                        placeholder="Inverse Relationship (optional)"
+                        placeholder="Inverse Relationship (Optional, auto-generated if not set)"
                         :options="getRelatedModelRelationshipsForSelect(relationship)"
                     />
                 </template>

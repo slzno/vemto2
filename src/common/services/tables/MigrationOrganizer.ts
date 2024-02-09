@@ -13,7 +13,7 @@ export default class MigrationOrganizer {
     }
 
     getOrderForTable(table: Table): number {
-        return this.handle().findIndex(t => t.name === table.name) || 0
+        return this.handle().findIndex(t => t.name === table.name) + 1 || 1
     }
 
     handle(): Table[] {

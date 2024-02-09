@@ -4,12 +4,14 @@ import Main from "@Renderer/services/wrappers/Main"
 import Project from "../../../common/models/Project"
 import PhpFormatter from "../formatters/PhpFormatter"
 import TemplateCompiler from "../templates/base/TemplateCompiler"
-import MigrationOrganizer from "@Renderer/services/table/MigrationOrganizer"
+import MigrationOrganizer from "@Common/services/tables/MigrationOrganizer"
 
 
 export default class GenerateNewMigration {
     table: Table
     project: Project
+    customName: string
+    customContent: string
 
     constructor(table: Table) {
         this.setTable(table)
@@ -19,6 +21,18 @@ export default class GenerateNewMigration {
         this.table = table
         this.project = table.project
         
+        return this
+    }
+
+    setCustomName(name: string) {
+        this.customName = name
+
+        return this
+    }
+
+    setCustomContent(content: string) {
+        this.customContent = content
+
         return this
     }
 
@@ -58,10 +72,11 @@ export default class GenerateNewMigration {
     }
 
     async generateMigration() {
-        const fileContent = await this.getContent()
+        const fileContent = this.customContent ?? await this.getContent(),
+            filePath = this.customName ?? this.getName()
 
         await Main.API.writeProjectFile(
-            this.getName(),
+            filePath,
             fileContent
         )
 

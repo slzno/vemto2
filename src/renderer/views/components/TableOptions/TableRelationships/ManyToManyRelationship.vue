@@ -22,7 +22,7 @@
                     label="Pivot Table"
                     v-model="relationship.pivotId"
                     :options="getForSelect(projectStore.project.tables)"
-                    placeholder="Pivot Table (Optional)"
+                    placeholder="Pivot Table (Optional, auto-generated if not set)"
                     @input="$emit('save')"
                 />
             </div>
