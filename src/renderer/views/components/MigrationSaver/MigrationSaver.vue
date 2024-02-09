@@ -101,7 +101,8 @@
                 latestMigration: table.getLatestMigration(),
                 canUpdateLatestMigration: table.canUpdateLatestMigration(),
                 canCreateNewMigration: table.canCreateNewMigration(),
-                migrationName: "",
+                creationMigrationName: "",
+                updateMigrationName: "",
                 migrationContent: "",
                 selectedOption: "createMigration",
             }
@@ -272,7 +273,7 @@
             const migrationUpdater = new UpdateExistingMigration(table.instance),
                 migrationData = await migrationUpdater.getData()
 
-            table.migrationName = migrationData.name
+            table.updateMigrationName = !table.updateMigrationName ? migrationData.name : table.updateMigrationName
             table.migrationContent = migrationData.content
         }
 
@@ -280,7 +281,7 @@
             const migrationCreator = new GenerateNewMigration(table.instance),
                 migrationData = await migrationCreator.getData()
             
-            table.migrationName = !table.migrationName ? migrationData.name : table.migrationName
+            table.creationMigrationName = !table.creationMigrationName ? migrationData.name : table.creationMigrationName
             table.migrationContent = migrationData.content
         }
     }
@@ -570,7 +571,8 @@
                                 </div>
         
                                 <div class="p-2 flex-grow space-y-2">
-                                    <UiText v-model="selectedTableSettings.migrationName" :disabled="selectedTableSettings.selectedOption === 'updateMigration'" />
+                                    <UiText v-if="selectedTableSettings.selectedOption === 'createMigration'" v-model="selectedTableSettings.creationMigrationName" />
+                                    <UiText v-if="selectedTableSettings.selectedOption === 'updateMigration'" v-model="selectedTableSettings.updateMigrationName" />
                                     <highlightjs class="h-full" language="php" :code="selectedTableSettings.migrationContent" />
                                 </div>
                             </div>
