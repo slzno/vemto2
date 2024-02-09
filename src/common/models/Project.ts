@@ -744,6 +744,12 @@ export default class Project extends RelaDB.Model {
         })
     }
 
+    static defaultSchemaSection(): SchemaSection {
+        const project = Project.find(1)
+
+        return project.getDefaultSchemaSection()
+    }
+    
     getDefaultSchemaSection(): SchemaSection {
         const defaultSchemaSection = this.schemaSections.find(section => section.isDefault())
 

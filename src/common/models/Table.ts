@@ -42,10 +42,22 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         }
     }
 
-    static updating(data: any): any {
-        const defaultSchemaSection = data.project.getDefaultSchemaSection()
+    static creating(data: any): any {
+        data = Table.addSectionToTableDataIfNecessary(data)
 
-        if(!data.sectionId) {
+        return data
+    }
+
+    static updating(data: any): any {
+        data = Table.addSectionToTableDataIfNecessary(data)
+
+        return data
+    }
+
+    static addSectionToTableDataIfNecessary(data: any): any {
+        const defaultSchemaSection = Project.defaultSchemaSection()
+
+        if(!data.sectionId && defaultSchemaSection) {
             data.sectionId = defaultSchemaSection ? defaultSchemaSection.id : null
         }
 
