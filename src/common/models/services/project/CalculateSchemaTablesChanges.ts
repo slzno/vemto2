@@ -1,6 +1,6 @@
 import Project from "@Common/models/Project"
 import Table from "@Common/models/Table"
-import MigrationOrganizer from "@Common/services/tables/MigrationOrganizer"
+import MigrationOrganizer, { TablesOrders } from "@Common/services/tables/MigrationOrganizer"
 
 interface SchemaTablesChanges {
     addedTables: Table[]
@@ -15,110 +15,161 @@ export enum SchemaTableChangeType {
 }
 
 export default class CalculateSchemaTablesChanges {
+    
     protected project: Project
+    protected addedTables: Table[] = []
+    protected changedTables: Table[] = []
+    protected removedTables: Table[] = []
+    private changesCalculated: boolean = false
 
     constructor(project: Project) {
         this.project = project
     }
 
     getAddedTables(): Table[] {
-        const { addedTables } = this.calculate()
+        if (!this.changesCalculated) {
+            this.calculate()
+        }
 
-        return addedTables
+        return this.addedTables
     }
 
     getChangedTables(): Table[] {
-        const { changedTables } = this.calculate()
+        if (!this.changesCalculated) {
+            this.calculate()
+        }
 
-        return changedTables
+        return this.changedTables
     }
 
     getRemovedTables(): Table[] {
-        const { removedTables } = this.calculate()
+        if (!this.changesCalculated) {
+            this.calculate()
+        }
 
-        return removedTables
+        return this.removedTables
     }
 
     hasChanges(): boolean {
-        const { addedTables, changedTables, removedTables } = this.calculate()
+        if (!this.changesCalculated) {
+            this.calculate()
+        }
 
-        return addedTables.length > 0 || changedTables.length > 0 || removedTables.length > 0
+        return this.addedTables.length > 0 
+            || this.changedTables.length > 0 
+            || this.removedTables.length > 0
     }
 
     hasAddedTables(): boolean {
-        const { addedTables } = this.calculate()
+        if (!this.changesCalculated) {
+            this.calculate()
+        }
 
-        return addedTables.length > 0
+        return this.addedTables.length > 0
     }
 
     hasChangedTables(): boolean {
-        const { changedTables } = this.calculate()
+        if (!this.changesCalculated) {
+            this.calculate()
+        }
 
-        return changedTables.length > 0
+        return this.changedTables.length > 0
     }
 
     hasRemovedTables(): boolean {
-        const { removedTables } = this.calculate()
+        if (!this.changesCalculated) {
+            this.calculate()
+        }
 
-        return removedTables.length > 0
+        return this.removedTables.length > 0
     }
 
     getAllTables(): Table[] {
-        const { addedTables, changedTables, removedTables } = this.calculate()
+        if (!this.changesCalculated) {
+            this.calculate()
+        }
 
-        const allTables = [...addedTables, ...changedTables, ...removedTables]
-
+        const allTables = [...this.addedTables, ...this.changedTables, ...this.removedTables]
+        
         return allTables.filter((table, index, self) => {
             return self.findIndex(t => t.id === table.id) === index
         })
     }
-
-    getAllChangesWithTable(): { table: Table, type: SchemaTableChangeType }[] {
-        const { addedTables, changedTables, removedTables } = this.calculate()
+    
+    getAllChangesWithTable(ordered: boolean = false): { table: Table, type: SchemaTableChangeType }[] {
+        if (!this.changesCalculated) {
+            ordered ? this.calculateOrdered() : this.calculate()
+        }
 
         const allChanges = [
-            ...addedTables.map(table => ({ table, type: SchemaTableChangeType.Added })),
-            ...changedTables.map(table => ({ table, type: SchemaTableChangeType.Changed })),
-            ...removedTables.map(table => ({ table, type: SchemaTableChangeType.Removed })),
+            ...this.addedTables.map(table => ({ table, type: SchemaTableChangeType.Added })),
+            ...this.changedTables.map(table => ({ table, type: SchemaTableChangeType.Changed })),
+            ...this.removedTables.map(table => ({ table, type: SchemaTableChangeType.Removed })),
         ]
 
-        return allChanges.filter((change, index, self) => {
+        return allChanges.filter((change, index, self) => { 
             return self.findIndex(c => c.table.id === change.table.id) === index
         })
     }
 
-    calculate(): SchemaTablesChanges {
-        let addedTables: Table[] = []
-        let changedTables: Table[] = []
-        let removedTables: Table[] = []
-
-        for (const table of this.project.tables) {
-            if (table.isNew()) {
-                addedTables.push(table)
-            } else if (table.isDirty()) {
-                changedTables.push(table)
-            } else if (table.isRemoved()) {
-                removedTables.push(table)
-            }
+    calculateOrdered(): SchemaTablesChanges {
+        if (!this.changesCalculated) {
+            this.calculate()
         }
 
-        // addedTables = this.sortTablesByMigrationOrder(addedTables)
+        const tablesOrders = new MigrationOrganizer(this.project).getTablesOrders()
 
         return {
-            addedTables,
-            changedTables,
-            removedTables,
+            addedTables: this.sortTablesByMigrationOrder(tablesOrders, this.addedTables),
+            changedTables: this.sortTablesByMigrationOrder(tablesOrders, this.changedTables),
+            removedTables: this.sortTablesByMigrationOrder(tablesOrders, this.removedTables),
         }
     }
 
-    sortTablesByMigrationOrder(tables: Table[]): Table[] {
-        const migrationOrganizer = new MigrationOrganizer(this.project)
+    calculate(): SchemaTablesChanges {
+        if (this.changesCalculated) return {
+            addedTables: this.addedTables,
+            changedTables: this.changedTables,
+            removedTables: this.removedTables,
+        }
 
+        this.addedTables = []
+        this.changedTables = []
+        this.removedTables = []
+
+        for (const table of this.project.tables) {
+            if (table.isNew()) {
+                this.addedTables.push(table)
+            } else if (table.isDirty()) {
+                this.changedTables.push(table)
+            } else if (table.isRemoved()) {
+                this.removedTables.push(table)
+            }
+        }
+
+        this.changesCalculated = true
+
+        return {
+            addedTables: this.addedTables,
+            changedTables: this.changedTables,
+            removedTables: this.removedTables,
+        }
+    }
+
+    reset(): CalculateSchemaTablesChanges {
+        this.addedTables = []
+        this.changedTables = []
+        this.removedTables = []
+        this.changesCalculated = false
+
+        return this
+    }
+
+    sortTablesByMigrationOrder(orders: TablesOrders, tables: Table[]): Table[] {
         return tables.sort((a, b) => {
-            const aOrder = migrationOrganizer.getOrderForTable(a)
-            const bOrder = migrationOrganizer.getOrderForTable(b)
-
-            return aOrder - bOrder
+            if (orders[a.id] < orders[b.id]) return -1
+            if (orders[a.id] > orders[b.id]) return 1
+            return 0
         })
     }
 }

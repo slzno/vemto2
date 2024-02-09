@@ -1,6 +1,7 @@
 import Table from "@Common/models/Table"
 import Project from "@Common/models/Project"
 
+export type TablesOrders = { [tableId: string]: number }
 export default class MigrationOrganizer {
     private project: Project
 
@@ -14,6 +15,13 @@ export default class MigrationOrganizer {
 
     getOrderForTable(table: Table): number {
         return this.handle().findIndex(t => t.name === table.name) + 1 || 1
+    }
+
+    getTablesOrders(): TablesOrders {
+        return this.handle().reduce((acc, table, index) => {
+            acc[table.id] = index + 1
+            return acc
+        }, {})
     }
 
     handle(): Table[] {

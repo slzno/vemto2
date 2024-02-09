@@ -19,7 +19,6 @@
     import ConflictsSolver from "../CodeQueue/ConflictsSolver.vue"
     import Alert from "@Renderer/components/utils/Alert"
     import InternalFiles from "@Renderer/util/InternalFiles"
-    import MigrationOrganizer from "@Renderer/services/table/MigrationOrganizer"
 
     const projectStore = useProjectStore(),
         showingModal = ref(false),
@@ -87,7 +86,11 @@
     const buildTablesSettings = async () => {
         await resetTablesSettings()
 
-        let allChanges = tablesChangesCalculator.getAllChangesWithTable()
+        const changesOrderedByMigration = true
+        
+        const allChanges = tablesChangesCalculator.reset().getAllChangesWithTable(
+            changesOrderedByMigration
+        )
 
         createdTables.value = tablesChangesCalculator.getAddedTables()
         changedTables.value = tablesChangesCalculator.getChangedTables()
@@ -120,7 +123,7 @@
     const buildModelsSettings = async () => {
         await resetModelsSettings()
 
-        let allChanges = modelsChangesCalculator.getAllChangesWithModel()
+        let allChanges = modelsChangesCalculator.reset().getAllChangesWithModel()
 
         createdModels.value = modelsChangesCalculator.getAddedModels()
         changedModels.value = modelsChangesCalculator.getChangedModels()
@@ -405,7 +408,7 @@
                         </div>
                         <div @click.stop="selectTable(table, 'created')" :class="{'text-red-400 bg-slate-800': isSelectedTable(table)}" class="px-5 py-1 hover:text-red-400 hover:bg-slate-800 hover:cursor-pointer flex justify-between items-center" v-for="table in createdTables" :key="table.id">
                             <div>
-                                {{ table.name }}
+                                {{ table.name }} {{ table.id }}
                             </div>
 
                             <button class="cursor-pointer disabled:cursor-not-allowed disabled:opacity-60" title="Delete table">
