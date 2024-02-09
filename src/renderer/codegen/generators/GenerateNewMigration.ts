@@ -1,8 +1,11 @@
+import { padStart } from "lodash"
 import Table from "../../../common/models/Table"
 import Main from "@Renderer/services/wrappers/Main"
 import Project from "../../../common/models/Project"
 import PhpFormatter from "../formatters/PhpFormatter"
 import TemplateCompiler from "../templates/base/TemplateCompiler"
+import MigrationOrganizer from "@Renderer/services/table/MigrationOrganizer"
+
 
 export default class GenerateNewMigration {
     table: Table
@@ -34,19 +37,24 @@ export default class GenerateNewMigration {
         const datePrefix = new Date().toISOString().split('T')[0].replace(/-/g, '_'),
             timePrefix = new Date().toISOString().split('T')[1].split('.')[0].replace(/:/g, '')
 
+        const migrationOrganizer = new MigrationOrganizer(this.project)
+        
+        let migrationOrder = migrationOrganizer.getOrderForTable(this.table)
+        migrationOrder = padStart(migrationOrder, 3, '0')
+
         if(this.table.needsCreationMigration()) {
-            return `/database/migrations/${datePrefix}_${timePrefix}_create_${this.table.name}_table.php`
+            return `/database/migrations/${datePrefix}_${timePrefix}_${migrationOrder}_create_${this.table.name}_table.php`
         } 
 
         if(this.table.wasRenamed()) {
-            return `/database/migrations/${datePrefix}_${timePrefix}_rename_${this.table.schemaState.name}_table_to_${this.table.name}.php`
+            return `/database/migrations/${datePrefix}_${timePrefix}_${migrationOrder}_rename_${this.table.schemaState.name}_table_to_${this.table.name}.php`
         }
 
         if(this.table.isRemoved()) {
-            return `/database/migrations/${datePrefix}_${timePrefix}_drop_${this.table.schemaState.name}_table.php`
+            return `/database/migrations/${datePrefix}_${timePrefix}_${migrationOrder}_drop_${this.table.schemaState.name}_table.php`
         }
 
-        return `/database/migrations/${datePrefix}_${timePrefix}_update_${this.table.name}_table.php`
+        return `/database/migrations/${datePrefix}_${timePrefix}_${migrationOrder}_update_${this.table.name}_table.php`
     }
 
     async generateMigration() {

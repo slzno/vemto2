@@ -12,6 +12,10 @@ export default class MigrationOrganizer {
         return this.handle().map(table => table.name)
     }
 
+    getOrderForTable(table: Table): number {
+        return this.handle().findIndex(t => t.name === table.name) || 0
+    }
+
     handle(): Table[] {
         const tablesWithChanges = this.project.getTablesWithChanges()
         const newTables = tablesWithChanges.filter(table => table.isNew()).sort(this.compareTables)

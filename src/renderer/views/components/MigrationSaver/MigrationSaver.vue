@@ -49,11 +49,6 @@
         selectedModelMode = ref("created") as Ref<"created"|"updated"|"removed">
 
     onMounted(() => {
-
-        const organizer = new MigrationOrganizer(projectStore.project)
-        
-        console.log(organizer.getTablesNames())
-
         buildSettings()
     })
 
@@ -285,7 +280,7 @@
             const migrationCreator = new GenerateNewMigration(table.instance),
                 migrationData = await migrationCreator.getData()
             
-            table.migrationName = migrationData.name
+            table.migrationName = !table.migrationName ? migrationData.name : table.migrationName
             table.migrationContent = migrationData.content
         }
     }
