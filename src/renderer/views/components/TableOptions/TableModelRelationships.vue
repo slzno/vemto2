@@ -16,12 +16,15 @@
     import UiCheckbox from '@Renderer/components/ui/UiCheckbox.vue'
     import UiMultiSelect from '@Renderer/components/ui/UiMultiSelect.vue'
     import Column from '@Common/models/Column'
+    import UiMessage from '@Renderer/components/ui/UiMessage.vue'
+    import UiInfo from '@Renderer/components/ui/UiInfo.vue'
 
     const props = defineProps(['model', 'models']),
         models = toRef(props, 'models'),
         model = toRef(props, 'model'),
         relationships = ref([]),
-        confirmDeleteDialog = ref(null)
+        confirmDeleteDialog = ref(null),
+        circularErrorMessage = ref(null)
 
     onMounted(() => {
         loadRelationships()
@@ -79,14 +82,18 @@
     }
 
     const saveRelationship = (relationship: Relationship) => {
-        if(relationship.id) {
-            relationship.saveFromInterface()
+        try {
+            if(relationship.id) {
+                relationship.saveFromInterface()
+                loadRelationships()
+                return
+            }
+    
+            relationship.processAndSave(true)
             loadRelationships()
-            return
+        } catch (error: any) {
+            circularErrorMessage.value.show()
         }
-
-        relationship.processAndSave(true)
-        loadRelationships()
     }
 
     const onRelationshipRemoving = async (relationship: Relationship, force: boolean = false) => {
@@ -161,6 +168,20 @@
         }">
             Are you sure you want to delete this relationship?
         </UiConfirm>
+
+        <UiMessage ref="circularErrorMessage">
+            <div class="p-4 flex flex-col space-y-4">
+                <UiInfo>
+                    <p>
+                        You are trying to create a Circular Relationship (by creating a Foreign Key) with a table that was not saved yet. Please save the table first.
+                    </p>
+                </UiInfo>
+
+                <small class="text-slate-500 dark:text-slate-400">
+                    <span class="text-xl">*</span> A Circular Relationship happens when both tables depend on each other. It is not allowed to do it before saving the table because it may throw SQL errors when migrating the database.
+                </small>
+            </div>
+        </UiMessage>
 
         <div>
             <div

@@ -349,6 +349,20 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         return !! this.getRelatedTables().length
     }
 
+    cannotBeChildrenOf(table: Table): boolean {
+        return ! this.canBeChildrenOf(table)
+    }
+
+    canBeChildrenOf(table: Table): boolean {
+        if(!table) return false
+
+        if(!table.isNew()) return true
+
+        if(this.isParentOf(table)) return false
+
+        return true
+    }
+
     isParentOf(table: Table): boolean {
         return table.isChildrenOf(this)
     }

@@ -8,6 +8,7 @@ import WordManipulator from "@Common/util/WordManipulator"
 import AbstractSchemaModel from "./composition/AbstractSchemaModel"
 
 import { uniq } from 'lodash'
+import CircularRelationError from "./errors/CircularRelationError"
 
 export default class Index extends AbstractSchemaModel implements SchemaModel {
     id: string
@@ -41,6 +42,15 @@ export default class Index extends AbstractSchemaModel implements SchemaModel {
             onTable: () => this.belongsTo(Table, 'onTableId'),
             referencesColumn: () => this.belongsTo(Column, 'referencesColumnId'),
             indexColumns: () => this.belongsToMany(Column, IndexColumn).cascadeDetach()
+        }
+    }
+
+    static creating(data: any) {
+        const indexTable = Table.find(data.tableId),
+            relatedTable = indexTable.project.findTableByName(data.on)
+
+        if(relatedTable && !indexTable.canBeChildrenOf(relatedTable)) {
+            throw new CircularRelationError(`Circular relationship with non-saved table "${relatedTable.name}" is not allowed. Please save the schema data before creating a circular relationship.`)
         }
     }
 

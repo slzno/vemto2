@@ -1,11 +1,10 @@
 <script setup lang="ts">
-    import UiModal from "./UiModal.vue"
-    import { GlobeAltIcon } from "@heroicons/vue/24/outline"
-    import { ref, defineProps, defineEmits, computed, onMounted } from "vue"
-    import UiSelect from "./UiSelect.vue"
     import UiText from "./UiText.vue"
+    import UiModal from "./UiModal.vue"
     import UiLockableText from "./UiLockableText.vue"
+    import { GlobeAltIcon } from "@heroicons/vue/24/outline"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
+    import { ref, defineProps, defineEmits, computed, onMounted } from "vue"
 
     const props = defineProps({
         modelValue: {
