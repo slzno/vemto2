@@ -6,7 +6,7 @@
     import Input from '@Common/models/crud/Input'
     import Alert from '@Renderer/components/utils/Alert'
     import CrudPanel from '@Common/models/crud/CrudPanel'
-    import { TrashIcon } from '@heroicons/vue/24/outline'
+    import { PhotoIcon, TrashIcon } from '@heroicons/vue/24/outline'
     import InputOptions from './components/InputOptions.vue'
     import UiModal from '@Renderer/components/ui/UiModal.vue'
     import { InputType } from '@Common/models/crud/InputType'
@@ -225,7 +225,7 @@
 </script>
 <template>
     <div class="flex w-full h-screen space-x-4 mt-2 px-2">
-        <div class="space-y-4 py-2 w-48">
+        <div class="space-y-4 py-2 w-52">
             <div>
                 <h2 class="text-sm font-thin text-slate-400 mb-1">Common Inputs</h2>
 
@@ -237,9 +237,10 @@
             </div>
 
             <div>
-                <h2 class="text-sm font-thin text-slate-400 mb-1">Relations Details</h2>
+                <h2 class="text-sm font-thin text-slate-400 mb-1">Relationships</h2>
 
                 <div class="grid grid-cols-2 gap-2">
+                    <UiButton @click="addInput('belongsTo')" class="w-full">Belongs To</UiButton>
                     <UiButton @click="addRelationship('hasManyDetail')" class="w-full">Has Many</UiButton>
                     <UiButton :disabled="!crud.isForFilament()" @click="addRelationship('morphMany')" class="w-full">Morph Many</UiButton>
                     <UiButton :disabled="!crud.isForFilament()" @click="addRelationship('belongsToMany')" class="w-full">Belongs To Many</UiButton>
@@ -310,7 +311,7 @@
                                 <div class="flex justify-between">
                                     <div class="flex flex-col">
                                         <i class="text-red-500 text-xs opacity-90">{{ changeCase.pascalCase(element.type) }}</i>
-                                        <span class="text-slate-300 font-thin">{{ projectStore.project.getDefaultTranslation(element.label) }}</span>
+                                        <span class="text-slate-300 font-thin">{{ projectStore.project.getDefaultTranslation(element.label) || element.name }}</span>
                                     </div>
                                     <TrashIcon
                                         class="h-4 w-4 mr-1 invisible group-hover:visible text-red-400 cursor-pointer hover:text-red-500"
@@ -318,7 +319,8 @@
                                     />
                                 </div>
                                 
-                                <div v-if="element.isImage()" class="w-32 h-32 mt-1 dark:text-slate-200 border border-slate-300 dark:border-slate-800 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg">
+                                <div v-if="element.isImage()" class="flex items-center w-32 h-32 mt-1 dark:text-slate-200 border border-slate-300 dark:border-slate-800 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg">
+                                    <PhotoIcon class="w-16 h-16 mx-auto opacity-10 stroke-[0.5]" />
                                 </div>
                                 <div v-else class="flex items-center w-full mt-1 h-10 dark:text-slate-200 border border-slate-300 dark:border-slate-800 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg">
                                     <div 
