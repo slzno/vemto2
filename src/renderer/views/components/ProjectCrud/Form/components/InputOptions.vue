@@ -51,9 +51,10 @@
                 <div class="flex flex-col h-full">
                     <div>
                         <div class="flex justify-between flex-col bg-slate-800 rounded-t-lg">
-                            <div class="flex flex-col p-4 pb-2">
-                                <span class="font-semibold">Input Options</span>
-                                <div class="text-red-400">{{ input.name }}</div>
+                            <div class="flex flex-col p-4 pb-4">
+                                <span class="font-thin font-lg">
+                                    Input Options (<span class="text-red-400 px-1">{{ input.name }}</span>)
+                                </span>
                             </div>
                             
                             <UiTabs

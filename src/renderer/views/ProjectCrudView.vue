@@ -38,7 +38,7 @@
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-hidden"
     >
         <div v-if="crud">
-            <div class="p-2 font-bold">Edit {{ crud.getLabel() }} CRUD</div>
+            <div class="px-4 py-4 font-thin text-lg">Edit {{ crud.getLabel() }} CRUD</div>
 
             <UiTabs 
                 :name="projectStore.project.getTabNameFor(`crud${crud.id}`)" 
