@@ -237,7 +237,7 @@
         </div>
 
         <!-- Input's Modal -->
-        <UiModal width="25%" title="Create Input" :show="showingCreateInputModal" @close="closeInputModal()">
+        <UiModal width="450px" title="Create Input" :show="showingCreateInputModal" @close="closeInputModal()">
             <div class="m-2">
                 <div class="m-1 flex flex-col gap-2" @keyup.enter="createInput()">
                     <UiSelect v-model="newInputData.panelId" label="Panel">
@@ -264,7 +264,7 @@
         </UiModal>
 
         <!-- HasManyDetail Modal -->
-        <UiModal width="25%" title="Create Input" :show="showingCreateRelationshipModal" @close="closeDetailModal()">
+        <UiModal width="450px" title="Create Input" :show="showingCreateRelationshipModal" @close="closeDetailModal()">
             <div class="m-2">
                 <div class="m-1 flex flex-col gap-2" @keyup.enter="createRelationship()">
                     <UiSelect v-model="newHasManyDetailRelationship" label="Relationship" >
@@ -278,34 +278,47 @@
             </div>
         </UiModal>
 
-        <div class="flex-grow bg-slate-950 p-2 rounded-lg">
-            <section class="border border-dotted border-slate-600 rounded-md p-4" v-for="panel in crud.panels" :key="panel.id">
-                <h1 class="font-bold text-lg text-slate-500 mb-4">{{ panel.title }}</h1>
+        <div class="flex-grow bg-slate-950 p-4 rounded-lg">
+            <section class="border border-dotted border-slate-800 rounded-md p-2 bg-slate-900" v-for="panel in crud.panels" :key="panel.id">
+                <h1 class="font-thin text-sm text-slate-400 mb-4">{{ panel.title }}</h1>
 
-                <Draggable
-                    class="space-y-1"
-                    :list="panelInputs[panel.id]"
-                    :item-key="`panel-${panel.id}-inputs-draggable`"
-                    @end="saveInputsOrder(panel)"
-                >
-                    <template #item="{ element }">
-                        <div
-                            class="p-1 border group border-dotted rounded-lg border-transparent hover:border-slate-700 cursor-pointer"
-                            :class="{ '!border-slate-700': selectedInput?.id == element.id }"
-                            @click="openInputModal(element)"
-                        >
-                            <div class="flex justify-between">
-                                <span>{{ projectStore.project.getDefaultTranslation(element.label) }} <i class="text-slate-500 text-sm">{{ element.type }}</i></span>
-                                <TrashIcon
-                                    class="h-5 w-5 mr-1 invisible group-hover:visible text-red-400 cursor-pointer hover:text-red-500"
-                                    @click.stop="removeInput(element, element.panel)"
-                                />
+                <div class="px-2 py-4">
+                    <Draggable
+                        class="space-y-2"
+                        :list="panelInputs[panel.id]"
+                        :item-key="`panel-${panel.id}-inputs-draggable`"
+                        @end="saveInputsOrder(panel)"
+                    >
+                        <template #item="{ element }">
+                            <div
+                                class="p-2 border group border-dotted rounded-lg border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-850 cursor-pointer"
+                                :class="{ '!border-slate-700 bg-slate-850': selectedInput?.id == element.id }"
+                                @click="openInputModal(element)"
+                            >
+                                <div class="flex justify-between">
+                                    <div class="flex flex-col">
+                                        <i class="text-red-500 text-xs opacity-90">{{ changeCase.pascalCase(element.type) }}</i>
+                                        <span class="text-slate-300 font-thin">{{ projectStore.project.getDefaultTranslation(element.label) }}</span>
+                                    </div>
+                                    <TrashIcon
+                                        class="h-4 w-4 mr-1 invisible group-hover:visible text-red-400 cursor-pointer hover:text-red-500"
+                                        @click.stop="removeInput(element, element.panel)"
+                                    />
+                                </div>
+                                
+                                <div v-if="element.isImage()" class="w-32 h-32 mt-1 dark:text-slate-200 border border-slate-300 dark:border-slate-800 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg">
+                                </div>
+                                <div v-else class="flex items-center w-full mt-1 h-10 dark:text-slate-200 border border-slate-300 dark:border-slate-800 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg">
+                                    <div 
+                                        v-if="element.placeholder"
+                                        class="text-sm text-slate-300 dark:text-slate-600"
+                                    >{{ projectStore.project.getDefaultTranslation(element.placeholder) }}
+                                    </div>
+                                </div>
                             </div>
-                            
-                            <div class="w-full mt-1 h-8 dark:text-slate-200 border-0 bg-slate-100 dark:bg-slate-850 px-2 py-1 rounded-lg"></div>
-                        </div>
-                    </template>
-                </Draggable>
+                        </template>
+                    </Draggable>
+                </div>
             </section>
 
             <div class="border border-dotted border-slate-600 rounded-md p-4" v-for="detail in crud.hasManyDetails" :key="detail.id">
