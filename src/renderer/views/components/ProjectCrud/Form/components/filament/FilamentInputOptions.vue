@@ -15,8 +15,8 @@
         projectStore = useProjectStore()
 
     const tabs = [
-        { label: "Form", value: "form" },
-        { label: "Table", value: "column" }
+        { label: "Form Input", value: "form" },
+        { label: "Table Column", value: "column" }
     ]
 </script>
 <template>
