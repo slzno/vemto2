@@ -78,13 +78,13 @@
 
 <template>
     <ul
-        :class="backgroundClass + ' bg-red-500 flex space-x-2 text-sm text-slate-500 px-1 border-b border-slate-700 select-none'"
+        :class="backgroundClass + ' bg-red-500 flex space-x-2 text-sm text-slate-500 px-2 border-b border-slate-700 select-none'"
     >
         <li
             v-for="tab in tabs"
             :key="tab.value"
             @click="setTab(tab.value)"
-            class="rounded-t px-2 py-1 -mb-px cursor-pointer hover:text-slate-300 border-l border-t border-r flex items-center space-x-2"
+            class="rounded-t px-3 py-1.5 -mb-px cursor-pointer hover:text-slate-300 border-l border-t border-r flex items-center space-x-2"
             :class="calculateSelectedClasses(tab.value)"
         >
             <div>{{ tab.label }}</div>

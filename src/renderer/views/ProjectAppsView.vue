@@ -84,16 +84,12 @@
                 </UiButton>
                 <UiButton disabled>
                     <PlusIcon class="w-4 h-4 mr-1" />
-                    API Resource
-                </UiButton>
-                <UiButton disabled>
-                    <PlusIcon class="w-4 h-4 mr-1" />
                     Report
                 </UiButton>
-                <UiButton disabled>
+                <!-- <UiButton disabled>
                     <PlusIcon class="w-4 h-4 mr-1" />
                     Dashboard
-                </UiButton>
+                </UiButton> -->
                 <!-- <UiButton @click="projectStore.project.deleteAllApplications()">Delete All</UiButton> -->
             </div>
 

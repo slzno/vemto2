@@ -29,11 +29,11 @@
         selectedTab = ref("resourceComponent")
 
     const tabs = [
-        { label: "Resource Component", value: "resourceComponent" },
-        { label: "Create Component", value: "createComponent" },
-        { label: "Edit Component", value: "editComponent" },
-        { label: "List Component", value: "listComponent" },
-        { label: "View Component", value: "viewComponent" }
+        { label: "Resource", value: "resourceComponent" },
+        { label: "Create Record", value: "createComponent" },
+        { label: "Edit Record", value: "editComponent" },
+        { label: "List Records", value: "listComponent" },
+        { label: "View Record", value: "viewComponent" }
     ]
 
     onMounted(async () => {
