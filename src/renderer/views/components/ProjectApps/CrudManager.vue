@@ -47,7 +47,7 @@ import { PlusIcon } from '@heroicons/vue/24/outline'
 <template>
     <div>
         <UiButton @click="show()">
-            <PlusIcon class="w-4 h-4 mr-1" />
+            <PlusIcon class="w-4 h-4 mr-1 text-red-500" />
             CRUD
         </UiButton>
 

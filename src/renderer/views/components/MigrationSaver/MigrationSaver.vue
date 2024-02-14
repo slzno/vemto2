@@ -369,8 +369,9 @@
             v-if="projectStore.project.hasSchemaChanges()"
         >
             <div class="flex flex-col space-y-2 bg-white dark:bg-slate-850 border border-slate-300 dark:border-slate-700 rounded-lg shadow-lg">
-                <div class="flex items-center space-x-2 text-sm pt-3 pb-3 px-3 bg-slate-100 dark:bg-slate-800 rounded-t-lg text-slate-900 dark:text-slate-300 font-thin">
+                <div class="flex items-center space-x-1 text-sm pt-3 pb-3 px-3 bg-slate-100 dark:bg-slate-800 rounded-t-lg text-slate-900 dark:text-slate-300 font-thin border-b border-slate-500 dark:border-slate-700">
                     <!-- <div class="rounded-full w-3 h-3 bg-red-400 animate-pulse"></div> -->
+                    <CircleStackIcon class="w-4 h-4 text-red-500" />
                     <div>There are schema changes</div>
                 </div>
                 <div class="pt-1 pb-3 px-3">

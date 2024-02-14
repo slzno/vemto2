@@ -11,6 +11,7 @@
     import Sortable from 'sortablejs'
     import Component from '../../common/models/page/components/AbstractComponent'
     import PreviewPageComponent from './components/ProjectPage/PreviewPageComponent.vue'
+import UiEmptyMessage from '@Renderer/components/ui/UiEmptyMessage.vue'
     
     const projectStore = useProjectStore()
 
@@ -121,7 +122,12 @@
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-hidden"
     >
         <div v-if="page">
-            <div class="p-2 font-bold">Edit {{ page.getLabel() }} Page</div>
+            <div class="p-4 flex items-center space-x-2">
+                <span class="font-thin text-xl">
+                    Edit {{ page.getLabel() }} Page
+                </span>
+                <small class="rounded text-red-400 text-xs font-normal bg-black px-2 py-1">Alpha Preview</small>
+            </div>
 
             <UiTabs :name="projectStore.project.getTabNameFor(`page${page.id}`)"
                 :tabs="tabs" 
@@ -133,20 +139,20 @@
                     <small>Basic</small>
                     <UiButton class="w-full" @click="addComponent('TwoColumns')">Two Columns</UiButton>
                     <UiButton class="w-full" @click="addComponent('Custom')">Custom</UiButton>
-                    <UiButton class="w-full">Section</UiButton>
+                    <UiButton class="w-full" disabled>Section</UiButton>
                     <UiButton class="w-full" @click="addComponent('HeaderOne')">H1</UiButton>
-                    <UiButton class="w-full">H2</UiButton>
+                    <UiButton class="w-full" disabled>H2</UiButton>
                     <UiButton class="w-full" @click="addComponent('Small')">Small</UiButton>
                     <UiButton class="w-full" @click="addComponent('Paragraph')">Paragraph</UiButton>
                     <UiButton class="w-full" @click="addComponent('Link')">Link</UiButton>
                     <small>Logic</small>
-                    <UiButton class="w-full">If</UiButton>
-                    <UiButton class="w-full">If...Else</UiButton>
-                    <UiButton class="w-full">Foreach</UiButton>
+                    <UiButton class="w-full" disabled>If</UiButton>
+                    <UiButton class="w-full" disabled>If...Else</UiButton>
+                    <UiButton class="w-full" disabled>Foreach</UiButton>
                     <UiButton class="w-full" @click="addComponent('Forelse')">Forelse</UiButton>
                     <small>Custom</small>
-                    <UiButton class="w-full">Navbar</UiButton>
-                    <UiButton class="w-full">Post Item</UiButton>
+                    <UiButton class="w-full" disabled>Navbar</UiButton>
+                    <UiButton class="w-full" disabled>Post Item</UiButton>
                 </div>
 
                 <div class="w-full h-screen">
@@ -161,8 +167,8 @@
                 </div>
             </section>
 
-            <section class="flex flex-col w-full h-screen space-y-4 mt-2 px-2 pb-40 overflow-scroll" v-if="selectedTab === 'settings'">
-                <div>
+            <section class="flex flex-col w-full h-screen space-y-4 mt-2 p-4 pb-40 overflow-scroll" v-if="selectedTab === 'settings'">
+                <div class="w-1/2 space-y-2">
                     <UiSelect v-model="page.sectionId" label="Section" @change="page.save()" >
                         <option :value="null" disabled>Select a section</option>
                         <option v-for="section in projectStore.project.appSections" :value="section.id" :key="section.id">{{ section.name }}</option>
@@ -172,11 +178,18 @@
 
                     <UiText v-model="page.livewireComponentName" label="Component Name" @input="page.save()" />
 
-                    <b>Route:</b>
-                    <div v-for="route in page.routes" :key="route.id">
-                        <UiText v-model="route.path" label="Route path" @input="route.save()" />
+                    <div>
+                        <div v-for="route in page.routes" :key="route.id">
+                            <UiText v-model="route.path" label="Route path" @input="route.save()" />
+                        </div>
                     </div>
                 </div>
+            </section>
+
+            <section class="flex flex-col w-full h-screen space-y-4 mt-2 px-2 pb-40 overflow-scroll" v-if="selectedTab === 'logic'">
+                <UiEmptyMessage>
+                    <span>Under development</span>
+                </UiEmptyMessage>
             </section>
         </div>
     </div>

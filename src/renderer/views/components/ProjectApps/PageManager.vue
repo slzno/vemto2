@@ -38,7 +38,7 @@
 <template>
     <div>
         <UiButton @click="show()">
-            <PlusIcon class="w-4 h-4 mr-1" />
+            <PlusIcon class="w-4 h-4 mr-1 text-red-500" />
             Page
         </UiButton>
 
