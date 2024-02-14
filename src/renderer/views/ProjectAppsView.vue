@@ -105,7 +105,7 @@
                 >
                     <div class="flex flex-col">
                         <span class="font-semibold">{{ app.getLabel() }}</span>
-                        <div :class="app.isForFilament() ? 'text-yellow-400' : 'text-slate-400'">{{ app.getAppSubType() }}</div>
+                        <div class="text-slate-400">{{ app.getAppSubType() }}</div>
                     </div>
 
                     <UiButton class="text-sm" @click.stop="app.delete()"
