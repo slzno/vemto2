@@ -33,8 +33,7 @@
 </script>
 <template>
     <div class="flex flex-col">
-        <div class="bg-slate-950">
-            <h2 class="p-4 text-white font-bold">CRUD Settings</h2>
+        <div class="pt-4">
             <div>
                 <UiTabs 
                     :name="projectStore.project.getTabNameFor(`crud${crud.id}settings`)" 

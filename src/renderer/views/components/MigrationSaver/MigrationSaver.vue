@@ -415,7 +415,7 @@
                     </div>
                     <div v-else class="flex w-full h-full">
                         <!-- Changes Selector -->
-                        <div class="w-1/5 text-slate-300 bg-slate-950">
+                        <div class="w-1/5 text-slate-300 bg-slate-950 overflow-y-auto">
                             <div class="flex items-center p-2 bg-slate-990 text-slate-200">
                                 <TableCellsIcon class="w-4 h-4 mr-2" />
                                 Tables
@@ -597,7 +597,7 @@
                                     <div class="p-2 flex-grow space-y-2">
                                         <UiText v-if="selectedTableSettings.selectedOption === 'createMigration'" v-model="selectedTableSettings.creationMigrationName" />
                                         <UiText v-if="selectedTableSettings.selectedOption === 'updateMigration'" v-model="selectedTableSettings.updateMigrationName" disabled />
-                                        <highlightjs class="h-full" language="php" :code="selectedTableSettings.migrationContent" />
+                                        <highlightjs class="h-40" language="php" :code="selectedTableSettings.migrationContent" />
                                     </div>
                                 </div>
                             </div>

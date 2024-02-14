@@ -60,50 +60,53 @@
 </script>
 <template>
     <div
-        class="flex flex-col w-full space-y-4"
-        style="height: calc(100vh - 122px)"
+        class="flex flex-col w-full"
+        style="height: calc(100vh - 70px)"
     >
-        <div class="bg-slate-950 pt-2">
+        <div class="pt-4">
             <UiTabs
                 :name="projectStore.project.getTabNameFor(`crud-code${crud.id}`)"
                 :tabs="tabs" 
                 v-model="selectedTab" 
+                selectedClass="bg-slate-950"
             />
         </div>
 
-        <HookEditor
-            v-if="selectedTab == 'resourceComponent' && resourceComponentContent"
-            :content="resourceComponentContent"
-            :hooks="crud.getHooks('filamentResource')"
-            @hooksUpdated="hooks => crud.saveHooks('filamentResource', hooks)"
-        />
-        
-        <HookEditor
-            v-if="selectedTab == 'createComponent' && createComponentContent"
-            :content="createComponentContent"
-            :hooks="crud.getHooks('filamentCreateComponent')"
-            @hooksUpdated="hooks => crud.saveHooks('filamentCreateComponent', hooks)"
-        />
-
-        <HookEditor
-            v-if="selectedTab == 'editComponent' && editComponentContent"
-            :content="editComponentContent"
-            :hooks="crud.getHooks('filamentEditComponent')"
-            @hooksUpdated="hooks => crud.saveHooks('filamentEditComponent', hooks)"
-        />
-
-        <HookEditor
-            v-if="selectedTab == 'listComponent' && listComponentContent"
-            :content="listComponentContent"
-            :hooks="crud.getHooks('filamentListComponent')"
-            @hooksUpdated="hooks => crud.saveHooks('filamentListComponent', hooks)"
-        />
-
-        <HookEditor
-            v-if="selectedTab == 'viewComponent' && viewComponentContent"
-            :content="viewComponentContent"
-            :hooks="crud.getHooks('filamentViewComponent')"
-            @hooksUpdated="hooks => crud.saveHooks('filamentViewComponent', hooks)"
-        />
+        <div class="bg-slate-950 h-full py-4">
+            <HookEditor
+                v-if="selectedTab == 'resourceComponent' && resourceComponentContent"
+                :content="resourceComponentContent"
+                :hooks="crud.getHooks('filamentResource')"
+                @hooksUpdated="hooks => crud.saveHooks('filamentResource', hooks)"
+            />
+            
+            <HookEditor
+                v-if="selectedTab == 'createComponent' && createComponentContent"
+                :content="createComponentContent"
+                :hooks="crud.getHooks('filamentCreateComponent')"
+                @hooksUpdated="hooks => crud.saveHooks('filamentCreateComponent', hooks)"
+            />
+    
+            <HookEditor
+                v-if="selectedTab == 'editComponent' && editComponentContent"
+                :content="editComponentContent"
+                :hooks="crud.getHooks('filamentEditComponent')"
+                @hooksUpdated="hooks => crud.saveHooks('filamentEditComponent', hooks)"
+            />
+    
+            <HookEditor
+                v-if="selectedTab == 'listComponent' && listComponentContent"
+                :content="listComponentContent"
+                :hooks="crud.getHooks('filamentListComponent')"
+                @hooksUpdated="hooks => crud.saveHooks('filamentListComponent', hooks)"
+            />
+    
+            <HookEditor
+                v-if="selectedTab == 'viewComponent' && viewComponentContent"
+                :content="viewComponentContent"
+                :hooks="crud.getHooks('filamentViewComponent')"
+                @hooksUpdated="hooks => crud.saveHooks('filamentViewComponent', hooks)"
+            />
+        </div>
     </div>
 </template>

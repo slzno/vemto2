@@ -1,7 +1,6 @@
 <script setup lang="ts">
     import { ref, defineProps, onMounted, toRef, Ref, defineEmits } from "vue"
     import * as monaco from "monaco-editor"
-    import { BuiltinTheme } from "monaco-editor"
     import { constrainedEditor } from "constrained-editor-plugin"
     import editorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker"
     import jsonWorker from "monaco-editor/esm/vs/language/json/json.worker?worker"
@@ -93,13 +92,13 @@
         }
 
         const theme = {
-            base: "vs-dark" as BuiltinTheme,
+            base: "vs-dark",
             inherit: true,
             rules: [],
             colors: {
-                "editor.background": "#0f172a",
+                "editor.background": "#091023",
             },
-        }
+        } as monaco.editor.IStandaloneThemeData
 
         monaco.editor.defineTheme("vemto-dark", theme)
 

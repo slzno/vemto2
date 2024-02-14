@@ -27,11 +27,11 @@
 
         if(tabs[1] && tabs[1].value == "filament") return
 
-        tabs.push({ label: "Filament Data", value: "filament" })
+        tabs.push({ label: "Filament", value: "filament" })
     })
 
     const tabs = [
-        { label: "Common Data", value: "common" }
+        { label: "Main", value: "common" }
     ]
 </script>
 <template>
@@ -59,6 +59,7 @@
                                 :name="projectStore.project.getTabNameFor(`crud${input.crud.id}input${input.id}`)" 
                                 :tabs="tabs" 
                                 v-model="selectedTab" 
+                                selectedClass="bg-slate-850"
                             />
                         </div>
         
