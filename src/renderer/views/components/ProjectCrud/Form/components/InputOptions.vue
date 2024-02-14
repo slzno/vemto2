@@ -45,6 +45,7 @@
             class="fixed right-0 bottom-0 h-screen pt-10 px-4 z-50 text-slate-200"
             style="width: 38rem"
             v-if="show"
+            v-shortkey="['esc']" @shortkey="$emit('close')"
         >
             <div class="relative rounded-t-lg bg-slate-850 w-full shadow-2xl border-t border-l border-r border-slate-600 h-full">
                 <div class="flex flex-col h-full">

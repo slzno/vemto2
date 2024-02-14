@@ -217,7 +217,7 @@
             </UiSelect>
             <small class="text-slate-400">
                 These options are explained in the
-                <b @click="openImageEditorModeDocumentation()" class="cursor-pointer underline underline-offset-2 decoration-red-400">Cropper.js documentation</b>
+                <b @click="openImageEditorModeDocumentation()" class="cursor-pointer underline underline-offset-2 decoration-slate-400">Cropper.js documentation</b>
             </small>
         </div>
 
