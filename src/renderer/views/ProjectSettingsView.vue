@@ -21,7 +21,7 @@ import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
     <div
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-scroll"
     >
-        <div class="mt-2">
+        <div class="mt-3">
             <UiTabs 
                 :name="projectStore.project.getTabNameFor('env')" 
                 :tabs="tabs" 
@@ -34,7 +34,7 @@ import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
         </div>
 
         <div class="p-4" v-if="selectedTab === 'lang'">
-            <div class="w-96">
+            <div class="w-1/2">
                 <LanguagesEditor />
             </div>
         </div>

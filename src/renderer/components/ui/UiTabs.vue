@@ -69,7 +69,7 @@
         return {
             [props.selectedClass]: localValue.value === tabValue,
             'border-transparent': localValue.value !== tabValue,
-            'text-slate-300 border-slate-700': localValue.value === tabValue,
+            'text-slate-200 border-slate-700': localValue.value === tabValue,
         }
     }
 
@@ -78,7 +78,7 @@
 
 <template>
     <ul
-        :class="backgroundClass + ' bg-red-500 flex space-x-2 text-sm text-slate-500 px-2 border-b border-slate-700 select-none'"
+        :class="backgroundClass + ' bg-red-500 flex space-x-2 text-sm text-slate-450 px-2 border-b border-slate-700 select-none'"
     >
         <li
             v-for="tab in tabs"

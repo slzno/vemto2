@@ -462,7 +462,7 @@
                     @blur="closeSearch()"
                     @keyup.esc="closeSearch()"
                     type="text"
-                    class="bg-slate-100 dark:bg-slate-950 px-4 py-1 rounded-full focus:border-red-500 border border-transparent focus:ring-transparent placeholder-slate-400 dark:placeholder-slate-600 placeholder:font-thin"
+                    class="bg-slate-100 dark:bg-slate-950 px-4 py-1 rounded-full focus:border-red-500 border border-transparent focus:ring-transparent placeholder-slate-400 dark:placeholder-slate-500 placeholder:font-thin"
                     placeholder="Search..."
                 />
 

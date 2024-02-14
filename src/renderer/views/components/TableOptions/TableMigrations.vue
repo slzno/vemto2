@@ -22,7 +22,7 @@ import UiEmptyMessage from '@Renderer/components/ui/UiEmptyMessage.vue';
 <template>
     <div>
         <section class="space-y-2">
-            <div class="flex flex-col py-2 px-4 rounded-lg bg-slate-900 text-slate-300 cursor-pointer hover:bg-slate-950" 
+            <div class="flex flex-col py-2 px-4 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 cursor-pointer hover:bg-slate-750" 
             title="Open migration"
             v-for="migration in table.migrations" @click="openMigration(migration)">
                 <div class="text-green-400" v-if="isCreationMigration(migration)">

@@ -8,7 +8,7 @@
 <template>
     <div :class="{
         'line-through opacity-50': column.isRemoved()
-    }" class="w-full flex items-center text-slate-700 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 px-1 rounded cursor-default py-0.5">
+    }" class="w-full flex items-center text-slate-700 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 px-1 rounded cursor-default py-[0.05rem]">
         <span
             :class="{
                 'text-yellow-500 dark:text-yellow-400 font-semibold':

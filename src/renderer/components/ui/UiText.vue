@@ -49,7 +49,7 @@
         <label v-if="label" class="text-xs text-slate-400">{{ label }}</label>
         <input
             :class="{ 'flex-1': inlineLabel }"
-            class="border border-slate-650 focus:border-red-500 dark:focus:text-slate-200 dark:text-slate-300 focus:ring-transparent bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
+            class="border border-slate-650 focus:border-red-500 dark:focus:text-slate-200 dark:text-slate-300 focus:ring-transparent bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed placeholder-slate-400 dark:placeholder-slate-500 placeholder:font-thin"
             type="text"
             :id="id"
             :placeholder="placeholder"

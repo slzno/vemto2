@@ -43,18 +43,18 @@
             </div>
         </div>
 
-        <div class="w-full h-screen mt-2 px-2 pb-40 overflow-scroll">
-            <template v-if="selectedTab === 'common'">
+        <div class="w-full h-screen mt-2 px-6 pt-4 pb-96 overflow-scroll">
+            <div class="w-1/2" v-if="selectedTab === 'common'">
                 <CrudCommonSettings :crud="crud" />
-            </template>
+            </div>
 
-            <template v-if="selectedTab === 'livewire'">
+            <div class="w-1/2" v-if="selectedTab === 'livewire'">
                 <CrudLivewireSettings :crud="crud" />
-            </template>
+            </div>
 
-            <template v-if="selectedTab === 'filament'">
+            <div class="w-1/2" v-if="selectedTab === 'filament'">
                 <CrudFilamentSettings :crud="crud" />
-            </template>
+            </div>
         </div>
     </div>
 </template>

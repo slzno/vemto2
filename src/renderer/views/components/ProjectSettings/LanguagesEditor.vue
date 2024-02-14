@@ -42,7 +42,7 @@ import UiCheckbox from '@Renderer/components/ui/UiCheckbox.vue'
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-scroll"
     >
         <div>
-            <div class="h-[calc(100vh-150px)] overflow-y-auto pr-4 pb-52 mt-4">
+            <div class="h-[calc(100vh-150px)] overflow-y-auto pr-4 pb-52">
                 <UiSelect
                     v-model="projectStore.project.defaultLanguage"
                     label="Default Language"

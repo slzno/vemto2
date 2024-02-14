@@ -231,7 +231,7 @@
 
                 <div class="grid grid-cols-2 gap-2">
                     <template v-for="input in inputTypes()" :key="input">
-                        <button class="dark:bg-slate-850 border dark:border-slate-800 p-2 rounded font-thin dark:text-slate-250 text-sm dark:hover:bg-slate-800 dark:hover:text-slate-200" @click="addInput(input)">{{ changeCase.pascalCase(input) }}</button>
+                        <button class="dark:bg-slate-850 border dark:border-slate-800 p-2 rounded font-thin dark:text-slate-250 text-sm dark:hover:bg-slate-800 dark:hover:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed" @click="addInput(input)">{{ changeCase.pascalCase(input) }}</button>
                     </template>
                 </div>
             </div>
@@ -240,17 +240,17 @@
                 <h2 class="font-thin text-slate-400 mb-1">Relationships</h2>
 
                 <div class="grid grid-cols-2 gap-2">
-                    <button class="dark:bg-slate-850 border dark:border-slate-800 p-2 rounded font-thin dark:text-slate-250 text-sm dark:hover:bg-slate-800 dark:hover:text-slate-200" @click="addInput('belongsTo')">Belongs To</button>
-                    <button class="dark:bg-slate-850 border dark:border-slate-800 p-2 rounded font-thin dark:text-slate-250 text-sm dark:hover:bg-slate-800 dark:hover:text-slate-200" @click="addRelationship('hasManyDetail')">Has Many</button>
-                    <button class="dark:bg-slate-850 border dark:border-slate-800 p-2 rounded font-thin dark:text-slate-250 text-sm dark:hover:bg-slate-800 dark:hover:text-slate-200" :disabled="!crud.isForFilament()" @click="addRelationship('morphMany')">Morph Many</button>
-                    <button class="dark:bg-slate-850 border dark:border-slate-800 p-2 rounded font-thin dark:text-slate-250 text-sm dark:hover:bg-slate-800 dark:hover:text-slate-200" :disabled="!crud.isForFilament()" @click="addRelationship('belongsToMany')">Belongs To Many</button>
-                    <button class="dark:bg-slate-850 border dark:border-slate-800 p-2 rounded font-thin dark:text-slate-250 text-sm dark:hover:bg-slate-800 dark:hover:text-slate-200" :disabled="!crud.isForFilament()" @click="addRelationship('morphToMany')">Morph To Many</button>
+                    <button class="dark:bg-slate-850 border dark:border-slate-800 p-2 rounded font-thin dark:text-slate-250 text-sm dark:hover:bg-slate-800 dark:hover:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed" @click="addInput('belongsTo')">Belongs To</button>
+                    <button class="dark:bg-slate-850 border dark:border-slate-800 p-2 rounded font-thin dark:text-slate-250 text-sm dark:hover:bg-slate-800 dark:hover:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed" @click="addRelationship('hasManyDetail')">Has Many</button>
+                    <button class="dark:bg-slate-850 border dark:border-slate-800 p-2 rounded font-thin dark:text-slate-250 text-sm dark:hover:bg-slate-800 dark:hover:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed" :disabled="!crud.isForFilament()" @click="addRelationship('morphMany')">Morph Many</button>
+                    <button class="dark:bg-slate-850 border dark:border-slate-800 p-2 rounded font-thin dark:text-slate-250 text-sm dark:hover:bg-slate-800 dark:hover:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed" :disabled="!crud.isForFilament()" @click="addRelationship('belongsToMany')">Belongs To Many</button>
+                    <button class="dark:bg-slate-850 border dark:border-slate-800 p-2 rounded font-thin dark:text-slate-250 text-sm dark:hover:bg-slate-800 dark:hover:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed" :disabled="!crud.isForFilament()" @click="addRelationship('morphToMany')">Morph To Many</button>
                 </div>
             </div>
         </div>
 
         <!-- Input's Modal -->
-        <UiModal width="450px" title="Create Input" :show="showingCreateInputModal" @close="closeInputModal()">
+        <UiModal width="450px" title="Add Component" :show="showingCreateInputModal" @close="closeInputModal()">
             <div class="m-2">
                 <div class="m-1 flex flex-col gap-2" @keyup.enter="createInput()">
                     <UiSelect v-model="newInputData.panelId" label="Panel">
@@ -277,7 +277,7 @@
         </UiModal>
 
         <!-- HasManyDetail Modal -->
-        <UiModal width="450px" title="Create Input" :show="showingCreateRelationshipModal" @close="closeDetailModal()">
+        <UiModal width="450px" title="Add Component" :show="showingCreateRelationshipModal" @close="closeDetailModal()">
             <div class="m-2">
                 <div class="m-1 flex flex-col gap-2" @keyup.enter="createRelationship()">
                     <UiSelect v-model="newHasManyDetailRelationship" label="Relationship" >

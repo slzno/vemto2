@@ -18,6 +18,14 @@ import UiTranslator from '@Renderer/components/ui/UiTranslator.vue'
 <template>
     <div class="space-y-4">
         <div>
+            <UiTranslator v-model="crud.settings.itemTitle" label="Item Title" @input="crud.save()" />
+        </div>
+
+        <div>
+            <UiTranslator v-model="crud.settings.collectionTitle" label="Collection Title" @input="crud.save()" />
+        </div>
+        
+        <div>
             <UiSelect v-model="crud.sectionId" label="Section" @change="crud.save()" >
                 <option :value="null" disabled>Select a section</option>
                 <option v-for="section in projectStore.project.appSections" :value="section.id" :key="section.id">{{ section.name }}</option>
@@ -38,14 +46,6 @@ import UiTranslator from '@Renderer/components/ui/UiTranslator.vue'
 
         <div>
             <UiText v-model="crud.settings.collectionName" label="Collection Name" @input="crud.save()" />
-        </div>
-
-        <div>
-            <UiTranslator v-model="crud.settings.itemTitle" label="Item Title" @input="crud.save()" />
-        </div>
-
-        <div>
-            <UiTranslator v-model="crud.settings.collectionTitle" label="Collection Title" @input="crud.save()" />
         </div>
 
         <div>

@@ -369,7 +369,7 @@
             v-if="projectStore.project.hasSchemaChanges()"
         >
             <div class="flex flex-col space-y-2 bg-white dark:bg-slate-850 border border-slate-300 dark:border-slate-700 rounded-lg shadow-lg">
-                <div class="flex items-center space-x-2 text-sm pt-3 pb-3 px-3 bg-slate-100 dark:bg-slate-800 rounded-t-lg dark:text-slate-300">
+                <div class="flex items-center space-x-2 text-sm pt-3 pb-3 px-3 bg-slate-100 dark:bg-slate-800 rounded-t-lg text-slate-900 dark:text-slate-300 font-thin">
                     <!-- <div class="rounded-full w-3 h-3 bg-red-400 animate-pulse"></div> -->
                     <div>There are schema changes</div>
                 </div>

@@ -109,7 +109,7 @@
         v-if="projectStore.projectIsReady"
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-scroll"
     >
-        <div class="mt-2">
+        <div class="mt-3">
             <UiTabs 
                 :name="projectStore.project.getTabNameFor('queue')" 
                 :tabs="tabs" 

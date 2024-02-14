@@ -53,7 +53,7 @@
         v-if="projectStore.projectIsReady"
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-hidden"
     >
-        <div class="mt-2">
+        <div class="mt-3">
             <UiTabs :name="projectStore.project.getTabNameFor('apps')" :tabs="tabs" v-model="selectedTab" />
         </div>
 
@@ -104,8 +104,8 @@
                     @click="openApp(app)"
                 >
                     <div class="flex flex-col">
-                        <span class="font-semibold">{{ app.getLabel() }}</span>
-                        <div class="text-slate-400">{{ app.getAppSubType() }}</div>
+                        <span class="font-thin text-xl">{{ app.getLabel() }}</span>
+                        <div class="text-slate-450 text-xs">{{ app.getAppSubType() }}</div>
                     </div>
 
                     <UiButton class="text-sm" @click.stop="app.delete()"

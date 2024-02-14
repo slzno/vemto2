@@ -241,7 +241,7 @@
 
         <main class="flex flex-col items-center justify-center gap-4">
             <div class="mt-8 w-1/3 max-w-xl">
-                <UiText v-model="search" placeholder="Search apps..." />
+                <UiText v-model="search" placeholder="Search Apps..." />
             </div>
 
             <UiEmptyMessage v-if="!projects.length">
