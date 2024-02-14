@@ -227,11 +227,11 @@
     <div class="flex w-full h-screen space-x-4 mt-2 px-2">
         <div class="space-y-4 py-2 w-52">
             <div>
-                <h2 class="text-sm font-thin text-slate-400 mb-1">Common Inputs</h2>
+                <h2 class="font-thin text-slate-350 mb-1">Common Inputs</h2>
 
                 <div class="grid grid-cols-2 gap-2">
                     <template v-for="input in inputTypes()" :key="input">
-                        <UiButton @click="addInput(input)" class="w-full">{{ changeCase.pascalCase(input) }}</UiButton>
+                        <button class="dark:bg-slate-850 border dark:border-slate-800 p-2 rounded font-thin dark:text-slate-250 text-sm dark:hover:bg-slate-950 dark:hover:text-slate-200" @click="addInput(input)">{{ changeCase.pascalCase(input) }}</button>
                     </template>
                 </div>
             </div>
@@ -240,11 +240,11 @@
                 <h2 class="text-sm font-thin text-slate-400 mb-1">Relationships</h2>
 
                 <div class="grid grid-cols-2 gap-2">
-                    <UiButton @click="addInput('belongsTo')" class="w-full">Belongs To</UiButton>
-                    <UiButton @click="addRelationship('hasManyDetail')" class="w-full">Has Many</UiButton>
-                    <UiButton :disabled="!crud.isForFilament()" @click="addRelationship('morphMany')" class="w-full">Morph Many</UiButton>
-                    <UiButton :disabled="!crud.isForFilament()" @click="addRelationship('belongsToMany')" class="w-full">Belongs To Many</UiButton>
-                    <UiButton :disabled="!crud.isForFilament()" @click="addRelationship('morphToMany')" class="w-full">Morph To Many</UiButton>
+                    <button class="dark:bg-slate-850 border dark:border-slate-800 p-2 rounded font-thin dark:text-slate-250 text-sm dark:hover:bg-slate-950 dark:hover:text-slate-200" @click="addInput('belongsTo')">Belongs To</button>
+                    <button class="dark:bg-slate-850 border dark:border-slate-800 p-2 rounded font-thin dark:text-slate-250 text-sm dark:hover:bg-slate-950 dark:hover:text-slate-200" @click="addRelationship('hasManyDetail')">Has Many</button>
+                    <button class="dark:bg-slate-850 border dark:border-slate-800 p-2 rounded font-thin dark:text-slate-250 text-sm dark:hover:bg-slate-950 dark:hover:text-slate-200" :disabled="!crud.isForFilament()" @click="addRelationship('morphMany')">Morph Many</button>
+                    <button class="dark:bg-slate-850 border dark:border-slate-800 p-2 rounded font-thin dark:text-slate-250 text-sm dark:hover:bg-slate-950 dark:hover:text-slate-200" :disabled="!crud.isForFilament()" @click="addRelationship('belongsToMany')">Belongs To Many</button>
+                    <button class="dark:bg-slate-850 border dark:border-slate-800 p-2 rounded font-thin dark:text-slate-250 text-sm dark:hover:bg-slate-950 dark:hover:text-slate-200" :disabled="!crud.isForFilament()" @click="addRelationship('morphToMany')">Morph To Many</button>
                 </div>
             </div>
         </div>
