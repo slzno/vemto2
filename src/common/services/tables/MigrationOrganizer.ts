@@ -5,12 +5,35 @@ export type TablesOrders = { [tableId: string]: number }
 export default class MigrationOrganizer {
     private project: Project
 
+    static storedTablesOrders: TablesOrders = {}
+
     constructor(project: any) {
         this.project = project
     }
 
+    static storeTablesOrders(project: Project) {
+        const organizer = new MigrationOrganizer(project)
+        MigrationOrganizer.storedTablesOrders = organizer.getTablesOrders()
+    }
+
+    static getStoredTablesOrders() {
+        return MigrationOrganizer.storedTablesOrders
+    }
+
+    static clearStoredTablesOrders() {
+        MigrationOrganizer.storedTablesOrders = {}
+    }
+
     getTablesNames(): string[] {
         return this.handle().map(table => table.name)
+    }
+
+    getStoredOrderForTable(table: Table): number {
+        if (MigrationOrganizer.storedTablesOrders[table.id]) {
+            return MigrationOrganizer.storedTablesOrders[table.id]
+        }
+
+        return this.getOrderForTable(table)
     }
 
     getOrderForTable(table: Table): number {

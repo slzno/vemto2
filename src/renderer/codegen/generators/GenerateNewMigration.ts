@@ -53,7 +53,7 @@ export default class GenerateNewMigration {
 
         const migrationOrganizer = new MigrationOrganizer(this.project)
         
-        let migrationOrder = migrationOrganizer.getOrderForTable(this.table)
+        let migrationOrder = migrationOrganizer.getStoredOrderForTable(this.table)
         migrationOrder = padStart(migrationOrder, 3, '0')
 
         if(this.table.needsCreationMigration()) {
