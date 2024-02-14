@@ -225,15 +225,27 @@
 </script>
 <template>
     <div class="flex w-full h-screen space-x-4 mt-2 px-2">
-        <div class="space-y-2 w-36">
-            <template v-for="input in inputTypes()" :key="input">
-                <UiButton @click="addInput(input)" class="w-full">{{ changeCase.pascalCase(input) }}</UiButton>
-            </template>
-            <h2>Master Details</h2>
-            <UiButton @click="addRelationship('hasManyDetail')" class="w-full">Add Has Many Detail</UiButton>
-            <UiButton :disabled="!crud.isForFilament()" @click="addRelationship('morphMany')" class="w-full">Add Morph Many</UiButton>
-            <UiButton :disabled="!crud.isForFilament()" @click="addRelationship('belongsToMany')" class="w-full">Add Belongs To Many Detail</UiButton>
-            <UiButton :disabled="!crud.isForFilament()" @click="addRelationship('morphToMany')" class="w-full">Add Morph To Many</UiButton>
+        <div class="space-y-4 py-2 w-48">
+            <div>
+                <h2 class="text-sm font-thin text-slate-400 mb-1">Common Inputs</h2>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <template v-for="input in inputTypes()" :key="input">
+                        <UiButton @click="addInput(input)" class="w-full">{{ changeCase.pascalCase(input) }}</UiButton>
+                    </template>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="text-sm font-thin text-slate-400 mb-1">Relations Details</h2>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <UiButton @click="addRelationship('hasManyDetail')" class="w-full">Has Many</UiButton>
+                    <UiButton :disabled="!crud.isForFilament()" @click="addRelationship('morphMany')" class="w-full">Morph Many</UiButton>
+                    <UiButton :disabled="!crud.isForFilament()" @click="addRelationship('belongsToMany')" class="w-full">Belongs To Many</UiButton>
+                    <UiButton :disabled="!crud.isForFilament()" @click="addRelationship('morphToMany')" class="w-full">Morph To Many</UiButton>
+                </div>
+            </div>
         </div>
 
         <!-- Input's Modal -->
