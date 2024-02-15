@@ -5,4 +5,5 @@ export default class MultiLineString extends ColumnType {
     static faker: string = 'fake()->text()'
     static identifier: string = 'multiLineString'
     static inputType: string = 'textarea'
+    static defaultValueTypeIsString: boolean = true
 }

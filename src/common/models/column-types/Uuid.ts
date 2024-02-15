@@ -5,4 +5,5 @@ export default class Uuid extends ColumnType {
     static faker: string = 'fake()->uuid()'
     static identifier: string = 'uuid'
     static inputType: string = 'text'
+    static defaultValueTypeIsString: boolean = true
 }

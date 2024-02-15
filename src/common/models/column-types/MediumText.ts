@@ -5,4 +5,5 @@ export default class MediumText extends ColumnType {
     static faker: string = 'fake()->text()'
     static identifier: string = 'mediumText'
     static inputType: string = 'textarea'
+    static defaultValueTypeIsString: boolean = true
 }

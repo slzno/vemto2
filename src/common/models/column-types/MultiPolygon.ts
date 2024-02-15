@@ -5,4 +5,5 @@ export default class MultiPolygon extends ColumnType {
     static faker: string = '[]'
     static identifier: string = 'multiPolygon'
     static inputType: string = 'text'
+    static defaultValueTypeIsString: boolean = true
 }

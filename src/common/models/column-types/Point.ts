@@ -5,4 +5,5 @@ export default class Point extends ColumnType {
     static faker: string = '"{fake()->latitude()},{fake()->longitude()}"'
     static identifier: string = 'point'
     static inputType: string = 'text'
+    static defaultValueTypeIsString: boolean = true
 }

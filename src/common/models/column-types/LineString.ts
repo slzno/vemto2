@@ -5,4 +5,5 @@ export default class LineString extends ColumnType {
     static identifier: string = 'lineString'
     static faker: string = 'fake()->text()'
     static inputType: string = 'text'
+    static defaultValueTypeIsString: boolean = true
 }

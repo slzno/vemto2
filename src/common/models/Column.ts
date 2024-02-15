@@ -430,6 +430,14 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         this.options = this.getDefaultOptions()
     }
 
+    getDefaultForTemplate(): string {
+        let type = this.getType()
+
+        if(type.defaultValueTypeIsString) return `'${this.default}'`
+
+        return this.default
+    }
+
     getDefaultOptions(): string[] {
         let defaultSettingsByName = this.getDefaultSettingsByName()
 

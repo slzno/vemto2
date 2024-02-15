@@ -6,6 +6,7 @@ export default class Text extends ColumnType {
     static faker: string = 'fake()->text()'
     static identifier: string = 'text'
     static inputType: string = 'textarea'
+    static defaultValueTypeIsString: boolean = true
 
     static validationRules: any[] = [
         'string',

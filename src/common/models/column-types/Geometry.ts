@@ -5,4 +5,5 @@ export default class Geometry extends ColumnType {
     static faker: string = '"{fake()->latitude()},{fake()->longitude()}"'
     static identifier: string = 'geometry'
     static inputType: string = 'textarea'
+    static defaultValueTypeIsString: boolean = true
 }

@@ -5,4 +5,5 @@ export default class Jsonb extends ColumnType {
     static identifier: string = 'jsonb'
     static faker: string = '[]'
     static inputType: string = 'textarea'
+    static defaultValueTypeIsString: boolean = true
 }

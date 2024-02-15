@@ -5,4 +5,5 @@ export default class IpAddress extends ColumnType {
     static identifier: string = 'ipAddress'
     static faker: string = 'fake()->ipv4()'
     static inputType: string = 'text'
+    static defaultValueTypeIsString: boolean = true
 }

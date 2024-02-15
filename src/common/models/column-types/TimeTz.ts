@@ -5,4 +5,5 @@ export default class TimeTz extends ColumnType {
     static faker: string = "fake()->time('now', 'UTC')"
     static identifier: string = 'timeTz'
     static inputType: string = 'time'
+    static defaultValueTypeIsString: boolean = true
 }

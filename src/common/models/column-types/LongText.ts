@@ -5,4 +5,5 @@ export default class LongText extends ColumnType {
     static identifier: string = 'longText'
     static faker: string = 'fake()->text()'
     static inputType: string = 'textarea'
+    static defaultValueTypeIsString: boolean = true
 }

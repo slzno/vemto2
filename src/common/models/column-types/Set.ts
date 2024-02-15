@@ -5,4 +5,5 @@ export default class Set extends ColumnType {
     static identifier: string = 'set'
     static faker: string = "'{DEFAULT_OR_FIRST}'"
     static inputType: string = 'select'
+    static defaultValueTypeIsString: boolean = true
 }

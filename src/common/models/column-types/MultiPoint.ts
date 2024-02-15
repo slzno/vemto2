@@ -5,4 +5,5 @@ export default class MultiPoint extends ColumnType {
     static faker: string = '[]'
     static identifier: string = 'multiPoint'
     static inputType: string = 'text'
+    static defaultValueTypeIsString: boolean = true
 }
