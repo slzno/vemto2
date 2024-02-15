@@ -159,7 +159,7 @@
             </button>
         </div>
 
-        <div class="flex m-2 flex-col" v-if="showingOptions">
+        <div class="flex m-2 flex-col space-y-4 mt-4" v-if="showingOptions">
             <div class="flex gap-3">
                 <div class="m-1">
                     <UiCheckbox v-model="column.unique" label="Unique" @change="onUniqueChanged" />
