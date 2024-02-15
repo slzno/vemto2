@@ -147,8 +147,8 @@
                     <UiCheckbox small-text v-model="column.nullable" label="Nullable" @change="column.saveFromInterface()" />
                 </div>
 
-                <div class="flex items-center justify-between" @click="removeColumn">
-                    <TrashIcon class="w-4 h-4 text-red-500 cursor-pointer" />
+                <div class="flex items-center justify-between pl-2" @click="removeColumn">
+                    <TrashIcon class="w-4 h-4 text-slate-500 hover:text-red-500 cursor-pointer" />
                 </div>
             </div>
 
