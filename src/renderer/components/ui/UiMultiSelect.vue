@@ -69,7 +69,7 @@
             :classes="{
                 container: 'relative mx-auto w-full flex items-center justify-end box-border cursor-pointer border border-slate-300 dark:border-slate-650 rounded-lg text-base leading-snug outline-none dark:bg-slate-950',
                 containerOpen: 'rounded-lg',
-                tag: 'bg-red-500 text-white text-sm font-semibold py-0.5 pl-2 rounded mr-1 mb-1 flex items-center whitespace-nowrap rtl:pl-0 rtl:pr-2 rtl:mr-0 rtl:ml-1',
+                tag: 'bg-slate-800 text-slate-300 border border-slate-700 text-sm font-thin py-0.5 pl-2 rounded-md mr-1 mb-1 flex items-center whitespace-nowrap rtl:pl-0 rtl:pr-2 rtl:mr-0 rtl:ml-1',
                 tagRemove: 'flex items-center justify-center p-1 mx-0.5 rounded-sm hover:bg-red-300 hover:bg-opacity-25 group',
                 option: 'flex items-center w-full justify-start box-border text-left cursor-pointer text-base leading-snug py-2 px-3',
                 tagsSearch: 'absolute inset-0 border-0 outline-none focus:ring-0 appearance-none p-0 dark:bg-transparent text-base font-sans box-border w-full rounded',
