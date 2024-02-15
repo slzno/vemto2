@@ -104,7 +104,7 @@
                     @click="openApp(app)"
                 >
                     <div class="flex flex-col">
-                        <span class="font-thin text-xl">{{ app.getLabel() }}</span>
+                        <span class="text-lg">{{ app.getLabel() }}</span>
                         <div class="text-slate-450 text-xs">{{ app.getAppSubType() }}</div>
                     </div>
 

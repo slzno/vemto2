@@ -206,6 +206,7 @@
 
     const log = (data: any): void => {
         console.log(data)
+        console.log('is dirty', data.isDirty())
     }
 </script>
 
@@ -366,10 +367,10 @@
                     </section>
                 </div>
     
-                <div class="mt-4" v-if="onDevelopment">
+                <!-- <div class="mt-4" v-if="onDevelopment">
                     <UiButton @click="log(model)">Log details</UiButton>
                     <UiButton @click="model.logDataComparison()">Log data comparison</UiButton>
-                </div>
+                </div> -->
             </div>
     
             <div v-show="selectedTab === 'relationships'">

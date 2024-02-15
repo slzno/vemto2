@@ -157,6 +157,11 @@
             }
         })
     }
+
+    const log = (relationship: Relationship) => {
+        console.log(relationship)
+        console.log("Is Dirty: ", relationship.isDirty())
+    }
 </script>
 <template>
     <div>
@@ -305,6 +310,11 @@
                         Save
                     </UiButton>
                 </div>
+
+                <!-- <div class="mt-4">
+                    <UiButton @click="log(relationship)">Log details</UiButton>
+                    <UiButton @click="relationship.logDataComparison()">Log data comparison</UiButton>
+                </div> -->
             </div>
         </div>
 

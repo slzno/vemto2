@@ -122,7 +122,7 @@
                         'line-through':
                             file.status === RenderableFileStatus.REMOVED,
                     }"
-                    class="italic hover:text-red-500 dark:hover:text-red-400"
+                    class="font-thin hover:text-red-500 dark:hover:text-red-400"
                 >
                     {{ file.getRelativeFilePath() }}
                 </div>

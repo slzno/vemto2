@@ -32,8 +32,8 @@ import Table from '@Common/models/Table'
             </div>
             
             <div>
-                <UiButton @click="table.logDataComparison()">Log data comparison</UiButton>
-                <UiButton @click="logTable(table)">Log table data</UiButton>
+                <!-- <UiButton @click="table.logDataComparison()">Log data comparison</UiButton>
+                <UiButton @click="logTable(table)">Log table data</UiButton> -->
             </div>
         </section>
     </div>

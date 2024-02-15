@@ -401,7 +401,7 @@
                 title="Review schema changes"
                 :show="showingModal"
                 @close="close()"
-                width="1500px"
+                width="1400px"
                 height="calc(100vh - 5rem)"
             >
                 <section
