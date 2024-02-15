@@ -137,7 +137,7 @@
 
             <tbody>
                 <tr class="hover:bg-slate-300 dark:hover:bg-slate-850 group" v-for="input in crud.inputs" :key="input.id">
-                    <td class="px-4 py-3 text-right italic group-hover:text-red-500">
+                    <td class="px-4 py-3 text-right group-hover:text-red-500">
                         <div class="w-full bg-slate-800 py-1 pl-2 pr-6 rounded-r-full border border-slate-700">
                             {{ input.name }}
                         </div>
@@ -245,6 +245,11 @@
 
 .v3ti .v3ti-tag .v3ti-remove-tag:hover {
     @apply text-red-500;
+}
+
+.v3ti .v3ti-new-tag::placeholder {
+    @apply font-thin;
+    @apply text-slate-400 dark:text-slate-500;
 }
 
 .v3ti-context-menu {
