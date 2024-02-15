@@ -65,7 +65,7 @@
             />
         </UiModal>
 
-        <div class="p-2 space-y-2">
+        <div class="space-y-2">
             <UiButton @click="showHooksModal('model')">Model</UiButton>
             <UiButton @click="showHooksModal('policy')">Policy</UiButton>
             <UiButton @click="showHooksModal('seeder')">Seeder</UiButton>

@@ -222,265 +222,267 @@
             />
         </div>
 
-        <div v-show="selectedTab === 'data'">
-            <div class="flex justify-between gap-2">
-                <UiText
-                    v-model="model.namespace"
-                    placeholder="Model namespace"
-                    @input="saveModelData()"
-                />
-                <UiText
-                    v-model="model.name"
-                    placeholder="Model name"
-                    @input="saveModelData(true)"
-                />
-                <div class="flex items-center justify-center">
-                    <UiOptionsDropdown>
-                        <UiDropdownItem @click="deleteModel()">
-                            <TrashIcon class="h-5 w-5 mr-1 text-red-400" /> Delete
-                        </UiDropdownItem>
-                    </UiOptionsDropdown>
-                </div>
-            </div>
-            <div class="mt-2">
-                <UiText 
-                    label="Collection"
-                    v-model="model.plural"
-                    placeholder="Collection"
-                    @blur="saveModelCollection()"
-                    @focus="modelPluralReference = $event"
-                />
-            </div>
-            <div class="mt-4 flex gap-3">
-                <UiCheckbox
-                    label="Has Timestamps"
-                    v-model="model.hasTimestamps"
-                    @change="saveModelData()"
-                />
-                <UiCheckbox
-                    label="Has SoftDeletes"
-                    v-model="model.hasSoftDeletes"
-                    @change="saveModelData()"
-                />
-            </div>
-
-            <div class="mt-4 bg-slate-850 rounded-md space-y-1 p-2 flex flex-col gap-1">
-                <div>
-                    <UiCheckbox
-                        label="Has Guarded"
-                        v-model="model.hasGuarded"
-                        @change="saveModelData()"
+        <div class="p-2">
+            <div v-show="selectedTab === 'data'">
+                <div class="flex justify-between gap-2">
+                    <UiText
+                        v-model="model.namespace"
+                        placeholder="Model namespace"
+                        @input="saveModelData()"
                     />
-                </div>
-
-                <div v-if="model.hasGuarded">
-                    <UiMultiSelect
-                        inputLabel="Guarded"
-                        :default-value="getSelectDataForLayout(model.guardedColumns)"
-                        @change="$event => saveGuardedColumns($event)"
-                        :options="getSelectDataForLayout(model.table.getColumns())"
+                    <UiText
+                        v-model="model.name"
+                        placeholder="Model name"
+                        @input="saveModelData(true)"
                     />
-                </div>
-            </div>
-
-            <div class="mt-4 bg-slate-850 rounded-md space-y-1 p-2 flex flex-col gap-1">
-                <div>
-                    <UiCheckbox
-                        label="Has Fillable"
-                        v-model="model.hasFillable"
-                        @change="saveModelData()"
-                    />
-                </div>
-
-                <div v-if="model.hasFillable">
-                    <UiMultiSelect
-                        inputLabel="Fillable"
-                        :default-value="getSelectDataForLayout(model.fillableColumns)"
-                        @change="$event => saveFillableColumns($event)"
-                        :options="getSelectDataForLayout(model.table.getColumns())"
-                    />
-                </div>
-            </div>
-
-            <div class="mt-4 text-sm underline underline-offset-4 decoration-slate-600 text-slate-500 text-center">
-                Model Properties
-            </div>
-
-            <div class="mt-4 bg-slate-850 rounded-md space-y-1 p-2 flex flex-col gap-1">
-                <UiMultiSelect
-                    inputLabel="Hidden"
-                    :default-value="getSelectDataForLayout(model.hiddenColumns)"
-                    @change="$event => saveHiddenColumns($event)"
-                    :options="getSelectDataForLayout(model.table.getColumns())"
-                />
-            </div>
-
-            <div class="mt-4 bg-slate-850 rounded-md space-y-1 p-2 flex flex-col gap-1">
-                <UiMultiSelect
-                    inputLabel="Dates"
-                    :default-value="getSelectDataForLayout(model.datesColumns)"
-                    @change="$event => saveDatesColumns($event)"
-                    :options="getSelectDataForLayout(model.table.getColumns())"
-                />
-            </div>
-
-            <div class="mt-4 bg-slate-850 rounded-md space-y-1 p-2 flex flex-col gap-1">
-                <UiMultiSelect
-                    inputLabel="Appends"
-                    :default-value="getSelectDataForLayout(model.appends)"
-                    @change="$event => saveAppendsColumns($event)"
-                    :options="getSelectDataForLayout(model.table.getColumns())"
-                />
-            </div>
-
-            <div class="mt-4 bg-slate-850 rounded-md space-y-1 p-2 flex flex-col gap-2">
-                <span class="text-xs text-slate-400">Casts</span>
-                <div class="flex flex-col gap-3">
-                    <div class="flex gap-3" v-for="(modelCast, index) in modelCasts" :key="index">
-                        <div class="w-1/2">
-                            <UiSelect v-model="modelCasts[index][0]" label="Column" @change="saveModelCast(index)">
-                                <template v-for="column in getModelColumnsForCastExcept(modelCasts[index][0])">
-                                    <option :value="column.id">{{ column.name }}</option>
-                                </template>
-                            </UiSelect>
-                        </div>
-                        <div class="w-1/2">
-                            <UiText v-model="modelCasts[index][1]" label="Type" @input.debounce="saveModelCast(index)" />
-                        </div>
+                    <div class="flex items-center justify-center">
                         <UiOptionsDropdown>
-                            <UiDropdownItem @click="deleteModelCast(index)">
+                            <UiDropdownItem @click="deleteModel()">
                                 <TrashIcon class="h-5 w-5 mr-1 text-red-400" /> Delete
                             </UiDropdownItem>
                         </UiOptionsDropdown>
                     </div>
                 </div>
-
-                <section
-                    class="flex w-full justify-center text-slate-400 hover:text-red-500 cursor-pointer text-sm"
-                >
-                    <div class="flex items-center" @click="addModelCast()">
-                        <PlusCircleIcon class="w-6 h-6" />
-                        <span class="px-1.5">Add Column</span>
+                <div class="mt-2">
+                    <UiText 
+                        label="Collection"
+                        v-model="model.plural"
+                        placeholder="Collection"
+                        @blur="saveModelCollection()"
+                        @focus="modelPluralReference = $event"
+                    />
+                </div>
+                <div class="mt-4 flex gap-3">
+                    <UiCheckbox
+                        label="Has Timestamps"
+                        v-model="model.hasTimestamps"
+                        @change="saveModelData()"
+                    />
+                    <UiCheckbox
+                        label="Has SoftDeletes"
+                        v-model="model.hasSoftDeletes"
+                        @change="saveModelData()"
+                    />
+                </div>
+    
+                <div class="mt-4 bg-slate-850 rounded-md space-y-1 p-2 flex flex-col gap-1">
+                    <div>
+                        <UiCheckbox
+                            label="Has Guarded"
+                            v-model="model.hasGuarded"
+                            @change="saveModelData()"
+                        />
                     </div>
-                </section>
-            </div>
-
-            <div class="mt-4" v-if="onDevelopment">
-                <UiButton @click="log(model)">Log details</UiButton>
-                <UiButton @click="model.logDataComparison()">Log data comparison</UiButton>
-            </div>
-        </div>
-
-        <div v-show="selectedTab === 'relationships'">
-            <TableModelRelationships
-                :model="model"
-                :models="models"
-            />
-        </div>
-
-        <div v-show="selectedTab === 'code'">
-            <ModelHooks :model="model" />
-        </div>
-
-        <div v-show="selectedTab === 'imports'">
-                <div class="text-slate-400">Parent Class</div>
-            <div v-if="model.hasParentClass()">
-                <UiText
-                    v-model="model.parentClass"
-                    placeholder="Parent Class"
-                    @input="saveModelData()"
-                />
-            </div>
-
-            <div class="mt-4">
-                <div class="text-slate-400">Traits</div>
-                <div class="flex flex-col gap-1" v-if="model.hasTraits()">
-                    <template v-for="(modelTrait, index) in model.traits">
-                        <div class="flex justify-center items-center">
-                            <UiText
-                                v-model="model.traits[index]"
-                                placeholder="Trait"
-                                @input="saveModelData()"
-                            />
-
+    
+                    <div v-if="model.hasGuarded">
+                        <UiMultiSelect
+                            inputLabel="Guarded"
+                            :default-value="getSelectDataForLayout(model.guardedColumns)"
+                            @change="$event => saveGuardedColumns($event)"
+                            :options="getSelectDataForLayout(model.table.getColumns())"
+                        />
+                    </div>
+                </div>
+    
+                <div class="mt-4 bg-slate-850 rounded-md space-y-1 p-2 flex flex-col gap-1">
+                    <div>
+                        <UiCheckbox
+                            label="Has Fillable"
+                            v-model="model.hasFillable"
+                            @change="saveModelData()"
+                        />
+                    </div>
+    
+                    <div v-if="model.hasFillable">
+                        <UiMultiSelect
+                            inputLabel="Fillable"
+                            :default-value="getSelectDataForLayout(model.fillableColumns)"
+                            @change="$event => saveFillableColumns($event)"
+                            :options="getSelectDataForLayout(model.table.getColumns())"
+                        />
+                    </div>
+                </div>
+    
+                <div class="mt-4 text-sm underline underline-offset-4 decoration-slate-600 text-slate-500 text-center">
+                    Model Properties
+                </div>
+    
+                <div class="mt-4 bg-slate-850 rounded-md space-y-1 p-2 flex flex-col gap-1">
+                    <UiMultiSelect
+                        inputLabel="Hidden"
+                        :default-value="getSelectDataForLayout(model.hiddenColumns)"
+                        @change="$event => saveHiddenColumns($event)"
+                        :options="getSelectDataForLayout(model.table.getColumns())"
+                    />
+                </div>
+    
+                <div class="mt-4 bg-slate-850 rounded-md space-y-1 p-2 flex flex-col gap-1">
+                    <UiMultiSelect
+                        inputLabel="Dates"
+                        :default-value="getSelectDataForLayout(model.datesColumns)"
+                        @change="$event => saveDatesColumns($event)"
+                        :options="getSelectDataForLayout(model.table.getColumns())"
+                    />
+                </div>
+    
+                <div class="mt-4 bg-slate-850 rounded-md space-y-1 p-2 flex flex-col gap-1">
+                    <UiMultiSelect
+                        inputLabel="Appends"
+                        :default-value="getSelectDataForLayout(model.appends)"
+                        @change="$event => saveAppendsColumns($event)"
+                        :options="getSelectDataForLayout(model.table.getColumns())"
+                    />
+                </div>
+    
+                <div class="mt-4 bg-slate-850 rounded-md space-y-1 p-2 flex flex-col gap-2">
+                    <span class="text-xs text-slate-400">Casts</span>
+                    <div class="flex flex-col gap-3">
+                        <div class="flex gap-3" v-for="(modelCast, index) in modelCasts" :key="index">
+                            <div class="w-1/2">
+                                <UiSelect v-model="modelCasts[index][0]" label="Column" @change="saveModelCast(index)">
+                                    <template v-for="column in getModelColumnsForCastExcept(modelCasts[index][0])">
+                                        <option :value="column.id">{{ column.name }}</option>
+                                    </template>
+                                </UiSelect>
+                            </div>
+                            <div class="w-1/2">
+                                <UiText v-model="modelCasts[index][1]" label="Type" @input.debounce="saveModelCast(index)" />
+                            </div>
                             <UiOptionsDropdown>
-                                <UiDropdownItem @click="deleteTrait(index)">
+                                <UiDropdownItem @click="deleteModelCast(index)">
                                     <TrashIcon class="h-5 w-5 mr-1 text-red-400" /> Delete
                                 </UiDropdownItem>
                             </UiOptionsDropdown>
                         </div>
-                    </template>
-                </div>
-
-                <div class="mt-1">
-                    <UiButton
-                        @click="newTrait()"
+                    </div>
+    
+                    <section
+                        class="flex w-full justify-center text-slate-400 hover:text-red-500 cursor-pointer text-sm"
                     >
-                        <span class="flex items-center">
-                            <PlusCircleIcon class="h-5 w-5 mr-1" /> Add Trait
-                        </span>
-                    </UiButton>
-                </div>
-            </div>
-
-            <div class="mt-4">
-                <div class="text-slate-400">Interfaces</div>
-                <div class="flex flex-col gap-1" v-if="model.hasInterfaces()">
-                    <template v-for="(modelInterface, index) in model.interfaces">
-                        <div class="flex justify-center items-center">
-                            <UiText
-                                v-model="model.interfaces[index]"
-                                placeholder="Interface"
-                                @input="saveModelData()"
-                            />
-
-                            <UiOptionsDropdown>
-                                <UiDropdownItem @click="deleteInterface(index)">
-                                    <TrashIcon class="h-5 w-5 mr-1 text-red-400" /> Delete
-                                </UiDropdownItem>
-                            </UiOptionsDropdown>
+                        <div class="flex items-center" @click="addModelCast()">
+                            <PlusCircleIcon class="w-6 h-6" />
+                            <span class="px-1.5">Add Column</span>
                         </div>
-                    </template>
+                    </section>
                 </div>
-
-                <div class="mt-1">
-                    <UiButton
-                        @click="newInterface()"
-                    >
-                        <span class="flex items-center">
-                            <PlusCircleIcon class="h-5 w-5 mr-1" /> Add Interface
-                        </span>
-                    </UiButton>
+    
+                <div class="mt-4" v-if="onDevelopment">
+                    <UiButton @click="log(model)">Log details</UiButton>
+                    <UiButton @click="model.logDataComparison()">Log data comparison</UiButton>
                 </div>
             </div>
-        </div>
-
-        <div v-show="selectedTab === 'settings'">
-            <div class="flex flex-col p-2 space-y-1">
-                <UiNumber
-                    label="Seeder Quantity"
-                    v-model="model.seederQuantity"
-                    @input="saveModelData()"
-                />
-
-                <UiCheckbox
-                    label="Execute Seeder"
-                    v-model="model.callSeeder"
-                    @change="saveModelData()"
-                />
-
     
-                <UiCheckbox
-                    label="Comment Attributes"
-                    v-model="model.attributesComments"
-                    @change="saveModelData()"
+            <div v-show="selectedTab === 'relationships'">
+                <TableModelRelationships
+                    :model="model"
+                    :models="models"
                 />
+            </div>
     
-                <UiCheckbox
-                    label="Comment Methods"
-                    v-model="model.methodsComments"
-                    @change="saveModelData()"
-                />
+            <div v-show="selectedTab === 'code'">
+                <ModelHooks :model="model" />
+            </div>
+    
+            <div v-show="selectedTab === 'imports'">
+                    <div class="text-slate-400">Parent Class</div>
+                <div v-if="model.hasParentClass()">
+                    <UiText
+                        v-model="model.parentClass"
+                        placeholder="Parent Class"
+                        @input="saveModelData()"
+                    />
+                </div>
+    
+                <div class="mt-4">
+                    <div class="text-slate-400">Traits</div>
+                    <div class="flex flex-col gap-1" v-if="model.hasTraits()">
+                        <template v-for="(modelTrait, index) in model.traits">
+                            <div class="flex justify-center items-center">
+                                <UiText
+                                    v-model="model.traits[index]"
+                                    placeholder="Trait"
+                                    @input="saveModelData()"
+                                />
+    
+                                <UiOptionsDropdown>
+                                    <UiDropdownItem @click="deleteTrait(index)">
+                                        <TrashIcon class="h-5 w-5 mr-1 text-red-400" /> Delete
+                                    </UiDropdownItem>
+                                </UiOptionsDropdown>
+                            </div>
+                        </template>
+                    </div>
+    
+                    <div class="mt-1">
+                        <UiButton
+                            @click="newTrait()"
+                        >
+                            <span class="flex items-center">
+                                <PlusCircleIcon class="h-5 w-5 mr-1" /> Add Trait
+                            </span>
+                        </UiButton>
+                    </div>
+                </div>
+    
+                <div class="mt-4">
+                    <div class="text-slate-400">Interfaces</div>
+                    <div class="flex flex-col gap-1" v-if="model.hasInterfaces()">
+                        <template v-for="(modelInterface, index) in model.interfaces">
+                            <div class="flex justify-center items-center">
+                                <UiText
+                                    v-model="model.interfaces[index]"
+                                    placeholder="Interface"
+                                    @input="saveModelData()"
+                                />
+    
+                                <UiOptionsDropdown>
+                                    <UiDropdownItem @click="deleteInterface(index)">
+                                        <TrashIcon class="h-5 w-5 mr-1 text-red-400" /> Delete
+                                    </UiDropdownItem>
+                                </UiOptionsDropdown>
+                            </div>
+                        </template>
+                    </div>
+    
+                    <div class="mt-1">
+                        <UiButton
+                            @click="newInterface()"
+                        >
+                            <span class="flex items-center">
+                                <PlusCircleIcon class="h-5 w-5 mr-1" /> Add Interface
+                            </span>
+                        </UiButton>
+                    </div>
+                </div>
+            </div>
+    
+            <div v-show="selectedTab === 'settings'">
+                <div class="flex flex-col space-y-1">
+                    <UiNumber
+                        label="Seeder Quantity"
+                        v-model="model.seederQuantity"
+                        @input="saveModelData()"
+                    />
+    
+                    <UiCheckbox
+                        label="Execute Seeder"
+                        v-model="model.callSeeder"
+                        @change="saveModelData()"
+                    />
+    
+        
+                    <UiCheckbox
+                        label="Comment Attributes"
+                        v-model="model.attributesComments"
+                        @change="saveModelData()"
+                    />
+        
+                    <UiCheckbox
+                        label="Comment Methods"
+                        v-model="model.methodsComments"
+                        @change="saveModelData()"
+                    />
+                </div>
             </div>
         </div>
     </div>
