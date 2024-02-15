@@ -32,12 +32,27 @@ export default class ValidationTypes {
                 link: 'https://laravel.com/docs/10.x/validation#rule-alpha'
             },
             {
+                text: 'alpha:ascii',
+                description: 'The field under validation must be entirely alphabetic characters (ASCII).',
+                link: 'https://laravel.com/docs/10.x/validation#rule-alpha'
+            },
+            {
                 text: 'alpha_dash',
                 description: 'The field under validation may have alpha-numeric characters, as well as dashes and underscores.',
                 link: 'https://laravel.com/docs/10.x/validation#rule-alpha-dash'
             },
             {
+                text: 'alpha_dash:ascii',
+                description: 'The field under validation may have alpha-numeric characters, as well as dashes and underscores. (ASCII)',
+                link: 'https://laravel.com/docs/10.x/validation#rule-alpha-dash'
+            },
+            {
                 text: 'alpha_num',
+                description: 'The field under validation must be entirely alpha-numeric characters.',
+                link: 'https://laravel.com/docs/10.x/validation#rule-alpha-num'
+            },
+            {
+                text: 'alpha_num:ascii',
                 description: 'The field under validation must be entirely alpha-numeric characters.',
                 link: 'https://laravel.com/docs/10.x/validation#rule-alpha-num'
             },
@@ -87,6 +102,16 @@ export default class ValidationTypes {
                 link: 'https://laravel.com/docs/10.x/validation#rule-current-password'
             },
             {
+                text: 'current_password:web',
+                description: "The field under validation must match the authenticated user's password",
+                link: 'https://laravel.com/docs/10.x/validation#rule-current-password'
+            },
+            {
+                text: 'current_password:api',
+                description: "The field under validation must match the authenticated user's password",
+                link: 'https://laravel.com/docs/10.x/validation#rule-current-password'
+            },
+            {
                 text: 'date',
                 description: 'The field under validation must be a valid, non-relative date according to the strtotime PHP function.',
                 link: 'https://laravel.com/docs/10.x/validation#rule-date'
@@ -102,7 +127,12 @@ export default class ValidationTypes {
                 link: 'https://laravel.com/docs/10.x/validation#rule-date-format'
             },
             {
-                text: 'decimal:decimals',
+                text: 'decimal:min,max',
+                description: 'The field under validation must be a decimal with a maximum of digits including decimals',
+                link: 'https://laravel.com/docs/10.x/validation#rule-decimal'
+            },
+            {
+                text: 'decimal:2',
                 description: 'The field under validation must be a decimal with a maximum of digits including decimals',
                 link: 'https://laravel.com/docs/10.x/validation#rule-decimal'
             },
@@ -132,12 +162,27 @@ export default class ValidationTypes {
                 link: 'https://laravel.com/docs/10.x/validation#rule-digits-between'
             },
             {
-                text: 'dimensions',
+                text: 'dimensions:min_width=100,min_height=200',
+                description: "The file under validation must be an image meeting the dimension constraints as specified by the rule's parameters: false Available constraints are: min_width, max_width, min_height, max_height, width, height, ratio",
+                link: 'https://laravel.com/docs/10.x/validation#rule-dimensions'
+            },
+            {
+                text: 'dimensions:ratio=3/2',
                 description: "The file under validation must be an image meeting the dimension constraints as specified by the rule's parameters: false Available constraints are: min_width, max_width, min_height, max_height, width, height, ratio",
                 link: 'https://laravel.com/docs/10.x/validation#rule-dimensions'
             },
             {
                 text: 'distinct',
+                description: 'When working with arrays, the field under validation must not have any duplicate values',
+                link: 'https://laravel.com/docs/10.x/validation#rule-distinct'
+            },
+            {
+                text: 'distinct:strict',
+                description: 'When working with arrays, the field under validation must not have any duplicate values',
+                link: 'https://laravel.com/docs/10.x/validation#rule-distinct'
+            },
+            {
+                text: 'distinct:ignore_case',
                 description: 'When working with arrays, the field under validation must not have any duplicate values',
                 link: 'https://laravel.com/docs/10.x/validation#rule-distinct'
             },
@@ -277,7 +322,27 @@ export default class ValidationTypes {
                 link: 'https://laravel.com/docs/10.x/validation#rule-mimetypes'
             },
             {
+                text: 'mimetypes:image/jpeg,image/png,image/bmp,image/gif,image/svg,image/webp',
+                description: "The file under validation must match one of the given MIME types: false To determine the MIME type of the uploaded file, the file's contents will be read and the framework will attempt to guess the MIME type, which may be different from the client provided MIME type.",
+                link: 'https://laravel.com/docs/10.x/validation#rule-mimetypes'
+            },
+            {
+                text: 'mimetypes:video/mp4,video/avi,video/mov,video/flv,video/wmv,video/3gp,video/webm,video/mkv',
+                description: "The file under validation must match one of the given MIME types: false To determine the MIME type of the uploaded file, the file's contents will be read and the framework will attempt to guess the MIME type, which may be different from the client provided MIME type.",
+                link: 'https://laravel.com/docs/10.x/validation#rule-mimetypes'
+            },
+            {
                 text: 'mimes:foo,bar,...',
+                description: 'The file under validation must have a MIME type corresponding to one of the listed extensions',
+                link: 'https://laravel.com/docs/10.x/validation#rule-mimes'
+            },
+            {
+                text: 'mimes:jpe,jpeg,jpg,png,gif,svg,webp',
+                description: 'The file under validation must have a MIME type corresponding to one of the listed extensions',
+                link: 'https://laravel.com/docs/10.x/validation#rule-mimes'
+            },
+            {
+                text: 'mimes:mp4,avi,mov,flv,wmv,3gp,webm,mkv',
                 description: 'The file under validation must have a MIME type corresponding to one of the listed extensions',
                 link: 'https://laravel.com/docs/10.x/validation#rule-mimes'
             },
@@ -438,6 +503,11 @@ export default class ValidationTypes {
             },
             {
                 text: 'url',
+                description: 'The field under validation must be a valid URL.',
+                link: 'https://laravel.com/docs/10.x/validation#rule-url'
+            },
+            {
+                text: 'url:https',
                 description: 'The field under validation must be a valid URL.',
                 link: 'https://laravel.com/docs/10.x/validation#rule-url'
             },

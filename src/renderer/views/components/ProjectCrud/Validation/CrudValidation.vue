@@ -171,7 +171,7 @@
                                         <div class="text-xl dark:text-slate-200">{{ item.text }}</div>
                                         <div class="text-sm dark:text-slate-400" v-if="item.description">{{ item.description }}</div>
                                         <div class="text-sm">
-                                            <a :href="item.link" class="text-red-500" @click.prevent.stop="openURL(item.link)">See more</a>
+                                            <a :href="item.link" class="underline text-red-500" @click.prevent.stop="openURL(item.link)">See more</a>
                                         </div>
                                     </div>
                                 </template>
@@ -206,7 +206,7 @@
                                     <div class="text-xl dark:text-slate-200">{{ item.text }}</div>
                                     <div class="text-sm dark:text-slate-400" v-if="item.description">{{ item.description }}</div>
                                     <div class="text-sm">
-                                        <a :href="item.link" class="text-red-500" @click.prevent.stop="openURL(item.link)">See more</a>
+                                        <a :href="item.link" class="underline text-red-500" @click.prevent.stop="openURL(item.link)">See more</a>
                                     </div>
                                 </div>
                             </template>
@@ -236,6 +236,17 @@
 .v3ti .v3ti-tag .v3ti-remove-tag {
     color: #222;
     transition: color .3s;
+}
+
+.v3ti .v3ti-tag span {
+    @apply outline-none;
+    @apply px-2;
+    @apply border border-transparent;
+    @apply rounded;
+}
+
+.v3ti .v3ti-tag span:focus {
+    @apply border-red-500;
 }
 
 .v3ti .v3ti-tag .v3ti-remove-tag {
