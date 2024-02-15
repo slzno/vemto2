@@ -36,16 +36,22 @@ export default class ModelsBuilder {
     }
 
     processModels() {
-        ModelsBuilder.processing = true
+        try {
+            ModelsBuilder.processing = true
+    
+            this.readModels()
+            this.dumpModels()
+            this.setRelatedModels()
+            this.readInverseRelationships()
+    
+            this.reset()
+    
+            ModelsBuilder.processing = false
+        } catch (error) {            
+            ModelsBuilder.processing = false
 
-        this.readModels()
-        this.dumpModels()
-        this.setRelatedModels()
-        this.readInverseRelationships()
-
-        this.reset()
-
-        ModelsBuilder.processing = false
+            throw error
+        }
     }
 
     readModels() {

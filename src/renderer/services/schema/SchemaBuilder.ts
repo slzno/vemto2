@@ -43,43 +43,55 @@ export default class SchemaBuilder {
     }
 
     async buildTables() {
-        SchemaBuilder.processing = true
+        try {
+            SchemaBuilder.processing = true
+    
+            if (!this.schemaData) {
+                await this.readData()
+            }
+    
+            const tablesBuilder = new TablesBuilder(this.project)
+    
+            tablesBuilder.setSchemaData(this.schemaData)
+    
+            await tablesBuilder.build()
+    
+            await this.updateProjectSettings()
+    
+            SchemaBuilder.processing = false
+    
+            return this
+        } catch (error) {
+            SchemaBuilder.processing = false
 
-        if (!this.schemaData) {
-            await this.readData()
+            throw error
         }
-
-        const tablesBuilder = new TablesBuilder(this.project)
-
-        tablesBuilder.setSchemaData(this.schemaData)
-
-        await tablesBuilder.build()
-
-        await this.updateProjectSettings()
-
-        SchemaBuilder.processing = false
-
-        return this
     }
 
     async buildModels() {
-        SchemaBuilder.processing = true
+        try {
+            SchemaBuilder.processing = true
+    
+            if (!this.schemaData) {
+                await this.readData()
+            }
+            
+            const modelsBuilder = new ModelsBuilder(this.project)
+    
+            modelsBuilder.setSchemaData(this.schemaData)
+    
+            await modelsBuilder.build()
+    
+            await this.updateProjectSettings()
+    
+            SchemaBuilder.processing = false
+    
+            return this
+        } catch (error) {
+            SchemaBuilder.processing = false
 
-        if (!this.schemaData) {
-            await this.readData()
+            throw error
         }
-
-        const modelsBuilder = new ModelsBuilder(this.project)
-
-        modelsBuilder.setSchemaData(this.schemaData)
-
-        await modelsBuilder.build()
-
-        await this.updateProjectSettings()
-
-        SchemaBuilder.processing = false
-
-        return this
     }
 
     async updateProjectSettings() {

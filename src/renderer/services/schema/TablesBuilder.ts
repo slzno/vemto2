@@ -35,14 +35,20 @@ export default class TablesBuilder {
     }
 
     processTables() {
-        TablesBuilder.processing = true
+        try {
+            TablesBuilder.processing = true
+    
+            this.readTables()
+            this.readTableIndexes()
+    
+            this.reset()
+    
+            TablesBuilder.processing = false
+        } catch (error) {
+            TablesBuilder.processing = false
 
-        this.readTables()
-        this.readTableIndexes()
-
-        this.reset()
-
-        TablesBuilder.processing = false
+            throw error   
+        }
     }
 
     readTables() {
