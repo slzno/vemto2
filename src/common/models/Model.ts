@@ -106,6 +106,18 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     }
 
     static creating(modelData: any): any {
+        modelData = Model.fixData(modelData)
+
+        return modelData
+    }
+
+    static updating(modelData: any): any {
+        modelData = Model.fixData(modelData)
+
+        return modelData
+    }
+
+    static fixData(modelData: any): any {
         if(!modelData.methods) modelData.methods = []
 
         if(!modelData.traits) modelData.traits = []
