@@ -93,10 +93,11 @@
                 <!-- <UiButton @click="projectStore.project.deleteAllApplications()">Delete All</UiButton> -->
             </div>
 
-            <div class="mt-4 space-y-2 flex flex-col h-full">
+            <div class="mt-4 space-y-2 flex flex-col overflow-y-auto pb-14" style="height: calc(100vh - 180px)">
                 <UiEmptyMessage v-if="!filteredApplications.length">
                     <span>There are no applications yet</span>
                 </UiEmptyMessage>
+                
                 <div
                     class="border border-slate-700 bg-slate-850 rounded-lg p-3 cursor-pointer hover:bg-slate-800 w-full flex justify-between items-start"
                     v-for="app in filteredApplications"
