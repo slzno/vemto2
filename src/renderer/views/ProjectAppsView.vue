@@ -35,6 +35,13 @@
         }
     }
 
+    const deleteApp = async (app: Crud | Page) => {
+        const confirmed = await window.projectConfirm(`Are you sure you want to delete ${app.getLabel()}?`)
+        if (!confirmed) return
+
+        app.delete()
+    }
+
     const selectedTab = ref("applications")
 
     const tabs = [
@@ -109,7 +116,7 @@
                         <div class="text-slate-450 text-xs">{{ app.getAppSubType() }}</div>
                     </div>
 
-                    <UiButton class="text-sm" @click.stop="app.delete()"
+                    <UiButton class="text-sm" @click.stop="deleteApp(app)"
                         >Delete</UiButton
                     >
                 </div>
