@@ -19,6 +19,9 @@
     import { defineProps, ref, toRef, onMounted, reactive } from 'vue'
     import Relationship from '@Common/models/Relationship'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
+    import { useRouter } from 'vue-router'
+
+    const router = useRouter()
 
     const props = defineProps({
         crud: {
@@ -222,6 +225,10 @@
 
         closeDetailModal()
     }
+
+    const openCrud = (crud: Crud) => {
+        router.push({ name: "project-crud", params: { crudId: crud.id } })
+    }
 </script>
 <template>
     <div class="flex w-full h-screen space-x-4 mt-2 px-2">
@@ -296,6 +303,19 @@
                 <h1 class="font-thin text-sm text-slate-400 mb-4">{{ panel.title }}</h1>
 
                 <div class="px-2 py-4">
+                    <div 
+                        v-if="!panelInputs[panel.id] || panelInputs[panel.id].length === 0" 
+                        class="flex justify-center text-slate-300 dark:text-slate-500 font-thin"
+                    >
+                        <div v-if="crud.isDetail()">
+                            There are no inputs in this detail (the inputs may be inherited from the pivot table)
+                        </div>
+
+                        <div v-else>
+                            There are no inputs in this panel
+                        </div>
+                    </div>
+
                     <Draggable
                         class="space-y-2"
                         :list="panelInputs[panel.id]"
@@ -335,7 +355,7 @@
                 </div>
             </section>
 
-            <div class="border border-dotted border-slate-800 rounded-md p-2 bg-slate-900 hover:bg-slate-850 group cursor-pointer" v-for="detail in crud.hasManyDetails" :key="detail.id">
+            <div class="border border-dotted border-slate-800 rounded-md p-2 bg-slate-900 hover:bg-slate-850 group cursor-pointer" v-for="detail in crud.hasManyDetails" :key="detail.id" @click="openCrud(detail.detailCrud)">
                 <div class="flex flex-col">
                     <i class="text-red-500 text-xs opacity-90">Has Many</i>
                 </div>
@@ -350,7 +370,7 @@
                 </div>
             </div>
 
-            <div class="border border-dotted border-slate-800 rounded-md p-2 bg-slate-900 hover:bg-slate-850 group cursor-pointer" v-for="detail in crud.morphManyDetails" :key="detail.id">
+            <div class="border border-dotted border-slate-800 rounded-md p-2 bg-slate-900 hover:bg-slate-850 group cursor-pointer" v-for="detail in crud.morphManyDetails" :key="detail.id" @click="openCrud(detail.detailCrud)">
                 <div class="flex flex-col">
                     <i class="text-red-500 text-xs opacity-90">Morph Many</i>
                 </div>
@@ -365,7 +385,7 @@
                 </div>
             </div>
 
-            <div class="border border-dotted border-slate-800 rounded-md p-2 bg-slate-900 hover:bg-slate-850 group cursor-pointer" v-for="detail in crud.belongsToManyDetails" :key="detail.id">
+            <div class="border border-dotted border-slate-800 rounded-md p-2 bg-slate-900 hover:bg-slate-850 group cursor-pointer" v-for="detail in crud.belongsToManyDetails" :key="detail.id" @click="openCrud(detail.detailCrud)">
                 <div class="flex flex-col">
                     <i class="text-red-500 text-xs opacity-90">Belongs To Many</i>
                 </div>
@@ -380,7 +400,7 @@
                 </div>
             </div>
 
-            <div class="border border-dotted border-slate-800 rounded-md p-2 bg-slate-900 hover:bg-slate-850 group cursor-pointer" v-for="detail in crud.morphToManyDetails" :key="detail.id">
+            <div class="border border-dotted border-slate-800 rounded-md p-2 bg-slate-900 hover:bg-slate-850 group cursor-pointer" v-for="detail in crud.morphToManyDetails" :key="detail.id" @click="openCrud(detail.detailCrud)">
                 <div class="flex flex-col">
                     <i class="text-red-500 text-xs opacity-90">Morph To Many</i>
                 </div>
