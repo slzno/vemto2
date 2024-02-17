@@ -291,7 +291,7 @@
             </div>
         </UiModal>
 
-        <div class="flex-grow bg-slate-950 p-4 rounded-lg space-y-4">
+        <div class="flex-grow bg-slate-950 p-4 rounded-lg space-y-4 overflow-y-auto pb-96">
             <section class="border border-dotted border-slate-800 rounded-md p-2 bg-slate-900" v-for="panel in crud.panels" :key="panel.id">
                 <h1 class="font-thin text-sm text-slate-400 mb-4">{{ panel.title }}</h1>
 
@@ -344,33 +344,54 @@
                         <h1 class="font-thin text-nomal text-slate-400">Has Many {{ detail.detailCrud.getLabel() }}</h1>
         
                         <div class="flex flex-col items-center">
-                            <TableCellsIcon class="w-36 h-36 text-slate-700 stroke-[0.015rem]" />
+                            <TableCellsIcon class="w-24 h-24 text-slate-700 stroke-[0.015rem]" />
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="border border-dotted border-slate-600 rounded-md p-4" v-for="detail in crud.morphManyDetails" :key="detail.id">
-                <h1 class="font-bold text-lg text-slate-500 mb-4">Morph Many Detail: {{ detail.detailCrud.getLabel() }}</h1>
-
-                <div class="space-y-1">
-                    This is a Morph Many Detail
+            <div class="border border-dotted border-slate-800 rounded-md p-2 bg-slate-900 hover:bg-slate-850 group cursor-pointer" v-for="detail in crud.morphManyDetails" :key="detail.id">
+                <div class="flex flex-col">
+                    <i class="text-red-500 text-xs opacity-90">Morph Many</i>
+                </div>
+                <div class="flex justify-center">
+                    <div>
+                        <h1 class="font-thin text-nomal text-slate-400">Morph Many {{ detail.detailCrud.getLabel() }}</h1>
+        
+                        <div class="flex flex-col items-center">
+                            <TableCellsIcon class="w-24 h-24 text-slate-700 stroke-[0.015rem]" />
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="border border-dotted border-slate-600 rounded-md p-4" v-for="detail in crud.belongsToManyDetails" :key="detail.id">
-                <h1 class="font-bold text-lg text-slate-500 mb-4">Morph Many Detail: {{ detail.detailCrud.getLabel() }}</h1>
-
-                <div class="space-y-1">
-                    This is a Belongs To Many Detail
+            <div class="border border-dotted border-slate-800 rounded-md p-2 bg-slate-900 hover:bg-slate-850 group cursor-pointer" v-for="detail in crud.belongsToManyDetails" :key="detail.id">
+                <div class="flex flex-col">
+                    <i class="text-red-500 text-xs opacity-90">Belongs To Many</i>
+                </div>
+                <div class="flex justify-center">
+                    <div>
+                        <h1 class="font-thin text-nomal text-slate-400">Belongs To Many {{ detail.detailCrud.getLabel() }}</h1>
+        
+                        <div class="flex flex-col items-center">
+                            <TableCellsIcon class="w-24 h-24 text-slate-700 stroke-[0.015rem]" />
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="border border-dotted border-slate-600 rounded-md p-4" v-for="detail in crud.morphToManyDetails" :key="detail.id">
-                <h1 class="font-bold text-lg text-slate-500 mb-4">Morph Many Detail: {{ detail.detailCrud.getLabel() }}</h1>
-
-                <div class="space-y-1">
-                    This is a Morph To Many Detail
+            <div class="border border-dotted border-slate-800 rounded-md p-2 bg-slate-900 hover:bg-slate-850 group cursor-pointer" v-for="detail in crud.morphToManyDetails" :key="detail.id">
+                <div class="flex flex-col">
+                    <i class="text-red-500 text-xs opacity-90">Morph To Many</i>
+                </div>
+                <div class="flex justify-center">
+                    <div>
+                        <h1 class="font-thin text-nomal text-slate-400">Morph To Many {{ detail.detailCrud.getLabel() }}</h1>
+        
+                        <div class="flex flex-col items-center">
+                            <TableCellsIcon class="w-24 h-24 text-slate-700 stroke-[0.015rem]" />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
