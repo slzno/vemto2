@@ -40,7 +40,7 @@ import { defineProps, defineEmits, computed } from "vue"
         <label v-if="label" class="text-xs text-slate-400">{{ label }}</label>
         <select
             :disabled="disabled"
-            class="w-full border border-slate-650 focus:border-red-500 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg focus:ring-transparent"
+            class="w-full border border-slate-300 dark:border-slate-650 focus:border-red-500 dark:focus:border-red-500 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg focus:ring-transparent"
             v-model="localValue"
         >
             <slot></slot>

@@ -60,12 +60,12 @@
                 :class="{
                     'select-none pointer-events-none': processing,
                 }"
-                class="fixed left-0 top-0 w-full h-full text-slate-200 flex items-center justify-center bg-slate-900 bg-opacity-95"
+                class="fixed left-0 top-0 w-full h-full dark:text-slate-200 flex items-center justify-center bg-slate-200 dark:bg-slate-900 bg-opacity-95"
                 v-if="show"
             >
                 <!-- Modal -->
                 <div
-                    class="flex flex-col relative rounded-lg bg-slate-850 shadow-2xl border border-slate-700"
+                    class="flex flex-col relative rounded-lg bg-white dark:bg-slate-850 shadow-2xl border border-slate-200 dark:border-slate-700"
                     style="max-height: calc(100vh - 5rem);"
                     :style="{ width: width, height: height }"
                 >
@@ -79,9 +79,9 @@
                         <XMarkIcon class="w-4 h-4 stroke-2 hover:text-red-500" />
                     </button>
 
-                    <header class="flex justify-between bg-slate-800 p-2 rounded-t-lg border-b border-slate-700">
+                    <header class="flex justify-between bg-white dark:bg-slate-800 p-2 rounded-t-lg border-b border-slate-200 text-slate-700 dark:border-slate-700">
                         <div class="flex flex-col">
-                            <span class="font-semibold">
+                            <span class="font-normal dark:text-slate-200">
                                 {{ title }}
                             </span>
                         </div>
@@ -102,7 +102,7 @@
                         :class="{
                             'opacity-50': processing,
                         }" 
-                        class="bg-slate-800 rounded-b-lg border-t border-slate-700"
+                        class="bg-white dark:bg-slate-800 rounded-b-lg border-t border-slate-200 dark:border-slate-700"
                     >
                         <slot name="footer"></slot>
                     </footer>

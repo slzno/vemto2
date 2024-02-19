@@ -152,7 +152,7 @@
                 </div>
             </div>
 
-            <button class="px-2 border border-transparent focus:border-red-500 outline-none rounded" @click="showingOptions = !showingOptions">
+            <button class="px-2 border border-transparent focus:border-red-500 dark:focus:border-red-500 outline-none rounded" @click="showingOptions = !showingOptions">
                 <component :is="showingOptions ? ChevronUpIcon : ChevronDownIcon"
                     class="w-4 h-4 text-slate-400 hover:text-red-500 cursor-pointer"
                 />

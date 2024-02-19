@@ -247,7 +247,7 @@
         <label class="text-xs text-slate-400" v-if="label">{{ label }}</label>
         <button
             ref="selectButton"
-            class="flex focus:border-red-500 border border-slate-650 items-center justify-between bg-white dark:bg-slate-950 appearance-none rounded-lg leading-tight text-slate-600 dark:text-slate-300 dark:focus:text-slate-200 py-1.5 px-2 w-full outline-none"
+            class="flex focus:border-red-500 dark:focus:border-red-500 border border-slate-650 items-center justify-between bg-white dark:bg-slate-950 appearance-none rounded-lg leading-tight text-slate-600 dark:text-slate-300 dark:focus:text-slate-200 py-1.5 px-2 w-full outline-none"
             :class="{ 'active': showing, 'p-2': !small }"
             :title="selected ? selected.label : placeholder"
             @focus="focusFiredOnce()"
@@ -269,7 +269,7 @@
         >
             <div class="relative">
                 <div class="p-2" style="height: 60px">
-                    <input ref="searchInput" class="focus:border focus:border-red-500 rounded leading-tight bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 py-1 px-1 w-full border-2 border-transparent outline-none" placeholder="Search..." v-model="search">
+                    <input ref="searchInput" class="focus:border focus:border-red-500 dark:focus:border-red-500 rounded leading-tight bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 py-1 px-1 w-full border-2 border-transparent outline-none" placeholder="Search..." v-model="search">
                 </div>
                 <ul ref="dropdownList" class="list-reset h-full overflow-y-auto" style="max-height: 240px;">
                     <li :ref="optionReference(option)" v-for="(option, index) in filteredOptions" :key="index">

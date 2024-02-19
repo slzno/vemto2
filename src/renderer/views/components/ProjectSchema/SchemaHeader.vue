@@ -338,7 +338,7 @@
             <div class="flex">
                 <button
                     title="Add table (CTRL + Shift + T)"
-                    class="p-2 cursor-pointer text-slate-600 dark:text-slate-350 hover:text-red-500 dark:hover:text-red-500 border border-transparent focus:border-red-500 outline-none rounded"
+                    class="p-2 cursor-pointer text-slate-600 dark:text-slate-350 hover:text-red-500 dark:hover:text-red-500 border border-transparent focus:border-red-500 dark:focus:border-red-500 outline-none rounded"
                     @click="showTableModal()"
                     v-shortkey="['ctrl', 'shift', 't']" @shortkey="showTableModal()"
                 >
@@ -389,7 +389,7 @@
                 <button
                     @click="info('Schema Comments: Coming soon...')"
                     title="Add comment"
-                    class="p-2 cursor-pointer text-slate-600 dark:text-slate-350 hover:text-red-500 dark:hover:text-red-500 border border-transparent focus:border-red-500 outline-none"
+                    class="p-2 cursor-pointer text-slate-600 dark:text-slate-350 hover:text-red-500 dark:hover:text-red-500 border border-transparent focus:border-red-500 dark:focus:border-red-500 outline-none"
                 >
                     <svg
                         class="w-7 h-7 stroke-1"
@@ -404,7 +404,7 @@
 
                 <button
                     @click="info('Save as Image: Coming soon...')"
-                    class="p-2 cursor-pointer text-slate-600 dark:text-slate-350 hover:text-red-500 dark:hover:text-red-500 border border-transparent focus:border-red-500 outline-none rounded"
+                    class="p-2 cursor-pointer text-slate-600 dark:text-slate-350 hover:text-red-500 dark:hover:text-red-500 border border-transparent focus:border-red-500 dark:focus:border-red-500 outline-none rounded"
                 >
                     <svg
                         class="w-7 h-7 stroke-1"
@@ -418,7 +418,7 @@
                 </button>
 
                 <button
-                    class="p-2 cursor-pointer text-slate-600 dark:text-slate-350 hover:text-red-500 dark:hover:text-red-500 border border-transparent focus:border-red-500 outline-none rounded"
+                    class="p-2 cursor-pointer text-slate-600 dark:text-slate-350 hover:text-red-500 dark:hover:text-red-500 border border-transparent focus:border-red-500 dark:focus:border-red-500 outline-none rounded"
                     title="Sync Schema"
                     @click="syncSchema()"
                 >
@@ -431,7 +431,7 @@
             <!-- Control -->
             <div class="flex items-center ml-4 border-r border-l border-slate-200 dark:border-slate-750">
                 <button
-                    class="p-2 cursor-pointer text-slate-500 dark:text-slate-350 hover:text-red-500 dark:hover:text-red-500 border border-transparent focus:border-red-500 outline-none rounded"
+                    class="p-2 cursor-pointer text-slate-500 dark:text-slate-350 hover:text-red-500 dark:hover:text-red-500 border border-transparent focus:border-red-500 dark:focus:border-red-500 outline-none rounded"
                     title="Zoom In"
                     @click="zoomIn()"
                 >
@@ -443,7 +443,7 @@
                     {{ projectStore.project.currentZoom || 100 }}
                 </div>
                 <button
-                    class="p-2 cursor-pointer text-slate-500 dark:text-slate-350 hover:text-red-500 dark:hover:text-red-500 border border-transparent focus:border-red-500 outline-none rounded"
+                    class="p-2 cursor-pointer text-slate-500 dark:text-slate-350 hover:text-red-500 dark:hover:text-red-500 border border-transparent focus:border-red-500 dark:focus:border-red-500 outline-none rounded"
                     title="Zoom Out"
                     @click="zoomOut()"
                 >
@@ -462,7 +462,7 @@
                     @blur="closeSearch()"
                     @keyup.esc="closeSearch()"
                     type="text"
-                    class="bg-slate-100 dark:bg-slate-950 px-4 py-1 rounded-full focus:border-red-500 border border-transparent focus:ring-transparent placeholder-slate-400 dark:placeholder-slate-500 placeholder:font-thin"
+                    class="bg-slate-100 dark:bg-slate-950 px-4 py-1 rounded-full focus:border-red-500 dark:focus:border-red-500 border border-transparent focus:ring-transparent placeholder-slate-400 dark:placeholder-slate-500 placeholder:font-thin"
                     placeholder="Search..."
                 />
 
@@ -481,7 +481,7 @@
         <div class="flex gap-1 items-center text-xs">
             <button
                 @click="newSchema()"
-                class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-100 dark:border-slate-700 h-6 focus:border-red-500 outline-none"
+                class="flex items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-100 dark:border-slate-700 h-6 focus:border-red-500 dark:focus:border-red-500 outline-none"
             >
                 <div
                     class="py-1 px-5 cursor-pointer text-slate-600 dark:text-slate-350 hover:text-red-500 dark:hover:text-red-500 flex items-center justify-center"
@@ -495,7 +495,7 @@
             <div v-for="section in projectStore.project.schemaSections">
                 <button
                     @click="selectSchemaSection(section)"
-                    class="flex relative group items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-100 dark:border-slate-700 h-6 focus:border-red-500 outline-none"
+                    class="flex relative group items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-100 dark:border-slate-700 h-6 focus:border-red-500 dark:focus:border-red-500 outline-none"
                 >
                     <div
                         :class="{
