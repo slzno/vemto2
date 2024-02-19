@@ -249,7 +249,7 @@
             </UiEmptyMessage>
 
             <div class="flex flex-col gap-2 w-1/2 max-w-xl">
-                <div v-for="project in filteredProjects" @click="openProject(project)" class="p-2 rounded-lg border border-slate-650 bg-slate-850 cursor-pointer hover:bg-slate-800">
+                <div v-for="project in filteredProjects" @click="openProject(project)" class="p-2 rounded-lg border border-slate-300 dark:border-slate-650 bg-slate-50 dark:bg-slate-850 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800">
                     <div class="flex justify-between">
                         <span>{{ project.path.split(/\/|\\/).pop() }}</span>
                         <UiOptionsDropdown>

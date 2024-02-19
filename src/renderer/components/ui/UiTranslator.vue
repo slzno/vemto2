@@ -84,7 +84,7 @@
         <label v-if="label" class="text-xs text-slate-500 dark:text-slate-400">{{ label }}</label>
         <div :class="{ 'flex-1': inlineLabel }" class="flex">
             <input
-                class="flex-1 border border-slate-650 border-r-transparent focus:border-red-500 dark:focus:border-red-500 dark:focus:border-r-red-500 dark:focus:text-slate-200 dark:text-slate-300 focus:ring-transparent bg-slate-200 dark:bg-slate-950 px-2 py-1 rounded-lg rounded-r-none disabled:opacity-60 disabled:cursor-not-allowed"
+                class="flex-1 border border-slate-300 dark:border-slate-650 border-r-transparent focus:border-red-500 dark:focus:border-red-500 dark:focus:border-r-red-500 dark:focus:text-slate-200 dark:text-slate-300 focus:ring-transparent bg-slate-200 dark:bg-slate-950 px-2 py-1 rounded-lg rounded-r-none disabled:opacity-60 disabled:cursor-not-allowed"
                 type="text"
                 :id="id"
                 :placeholder="placeholder"
@@ -98,7 +98,7 @@
             />
             <button 
                 @click="showingModal = true"
-                class="flex px-2 items-center bg-slate-100 dark:bg-slate-950 border border-slate-650 border-l-0 rounded-lg rounded-l-none cursor-pointer hover:text-red-500"
+                class="flex px-2 items-center bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-650 border-l-0 rounded-lg rounded-l-none cursor-pointer hover:text-red-500"
             >
                 <GlobeAltIcon class="w-4 h-4 stroke-2" />
             </button>

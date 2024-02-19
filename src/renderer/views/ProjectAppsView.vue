@@ -106,7 +106,7 @@
                 </UiEmptyMessage>
                 
                 <div
-                    class="border border-slate-700 bg-slate-850 rounded-lg p-3 cursor-pointer hover:bg-slate-800 w-full flex justify-between items-start"
+                    class="border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-850 rounded-lg p-3 cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-800 w-full flex justify-between items-start"
                     v-for="app in filteredApplications"
                     :key="app.id"
                     @click="openApp(app)"
