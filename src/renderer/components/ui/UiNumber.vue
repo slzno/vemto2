@@ -61,7 +61,7 @@
 
 <template>
     <div class="flex gap-1 flex-1" :class="{ 'flex-col': !inlineLabel, 'items-center': inlineLabel }">
-        <label v-if="label" class="text-xs text-slate-400">{{ label }}</label>
+        <label v-if="label" class="text-xs text-slate-500 dark:text-slate-400">{{ label }}</label>
         <input
             :class="{ 'flex-1': inlineLabel }"
             class="border border-slate-300 dark:border-slate-650 focus:border-red-500 dark:focus:border-red-500 dark:focus:text-slate-200 dark:text-slate-300 focus:ring-transparent bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"

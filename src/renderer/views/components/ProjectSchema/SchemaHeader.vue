@@ -347,15 +347,15 @@
 
                 <!-- New table modal -->
                 <UiModal
-                    width="25%"
+                    width="450px"
                     title="Create Table"
                     :show="showingCreateTableModal"
                     @close="closeTableModal()"
                 >
-                    <div class="m-2">
+                    <div class="p-4">
                         <div class="m-1 flex flex-col gap-2" @keyup.enter="createTable()">
                             <UiText v-model="newTable.name" id="new-table-name" placeholder="Table Name"></UiText>
-                            <UiCheckbox v-model="addModelForNewTable" label="Add a default model"></UiCheckbox>
+                            <UiCheckbox class="mt-2" v-model="addModelForNewTable" label="Add a default model"></UiCheckbox>
                         </div>
                     </div>
 
@@ -462,7 +462,7 @@
                     @blur="closeSearch()"
                     @keyup.esc="closeSearch()"
                     type="text"
-                    class="bg-slate-100 dark:bg-slate-950 px-4 py-1 rounded-full focus:border-red-500 dark:focus:border-red-500 border border-transparent focus:ring-transparent placeholder-slate-400 dark:placeholder-slate-500 placeholder:font-thin"
+                    class="bg-slate-100 dark:bg-slate-950 px-4 py-1 rounded-full focus:border-red-500 dark:focus:border-red-500 border border-slate-300 dark:border-slate-750 focus:ring-transparent placeholder-slate-400 dark:placeholder-slate-500 placeholder:font-thin"
                     placeholder="Search..."
                 />
 

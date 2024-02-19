@@ -32,17 +32,21 @@
 </script>
 
 <template>
-    <label class="inline-box">
-        <div class="flex items-center space-x-1 group">
-            <input
-                type="checkbox"
-                class="rounded bg-slate-950 border-0 text-red-450 shadow-sm focus:border-red-450 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300"
-                v-model="localValue"
-            />
-            <span :class="{
-                'text-xs': smallText,
-                'text-sm': !smallText,
-            }" class="text-slate-400 group-hover:text-slate-300" v-if="label">{{ label }}</span>
-        </div>
-    </label>
+    <div class="inline-block">
+        <label>
+            <div class="inline-block">
+                <div class="flex items-center space-x-1 group">
+                    <input
+                        type="checkbox"
+                        class="rounded bg-slate-200 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-red-450 shadow-sm focus:border-red-500 dark:focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300"
+                        v-model="localValue"
+                    />
+                    <span :class="{
+                        'text-xs': smallText,
+                        'text-sm': !smallText,
+                    }" class="hover:text-slate-600 dark:text-slate-400 dark:group-hover:text-slate-300 select-none" v-if="label">{{ label }}</span>
+                </div>
+            </div>
+        </label>
+    </div>
 </template>
