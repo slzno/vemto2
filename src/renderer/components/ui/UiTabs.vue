@@ -31,7 +31,7 @@
 
         selectedClass: {
             type: String,
-            default: "bg-slate-900",
+            default: "bg-white dark:bg-slate-900",
         },
     })
 
@@ -69,7 +69,7 @@
         return {
             [props.selectedClass]: localValue.value === tabValue,
             'border-transparent': localValue.value !== tabValue,
-            'text-slate-200 border-slate-700': localValue.value === tabValue,
+            'text-slate-750 dark:text-slate-200 border-slate-300 dark:border-slate-700': localValue.value === tabValue,
         }
     }
 
@@ -78,13 +78,13 @@
 
 <template>
     <ul
-        :class="backgroundClass + ' bg-red-500 flex space-x-2 text-sm text-slate-450 px-2 border-b border-slate-700 select-none'"
+        :class="backgroundClass + ' bg-red-500 flex space-x-2 text-sm text-slate-500 dark:text-slate-450 px-2 border-b border-slate-300 dark:border-slate-700 select-none'"
     >
         <li
             v-for="tab in tabs"
             :key="tab.value"
             @click="setTab(tab.value)"
-            class="rounded-t px-3 py-1.5 -mb-px cursor-pointer hover:text-slate-300 border-l border-t border-r flex items-center space-x-2"
+            class="rounded-t px-3 py-1.5 -mb-px cursor-pointer hover:opacity-80 border-l border-t border-r flex items-center space-x-2"
             :class="calculateSelectedClasses(tab.value)"
         >
             <div>{{ tab.label }}</div>
