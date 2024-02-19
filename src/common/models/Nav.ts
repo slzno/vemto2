@@ -60,7 +60,13 @@ export default class Nav extends RelaDB.Model {
     }
 
     static deleting(nav: Nav) {
-        nav.project.deleteTranslationOnAllLanguages(nav.getLangKeyForName())
+        const hasNavWithSameTranslation = (translationProperty: string) => Nav.get().filter(
+            (otherNav: Nav) => otherNav.id !== nav.id && otherNav[translationProperty] === nav[translationProperty]
+        ).length > 0
+
+        if(!hasNavWithSameTranslation('name')) {
+            nav.project.deleteTranslationOnAllLanguages(nav.getLangKeyForName())
+        }
     }
 
     static updating(data: any) {

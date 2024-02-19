@@ -67,8 +67,20 @@ export default class Input extends RelaDB.Model {
     }
 
     static deleting(input: Input) {
-        input.crud.project.deleteTranslationOnAllLanguages(input.getLangKeyForLabel())
-        input.crud.project.deleteTranslationOnAllLanguages(input.getLangKeyForPlaceholder())
+        const hasInputWithSameTranslation = (translationProperty: string) => Crud.get().filter(
+            (crud: Crud) => crud.id !== input.crud.id && crud.inputs.filter(
+                (input: Input) => input[translationProperty] === input[translationProperty]
+            ).length > 1
+        ).length > 0
+
+        if(!hasInputWithSameTranslation("label")) {
+            input.crud.project.deleteTranslationOnAllLanguages(input.getLangKeyForLabel())
+        }
+
+        if(!hasInputWithSameTranslation("placeholder")) {
+            input.crud.project.deleteTranslationOnAllLanguages(input.getLangKeyForPlaceholder())
+        }
+
     }
 
     static createFromColumn(crud: Crud, column: Column, forceType?: InputType | null, ignoreColumnHidden: boolean = false) {
