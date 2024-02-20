@@ -82,7 +82,7 @@
             <!-- Current Project: vemto-test-01 -->
         </div>
     </div>
-    <div id="appContainer" class="w-full h-screen">
+    <div id="appContainer" class="w-full h-screen dark">
         <div class="text-slate-700 dark:text-slate-300 h-full w-full">
             <RouterView :key="$route.fullPath" />
         </div>
