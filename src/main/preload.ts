@@ -1,7 +1,13 @@
 import { contextBridge, ipcRenderer } from "electron"
 
 contextBridge.exposeInMainWorld("api", {
-    onDevelopment: () => { return process.env.NODE_ENV === "development" },
+    onDevelopment: () => { 
+        return process.env.NODE_ENV === "development" 
+    },
+
+    isRecording: () => {
+        return !! process.env.VEMTO_RECORDING
+    },
 
     // Common messages
     prepareDatabase: (path: string) => {

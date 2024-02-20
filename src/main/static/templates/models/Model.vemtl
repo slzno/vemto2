@@ -9,15 +9,23 @@ use <$ this.model.getParentClass() $>;
 <% } %>
 <# Traits #>
 <% if(this.model.hasTraits()) { %>
-<% for(let modelTrait of this.model.getTraits()) { %>
-use <$ modelTrait $>;
-<% } %>
+    <% for(let modelTrait of this.model.getTraits()) { %>
+    use <$ modelTrait $>;
+    <% } %>
 <% } %>
 <# Interfaces #>
 <% if(this.model.hasInterfaces()) { %>
-<% for(let modelInterface of this.model.getInterfaces()) { %>
-use <$ modelInterface $>;
+    <% for(let modelInterface of this.model.getInterfaces()) { %>
+    use <$ modelInterface $>;
+    <% } %>
 <% } %>
+<# Other imports #>
+<% if(this.model.hasOtherImports()) { %>
+    <% for(let modelImport of this.model.getOtherImports()) { %>
+        <% if(this.model.contentNotPresentInSomeHook(modelImport)) { %>
+        use <$ modelImport $>;
+        <% } %>
+    <% } %>
 <% } %>
 <# --- #>
 <% if(this.model.hasSoftDeletes) { %>

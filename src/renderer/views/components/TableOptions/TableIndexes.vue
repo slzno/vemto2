@@ -18,7 +18,7 @@
         tableIndexes = ref([]),
         confirmDeleteDialog = ref(null)
 
-    const onDevelopment = Main.API.onDevelopment()
+    const onDevelopment = Main.API.onDevelopment() && !Main.API.isRecording()
 
     onMounted(() => {
         tableIndexes.value = props.table.getIndexes()
@@ -126,10 +126,10 @@
                     'border-blue-400': index.isCommon(),
                 }"
             >
-                <!-- <div class="mt-4" v-if="onDevelopment">
+                <div class="mt-4" v-if="onDevelopment">
                     <UiButton @click="log(index)">Log details</UiButton>
                     <UiButton @click="index.logDataComparison()">Log data comparison</UiButton>
-                </div> -->
+                </div>
                 <div class="flex gap-2 mb-2">
                     <div class="w-[10rem]">
                         <UiDropdownSelect

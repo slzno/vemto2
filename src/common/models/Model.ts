@@ -21,6 +21,7 @@ import FillCastsColumns from "./services/models/Fillers/FillCastsColumns"
 import { uniq } from 'lodash'
 import { snakeCase } from "change-case"
 import Crud from "./crud/Crud"
+import TextUtil from "@Common/util/TextUtil"
 
 export default class Model extends AbstractSchemaModel implements SchemaModel {
     id: string
@@ -59,6 +60,7 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     parentClass: string
     interfaces: string[]
     traits: string[]
+    allImports: string[]
 
     /**
      * Laravel related properties
@@ -122,6 +124,7 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
 
         if(!modelData.traits) modelData.traits = []
         if(!modelData.interfaces) modelData.interfaces = []
+        if(!modelData.allImports) modelData.allImports = []
 
         if(!modelData.guarded) modelData.guarded = []
         if(!modelData.fillable) modelData.fillable = []
@@ -270,6 +273,7 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         this.parentClass = data.parentClass
         this.interfaces = data.interfaces
         this.traits = data.traits
+        this.allImports = data.allImports
         this.hasGuarded = data.hasGuarded
         this.hasFillable = data.hasFillable
         this.hasTimestamps = data.hasTimestamps
@@ -355,6 +359,7 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
             parentClass: this.parentClass,
             interfaces: DataComparator.cloneArray(this.interfaces),
             traits: DataComparator.cloneArray(this.traits),
+            allImports: DataComparator.cloneArray(this.allImports),
             hasGuarded: this.hasGuarded,
             hasFillable: this.hasFillable,
             hasTimestamps: this.hasTimestamps,
@@ -428,6 +433,10 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
             traits: DataComparator.arraysAreDifferent(
                 this.schemaState.traits,
                 comparisonData.traits
+            ),
+            allImports: DataComparator.arraysAreDifferent(
+                this.schemaState.allImports,
+                comparisonData.allImports
             ),
             hasGuarded: DataComparator.booleansAreDifferent(
                 this.schemaState.hasGuarded,
@@ -785,6 +794,35 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         this.ownRelationships.forEach(rel => rel.undoChanges())
     }
 
+    contentNotPresentInSomeHook(content: string): boolean {
+        return !this.contentPresentInSomeHook(content)
+    }
+
+    contentPresentInSomeHook(content: string): boolean {
+        const hooks = this.hooks || {}
+
+        const absoluteContent = TextUtil.absolute(content),
+            absoluteHooksContent = TextUtil.absolute(this.getAllHooksContent())
+
+        return absoluteHooksContent.includes(absoluteContent)
+    }
+
+    getAllHooksContent(): string {
+        const hooks = this.hooks || {}
+
+        let allHooksContent = ''
+
+        for (let key in hooks) {
+            const hook = hooks[key] || {}
+
+            for (let hookName in hook) {
+                allHooksContent += hook[hookName] || ''
+            }
+        }
+
+        return allHooksContent
+    }
+
     getHooks(type: string): any {
         return this.hooks ? this.hooks[type] || {} : {}
     }
@@ -830,6 +868,18 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
 
     getTraits(): string[] {
         return this.traits || []
+    }
+
+    hasOtherImports(): boolean {
+        return this.getOtherImports().length > 0
+    }
+
+    getOtherImports(): string[] {
+        return this.allImports.filter((importName) => {
+            return !this.traits.includes(importName) 
+                && !this.interfaces.includes(importName) 
+                && this.parentClass != importName
+        }) || []
     }
 
     hasMethods(): boolean {

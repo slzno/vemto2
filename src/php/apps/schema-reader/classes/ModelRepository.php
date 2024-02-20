@@ -3,6 +3,11 @@
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
+/**
+ * TODO: Refactor this class to have a cleaner code (it was experimental but turned out 
+ * to be functional, so it needs a refactor)
+ */
+
 class ModelRepository {
     protected $models = [];
     
@@ -12,6 +17,12 @@ class ModelRepository {
         $formattedModels = [];
 
         foreach ($models as $model) {
+            $allImports = self::getAllImports($model);
+
+            $allImports = collect($allImports)->map(function ($importData) {
+                return self::buildImportStatementFromData($importData);
+            })->values()->toArray();
+
             $reflection = new \ReflectionClass($model['class']);
             
             // get the model parent class
@@ -32,7 +43,15 @@ class ModelRepository {
             $traits = collect($reflection->getTraits())->map(function ($trait) use ($model) {
                 return self::buildImportStatement($model, $trait);
             })->values()->toArray();
-            
+
+            // remove traits from allImports (because the regex to get the imports also gets the traits)
+            $traitsShortNames = collect($reflection->getTraits())->map(function ($trait) {
+                return $trait->getShortName();
+            })->values()->toArray();
+            $allImports = collect($allImports)->filter(function ($import) use ($traitsShortNames) {
+                return ! in_array($import, $traitsShortNames);
+            })->values()->toArray();
+
             $properties = $reflection->getDefaultProperties();
 
             $fillable = $properties['fillable'] ?? [];
@@ -117,6 +136,7 @@ class ModelRepository {
             $hasProperty = function($visibility, $name) use ($model) {
                 if(! File::exists($model['fullPath'])) return false;
 
+                // TODO: use $model['fileContent']
                 $fileContent = file_get_contents($model['fullPath']);
 
                 if(empty($fileContent)) return false;
@@ -137,6 +157,7 @@ class ModelRepository {
                 'class' => $model['class'],
                 'namespace' => $reflection->getNamespaceName(),
                 'path' => $model['path'],
+                'allImports' => $allImports,
                 'parentClass' => self::buildImportStatement($model, $parentClass),
                 'interfaces' => $interfaces,
                 'traits' => $traits,
@@ -167,6 +188,11 @@ class ModelRepository {
     {
         $importData = self::getImportData($modelData, $import);
 
+        return self::buildImportStatementFromData($importData);
+    }
+
+    public static function buildImportStatementFromData($importData)
+    {
         if($importData['name'] === $importData['alias']) {
             return $importData['import'];
         }
@@ -198,8 +224,47 @@ class ModelRepository {
         return $alias;
     }
 
+    public static function getAllImports($model)
+    {
+        $fileContent = $model['fileContent'];
+
+        preg_match_all('/use\s+([^\s;]+(?:\s+as\s+[^\s;]+)?)\s*;/m', $fileContent, $matches);
+
+        return collect($matches[1])->map(function ($import) {
+            $alias = null;
+
+            // remove the "use" keyword and the semicolon
+            $import = str_replace(['use ', ';'], '', $import);
+            $import = trim($import);
+
+            // split the import by \ to get the class name
+            $importSections = explode('\\', $import);
+            $name = end($importSections);
+            $name = str_contains($name, ' as ') ? explode(' as ', $name)[1] : $name;
+
+            // if the import has the "as" keyword, we need to get the alias
+            if (str_contains($import, ' as ')) {
+                $aliasSections = explode(' as ', $import);
+                $alias = end($aliasSections);
+            } else {
+                $alias = $name;
+            }
+
+            return [
+                'import' => $import,
+                'name' => $name,
+                'alias' => $alias,
+            ];
+        })->values()->toArray();
+    }
+
+    /**
+     * Get all models from the application
+     * Based on the code by @mohammad425 
+     * https://gist.github.com/mohammad425/231242958edb640601108bdea7bcf9ac
+     * @return array
+     */
     public static function getModels() {
-        // Based on the code by @mohammad425 (https://gist.github.com/mohammad425/231242958edb640601108bdea7bcf9ac)
         $composerData = json_decode(
             file_get_contents(base_path('composer.json')), 
             true

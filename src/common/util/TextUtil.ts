@@ -1,4 +1,14 @@
 class TextUtil {
+
+    /**
+     * Removes all spaces, tabs and line breaks from a string
+     * @param string text 
+     * @returns string
+     */
+    absolute(text: string) {
+        return text.replace(/\s/g, '')
+    }
+
     random(size = 32) {
         let result = ''
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'

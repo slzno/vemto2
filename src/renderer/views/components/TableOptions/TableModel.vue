@@ -18,7 +18,7 @@
     import RenderableModel from "@Renderer/codegen/sequential/services/model/RenderableModel"
     import UiNumber from "@Renderer/components/ui/UiNumber.vue"
 
-    const onDevelopment = Main.API.onDevelopment()
+    const onDevelopment = Main.API.onDevelopment() && !Main.API.isRecording()
 
     const props = defineProps({
         model: {
@@ -367,10 +367,10 @@
                     </section>
                 </div>
     
-                <!-- <div class="mt-4" v-if="onDevelopment">
+                <div class="mt-4" v-if="onDevelopment">
                     <UiButton @click="log(model)">Log details</UiButton>
                     <UiButton @click="model.logDataComparison()">Log data comparison</UiButton>
-                </div> -->
+                </div>
             </div>
     
             <div v-show="selectedTab === 'relationships'">

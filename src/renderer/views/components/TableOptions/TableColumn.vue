@@ -14,7 +14,7 @@
     import UiOptionsDropdown from '@Renderer/components/ui/UiOptionsDropdown.vue'
     import UiDropdownItem from '@Renderer/components/ui/UiDropdownItem.vue'
 
-    const onDevelopment = Main.API.onDevelopment()
+    const onDevelopment = Main.API.onDevelopment() && !Main.API.isRecording()
 
     const props = defineProps({
             column: {
@@ -220,10 +220,10 @@
                 </div>
             </div>
             
-            <!-- <div class="mt-4" v-if="onDevelopment">
+            <div class="mt-4" v-if="onDevelopment">
                 <UiButton @click="column.logDataComparison()">Log data comparison</UiButton>
                 <UiButton @click="log(column)">Log details</UiButton>
-            </div> -->
+            </div>
         </div>
 
     </div>
