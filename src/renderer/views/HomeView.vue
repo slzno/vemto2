@@ -168,12 +168,12 @@
             <div class="m-1 flex flex-col gap-4">
 
                 <div class="flex justify-end">
-                    <div class="px-2 py-1 bg-slate-950 rounded-md text-sm w-auto inline text-slate-300 font-mono">
-                        Connecting to <span class="text-red-400">{{ currentConnectingFolder }}</span>
+                    <div class="px-2 py-1 bg-slate-100 dark:bg-slate-950 rounded-md text-sm w-auto inline text-slate-750 dark:text-slate-300 font-mono">
+                        Connecting to <span class="text-red-500 dark:text-red-400">{{ currentConnectingFolder }}</span>
                     </div>
                 </div>
 
-                <div>
+                <div class="flex flex-col gap-2">
                     <UiSelect v-model="connectingFolderSettings.cssFramework" label="CSS Framework">
                         <option value="tailwind">TailwindCSS</option>
                         <option value="bootstrap">Bootstrap</option>
@@ -190,7 +190,7 @@
                     </UiSelect>
                 </div>
 
-                <div>
+                <div class="flex flex-col">
                     <UiCheckbox v-model="connectingFolderSettings.usesLivewire" label="Has Livewire installed"></UiCheckbox>
                     <UiCheckbox v-model="connectingFolderSettings.usesInertia" label="Has Inertia installed"></UiCheckbox>
                     <UiCheckbox v-model="connectingFolderSettings.usesVue" label="Has Vue installed"></UiCheckbox>
@@ -199,7 +199,7 @@
                 <div>
                     <UiCheckbox v-model="connectingFolderSettings.isFreshLaravelProject" label="It is a fresh Laravel project"></UiCheckbox>
 
-                    <div class="mt-2 p-2 rounded-lg border border-slate-700 bg-slate-900 font-mono text-sm text-slate-300" v-if="connectingFolderSettings.isFreshLaravelProject">
+                    <div class="mt-2 p-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 font-mono text-sm text-slate-700 dark:text-slate-300" v-if="connectingFolderSettings.isFreshLaravelProject">
                         When a project is marked as fresh, Vemto will automatically generate some specific files after connecting it. This is useful when you want to connect a new project that was created manually. It is not recommended to mark a project as fresh if it is a previous existing project, as it may overwrite some files.
                     </div>
                 </div>

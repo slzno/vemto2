@@ -120,11 +120,11 @@
             <div>
                 <TruckIcon
                     v-if="development"
-                    class="w-36 h-36 text-slate-800 stroke-1"
+                    class="w-36 h-36 text-slate-200 dark:text-slate-800 stroke-1"
                 />
                 <CubeTransparentIcon
                     v-else
-                    class="w-36 h-36 text-slate-800 stroke-1"
+                    class="w-36 h-36 text-slate-200 dark:text-slate-800 stroke-1"
                 />
             </div>
 
@@ -135,7 +135,7 @@
 
                 <!-- Show a random quote -->
                 <span
-                    class="text-base max-w-xl text-center text-slate-500 font-mono mt-5 border-dotted font-normal h-7 overflow-visible"
+                    class="text-base max-w-xl text-center text-slate-600 dark:text-slate-500 font-mono mt-5 border-dotted font-normal h-7 overflow-visible"
                 >
                     <Transition
                         enter-from-class="transition duration-2000 opacity-0"

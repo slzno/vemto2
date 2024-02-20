@@ -3,6 +3,6 @@
         <div>
             <slot></slot>
         </div>
-        <div class="border-t border-slate-700"></div>
+        <div class="border-t border-slate-200 dark:border-slate-700"></div>
     </div>
 </template>

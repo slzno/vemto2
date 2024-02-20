@@ -101,9 +101,9 @@
         :class="{
             'opacity-30': schemaStore.hasSelectedTable && schemaStore.selectedTableIsNot(table),
             'border border-transparent': schemaStore.selectedTableIsNot(table),
-            'border dark:border-slate-500': schemaStore.selectedTableIs(table),
+            'border border-slate-400 dark:border-slate-500': schemaStore.selectedTableIs(table),
         }"
-        class="cursor-move schema-table group absolute shadow-lg rounded-lg hover:border-slate-500 bg-white dark:bg-slate-850 z-10 space-y-4 pb-4 select-none"
+        class="cursor-move schema-table group absolute shadow-lg rounded-lg hover:border-slate-400 dark:hover:border-slate-500 bg-white dark:bg-slate-850 z-10 space-y-4 pb-4 select-none"
         style="min-width: 270px"
         :style="{
             top: getTablePosition(table).top,
