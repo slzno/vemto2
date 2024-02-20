@@ -561,7 +561,9 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
                 on: relatedModel.table.name,
                 onTableId: relatedModel.table.id,
                 references: primaryKeyColumn?.name,
-                referencesColumnId: primaryKeyColumn?.id
+                referencesColumnId: primaryKeyColumn?.id,
+                onUpdate: 'cascade',
+                onDelete: 'cascade'
             })
         
         foreign.save()
