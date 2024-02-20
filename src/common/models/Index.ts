@@ -52,6 +52,8 @@ export default class Index extends AbstractSchemaModel implements SchemaModel {
         if(relatedTable && !indexTable.canBeChildrenOf(relatedTable)) {
             throw new CircularRelationError(`Circular relationship with non-saved table "${relatedTable.name}" is not allowed. Please save the schema data before creating a circular relationship.`)
         }
+
+        return data
     }
 
     static updating(data: any): any {
