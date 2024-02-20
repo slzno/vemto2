@@ -10,7 +10,7 @@
     <div :class="{
         'line-through opacity-50': model.isRemoved(),
     }" class="dark:text-slate-300 space-y-2">
-        <div class="rounded bg-slate-50 dark:bg-slate-900 px-2 py-1 hover:bg-slate-100 dark:hover:bg-slate-950 hover:cursor-pointer">
+        <div class="rounded bg-slate-50 dark:bg-slate-900 px-2 py-1">
             <div class="font-semibold text-sm flex justify-between">
                 <div class="flex items-center space-x-1 pr-4 text-slate-300">
                     <div v-if="model.isNew()" title="Model Draft">

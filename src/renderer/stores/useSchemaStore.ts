@@ -5,6 +5,7 @@ import { useProjectStore } from "./useProjectStore"
 
 export const useSchemaStore = defineStore("schema", {
     state: () => ({ 
+        canDragTable: false,
         focusedTable: {} as Table,
         selectedTable: {} as Table,
         selectedSchemaSection: {} as SchemaSection,
@@ -13,6 +14,14 @@ export const useSchemaStore = defineStore("schema", {
     }),
 
     actions: {
+        enableTableDragging(): void {
+            this.canDragTable = true
+        },
+
+        disableTableDragging(): void {
+            this.canDragTable = false
+        },
+
         selectTable(table: Table): void {
             this.deselectTable()
 

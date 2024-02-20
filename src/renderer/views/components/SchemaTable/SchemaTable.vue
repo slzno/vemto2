@@ -57,7 +57,7 @@
 
         setTimeout(() => {
             clickedQuickly = false
-        }, 250)
+        }, 400)
     }
 
     const endClick = () => {
@@ -93,8 +93,6 @@
     </UiConfirm>
 
     <div
-        @mousedown="startClick()"
-        @mouseup="endClick()"
         :id="`table_${table.id}`"
         :ref="`table_${table.id}`"
         :data-table-id="table.id"
@@ -103,14 +101,19 @@
             'border border-transparent': schemaStore.selectedTableIsNot(table),
             'border border-slate-400 dark:border-slate-500': schemaStore.selectedTableIs(table),
         }"
-        class="cursor-move schema-table group absolute shadow-lg rounded-lg hover:border-slate-400 dark:hover:border-slate-500 bg-white dark:bg-slate-850 z-10 space-y-4 pb-4 select-none"
+        class="schema-table group absolute shadow-lg rounded-lg hover:border-slate-400 dark:hover:border-slate-500 bg-white dark:bg-slate-850 z-10 space-y-4 pb-4 select-none cursor-default"
         style="min-width: 270px"
         :style="{
             top: getTablePosition(table).top,
             left: getTablePosition(table).left,
         }"
     >
-        <div class="w-full dark:bg-slate-800 rounded-t-lg px-4 pt-2 pb-2 flex justify-between items-center">
+        <!-- Table title -->
+        <div 
+            @mouseover="schemaStore.enableTableDragging()"
+            @mouseleave="schemaStore.disableTableDragging()"
+            class="w-full cursor-move hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-t-lg px-4 pt-2 pb-2 flex justify-between items-center"
+        >
             <span class="title w-full font-bold text-lg text-slate-750 dark:text-slate-300 flex items-center space-x-1">
                 <div class="flex items-center" :class="{
                     'line-through': table.isRemoved(),
@@ -155,24 +158,31 @@
 
         </div>
 
-        <div
-            :class="{
-                'opacity-30': table.isRemoved(),
-            }" 
-            class="font-mono px-4">
-            <TableColumn
-                v-for="column in table.getAllOrderedColumns()"
-                :key="column.name"
-                :column="column"
-            />
-        </div>
-
-        <div class="font-mono px-4">
-            <TableModel
-                v-for="model in table.models"
-                :key="model.name"
-                :model="model"
-            />
+        <!-- Table content -->
+        <div 
+            @mousedown="startClick()"
+            @mouseup="endClick()"
+            class="flex flex-col space-y-4 cursor-default"
+        >
+            <div
+                :class="{
+                    'opacity-30': table.isRemoved(),
+                }" 
+                class="font-mono px-4">
+                <TableColumn
+                    v-for="column in table.getAllOrderedColumns()"
+                    :key="column.name"
+                    :column="column"
+                />
+            </div>
+    
+            <div class="font-mono px-4">
+                <TableModel
+                    v-for="model in table.models"
+                    :key="model.name"
+                    :model="model"
+                />
+            </div>
         </div>
     </div>
 </template>

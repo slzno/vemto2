@@ -174,9 +174,12 @@
         })
 
         jsPlumbInstance.bind(EVENT_DRAG_START, (p: any) => {
+            if(!schemaStore.canDragTable) return false
+
             isDragging = true
 
             const tableId = parseInt(p.el.getAttribute("data-table-id")).toString()
+
             schemaStore.setDraggingTableId(tableId)
         })
 
