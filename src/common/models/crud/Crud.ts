@@ -132,8 +132,17 @@ export default class Crud extends RelaDB.Model {
     }
 
     static deleting(crud: Crud) {
-        crud.project.deleteTranslationOnAllLanguages(crud.getLangKeyForItemTitle())
-        crud.project.deleteTranslationOnAllLanguages(crud.getLangKeyForCollectionTitle())
+        const hasCrudWithSameTranslation = (translationProperty: string) => Crud.get().filter(
+            (otherCrud: Crud) => otherCrud.id !== crud.id && otherCrud.settings[translationProperty] === crud.settings[translationProperty]
+        ).length > 0
+
+        if(!hasCrudWithSameTranslation('itemTitle')) {
+            crud.project.deleteTranslationOnAllLanguages(crud.getLangKeyForItemTitle())
+        }
+
+        if(!hasCrudWithSameTranslation('collectionTitle')) {
+            crud.project.deleteTranslationOnAllLanguages(crud.getLangKeyForCollectionTitle())
+        }
     }
 
     static getBasic() {
