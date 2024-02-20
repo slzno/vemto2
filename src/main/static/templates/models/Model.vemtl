@@ -4,6 +4,7 @@
 
 namespace App\Models;
 
+// hook:BEFORE_IMPORTS
 <% if(this.model.hasParentClass()) { %>
 use <$ this.model.getParentClass() $>;
 <% } %>
