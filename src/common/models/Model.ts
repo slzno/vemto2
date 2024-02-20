@@ -799,8 +799,6 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     }
 
     contentPresentInSomeHook(content: string): boolean {
-        const hooks = this.hooks || {}
-
         const absoluteContent = TextUtil.absolute(content),
             absoluteHooksContent = TextUtil.absolute(this.getAllHooksContent())
 

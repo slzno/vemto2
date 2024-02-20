@@ -380,7 +380,9 @@ implements
     <% if(this.model.hasMethods()) { %>
         <# Methods #>
         <% for(let method of this.model.getMethods()) { %>
-            <$ method.content $>
+            <% if(this.model.contentNotPresentInSomeHook(method.content)) { %>
+                <$ method.content $>
+            <% } %>
         <% } %>
     <% } %>
 
