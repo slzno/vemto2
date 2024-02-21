@@ -119,7 +119,7 @@
 
         editableLines.forEach((line) => {
             editor.deltaDecorations([], [
-                { range: new monaco.Range(line, 1, line, 1), options: { isWholeLine: true, className: 'bg-slate-800' } }
+                { range: new monaco.Range(line, 1, line, 1), options: { isWholeLine: true, className: 'hook-line' } }
             ])
         })
     }
@@ -172,5 +172,9 @@
 <style>
     .editableArea--multi-line {
         background-color: #2d3748;
+    }
+
+    .hook-line {
+        background-color: rgba(108, 122, 137, 0.2);
     }
 </style>
