@@ -1,6 +1,62 @@
+<script setup lang="ts">
+    import { computed, onMounted, ref } from 'vue'
+
+    const canShow = ref(false)
+
+    const props = defineProps({
+        size: {
+            type: Number,
+            default: 20,
+        },
+
+        strokeWidth: {
+            type: Number,
+            default: 4,
+        },
+
+        delay: {
+            type: Number,
+            default: 0,
+        },
+    })
+    
+    onMounted(() => {
+        if (props.delay === 0) {
+            canShow.value = true
+            return
+        }
+
+        setTimeout(() => {
+            canShow.value = true
+        }, props.delay)
+    })
+
+    const ringStyle = computed(() => ({
+        width: `${props.size}px`,
+        height: `${props.size}px`,
+    }))
+
+    const divStyle = computed(() => {
+        const size = Math.max(0, props.size - 4)
+        
+        return {
+            width: `${size}px`,
+            height: `${size}px`,
+            margin: `${props.strokeWidth}px`,
+            borderWidth: `${props.strokeWidth}px`,
+            borderRadius: '50%',
+        }
+    })
+</script>
+
 <template>
-    <div class="flex text-slate-400 dark:text-slate-200">
-        <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+    <div v-show="canShow" class="flex text-gray-500 dark:text-white" :style="ringStyle">
+        <div class="lds-ring">
+            <div :style="divStyle"></div>
+            <div :style="divStyle"></div>
+            <div :style="divStyle"></div>
+            <div :style="divStyle"></div>
+        </div>
     </div>
 </template>
 
@@ -8,15 +64,11 @@
     .lds-ring {
         display: inline-block;
         position: relative;
-        width: 20px;
-        height: 20px;
     }
     .lds-ring div {
         box-sizing: border-box;
         display: block;
         position: absolute;
-        width: 16px;
-        height: 16px;
         margin: 4px;
         border: 4px solid currentColor;
         border-radius: 50%;

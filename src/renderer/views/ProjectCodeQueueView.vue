@@ -4,10 +4,12 @@
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import { computed, ref, onMounted, Ref, watch, nextTick } from "vue"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
+    import UiLoading from "@Renderer/components/ui/UiLoading.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
     import RenderableFileViewer from "./components/CodeQueue/RenderableFileViewer.vue"
+    import { CubeTransparentIcon } from "@heroicons/vue/24/outline"
 
     const projectStore = useProjectStore(),
         search = ref(""),
@@ -16,7 +18,8 @@
         allRemovedFiles = ref([]) as Ref<RenderableFile[]>,
         allConflictFiles = ref([]) as Ref<RenderableFile[]>,
         allIgnoredFiles = ref([]) as Ref<RenderableFile[]>,
-        loadingFiles = ref(false)
+        loadingFiles = ref(false),
+        uiTabs = ref(null)
 
     onMounted(() => {
         projectStore.project.startCodeGenerationSettings()
@@ -25,12 +28,12 @@
     })
 
     watch(() => projectStore.project.renderableFiles, () => {
-        console.log('watching renderable files')
         loadFiles()
     })
 
     const loadFiles = async () => {
         loadingFiles.value = true
+        uiTabs.value.setLoadingTab(selectedTab.value)
 
         await nextTick()
 
@@ -41,6 +44,7 @@
             allIgnoredFiles.value = projectStore.project.getIgnoredRenderableFiles()
     
             loadingFiles.value = false
+            uiTabs.value.clearLoadingTab()
         }, 0)
     }
 
@@ -135,6 +139,7 @@
     >
         <div class="mt-3">
             <UiTabs 
+                ref="uiTabs"
                 :name="projectStore.project.getTabNameFor('queue')" 
                 :tabs="tabs" 
                 v-model="selectedTab" 
@@ -239,7 +244,10 @@
                         </div>
                     </div>
     
-                    <UiButton @click="clearRemovedFiles()">Clear All</UiButton>
+                    <UiButton @click="clearRemovedFiles()">
+                        <CubeTransparentIcon class="w-4 h-4 mr-2 text-red-400" />
+                        <span>Clear All</span>
+                    </UiButton>
                 </div>
                 
                 <div v-if="removedFiles.length">

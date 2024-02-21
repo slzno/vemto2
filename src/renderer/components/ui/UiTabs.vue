@@ -1,7 +1,9 @@
 <script setup lang="ts">
-    import { ref, defineProps, defineEmits, onMounted, watch } from "vue"
+    import UiLoading from "./UiLoading.vue"
+    import { ref, defineProps, defineEmits, defineExpose, onMounted, watch } from "vue"
 
-    let localValue = ref(null)
+    let localValue = ref(null),
+        loadingTab = ref("")
 
     const props = defineProps({
         modelValue: {
@@ -74,6 +76,23 @@
     }
 
     const getLastSelectedKey = () => `lastSelectedTab-${props.name}`
+
+    const setLoadingTab = (tab: string): void => {
+        loadingTab.value = tab
+    }
+
+    const clearLoadingTab = (): void => {
+        loadingTab.value = ""
+    }
+
+    const isLoadingTab = (tab: string): boolean => {
+        return loadingTab.value === tab
+    }
+
+    defineExpose({
+        setLoadingTab,
+        clearLoadingTab,
+    })
 </script>
 
 <template>
@@ -89,14 +108,21 @@
         >
             <div>{{ tab.label }}</div>
 
-            <div
-                class="flex items-center justify-center h-4 w-5 text-xs border border-slate-700 rounded"
-                :class="typeof tab.emphasize === 'function' ?
-                    (tab.emphasize() ? 'border-red-500 text-red-500' : 'text-slate-500') :
-                    tab.emphasize ? 'border-red-500 text-red-500' : 'text-slate-500'"
-                v-if="typeof tab.badge !== 'undefined'"
-            >
-                {{ typeof tab.badge === "function" ? tab.badge() : tab.badge }}
+            <div class="h-4 w-5" v-if="isLoadingTab(tab.value)">
+                <UiLoading class="w-4 h-4" :size="15" :stroke-width="2"/>
+            </div>
+
+            <div v-else>
+                <!-- Tab badge -->
+                <div
+                    class="flex items-center justify-center h-4 w-5 text-xs border border-slate-700 rounded"
+                    :class="typeof tab.emphasize === 'function' ?
+                        (tab.emphasize() ? 'border-red-500 text-red-500' : 'text-slate-500') :
+                        tab.emphasize ? 'border-red-500 text-red-500' : 'text-slate-500'"
+                    v-if="typeof tab.badge !== 'undefined'"
+                >
+                    {{ typeof tab.badge === "function" ? tab.badge() : tab.badge }}
+                </div>
             </div>
         </li>
     </ul>
