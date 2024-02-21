@@ -64,7 +64,7 @@
     }
 
     const clearFile = async (file: RenderableFile) => {
-        file.delete()
+        file.setAsIdle()
     }
 </script>
 
@@ -80,38 +80,41 @@
     />
 
     <div
+        v-if="file && file.id"
         class="flex flex-col justify-center bg-slate-200 dark:bg-slate-850 dark:hover:bg-slate-800 w-full min-h-[3.5rem] rounded-lg mb-2 p-2 px-2"
     >
         <div class="flex items-center justify-between">
             <div class="flex cursor-pointer" @click="openFile(file)">
                 <div class="w-24">
-                    <div class="inline-block p-1 rounded-md bg-slate-800 mr-2">
-                        <div class="flex items-center space-x-1 text-xs">
+                    <div 
+                        class="inline-block p-1 rounded-md bg-slate-750 border border-slate-700 mr-2"
+                        :class="{
+                            'text-green-500':
+                                file.status ===
+                                RenderableFileStatus.RENDERED,
+                            'text-yellow-500':
+                                file.status ===
+                                RenderableFileStatus.PENDING,
+                            'text-red-500':
+                                file.status ===
+                                RenderableFileStatus.ERROR,
+                            'text-orange-500':
+                                file.status ===
+                                RenderableFileStatus.CONFLICT,
+                            'text-red-700':
+                                file.status ===
+                                RenderableFileStatus.ASK_TO_REMOVE,
+                            'text-red-800':
+                                file.status ===
+                                RenderableFileStatus.CAN_REMOVE,
+                            'text-slate-450':
+                                file.status ===
+                                RenderableFileStatus.REMOVED || file.status === RenderableFileStatus.IGNORED,
+                        }"
+                    >
+                        <div class="flex items-center space-x-1.5 text-xs">
                             <div
-                                class="rounded-full w-3 h-3"
-                                :class="{
-                                    'bg-green-500':
-                                        file.status ===
-                                        RenderableFileStatus.RENDERED,
-                                    'bg-yellow-500':
-                                        file.status ===
-                                        RenderableFileStatus.PENDING,
-                                    'bg-red-500':
-                                        file.status ===
-                                        RenderableFileStatus.ERROR,
-                                    'bg-orange-500':
-                                        file.status ===
-                                        RenderableFileStatus.CONFLICT,
-                                    'bg-red-700':
-                                        file.status ===
-                                        RenderableFileStatus.ASK_TO_REMOVE,
-                                    'bg-red-800':
-                                        file.status ===
-                                        RenderableFileStatus.CAN_REMOVE,
-                                    'bg-gray-500':
-                                        file.status ===
-                                        RenderableFileStatus.REMOVED || file.status === RenderableFileStatus.IGNORED,
-                                }"
+                                class="rounded-full w-2.5 h-2.5 bg-current"
                             ></div>
                             <div>{{ sentenceCase(file.status) }}</div>
                         </div>

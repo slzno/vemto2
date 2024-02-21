@@ -1,5 +1,5 @@
 <template>
-    <div class="flex text-gray-500 dark:text-white">
+    <div class="flex text-slate-400 dark:text-slate-200">
         <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
     </div>
 </template>

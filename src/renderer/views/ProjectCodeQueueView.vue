@@ -2,7 +2,7 @@
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import RenderableFile from "@Common/models/RenderableFile"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
-    import { computed, ref, onMounted } from "vue"
+    import { computed, ref, onMounted, Ref, watch, nextTick } from "vue"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
@@ -11,7 +11,38 @@
 
     const projectStore = useProjectStore(),
         search = ref(""),
-        searchRemoved = ref("")
+        searchRemoved = ref(""),
+        allNonRemovedFiles = ref([]) as Ref<RenderableFile[]>,
+        allRemovedFiles = ref([]) as Ref<RenderableFile[]>,
+        allConflictFiles = ref([]) as Ref<RenderableFile[]>,
+        allIgnoredFiles = ref([]) as Ref<RenderableFile[]>,
+        loadingFiles = ref(false)
+
+    onMounted(() => {
+        projectStore.project.startCodeGenerationSettings()
+
+        loadFiles()
+    })
+
+    watch(() => projectStore.project.renderableFiles, () => {
+        console.log('watching renderable files')
+        loadFiles()
+    })
+
+    const loadFiles = async () => {
+        loadingFiles.value = true
+
+        await nextTick()
+
+        setTimeout(async () => {
+            allNonRemovedFiles.value = projectStore.project.getNonRemovedRenderableFiles()
+            allRemovedFiles.value = projectStore.project.getRemovedRenderableFiles()
+            allConflictFiles.value = projectStore.project.getConflictRenderableFiles()
+            allIgnoredFiles.value = projectStore.project.getIgnoredRenderableFiles()
+    
+            loadingFiles.value = false
+        }, 0)
+    }
 
     const selectedTab = ref("queue")
 
@@ -19,39 +50,32 @@
         {
             label: "Queue",
             value: "queue",
-            badge: () =>
-                projectStore.project.getNonRemovedRenderableFiles(false).length,
+            badge: () => allNonRemovedFiles.value.length,
         },
         {
             label: "Conflicts",
             value: "conflicts",
-            badge: () =>
-                projectStore.project.getConflictRenderableFiles(false).length,
+            badge: () => allConflictFiles.value.length,
         },
         {
             label: "Ignored",
             value: "ignored",
-            badge: () => projectStore.project.getIgnoredRenderableFiles(false).length,
+            badge: () => allIgnoredFiles.value.length,
         },
         {
             label: "Removed",
             value: "removed",
-            badge: () =>
-                projectStore.project.getRemovedRenderableFiles(false).length,
+            badge: () => allRemovedFiles.value.length,
         },
-        { label: "Settings", value: "settings" },
+        // { label: "Settings", value: "settings" },
     ]
-
-    onMounted(() => {
-        projectStore.project.startCodeGenerationSettings()
-    })
 
     const filteredFiles = computed(() => {
             if (!projectStore.project || !projectStore.project.renderableFiles)
                 return []
 
             return filterBySearch(
-                projectStore.project.getNonRemovedRenderableFiles(),
+                allNonRemovedFiles.value,
                 search
             )
         }),
@@ -60,7 +84,7 @@
                 return []
 
             return filterBySearch(
-                projectStore.project.getRemovedRenderableFiles(),
+                allRemovedFiles.value,
                 searchRemoved
             )
         }),
@@ -69,7 +93,7 @@
                 return []
 
             return filterBySearch(
-                projectStore.project.getConflictRenderableFiles(),
+                allConflictFiles.value,
                 search
             )
         }),
@@ -78,7 +102,7 @@
                 return []
 
             return filterBySearch(
-                projectStore.project.getIgnoredRenderableFiles(),
+                allIgnoredFiles.value,
                 search
             )
         })
@@ -117,138 +141,149 @@
             />
         </div>
 
-        <div class="p-4" v-if="selectedTab === 'queue'">
-            <UiEmptyMessage v-if="!filteredFiles.length">
-                <span>There are no files in the Queue</span>
-            </UiEmptyMessage>
-
-            <div class="flex top-0 left-0 space-x-2 text-sm z-20 mb-4">
-                <div>
-                    <!-- Search -->
-                    <div class="flex items-center">
-                        <UiText
-                            v-model="search"
-                            placeholder="Search files..."
-                        />
+        <div>
+            <div class="p-4" v-show="selectedTab === 'queue'">
+                <UiEmptyMessage v-if="!filteredFiles.length">
+                    <span>There are no files in the Queue</span>
+                </UiEmptyMessage>
+    
+                <div class="flex top-0 left-0 space-x-2 text-sm z-20 mb-4">
+                    <div>
+                        <!-- Search -->
+                        <div class="flex items-center">
+                            <UiText
+                                v-model="search"
+                                placeholder="Search files..."
+                            />
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <RenderableFileViewer
-                v-for="file in filteredFiles"
-                :key="file.id"
-                :file="file"
-            >
-            </RenderableFileViewer>
-        </div>
-
-        <div class="p-4" v-if="selectedTab === 'conflicts'">
-            <UiEmptyMessage v-if="!conflictFiles.length">
-                <span>There are no files with conflicts</span>
-            </UiEmptyMessage>
-
-            <div class="flex top-0 left-0 space-x-2 text-sm z-20 mb-4">
-                <div>
-                    <!-- Search -->
-                    <div class="flex items-center">
-                        <UiText
-                            v-model="search"
-                            placeholder="Search files..."
-                        />
-                    </div>
+                
+                <div v-if="filteredFiles.length">
+                    <RenderableFileViewer
+                        v-for="file in filteredFiles"
+                        :key="file.id"
+                        :file="file"
+                    >
+                    </RenderableFileViewer>
                 </div>
             </div>
-
-            <RenderableFileViewer
-                v-for="file in conflictFiles"
-                :key="file.id"
-                :file="file"
-            >
-            </RenderableFileViewer>
-        </div>
-
-        <div class="p-4" v-if="selectedTab === 'ignored'">
-            <UiEmptyMessage v-if="!ignoredFiles.length">
-                <span>There are no ignored files</span>
-            </UiEmptyMessage>
-
-            <div class="flex top-0 left-0 space-x-2 text-sm z-20 mb-4">
-                <div>
-                    <!-- Search -->
-                    <div class="flex items-center">
-                        <UiText
-                            v-model="search"
-                            placeholder="Search files..."
-                        />
+    
+            <div class="p-4" v-show="selectedTab === 'conflicts'">
+                <UiEmptyMessage v-if="!conflictFiles.length">
+                    <span>There are no files with conflicts</span>
+                </UiEmptyMessage>
+    
+                <div class="flex top-0 left-0 space-x-2 text-sm z-20 mb-4">
+                    <div>
+                        <!-- Search -->
+                        <div class="flex items-center">
+                            <UiText
+                                v-model="search"
+                                placeholder="Search files..."
+                            />
+                        </div>
                     </div>
                 </div>
+                
+                <div v-if="conflictFiles.length">
+                    <RenderableFileViewer
+                        v-for="file in conflictFiles"
+                        :key="file.id"
+                        :file="file"
+                    >
+                    </RenderableFileViewer>
+                </div>
             </div>
-
-            <RenderableFileViewer
-                v-for="file in ignoredFiles"
-                :key="file.id"
-                :file="file"
-            >
-            </RenderableFileViewer>
-        </div>
-
-        <div class="p-4" v-if="selectedTab === 'removed'">
-            <UiEmptyMessage v-if="!removedFiles.length">
-                <span>There are no removed files</span>
-            </UiEmptyMessage>
-
-            <div class="flex top-0 left-0 space-x-2 text-sm z-20 mb-4">
-                <div>
-                    <!-- Search -->
-                    <div class="flex items-center">
-                        <UiText
-                            v-model="search"
-                            placeholder="Search files..."
-                        />
+    
+            <div class="p-4" v-if="selectedTab === 'ignored'">
+                <UiEmptyMessage v-show="!ignoredFiles.length">
+                    <span>There are no ignored files</span>
+                </UiEmptyMessage>
+    
+                <div class="flex top-0 left-0 space-x-2 text-sm z-20 mb-4">
+                    <div>
+                        <!-- Search -->
+                        <div class="flex items-center">
+                            <UiText
+                                v-model="search"
+                                placeholder="Search files..."
+                            />
+                        </div>
                     </div>
                 </div>
-
-                <UiButton @click="clearRemovedFiles()">Clear All</UiButton>
+                
+                <div v-if="ignoredFiles.length">
+                    <RenderableFileViewer
+                        v-for="file in ignoredFiles"
+                        :key="file.id"
+                        :file="file"
+                    >
+                    </RenderableFileViewer>
+                </div>
             </div>
-
-            <RenderableFileViewer
-                v-for="file in removedFiles"
-                :key="file.id"
-                :file="file"
-            >
-            </RenderableFileViewer>
+    
+            <div class="p-4" v-if="selectedTab === 'removed'">
+                <UiEmptyMessage v-show="!removedFiles.length">
+                    <span>There are no removed files</span>
+                </UiEmptyMessage>
+    
+                <div class="flex top-0 left-0 space-x-2 text-sm z-20 mb-4">
+                    <div>
+                        <!-- Search -->
+                        <div class="flex items-center">
+                            <UiText
+                                v-model="search"
+                                placeholder="Search files..."
+                            />
+                        </div>
+                    </div>
+    
+                    <UiButton @click="clearRemovedFiles()">Clear All</UiButton>
+                </div>
+                
+                <div v-if="removedFiles.length">
+                    <RenderableFileViewer
+                        v-for="file in removedFiles"
+                        :key="file.id"
+                        :file="file"
+                    >
+                    </RenderableFileViewer>
+                </div>
+            </div>
+    
+            <div class="p-4" v-if="selectedTab === 'settings'">
+                <UiCheckbox
+                    v-model="projectStore.project.codeGenerationSettings.models"
+                    label="Generate Models"
+                    @change="projectStore.project.save()"
+                />
+    
+                <UiCheckbox
+                    v-model="projectStore.project.codeGenerationSettings.factories"
+                    label="Generate Factories"
+                    @change="projectStore.project.save()"
+                />
+    
+                <UiCheckbox
+                    v-model="projectStore.project.codeGenerationSettings.seeders"
+                    label="Generate Seeders"
+                    @change="projectStore.project.save()"
+                />
+    
+                <UiCheckbox
+                    v-model="projectStore.project.codeGenerationSettings.policies"
+                    label="Generate Policies"
+                    @change="projectStore.project.save()"
+                />
+    
+                <UiCheckbox
+                    v-model="projectStore.project.codeGenerationSettings.routes"
+                    label="Generate Routes"
+                    @change="projectStore.project.save()"
+                />
+            </div>
         </div>
 
-        <div class="p-4" v-if="selectedTab === 'settings'">
-            <UiCheckbox
-                v-model="projectStore.project.codeGenerationSettings.models"
-                label="Generate Models"
-                @change="projectStore.project.save()"
-            />
-
-            <UiCheckbox
-                v-model="projectStore.project.codeGenerationSettings.factories"
-                label="Generate Factories"
-                @change="projectStore.project.save()"
-            />
-
-            <UiCheckbox
-                v-model="projectStore.project.codeGenerationSettings.seeders"
-                label="Generate Seeders"
-                @change="projectStore.project.save()"
-            />
-
-            <UiCheckbox
-                v-model="projectStore.project.codeGenerationSettings.policies"
-                label="Generate Policies"
-                @change="projectStore.project.save()"
-            />
-
-            <UiCheckbox
-                v-model="projectStore.project.codeGenerationSettings.routes"
-                label="Generate Routes"
-                @change="projectStore.project.save()"
-            />
-        </div>
     </div>
 </template>
