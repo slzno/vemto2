@@ -794,6 +794,15 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         this.ownRelationships.forEach(rel => rel.undoChanges())
     }
 
+
+    methodNotPresentInSomeHook(method: any): boolean {
+        return !this.methodPresentInSomeHook(method)
+    }
+
+    methodPresentInSomeHook(method: any): boolean {
+        return this.contentPresentInSomeHook(`function ${method.name}`)
+    }
+
     contentNotPresentInSomeHook(content: string): boolean {
         return !this.contentPresentInSomeHook(content)
     }

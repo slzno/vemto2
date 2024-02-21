@@ -222,11 +222,12 @@
             @syncSchema="syncSchema" 
         />
 
-        <SchemaTables v-if="canDrawTables" @tablesLoaded="drawConnectionsOnNextTick()" />
+        <SchemaTables 
+            v-if="canDrawTables" 
+            @tablesLoaded="drawConnectionsOnNextTick()" 
+        />
 
         <MigrationSaver />
-
-        <!-- <SchemaFooter /> -->
     </div>
 </template>
 
