@@ -87,7 +87,7 @@
             <div class="flex cursor-pointer" @click="openFile(file)">
                 <div class="w-24">
                     <div 
-                        class="inline-block p-1 rounded-md bg-slate-750 border border-slate-700 mr-2"
+                        class="inline-block py-1 px-1.5 rounded-md bg-slate-750 border border-slate-700 mr-2"
                         :class="{
                             'text-green-500':
                                 file.status ===
