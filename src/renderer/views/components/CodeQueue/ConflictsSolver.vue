@@ -181,8 +181,8 @@
 </script>
 
 <template>
-    <UiConfirm ref="confirmOverwriteDialog" title="Overwrite file content">
-        Are you sure you want to overwrite the current content with the generated code?
+    <UiConfirm ref="confirmOverwriteDialog" title="Confirm Code">
+        Are you sure you want to accept the <span class="text-red-500 dark:text-red-400">generated code</span>?
     </UiConfirm>
 
     <UiConfirm ref="confirmIgnoreDialog" title="Ignore file">
@@ -211,11 +211,11 @@
                         Merge with AI
                     </UiButton>
     
-                    <UiButton title="Merge is currently in Alpha and may have weird results. If you need better results, use Merge with AI" @click="mergeCode()">
+                    <!-- <UiButton title="Merge is currently in Alpha and may have weird results. If you need better results, use Merge with AI" @click="mergeCode()">
                         <UiLoading v-show="calculatingMerge" class="mr-1 scale-75"></UiLoading>
                         <MergeIcon v-show="!calculatingMerge" class="w-4 h-4 mr-1 text-red-500" />
                         Merge&nbsp;<small>(Alpha)</small>
-                    </UiButton>
+                    </UiButton> -->
     
                     <UiButton @click="solveManually()">
                         <CodeBracketIcon class="w-4 h-4 mr-1 stroke-2 text-red-500" />
@@ -224,7 +224,7 @@
     
                     <UiButton @click="overwriteFile()">
                         <ArrowDownTrayIcon class="w-4 h-4 mr-1 stroke-2 text-red-500" />
-                        Overwrite
+                        Accept Generated
                     </UiButton>
     
                     <UiButton v-if="canIgnore" @click="ignoreFile()">
