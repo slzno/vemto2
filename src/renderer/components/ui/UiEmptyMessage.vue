@@ -3,6 +3,7 @@
     import {
         CubeTransparentIcon, TruckIcon,
     } from "@heroicons/vue/24/outline"
+import UiLoading from "./UiLoading.vue"
     
     const props = defineProps({
         development: {
@@ -11,6 +12,11 @@
         },
 
         local: {
+            type: Boolean,
+            default: false,
+        },
+
+        loading: {
             type: Boolean,
             default: false,
         },
@@ -118,14 +124,20 @@
     >
         <div class="flex flex-col items-center space-y-10">
             <div>
-                <TruckIcon
-                    v-if="development"
-                    class="w-36 h-36 text-slate-200 dark:text-slate-800 stroke-1"
-                />
-                <CubeTransparentIcon
-                    v-else
-                    class="w-36 h-36 text-slate-200 dark:text-slate-800 stroke-1"
-                />
+                <div v-if="loading">
+                    <UiLoading :size="100" />
+                </div>
+
+                <div v-else>
+                    <TruckIcon
+                        v-if="development"
+                        class="w-36 h-36 text-slate-200 dark:text-slate-800 stroke-1"
+                    />
+                    <CubeTransparentIcon
+                        v-else
+                        class="w-36 h-36 text-slate-200 dark:text-slate-800 stroke-1"
+                    />
+                </div>
             </div>
 
             <div

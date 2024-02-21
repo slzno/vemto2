@@ -1,10 +1,10 @@
 <script setup lang="ts">
+    import { debounce } from "lodash"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import RenderableFile from "@Common/models/RenderableFile"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import { computed, ref, onMounted, Ref, watch, nextTick } from "vue"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
-    import UiLoading from "@Renderer/components/ui/UiLoading.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
@@ -32,11 +32,17 @@
     })
 
     const loadFiles = async () => {
+        console.log("Loading files...")
+
         loadingFiles.value = true
         uiTabs.value.setLoadingTab(selectedTab.value)
 
         await nextTick()
 
+        loadFilesDebounced()
+    }
+
+    const loadFilesDebounced = debounce(async () => {
         setTimeout(async () => {
             allNonRemovedFiles.value = projectStore.project.getNonRemovedRenderableFiles()
             allRemovedFiles.value = projectStore.project.getRemovedRenderableFiles()
@@ -46,7 +52,7 @@
             loadingFiles.value = false
             uiTabs.value.clearLoadingTab()
         }, 0)
-    }
+    }, 300)
 
     const selectedTab = ref("queue")
 
@@ -148,9 +154,16 @@
 
         <div>
             <div class="p-4" v-show="selectedTab === 'queue'">
-                <UiEmptyMessage v-if="!filteredFiles.length">
-                    <span>There are no files in the Queue</span>
-                </UiEmptyMessage>
+                <div v-if="loadingFiles">
+                    <UiEmptyMessage loading>
+                        <span>Loading files...</span>
+                    </UiEmptyMessage>
+                </div>
+                <div v-else>
+                    <UiEmptyMessage v-if="!filteredFiles.length">
+                        <span>There are no files in the Queue</span>
+                    </UiEmptyMessage>
+                </div>
     
                 <div class="flex top-0 left-0 space-x-2 text-sm z-20 mb-4">
                     <div>
