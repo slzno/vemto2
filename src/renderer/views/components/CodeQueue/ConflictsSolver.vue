@@ -55,6 +55,7 @@
         newFileContent = toRef(props, 'newFileContent')
 
     const show = async () => {
+        calculatingAIMerge.value = false
         showingModal.value = true
 
         await nextTick()
@@ -206,8 +207,8 @@
                 </div>
                 <div class="flex space-x-2">
                     <UiButton @click="mergeCodeWithAI()">
-                        <UiLoading v-show="calculatingAIMerge" class="mr-1 scale-75"></UiLoading>
-                        <MergeIcon v-show="!calculatingAIMerge" class="w-4 h-4 mr-1 text-blue-500" />
+                        <UiLoading v-if="calculatingAIMerge" class="mr-1 scale-75"></UiLoading>
+                        <MergeIcon v-else class="w-4 h-4 mr-1 text-blue-500" />
                         Merge with AI
                     </UiButton>
     
