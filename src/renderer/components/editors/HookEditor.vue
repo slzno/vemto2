@@ -28,6 +28,8 @@
 
     let editor = null
 
+    const linesDecorations: any = {}
+
     onMounted(async () => {
         editor = createEditor()
 
@@ -117,10 +119,15 @@
     const highlightEditableLines = (model: any) => {
         const editableLines = getEditableLines(model)
 
+        // then add decorations
         editableLines.forEach((line) => {
-            editor.deltaDecorations([], [
+            const currentDecorations = linesDecorations[line] || []
+            
+            const decorations = editor.deltaDecorations(currentDecorations, [
                 { range: new monaco.Range(line, 1, line, 1), options: { isWholeLine: true, className: 'hook-line' } }
             ])
+
+            linesDecorations[line] = decorations
         })
     }
 
