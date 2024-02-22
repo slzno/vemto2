@@ -354,6 +354,10 @@
         await table.delete()
         await buildTablesSettings()
     }
+
+    const openSelectedModel = async () => {
+        Main.API.openProjectFile(selectedModelSettings.value.renderable.getFullFilePath())
+    }
 </script>
 
 <template>
@@ -612,7 +616,10 @@
                             >
                                 <div class="p-2 flex-grow space-y-2">
                                     <div class="flex items-center justify-between">
-                                        <div class="text-slate-500 italic text-sm">
+                                        <div 
+                                            @click="openSelectedModel()"
+                                            class="text-slate-500 dark:text-slate-400 font-thin text-sm cursor-pointer hover:text-red-500  dark:hover:text-red-400"
+                                        >
                                             {{ selectedModelSettings.instance.getClassString() }}
                                         </div>
                                         <div class="flex justify-end space-x-0.5">
