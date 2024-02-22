@@ -33,10 +33,10 @@ export default class HasManyDetail extends RelaDB.Model {
             relationship.foreignKey,
         ]
 
-        const detailCrud = Crud.createFromModel(
+        const detailCrud = Crud.createDetailFromModel(
             relationship.relatedModel,
             crud.type,
-            excludedColumns,
+            excludedColumns
         )
 
         detailCrud.basePath = `${capitalCase(crud.name)}${capitalCase(detailCrud.plural)}Detail`

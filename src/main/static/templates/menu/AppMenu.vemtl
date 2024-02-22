@@ -6,7 +6,7 @@
             <x-slot name="trigger">
                 <span class="inline-flex rounded-md">
                     <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition ease-in-out duration-150">
-                        <$ nav.name $>
+                        <$ this.helpers.lang(nav.name) $>
 
                         <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
@@ -16,17 +16,23 @@
             </x-slot>
 
             <x-slot name="content">
-                <% for (let childrenNav of nav.children) { %>
-                <# Let's check if the nav item has custom content #>
-                @can('view-any', <$ childrenNav.getModel().class $>::class)
-                <% if (childrenNav.hasCustomLink()) { %>
-                <x-dropdown-link href="<$ childrenNav.getCustomLink() $>">
+                <% if(nav.children.length) { %>
+                    <% for (let childrenNav of nav.children) { %>
+                    <# Let's check if the nav item has custom content #>
+                    @can('view-any', <$ childrenNav.getModel().class $>::class)
+                    <% if (childrenNav.hasCustomLink()) { %>
+                    <x-dropdown-link href="<$ childrenNav.getCustomLink() $>">
+                    <% } else { %>
+                    <x-dropdown-link href="{{ route('<$ childrenNav.navigable.getIndexRouteName() $>') }}">
+                    <% } %>
+                        <$ this.helpers.lang(childrenNav.name) $>
+                    </x-dropdown-link>
+                    @endcan
+                    <% } %>
                 <% } else { %>
-                <x-dropdown-link href="{{ route('<$ childrenNav.navigable.getIndexRouteName() $>') }}">
-                <% } %>
-                    <$ childrenNav.name $>
-                </x-dropdown-link>
-                @endcan
+                    <x-dropdown-link>
+                        No items found
+                    </x-dropdown-link>
                 <% } %>
             </x-slot>
         </x-dropdown>

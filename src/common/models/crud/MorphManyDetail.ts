@@ -34,10 +34,10 @@ export default class MorphManyDetail extends RelaDB.Model {
             relationship.typeColumn
         ]
 
-        const detailCrud = Crud.createFromModel(
+        const detailCrud = Crud.createDetailFromModel(
             relationship.relatedModel,
             crud.type,
-            excludedColumns,
+            excludedColumns
         )
 
         detailCrud.basePath = `${capitalCase(crud.name)}${capitalCase(detailCrud.plural)}Detail`

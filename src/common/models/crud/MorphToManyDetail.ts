@@ -36,10 +36,10 @@ export default class MorphToManyDetail extends RelaDB.Model {
             relationship.typeColumn,
         ]
 
-        const detailCrud = Crud.createFromTable(
+        const detailCrud = Crud.createDetailFromTable(
             relationship.pivot,
             crud.type,
-            excludedColumns,
+            excludedColumns
         )
 
         detailCrud.basePath = `${capitalCase(crud.name)}${capitalCase(detailCrud.plural)}Detail`
