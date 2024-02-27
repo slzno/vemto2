@@ -18,6 +18,8 @@
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import UiSelect from "@Renderer/components/ui/UiSelect.vue"
     import UiLoading from "@Renderer/components/ui/UiLoading.vue"
+import UiTextarea from "@Renderer/components/ui/UiTextarea.vue"
+import UiInfo from "@Renderer/components/ui/UiInfo.vue"
 
     const projectManager = new ProjectManager(),
         search = ref(""),
@@ -155,6 +157,42 @@
         Are you sure you want to disconnect this project?
     </UiConfirm>
 
+    <!-- License modal -->
+    <UiModal
+        width="700px"
+        title="License"
+        :show="true"
+        :processing="false"
+    >
+        <div class="p-4">
+            <div class="m-1 flex flex-col gap-4">
+
+                <UiInfo>
+                    You are trying to use a feature that requires a license. Please enter your e-mail and license key to activate it.
+                </UiInfo>
+
+                <div class="flex flex-col gap-4">
+                    <UiText label="E-mail" />
+
+                    <UiTextarea label="License" />
+                </div>
+    
+            </div>
+        </div>
+
+        <template #footer>
+            <div class="flex justify-between p-2">
+                <UiButton >
+                    <div>Buy License</div>
+                </UiButton>
+
+                <UiButton >
+                    <div>Activate</div>
+                </UiButton>
+            </div>
+        </template>
+    </UiModal>
+
     <!-- Connect folder modal -->
     <UiModal
         width="700px"
@@ -234,6 +272,10 @@
                     <UiButton class="gap-1.5" @click="connectSSH">
                         <CommandLineIcon class="w-5 h-5 text-red-500" />
                         Connect SSH
+                    </UiButton>
+
+                    <UiButton class="gap-1.5" @click="connectSSH">
+                        License
                     </UiButton>
                 </div>
             </div>

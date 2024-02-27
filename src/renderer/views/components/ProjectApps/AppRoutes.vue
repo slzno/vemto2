@@ -135,7 +135,7 @@
     </div>
 
     <UiModal
-        title="Add Menu Item"
+        title="Add Route"
         :show="showingCreateRouteModal"
         @close="close()"
         width="25%"
