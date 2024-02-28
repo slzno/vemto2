@@ -18,12 +18,15 @@
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import UiSelect from "@Renderer/components/ui/UiSelect.vue"
     import UiLoading from "@Renderer/components/ui/UiLoading.vue"
-import UiTextarea from "@Renderer/components/ui/UiTextarea.vue"
-import UiInfo from "@Renderer/components/ui/UiInfo.vue"
+    import UiTextarea from "@Renderer/components/ui/UiTextarea.vue"
+    import UiInfo from "@Renderer/components/ui/UiInfo.vue"
+    import LicenseHandler from "@Renderer/services/LicenseHandler"
 
     const projectManager = new ProjectManager(),
         search = ref(""),
         projects = ref([]),
+        licenseEmail = ref(""),
+        licenseCode = ref(""),
         confirmDisconnectDialog = ref(null),
         currentConnectingFolder = ref(null),
         showingConnectingFolderModal = ref(false),
@@ -150,6 +153,12 @@ import UiInfo from "@Renderer/components/ui/UiInfo.vue"
     const openProjectOnTerminal = (project: any) => {
         Main.API.openTerminal(project.path)
     }
+
+    const activateLicense = async () => {
+        const handler = new LicenseHandler()
+
+        handler.activateLicense(licenseEmail.value, licenseCode.value)
+    }
 </script>
 
 <template>
@@ -172,9 +181,9 @@ import UiInfo from "@Renderer/components/ui/UiInfo.vue"
                 </UiInfo>
 
                 <div class="flex flex-col gap-4">
-                    <UiText label="E-mail" />
+                    <UiText v-model="licenseEmail" label="E-mail" />
 
-                    <UiTextarea label="License" />
+                    <UiTextarea v-model="licenseCode" label="License" />
                 </div>
     
             </div>
@@ -186,7 +195,7 @@ import UiInfo from "@Renderer/components/ui/UiInfo.vue"
                     <div>Buy License</div>
                 </UiButton>
 
-                <UiButton >
+                <UiButton @click="activateLicense">
                     <div>Activate</div>
                 </UiButton>
             </div>

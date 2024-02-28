@@ -14,33 +14,26 @@ export default class LicenseHandler {
     }
 
     async activateLicense(email:string, license: string): Promise<boolean> {
-        try {
-            const response = await fetch('http://localhost:8000/v2/licenses/activate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email,
-                    license
-                })
+        const response = await fetch('http://localhost:8000/api/v2/licenses/activate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email,
+                license
             })
+        })
 
-            if (response.status === 200) {
-                const data = await response.json()
-                this.saveLicense(data)
-                return true
-            } else {
-                const data = await response.json()
-                if (data.errors) {
-                    data.errors.forEach((error: string) => {
-                        Alert.error(error)
-                    })
-                } else {
-                    Alert.error(data.message)
-                }
-            }
+        const data = await this.treatResponse(response)
+
+        if (data) {
+            this.saveLicense(data)
+
+            return true
         }
+
+        return false
     }
 
     async revokeLicense(email:string, license: string): Promise<boolean> {
@@ -59,5 +52,27 @@ export default class LicenseHandler {
 
     saveLicense(licenseData: LicenseData): void {
         localStorage.setItem('licenseData', JSON.stringify(licenseData))
+    }
+
+    async treatResponse(response: Response): Promise<any> {
+        if (response.status === 200) {
+            return await response.json()
+        } else {
+            const data = await response.json()
+            
+            if (data.errors) {
+                Object.keys(data.errors).forEach((key) => {
+                    const message = data.errors[key] ? data.errors[key][0] : null
+
+                    if (message) {
+                        Alert.error(message)
+                    }
+                })
+            } else {
+                Alert.error(data.message)
+            }
+        }
+
+        return null
     }
 }
