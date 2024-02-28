@@ -80,6 +80,13 @@ export default class LicenseHandler {
         }
 
         this.saveLicense(data)
+
+        if(this.isExpired()) {
+            this.removeLicense()
+            return false
+        }
+
+        return true
     }
 
     async activateLicense(email:string, license: string): Promise<boolean> {
