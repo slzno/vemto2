@@ -162,8 +162,6 @@ export default class LicenseHandler {
             return await response.json()
         } else {
             const data = await response.json()
-
-            console.log(data)
             
             if (data.errors && data.errors.length > 0) {
                 Object.keys(data.errors).forEach((key) => {
