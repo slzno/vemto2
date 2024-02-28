@@ -9,6 +9,8 @@ export interface LicenseData {
 }
 
 export default class LicenseHandler {
+    
+
     async checkLicense(email:string, license: string): Promise<boolean> {
         const response = await fetch('http://localhost:8000/api/v2/licenses/data', {
             method: 'POST',
@@ -23,7 +25,9 @@ export default class LicenseHandler {
 
         const data = await this.treatResponse(response)
 
-        if(!data || data.occupied) {
+        if(!data) return false
+
+        if(data.occupied) {
             this.removeLicense()
             return false
         }
