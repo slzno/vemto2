@@ -9,7 +9,54 @@ export interface LicenseData {
 }
 
 export default class LicenseHandler {
-    
+    isActive(): boolean {
+        return !this.isExpired()
+    }
+
+    isExpired(): boolean {
+        if(!this.hasLicense()) {
+            return true
+        }
+
+        if (this.isLifetime()) {
+            return false
+        }
+
+        if (this.isExpiredByEndsAt()) {
+            return true
+        }
+
+        const licenseData = this.getLicense()
+
+        if (licenseData) {
+            return licenseData.expired
+        }
+
+        return true
+    }
+
+    isExpiredByEndsAt(): boolean {
+        const licenseData = this.getLicense()
+
+        if (licenseData) {
+            const endsAt = new Date(licenseData.endsAt)
+            const now = new Date()
+
+            return endsAt < now
+        }
+
+        return true
+    }
+
+    isLifetime(): boolean {
+        const licenseData = this.getLicense()
+
+        if (licenseData) {
+            return licenseData.isLifetime
+        }
+
+        return false
+    }
 
     async checkLicense(email:string, license: string): Promise<boolean> {
         const response = await fetch('http://localhost:8000/api/v2/licenses/data', {
@@ -79,6 +126,10 @@ export default class LicenseHandler {
         }
 
         return false
+    }
+
+    hasLicense(): boolean {
+        return !!this.getLicense()
     }
 
     getLicense(): LicenseData {
