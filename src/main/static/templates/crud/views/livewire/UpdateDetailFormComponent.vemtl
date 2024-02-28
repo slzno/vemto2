@@ -13,6 +13,9 @@ namespace <$ crud.livewireFormsNamespace $>;
 use Livewire\Form;
 use Livewire\Attributes\Rule;
 use App\Models\<$ modelName $>;
+<% if(this.crud.hasPasswordInputs()) { %>
+use Illuminate\Support\Facades\Hash;
+<% } %>
 // hook:IMPORTS
  
 class <$ this.filenameWithoutExtension $> extends Form
@@ -52,6 +55,10 @@ class <$ this.filenameWithoutExtension $> extends Form
 
         <% for (let input of crud.getFileInputs()) { %>
         $this->process<$ pascalCase(input.name) $>();
+        <% } %>
+
+        <% for(let input of crud.getPasswordInputs()) { %>
+            $this-><$ input.column.name $> = Hash::make($this-><$ input.column.name $>);
         <% } %>
 
         $this-><$ itemVarName $>->update($this->except([

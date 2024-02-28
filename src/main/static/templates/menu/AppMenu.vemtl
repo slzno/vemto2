@@ -21,9 +21,9 @@
                     <# Let's check if the nav item has custom content #>
                     @can('view-any', <$ childrenNav.getModel().class $>::class)
                     <% if (childrenNav.hasCustomLink()) { %>
-                    <x-dropdown-link href="<$ childrenNav.getCustomLink() $>">
+                    <x-dropdown-link wire:navigate href="<$ childrenNav.getCustomLink() $>">
                     <% } else { %>
-                    <x-dropdown-link href="{{ route('<$ childrenNav.navigable.getIndexRouteName() $>') }}">
+                    <x-dropdown-link wire:navigate href="{{ route('<$ childrenNav.navigable.getIndexRouteName() $>') }}">
                     <% } %>
                         <$ this.helpers.lang(childrenNav.name) $>
                     </x-dropdown-link>

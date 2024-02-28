@@ -435,6 +435,14 @@ export default class Crud extends RelaDB.Model {
         return this.getOrderedInputs().filter((input) => input.showOnIndex)
     }
 
+    hasPasswordInputs(): boolean {
+        return this.getPasswordInputs().length > 0
+    }
+
+    getPasswordInputs(): Input[] {
+        return this.inputs.filter((input) => input.isPassword())
+    }
+
     getInputsForIndexExcept(excludedInputs: Input | Input[]): Input[] {
         let excludedInputIds = []
 
