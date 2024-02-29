@@ -18,19 +18,16 @@
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import UiSelect from "@Renderer/components/ui/UiSelect.vue"
     import UiLoading from "@Renderer/components/ui/UiLoading.vue"
-    import UiTextarea from "@Renderer/components/ui/UiTextarea.vue"
-    import UiInfo from "@Renderer/components/ui/UiInfo.vue"
-    import LicenseHandler from "@Renderer/services/LicenseHandler"
+    import Settings from "@Renderer/views/components/System/Settings.vue"
 
     const projectManager = new ProjectManager(),
         search = ref(""),
         projects = ref([]),
-        licenseEmail = ref(""),
-        licenseCode = ref(""),
         confirmDisconnectDialog = ref(null),
         currentConnectingFolder = ref(null),
         showingConnectingFolderModal = ref(false),
         processingConnectFolder = ref(false),
+        settingsModal = ref(null),
         connectingFolderSettings = ref({
             cssFramework: "tailwind",
             uiStarterKit: "jetstream",
@@ -153,12 +150,6 @@
     const openProjectOnTerminal = (project: any) => {
         Main.API.openTerminal(project.path)
     }
-
-    const activateLicense = async () => {
-        const handler = new LicenseHandler()
-
-        handler.activateLicense(licenseEmail.value, licenseCode.value)
-    }
 </script>
 
 <template>
@@ -166,41 +157,8 @@
         Are you sure you want to disconnect this project?
     </UiConfirm>
 
-    <!-- License modal -->
-    <UiModal
-        width="700px"
-        title="License"
-        :show="true"
-        :processing="false"
-    >
-        <div class="p-4">
-            <div class="m-1 flex flex-col gap-4">
-
-                <UiInfo>
-                    You are trying to use a feature that requires a license. Please enter your e-mail and license key to activate it.
-                </UiInfo>
-
-                <div class="flex flex-col gap-4">
-                    <UiText v-model="licenseEmail" label="E-mail" />
-
-                    <UiTextarea v-model="licenseCode" label="License" />
-                </div>
-    
-            </div>
-        </div>
-
-        <template #footer>
-            <div class="flex justify-between p-2">
-                <UiButton >
-                    <div>Buy License</div>
-                </UiButton>
-
-                <UiButton @click="activateLicense">
-                    <div>Activate</div>
-                </UiButton>
-            </div>
-        </template>
-    </UiModal>
+    <!-- Settings modal -->
+    <Settings ref="settingsModal"></Settings>
 
     <!-- Connect folder modal -->
     <UiModal
@@ -283,8 +241,8 @@
                         Connect SSH
                     </UiButton>
 
-                    <UiButton class="gap-1.5" @click="connectSSH">
-                        License
+                    <UiButton class="gap-1.5" @click="settingsModal.show()">
+                        Settings
                     </UiButton>
                 </div>
             </div>
