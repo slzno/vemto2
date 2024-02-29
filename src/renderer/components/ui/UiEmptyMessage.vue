@@ -125,7 +125,7 @@ import UiSmallButton from "./UiSmallButton.vue"
 <template>
     <div
         :style="local ? '' : 'width: calc(100vw - 80px)'"
-        class="text-sm p-2 flex items-center justify-center space-x-2"
+        class="text-sm p-2 flex items-center justify-center space-x-2 pointer-events-none"
         :class="{
             'fixed top-0 right-0 h-screen': !local
         }"
@@ -168,7 +168,7 @@ import UiSmallButton from "./UiSmallButton.vue"
                                 {{ randomQuote }}
                             </div>
                             
-                            <div class="opacity-30 flex justify-center pt-4">
+                            <div class="opacity-30 flex justify-center pt-4 pointer-events-auto">
                                 <UiSmallButton @click="fillRandomQuote">
                                     <ArrowPathIcon class="w-4 h-4" />
                                 </UiSmallButton>
