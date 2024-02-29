@@ -38,6 +38,7 @@ export default class LicenseHandler {
     isExpiredByEndsAt(): boolean {
         const licenseData = this.getLicense()
 
+        
         if (licenseData) {
             const endsAt = new Date(licenseData.endsAt)
             const now = new Date()
@@ -76,6 +77,14 @@ export default class LicenseHandler {
 
     async checkLicense(): Promise<boolean> {
         if(!this.hasLicense()) return false
+
+        console.log('Checking license...')
+        console.log('Is expired:', this.isExpired())
+
+        if(this.isExpired()) {
+            this.removeLicense()
+            return false
+        }
 
         const licenseData: LicenseData = this.getLicense()
 

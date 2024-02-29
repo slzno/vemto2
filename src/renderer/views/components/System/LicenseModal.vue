@@ -14,6 +14,8 @@ import { CheckIcon, CubeTransparentIcon, ShoppingBagIcon, ShoppingCartIcon } fro
         warningMessage: String,
     })
 
+    const emit = defineEmits(["close"])
+
     const showingModal = ref(false),
         licenseData = ref({}) as Ref<LicenseData>,
         licenseIsActive = ref(false),
@@ -44,6 +46,8 @@ import { CheckIcon, CubeTransparentIcon, ShoppingBagIcon, ShoppingCartIcon } fro
 
     const close = () => {
         showingModal.value = false
+
+        emit("close")
     }
 
     const activateLicense = async () => {

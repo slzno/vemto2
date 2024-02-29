@@ -19,6 +19,7 @@
     import UiSelect from "@Renderer/components/ui/UiSelect.vue"
     import UiLoading from "@Renderer/components/ui/UiLoading.vue"
     import Settings from "@Renderer/views/components/System/Settings.vue"
+import LicenseHandler from "@Renderer/services/LicenseHandler"
 
     const projectManager = new ProjectManager(),
         search = ref(""),
@@ -42,6 +43,9 @@
     const router = useRouter()
 
     onMounted(async () => {
+        const licenseHandler = new LicenseHandler()
+        licenseHandler.checkLicense()
+
         getProjects()
     })
 
