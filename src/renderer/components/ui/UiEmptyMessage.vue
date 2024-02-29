@@ -1,9 +1,11 @@
 <script setup lang="ts">
     import { defineProps, ref, onMounted } from "vue"
     import {
+ArrowPathIcon,
         CubeTransparentIcon, TruckIcon,
     } from "@heroicons/vue/24/outline"
 import UiLoading from "./UiLoading.vue"
+import UiSmallButton from "./UiSmallButton.vue"
     
     const props = defineProps({
         development: {
@@ -23,24 +25,30 @@ import UiLoading from "./UiLoading.vue"
     })
 
     const randomQuote = ref("")
+    
+    let randomQuoteTimer = null,
+        nextQuoteTimer = null
 
     onMounted(() => {
         fillRandomQuote()
     })
 
     const fillRandomQuote = () => {
+        if(nextQuoteTimer) clearTimeout(nextQuoteTimer)
+        if(randomQuoteTimer) clearTimeout(randomQuoteTimer)
+
         randomQuote.value = ""
 
-        setTimeout(() => {
+        randomQuoteTimer = setTimeout(() => {
             randomQuote.value = getRandomQuote()
+
+            // after some time sufficiant to read the quote, change it (consider the length of the quote)
+            let nextQuoteTime = (randomQuote.value.length * 30) + 20000
+
+            nextQuoteTimer = setTimeout(() => {
+                fillRandomQuote()
+            }, nextQuoteTime)
         }, 10)
-
-        // after some time sufficiant to read the quote, change it (consider the length of the quote)
-        let nextQuoteTime = (randomQuote.value.length * 30) + 20000
-
-        setTimeout(() => {
-            fillRandomQuote()
-        }, nextQuoteTime)
     }
 
     const getRandomQuote = () => {
@@ -117,7 +125,7 @@ import UiLoading from "./UiLoading.vue"
 <template>
     <div
         :style="local ? '' : 'width: calc(100vw - 80px)'"
-        class="text-sm p-2 flex items-center justify-center space-x-2 pointer-events-none"
+        class="text-sm p-2 flex items-center justify-center space-x-2"
         :class="{
             'fixed top-0 right-0 h-screen': !local
         }"
@@ -146,7 +154,7 @@ import UiLoading from "./UiLoading.vue"
                 <slot></slot>
 
                 <!-- Show a random quote -->
-                <span
+                <div
                     class="text-base max-w-xl text-center text-slate-600 dark:text-slate-500 font-mono mt-5 border-dotted font-normal h-7 overflow-visible"
                 >
                     <Transition
@@ -155,12 +163,21 @@ import UiLoading from "./UiLoading.vue"
                         leave-from-class="transition duration-2000 opacity-100"
                         leave-to-class="transition duration-2000 opacity-0"
                     >
-                    <div v-if="randomQuote">
-                        {{ randomQuote }}
-                    </div>
+                        <div v-if="randomQuote">
+                            <div>
+                                {{ randomQuote }}
+                            </div>
+                            
+                            <div class="opacity-30 flex justify-center pt-4">
+                                <UiSmallButton @click="fillRandomQuote">
+                                    <ArrowPathIcon class="w-4 h-4" />
+                                </UiSmallButton>
+                            </div>
+                        </div>
                     </Transition>
-                </span>
+                </div>
             </div>
+
         </div>
     </div>
 </template>
