@@ -51,6 +51,8 @@
     const loadTables = () => {
         if(!canLoadTables.value) return
 
+        if(projectStore.projectIsEmpty) return
+
         tables.value = projectStore.project.getTablesBySection(schemaStore.selectedSchemaSection)
 
         nextTick(() => {

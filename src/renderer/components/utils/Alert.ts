@@ -4,6 +4,7 @@ export default class Alert {
     alert: Notyf
     message: string
     duration: number
+    static localInstance: Alert
     
     constructor() {
         if(typeof window === 'undefined') return
@@ -45,19 +46,35 @@ export default class Alert {
     }
 
     static success(message: string, duration?: number): NotyfNotification {
-        return new Alert()._success(message, duration)
+        this.createInstanceIfNotExists()
+
+        return Alert.localInstance._success(message, duration)
     }
 
     static warning(message: string, duration?: number): NotyfNotification {
-        return new Alert()._warning(message, duration)
+        this.createInstanceIfNotExists()
+
+        return Alert.localInstance._warning(message, duration)
     }
 
     static info(message: string, duration?: number): NotyfNotification {
-        return new Alert()._info(message, duration)
+        this.createInstanceIfNotExists()
+
+        return Alert.localInstance._info(message, duration)
     }
 
     static error(message: string, duration?: number): NotyfNotification {
-        return new Alert()._error(message, duration)
+        this.createInstanceIfNotExists()
+        
+        return Alert.localInstance._error(message, duration)
+    }
+
+    static createInstanceIfNotExists(): Alert {
+        if(!Alert.localInstance) {
+            Alert.localInstance = new Alert()
+        }
+
+        return Alert.localInstance
     }
 
     _success(message: string, duration?: number): NotyfNotification {

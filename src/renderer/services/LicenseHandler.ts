@@ -48,6 +48,22 @@ export default class LicenseHandler {
         return true
     }
 
+    getExpirationDate(): string {
+        const licenseData = this.getLicense()
+
+        if (licenseData) {
+            if (licenseData.isLifetime) {
+                return 'Lifetime'
+            }
+
+            const endsAt = new Date(licenseData.endsAt)
+
+            return endsAt.toLocaleDateString()
+        }
+
+        return ''
+    }
+
     isLifetime(): boolean {
         const licenseData = this.getLicense()
 
@@ -171,7 +187,10 @@ export default class LicenseHandler {
         } else {
             const data = await response.json()
             
-            if (data.errors && data.errors.length > 0) {
+            if (data.errors 
+                && typeof data.errors === 'object'
+                && Object.keys(data.errors).length > 0
+            ) {
                 Object.keys(data.errors).forEach((key) => {
                     const message = data.errors[key] ? data.errors[key][0] : null
 

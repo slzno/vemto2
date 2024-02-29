@@ -1,6 +1,7 @@
 <script setup lang="ts">
     import { toRef, useSlots, onMounted, defineEmits, watch } from "vue"
     import { XMarkIcon } from "@heroicons/vue/24/outline"
+import UiLoading from "./UiLoading.vue"
 
     const props = defineProps({
         show: Boolean,
@@ -76,7 +77,8 @@
                         class="cursor-pointer flex absolute top-2 right-2"
                         @click="$emit('close')"
                     >
-                        <XMarkIcon class="w-4 h-4 stroke-2 hover:text-red-500" />
+                        <UiLoading v-if="processing" :size="15" :stroke-width="2" />
+                        <XMarkIcon v-else class="w-4 h-4 stroke-2 hover:text-red-500" />
                     </button>
 
                     <header class="flex justify-between bg-white dark:bg-slate-800 p-2 rounded-t-lg border-b border-slate-200 text-slate-700 dark:border-slate-700">
