@@ -11,7 +11,7 @@
 namespace <$ crud.livewireFormsNamespace $>;
  
 use Livewire\Form;
-use Livewire\Attributes\Rule;
+use Illuminate\Validation\Rule;
 use App\Models\<$ modelName $>;
 <% if(this.crud.hasPasswordInputs()) { %>
 use Illuminate\Support\Facades\Hash;
@@ -26,8 +26,6 @@ class <$ this.filenameWithoutExtension $> extends Form
     public ?<$ modelName $> $<$ itemVarName $>;
 
     <% for (let input of crud.inputs) { %>
-        #[Rule('<$ input.getUpdateRulesForTemplate() $>')]
-        <# --- #>
         public $<$ input.column.name $> = '<$ input.defaultValue || '' $>';
         
         <% if (input.isFileOrImage()) { %>
@@ -36,6 +34,16 @@ class <$ this.filenameWithoutExtension $> extends Form
 
     <% } %>
     // hook:AFTER_VARIABLES
+
+    public function rules(): array
+    {
+        return [
+            // hook:RULES
+            <% for (let input of crud.inputs) { %>
+                '<$ input.column.name $>' => [<$ input.getUpdateRulesForLivewireMethod(crud) $>],
+            <% } %>
+        ];
+    }
 
     public function set<$ modelName $>(<$ modelName $> $<$ itemVarName $>)
     {

@@ -321,6 +321,38 @@ export default class Input extends RelaDB.Model {
         return [InputType.DATE, InputType.DATETIME].includes(this.type)
     }
 
+    getCreationRulesForLivewireMethod(crud: Crud) {
+        return this.getRulesForLivewireMethod(this.creationRules, crud)
+    }
+
+    getUpdateRulesForLivewireMethod(crud: Crud) {
+        return this.getRulesForLivewireMethod(this.updateRules, crud)
+    }
+
+    getRulesForLivewireMethod(rules: InputValidationRule[], crud: Crud) {
+        let allRules: string[] = rules.map((rule) => rule.value)
+
+        const dynamicVariables = ['unique', 'exists']
+
+        return allRules.map((rule: string) => {
+            const [ruleName, ruleArgs] = rule.split(':')
+
+            if(dynamicVariables.includes(ruleName)) {
+                let args = ruleArgs.split(',').map((arg) => `'${arg}'`).join(', ')
+            
+                let rule = `Rule::${ruleName}(${args})`
+
+                if(ruleName === 'unique' && rules === this.updateRules) {
+                    rule += `->ignore($this->${crud.settings.itemName})`
+                }
+
+                return rule
+            }
+
+            return `"${rule}"`
+        })
+    }
+
     getRulesForTemplate(rules: InputValidationRule[]) {
         return rules.map((rule) => rule.value).join("|")
     }
