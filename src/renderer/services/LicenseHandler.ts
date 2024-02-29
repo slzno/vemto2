@@ -58,23 +58,27 @@ export default class LicenseHandler {
         return false
     }
 
-    async checkLicense(email:string, license: string): Promise<boolean> {
-        const response = await fetch('http://localhost:8000/api/v2/licenses/data', {
-            method: 'POST',
+    async checkLicense(): Promise<boolean> {
+        if(!this.hasLicense()) return false
+
+        const licenseData: LicenseData = this.getLicense()
+
+        const url = new URL('http://localhost:8000/api/v2/licenses/data')
+        url.searchParams.append('email', licenseData.email)
+        url.searchParams.append('license', licenseData.code)
+
+        const response = await fetch(url, {
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email,
-                license
-            })
+            }
         })
 
         const data = await this.treatResponse(response)
 
         if(!data) return false
 
-        if(data.occupied) {
+        if(!data.occupied) {
             this.removeLicense()
             return false
         }
@@ -112,15 +116,19 @@ export default class LicenseHandler {
         return false
     }
 
-    async revokeLicense(email:string, license: string): Promise<boolean> {
+    async revokeLicense(): Promise<boolean> {
+        if(!this.hasLicense()) return false
+
+        const licenseData: LicenseData = this.getLicense()
+
         const response = await fetch('http://localhost:8000/api/v2/licenses/revoke', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                email,
-                license
+                email: licenseData.email,
+                license: licenseData.code,
             })
         })
 

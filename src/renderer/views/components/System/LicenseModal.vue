@@ -1,19 +1,33 @@
 <script setup lang="ts">
-    import { ref, onMounted, defineExpose } from "vue"
+    import { ref, onMounted, defineExpose, defineProps, Ref } from "vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import UiModal from "@Renderer/components/ui/UiModal.vue"
     import UiTextarea from "@Renderer/components/ui/UiTextarea.vue"
-    import UiInfo from "@Renderer/components/ui/UiInfo.vue"
-    import LicenseHandler from "@Renderer/services/LicenseHandler"
+    import UiWarning from "@Renderer/components/ui/UiWarning.vue"
+    import LicenseHandler, { LicenseData } from "@Renderer/services/LicenseHandler"
+
+    const props = defineProps({
+        showWarning: Boolean,
+        warningMessage: String,
+    })
 
     const showingModal = ref(false),
-        licenseEmail = ref(""),
-        licenseCode = ref("")
+        licenseData = ref({}) as Ref<LicenseData>,
+        licenseIsActive = ref(false)
+
+    const licenseHandler = new LicenseHandler()
 
     onMounted(async () => {
-        
+        await checkLicense()
     })
+
+    const checkLicense = async () => {
+        await licenseHandler.checkLicense()
+
+        licenseData.value = licenseHandler.getLicense() || {} as LicenseData
+        licenseIsActive.value = licenseHandler.isActive()
+    }
 
     const show = () => {
         showingModal.value = true
@@ -24,9 +38,12 @@
     }
 
     const activateLicense = async () => {
-        const handler = new LicenseHandler()
+        await licenseHandler.activateLicense(licenseData.value.email, licenseData.value.code)
 
-        handler.activateLicense(licenseEmail.value, licenseCode.value)
+        if(licenseHandler.hasLicense()) {
+            licenseIsActive.value = licenseHandler.isActive()
+            licenseData.value = licenseHandler.getLicense()
+        }
     }
 
     defineExpose({
@@ -44,15 +61,16 @@
     >
         <div class="p-4">
             <div class="m-1 flex flex-col gap-4">
+                {{  licenseIsActive ? "License is active" : "License is not active" }}
 
-                <UiInfo>
-                    You are trying to use a feature that requires a license. Please enter your e-mail and license key to activate it.
-                </UiInfo>
+                <UiWarning v-if="showWarning">
+                    {{ warningMessage || "You are trying to use a feature that requires a license. Please enter your e-mail and license key to activate it." }}
+                </UiWarning>
 
                 <div class="flex flex-col gap-4">
-                    <UiText v-model="licenseEmail" label="E-mail" />
+                    <UiText v-model="licenseData.email" label="E-mail" />
 
-                    <UiTextarea v-model="licenseCode" label="License" />
+                    <UiTextarea v-model="licenseData.code" label="License" />
                 </div>
     
             </div>
