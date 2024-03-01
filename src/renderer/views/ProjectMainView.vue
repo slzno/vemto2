@@ -219,7 +219,7 @@
             >
                 <div>
                     <UiInfo>
-                        To use AI features, it may be necessary to send your project's schema or specific sections of code to our servers (and maybe to OpenAI's API servers) for processing. 
+                        To use AI features, it may be necessary to send the project's schema or specific sections of code (only the necessary to run a specific task, for example, merging two versions of a PHP class or an abstract description of your migrations schema) to our servers (and maybe to OpenAI's API servers) for processing. 
                         <br>
                         <br>
                         We don't store any of your project data on our servers. We use it only to provide the features you are using.
