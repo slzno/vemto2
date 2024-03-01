@@ -67,8 +67,20 @@ export default class Input extends RelaDB.Model {
     }
 
     static deleting(input: Input) {
-        input.crud.project.deleteTranslationOnAllLanguages(input.getLangKeyForLabel())
-        input.crud.project.deleteTranslationOnAllLanguages(input.getLangKeyForPlaceholder())
+        const hasInputWithSameTranslation = (translationProperty: string) => Crud.get().filter(
+            (crud: Crud) => crud.id !== input.crud.id && crud.inputs.filter(
+                (input: Input) => input[translationProperty] === input[translationProperty]
+            ).length > 1
+        ).length > 0
+
+        if(!hasInputWithSameTranslation("label")) {
+            input.crud.project.deleteTranslationOnAllLanguages(input.getLangKeyForLabel())
+        }
+
+        if(!hasInputWithSameTranslation("placeholder")) {
+            input.crud.project.deleteTranslationOnAllLanguages(input.getLangKeyForPlaceholder())
+        }
+
     }
 
     static createFromColumn(crud: Crud, column: Column, forceType?: InputType | null, ignoreColumnHidden: boolean = false) {
@@ -307,6 +319,38 @@ export default class Input extends RelaDB.Model {
 
     isDateOrDateTime() {
         return [InputType.DATE, InputType.DATETIME].includes(this.type)
+    }
+
+    getCreationRulesForLivewireMethod(crud: Crud) {
+        return this.getRulesForLivewireMethod(this.creationRules, crud)
+    }
+
+    getUpdateRulesForLivewireMethod(crud: Crud) {
+        return this.getRulesForLivewireMethod(this.updateRules, crud)
+    }
+
+    getRulesForLivewireMethod(rules: InputValidationRule[], crud: Crud) {
+        let allRules: string[] = rules.map((rule) => rule.value)
+
+        const dynamicVariables = ['unique', 'exists']
+
+        return allRules.map((rule: string) => {
+            const [ruleName, ruleArgs] = rule.split(':')
+
+            if(dynamicVariables.includes(ruleName)) {
+                let args = ruleArgs.split(',').map((arg) => `'${arg}'`).join(', ')
+            
+                let rule = `Rule::${ruleName}(${args})`
+
+                if(ruleName === 'unique' && rules === this.updateRules) {
+                    rule += `->ignore($this->${crud.settings.itemName})`
+                }
+
+                return rule
+            }
+
+            return `"${rule}"`
+        })
     }
 
     getRulesForTemplate(rules: InputValidationRule[]) {

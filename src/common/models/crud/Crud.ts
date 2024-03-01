@@ -132,8 +132,17 @@ export default class Crud extends RelaDB.Model {
     }
 
     static deleting(crud: Crud) {
-        crud.project.deleteTranslationOnAllLanguages(crud.getLangKeyForItemTitle())
-        crud.project.deleteTranslationOnAllLanguages(crud.getLangKeyForCollectionTitle())
+        const hasCrudWithSameTranslation = (translationProperty: string) => Crud.get().filter(
+            (otherCrud: Crud) => otherCrud.id !== crud.id && otherCrud.settings[translationProperty] === crud.settings[translationProperty]
+        ).length > 0
+
+        if(!hasCrudWithSameTranslation('itemTitle')) {
+            crud.project.deleteTranslationOnAllLanguages(crud.getLangKeyForItemTitle())
+        }
+
+        if(!hasCrudWithSameTranslation('collectionTitle')) {
+            crud.project.deleteTranslationOnAllLanguages(crud.getLangKeyForCollectionTitle())
+        }
     }
 
     static getBasic() {
@@ -214,6 +223,50 @@ export default class Crud extends RelaDB.Model {
         return crud
     }
 
+    static createDetailFromModel(
+        model: Model,
+        crudType: CrudType = CrudType.LIVEWIRE,
+        excludedColumns: Column[] = []
+    ) {
+        const defaultSearchColumn = model.table.getLabelColumn(),
+            crudIsForFilament = crudType == CrudType.FILAMENT
+
+        const defaultSortColumn = model.table.getUpdatedAtColumn() 
+            || model.table.getCreatedAtColumn()
+            || model.table.getPrimaryKeyColumn()
+            || defaultSearchColumn
+
+        const defaultSection = crudIsForFilament
+            ? AppSection.findDefaultAdminSection()
+            : AppSection.findDefaultDashboardSection()
+
+        const crud = new Crud()
+        crud.type = crudType
+        crud.name = capitalCase(model.name)
+        crud.plural = capitalCase(model.plural)
+        crud.sectionId = defaultSection ? defaultSection.id : null
+        crud.modelId = model.id
+        crud.tableId = model.tableId
+        crud.projectId = model.projectId
+        crud.basePath = capitalCase(model.plural)
+
+        crud.calculateSettings()
+        crud.calculateLivewireSpecificData()
+
+        if(defaultSearchColumn) crud.defaultSearchColumnId = defaultSearchColumn.id
+        if(defaultSortColumn) crud.defaultSortColumnId = defaultSortColumn.id
+
+        crud.defaultSortDirection = "desc"
+
+        if(crudIsForFilament) crud.calculateFilamentSettings()
+
+        crud.save()
+
+        crud.addInputsFromModel(model, excludedColumns)
+
+        return crud
+    }
+
     static createFromTable(
         table: Table,
         crudType: CrudType = CrudType.LIVEWIRE,
@@ -263,6 +316,54 @@ export default class Crud extends RelaDB.Model {
             crud.addRoutes()
             crud.addNavs()
         }
+
+        return crud
+    }
+
+    static createDetailFromTable(
+        table: Table,
+        crudType: CrudType = CrudType.LIVEWIRE,
+        excludedColumns: Column[] = []
+    ) {
+        const defaultSearchColumn = table.getLabelColumn(),
+            crudIsForFilament = crudType == CrudType.FILAMENT
+
+        const defaultSortColumn = table.getUpdatedAtColumn() 
+            || table.getCreatedAtColumn()
+            || table.getPrimaryKeyColumn()
+            || defaultSearchColumn
+
+        const defaultSection = crudIsForFilament
+            ? AppSection.findDefaultAdminSection()
+            : AppSection.findDefaultDashboardSection()
+
+        const crudName = WordManipulator.runMultiple(
+            ['singularize', 'pascalCase'],
+            this.table.name
+        )
+
+        const crud = new Crud()
+        crud.type = crudType
+        crud.name = capitalCase(crudName)
+        crud.plural = capitalCase(table.name)
+        crud.sectionId = defaultSection ? defaultSection.id : null
+        crud.tableId = table.id
+        crud.projectId = table.projectId
+        crud.basePath = capitalCase(table.name)
+
+        crud.calculateSettings(crudName, table.name)
+        crud.calculateLivewireSpecificData()
+        
+        if(defaultSearchColumn) crud.defaultSearchColumnId = defaultSearchColumn.id
+        if(defaultSortColumn) crud.defaultSortColumnId = defaultSortColumn.id
+
+        crud.defaultSortDirection = "desc"
+
+        if(crudIsForFilament) crud.calculateFilamentSettings()
+
+        crud.save()
+
+        crud.addInputsFromTable(table, excludedColumns)
 
         return crud
     }
@@ -332,6 +433,14 @@ export default class Crud extends RelaDB.Model {
 
     getInputsForIndex(): Input[] {
         return this.getOrderedInputs().filter((input) => input.showOnIndex)
+    }
+
+    hasPasswordInputs(): boolean {
+        return this.getPasswordInputs().length > 0
+    }
+
+    getPasswordInputs(): Input[] {
+        return this.inputs.filter((input) => input.isPassword())
     }
 
     getInputsForIndexExcept(excludedInputs: Input | Input[]): Input[] {

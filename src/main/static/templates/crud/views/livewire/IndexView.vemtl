@@ -18,7 +18,7 @@
     </x-ui.breadcrumbs>
 
     <div class="vtheme(crud.index.tools)">
-        <x-ui.input wire:model="search" type="text" placeholder="Search <$ this.helpers.lang(crud.settings.collectionTitle) $>..." />
+        <x-ui.input wire:model.live="search" type="text" placeholder="Search <$ this.helpers.lang(crud.settings.collectionTitle) $>..." />
 
         @can('create', <$ crud.model.class $>::class)
         <a wire:navigate href="{{ route('<$ crud.getRouteNameByTag('create') $>') }}">
@@ -62,11 +62,18 @@
                 @forelse ($<$ collectionVarName $> as $<$ itemVarName $>)
                 <x-ui.table.row wire:loading.class.delay="vtheme(default.delay)">
                     <% for (let input of crud.getInputsForIndex()) { %>
-                        <x-ui.table.column for-crud>{{ $<$ itemVarName $>-><$ input.column.name $> }}</x-ui.table.column>
+                        <###>
+                        <% if(input.isImage()) { %>
+                            <x-ui.table.column for-crud>
+                                <x-ui.table.image url="{{ asset('storage/' . $<$ itemVarName $>-><$ input.column.name $>) }}" alt="{{ $<$ itemVarName $>-><$ input.column.name $> }}" />
+                            </x-ui.table.column>
+                        <% } else { %>
+                            <x-ui.table.column for-crud>{{ $<$ itemVarName $>-><$ input.column.name $> }}</x-ui.table.column>
+                        <% } %>
                     <% } %>
                     <x-ui.table.action-column>
                         @can('update', $<$ itemVarName $>)
-                        <x-ui.action href="{{ route('<$ crud.getRouteNameByTag('edit') $>', $<$ itemVarName $>) }}">Edit</x-ui.action>
+                        <x-ui.action wire:navigate href="{{ route('<$ crud.getRouteNameByTag('edit') $>', $<$ itemVarName $>) }}">Edit</x-ui.action>
                         @endcan
                         @can('delete', $<$ itemVarName $>)
                         <x-ui.action.danger wire:click="confirmDeletion({{ $<$ itemVarName $>->id }})">Delete</x-ui.action.danger>

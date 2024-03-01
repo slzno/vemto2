@@ -76,7 +76,9 @@
 
     const addIndex = () => {
         const index = new Index({
-            tableId: table.value.id
+            tableId: table.value.id,
+            onUpdate: 'cascade',
+            onDelete: 'cascade'
         }).saveFromInterface()
 
         tableIndexes.value.push(index)

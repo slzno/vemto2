@@ -76,7 +76,7 @@
     <x-ui.container.table>
         <x-ui.table>
             <x-slot name="head">
-                <% for (let input of detailCrud.inputs) { %>
+                <% for (let input of detailCrud.getInputsForIndex()) { %>
                     <x-ui.table.header for-detailCrud wire:click="sortBy('<$ input.column.name $>')"><$ this.helpers.lang(input.label) $></x-ui.table.header>
                 <% } %>
                 <x-ui.table.action-header>Actions</x-ui.table.action-header>
@@ -85,8 +85,15 @@
             <x-slot name="body">
                 @forelse ($<$ collectionVarName $> as $<$ itemVarName $>)
                 <x-ui.table.row wire:loading.class.delay="vtheme(default.delay)">
-                    <% for (let input of detailCrud.inputs) { %>
-                        <x-ui.table.column for-detailCrud>{{ $<$ itemVarName $>-><$ input.column.name $> }}</x-ui.table.column>
+                    <% for (let input of detailCrud.getInputsForIndex()) { %>
+                        <###>
+                        <% if(input.isImage()) { %>
+                            <x-ui.table.column for-detailCrud>
+                                <x-ui.table.image url="{{ asset('storage/' . $<$ itemVarName $>-><$ input.column.name $>) }}" alt="{{ $<$ itemVarName $>-><$ input.column.name $> }}" />
+                            </x-ui.table.column>
+                        <% } else { %>
+                            <x-ui.table.column for-detailCrud>{{ $<$ itemVarName $>-><$ input.column.name $> }}</x-ui.table.column>
+                        <% } %>
                     <% } %>
                     <x-ui.table.action-column>
                         @can('update', $<$ itemVarName $>)
