@@ -6,8 +6,8 @@
     import UiTextarea from "@Renderer/components/ui/UiTextarea.vue"
     import UiWarning from "@Renderer/components/ui/UiWarning.vue"
     import LicenseHandler, { LicenseData } from "@Renderer/services/LicenseHandler"
-import Main from "@Renderer/services/wrappers/Main"
-import { CheckIcon, CubeTransparentIcon, ShoppingBagIcon, ShoppingCartIcon } from "@heroicons/vue/24/outline"
+    import Main from "@Renderer/services/wrappers/Main"
+    import { CheckIcon, CubeTransparentIcon, ShoppingCartIcon } from "@heroicons/vue/24/outline"
 
     defineProps({
         showWarning: Boolean,
@@ -93,7 +93,7 @@ import { CheckIcon, CubeTransparentIcon, ShoppingBagIcon, ShoppingCartIcon } fro
     >
         <div class="p-4">
             <div class="m-1 flex flex-col gap-4">
-                <UiWarning v-if="showWarning">
+                <UiWarning v-if="showWarning && !licenseIsActive">
                     {{ warningMessage || "You are trying to use a feature that requires a license. Please enter your e-mail and license key to activate it." }}
                 </UiWarning>
 

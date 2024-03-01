@@ -7,7 +7,7 @@
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import ProjectManager from "@Renderer/services/project/ProjectManager"
-    import { ClipboardDocumentIcon, CommandLineIcon, FolderIcon, PlusCircleIcon, XMarkIcon } from "@heroicons/vue/24/outline"
+    import { ClipboardDocumentIcon, Cog6ToothIcon, CommandLineIcon, FolderIcon, PlusCircleIcon, XMarkIcon } from "@heroicons/vue/24/outline"
     import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
     import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
     import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
@@ -246,6 +246,7 @@ import LicenseHandler from "@Renderer/services/LicenseHandler"
                     </UiButton>
 
                     <UiButton class="gap-1.5" @click="settingsModal.show()">
+                        <Cog6ToothIcon class="w-5 h-5 text-red-500" />
                         Settings
                     </UiButton>
                 </div>

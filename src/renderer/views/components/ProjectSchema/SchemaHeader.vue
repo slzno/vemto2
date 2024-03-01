@@ -193,7 +193,15 @@
     }
 
     const showTableModal = (): void => {
+        const currentTablesCount = projectStore.project.tables.length
+
+        if(!window.licenseIsActive() && currentTablesCount >= 12) {
+            window.showLicenseModal("You've hit the limit of 12 tables for the Free License. Please activate your license to add unlimited tables.")
+            return
+        }
+
         reset()
+        
         showingCreateTableModal.value = true
 
         nextTick(() => {

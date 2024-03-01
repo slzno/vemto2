@@ -1,6 +1,8 @@
 declare global {
     interface Window {
         api: ElectronApi,
+        licenseIsActive: () => boolean,
+        showLicenseModal: (warningMessage?: string) => void,
         projectConfirm: (message?: string, title?: string, options?: any) => Promise<boolean>
     }
 }

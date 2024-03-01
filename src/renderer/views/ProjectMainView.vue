@@ -21,6 +21,8 @@
     import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
     import UiWarning from "@Renderer/components/ui/UiWarning.vue"
     import UiInfo from "@Renderer/components/ui/UiInfo.vue"
+    import LicenseModal from "./components/System/LicenseModal.vue"
+import LicenseHandler from "@Renderer/services/LicenseHandler"
 
     const canShow = ref(false),
         projectStore = useProjectStore(),
@@ -28,6 +30,8 @@
         appStore = useAppStore(),
         errorsDialog = ref(null),
         confirmDialog = ref(null),
+        licenseModal = ref(null),
+        licenseModalWarningMessage = ref(""),
         confirmDialogMessage = ref(""),
         confirmDialogTitle = ref(""),
         confirmDialogOptions = ref({}) as Ref<any>
@@ -36,6 +40,7 @@
 
     onMounted(async () => {
         handleKeyInputs()
+        setupLicenseModal()
         setupDefaultConfirmDialog()
 
         await HandleProjectDatabase.populate(() => {
@@ -80,6 +85,20 @@
         sourceCheckerTimeout = setTimeout(checkSourceChanges, 750)
     }
 
+    const setupLicenseModal = () => {
+        const licenseHandler = new LicenseHandler()
+
+        window.licenseIsActive = () => {
+            return licenseHandler.isActive()
+        }
+
+        window.showLicenseModal = async (warningMessage = "") => {
+            licenseModalWarningMessage.value = warningMessage || "You are trying to use a feature that requires a license. Please enter your e-mail and license key to activate it."
+
+            await licenseModal.value.show()
+        }
+    }
+
     const setupDefaultConfirmDialog = () => {
         window.projectConfirm = async (
             message: string = "Are you sure?", 
@@ -96,6 +115,14 @@
     }
 
     const generateCode = async () => {
+        console.log('Will generate')
+        const currentTablesCount = projectStore.project.tables.length
+
+        if(!window.licenseIsActive() && currentTablesCount >= 12) {
+            window.showLicenseModal("You've hit the limit of 12 tables for the Free License. Please activate your license to generate code.")
+            return
+        }
+
         if (projectStore.project.hasSchemaChanges()) {
             Alert.warning(
                 "There are schema changes that need to be applied before generating code"
@@ -139,6 +166,12 @@
         <!-- Content -->
         <div v-if="canShow" class="flex-1">
             <RouterView />
+
+            <LicenseModal
+                ref="licenseModal" 
+                show-warning
+                :warning-message="licenseModalWarningMessage"
+            />
 
             <UiConfirm ref="confirmDialog" :title="confirmDialogTitle">
                 <div v-html="confirmDialogMessage"></div>
