@@ -14,6 +14,8 @@
     import Main from '@Renderer/services/wrappers/Main'
     import UiConfirm from '@Renderer/components/ui/UiConfirm.vue'
     import UiWarning from '@Renderer/components/ui/UiWarning.vue'
+import LicenseHandler from '@Renderer/services/LicenseHandler'
+import Alert from '@Renderer/components/utils/Alert'
 
     const showingModal = ref(false),
         showingResultModal = ref(false),
@@ -102,10 +104,18 @@
     }
 
     const mergeCodeWithAI = async () => {
+        if(!window.licenseIsActive()) {
+            window.showLicenseModal("Please activate your license to use AI features.")
+            return
+        }
+
+        const licenseHandler = new LicenseHandler(),
+            licenseData = licenseHandler.getLicense()
+
         try {
             calculatingAIMerge.value = true
 
-            const response = await fetch('http://localhost/api/php/merge', {
+            const response = await fetch('http://localhost:8000/api/v2/php/merge', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -114,14 +124,29 @@
                 body: JSON.stringify({
                     first_code: currentFileContent.value,
                     second_code: newFileContent.value,
+                    license_email: licenseData.email,
+                    license_code: licenseData.code,
                 }),
-            }).then(response => response.json()).catch(() => calculatingAIMerge.value = false)
+            }).then(async (response) => { 
+                const responseData: any = await response.json()
+
+                console.log(responseData)
+
+                if(!response.ok) Alert.error(responseData.message || "Error")
+
+                return responseData 
+            }).catch(error => {
+                Alert.error(error.message)
+                calculatingAIMerge.value = false
+            })
 
             resultCode.value = response.result
 
             calculatingAIMerge.value = false
 
-            showResultModal()
+            if(resultCode.value) {
+                showResultModal()
+            }
         } catch (error) {
             console.error(error)
             calculatingAIMerge.value = false

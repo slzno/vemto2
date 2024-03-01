@@ -89,6 +89,7 @@
         title="Settings"
         :show="showingModal"
         :processing="processing"
+        on-top-of-everything
         @close="close"
     >
         <div class="p-4">

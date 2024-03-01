@@ -6,6 +6,13 @@
     -webkit-app-region: no-drag;
 } */
 
+.notyf {
+  z-index: 999999 !important;
+}
+.notyf__wrapper {
+  z-index: 999999 !important;
+}
+
 .titlebar {
   -webkit-app-region: drag;
 }
