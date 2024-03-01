@@ -146,7 +146,7 @@
             </div>
 
             <template #footer>
-                <div class="flex justify-end p-2 space-x-2">
+                <div class="flex justify-between p-2 space-x-2">
                     <UiButton id="cancelButton" @click="cancelClicked">
                         <XMarkIcon class="w-4 h-4 mr-1 text-red-400" />
                         {{ cancelText }}

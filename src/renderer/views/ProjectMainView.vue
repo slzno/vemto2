@@ -22,7 +22,7 @@
     import UiWarning from "@Renderer/components/ui/UiWarning.vue"
     import UiInfo from "@Renderer/components/ui/UiInfo.vue"
     import LicenseModal from "./components/System/LicenseModal.vue"
-import LicenseHandler from "@Renderer/services/LicenseHandler"
+    import LicenseHandler from "@Renderer/services/LicenseHandler"
 
     const canShow = ref(false),
         projectStore = useProjectStore(),
@@ -30,6 +30,7 @@ import LicenseHandler from "@Renderer/services/LicenseHandler"
         appStore = useAppStore(),
         errorsDialog = ref(null),
         confirmDialog = ref(null),
+        aiConfirmDialog = ref(null),
         licenseModal = ref(null),
         licenseModalWarningMessage = ref(""),
         confirmDialogMessage = ref(""),
@@ -112,6 +113,21 @@ import LicenseHandler from "@Renderer/services/LicenseHandler"
             const confirmed = await confirmDialog.value.confirm()
             return confirmed
         }
+
+        window.aiConfirm = async (): Promise<boolean> => {
+            const storageKey = `doNotShowAiConfirm_${projectStore.project.id}`
+
+            if(window.localStorage.getItem(storageKey)) return true
+
+            const confirmed = await aiConfirmDialog.value.confirm()
+            if(!confirmed) return false
+            
+            if(confirmed.doNotShowAgain) {
+                window.localStorage.setItem(storageKey, 'true')
+            }
+
+            return true
+        }
     }
 
     const generateCode = async () => {
@@ -150,6 +166,10 @@ import LicenseHandler from "@Renderer/services/LicenseHandler"
         }
     }
 
+    const openURL = (url: string) => {
+        Main.API.openURL(url)
+    }
+
     const openProjectFolder = () => {
         Main.API.openProjectFolder("/")
     }
@@ -184,6 +204,32 @@ import LicenseHandler from "@Renderer/services/LicenseHandler"
                     <UiInfo>
                         {{ confirmDialogOptions.infoMessage }}
                     </UiInfo>
+                </div>
+            </UiConfirm>
+
+            <UiConfirm 
+                ref="aiConfirmDialog" 
+                title="Confirm AI Usage"
+                :options="{
+                    'doNotShowAgain': {
+                        'label': 'I confirm, please do not show this again',
+                        'value': false
+                    }
+                }"
+            >
+                <div>
+                    <UiInfo>
+                        To use AI features, it may be necessary to send your project's schema or specific sections of code to our servers (and maybe to OpenAI's API servers) for processing. 
+                        <br>
+                        <br>
+                        We don't store any of your project data on our servers. We use it only to provide the features you are using.
+                    </UiInfo>
+                </div>
+                <div class="mt-4">
+                    By confirming this, you agree to our <a @click="openURL('https://adhesive-screen-52e.notion.site/Privacy-Policy-for-Vemto-30ab8d23544c4a33bc7dd0bdd2fa7d3b')" target="_blank" class="underline cursor-pointer text-blue-400">Privacy Policy</a> and to send your project's data to our servers and through OpenAI's API. You can learn more about OpenAI's policies <a @click="openURL('https://openai.com/policies')" target="_blank" class="underline cursor-pointer text-blue-400">here</a>.
+                    <br>
+                    <br>
+                    If you have any questions or concerns, please contact us at <a @click="openURL('mailto:contact@vemto.app')" class="underline cursor-pointer text-blue-400">contact@vemto.app</a>.
                 </div>
             </UiConfirm>
 

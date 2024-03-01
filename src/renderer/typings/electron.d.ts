@@ -3,7 +3,8 @@ declare global {
         api: ElectronApi,
         licenseIsActive: () => boolean,
         showLicenseModal: (warningMessage?: string) => void,
-        projectConfirm: (message?: string, title?: string, options?: any) => Promise<boolean>
+        projectConfirm: (message?: string, title?: string, options?: any) => Promise<boolean>,
+        aiConfirm: () => Promise<boolean>,
     }
 }
 

@@ -109,6 +109,9 @@ import Alert from '@Renderer/components/utils/Alert'
             return
         }
 
+        const confirmed = await window.aiConfirm()
+        if(!confirmed) return
+
         const licenseHandler = new LicenseHandler(),
             licenseData = licenseHandler.getLicense()
 
