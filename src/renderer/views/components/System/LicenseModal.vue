@@ -86,7 +86,7 @@
 <template>
     <UiModal
         width="700px"
-        title="Settings"
+        title="License"
         :show="showingModal"
         :processing="processing"
         on-top-of-everything
