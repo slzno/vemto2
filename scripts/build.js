@@ -5,6 +5,8 @@ const Vite = require("vite")
 const compileTs = require("./private/tsc")
 
 function buildRenderer() {
+    console.log(Chalk.blueBright("Building renderer..."))
+
     return Vite.build({
         configFile: Path.join(__dirname, "..", "vite.config.js"),
         base: "./",
@@ -13,6 +15,8 @@ function buildRenderer() {
 }
 
 function buildMain() {
+    console.log(Chalk.blueBright("Building main..."))
+    
     const mainPath = Path.join(__dirname, "..", "src", "main")
     return compileTs(mainPath)
 }
