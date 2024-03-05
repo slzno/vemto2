@@ -1,5 +1,5 @@
 {
-    "appId": "com.electron.app",
+    "appId": "app.vemto.v2",
     "directories": {
         "output": "dist"
     },
@@ -7,7 +7,7 @@
         "oneClick": false,
         "perMachine": false,
         "allowToChangeInstallationDirectory": true,
-        "shortcutName": "Electron App"
+        "shortcutName": "Vemto"
     },
     "win": {
         "target": "nsis"
@@ -16,7 +16,11 @@
         "target": ["snap"]
     },
     "files": [
-        "build/main/**/*",
+        {
+            "from": "build/src/main",
+            "to": "build/src/main",
+            "filter": ["**/*"]
+        },
         {
             "from": "build/renderer",
             "to": "renderer",
@@ -31,11 +35,24 @@
         "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
         "!**/node_modules/*.d.ts",
         "!**/node_modules/.bin",
+        "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}",
+        "!.editorconfig",
+        "!**/._*",
+        "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}",
+        "!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}",
+        "!**/{appveyor.yml,.travis.yml,circle.yml}",
+        "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}",
+        "!.VSCodeCounter",
+        "!.vscode",
+        "!.vemto",
         "!src",
         "!config",
         "!README.md",
         "!scripts",
-        "!build/renderer",
-        "!dist"
+        "!build",
+        "!dist",
+        "!vendor",
+        "!tests",
+        "!logs"
     ]
 }

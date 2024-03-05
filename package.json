@@ -1,5 +1,6 @@
 {
     "name": "vemto",
+    "productName": "Vemto",
     "version": "2.0.0",
     "description": "A Laravel code generator and studio",
     "main": "build/src/main/main.js",
@@ -8,6 +9,7 @@
         "dev:fast": "set VEMTO_NO_CHECKERS=1 && set VEMTO_FAST_MODE=1 && node scripts/dev-server.js",
         "dev:record": "set VEMTO_RECORDING=1 && set VEMTO_NO_CHECKERS=1 && set VEMTO_FAST_MODE=1 && node scripts/dev-server.js",
         "no-menu": "set VEMTO_HIDE_MENU=1 && node scripts/dev-server.js",
+        "webpack": "node scripts/build-webpack.js",
         "build": "node scripts/build.js && electron-builder",
         "build:win": "node scripts/build.js && electron-builder --win",
         "build:mac": "node scripts/build.js && electron-builder --mac",
@@ -26,10 +28,10 @@
         "test:templates": "npm run test -- --selectProjects test-templates",
         "test:unit": "npm run test -- --selectProjects test-unit"
     },
-    "repository": "https://github.com/deluze/electron-vue-template",
+    "repository": "https://github.com/TiagoSilvaPereira/vemto-releases/releases",
     "author": {
-        "name": "Deluze",
-        "url": "https://github.com/Deluze"
+        "name": "King of Code",
+        "url": "https://kingofcode.com.br"
     },
     "devDependencies": {
         "@babel/preset-typescript": "^7.18.6",
@@ -68,6 +70,8 @@
         "@jsplumb/browser-ui": "^5.12.0",
         "@jsplumb/connector-bezier": "^5.12.0",
         "@prettier/plugin-php": "^0.19.2",
+        "@tiago_silva_pereira/reladb": "^2.0.0",
+        "@tiago_silva_pereira/vemto-template-engine": "^4.0.2",
         "@vueform/multiselect": "^2.6.1",
         "@vueuse/core": "^10.5.0",
         "animate.css": "^4.1.1",
