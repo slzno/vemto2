@@ -503,6 +503,9 @@
             <div v-for="section in projectStore.project.schemaSections">
                 <button
                     @click="selectSchemaSection(section)"
+                    :class="{
+                        'border-red-500 dark:border-red-500': schemaStore.selectedSchemaSectionIs(section),
+                    }"
                     class="flex relative group items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-100 dark:border-slate-700 h-6 focus:border-red-500 dark:focus:border-red-500 outline-none"
                 >
                     <div
