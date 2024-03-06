@@ -42,7 +42,8 @@ async function createWindow() {
 
         await mainWindow.webContents.openDevTools()
     } else {
-        mainWindow.setMenu(null)
+        // mainWindow.setMenu(null)
+        // mainWindow.loadFile(join(__dirname, "..", "..", "..", "renderer", "index.html"))
         mainWindow.loadFile(join(app.getAppPath(), "renderer", "index.html"))
     }
 
