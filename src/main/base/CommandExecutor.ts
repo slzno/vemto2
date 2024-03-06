@@ -72,7 +72,6 @@ export default class CommandExecutor {
                     resolve(this.parseJsonData(stdout))
                 })
             } catch (error) {
-                console.log("ENTREI AQUIIIIIIIIIIIIIIIIII")
                 console.error("(execution error) FAILED to execute command: " + command)
                 console.error(error)
                 reject(error)

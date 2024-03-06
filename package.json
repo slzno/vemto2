@@ -9,7 +9,7 @@
         "dev:fast": "set VEMTO_NO_CHECKERS=1 && set VEMTO_FAST_MODE=1 && node scripts/dev-server.js",
         "dev:record": "set VEMTO_RECORDING=1 && set VEMTO_NO_CHECKERS=1 && set VEMTO_FAST_MODE=1 && node scripts/dev-server.js",
         "no-menu": "set VEMTO_HIDE_MENU=1 && node scripts/dev-server.js",
-        "build:vite": "electron-vite build && electron-builder",
+        "build:vite": "node scripts/prebare-build.js && electron-vite build && node scripts/post-build.js && electron-builder",
         "build": "node scripts/build.js && electron-builder",
         "build:win": "node scripts/build.js && electron-builder --win",
         "build:mac": "node scripts/build.js && electron-builder --mac",
