@@ -1,13 +1,13 @@
 import path from "path"
 import { exec } from "child_process"
-import { shellPath } from "shell-path"
+import { shellPathSync } from "shell-path"
 
 export default class CommandExecutor {
 
     static fixShellPathOnMacOs() {
         if(process.platform !== "darwin") return
 
-        process.env.PATH = shellPath.sync() || [
+        process.env.PATH = shellPathSync() || [
             "./node_modules/.bin",
             "/.nodebrew/current/bin",
             "/usr/local/bin",
