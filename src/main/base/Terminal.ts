@@ -4,7 +4,6 @@ export default class Terminal {
 
     static async open(path: string) {
         const isMacOs = process.platform === "darwin",
-            isWindows = process.platform === "win32",
             isLinux = process.platform === "linux"
             
         if (isMacOs) {
