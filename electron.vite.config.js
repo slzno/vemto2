@@ -28,7 +28,9 @@ export default defineConfig({
             ignoreDynamicRequires: true,
         },
         
-        plugins: [externalizeDepsPlugin()],
+        plugins: [externalizeDepsPlugin({
+            exclude: ["shell-path"],
+        })],
 
         resolve: {
             alias: {
