@@ -1,11 +1,29 @@
 import path from "path"
 import { exec } from "child_process"
+import { shellPath } from "shell-path"
 
 export default class CommandExecutor {
+
+    static fixShellPathOnMacOs() {
+        if(process.platform !== "darwin") return
+
+        process.env.PATH = shellPath.sync() || [
+            "./node_modules/.bin",
+            "/.nodebrew/current/bin",
+            "/usr/local/bin",
+            "/usr/bin",
+            "/bin",
+            "/usr/sbin",
+            "/sbin",
+            process.env.PATH
+        ].join(":")
+    }
 
     static executeOnPath(executionPath: string, command: string): Promise<string> {
         return new Promise((resolve, reject) => {
             try {
+                CommandExecutor.fixShellPathOnMacOs()
+
                 exec(command, {
                     cwd: path.join("", executionPath),
                 }, (error, stdout, stderr) => {
