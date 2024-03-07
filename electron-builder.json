@@ -22,6 +22,12 @@
     "linux": {
         "target": ["snap"]
     },
+    "mac": {
+        "target": {
+            "target": "dmg",
+            "arch": ["x64", "arm64"]
+        }
+    },
     "files": [
         {
             "from": "build/src/main",
