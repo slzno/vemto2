@@ -42,7 +42,7 @@
     <nav class="w-20 h-full flex flex-col items-center justify-between bg-white dark:bg-slate-900 border-r border-slate-300 dark:border-slate-800">
         <div>
             <button
-                class="w-full h-12 flex justify-center items-center py-10 text-slate-500 dark:text-slate-600 cursor-pointer hover:text-slate-600 dark:hover:text-slate-400 outline-none focus:!text-slate-800 dark:focus:!text-slate-400"
+                class="w-full h-12 flex justify-center items-center py-10 mt-4 text-slate-500 dark:text-slate-600 cursor-pointer hover:text-slate-600 dark:hover:text-slate-400 outline-none focus:!text-slate-800 dark:focus:!text-slate-400"
                 @click="goToHome()"
             >
                 <HomeIcon class="w-5 h-5 stroke-2" />

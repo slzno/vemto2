@@ -3,10 +3,12 @@ import child_process from 'child_process'
 export default class Terminal {
 
     static async open(path: string) {
-        const isMacOs = process.platform === "darwin"
+        const isMacOs = process.platform === "darwin",
+            isWindows = process.platform === "win32",
+            isLinux = process.platform === "linux"
             
         if (isMacOs) {
-            await Terminal.executeCommand(`osascript -e 'tell application "Terminal"' -e 'activate' -e 'do script "cd ${path} in window 1' -e 'end tell'`)
+            await Terminal.executeCommand(`osascript -e 'tell application "Terminal"' -e 'activate' -e 'do script "cd ${path}" in window 1' -e 'end tell'`)
         } else {
             const fullCommand = `cd ${path};`,
                 commandToExecute = fullCommand.replace(/;/g, '\\;')

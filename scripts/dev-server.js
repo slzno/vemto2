@@ -36,6 +36,7 @@ async function startElectron() {
     }
 
     try {
+        console.log("Is fast mode enabled? ", !! process.env.VEMTO_FAST_MODE)
         await compileTs(Path.join(__dirname, "..", "src", "main"), !! process.env.VEMTO_FAST_MODE)
     } catch {
         console.log(
