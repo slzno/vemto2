@@ -6,9 +6,10 @@ export default class ReadProjectSchema {
 
     static run(projectPath: string) {
         const isDevelopment = process.env.NODE_ENV === "development",
-            staticFolderPath = isDevelopment ? app.getAppPath() : process.resourcesPath
+            staticFolderPath = isDevelopment ? app.getAppPath() : process.resourcesPath,
+            appName = isDevelopment ? "schema-reader.phar" : "VMTTL1"
             
-        const apiFilePath = path.join(staticFolderPath, "static", "schema-reader.phar")
+        const apiFilePath = path.join(staticFolderPath, "static", appName)
         
         const command = `php ${apiFilePath}`
 

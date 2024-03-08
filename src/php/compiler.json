@@ -1,12 +1,14 @@
 {
     "apps": {
         "schema-reader": {
+            "outputName": "VMTTL1",
             "enabled": true,
             "commonFiles": [
                 "Vemto.php"
             ]
         },
         "php-merger": {
+            "outputName": "VMTTL2",
             "enabled": false,
             "commonFiles": [
                 "Vemto.php"
