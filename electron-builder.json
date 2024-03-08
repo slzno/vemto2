@@ -19,8 +19,7 @@
     },
     "win": {
         "target": "nsis",
-        "certificateSubjectName": "Tiago Silva Pereira Rodrigues",
-        "license": "./src/main/static/License.txt"
+        "certificateSubjectName": "Tiago Silva Pereira Rodrigues"
     },
     "linux": {
         "target": ["AppImage"]
