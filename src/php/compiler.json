@@ -1,11 +1,13 @@
 {
     "apps": {
         "schema-reader": {
+            "enabled": true,
             "commonFiles": [
                 "Vemto.php"
             ]
         },
         "php-merger": {
+            "enabled": false,
             "commonFiles": [
                 "Vemto.php"
             ]

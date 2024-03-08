@@ -10,6 +10,12 @@ $compilerSettings = json_decode(file_get_contents(__DIR__ . '/compiler.json'));
 $apps = $compilerSettings->apps;
 
 foreach ($apps as $app => $appSettings) {
+    // if the app is not enabled, skip it
+    if (!$appSettings->enabled) {
+        echo "Skipping $app...\n";
+        continue;
+    }
+
     $folder = __DIR__ . "/apps/$app";
 
     // Copy files from common to the app/common folder
