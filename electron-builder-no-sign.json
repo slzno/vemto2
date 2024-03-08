@@ -1,7 +1,7 @@
 {
     "appId": "app.vemto.v2",
     "publish": "github",
-    "afterSign": "electron-builder-notarize",
+    "afterSign": "./nothing.js",
     "directories": {
         "output": "dist"
     },
@@ -19,17 +19,22 @@
     },
     "win": {
         "target": "nsis",
-        "certificateSubjectName": "Tiago Silva Pereira Rodrigues"
+        "sign": "./nothing.js"
     },
     "linux": {
-        "target": ["AppImage"]
+        "target": [
+            "AppImage"
+        ]
     },
     "mac": {
         "hardenedRuntime": true,
-		"entitlements": "./node_modules/electron-builder-notarize/entitlements.mac.inherit.plist",
+        "entitlements": "./node_modules/electron-builder-notarize/entitlements.mac.inherit.plist",
         "target": {
             "target": "dmg",
-            "arch": ["x64", "arm64"]
+            "arch": [
+                "x64",
+                "arm64"
+            ]
         }
     },
     "files": [
@@ -44,12 +49,16 @@
         {
             "from": "build/renderer",
             "to": "renderer",
-            "filter": ["**/*"]
+            "filter": [
+                "**/*"
+            ]
         },
         {
             "from": "src/main/static",
             "to": "static",
-            "filter": ["**/*"]
+            "filter": [
+                "**/*"
+            ]
         },
         "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
         "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",

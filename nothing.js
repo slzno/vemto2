@@ -1,3 +1,3 @@
-exports.default = async function(configuration) {
-    // your custom code
+exports.default = async () => {
+    console.log("Do nothing!")
 }

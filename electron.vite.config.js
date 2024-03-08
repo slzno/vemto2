@@ -8,6 +8,7 @@ export default defineConfig({
     preload: {
         root: Path.join(__dirname, "src", "main"),
         build: {
+            minify: true,
             outDir: Path.join(__dirname, "build", "src", "main"),
 
             lib: {
@@ -19,6 +20,7 @@ export default defineConfig({
     main: {
         root: Path.join(__dirname, "src", "main"),
         build: {
+            minify: true,
             outDir: Path.join(__dirname, "build", "src", "main"),
             emptyOutDir: true,
         },
@@ -29,7 +31,11 @@ export default defineConfig({
         },
         
         plugins: [externalizeDepsPlugin({
-            exclude: ["shell-path"],
+            exclude: [
+                "shell-path",
+                "@tiago_silva_pereira/reladb",
+                "@tiago_silva_pereira/vemto-template-engine",
+            ],
         })],
 
         resolve: {
@@ -55,6 +61,7 @@ export default defineConfig({
         },
         open: false,
         build: {
+            minify: true,
             outDir: Path.join(__dirname, "build", "renderer"),
             emptyOutDir: true,
         },
