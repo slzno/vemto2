@@ -1,6 +1,7 @@
 {
     "appId": "app.vemto.v2",
     "publish": "github",
+    "afterSign": "electron-builder-notarize",
     "directories": {
         "output": "dist"
     },
@@ -24,6 +25,8 @@
         "target": ["AppImage"]
     },
     "mac": {
+        "hardenedRuntime": true,
+		"entitlements": "./node_modules/electron-builder-notarize/entitlements.mac.inherit.plist",
         "target": {
             "target": "dmg",
             "arch": ["x64", "arm64"]
