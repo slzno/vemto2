@@ -2,7 +2,7 @@
     "name": "vemto",
     "productName": "Vemto",
     "version": "2.0.0",
-    "description": "A Laravel code generator and studio",
+    "description": "The ultimate studio for Laravel",
     "main": "build/src/main/main.js",
     "scripts": {
         "dev": "node scripts/dev-server.js",
