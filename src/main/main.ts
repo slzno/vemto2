@@ -1,4 +1,5 @@
 import { join } from "path"
+import { autoUpdater } from "electron-updater"
 import { HandleDatabase } from "./DatabaseHandler"
 import { HandleFileQueue } from "./FileQueueHandler"
 import { app, BrowserWindow, session } from "electron"
@@ -45,6 +46,8 @@ async function createWindow() {
         // mainWindow.setMenu(null)
         // mainWindow.loadFile(join(__dirname, "..", "..", "..", "renderer", "index.html"))
         mainWindow.loadFile(join(app.getAppPath(), "renderer", "index.html"))
+
+        autoUpdater.checkForUpdatesAndNotify()
     }
 
     mainWindow.maximize()

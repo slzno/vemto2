@@ -9,8 +9,8 @@
         "dev:fast": "cross-env VEMTO_NO_CHECKERS=1 VEMTO_FAST_MODE=1 node scripts/dev-server.js",
         "dev:record": "cross-env VEMTO_RECORDING=1 VEMTO_NO_CHECKERS=1 VEMTO_FAST_MODE=1 node scripts/dev-server.js",
         "no-menu": "cross-env VEMTO_HIDE_MENU=1 node scripts/dev-server.js",
-        "build:vite": "node scripts/prepare-build.js && electron-vite build && node scripts/post-build.js && electron-builder",
-        "build": "node scripts/build.js && electron-builder",
+        "build:local": "node scripts/prepare-build.js && electron-vite build && node scripts/post-build.js && electron-builder",
+        "build": "node scripts/prepare-build.js && electron-vite build && node scripts/post-build.js && electron-builder --publish always",
         "build:win": "node scripts/build.js && electron-builder --win",
         "build:mac": "node scripts/build.js && electron-builder --mac",
         "build:linux": "node scripts/build.js && electron-builder --linux",
@@ -28,7 +28,11 @@
         "test:templates": "npm run test -- --selectProjects test-templates",
         "test:unit": "npm run test -- --selectProjects test-unit"
     },
-    "repository": "https://github.com/TiagoSilvaPereira/vemto-releases/releases",
+    "homepage": "https://vemto.app",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/TiagoSilvaPereira/vemto2-releases"
+    },
     "author": {
         "name": "King of Code",
         "url": "https://kingofcode.com.br"
@@ -86,6 +90,7 @@
         "crypto-js": "^4.1.1",
         "diff": "^5.1.0",
         "diff2html": "^3.4.33",
+        "electron-updater": "^6.1.8",
         "highlight.js": "^11.6.0",
         "lodash": "^4.17.21",
         "monaco-editor": "0.38.0",

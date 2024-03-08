@@ -1,5 +1,6 @@
 {
     "appId": "app.vemto.v2",
+    "publish": "github",
     "directories": {
         "output": "dist"
     },
@@ -20,7 +21,7 @@
         "sign": "./nothing.js"
     },
     "linux": {
-        "target": ["snap"]
+        "target": ["AppImage"]
     },
     "mac": {
         "target": {
