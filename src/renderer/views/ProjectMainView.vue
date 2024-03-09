@@ -244,7 +244,7 @@
                     >
                         <div>
                             <button
-                                class="flex text-slate-600 dark:text-slate-300 outline-none focus:text-red-500 cursor-pointer hover:text-red-500 dark:hover:text-red-500"
+                                class="flex text-slate-600 dark:text-slate-300 outline-none focus:text-red-500 dark:focus:text-red-500 cursor-pointer hover:text-red-500 dark:hover:text-red-500"
                                 title="Generate Code (F5)"
                                 @click="generateCode()"
                             >
@@ -258,20 +258,20 @@
                             </button>
                         </div>
                         <button
-                            class="flex text-slate-600 dark:text-slate-300 outline-none focus:text-red-500 cursor-pointer hover:text-red-500 dark:hover:text-red-500"
+                            class="flex text-slate-600 dark:text-slate-300 outline-none focus:text-red-500 dark:focus:text-red-500 cursor-pointer hover:text-red-500 dark:hover:text-red-500"
                             title="Open Project Folder (F6)"
                             @click="openProjectFolder()"
                         >
                             <FolderIcon class="w-7 h-7 stroke-1" />
                         </button>
                         <button
-                            class="flex text-slate-600 dark:text-slate-300 outline-none focus:text-red-500 cursor-pointer hover:text-red-500 dark:hover:text-red-500"
+                            class="flex text-slate-600 dark:text-slate-300 outline-none focus:text-red-500 dark:focus:text-red-500 cursor-pointer hover:text-red-500 dark:hover:text-red-500"
                             title="Open Project on Command Line (F7)"
                             @click="openProjectOnTerminal()"
                         >
                             <CommandLineIcon class="w-7 h-7 stroke-1" />
                         </button>
-                        <div
+                        <button
                             @click="errorsDialog.toggle()"
                             class="relative cursor-pointer"
                         >
@@ -288,7 +288,7 @@
                                 }"
                                 class="w-7 h-7 stroke-1 hover:text-red-500 dark:hover:text-red-500"
                             />
-                        </div>
+                        </button>
                     </div>
                 </div>
             </div>
