@@ -11,6 +11,7 @@
     import UiModal from "@Renderer/components/ui/UiModal.vue"
     import UiSelect from "@Renderer/components/ui/UiSelect.vue"
     import { ProjectCssFramework } from "@Common/models/Project"
+import { PlusIcon } from "@heroicons/vue/24/outline"
 
     const projectStore = useProjectStore()
 
@@ -136,7 +137,10 @@
         <div class="w-1/3 h-full space-y-2">
             <div class="flex space-x-2">
                 <UiText v-model="search" placeholder="Search..."></UiText>
-                <UiButton @click="showingNewThemeModal = true">New Theme</UiButton>
+                <UiButton @click="showingNewThemeModal = true">
+                    <PlusIcon class="w-4 h-4 mr-1 text-red-500" />
+                    New Theme
+                </UiButton>
             </div>
             
             <div class="space-y-2 h-full overflow-auto pb-60">
@@ -151,4 +155,3 @@
         </div>
     </div>
 </template>
- @Renderer/services/project/GenerateDefaultVthemeKeys

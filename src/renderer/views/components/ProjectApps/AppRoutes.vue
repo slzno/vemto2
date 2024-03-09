@@ -7,6 +7,7 @@
     import UiModal from "@Renderer/components/ui/UiModal.vue";
     import UiSelect from "@Renderer/components/ui/UiSelect.vue";
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
+import { PlusIcon } from "@heroicons/vue/24/outline";
 
     const projectStore = useProjectStore(),
         activeRoute = ref<Route|null>(null),
@@ -131,7 +132,10 @@
 
 <template>
     <div class="mb-3">
-        <UiButton @click="showingCreateRouteModal = true">Add Route</UiButton>
+        <UiButton @click="showingCreateRouteModal = true">
+            <PlusIcon class="w-4 h-4 mr-1 text-red-500" />
+            Add Route
+        </UiButton>
     </div>
 
     <UiModal

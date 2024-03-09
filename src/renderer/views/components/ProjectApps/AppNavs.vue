@@ -8,6 +8,7 @@
     import { useProjectStore } from "@Renderer/stores/useProjectStore";
     import UiText from "@Renderer/components/ui/UiText.vue";
     import GenerateBasicMenu from "@Renderer/services/project/GenerateBasicMenu";
+import { PlusIcon } from "@heroicons/vue/24/outline";
 
     const projectStore = useProjectStore(),
         editingNavigation = ref<null | Nav>(null),
@@ -116,8 +117,14 @@
 
 <template>
     <div class="mb-3 flex gap-2">
-        <UiButton @click="showingCreateNavigationModal = true">Add Menu Item</UiButton>
-        <UiButton @click="createBasicNavs">Add Basic Navs</UiButton>
+        <UiButton @click="showingCreateNavigationModal = true">
+            <PlusIcon class="w-4 h-4 mr-1 text-red-500" />
+            Add Menu Item
+        </UiButton>
+        <UiButton @click="createBasicNavs">
+            <PlusIcon class="w-4 h-4 mr-1 text-red-500" />
+            Add Default Items
+        </UiButton>
     </div>
 
     <UiModal

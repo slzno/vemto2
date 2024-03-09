@@ -6,6 +6,7 @@
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import GenerateBasicSections from "@Renderer/services/project/GenerateBasicSections"
+import { PlusIcon } from "@heroicons/vue/24/outline"
 
     const projectStore = useProjectStore(),
         editingSection = ref<null | AppSection>(null)
@@ -59,8 +60,14 @@
 
 <template>
     <div class="mb-3 flex space-x-2">
-        <UiButton @click="addSection()">Add Section</UiButton>
-        <UiButton @click="addDefaultSections()">Add Default Sections</UiButton>
+        <UiButton @click="addSection()">
+            <PlusIcon class="w-4 h-4 mr-1 text-red-500" />
+            Add Section
+        </UiButton>
+        <UiButton @click="addDefaultSections()">
+            <PlusIcon class="w-4 h-4 mr-1 text-red-500" />
+            Add Default Sections
+        </UiButton>
     </div>
 
     <div class="bg-slate-950 p-3 rounded-lg border border-slate-700 h-screen">
