@@ -4,18 +4,19 @@ import CommandExecutor from "@Main/base/CommandExecutor"
 
 export default class ReadProjectSchema {
 
-    static run(projectPath: string) {
+    static async run(projectPath: string) {
         const isDevelopment = process.env.NODE_ENV === "development",
-            staticFolderPath = isDevelopment ? app.getAppPath() : process.resourcesPath,
-            appName = isDevelopment ? "schema-reader.phar" : "VMTTL1"
+            staticFolderPath = isDevelopment ? app.getAppPath() : process.resourcesPath
             
-        const apiFilePath = path.join(staticFolderPath, "static", appName)
+        const apiFilePath = path.join(staticFolderPath, "static", "VMTTL1")
         
         const command = `php ${apiFilePath}`
 
-        console.log(`Running ${command} on ${projectPath}`)
+        if(isDevelopment) {
+            console.log(`Running ${command} on ${projectPath}`)
+        }
 
-        return CommandExecutor.executeOnPath(projectPath, command)
+        return await CommandExecutor.executeOnPath(projectPath, command)
     }
 
 }

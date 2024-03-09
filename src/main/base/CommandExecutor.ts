@@ -1,13 +1,22 @@
 import path from "path"
 import { exec } from "child_process"
-import { shellPathSync } from "shell-path"
 
 export default class CommandExecutor {
 
-    static fixShellPathOnMacOs() {
-        if(process.platform !== "darwin") return
+    static async fixShellPathOnMacOs(): Promise<void> {
+        if (process.platform !== "darwin") return
 
-        process.env.PATH = shellPathSync() || [
+        let shellPath
+
+        try {
+            shellPath = (await import("shell-path")).shellPathSync()
+            console.log("Successfully imported shell-path")
+        } catch (error) {
+            shellPath = null
+            console.error("Failed to import shell-path", error)
+        }
+
+        process.env.PATH = shellPath || [
             "./node_modules/.bin",
             "/.nodebrew/current/bin",
             "/usr/local/bin",
@@ -19,11 +28,11 @@ export default class CommandExecutor {
         ].join(":")
     }
 
-    static executeOnPath(executionPath: string, command: string): Promise<string> {
+    static async executeOnPath(executionPath: string, command: string): Promise<string> {
+        await CommandExecutor.fixShellPathOnMacOs()
+
         return new Promise((resolve, reject) => {
             try {
-                CommandExecutor.fixShellPathOnMacOs()
-
                 exec(command, {
                     cwd: path.join("", executionPath),
                 }, (error, stdout, stderr) => {
