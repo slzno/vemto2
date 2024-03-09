@@ -6,6 +6,7 @@ import { app, BrowserWindow, session } from "electron"
 import { HandleIpcMessages } from "./IpcMessagesHandler"
 import installExtension from "electron-devtools-installer"
 import { HandleRenderableFileQueue } from "./RenderableFileQueueHandler"
+import Storage from "./services/Storage"
 
 const isTesting = process.env.NODE_ENV === "test",
     isDevelopment = process.env.NODE_ENV === "development"
@@ -33,6 +34,8 @@ async function createWindow() {
             // devTools: true,
         },
     })
+
+    Storage.setWindow(mainWindow)
 
     if (isDevelopment) {
         const rendererPort = process.argv[2]
