@@ -120,4 +120,7 @@ contextBridge.exposeInMainWorld("api", {
     mergePHPFile: (relativePath: string) => {
         return ipcRenderer.invoke("php:file:merge", relativePath)
     },
+    phpIsInstalled: () => {
+        return ipcRenderer.invoke("php:is:installed")
+    },
 })

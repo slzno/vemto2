@@ -60,6 +60,13 @@ import LicenseHandler from "@Renderer/services/LicenseHandler"
     })
 
     const openFolder = async () => {
+        const phpInstalled = await Main.API.phpIsInstalled()
+        
+        if(!phpInstalled) {
+            Alert.warning("PHP was not detected. Please install PHP or set the correct path in the settings to connect a local project")
+            return
+        }
+
         const path = await Main.API.openFolderDialog()
 
         if (!path) return
@@ -232,10 +239,10 @@ import LicenseHandler from "@Renderer/services/LicenseHandler"
         <header class="flex w-full justify-center mt-10">
             <div class="flex flex-col">
                 <div class="flex gap-2">
-                    <UiButton class="gap-1.5" @click="newApp()">
+                    <!-- <UiButton class="gap-1.5" @click="newApp()">
                         <PlusCircleIcon class="w-5 h-5 text-red-500" />
                         New App
-                    </UiButton>
+                    </UiButton> -->
                     <UiButton class="gap-1.5" @click="openFolder()">
                         <FolderIcon class="w-5 h-5 text-red-500" />
                         Connect Folder

@@ -1,33 +1,23 @@
 import path from "path"
 import { exec } from "child_process"
+import Storage from "@Main/services/Storage"
 
 export default class CommandExecutor {
 
-    static async fixShellPathOnMacOs(): Promise<void> {
-        if (process.platform !== "darwin") return
+    static async executePhpOnPath(executionPath: string, command: string, plainReturn:boolean = false): Promise<string> {
+        const phpPath = await Storage.get("phpPath") || "php",
+            phpCommand = `${phpPath} ${command}`
 
-        let shellPath
-
-        try {
-            shellPath = (await import("shell-path")).shellPathSync()
-        } catch (error) {
-            shellPath = null
-            console.error("Failed to import shell-path", error)
-        }
-
-        process.env.PATH = shellPath || [
-            "./node_modules/.bin",
-            "/.nodebrew/current/bin",
-            "/usr/local/bin",
-            "/usr/bin",
-            "/bin",
-            "/usr/sbin",
-            "/sbin",
-            process.env.PATH
-        ].join(":")
+        return await this.executeOnPath(executionPath, phpCommand, plainReturn)
     }
 
-    static async executeOnPath(executionPath: string, command: string): Promise<string> {
+    static async executeOnPath(executionPath: string, command: string, plainReturn: boolean = false): Promise<string> {
+        const isDevelopment = process.env.NODE_ENV === "development"
+
+        if(isDevelopment) {
+            console.log(`Running ${command} on ${executionPath}`)
+        }
+
         await CommandExecutor.fixShellPathOnMacOs()
 
         return new Promise((resolve, reject) => {
@@ -94,7 +84,11 @@ export default class CommandExecutor {
 
                         reject(errorData)
                     }
-        
+                    
+                    if (plainReturn) {
+                        resolve(stdout)
+                    }
+
                     resolve(this.parseJsonData(stdout))
                 })
             } catch (error) {
@@ -104,6 +98,30 @@ export default class CommandExecutor {
             }
 
         })
+    }
+
+    static async fixShellPathOnMacOs(): Promise<void> {
+        if (process.platform !== "darwin") return
+
+        let shellPath
+
+        try {
+            shellPath = (await import("shell-path")).shellPathSync()
+        } catch (error) {
+            shellPath = null
+            console.error("Failed to import shell-path", error)
+        }
+
+        process.env.PATH = shellPath || [
+            "./node_modules/.bin",
+            "/.nodebrew/current/bin",
+            "/usr/local/bin",
+            "/usr/bin",
+            "/bin",
+            "/usr/sbin",
+            "/sbin",
+            process.env.PATH
+        ].join(":")
     }
 
     static parseJsonData(data: string): any {

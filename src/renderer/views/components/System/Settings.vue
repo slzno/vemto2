@@ -8,15 +8,17 @@
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import LicenseModal from "./LicenseModal.vue"
     import LicenseHandler from "@Renderer/services/LicenseHandler"
-import { PencilSquareIcon } from "@heroicons/vue/24/outline"
-import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
+    import { CheckIcon, PencilSquareIcon } from "@heroicons/vue/24/outline"
+    import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
+import Alert from "@Renderer/components/utils/Alert"
     
     const licenseHandler = new LicenseHandler()
     
     const showingModal = ref(false),
         selectedTab = ref("license"),
         licenseModal = ref(null),
-        licenseIsActive = ref(false)
+        licenseIsActive = ref(false),
+        phpPath = ref("")
 
     const tabs = [
         { label: "License", value: "license" },
@@ -26,6 +28,7 @@ import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
 
     const show = () => {
         showingModal.value = true
+        phpPath.value = localStorage.getItem("phpPath") || ""
         
         readLicenseStatus()
     }
@@ -36,6 +39,12 @@ import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
 
     const readLicenseStatus = () => {
         licenseIsActive.value = licenseHandler.isActive()
+    }
+
+    const savePhpPath = () => {
+        localStorage.setItem("phpPath", phpPath.value)
+
+        Alert.info("PHP Path saved")
     }
 
     defineExpose({
@@ -82,9 +91,14 @@ import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
         </div>
 
         <div class="space-y-2 p-4" v-if="selectedTab === 'paths'">
-            <UiEmptyMessage local>
-                Under development
-            </UiEmptyMessage>
+            <UiText v-model="phpPath" label="PHP Path (folder + executable)"></UiText>
+
+            <div class="mt-2">
+                <UiButton @click="savePhpPath()">
+                    <CheckIcon class="h-4 w-4 mr-1 text-green-500" />
+                    <span>Save</span>
+                </UiButton>
+            </div>
         </div>
 
         <div class="space-y-2 p-4" v-if="selectedTab === 'theme'">

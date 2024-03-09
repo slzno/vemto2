@@ -13,7 +13,7 @@ import ProjectToolsView from "@Renderer/views/ProjectToolsView.vue"
 import ProjectSettingsView from "@Renderer/views/ProjectSettingsView.vue"
 
 const router = createRouter({
-    history: createWebHashHistory(import.meta.env.BASE_URL),
+    history: createWebHashHistory(),
     routes: [
         {
             path: "/",

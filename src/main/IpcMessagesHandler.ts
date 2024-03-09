@@ -9,6 +9,7 @@ import Terminal from "./base/Terminal"
 import ProjectPathResolver from "@Common/services/ProjectPathResolver"
 import ConflictManager from "./services/ConflictManager"
 import PHPMerger from "./services/PHPMerger"
+import CommandExecutor from "./base/CommandExecutor"
 
 export function HandleIpcMessages() {
     ipcMain.handle("confirm", (event, message: string) => {
@@ -285,6 +286,17 @@ export function HandleIpcMessages() {
     ipcMain.handle("open:url", (event, url) => {
         return handleError(event, () => {
             shell.openExternal(url)
+        })
+    })
+
+    ipcMain.handle("php:is:installed", (event) => {
+        return handleError(event, async () => {
+            try {
+                const result = await CommandExecutor.executePhpOnPath("", "--version", true)
+                return result.includes("PHP")
+            } catch (error) {
+                return false
+            }
         })
     })
 }

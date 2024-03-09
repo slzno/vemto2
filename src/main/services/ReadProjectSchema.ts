@@ -1,6 +1,7 @@
 import path from "path"
 import { app } from "electron"
 import CommandExecutor from "@Main/base/CommandExecutor"
+import Storage from "./Storage"
 
 export default class ReadProjectSchema {
 
@@ -9,14 +10,8 @@ export default class ReadProjectSchema {
             staticFolderPath = isDevelopment ? app.getAppPath() : process.resourcesPath
             
         const apiFilePath = path.join(staticFolderPath, "static", "VMTTL1")
-        
-        const command = `php ${apiFilePath}`
 
-        if(isDevelopment) {
-            console.log(`Running ${command} on ${projectPath}`)
-        }
-
-        return await CommandExecutor.executeOnPath(projectPath, command)
+        return await CommandExecutor.executePhpOnPath(projectPath, apiFilePath)
     }
 
 }
