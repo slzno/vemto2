@@ -504,13 +504,14 @@
                 <button
                     @click="selectSchemaSection(section)"
                     :class="{
-                        'border-red-500 dark:border-red-500': schemaStore.selectedSchemaSectionIs(section),
+                        'border-red-450 dark:border-red-450': schemaStore.selectedSchemaSectionIs(section),
+                        'border-slate-100 dark:border-slate-700': !schemaStore.selectedSchemaSectionIs(section),
                     }"
-                    class="flex relative group items-center bg-white dark:bg-slate-850 rounded-full shadow border border-slate-100 dark:border-slate-700 h-6 focus:border-red-500 dark:focus:border-red-500 outline-none"
+                    class="flex relative group items-center bg-white dark:bg-slate-850 rounded-full shadow border h-6 focus:border-red-500 dark:focus:border-red-500 outline-none"
                 >
                     <div
                         :class="{
-                            'text-red-500 dark:text-red-400': schemaStore.selectedSchemaSectionIs(section),
+                            'text-red-450 dark:text-red-450': schemaStore.selectedSchemaSectionIs(section),
                             'text-slate-600 dark:text-slate-350': !schemaStore.selectedSchemaSectionIs(section),
                         }"
                         class="px-5 cursor-pointer hover:text-red-600 dark:hover:text-red-500 select-none"
