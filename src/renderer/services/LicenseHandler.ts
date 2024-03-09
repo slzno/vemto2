@@ -1,4 +1,5 @@
 import Alert from "@Renderer/components/utils/Alert"
+import Main from "./wrappers/Main"
 
 export interface LicenseData {
     email: string
@@ -88,7 +89,9 @@ export default class LicenseHandler {
 
         const licenseData: LicenseData = this.getLicense()
 
-        const url = new URL('http://localhost:8000/api/v2/licenses/data')
+        const baseUrl = Main.API.getBaseUrl(),
+            url = new URL(`${baseUrl}/api/v2/licenses/data`)
+
         url.searchParams.append('email', licenseData.email)
         url.searchParams.append('license', licenseData.code)
 
@@ -119,7 +122,10 @@ export default class LicenseHandler {
     }
 
     async activateLicense(email:string, license: string): Promise<boolean> {
-        const response = await fetch('http://localhost:8000/api/v2/licenses/activate', {
+        const baseUrl = Main.API.getBaseUrl(),
+            url = new URL(`${baseUrl}/api/v2/licenses/activate`)
+
+        const response = await fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -146,7 +152,10 @@ export default class LicenseHandler {
 
         const licenseData: LicenseData = this.getLicense()
 
-        const response = await fetch('http://localhost:8000/api/v2/licenses/revoke', {
+        const baseUrl = Main.API.getBaseUrl(),
+            url = new URL(`${baseUrl}/api/v2/licenses/revoke`)
+
+        const response = await fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

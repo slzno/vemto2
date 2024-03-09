@@ -118,7 +118,10 @@ import Alert from '@Renderer/components/utils/Alert'
         try {
             calculatingAIMerge.value = true
 
-            const response = await fetch('http://localhost:8000/api/v2/php/merge', {
+            const baseUrl = Main.API.getBaseUrl(),
+                url = new URL(`${baseUrl}/api/v2/php/merge`)
+
+            const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',

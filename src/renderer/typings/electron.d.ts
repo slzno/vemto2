@@ -14,6 +14,7 @@ declare global {
 export default interface ElectronApi {
     onDevelopment: () => boolean,
     isRecording: () => boolean,
+    getBaseUrl: () => string,
     confirm: (message: string) => Promise<any>,
     openFolderDialog: () => Promise<string>,
     openURL: (url: string) => void,

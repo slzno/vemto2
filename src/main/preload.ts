@@ -9,6 +9,12 @@ contextBridge.exposeInMainWorld("api", {
         return !! process.env.VEMTO_RECORDING
     },
 
+    getBaseUrl: () => {
+        return process.env.NODE_ENV === "development" 
+            ? "http://localhost:8000" 
+            : "https://vemto.app"
+    },
+
     // Common messages
     prepareDatabase: (path: string) => {
         return ipcRenderer.invoke("prepare:project:database", path)
