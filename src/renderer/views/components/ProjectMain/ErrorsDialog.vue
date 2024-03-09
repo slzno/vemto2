@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import UiSmallButton from "@Renderer/components/ui/UiSmallButton.vue"
-import UiTabs from "@Renderer/components/ui/UiTabs.vue"
+    import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import { useErrorsStore } from "@Renderer/stores/useErrorsStore"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import { CheckCircleIcon, ShieldExclamationIcon, XMarkIcon } from "@heroicons/vue/24/outline"

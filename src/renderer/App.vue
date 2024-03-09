@@ -19,7 +19,9 @@
                 return
             }
             
-            Alert.error(error.message)
+            if (errorsStore.lastErrorMessage === error.message) return
+
+            // Alert.error("Error from background process")
             console.error(error.message)
             console.error(error.stack)
 
