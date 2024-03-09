@@ -381,7 +381,7 @@
                     :show="showingCreateSectionModal"
                     @close="closeSectionModal()"
                 >
-                    <div class="m-2">
+                    <div class="p-4">
                         <div class="m-1 flex flex-col gap-2" @keyup.enter="createTable()">
                             <UiText v-model="newSection.name" id="new-section-name" placeholder="Schema Section Name"></UiText>
                         </div>
