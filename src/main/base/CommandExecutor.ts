@@ -10,7 +10,6 @@ export default class CommandExecutor {
 
         try {
             shellPath = (await import("shell-path")).shellPathSync()
-            console.log("Successfully imported shell-path")
         } catch (error) {
             shellPath = null
             console.error("Failed to import shell-path", error)
