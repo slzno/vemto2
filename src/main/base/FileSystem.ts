@@ -123,9 +123,7 @@ class FileSystem {
         const result = shell.cp('-R', templateFolder, destinationFolder)
 
         // set the folder to be writable
-        const chmodResult = shell.chmod('-R', '755', destinationFolder)
-
-        console.log("chmod result", chmodResult)
+        fs.chmodSync(destinationFolder, 0o755)
 
         return result.code === 0
     }
