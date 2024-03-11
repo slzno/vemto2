@@ -1,3 +1,4 @@
+import os from "os"
 import path from "path"
 import { exec } from "child_process"
 import Storage from "@Main/services/Storage"
@@ -5,8 +6,11 @@ import Storage from "@Main/services/Storage"
 export default class CommandExecutor {
 
     static async executePhpOnPath(executionPath: string, command: string, plainReturn:boolean = false): Promise<string> {
-        const phpPath = await Storage.get("phpPath") || "php",
-            phpCommand = `${phpPath} ${command}`
+        let phpPath = await Storage.get("phpPath") || "php"
+
+        phpPath = CommandExecutor.escapePath(phpPath)
+
+        const phpCommand = `${phpPath} ${command}`
 
         return await this.executeOnPath(executionPath, phpCommand, plainReturn)
     }
@@ -122,6 +126,31 @@ export default class CommandExecutor {
             "/sbin",
             process.env.PATH
         ].join(":")
+    }
+
+    static escapePath(givenPath) {
+        const version = os.release()
+
+        // For some windows version (Windows 10 v1803), it is not useful to escape spaces in path
+        // https://docs.microsoft.com/en-us/windows/release-information/
+        const windowsVersionRegex = /(\d+\.\d+)\.(\d+)/
+        const should_not_escape = (majorRelease = '', osBuild = '') =>
+            /1\d+\.\d+/.test(majorRelease) && Number(osBuild) >= 17134.1184
+
+        return (CommandExecutor.isPosix())
+            // for posix path, escape is simple
+            ? givenPath.replace(/(\s+)/g, '\\$1')
+            // for windows, it depend of the build
+            : (should_not_escape(...windowsVersionRegex.exec(version).splice(1)))
+                // on major version, no need to escape anymore
+                // https://support.microsoft.com/en-us/help/4467268/url-encoded-unc-paths-not-url-decoded-in-windows-10-version-1803-later
+                ? givenPath
+                // on older version, replace space with symbol %20
+                : givenPath.replace(/(\s+)/g, '%20')
+    }
+
+    static isPosix() {
+        return (os.platform() !== 'win32')
     }
 
     static parseJsonData(data: string): any {
