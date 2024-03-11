@@ -120,7 +120,12 @@ class FileSystem {
 
     copyFolder(templateFolder: string, destinationFolder: string): boolean {
         console.log('Copying Folder: ' + templateFolder + ' to ' + destinationFolder)
-        return shell.cp('-R', templateFolder, destinationFolder)
+        const result = shell.cp('-R', templateFolder, destinationFolder)
+
+        // set the folder to be writable
+        shell.chmod('-R', '755', destinationFolder)
+
+        return result.code === 0
     }
 
     deleteFile(destFilePath: string, log = true): FileSystem {
