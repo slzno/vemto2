@@ -8,9 +8,9 @@ export default class CommandExecutor {
     static async executePhpOnPath(executionPath: string, command: string, plainReturn:boolean = false): Promise<string> {
         let phpPath = await Storage.get("phpPath") || "php"
 
-        phpPath = CommandExecutor.escapePath(phpPath)
+        // phpPath = CommandExecutor.escapePath(phpPath)
 
-        const phpCommand = `${phpPath} ${command}`
+        const phpCommand = `"${phpPath}" "${command}"`
 
         return await this.executeOnPath(executionPath, phpCommand, plainReturn)
     }
@@ -130,6 +130,8 @@ export default class CommandExecutor {
 
     static escapePath(givenPath) {
         const version = os.release()
+
+        console.log('SO version', version)
 
         // For some windows version (Windows 10 v1803), it is not useful to escape spaces in path
         // https://docs.microsoft.com/en-us/windows/release-information/
