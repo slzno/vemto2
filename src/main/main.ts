@@ -67,7 +67,7 @@ app.whenReady().then(() => {
                 ...details.responseHeaders,
                 "Content-Security-Policy": isDevelopment
                     ? ["default-src 'self' 'unsafe-eval' http: https: 'unsafe-inline'; img-src 'self' data:"]
-                    : ["script-src 'self' 'unsafe-eval'; img-src 'self' data:"],
+                    : ["script-src 'self' 'unsafe-eval' https://cdn.tailwindcss.com; img-src 'self' data:"],
             },
         })
     })
