@@ -224,7 +224,7 @@ import LicenseHandler from "@Renderer/services/LicenseHandler"
                 <br><br>
                 It was a year and a half of development, full of ups and downs. I'll soon make a blog post telling everything about this period, but let's get to the point:
                 <br><br>
-                <span class="text-green-500">Vemto 2 is finally here!</span>
+                <span class="text-red-500 font-bold">Vemto 2 is finally here </span>
                 <br><br>
                 It's still a pre-alpha version; of course, there will probably be bugs. But I'm happy because this version has the correct architecture, which has been rewritten several times during this period and will now only be improved (hopefully for the next 10 years).
                 <br><br>
@@ -238,7 +238,7 @@ import LicenseHandler from "@Renderer/services/LicenseHandler"
                 <br><br>
                 4 - When Vemto 2 generates code, it does just that. It does not install packages or modify composer.json or package.json during generation. This was a significant source of problems in version 1, and we found another way to do this, which will be implemented soon (Composer Manager, NPM Manager, etc.)
                 <br><br>
-                5 - Some features of Vemto 1 still need to be made available as we needed to resolve the entire architecture before that, which took almost the entire development period. Now, we are focused on developing features, and soon, we will have:
+                5 - Some features from Vemto 1 are still under development as we needed to resolve the entire architecture before bringing them, which took almost the whole development period. Now, we are focused on these features, and soon, we will have:
                 <br><br>
                 <ul>
                     <li>- Generation of API Endpoints</li>
@@ -252,7 +252,9 @@ import LicenseHandler from "@Renderer/services/LicenseHandler"
                 <br><br>
                 7 - Vemto 1 still works very well for generating API Endpoints. You can use it for this and connect Vemto 2 to your project.
                 <br><br>
-                8 - Please report any bug in the Issues repository or email contact@vemto.app.
+                8 - Small Tip: Test Filament code generation—it's awesome now! Just remember to install the Filament package in your project.
+                <br><br>
+                9 - Please report any bug in the <a @click="openURL('https://github.com/TiagoSilvaPereira/vemto2-issues/issues/new')" class="text-red-500 cursor-pointer">Issues Repository</a> or email <b>contact@vemto.app</b> (Issues repository is preferred).
                 <br><br>
                 We are focused on improving Vemto 2 and reaching the Release version as quickly as possible (our plans are for the middle of the year).
                 <br><br>
@@ -263,10 +265,6 @@ import LicenseHandler from "@Renderer/services/LicenseHandler"
                 Yours sincerely,
                 <br>
                 Tiago Rodrigues - Creator of Vemto
-                <br><br>
-                <span class="text-green-500">
-                    Note: I want to inform you that lifetime licenses will continue to cost $299 until April 30th. After that, the price will increase to $399.
-                </span>
             </div>
         </div>
     </UiModal>
