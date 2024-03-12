@@ -41,7 +41,9 @@ export default class SchemaBuilder {
             }
         } catch (error) {
             console.error("Error while checking for schema errors: ", error)
-            console.log("Schema Builder processing", SchemaBuilder.processing)
+            
+            SchemaBuilder.processing = false
+
             throw error
         }
     }
