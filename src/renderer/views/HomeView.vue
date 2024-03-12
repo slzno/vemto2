@@ -95,6 +95,8 @@
             
             processingConnectFolder.value = false
     
+            errorsStore.clearErrors()
+
             openSchema()
         } catch (error) {
             showingConnectingFolderModal.value = false
