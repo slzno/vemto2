@@ -41,6 +41,7 @@ export default class SchemaBuilder {
             }
         } catch (error) {
             console.error("Error while checking for schema errors: ", error)
+            console.log("Schema Builder processing", SchemaBuilder.processing)
             throw error
         }
     }
@@ -61,6 +62,8 @@ export default class SchemaBuilder {
     
             return this
         } catch (error) {
+            SchemaBuilder.processing = false
+
             console.error("Error while building schema: ", error)
 
             throw error
@@ -135,18 +138,22 @@ export default class SchemaBuilder {
     }
 
     async readData(specificPath: string = "") {
-        if (this.currentOpenProjectIsDifferent()) {
-            this.schemaData = null
+        try {
+            if (this.currentOpenProjectIsDifferent()) {
+                this.schemaData = null
+                return this
+            }
+    
+            const path = specificPath || this.project.getPath()
+    
+            await SchemaBuilder.checkForErrors(path)
+    
+            this.schemaData = await Main.API.loadSchema(path)
+    
             return this
+        } catch (error) {
+            this.schemaData = null
         }
-
-        const path = specificPath || this.project.getPath()
-
-        await SchemaBuilder.checkForErrors(path)
-
-        this.schemaData = await Main.API.loadSchema(path)
-
-        return this
     }
 
     schemaDataIsInvalid() {
