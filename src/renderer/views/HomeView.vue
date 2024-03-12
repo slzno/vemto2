@@ -28,6 +28,7 @@
         projects = ref([]),
         errorsStore = useErrorsStore(),
         errorsDialog = ref(null),
+        loadingProjectId = ref(null),
         confirmDisconnectDialog = ref(null),
         currentConnectingFolder = ref(null),
         showingWelcomeModal = ref(false),
@@ -82,6 +83,8 @@
     }
 
     const openProject = async (project: any) => {
+        loadingProjectId.value = project.id
+
         await openPath(project.path)
     }
 
@@ -379,20 +382,28 @@
                 <div v-for="project in filteredProjects" @click="openProject(project)" class="p-2 rounded-lg border border-slate-300 dark:border-slate-650 bg-slate-50 dark:bg-slate-850 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800">
                     <div class="flex justify-between">
                         <span>{{ project.path.split(/\/|\\/).pop() }}</span>
-                        <UiOptionsDropdown>
-                            <UiDropdownItem @click="copyProjectPath(project)">
-                                <ClipboardDocumentIcon class="h-5 w-5 mr-1 text-red-400" /> Copy Path
-                            </UiDropdownItem>
-                            <UiDropdownItem @click="openProjectPath(project)">
-                                <FolderIcon class="h-5 w-5 mr-1 text-red-400" /> Open Folder
-                            </UiDropdownItem>
-                            <UiDropdownItem @click="openProjectOnTerminal(project)">
-                                <CommandLineIcon class="h-5 w-5 mr-1 text-red-400" /> Open Terminal
-                            </UiDropdownItem>
-                            <UiDropdownItem @click="disconnectProject(project)">
-                                <XMarkIcon class="h-5 w-5 mr-1 text-red-400" /> Disconnect
-                            </UiDropdownItem>
-                        </UiOptionsDropdown>
+
+                        <div class="h-6">
+                            <UiLoading 
+                                v-if="loadingProjectId === project.id"
+                                :size="15"
+                                :strokeWidth="2"
+                            ></UiLoading>
+                            <UiOptionsDropdown v-else>
+                                <UiDropdownItem @click="copyProjectPath(project)">
+                                    <ClipboardDocumentIcon class="h-5 w-5 mr-1 text-red-400" /> Copy Path
+                                </UiDropdownItem>
+                                <UiDropdownItem @click="openProjectPath(project)">
+                                    <FolderIcon class="h-5 w-5 mr-1 text-red-400" /> Open Folder
+                                </UiDropdownItem>
+                                <UiDropdownItem @click="openProjectOnTerminal(project)">
+                                    <CommandLineIcon class="h-5 w-5 mr-1 text-red-400" /> Open Terminal
+                                </UiDropdownItem>
+                                <UiDropdownItem @click="disconnectProject(project)">
+                                    <XMarkIcon class="h-5 w-5 mr-1 text-red-400" /> Disconnect
+                                </UiDropdownItem>
+                            </UiOptionsDropdown>
+                        </div>
                     </div>
                     <div class="text-slate-500">
                         {{ project.path }}
