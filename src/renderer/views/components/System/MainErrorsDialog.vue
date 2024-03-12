@@ -3,7 +3,8 @@
     import { ref, watch, defineExpose, nextTick } from "vue"
     import { useErrorsStore } from "@Renderer/stores/useErrorsStore"
     import UiSmallButton from "@Renderer/components/ui/UiSmallButton.vue"
-    import { CheckCircleIcon, ShieldExclamationIcon, XMarkIcon } from "@heroicons/vue/24/outline"
+    import { CheckCircleIcon, ShieldExclamationIcon, XMarkIcon, FlagIcon } from "@heroicons/vue/24/outline"
+    import Main from "@Renderer/services/wrappers/Main"
 
     const errorsStore = useErrorsStore()
 
@@ -47,6 +48,12 @@
         selectedTab.value = "errors"
     }
 
+    const reportError = async (error) => {
+        const issueBody = `**Error Message:**\n${error.message}\n\n**Stack:**\n\`\`\`\n${error.stack}\n\`\`\``
+
+        Main.API.openIssue(error.message, issueBody)
+    }
+
     defineExpose({
         show,
         close,
@@ -86,10 +93,17 @@
                 <div v-if="selectedTab === 'errors'" class="w-full h-full overflow-y-scroll">
                     <div class="flex justify-end mb-2">
                         <UiSmallButton @click="errorsStore.clearErrors()">
+                            <XMarkIcon class="h-4 w-4 text-red-500 stroke-2 mr-1" />
                             Clear
                         </UiSmallButton>
                     </div>
                     <div class="p-2 text-sm rounded border border-slate-750" v-if="errorsStore.errors.length" v-for="error in errorsStore.errors">
+                        <div class="flex justify-start mb-2">
+                            <UiSmallButton @click="reportError(error)">
+                                <FlagIcon class="h-4 w-4 text-red-500 stroke-2 mr-1" />
+                                <span>Report</span>
+                            </UiSmallButton>
+                        </div>
                         <pre class="overflow-hidden whitespace-pre-wrap mb-2 text-red-450">{{ error.message }}</pre>
 
                         <div v-if="error.stack">

@@ -15,6 +15,7 @@ export default interface ElectronApi {
     onDevelopment: () => boolean,
     isRecording: () => boolean,
     getBaseUrl: () => string,
+    openIssue: (title: string, body: string) => Promise<void>,
     confirm: (message: string) => Promise<any>,
     openFolderDialog: () => Promise<string>,
     openURL: (url: string) => void,

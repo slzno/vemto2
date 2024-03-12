@@ -1,9 +1,10 @@
 <script setup lang="ts">
     import UiSmallButton from "@Renderer/components/ui/UiSmallButton.vue"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
+    import Main from "@Renderer/services/wrappers/Main"
     import { useErrorsStore } from "@Renderer/stores/useErrorsStore"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
-    import { CheckCircleIcon, ShieldExclamationIcon, XMarkIcon } from "@heroicons/vue/24/outline"
+    import { CheckCircleIcon, FlagIcon, ShieldExclamationIcon, XMarkIcon } from "@heroicons/vue/24/outline"
     import { ref, watch, defineExpose, nextTick } from "vue"
 
     const projectStore = useProjectStore(),
@@ -54,6 +55,12 @@
         }
     }
 
+    const reportError = async (error) => {
+        const issueBody = `**Error Message:**\n${error.message}\n\n**Stack:**\n\`\`\`\n${error.stack}\n\`\`\``
+
+        Main.API.openIssue(error.message, issueBody)
+    }
+
     defineExpose({
         show,
         close,
@@ -93,10 +100,18 @@
                 <div v-if="selectedTab === 'errors'" class="w-full h-full overflow-y-scroll">
                     <div class="flex justify-end mb-2">
                         <UiSmallButton @click="errorsStore.clearErrors()">
+                            <XMarkIcon class="h-4 w-4 text-red-500 stroke-2 mr-1" />
                             Clear
                         </UiSmallButton>
                     </div>
                     <div class="p-2 text-sm rounded border border-slate-750" v-if="errorsStore.errors.length" v-for="error in errorsStore.errors">
+                        <div class="flex justify-start mb-2">
+                            <UiSmallButton @click="reportError(error)">
+                                <FlagIcon class="h-4 w-4 text-red-500 stroke-2 mr-1" />
+                                <span>Report</span>
+                            </UiSmallButton>
+                        </div>
+
                         <pre class="overflow-hidden whitespace-pre-wrap mb-2 text-red-450">{{ error.message }}</pre>
 
                         <div v-if="error.stack">
@@ -112,11 +127,22 @@
                 <div v-if="selectedTab === 'schema'" class="w-full h-full overflow-y-scroll">
                     <div class="flex justify-end mb-2">
                         <UiSmallButton @click="projectStore.project.clearCurrentSchemaError()">
+                            <XMarkIcon class="h-4 w-4 text-red-500 stroke-2 mr-1" />
                             Clear
                         </UiSmallButton>
                     </div>
                     <div v-if="projectStore.project.hasCurrentSchemaError()" class="p-2 text-sm rounded border border-slate-750">
-                        <pre class="overflow-hidden whitespace-pre-wrap text-red-450">{{ projectStore.project.currentSchemaError }}</pre>
+                        <div class="flex justify-start mb-2">
+                            <UiSmallButton @click="reportError({
+                                message: projectStore.project.currentSchemaError,
+                                stack: projectStore.project.currentSchemaErrorStack,
+                            })">
+                                <FlagIcon class="h-4 w-4 text-red-500 stroke-2 mr-1" />
+                                <span>Report</span>
+                            </UiSmallButton>
+                        </div>
+
+                        <pre class="overflow-hidden whitespace-pre-wrap text-red-450 mb-2">{{ projectStore.project.currentSchemaError }}</pre>
 
                         <div v-if="projectStore.project.currentSchemaErrorStack">
                             <pre class="overflow-hidden whitespace-pre-wrap p-2 bg-slate-950 rounded-lg text-slate-200">{{ projectStore.project.currentSchemaErrorStack }}</pre>

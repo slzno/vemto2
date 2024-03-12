@@ -10,6 +10,7 @@ import ProjectPathResolver from "@Common/services/ProjectPathResolver"
 import ConflictManager from "./services/ConflictManager"
 import PHPMerger from "./services/PHPMerger"
 import CommandExecutor from "./base/CommandExecutor"
+import {openNewGitHubIssue, debugInfo} from "electron-util"
 
 export function HandleIpcMessages() {
     ipcMain.handle("confirm", (event, message: string) => {
@@ -297,6 +298,23 @@ export function HandleIpcMessages() {
             } catch (error) {
                 return false
             }
+        })
+    })
+
+    ipcMain.handle("open:issue", async (event, title, body) => {
+        let debugInfoData = debugInfo()
+
+        // remove lines starting with Electron from the debug info
+        debugInfoData = debugInfoData.split("\n").filter(line => !line.includes("Electron")).join("\n")
+
+        // Add app version from package.json
+        debugInfoData += `\nApp version: ${app.getVersion()}`
+
+        openNewGitHubIssue({
+            user: 'TiagoSilvaPereira',
+            repo: 'vemto2-issues',
+            title,
+            body: `${body}\n\n---\n\n${debugInfoData}`,
         })
     })
 }

@@ -15,6 +15,10 @@ contextBridge.exposeInMainWorld("api", {
             : "https://vemto.app"
     },
 
+    openIssue: (title: string, body: string) => {
+        return ipcRenderer.invoke("open:issue", title, body)
+    },
+
     // Common messages
     prepareDatabase: (path: string) => {
         return ipcRenderer.invoke("prepare:project:database", path)
