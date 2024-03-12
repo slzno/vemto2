@@ -18,6 +18,10 @@ export default class ProjectLanguages {
     static async getLanguages(): Promise<string[]> {
         const langFolderPaths = await Main.API.readProjectFolder("/lang")
 
+        if (!langFolderPaths) {
+            return ["en"]
+        }
+
         return ProjectLanguages.extractLanguageCodesFromLangPaths(langFolderPaths) || ["en"]
     }
 

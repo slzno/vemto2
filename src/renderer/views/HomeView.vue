@@ -83,9 +83,15 @@
     }
 
     const openProject = async (project: any) => {
-        loadingProjectId.value = project.id
+        try {
+            loadingProjectId.value = project.id
+            
+            await openPath(project.path)
+        } catch (error) {
+            Alert.error("Please check the application errors before trying to open")
 
-        await openPath(project.path)
+            loadingProjectId.value = null
+        }
     }
 
     const finishConnect = async (path) => {
@@ -102,6 +108,8 @@
 
             openSchema()
         } catch (error) {
+            Alert.error("Please check the application errors before trying to connect")
+
             showingConnectingFolderModal.value = false
             processingConnectFolder.value = false
         }
