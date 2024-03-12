@@ -42,6 +42,7 @@
     <nav class="w-20 h-full flex flex-col items-center justify-between bg-white dark:bg-slate-900 border-r border-slate-300 dark:border-slate-800">
         <div>
             <button
+                title="Home"
                 class="w-full h-12 flex justify-center items-center py-10 mt-4 text-slate-500 dark:text-slate-600 cursor-pointer hover:text-slate-600 dark:hover:text-slate-400 outline-none focus:!text-slate-800 dark:focus:!text-slate-400"
                 @click="goToHome()"
             >
@@ -49,6 +50,7 @@
             </button>
 
             <RouterLink
+                title="Schema Editor"
                 @click="setActiveTab('schema')"
                 :class="{
                     'text-red-500': navigationStore.activeTabIs('schema'),
@@ -62,6 +64,7 @@
             </RouterLink>
 
             <RouterLink
+                title="Apps"
                 @click="setActiveTab('apps')"
                 :class="{
                     'text-red-500': navigationStore.activeTabIs('apps'),
@@ -75,6 +78,7 @@
             </RouterLink>
 
             <RouterLink
+                title="Soon..."
                 @click="setActiveTab('bot')"
                 :class="{
                     'text-red-500': navigationStore.activeTabIs('bot'),
@@ -88,6 +92,7 @@
             </RouterLink>
 
             <RouterLink
+                title="Files Queue"
                 @click="setActiveTab('code-queue')"
                 :class="{
                     'text-red-500': navigationStore.activeTabIs('code-queue'),
@@ -104,6 +109,7 @@
 
         <div class="pb-4">
             <RouterLink
+                title="Settings"
                 @click="setActiveTab('settings')"
                 :class="{
                     'text-red-500': navigationStore.activeTabIs('settings'),
@@ -117,6 +123,7 @@
             </RouterLink>
             
             <RouterLink
+                title="Tools"
                 @click="setActiveTab('tools')"
                 :class="{
                     'text-red-500': navigationStore.activeTabIs('tools'),
@@ -130,6 +137,7 @@
             </RouterLink>
 
             <RouterLink
+                title="Plugins"
                 @click="setActiveTab('plugins')"
                 :class="{
                     'text-red-500': navigationStore.activeTabIs('plugins'),
