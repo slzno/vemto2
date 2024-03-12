@@ -46,16 +46,25 @@ export default class SchemaBuilder {
     }
 
     async build(tables: boolean = false, models: boolean = false) {
-        await this.readData()
+        try {
+            await this.readData()
+    
+            if(this.schemaDataIsInvalid()) {
+                return
+            }
+    
+            console.log("Building schema")
+            console.log("Schema data: ", this.schemaData)
+    
+            if (tables) await this.buildTables()
+            if (models) await this.buildModels()
+    
+            return this
+        } catch (error) {
+            console.error("Error while building schema: ", error)
 
-        if(this.schemaDataIsInvalid()) {
-            return
+            throw error
         }
-
-        if (tables) await this.buildTables()
-        if (models) await this.buildModels()
-
-        return this
     }
 
     async buildTables() {
@@ -64,6 +73,11 @@ export default class SchemaBuilder {
     
             if (!this.schemaData) {
                 await this.readData()
+            }
+
+            if(this.schemaDataIsInvalid()) {
+                console.log("Schema data is invalid, stopping tables build")
+                return
             }
     
             const tablesBuilder = new TablesBuilder(this.project)
@@ -90,6 +104,11 @@ export default class SchemaBuilder {
     
             if (!this.schemaData) {
                 await this.readData()
+            }
+
+            if(this.schemaDataIsInvalid()) {
+                console.log("Schema data is invalid, stopping models build")
+                return
             }
             
             const modelsBuilder = new ModelsBuilder(this.project)
@@ -122,6 +141,8 @@ export default class SchemaBuilder {
         }
 
         const path = specificPath || this.project.getPath()
+
+        await SchemaBuilder.checkForErrors(path)
 
         this.schemaData = await Main.API.loadSchema(path)
 

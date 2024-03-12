@@ -295,7 +295,6 @@ export default class Project extends RelaDB.Model {
 
     deleteAllModelsWithoutTable() {
         this.models.forEach((model) => {
-            console.log('has no table', model.name, model.hasNoTable())
             if (model.hasNoTable()) model.delete()
         })
     }
