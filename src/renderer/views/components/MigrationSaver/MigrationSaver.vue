@@ -215,19 +215,32 @@
             return
         }
 
-        const confirmed = await confirmSaveDialog.value.confirm()
-        if(!confirmed) return
+        try {
+            const confirmed = await confirmSaveDialog.value.confirm()
+            if(!confirmed) return
+            
+            savingSchemaChanges.value = true
 
-        savingSchemaChanges.value = true
+            await SchemaBuilder.checkForErrors(
+                projectStore.project.getPath()
+            )
 
-        await saveMigrations()
-        await saveModels()
+            await saveMigrations()
+            await saveModels()
+    
+            await readSchema()
+    
+            savingSchemaChanges.value = false
+    
+            close()
+        } catch (error: any) {
+            savingSchemaChanges.value = false
+            console.error("Error saving schema changes", error)
+            
+            Alert.error("Error saving schema changes: " + error.message)
 
-        await readSchema()
-
-        savingSchemaChanges.value = false
-
-        close()
+            throw error
+        }
     }
 
     const hasConflicts = () => {
