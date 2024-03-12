@@ -83,7 +83,7 @@
     }
 
     const scheduleNextCheck = () => {
-        sourceCheckerTimeout = setTimeout(checkSourceChanges, 750)
+        sourceCheckerTimeout = setTimeout(checkSourceChanges, 3000)
     }
 
     const setupLicenseModal = () => {
