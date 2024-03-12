@@ -7,7 +7,7 @@
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import ProjectManager from "@Renderer/services/project/ProjectManager"
-    import { ClipboardDocumentIcon, Cog6ToothIcon, CommandLineIcon, FolderIcon, PlusCircleIcon, XMarkIcon } from "@heroicons/vue/24/outline"
+    import { ClipboardDocumentIcon, Cog6ToothIcon, CommandLineIcon, FolderIcon, PlusCircleIcon, ShieldExclamationIcon, XMarkIcon } from "@heroicons/vue/24/outline"
     import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
     import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
     import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
@@ -19,11 +19,15 @@
     import UiSelect from "@Renderer/components/ui/UiSelect.vue"
     import UiLoading from "@Renderer/components/ui/UiLoading.vue"
     import Settings from "@Renderer/views/components/System/Settings.vue"
-import LicenseHandler from "@Renderer/services/LicenseHandler"
+    import LicenseHandler from "@Renderer/services/LicenseHandler"
+    import { useErrorsStore } from "@Renderer/stores/useErrorsStore"
+    import MainErrorsDialog from "./components/System/MainErrorsDialog.vue"
 
     const projectManager = new ProjectManager(),
         search = ref(""),
         projects = ref([]),
+        errorsStore = useErrorsStore(),
+        errorsDialog = ref(null),
         confirmDisconnectDialog = ref(null),
         currentConnectingFolder = ref(null),
         showingWelcomeModal = ref(false),
@@ -82,15 +86,20 @@ import LicenseHandler from "@Renderer/services/LicenseHandler"
     }
 
     const finishConnect = async (path) => {
-        processingConnectFolder.value = true
-
-        projectManager.setSettings(connectingFolderSettings.value)
-
-        await projectManager.connectFromPath(path)
-        
-        processingConnectFolder.value = false
-
-        openSchema()
+        try {
+            processingConnectFolder.value = true
+    
+            projectManager.setSettings(connectingFolderSettings.value)
+    
+            await projectManager.connectFromPath(path)
+            
+            processingConnectFolder.value = false
+    
+            openSchema()
+        } catch (error) {
+            showingConnectingFolderModal.value = false
+            processingConnectFolder.value = false
+        }
     }
 
     const openPath = async (path) => {
@@ -218,6 +227,8 @@ import LicenseHandler from "@Renderer/services/LicenseHandler"
                         <a @click="openURL('https://github.com/TiagoSilvaPereira/vemto2-issues/issues/new')" class="text-red-500 cursor-pointer">Issues</a>
                     </div>
                 </div>
+                <h1 class="text-bold text-lg">Please, read this carefully!</h1>
+                <br><br>
                 Hello!
                 <br><br>
                 I can't express how happy I am that you're seeing this screen! 😊
@@ -337,10 +348,10 @@ import LicenseHandler from "@Renderer/services/LicenseHandler"
         <header class="flex w-full justify-center mt-10">
             <div class="flex flex-col">
                 <div class="flex gap-2">
-                    <!-- <UiButton class="gap-1.5" @click="newApp()">
+                    <UiButton class="gap-1.5" @click="newApp()">
                         <PlusCircleIcon class="w-5 h-5 text-red-500" />
                         New App
-                    </UiButton> -->
+                    </UiButton>
                     <UiButton class="gap-1.5" @click="openFolder()">
                         <FolderIcon class="w-5 h-5 text-red-500" />
                         Connect Folder
@@ -348,11 +359,6 @@ import LicenseHandler from "@Renderer/services/LicenseHandler"
                     <UiButton class="gap-1.5" @click="connectSSH">
                         <CommandLineIcon class="w-5 h-5 text-red-500" />
                         Connect SSH
-                    </UiButton>
-
-                    <UiButton class="gap-1.5" @click="settingsModal.show()">
-                        <Cog6ToothIcon class="w-5 h-5 text-red-500" />
-                        Settings
                     </UiButton>
                 </div>
             </div>
@@ -388,6 +394,45 @@ import LicenseHandler from "@Renderer/services/LicenseHandler"
                     </div>
                     <div class="text-slate-500">
                         {{ project.path }}
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="fixed flex justify-end bottom-0 right-0 z-50 w-[194px]"
+            >
+                <MainErrorsDialog ref="errorsDialog" />
+
+                <div class="p-2 bg-slate-200 dark:bg-slate-900 rounded-l-full">
+                    <div
+                        class="py-2 px-5 rounded-full shadow bg-slate-100 dark:bg-slate-850 border border-slate-300 dark:border-slate-700 flex space-x-2"
+                    >
+                        <button
+                            @click="errorsDialog.toggle()"
+                            class="relative cursor-pointer"
+                        >
+                            <!-- Errors alert animation -->
+                            <div
+                                v-show="errorsStore.hasErrors"
+                                class="absolute rounded-full w-3 h-3 bg-red-600 animate-ping"
+                                style="left: 25px; bottom: 20px"
+                            ></div>
+                            <ShieldExclamationIcon
+                                :class="{
+                                    'text-red-500': errorsStore.hasErrors,
+                                    'text-slate-600 dark:text-slate-300': !errorsStore.hasErrors,
+                                }"
+                                class="w-7 h-7 stroke-1 hover:text-red-500 dark:hover:text-red-500"
+                            />
+                        </button>
+                        <button
+                            @click="settingsModal.show()"
+                            class="relative cursor-pointer"
+                        >
+                            <Cog6ToothIcon
+                                class="w-7 h-7 stroke-1 hover:text-red-500 dark:hover:text-red-500"
+                            />
+                        </button>
                     </div>
                 </div>
             </div>

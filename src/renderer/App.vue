@@ -59,7 +59,14 @@
     }
 
     const treatSchemaReaderError = (error: any): void => {
-        if(projectStore.projectIsEmpty) return
+        if(projectStore.projectIsEmpty) {
+            errorsStore.addError({
+                message: error.message,
+                stack: error.stack,
+            })
+
+            return
+        }
                 
         projectStore.project.setCurrentSchemaError(
             error.message,

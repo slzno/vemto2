@@ -28,12 +28,9 @@ export const useErrorsStore = defineStore("errors", {
         hasErrors(state): boolean {
             const projectStore = useProjectStore()
 
-            if(projectStore.projectIsEmpty) return false
+            if(!projectStore.projectIsEmpty && projectStore.project.hasCurrentSchemaError()) return true
 
-            const hasCurrentSchemaError = projectStore.project.hasCurrentSchemaError()
-
-            return state.errors.length > 0 
-                || hasCurrentSchemaError
+            return state.errors.length > 0
         },
     }
 })

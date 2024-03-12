@@ -29,6 +29,22 @@ export default class SchemaBuilder {
         return this.project.schemaDataHash !== this.schemaDataHash
     }
 
+    static async checkForErrors(projectPath: string) {
+        if (!projectPath) return
+
+        try {
+            const schemaData = await Main.API.loadSchema(projectPath)
+
+            if(schemaData.error) {
+                console.log("Schema data error: ", schemaData.error)
+                throw new Error(schemaData.error)
+            }
+        } catch (error) {
+            console.error("Error while checking for schema errors: ", error)
+            throw error
+        }
+    }
+
     async build(tables: boolean = false, models: boolean = false) {
         await this.readData()
 
@@ -99,13 +115,15 @@ export default class SchemaBuilder {
         this.project.save()
     }
 
-    async readData() {
+    async readData(specificPath: string = "") {
         if (this.currentOpenProjectIsDifferent()) {
             this.schemaData = null
             return this
         }
 
-        this.schemaData = await Main.API.loadSchema(this.project.getPath())
+        const path = specificPath || this.project.getPath()
+
+        this.schemaData = await Main.API.loadSchema(path)
 
         return this
     }

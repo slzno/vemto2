@@ -1,5 +1,5 @@
-import SchemaBuilder from "../schema/SchemaBuilder"
 import Main from "../wrappers/Main"
+import SchemaBuilder from "../schema/SchemaBuilder"
 import Project, { ProjectSettings, ProjectUIStarterKit } from "@Common/models/Project"
 import GenerateBasicProjectData from "@Renderer/services/project/GenerateBasicProjectData"
 
@@ -13,18 +13,24 @@ export default class ProjectConnector {
     }
 
     async connect(settings: ProjectSettings) {
-        if(this.project.connectionFinished) {
-            return
+        try {
+            // await SchemaBuilder.checkForErrors(this.project.getPath())
+
+            if(this.project.connectionFinished) {
+                return
+            }
+    
+            this.projectSettings = settings
+            this.setProjectSettingsDefaults(settings)
+    
+            await this.createVemtoFolder()
+            await this.createNecessaryFiles()
+            await this.doFirstSchemaSync()
+            await this.generateBasicProjectData()
+            await this.saveProject()
+        } catch (error) {
+            throw error
         }
-
-        this.projectSettings = settings
-        this.setProjectSettingsDefaults(settings)
-
-        await this.createVemtoFolder()
-        await this.createNecessaryFiles()
-        await this.doFirstSchemaSync()
-        await this.generateBasicProjectData()
-        await this.saveProject()
     }
 
     async createVemtoFolder() {

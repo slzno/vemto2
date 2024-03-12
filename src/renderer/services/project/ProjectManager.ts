@@ -2,6 +2,7 @@ import { v4 as uuid } from "uuid"
 import Project, { ProjectSettings } from "@Common/models/Project"
 import HandleProjectDatabase from "../HandleProjectDatabase"
 import ProjectConnector from "./ProjectConnector"
+import SchemaBuilder from "../schema/SchemaBuilder"
 
 export default class ProjectManager {
 
@@ -35,13 +36,19 @@ export default class ProjectManager {
     }
 
     async connectFromPath(path: string) {
-        let projectItem = this.findByPath(path)
+        try {
+            await SchemaBuilder.checkForErrors(path)
 
-        if(!projectItem) {
-            projectItem = this.register(path)
+            let projectItem = this.findByPath(path)
+    
+            if(!projectItem) {
+                projectItem = this.register(path)
+            }
+    
+            await this.open(projectItem.id)
+        } catch (error) {
+            throw error
         }
-
-        await this.open(projectItem.id)
     }
 
     async open(id: string) {
