@@ -3,6 +3,7 @@
     import { useRouter } from "vue-router"
     import { ProjectSettings } from "@Common/models/Project"
     import Main from "@Renderer/services/wrappers/Main"
+    import CreateProjectView from "@Renderer/views/components/Home/CreateProjectView.vue"
     import { compareVersions } from 'compare-versions'
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
@@ -163,10 +164,6 @@
         await projectManager.disconnect(project.id)
 
         getProjects()
-    }
-
-    const newApp = async () => {
-        Alert.info("Applications creation wizard is not available yet. Please create a project manually then connect it to Vemto")
     }
 
     const connectSSH = async () => {
@@ -361,10 +358,7 @@
         <header class="flex w-full justify-center mt-10">
             <div class="flex flex-col">
                 <div class="flex gap-2">
-                    <UiButton class="gap-1.5" @click="newApp()">
-                        <PlusCircleIcon class="w-5 h-5 text-red-500" />
-                        New App
-                    </UiButton>
+                    <CreateProjectView />
                     <UiButton class="gap-1.5" @click="openFolder()">
                         <FolderIcon class="w-5 h-5 text-red-500" />
                         Connect Folder

@@ -15,6 +15,18 @@ export default class CommandExecutor {
         return await this.executeOnPath(executionPath, phpCommand, plainReturn)
     }
 
+    static async executeComposerOnPath(executionPath: string, command: string, plainReturn:boolean = false): Promise<string> {
+        let composerPath = await Storage.get("composerPath") || "composer"
+
+        // composerPath = CommandExecutor.escapePath(composerPath)
+
+        const composerCommand = composerPath === 'composer'
+            ? `${composerPath} "${command}"` 
+            : `"${composerPath}" "${command}"`
+
+        return await this.executeOnPath(executionPath, composerCommand, plainReturn)
+    }
+
     static async executeOnPath(executionPath: string, command: string, plainReturn: boolean = false): Promise<string> {
         const isDevelopment = process.env.NODE_ENV === "development"
 

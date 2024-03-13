@@ -133,4 +133,7 @@ contextBridge.exposeInMainWorld("api", {
     phpIsInstalled: () => {
         return ipcRenderer.invoke("php:is:installed")
     },
+    composerIsInstalled: () => {
+        return ipcRenderer.invoke("composer:is:installed")
+    },
 })

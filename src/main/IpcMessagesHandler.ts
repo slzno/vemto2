@@ -301,6 +301,17 @@ export function HandleIpcMessages() {
         })
     })
 
+    ipcMain.handle("composer:is:installed", (event) => {
+        return handleError(event, async () => {
+            try {
+                const result = await CommandExecutor.executeComposerOnPath("", "--version", true)
+                return result.includes("Composer")
+            } catch (error) {
+                return false
+            }
+        })
+    })
+
     ipcMain.handle("open:issue", async (event, title, body) => {
         let debugInfoData = debugInfo()
 
