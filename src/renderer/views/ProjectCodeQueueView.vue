@@ -44,6 +44,8 @@
 
     const loadFilesDebounced = debounce(async () => {
         setTimeout(async () => {
+            if(projectStore.projectIsEmpty) return
+
             allNonRemovedFiles.value = projectStore.project.getNonRemovedRenderableFiles()
             allRemovedFiles.value = projectStore.project.getRemovedRenderableFiles()
             allConflictFiles.value = projectStore.project.getConflictRenderableFiles()
