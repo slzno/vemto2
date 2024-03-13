@@ -45,7 +45,15 @@
         window.addEventListener("error", (event) => {
             const error = event.error
 
-            Alert.error(error.message)
+            errorsStore.addError({
+                message: error.message,
+                stack: error.stack,
+            })
+        })
+
+        // catch all unhandled promise rejections
+        window.addEventListener("unhandledrejection", (event) => {
+            const error = event.reason
 
             errorsStore.addError({
                 message: error.message,

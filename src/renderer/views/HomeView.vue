@@ -55,6 +55,10 @@
         getProjects()
 
         showWelcomeModal()
+
+        window.addEventListener("error", (event) => {
+            console.log("Error happened in the renderer process")
+        })
     })
 
     const getProjects = () => {
@@ -91,6 +95,8 @@
             Alert.error("Please check the application errors before trying to open")
 
             loadingProjectId.value = null
+
+            throw error
         }
     }
 
@@ -112,6 +118,8 @@
 
             showingConnectingFolderModal.value = false
             processingConnectFolder.value = false
+
+            throw error
         }
     }
 

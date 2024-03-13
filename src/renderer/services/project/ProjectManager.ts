@@ -47,6 +47,7 @@ export default class ProjectManager {
     
             await this.open(projectItem.id)
         } catch (error) {
+            console.log("Error ocurred")
             throw error
         }
     }
