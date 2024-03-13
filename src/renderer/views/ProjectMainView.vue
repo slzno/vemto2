@@ -135,7 +135,7 @@
         const currentTablesCount = projectStore.project.tables.length
 
         if(!window.licenseIsActive() && currentTablesCount > 15) {
-            window.showLicenseModal("You've hit the limit of 15 tables for the Free License. Please activate your license to generate code.")
+            window.showLicenseModal("This project has more than 15 tables (including Laravel default tables). Please activate your license to generate code.")
             return
         }
 
