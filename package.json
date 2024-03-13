@@ -109,7 +109,7 @@
         "sortablejs": "^1.15.0",
         "uuid": "^9.0.0",
         "validatorjs": "^3.22.1",
-        "vue": "^3.2.36",
+        "vue": "^3.4",
         "vue-router": "^4.0.13",
         "vue3-shortkey": "^4.0.0",
         "vue3-tags-input": "^1.0.12",

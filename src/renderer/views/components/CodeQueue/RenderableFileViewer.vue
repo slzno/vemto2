@@ -5,7 +5,7 @@
     import Alert from "@Renderer/components/utils/Alert"
     import Main from "@Renderer/services/wrappers/Main"
     import { sentenceCase } from "change-case"
-    import { ref, Ref, defineProps } from "vue"
+    import { ref, Ref, defineProps, nextTick } from "vue"
     import TemplateErrorViewer from "../Common/TemplateErrorViewer.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import { CodeBracketIcon, DocumentMinusIcon, MinusCircleIcon, TrashIcon } from "@heroicons/vue/24/outline"
@@ -29,8 +29,10 @@
         conflictsFilePath.value = file.getRelativeFilePath()
         conflictsFileContent.value = await Main.API.readProjectFile(conflictsFilePath.value)
         conflictsNewFileContent.value = await InternalFiles.readGeneratedFile(conflictsFilePath.value)
-        
-        conflictsSolver.value.show()
+
+        nextTick(() => {
+            conflictsSolver.value.show()
+        })
     }
 
     const openFile = (file: RenderableFile): void => {
@@ -71,7 +73,7 @@
 <template>
     <ConflictsSolver 
         can-ignore
-        :ref="`conflictsSolver`"
+        ref="conflictsSolver"
         :relativeFilePath="conflictsFilePath"
         :currentFileContent="conflictsFileContent"
         :newFileContent="conflictsNewFileContent"
