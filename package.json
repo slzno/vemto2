@@ -1,7 +1,7 @@
 {
     "name": "vemto",
     "productName": "Vemto",
-    "version": "2.0.4",
+    "version": "2.0.5",
     "description": "The ultimate studio for Laravel",
     "main": "build/src/main/main.js",
     "scripts": {
