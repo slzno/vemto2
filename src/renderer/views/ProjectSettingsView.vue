@@ -41,7 +41,7 @@ import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
         </div>
 
         <div class="p-4" v-if="selectedTab === 'code'">
-            <UiCheckbox v-model="projectStore.project.codeChangesDetectorDisabled" label="Disable Code Changes Detector" />
+            <UiCheckbox v-model="projectStore.project.codeChangesDetectorDisabled" label="Turn Off Code Changes Detector" />
         </div>
 
         <div class="p-4" v-if="selectedTab === 'paths'">
