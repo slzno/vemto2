@@ -50,10 +50,11 @@ export const useProjectStore = defineStore("project", {
             return state.project.id !== undefined
         },
 
-        hasRenderableFilesWithConflict(state): boolean {
+        renderableFilesNeedAttention(state): boolean {
             if(!state.project.id) return false
             
             return state.project.hasRenderableFilesWithConflict()
+                || state.project.hasRenderableFilesWithErrors()
         },
 
         hasSchemaChanges(state): boolean {

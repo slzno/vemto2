@@ -114,6 +114,7 @@ export default class Project extends RelaDB.Model {
     translations: any
     defaultLanguage: string
     languages: string[]
+    codeChangesDetectorDisabled: boolean
 
     relationships() {
         return {
@@ -497,6 +498,12 @@ export default class Project extends RelaDB.Model {
         renderableFile.save()
 
         return renderableFile
+    }
+
+    hasRenderableFilesWithErrors(): boolean {
+        return this.renderableFiles.some(
+            (renderableFile) => renderableFile.status === RenderableFileStatus.ERROR
+        )
     }
 
     hasRenderableFilesWithConflict(): boolean {

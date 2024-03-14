@@ -23,6 +23,16 @@ export default class SequentialGenerator {
     }
 
     async run() {
+        try {
+            await this.runGeneration() 
+        } catch (error) {
+            console.error("Error while running generation: ", error)
+            
+            throw error
+        }
+    }
+
+    async runGeneration() {
         SequentialGenerator.startTimer()
 
         SchemaBuilder.disableSchemaChangesCheck()

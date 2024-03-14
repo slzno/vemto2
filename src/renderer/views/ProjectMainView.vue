@@ -75,6 +75,11 @@
             return
         }
 
+        if(projectStore.project.codeChangesDetectorDisabled) {
+            scheduleNextCheck()
+            return
+        }
+
         const schemaBuilder = new SchemaBuilder(projectStore.project)
 
         await schemaBuilder.checkSchemaChanges()
@@ -83,6 +88,8 @@
     }
 
     const scheduleNextCheck = () => {
+        if (sourceCheckerTimeout) clearTimeout(sourceCheckerTimeout)
+
         sourceCheckerTimeout = setTimeout(checkSourceChanges, 3000)
     }
 

@@ -48,6 +48,12 @@ class TextUtil {
         return (start > 0 || end < str.length) ? str.substring(start, end) : str
     }
 
+    getSurroundingLinesAsText(content: string, fromLine = 1, extraLines = 6) {
+        const lines = this.getSurroundingLinesFromContent(content, fromLine, extraLines)
+
+        return lines.map((line) => line.number + '    ' + line.content).join('\n')
+    }       
+
     getSurroundingLinesFromContent(content: string, fromLine = 1, extraLines = 6) {
         let lines = content.split('\n'),
             finalLines = [],    

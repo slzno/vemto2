@@ -142,12 +142,42 @@ class FileSystem {
             throw new Error('It is necessary to manually allow to remove a folder through Vemto')
         }
 
+        if(this.folderIsRestrict(folderPath)) {
+            throw new Error('Attempt to delete a restricted directory')
+        }
+
         if(fs.existsSync(folderPath)) {
             if(log) console.log('Removing Folder: ' + folderPath)
             fs.rmdirSync(folderPath, { recursive: true })
         }
 
         return this
+    }
+
+    folderIsRestrict(folderPath: string) {
+        const absolutePath = path.resolve(folderPath)
+
+        // if folder is not a Laravel project, it is restricted
+        if(!this.isLaravelProject(folderPath)) {
+            console.log("Folder is not a Laravel project: ", folderPath, absolutePath)
+            return true
+        }
+
+        console.log("Checking if folder is valid: ", folderPath, absolutePath)
+
+        const invalidPaths = [
+            "/", "C:\\", "/bin", "/etc", "/usr", "C:\\Windows", "C:\\Program Files"
+        ].map(p => path.resolve(p))
+
+        // Check if the projectPath is exactly one of the invalid paths or a subdirectory of them
+        return !absolutePath || invalidPaths.some(
+            invalidPath => absolutePath === invalidPath || absolutePath.startsWith(`${invalidPath}${path.sep}`)
+        )
+    }
+
+    isLaravelProject(folderPath: string) {
+        return this.fileExists(path.join(folderPath, 'artisan'))
+            && this.fileExists(path.join(folderPath, 'composer.json'))
     }
 
     manipulateFile(filePath: string, callback: Function): FileSystem {

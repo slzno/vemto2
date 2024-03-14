@@ -166,14 +166,18 @@ export default class TemplateCompiler {
             console.log(this.data)
             
             if(latestError) {
-                Alert.error('Error on template line ' + latestError.templateLine)
-                console.error('Error on template line ' + latestError.templateLine)
+                console.error('Error on template line ' + latestError.templateLine + ' - template name: ' + this.templateName)
                 console.log('Data: ', this.data)
                 
-                console.log('Template Lines: ', TextUtil.getSurroundingLinesFromContent(this.templateEngine.getTemplate(), latestError.templateLine, 6))
+                const templateLines = TextUtil.getSurroundingLinesFromContent(this.templateEngine.getTemplate(), latestError.templateLine, 6)
+
+                console.log('Template Lines: ', templateLines)
 
                 error.hasTemplateError = true
-                error.templateLine = latestError.templateLine
+                error.templateErrorLine = latestError.templateLine
+                error.templateName = this.templateName
+                error.templateContent = this.templateEngine.getTemplate()
+                error.templateLines = templateLines
             }
 
             throw error

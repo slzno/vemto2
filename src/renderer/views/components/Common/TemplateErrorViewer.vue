@@ -15,6 +15,11 @@
             required: true,
         },
 
+        templateContent: {
+            type: String,
+            required: false,
+        },
+
         errorMessage: {
             type: String,
             required: true,
@@ -49,7 +54,11 @@
     })
 
     const renderError = async () => {
-        templateContent.value = await Main.API.readTemplateFile(props.template)
+        if(props.templateContent) {
+            templateContent.value = props.templateContent
+        } else {
+            templateContent.value = await Main.API.readTemplateFile(props.template)
+        }
 
         templateLines.value = templateContent.value.split("\n")
 

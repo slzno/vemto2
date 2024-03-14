@@ -4,6 +4,11 @@ import { useProjectStore } from "./useProjectStore"
 interface Error {
     message: string
     stack: string,
+    hasTemplateError: boolean,
+    templateErrorLine: number,
+    templateName: string,
+    templateContent: string,
+    templateLines: string[],
 }
 
 export const useErrorsStore = defineStore("errors", {
@@ -14,6 +19,7 @@ export const useErrorsStore = defineStore("errors", {
 
     actions: {
         addError(error: Error) {
+            console.log("Adding error", error)
             this.lastErrorMessage = error.message
             this.errors.unshift(error)
         },

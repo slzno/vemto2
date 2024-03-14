@@ -57,7 +57,7 @@ import UiLoading from "./UiLoading.vue"
             <div
                 @keydown.escape="$emit('close')"
                 style="z-index: 70;"
-                :style="onTopOfEverything ? 'z-index: 10000 !important' : ''"
+                :style="onTopOfEverything ? 'z-index: 100000 !important' : ''"
                 :class="{
                     'select-none pointer-events-none': processing,
                 }"

@@ -229,7 +229,14 @@ export function HandleIpcMessages() {
         if(!project) return null
 
         return handleError(event, () => {
-            const completePath = path.join(project.getPath(), folderPath)
+            const projectPath = project.getPath(), 
+                pathIsInvalid = !projectPath || FileSystem.folderIsRestrict(projectPath)
+
+            if(pathIsInvalid) {
+                throw new Error("Project path is invalid or restrict") 
+            }
+
+            const completePath = path.join(projectPath, folderPath)
 
             return FileSystem.clearFolder(completePath)
         })
