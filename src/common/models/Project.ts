@@ -499,6 +499,12 @@ export default class Project extends RelaDB.Model {
         return renderableFile
     }
 
+    hasRenderableFilesWithErrors(): boolean {
+        return this.renderableFiles.some(
+            (renderableFile) => renderableFile.status === RenderableFileStatus.ERROR
+        )
+    }
+
     hasRenderableFilesWithConflict(): boolean {
         return this.renderableFiles.some(
             (renderableFile) => renderableFile.status === RenderableFileStatus.CONFLICT

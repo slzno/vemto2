@@ -86,7 +86,7 @@ export default abstract class Renderable {
 
             if(error.hasTemplateError) {
                 file.hasTemplateError = true
-                file.templateErrorLine = error.templateLine
+                file.templateErrorLine = error.templateErrorLine
                 file.save()
             }
         }
@@ -119,7 +119,7 @@ export default abstract class Renderable {
                 console.error(`Error compiling ${this.getTemplateFile()} at line ${error.templateLine}: ${error.message}`)
 
                 error.hasTemplateError = true
-                error.templateErrorLine = error.templateLine
+                error.templateErrorLine = error.templateErrorLine
                 error.templateName = this.getTemplateFile() || error.templateName || ""
                 error.templateLines = error.templateLines || []
                 error.templateContent = this.getTemplateFile()
