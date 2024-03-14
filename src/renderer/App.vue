@@ -45,20 +45,16 @@
         window.addEventListener("error", (event) => {
             const error = event.error
 
-            errorsStore.addError({
-                message: error.message,
-                stack: error.stack,
-            })
+            addErrorToStore(error)
         })
 
         // catch all unhandled promise rejections
         window.addEventListener("unhandledrejection", (event) => {
+            console.error("Unhandled Promise Rejection at:", event.promise)
+
             const error = event.reason
 
-            errorsStore.addError({
-                message: error.message,
-                stack: error.stack,
-            })
+            addErrorToStore(error)
         })
     })
 
@@ -68,10 +64,7 @@
 
     const treatSchemaReaderError = (error: any): void => {
         if(projectStore.projectIsEmpty) {
-            errorsStore.addError({
-                message: error.message,
-                stack: error.stack,
-            })
+            addErrorToStore(error)
 
             return
         }
@@ -80,6 +73,18 @@
             error.message,
             error.stack
         )
+    }
+
+    const addErrorToStore = (error: any): void => {
+        errorsStore.addError({
+            message: error.message,
+            stack: error.stack,
+            hasTemplateError: !! error.hasTemplateError,
+            templateErrorLine: error.templateErrorLine || 0,
+            templateName: error.templateName || "",
+            templateContent: error.templateContent || "",
+            templateLines: error.templateLines || [],
+        })
     }
 
     watch(currentRoute, (route) => {

@@ -60,37 +60,4 @@ export default abstract class AbstractComponent implements Component {
 
         return this[key].map((component: any) => ComponentHelper.getComponentHandler(component))
     }
-
-    // async render(): Promise<string> {
-    //     const templateEngine = new TemplateEngine(this.getRenderCode(), {
-    //         logger: null,
-    //         onBrowser: true,
-    //         disableImportsProcessing: true,
-    //     })
-
-    //     try {
-    //         const compiled = await templateEngine
-    //             .setData(this)    
-    //             .compileAsyncWithErrorTreatment()
-
-    //         return BladeFormatter.setContent(
-    //             compiled
-    //         ).format()
-    //     } catch (error: any) {
-    //         const latestError = templateEngine.getLatestError()
-
-    //         console.error(error)
-            
-    //         if(latestError) {
-    //             Alert.error('Error on template line ' + latestError.templateLine)
-    //             console.error('Error on template line ' + latestError.templateLine)
-    //             console.log('Data: ', this)
-                
-    //             error.hasTemplateError = true
-    //             error.templateLine = latestError.templateLine
-    //         }
-
-    //         throw error
-    //     }
-    // }
 }

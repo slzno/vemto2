@@ -120,6 +120,9 @@ export default abstract class Renderable {
 
                 error.hasTemplateError = true
                 error.templateErrorLine = error.templateLine
+                error.templateName = this.getTemplateFile() || error.templateName || ""
+                error.templateLines = error.templateLines || []
+                error.templateContent = this.getTemplateFile()
             } else {
                 console.error(`Error compiling ${this.getTemplateFile()}: ${error.message}`)
             }

@@ -70,6 +70,8 @@ import { PlusIcon } from "@heroicons/vue/24/outline"
 
         const iframe:any = document.getElementById('previewIframe')
 
+        if(!iframe) return
+
         iframe.contentDocument.open()
         iframe.contentDocument.write(compiledPreview.value)
     }

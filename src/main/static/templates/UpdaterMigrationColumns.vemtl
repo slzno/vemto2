@@ -1,5 +1,5 @@
 <# New columns #>
-<% for (let column of this.table.getNewColumns()) { %>
+<% for (let column of this.tablee.getNewColumns()) { %>
     <import template="MigrationColumn.vemtl" enableColumnAfterUsage="true">
 <% } %>
 <#  #>
