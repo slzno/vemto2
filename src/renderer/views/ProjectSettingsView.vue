@@ -5,6 +5,7 @@
     import DotEnvEditor from "@Renderer/views/components/ProjectSettings/DotEnvEditor.vue"
 import LanguagesEditor from "./components/ProjectSettings/LanguagesEditor.vue"
 import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
+import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
 
     const projectStore = useProjectStore()
     const selectedTab = ref("env")
@@ -40,9 +41,7 @@ import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
         </div>
 
         <div class="p-4" v-if="selectedTab === 'code'">
-            <UiEmptyMessage>
-                Under development
-            </UiEmptyMessage>
+            <UiCheckbox v-model="projectStore.project.codeChangesDetectorDisabled" label="Disable Code Changes Detector" />
         </div>
 
         <div class="p-4" v-if="selectedTab === 'paths'">

@@ -114,6 +114,7 @@ export default class Project extends RelaDB.Model {
     translations: any
     defaultLanguage: string
     languages: string[]
+    codeChangesDetectorDisabled: boolean
 
     relationships() {
         return {
