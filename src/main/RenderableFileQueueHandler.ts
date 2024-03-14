@@ -53,11 +53,39 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
     }
 
     const removeFile = async (file: RenderableFile) => {
-        const filePath = path.join(project.getPath(), file.getRelativeFilePath())
+        console.log("Will remove file: ", file.getRelativeFilePath())
+        
+        try {
+            if (projectPathIsInvalid()) {
+                throw new Error("Project path is invalid or attempt to access a restricted directory")
+            }
+            
+            const resolvedProjectPath = path.resolve(project.getPath()), 
+                filePath = path.resolve(
+                    path.join(resolvedProjectPath, file.getRelativeFilePath())
+                )
+    
+            console.log("Removing file: ", filePath)
+        
+            // Ensure the file is within the project directory after resolving any symbolic links
+            if (!filePath.startsWith(resolvedProjectPath)) {
+                throw new Error("Attempt to access a file outside the project directory")
+            }
+        
+            FileSystem.deleteFile(filePath)
+    
+            setFileStatus(file, RenderableFileStatus.REMOVED)
+        } catch (error) {
+            console.log("Error removing file: ", file.getRelativeFilePath())
 
-        FileSystem.deleteFile(filePath)
-
-        setFileStatus(file, RenderableFileStatus.REMOVED)
+            throw error
+        }
+    }
+    
+    const projectPathIsInvalid = () => {
+        const projectPath = project.getPath()
+        
+        return !projectPath || FileSystem.folderIsRestrict(projectPath)
     }
 
     const processFile = async (file: RenderableFile) => {

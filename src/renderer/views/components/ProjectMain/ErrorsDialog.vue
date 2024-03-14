@@ -91,7 +91,7 @@ import TextUtil from "@Common/util/TextUtil"
             leave-from-class="transition duration-200 translate-y-0"
             leave-to-class="transition duration-200 translate-y-full"
         >
-            <div v-if="projectStore.projectIsReady" v-show="showing" class="fixed rounded-lg shadow bg-slate-900 border border-slate-700 dark:text-slate-300" style="bottom: 60px; right: 10px; width: 700px; height: 30rem; z-index: 99999999;">
+            <div v-if="projectStore.projectIsReady" v-show="showing" class="fixed rounded-lg shadow bg-slate-900 border border-slate-700 dark:text-slate-300" style="bottom: 60px; right: 10px; width: 700px; height: 30rem; z-index: 9999;">
                 <!-- Header: 66px -->
                 <header class="dark:text-slate-200">
                     <div class="flex items-center text-center px-1 py-0.5 w-full bg-slate-850 mb-2 border-b border-slate-700 rounded-t-lg">
