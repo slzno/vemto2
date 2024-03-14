@@ -9,3 +9,4 @@ logs
 .VSCodeCounter/ 
 .vemto/
 .DS_Store
+notarization-error.log
