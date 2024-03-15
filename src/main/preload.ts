@@ -19,6 +19,10 @@ contextBridge.exposeInMainWorld("api", {
         return ipcRenderer.invoke("open:issue", title, body)
     },
 
+    getAppVersion: () => {
+        return ipcRenderer.invoke("get:app:version")
+    },
+
     // Common messages
     prepareDatabase: (path: string) => {
         return ipcRenderer.invoke("prepare:project:database", path)

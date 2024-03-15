@@ -7,7 +7,7 @@
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import ProjectManager from "@Renderer/services/project/ProjectManager"
-    import { ClipboardDocumentIcon, Cog6ToothIcon, CommandLineIcon, FolderIcon, PlusCircleIcon, ShieldExclamationIcon, XMarkIcon } from "@heroicons/vue/24/outline"
+    import { ClipboardDocumentIcon, Cog6ToothIcon, CommandLineIcon, FolderIcon, PlusCircleIcon, ShieldExclamationIcon, XMarkIcon, InformationCircleIcon } from "@heroicons/vue/24/outline"
     import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
     import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
     import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
@@ -35,6 +35,7 @@
         showingConnectingFolderModal = ref(false),
         processingConnectFolder = ref(false),
         settingsModal = ref(null),
+        vemtoVersion = ref("2.0.0"),
         connectingFolderSettings = ref({
             cssFramework: "tailwind",
             uiStarterKit: "jetstream",
@@ -54,6 +55,8 @@
 
         getProjects()
 
+        fillAppVersion()
+
         showWelcomeModal()
 
         window.addEventListener("error", (event) => {
@@ -63,6 +66,10 @@
 
     const getProjects = () => {
         projects.value = projectManager.get()
+    }
+
+    const fillAppVersion = async () => {
+        vemtoVersion.value = await Main.API.getAppVersion()
     }
 
     const filteredProjects = computed(() => {
@@ -299,6 +306,12 @@
                 Tiago Rodrigues - Creator of Vemto
             </div>
         </div>
+
+        <template #footer>
+            <div class="flex justify-end p-2 space-x-2 text-slate-500">
+                Vemto {{ vemtoVersion }}
+            </div>
+        </template>
     </UiModal>
 
     <!-- Connect folder modal -->
@@ -438,6 +451,7 @@
                         class="py-2 px-5 rounded-full shadow bg-slate-100 dark:bg-slate-850 border border-slate-300 dark:border-slate-700 flex space-x-2"
                     >
                         <button
+                            title="Log and Errors"
                             @click="errorsDialog.toggle()"
                             class="relative cursor-pointer"
                         >
@@ -455,11 +469,23 @@
                                 class="w-7 h-7 stroke-1 hover:text-red-500 dark:hover:text-red-500"
                             />
                         </button>
+                        
                         <button
+                            title="Settings"
                             @click="settingsModal.show()"
                             class="relative cursor-pointer"
                         >
                             <Cog6ToothIcon
+                                class="w-7 h-7 stroke-1 hover:text-red-500 dark:hover:text-red-500"
+                            />
+                        </button>
+
+                        <button
+                            title="About Vemto"
+                            @click="showingWelcomeModal = true"
+                            class="relative cursor-pointer"
+                        >
+                            <InformationCircleIcon
                                 class="w-7 h-7 stroke-1 hover:text-red-500 dark:hover:text-red-500"
                             />
                         </button>

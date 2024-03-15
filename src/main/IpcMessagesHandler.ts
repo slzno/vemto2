@@ -13,6 +13,10 @@ import CommandExecutor from "./base/CommandExecutor"
 import {openNewGitHubIssue, debugInfo} from "electron-util"
 
 export function HandleIpcMessages() {
+    ipcMain.handle("get:app:version", (event) => {
+        return app.getVersion()
+    })
+
     ipcMain.handle("confirm", (event, message: string) => {
         const dialogResult = dialog.showMessageBoxSync(null, {
             type: 'question',
