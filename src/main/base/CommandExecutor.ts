@@ -8,8 +8,6 @@ export default class CommandExecutor {
     static async executePhpOnPath(executionPath: string, command: string, plainReturn:boolean = false): Promise<string> {
         let phpPath = await Storage.get("phpPath") || "php"
 
-        // phpPath = CommandExecutor.escapePath(phpPath)
-
         const phpCommand = `"${phpPath}" "${command}"`
 
         return await this.executeOnPath(executionPath, phpCommand, plainReturn)
