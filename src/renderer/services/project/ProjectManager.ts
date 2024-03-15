@@ -67,7 +67,9 @@ export default class ProjectManager {
 
         this.setLatestProjectPath(projectItem.path)
         
-        this.setAsUpdated(id)
+        this.update(projectItem.id, {
+            laravelVersion: project.settings.laravelVersion
+        })
 
         return projectItem
     }
@@ -114,6 +116,21 @@ export default class ProjectManager {
         window.localStorage.setItem("__projects", JSON.stringify(projectItems))
     }
 
+    update(id: string, data: any) {
+        const projectItems = this.get()
+
+        const index = projectItems.findIndex((p: any) => p.id === id)
+
+        projectItems[index] = {
+            ...projectItems[index],
+            ...data
+        }
+
+        projectItems[index].updatedAt = new Date()
+
+        window.localStorage.setItem("__projects", JSON.stringify(projectItems))
+    }
+
     register(path: string) {
         const projectItems = this.get()
 
@@ -122,6 +139,7 @@ export default class ProjectManager {
                 id,
                 path, 
                 type: "Folder",
+                laravelVersion: null,
                 createdAt: new Date(), 
                 updatedAt: new Date() 
             }

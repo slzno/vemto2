@@ -396,7 +396,7 @@
 
             <div class="flex flex-col gap-2 w-1/2 max-w-xl">
                 <div v-for="project in filteredProjects" @click="openProject(project)" class="p-2 rounded-lg border border-slate-300 dark:border-slate-650 bg-slate-50 dark:bg-slate-850 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <div class="flex justify-between">
+                    <div class="flex justify-between text-slate-200">
                         <span>{{ project.path.split(/\/|\\/).pop() }}</span>
 
                         <div class="h-6">
@@ -421,8 +421,9 @@
                             </UiOptionsDropdown>
                         </div>
                     </div>
-                    <div class="text-slate-500">
-                        {{ project.path }}
+                    <div class="flex flex-col space-y-1">
+                        <span class="text-slate-450">{{ project.path }}</span>
+                        <span v-if="project.laravelVersion" class="text-xs text-slate-500">Laravel {{ project.laravelVersion }}</span>
                     </div>
                 </div>
             </div>
