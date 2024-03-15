@@ -265,7 +265,7 @@
         <div
             v-show="showing"
             class="bg-white dark:bg-slate-950 rounded-lg shadow-lg my-2 left-0 absolute overflow-hidden border border-slate-650"
-            style="min-width: 225px; width: 100%; max-height: 300px; z-index: 999; top: 50px;"
+            style="min-width: 225px; width: 100%; max-height: 300px; z-index: 999; top: 30px;"
         >
             <div class="relative">
                 <div class="p-2" style="height: 60px">

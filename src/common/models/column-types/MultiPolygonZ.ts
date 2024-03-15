@@ -1,10 +1,10 @@
 import ColumnType from "./base/ColumnType"
 import Project from "@Common/models/Project"
 
-export default class Point extends ColumnType {
-    static label: string = 'Point'
-    static faker: string = '"{fake()->latitude()},{fake()->longitude()}"'
-    static identifier: string = 'point'
+export default class MultiPolygonZ extends ColumnType {
+    static label: string = 'MultiPolygonZ'
+    static faker: string = '[]'
+    static identifier: string = 'multiPolygonZ'
     static inputType: string = 'text'
     static defaultValueTypeIsString: boolean = true
 

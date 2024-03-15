@@ -13,8 +13,10 @@
     import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
     import UiOptionsDropdown from '@Renderer/components/ui/UiOptionsDropdown.vue'
     import UiDropdownItem from '@Renderer/components/ui/UiDropdownItem.vue'
+    import { useProjectStore } from "@Renderer/stores/useProjectStore"
 
-    const onDevelopment = Main.API.onDevelopment() && !Main.API.isRecording()
+    const onDevelopment = Main.API.onDevelopment() && !Main.API.isRecording(),
+        projectStore = useProjectStore()
 
     const props = defineProps({
             column: {
@@ -26,7 +28,7 @@
 
     const column = toRef(props, "column") as Ref<Column>,
         showingOptions = ref(false),
-        columnTypes = ColumnTypeList.getArray(),
+        columnTypes = ColumnTypeList.getEnabled(projectStore.project),
         confirmDeleteDialog = ref(null)
 
     const onNameUpdated = () => {
