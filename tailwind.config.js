@@ -62,7 +62,6 @@ module.exports = {
         fontFamily: {
             sans: ["Figtree", "Roboto", "ui-sans-serif", "system-ui", "sans-serif"],
             mono: [
-                // "IBM Plex Mono",
                 "Roboto Mono",
                 "ui-monospace",
                 "SFMono-Regular",

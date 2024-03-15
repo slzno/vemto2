@@ -86,6 +86,15 @@ export function HandleIpcMessages() {
         })
     })
 
+    ipcMain.handle("folder:project:exists", (event, folderPath) => {
+        const project = Project.find(1)
+        if(!project) return null
+
+        return handleError(event, () => {
+            return FileSystem.folderExists(path.join(project.getPath(), folderPath))
+        })
+    })
+
     ipcMain.handle("file:template:read", (event, filePath) => {
         const project = Project.find(1)
         if(!project) return null

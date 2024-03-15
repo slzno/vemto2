@@ -110,7 +110,7 @@
     const finishConnect = async (path) => {
         try {
             processingConnectFolder.value = true
-    
+            
             projectManager.setSettings(connectingFolderSettings.value)
     
             await projectManager.connectFromPath(path)
@@ -138,6 +138,16 @@
 
         if(!projectInfo.isLaravelProject) {
             Alert.error("This folder is not a Laravel project")
+            return
+        }
+
+        const hasComposerVendor = await projectManager.projectHasComposerVendor(path)
+        if(!hasComposerVendor) {
+            Alert.error("This Laravel project does not have the vendor folder. Please run <b>composer install</b> before connecting it")
+            
+            loadingProjectId.value = null
+            processingConnectFolder.value = false
+
             return
         }
 
@@ -247,7 +257,7 @@
         @close="closeWelcomeModal"
     >
         <div>
-            <div class="p-4 pb-24 font-mono text-lg">
+            <div class="p-4 pb-24 font-serif text-lg">
                 <div class="flex w-full justify-end px-4">
                     <div class="flex space-x-3 text-sm">
                         <a @click="openURL('https://vemto.app')" class="text-red-500 cursor-pointer">Site</a>

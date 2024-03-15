@@ -3,6 +3,8 @@ import Project, { ProjectSettings } from "@Common/models/Project"
 import HandleProjectDatabase from "../HandleProjectDatabase"
 import ProjectConnector from "./ProjectConnector"
 import SchemaBuilder from "../schema/SchemaBuilder"
+import Main from "../wrappers/Main"
+import PathUtil from "@Common/util/PathUtil"
 
 export default class ProjectManager {
 
@@ -33,6 +35,12 @@ export default class ProjectManager {
         if (latestProjectPath) {
             await this.connectFromPath(latestProjectPath)
         }
+    }
+
+    async projectHasComposerVendor(projectPath: string) {
+        const path = PathUtil.join(projectPath, "vendor")
+
+        return await Main.API.folderExists(path)
     }
 
     async connectFromPath(path: string) {
