@@ -20,6 +20,18 @@ export const useErrorsStore = defineStore("errors", {
     actions: {
         addError(error: Error) {
             console.log("Adding error", error)
+
+            if(this.lastErrorMessage === error.message) {
+                // get the last error and prepend the stack if it is different
+                const lastError = this.errors[0]
+
+                if(lastError.stack !== error.stack) {
+                    lastError.stack = error.stack + "\n--------\n" + lastError.stack
+                }
+
+                return
+            }
+
             this.lastErrorMessage = error.message
             this.errors.unshift(error)
         },

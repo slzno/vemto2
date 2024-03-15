@@ -97,7 +97,7 @@
                             Clear
                         </UiSmallButton>
                     </div>
-                    <div class="p-2 text-sm rounded border border-slate-750" v-if="errorsStore.errors.length" v-for="error in errorsStore.errors">
+                    <div class="p-2 text-sm rounded border border-slate-750 mb-2" v-if="errorsStore.errors.length" v-for="error in errorsStore.errors">
                         <div class="flex justify-start mb-2">
                             <UiSmallButton @click="reportError(error)">
                                 <FlagIcon class="h-4 w-4 text-red-500 stroke-2 mr-1" />

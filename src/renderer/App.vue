@@ -25,10 +25,7 @@
             console.error(error.message)
             console.error(error.stack)
 
-            errorsStore.addError({
-                message: error.message,
-                stack: error.stack,
-            })
+            addErrorToStore(error)
         })
 
         if (Main.API.onDevelopment()) {
