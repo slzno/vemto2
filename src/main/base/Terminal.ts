@@ -1,4 +1,5 @@
 import child_process from 'child_process'
+import CommandExecutor from './CommandExecutor'
 
 export default class Terminal {
 
@@ -8,6 +9,19 @@ export default class Terminal {
             
         if (isMacOs) {
             await Terminal.executeCommand(`osascript -e 'tell application "Terminal"' -e 'activate' -e 'do script "cd ${path}" in window 1' -e 'end tell'`)
+        } else if (isLinux) {
+            const gnomeTerminalResult = await CommandExecutor.executeCommand("which gnome-terminal", true),
+                kdeTerminalResult = await CommandExecutor.executeCommand("which konsole", true)
+
+            if (gnomeTerminalResult.includes("gnome-terminal")) {
+                await Terminal.executeCommand(`gnome-terminal --working-directory=${path}`)
+                return
+            }
+
+            if (kdeTerminalResult.includes("konsole")) {
+                await Terminal.executeCommand(`konsole --workdir ${path}`)
+                return
+            }
         } else {
             const fullCommand = `cd ${path};`,
                 commandToExecute = fullCommand.replace(/;/g, '\\;')

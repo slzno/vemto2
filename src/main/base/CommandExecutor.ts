@@ -15,6 +15,10 @@ export default class CommandExecutor {
         return await this.executeOnPath(executionPath, phpCommand, plainReturn)
     }
 
+    static async executeCommand(command: string, plainReturn: boolean = false): Promise<string> {
+        return await this.executeOnPath("", command, plainReturn)
+    }
+
     static async executeOnPath(executionPath: string, command: string, plainReturn: boolean = false): Promise<string> {
         const isDevelopment = process.env.NODE_ENV === "development"
 
