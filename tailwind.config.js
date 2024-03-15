@@ -60,12 +60,22 @@ module.exports = {
 
         },
         fontFamily: {
-            sans: ["Roboto", "ui-sans-serif", "system-ui", "sans-serif"],
+            sans: ["Figtree", "Roboto", "ui-sans-serif", "system-ui", "sans-serif"],
             mono: [
+                // "IBM Plex Mono",
                 "Roboto Mono",
                 "ui-monospace",
                 "SFMono-Regular",
                 "monospace",
+            ],
+            serif: [
+                "Roboto Serif", 
+                "ui-serif", 
+                "Georgia", 
+                "Cambria", 
+                "Times New Roman", 
+                "Times", 
+                "serif"
             ],
         },
     },
