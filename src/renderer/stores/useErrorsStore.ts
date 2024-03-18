@@ -26,7 +26,7 @@ export const useErrorsStore = defineStore("errors", {
                 const lastError = this.errors[0]
 
                 if(lastError.stack !== error.stack) {
-                    lastError.stack = error.stack + "\n--------\n" + lastError.stack
+                    lastError.stack = error.stack + "\n\n--------\n\n" + lastError.stack
                 }
 
                 return

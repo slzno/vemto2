@@ -7,8 +7,15 @@
                 "Vemto.php"
             ]
         },
-        "php-merger": {
+        "db-reader": {
             "outputName": "VMTTL2",
+            "enabled": true,
+            "commonFiles": [
+                "Vemto.php"
+            ]
+        },
+        "php-merger": {
+            "outputName": "VMTTL3",
             "enabled": false,
             "commonFiles": [
                 "Vemto.php"

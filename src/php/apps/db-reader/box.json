@@ -1,0 +1,14 @@
+{
+    "output": "../../dist/schema-reader.phar",
+    "files": [
+        "index.php",
+        "load.php"
+    ],
+    "directories": [
+        "classes",
+        "common" 
+    ],
+    "blacklist": [
+        "./vendor"
+    ]
+}
