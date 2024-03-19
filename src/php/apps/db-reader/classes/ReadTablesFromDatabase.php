@@ -37,6 +37,8 @@ class ReadTablesFromDatabase
 
             DB::setDefaultConnection($connection);
 
+            $this->createAndMigrateTables($connection);
+
             $this->schema = $this->makeSchema();
 
             Vemto::log('Using connection: ' . $connection . "\n");
@@ -50,19 +52,28 @@ class ReadTablesFromDatabase
             Vemto::log("\nFinished!\n");
         } finally {
             DB::setDefaultConnection($connection);
-            app()->forgetInstance(Setting::class);
         }
     }
 
     protected function setup(string $connection): void
     {
-        $setting = app(Setting::class);
+        $setting = new Setting;
         $setting->setDefaultConnection($connection);
         $setting->setUseDBCollation(true);
         $setting->setIgnoreIndexNames(false);
         $setting->setIgnoreForeignKeyNames(false);
         $setting->setSquash(false);
         $setting->setWithHasTable(true);
+    }
+
+    protected function createAndMigrateTables(string $connection): void
+    {
+        $migrator = app(Migrator::class);
+        $migrator->setConnection($connection);
+
+        $migrator->createMigrationTable();
+
+        $migrator->migrateTables();
     }
 
     protected function makeSchema(): Schema

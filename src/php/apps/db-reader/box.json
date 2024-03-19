@@ -1,5 +1,5 @@
 {
-    "output": "../../dist/schema-reader.phar",
+    "output": "../../dist/db-reader.phar",
     "files": [
         "index.php",
         "load.php"

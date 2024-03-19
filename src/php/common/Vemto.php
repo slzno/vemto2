@@ -114,8 +114,10 @@ class Vemto
                 Vemto::log($th->getTraceAsString(), 'error');
             }
 
+            $traceString = str_replace("\n", "VEMTO_EOL", $th->getTraceAsString());
+
             echo "VEMTO_ERROR_START({$appName} Error: " . $th->getMessage() . ")VEMTO_ERROR_END";
-            echo "VEMTO_ERROR_TRACE_START({$appName} Error: " . $th->getTraceAsString() . ")VEMTO_ERROR_TRACE_END";
+            echo "VEMTO_ERROR_TRACE_START({$appName} Error: " . $traceString . ")VEMTO_ERROR_TRACE_END";
 
             exit(static::FAILURE);
         }
