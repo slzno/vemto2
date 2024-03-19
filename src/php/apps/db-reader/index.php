@@ -11,6 +11,7 @@ require_once 'classes/ReadTablesFromDatabase.php';
 require_once 'classes/ModelRepository.php';
 
 use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
 
 class DumbExceptionHandler implements Illuminate\Contracts\Debug\ExceptionHandler
 {
@@ -50,7 +51,9 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
     // );
     
     $app = Application::configure(basePath: dirname(__DIR__))
-        ->withExceptions([DumbExceptionHandler::class])
+        ->withExceptions(function (Exceptions $exceptions) {
+            //
+        })
         ->create();
 
     $app->handleCommand(new Symfony\Component\Console\Input\ArgvInput);
