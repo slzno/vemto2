@@ -1,21 +1,25 @@
 <script setup lang="ts">
+    import { ref, Ref, onMounted, watch, defineEmits } from "vue"
     import { PlusCircleIcon } from "@heroicons/vue/24/outline"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import UiModal from "@Renderer/components/ui/UiModal.vue"
-    import { ref, Ref } from "vue"
     import Main from "@Renderer/services/wrappers/Main"
     import Alert from "@Renderer/components/utils/Alert"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiPathSelector from "@Renderer/components/ui/UiPathSelector.vue"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import debounce from "@Common/tools/debounce"
-    import { ProjectCreatorData } from "@Renderer/services/project/ProjectCreator"
+    import ProjectCreator, { ProjectCreatorData } from "@Renderer/services/project/ProjectCreator"
+    import PathUtil from "@Common/util/PathUtil"
 
     const showingModal = ref(false)
     
     const settings = ref({}) as Ref<ProjectCreatorData>,
         errors = ref({}) as Ref<any>,
-        creatingProject = ref(false)
+        creatingProject = ref(false),
+        currentState = ref("")
+
+    const emit = defineEmits(["reloadProjectListAndOpenPath"])
 
     const show = async () => {
         const composerInstalled = await Main.API.composerIsInstalled()
@@ -28,8 +32,42 @@
         showingModal.value = true
     }
 
-    const create = () => {
+    const create = async () => {
         creatingProject.value = true
+
+        settings.value.starterKit = "jetstream"
+        settings.value.completePath = PathUtil.join(settings.value.path, settings.value.name)
+
+        Main.API.folderExists(settings.value.completePath)
+            .then((folderExists: boolean) => {
+                if(folderExists) {
+                    Alert.error("The folder already exists")
+                    creatingProject.value = false
+                    
+                    return
+                }
+
+                ProjectCreator.create(settings.value, (state) => currentState.value = state)
+                    .then(() => {
+                        Alert.success("App created successfully")
+                        close()
+
+                        emit("reloadProjectListAndOpenPath", settings.value.completePath)
+                    })
+                    .catch((error) => {
+                        Alert.error(error.message)
+                    })
+                    .finally(() => {
+                        currentState.value = ""
+                        settings.value = {} as ProjectCreatorData
+
+                        creatingProject.value = false
+                    })
+            })
+            .catch((error) => {
+                Alert.error(error.message)
+                creatingProject.value = false
+            })
     }
 
     const close = () => {
@@ -46,6 +84,14 @@
 
         errors.value.name = "Invalid project name"
     }, 250)
+
+    onMounted(() => {
+        watch(currentState, (value) => {
+            if(!value || !value?.length) return
+
+            Alert.info(value)
+        })
+    })
 </script>
 <template>
     <div>

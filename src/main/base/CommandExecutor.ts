@@ -6,23 +6,22 @@ import Storage from "@Main/services/Storage"
 export default class CommandExecutor {
 
     static async executePhpOnPath(executionPath: string, command: string, plainReturn:boolean = false): Promise<string> {
-        let phpPath = await Storage.get("phpPath") || "php"
-
-        // phpPath = CommandExecutor.escapePath(phpPath)
-
-        const phpCommand = `"${phpPath}" "${command}"`
+        const phpPath = await Storage.get("phpPath") || "php",
+            phpCommand = `"${phpPath}" "${command}"`
 
         return await this.executeOnPath(executionPath, phpCommand, plainReturn)
     }
 
+    static async executeArtisanOnPath(executionPath: string, command: string, plainReturn:boolean = false): Promise<string> {
+        const phpPath = await Storage.get("phpPath") || "php",
+            artisanCommand = `"${phpPath}" artisan ${command}`
+
+        return await this.executeOnPath(executionPath, artisanCommand, plainReturn)
+    }
+
     static async executeComposerOnPath(executionPath: string, command: string, plainReturn:boolean = false): Promise<string> {
-        let composerPath = await Storage.get("composerPath") || "composer"
-
-        // composerPath = CommandExecutor.escapePath(composerPath)
-
-        const composerCommand = composerPath === 'composer'
-            ? `${composerPath} "${command}"` 
-            : `"${composerPath}" "${command}"`
+        const composerPath = await Storage.get("composerPath") || "composer",
+            composerCommand = `${composerPath} ${command}`
 
         return await this.executeOnPath(executionPath, composerCommand, plainReturn)
     }

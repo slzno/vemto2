@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref, onMounted, computed, Ref } from "vue"
+    import { ref, onMounted, computed, Ref, nextTick } from "vue"
     import { useRouter } from "vue-router"
     import { ProjectSettings } from "@Common/models/Project"
     import Main from "@Renderer/services/wrappers/Main"
@@ -67,6 +67,14 @@
             return project.path.includes(search.value)
         })
     })
+
+    const reloadProjectListAndOpenPath = (path: string) => {
+        getProjects()
+        
+        nextTick(() => {
+            openPath(path)
+        })
+    }
 
     const openFolder = async () => {
         const phpInstalled = await Main.API.phpIsInstalled()
@@ -358,7 +366,7 @@
         <header class="flex w-full justify-center mt-10">
             <div class="flex flex-col">
                 <div class="flex gap-2">
-                    <CreateProjectView />
+                    <CreateProjectView @reloadProjectListAndOpenPath="reloadProjectListAndOpenPath" />
                     <UiButton class="gap-1.5" @click="openFolder()">
                         <FolderIcon class="w-5 h-5 text-red-500" />
                         Connect Folder

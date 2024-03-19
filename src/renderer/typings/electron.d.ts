@@ -49,5 +49,8 @@ export default interface ElectronApi {
     copyInternalFolderIfNotExists: (path: string, destination: string) => Promise<void>,
     mergePHPFile: (relativePath: string) => Promise<any>,
     phpIsInstalled: () => Promise<boolean>,
+    executePhpOnPath: (path: string, command: string) => Promise<string>,
     composerIsInstalled: () => Promise<boolean>,
+    executeComposerOnPath: (path: string, command: string) => Promise<string>,
+    executeArtisanOnPath: (path: string, command: string) => Promise<string>
 }
