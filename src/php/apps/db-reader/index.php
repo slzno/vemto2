@@ -51,9 +51,7 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
     // );
     
     $app = Application::configure(basePath: dirname(__DIR__))
-        ->withExceptions(function (Exceptions $exceptions) {
-            //
-        })
+        ->withExceptions(function () {})
         ->create();
 
     $app->handleCommand(new Symfony\Component\Console\Input\ArgvInput);
