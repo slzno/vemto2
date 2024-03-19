@@ -1,9 +1,6 @@
 <?php
 
 // Load the basic Laravel classes
-
-use Illuminate\Support\Facades\DB;
-
 require_once 'load.php';
 
 // Load Vemto classes
@@ -27,8 +24,8 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
         new Symfony\Component\Console\Output\ConsoleOutput
     );
 
-    $reader = new ReadTablesFromDatabase();
-    $reader->handle();
+    // $reader = new ReadTablesFromDatabase();
+    // $reader->handle();
 
     Vemto::respondWith([
         'status' => 'success'
