@@ -11,17 +11,11 @@ require_once 'classes/ReadTablesFromDatabase.php';
 require_once 'classes/ModelRepository.php';
 
 use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Facade;
 
-// use Illuminate\Foundation\Configuration\Exceptions;
-
 Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
-    // dd(sys_get_temp_dir());
-    // $tempPath = sys_get_temp_dir();
-    // $_ENV['LARAVEL_STORAGE_PATH'] = $tempPath;
 
     $app = Application::configure(basePath: dirname(__DIR__))
         ->withExceptions(function () {})
@@ -50,10 +44,6 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
 
     DB::setDefaultConnection('memory_sqlite');
 
-    // dd(database_path('migrations'));
-
-    // dd($APP_DIRECTORY . '/database/migrations');
-
     // create the migration repository
     $repository = $app->make('migration.repository');
     $repository->setSource('memory_sqlite');
@@ -63,24 +53,13 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
     $migrator = $app->make('migrator');
     $migrator->run($APP_DIRECTORY . '/database/migrations');
 
-    // use Artisan to migrate to the memory database
-    // ob_start();
+    $result = DB::table("password_resets")->get();
 
-    // Artisan::call('migrate:fresh', [
-    //     '--database' => 'memory_sqlite',
-    //     '--path' => $APP_DIRECTORY . '/database/migrations',
-    // ]);
-
-    // ob_end_clean();
-
-
-    // $result = DB::table("password_resets")->get();
-
-    // $reader = new ReadTablesFromDatabase();
-    // $reader->handle();
+    $reader = new ReadTablesFromDatabase();
+    $reader->handle();
     
-    // Vemto::respondWith([
-    //     'status' => 'success',
-    //     'result' => $result
-    // ]);
+    Vemto::respondWith([
+        'status' => 'success',
+        'result' => $result
+    ]);
 });

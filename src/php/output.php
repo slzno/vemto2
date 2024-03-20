@@ -22,7 +22,7 @@ if (isset($argv[1])) {
 
 foreach ($apps as $app => $appSettings) {
     
-    $output = executeApp($app);
+    $output = executeApp($app, $appSettings->defaultTesterProject);
     $vemtoOutput = parseResponse($output);
     
     echo $output . PHP_EOL;
@@ -41,6 +41,8 @@ foreach ($apps as $app => $appSettings) {
 function executeApp(string $app = 'schema-reader', string $laravelApp = 'laravel9-basic')
 {
     $output = '';
+
+    echo "Executing $app with $laravelApp" . PHP_EOL;
 
     chdir(realpath(__DIR__ . '/laravel-base/' . $laravelApp));
     $output = exec('php ' . __DIR__ . '/apps/' . $app . '/index.php');
