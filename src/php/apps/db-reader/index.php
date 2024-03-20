@@ -11,6 +11,7 @@ require_once 'classes/ReadTablesFromDatabase.php';
 require_once 'classes/ModelRepository.php';
 
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Facade;
@@ -18,28 +19,16 @@ use Illuminate\Support\Facades\Facade;
 // use Illuminate\Foundation\Configuration\Exceptions;
 
 Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
-    $tempPath = sys_get_temp_dir();
-    $_ENV['LARAVEL_STORAGE_PATH'] = $tempPath;
-    // $_ENV['APP_SERVICES_CACHE'] = $tempPath . '/services.php';
+    // dd(sys_get_temp_dir());
+    // $tempPath = sys_get_temp_dir();
+    // $_ENV['LARAVEL_STORAGE_PATH'] = $tempPath;
 
     $app = Application::configure(basePath: dirname(__DIR__))
         ->withExceptions(function () {})
         ->create();
 
+    $app->useStoragePath(sys_get_temp_dir());
     $app->useBootstrapPath(sys_get_temp_dir());
-    $app->useStoragePath(sys_get_temp_dir()); // Use the system temp directory for storage operations
-
-    // dd($app->bootstrapPath());
-
-    $tempManifestPath = sys_get_temp_dir();
-
-    $app->bind('Illuminate\Foundation\PackageManifest', function ($app) use ($tempManifestPath) {
-        return new \Illuminate\Foundation\PackageManifest(
-            new \Illuminate\Filesystem\Filesystem,
-            $app['path.base'],
-            $tempManifestPath . '/packages.php'
-        );
-    });
 
     $app->bootstrapWith([
         \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
@@ -50,7 +39,7 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
         \Illuminate\Foundation\Bootstrap\BootProviders::class,
     ]);
 
-    $app->handleCommand(new Symfony\Component\Console\Input\ArgvInput);
+    // $app->handleCommand(new Symfony\Component\Console\Input\ArgvInput);
 
     Facade::setFacadeApplication($app);
 
@@ -61,17 +50,37 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
 
     DB::setDefaultConnection('memory_sqlite');
 
+    // dd(database_path('migrations'));
+
+    // dd($APP_DIRECTORY . '/database/migrations');
+
+    // create the migration repository
+    $repository = $app->make('migration.repository');
+    $repository->setSource('memory_sqlite');
+    $repository->createRepository();
+
     // migrate
     $migrator = $app->make('migrator');
     $migrator->run($APP_DIRECTORY . '/database/migrations');
 
-    $result = DB::table("password_resets")->get();
+    // use Artisan to migrate to the memory database
+    // ob_start();
+
+    // Artisan::call('migrate:fresh', [
+    //     '--database' => 'memory_sqlite',
+    //     '--path' => $APP_DIRECTORY . '/database/migrations',
+    // ]);
+
+    // ob_end_clean();
+
+
+    // $result = DB::table("password_resets")->get();
 
     // $reader = new ReadTablesFromDatabase();
     // $reader->handle();
-
-    Vemto::respondWith([
-        'status' => 'success',
-        'result' => $result
-    ]);
+    
+    // Vemto::respondWith([
+    //     'status' => 'success',
+    //     'result' => $result
+    // ]);
 });
