@@ -72,19 +72,19 @@ class ReadTablesFromDatabase
         $this->appPath = $appPath;
     }
 
-    public function handle() {
+    public function handle(): array {
         $connection = DB::getDefaultConnection();
 
         try {
             $this->setup($connection);
-
-            $this->createAndMigrateTables($connection);
 
             $this->schema = $this->makeSchema();
 
             $tables = $this->schema->getTableNames()->sort()->values();
 
             $this->generate($tables);
+
+            return $this->tables;
         } finally {
             DB::setDefaultConnection($connection);
         }
@@ -99,11 +99,6 @@ class ReadTablesFromDatabase
         $setting->setIgnoreForeignKeyNames(false);
         $setting->setSquash(false);
         $setting->setWithHasTable(true);
-    }
-
-    protected function createAndMigrateTables(string $connection): void
-    {
-        //
     }
 
     protected function makeSchema(): Schema

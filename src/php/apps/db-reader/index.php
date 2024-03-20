@@ -60,10 +60,10 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
     $result = DB::table("migrations")->get();
 
     $reader = new ReadTablesFromDatabase($app, $APP_DIRECTORY);
-    $reader->handle();
+    $tables = $reader->handle();
     
     Vemto::respondWith([
         'status' => 'success',
-        'result' => $result
+        'tables' => $tables
     ]);
 });
