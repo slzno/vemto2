@@ -53,10 +53,10 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
     $migrator = $app->make('migrator');
     $migrator->run($APP_DIRECTORY . '/database/migrations');
 
-    $result = DB::table("password_resets")->get();
+    $result = DB::table("migrations")->get();
 
-    $reader = new ReadTablesFromDatabase();
-    $reader->handle();
+    // $reader = new ReadTablesFromDatabase();
+    // $reader->handle();
     
     Vemto::respondWith([
         'status' => 'success',
