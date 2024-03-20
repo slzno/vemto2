@@ -33,9 +33,13 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
         \Illuminate\Foundation\Bootstrap\BootProviders::class,
     ]);
 
-    // $app->handleCommand(new Symfony\Component\Console\Input\ArgvInput);
-
     Facade::setFacadeApplication($app);
+
+    $app->singleton(Illuminate\Database\Migrations\MigrationRepositoryInterface::class, function ($app) {
+        return $app->make('migration.repository');
+    });
+
+    $app->register(\KitLoong\MigrationsGenerator\MigrationsGeneratorServiceProvider::class);
 
     Config::set('database.connections.memory_sqlite', [
         'driver'   => 'sqlite',
@@ -55,8 +59,8 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
 
     $result = DB::table("migrations")->get();
 
-    // $reader = new ReadTablesFromDatabase();
-    // $reader->handle();
+    $reader = new ReadTablesFromDatabase($app, $APP_DIRECTORY);
+    $reader->handle();
     
     Vemto::respondWith([
         'status' => 'success',

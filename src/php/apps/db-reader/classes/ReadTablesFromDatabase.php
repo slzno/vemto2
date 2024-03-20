@@ -4,6 +4,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -26,6 +27,16 @@ use KitLoong\MigrationsGenerator\Setting;
 class ReadTablesFromDatabase
 {
     protected Schema $schema;
+
+    protected Application $app;
+
+    protected string $appPath;
+
+    public function __construct(Application $app, string $appPath)
+    {
+        $this->app = $app;
+        $this->appPath = $appPath;
+    }
 
     public function handle() {
         $connection = DB::getDefaultConnection();
@@ -68,12 +79,7 @@ class ReadTablesFromDatabase
 
     protected function createAndMigrateTables(string $connection): void
     {
-        $migrator = app(Migrator::class);
-        $migrator->setConnection($connection);
-
-        $migrator->createMigrationTable();
-
-        $migrator->migrateTables();
+        //
     }
 
     protected function makeSchema(): Schema
