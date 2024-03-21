@@ -2,6 +2,7 @@
 
 namespace VemtoDBReader;
 
+use Vemto\Vemto;
 use KitLoong\MigrationsGenerator\Schema\Models\Index as SchemaIndex;
 
 class Index {
@@ -12,10 +13,9 @@ class Index {
     public string $on;
     public string $onDelete;
     public string $onUpdate;
-    public string $type;
+    public string $type; // primary, unique, index, foreign, spatialIndex, fullText, fulltext
 
     public string $table;
-    public Table $tableInstance;
 
     protected TableRepository $tableRepository;
 
@@ -36,10 +36,38 @@ class Index {
         $newIndex->algorithm = null;
         $newIndex->table = $index->getTableName();
         $newIndex->type = $index->getType();
+        
+        $table = $newIndex->getTable();
+        $columns = $index->getColumns();
+
+        foreach ($columns as $columnName) {
+            $tableColumn = $table->getColumnByName($columnName);
+
+            if (!$tableColumn) {
+                continue;
+            }
+
+            $newIndex->addColumn($tableColumn);
+        }
 
         // set table reference
-
+        Vemto::log("Index name: " . $newIndex->name . " - Default Laravel name: " . $newIndex->getDefaultLaravelName());
 
         return $newIndex;
+    }
+
+    public function hasDefaultLaravelName(): bool
+    {
+        return $this->name === $this->getDefaultLaravelName();
+    }
+
+    public function getDefaultLaravelName(): string
+    {
+        return $this->table . '_' . $this->type . '_' . implode('_', array_map(fn($column) => $column->name, $this->columns));
+    }
+
+    public function getTable(): Table
+    {
+        return $this->tableRepository->getTableByName($this->table);
     }
 }
