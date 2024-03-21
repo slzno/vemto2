@@ -5,7 +5,7 @@
         "load.php"
     ],
     "directories": [
-        "classes",
+        "src",
         "common" 
     ],
     "blacklist": [

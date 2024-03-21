@@ -3,17 +3,12 @@
 // Load the basic Laravel classes
 require_once 'load.php';
 
-// Load Vemto classes
-require_once 'common/Vemto.php';
-
-require_once 'classes/ExtendedKernel.php';
-require_once 'classes/ReadTablesFromDatabase.php';
-require_once 'classes/ModelRepository.php';
-
+use Vemto\Vemto;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Facade;
+use VemtoDBReader\ReadTablesFromDatabase;
 
 Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
 

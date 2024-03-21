@@ -1,5 +1,9 @@
 <?php
 
+namespace Vemto;
+
+use Exception;
+
 class Vemto
 {
 

@@ -1,100 +1,21 @@
 <?php
 
+namespace VemtoDBReader;
+
 use Exception;
-use Illuminate\Foundation\Application;
+use Vemto\Vemto;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Foundation\Application;
+use KitLoong\MigrationsGenerator\Setting;
 use KitLoong\MigrationsGenerator\Enum\Driver;
-use KitLoong\MigrationsGenerator\Schema\Models\Column as SchemaColumn;
-use KitLoong\MigrationsGenerator\Schema\Models\Index as SchemaIndex;
+use KitLoong\MigrationsGenerator\Schema\Schema;
 use KitLoong\MigrationsGenerator\Schema\MySQLSchema;
 use KitLoong\MigrationsGenerator\Schema\PgSQLSchema;
-use KitLoong\MigrationsGenerator\Schema\Schema;
 use KitLoong\MigrationsGenerator\Schema\SQLiteSchema;
 use KitLoong\MigrationsGenerator\Schema\SQLSrvSchema;
-use KitLoong\MigrationsGenerator\Setting;
+use KitLoong\MigrationsGenerator\Schema\Models\Column as SchemaColumn;
 
-class Table {
-    public string $name;
-    public array $oldNames = [];
-    public array $migrations = [];
-    public array $columns = [];
-    public array $indexes = [];
-
-    public function addColumn(Column $column): void
-    {
-        $this->columns[$column->name] = $column;
-    }
-
-    public function addIndex(Index $index): void
-    {
-        $this->indexes[$index->name] = $index;
-    }
-}
-
-class Column {
-    public string $name;
-    public string $type;
-    public string|NULL $total;
-    public string|NULL $length;
-    public string|NULL $places;
-    public string|NULL $default;
-    public bool $index;
-    public bool $unique;
-    public bool $nullable;
-    public bool $unsigned;
-    public bool $autoIncrement;
-    
-    public static function fromSchemaColumn(SchemaColumn $column): Column
-    {
-        $newColumn = new Column;
-        $newColumn->name = $column->getName();
-        $newColumn->length = $column->getLength();
-        $newColumn->nullable = (bool) $column->isNotNull() ? false : true;
-        $newColumn->unsigned = (bool) $column->isUnsigned();
-        $newColumn->autoIncrement = (bool) $column->isAutoincrement();
-        $newColumn->type = $column->getType()->value;
-        $newColumn->index = false;
-        $newColumn->unique = false;
-        $newColumn->default = $column->getDefault();
-        $newColumn->total = null;
-        $newColumn->places = null;
-
-        return $newColumn;
-    }
-}
-
-class Index {
-    public string $name;
-    public array $columns = [];
-    public string $algorithm;
-    public string $references;
-    public string $on;
-    public string $onDelete;
-    public string $onUpdate;
-    public string $table;
-    public string $type;
-
-    public function addColumn(Column $column): void
-    {
-        $this->columns[] = $column;
-    }
-
-    public static function fromSchemaIndex(SchemaIndex $index): Index
-    {
-        $newIndex = new Index;
-        $newIndex->name = $index->getName();
-        $newIndex->algorithm = $index->getAlgorithm();
-        $newIndex->references = $index->getReferences();
-        $newIndex->on = $index->getOn();
-        $newIndex->onDelete = $index->getOnDelete();
-        $newIndex->onUpdate = $index->getOnUpdate();
-        $newIndex->table = $index->getTable();
-        $newIndex->type = $index->getType();
-
-        return $newIndex;
-    }
-}
 class ReadTablesFromDatabase
 {
     protected Schema $schema;
@@ -105,10 +26,19 @@ class ReadTablesFromDatabase
 
     protected array $tables = [];
 
+    protected TableRepository $tableRepository;
+
     public function __construct(Application $app, string $appPath)
     {
         $this->app = $app;
         $this->appPath = $appPath;
+
+        $this->tableRepository = new TableRepository;
+    }
+
+    public function getTableByName(string $name): Table
+    {
+        return isset($this->tables[$name]) ? $this->tables[$name] : null;
     }
 
     public function handle(): array {
@@ -192,7 +122,7 @@ class ReadTablesFromDatabase
             $indexes = $tableSchema->getIndexes();
             Vemto::dump($indexes);
             
-            $this->tables[] = $table;
+            $this->tables[$table->name] = $table;
         });
     }
 
