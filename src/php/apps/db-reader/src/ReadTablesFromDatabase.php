@@ -112,6 +112,8 @@ class ReadTablesFromDatabase
             $table = new Table;
             $table->name = $tableSchema->getName();
 
+            $this->tableRepository->addTable($table);
+
             $columns = $tableSchema->getColumns();
             $columns->each(function (SchemaColumn $column) use ($table) : void {
                 $newColumn = Column::fromSchemaColumn($column);
@@ -125,9 +127,6 @@ class ReadTablesFromDatabase
 
                 $table->addIndex($newIndex);
             });
-
-            
-            $this->tableRepository->addTable($table);
         });
     }
 

@@ -2,6 +2,8 @@
 
 namespace VemtoDBReader;
 
+use Vemto\Vemto;
+
 class TableRepository
 {
     protected array $tables = [];
@@ -13,6 +15,8 @@ class TableRepository
 
     public function addTable(Table $table): void
     {
+        Vemto::log("Adding table {$table->name} to TableRepository.");
+
         if (isset($this->tables[$table->name])) {
             throw new \Exception("Table {$table->name} already exists on TableRepository.");
         }
