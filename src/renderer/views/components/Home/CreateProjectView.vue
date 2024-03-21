@@ -11,6 +11,7 @@
     import debounce from "@Common/tools/debounce"
     import ProjectCreator, { ProjectCreatorData } from "@Renderer/services/project/ProjectCreator"
     import PathUtil from "@Common/util/PathUtil"
+    import UiSelect from "@Renderer/components/ui/UiSelect.vue"
 
     const showingModal = ref(false)
     
@@ -90,9 +91,21 @@
         settings.value = {
             path: "",
             name: "",
-            starterKit: "jetstream",
-            usesJetstreamTeams: false
+            starterKit: "jetstream"
         } as ProjectCreatorData
+    }
+
+    const onStarterKitChanged = () => {
+        if(!["jetstream", "breeze"].includes(settings.value.starterKit)) {
+            errors.value.starterKit = "Invalid starter kit"
+            return
+        }
+
+        delete errors.value.starterKit
+
+        if(settings.value.starterKit === "breeze") {
+            settings.value.usesJetstreamTeams = false
+        }
     }
 
     onMounted(() => {
@@ -131,6 +144,17 @@
 
                     <template v-if="errors.name !== undefined">
                         <span class="dark:text-red-500 text-sm pl-2">{{ errors.name }}</span>
+                    </template>
+                </div>
+
+                <div>
+                    <UiSelect v-model="settings.starterKit" label="UI Starter Kit" @change="onStarterKitChanged">
+                        <option value="jetstream">Jetstream</option>
+                        <option value="breeze">Breeze</option>
+                    </UiSelect>
+
+                    <template v-if="errors.starterKit !== undefined">
+                        <span class="dark:text-red-500 text-sm pl-2">{{ errors.starterKit }}</span>
                     </template>
                 </div>
 

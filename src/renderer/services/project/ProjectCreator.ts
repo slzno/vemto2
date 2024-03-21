@@ -20,13 +20,20 @@ export default class ProjectCreator {
         this.data = data
         this.stateCallback = stateCallback
 
+        const uiKitsMethodNames = {
+            jetstream: 'installJetstream',
+            breeze: 'installBreeze'
+        }
+        
+        const uiKitMethodName = uiKitsMethodNames[this.data.starterKit] || null
+
         try {
+            if (!uiKitMethodName) throw new Error("Invalid starter kit")
+
             await this.createProject()
             await this.generateStorageLink()
 
-            if(data.starterKit === "jetstream") await this.installJetstream()
-
-            await this.runStarterKitCommands()
+            await this[uiKitMethodName]()
 
             this.data = null
             this.hasErrors = false
@@ -51,17 +58,12 @@ export default class ProjectCreator {
     }
 
     async installJetstream() {
-        const state = this.data.usesJetstreamTeams ? "Creating Jetstream with Teams..." : "Creating Jetstream..."
+        const state = this.data.usesJetstreamTeams ? "Installing Jetstream with Teams..." : "Installing Jetstream..."
 
         this.stateCallback(state)
 
         await Main.API.executeComposerOnPath(this.data.completePath, "require laravel/jetstream --no-interaction")
-    }
-
-    async runStarterKitCommands() {
-        if(this.data.starterKit === "jetstream") {
-            await this.runJetstreamCommands()
-        }
+        await this.runJetstreamCommands()
     }
     
     async runJetstreamCommands() {
@@ -72,5 +74,18 @@ export default class ProjectCreator {
         this.stateCallback("Running Jetstream commands...")
 
         await Main.API.executeArtisanOnPath(this.data.completePath, command)
+    }
+
+    async installBreeze() {
+        this.stateCallback("Installing Breeze...")
+
+        await Main.API.executeComposerOnPath(this.data.completePath, "require laravel/breeze --dev --no-interaction")
+        await this.runBreezeCommands()
+    }
+
+    async runBreezeCommands() {
+        this.stateCallback("Running Breeze commands...")
+
+        await Main.API.executeArtisanOnPath(this.data.completePath, "breeze:install livewire --no-interaction")
     }
 }
