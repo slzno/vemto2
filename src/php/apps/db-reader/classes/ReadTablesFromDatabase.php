@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use KitLoong\MigrationsGenerator\Enum\Driver;
 use KitLoong\MigrationsGenerator\Schema\Models\Column as SchemaColumn;
+use KitLoong\MigrationsGenerator\Schema\Models\Index as SchemaIndex;
 use KitLoong\MigrationsGenerator\Schema\MySQLSchema;
 use KitLoong\MigrationsGenerator\Schema\PgSQLSchema;
 use KitLoong\MigrationsGenerator\Schema\Schema;
@@ -18,10 +19,16 @@ class Table {
     public array $oldNames = [];
     public array $migrations = [];
     public array $columns = [];
+    public array $indexes = [];
 
     public function addColumn(Column $column): void
     {
         $this->columns[$column->name] = $column;
+    }
+
+    public function addIndex(Index $index): void
+    {
+        $this->indexes[$index->name] = $index;
     }
 }
 
@@ -54,6 +61,38 @@ class Column {
         $newColumn->places = null;
 
         return $newColumn;
+    }
+}
+
+class Index {
+    public string $name;
+    public array $columns = [];
+    public string $algorithm;
+    public string $references;
+    public string $on;
+    public string $onDelete;
+    public string $onUpdate;
+    public string $table;
+    public string $type;
+
+    public function addColumn(Column $column): void
+    {
+        $this->columns[] = $column;
+    }
+
+    public static function fromSchemaIndex(SchemaIndex $index): Index
+    {
+        $newIndex = new Index;
+        $newIndex->name = $index->getName();
+        $newIndex->algorithm = $index->getAlgorithm();
+        $newIndex->references = $index->getReferences();
+        $newIndex->on = $index->getOn();
+        $newIndex->onDelete = $index->getOnDelete();
+        $newIndex->onUpdate = $index->getOnUpdate();
+        $newIndex->table = $index->getTable();
+        $newIndex->type = $index->getType();
+
+        return $newIndex;
     }
 }
 class ReadTablesFromDatabase
@@ -130,6 +169,7 @@ class ReadTablesFromDatabase
     protected function generate(Collection $tables): void
     {
         $this->generateTables($tables);
+        $this->generateForeignKeys($tables);
     }
 
     protected function generateTables(Collection $tables): void
@@ -148,15 +188,18 @@ class ReadTablesFromDatabase
 
                 $table->addColumn($newColumn);
             });
+
+            $indexes = $tableSchema->getIndexes();
+            Vemto::dump($indexes);
             
             $this->tables[] = $table;
         });
-
-        Vemto::dump($this->tables);
     }
 
     protected function generateForeignKeys(Collection $tables): void
     {
+        Vemto::dump($tables);
+
         $tables->each(function (string $table): void {
             $foreignKeys = $this->schema->getForeignKeys($table);
 
