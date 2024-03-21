@@ -8,11 +8,11 @@ use KitLoong\MigrationsGenerator\Schema\Models\Index as SchemaIndex;
 class Index {
     public string $name;
     public array $columns = [];
-    public string $algorithm;
-    public string $references;
-    public string $on;
-    public string $onDelete;
-    public string $onUpdate;
+    public string|NULL $algorithm;
+    public string|NULL $references;
+    public string|NULL $on;
+    public string|NULL $onDelete;
+    public string|NULL $onUpdate;
     public string $type; // primary, unique, index, foreign, spatialIndex, fullText, fulltext
 
     public string $table;
@@ -35,7 +35,7 @@ class Index {
         $newIndex->name = $index->getName();
         $newIndex->algorithm = null;
         $newIndex->table = $index->getTableName();
-        $newIndex->type = $index->getType();
+        $newIndex->type = $index->getType()->value;
         
         $table = $newIndex->getTable();
         $columns = $index->getColumns();

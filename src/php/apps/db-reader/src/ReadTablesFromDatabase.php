@@ -120,7 +120,12 @@ class ReadTablesFromDatabase
             });
 
             $indexes = $tableSchema->getIndexes();
-            Vemto::dump($indexes);
+            $indexes->each(function ($index) use ($table) : void {
+                $newIndex = Index::fromSchemaIndex($index);
+
+                $table->addIndex($newIndex);
+            });
+
             
             $this->tableRepository->addTable($table);
         });
