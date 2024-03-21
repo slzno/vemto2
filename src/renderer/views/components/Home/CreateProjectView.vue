@@ -38,9 +38,6 @@
 
         creatingProject.value = true
 
-        settings.value.starterKit = "jetstream"
-        settings.value.completePath = PathUtil.join(settings.value.path, settings.value.name)
-
         Main.API.folderExists(settings.value.completePath)
             .then((folderExists: boolean) => {
                 if(folderExists) {
@@ -50,16 +47,18 @@
                     return
                 }
 
+                settings.value.completePath = PathUtil.join(settings.value.path, settings.value.name)
+
                 projectCreator.value.create(settings.value, (state) => currentState.value = state)
                     .then(() => {
                         if(projectCreator.value.hasErrors) return
 
-                        close()
-
-                        settings.value = {} as ProjectCreatorData
-
                         Alert.success("App created successfully")
+
+                        close()
                         emit("reloadProjectListAndOpenPath", settings.value.completePath)
+                        
+                        resetSettings()
                     })
                     .finally(() => {
                         currentState.value = ""
@@ -87,6 +86,15 @@
         errors.value.name = "Invalid project name"
     }, 250)
 
+    const resetSettings = () => {
+        settings.value = {
+            path: "",
+            name: "",
+            starterKit: "jetstream",
+            usesJetstreamTeams: false
+        } as ProjectCreatorData
+    }
+
     onMounted(() => {
         watch(currentState, (value) => {
             if(!value || !value?.length) return
@@ -95,6 +103,8 @@
         })
 
         projectCreator.value = new ProjectCreator()
+
+        resetSettings()
     })
 </script>
 <template>
@@ -124,7 +134,7 @@
                     </template>
                 </div>
 
-                <div>
+                <div v-if="settings.starterKit === 'jetstream'">
                     <UiCheckbox v-model="settings.usesJetstreamTeams" label="Use Jetstream Teams" />
                 </div>
 

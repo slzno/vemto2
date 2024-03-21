@@ -1,5 +1,5 @@
 import Main from "../wrappers/Main"
-import Alert from "@Renderer/components/utils/Alert";
+import Alert from "@Renderer/components/utils/Alert"
 
 export interface ProjectCreatorData {
     name: string;
