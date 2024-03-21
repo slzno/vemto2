@@ -33,7 +33,7 @@ class ReadTablesFromDatabase
         $this->app = $app;
         $this->appPath = $appPath;
 
-        $this->tableRepository = new TableRepository;
+        $this->tableRepository = app(TableRepository::class);
     }
 
     public function getTableByName(string $name): Table
@@ -53,7 +53,7 @@ class ReadTablesFromDatabase
 
             $this->generate($tables);
 
-            return $this->tables;
+            return $this->tableRepository->get();
         } finally {
             DB::setDefaultConnection($connection);
         }
@@ -122,7 +122,7 @@ class ReadTablesFromDatabase
             $indexes = $tableSchema->getIndexes();
             Vemto::dump($indexes);
             
-            $this->tables[$table->name] = $table;
+            $this->tableRepository->addTable($table);
         });
     }
 

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Facade;
+use VemtoDBReader\TableRepository;
 use VemtoDBReader\ReadTablesFromDatabase;
 
 Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
@@ -35,6 +36,10 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
     });
 
     $app->register(\KitLoong\MigrationsGenerator\MigrationsGeneratorServiceProvider::class);
+
+    $app->singleton(TableRepository::class, function () {
+        return new TableRepository;
+    });
 
     // Config::set('database.connections.vemto_db_connection', [
     //     'driver'   => 'sqlite',
