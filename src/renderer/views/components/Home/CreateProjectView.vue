@@ -17,7 +17,8 @@
     const settings = ref({}) as Ref<ProjectCreatorData>,
         errors = ref({}) as Ref<any>,
         creatingProject = ref(false),
-        currentState = ref("")
+        currentState = ref(""),
+        projectCreator = ref<null | ProjectCreator>(null)
 
     const emit = defineEmits(["reloadProjectListAndOpenPath"])
 
@@ -33,6 +34,8 @@
     }
 
     const create = async () => {
+        if(creatingProject.value) return
+
         creatingProject.value = true
 
         settings.value.starterKit = "jetstream"
@@ -47,20 +50,19 @@
                     return
                 }
 
-                ProjectCreator.create(settings.value, (state) => currentState.value = state)
+                projectCreator.value.create(settings.value, (state) => currentState.value = state)
                     .then(() => {
-                        Alert.success("App created successfully")
+                        if(projectCreator.value.hasErrors) return
+
                         close()
 
+                        settings.value = {} as ProjectCreatorData
+
+                        Alert.success("App created successfully")
                         emit("reloadProjectListAndOpenPath", settings.value.completePath)
-                    })
-                    .catch((error) => {
-                        Alert.error(error.message)
                     })
                     .finally(() => {
                         currentState.value = ""
-                        settings.value = {} as ProjectCreatorData
-
                         creatingProject.value = false
                     })
             })
@@ -91,6 +93,8 @@
 
             Alert.info(value)
         })
+
+        projectCreator.value = new ProjectCreator()
     })
 </script>
 <template>

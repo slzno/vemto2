@@ -1,5 +1,5 @@
-import PathUtil from "@Common/util/PathUtil";
 import Main from "../wrappers/Main"
+import Alert from "@Renderer/components/utils/Alert";
 
 export interface ProjectCreatorData {
     name: string;
@@ -12,12 +12,11 @@ export interface ProjectCreatorData {
 }
 
 export default class ProjectCreator {
-    static data: ProjectCreatorData | null = null
-    static stateCallback: ((state: string) => void) | null = null
+    hasErrors: boolean = false
+    data: ProjectCreatorData | null = null
+    stateCallback: ((state: string) => void) | null = null
 
-    static async create(data: ProjectCreatorData, stateCallback: (state: string) => void) {
-        if(this.data || this.stateCallback) return
-
+    async create(data: ProjectCreatorData, stateCallback: (state: string) => void) {
         this.data = data
         this.stateCallback = stateCallback
 
@@ -28,27 +27,30 @@ export default class ProjectCreator {
             if(data.starterKit === "jetstream") await this.installJetstream()
 
             await this.runStarterKitCommands()
-        } catch (error) {
-            stateCallback("Error creating project")
-        } finally {
+
             this.data = null
+            this.hasErrors = false
             this.stateCallback = null
+        } catch (error: any) {
+            this.hasErrors = true
+
+            Alert.error("Error creating project: " + error.message)
         }
     }
 
-    static async createProject() {
+    async createProject() {
         this.stateCallback("Creating project! Please, wait... This may take a while.")
 
         await Main.API.executeComposerOnPath(this.data.path, `create-project laravel/laravel:^11.0 ${this.data.name}`)
     }
 
-    static async generateStorageLink() {
+    async generateStorageLink() {
         this.stateCallback("Generating storage link...")
 
         await Main.API.executeArtisanOnPath(this.data.completePath, "storage:link")
     }
 
-    static async installJetstream() {
+    async installJetstream() {
         const state = this.data.usesJetstreamTeams ? "Creating Jetstream with Teams..." : "Creating Jetstream..."
 
         this.stateCallback(state)
@@ -56,13 +58,13 @@ export default class ProjectCreator {
         await Main.API.executeComposerOnPath(this.data.completePath, "require laravel/jetstream --no-interaction")
     }
 
-    static async runStarterKitCommands() {
+    async runStarterKitCommands() {
         if(this.data.starterKit === "jetstream") {
             await this.runJetstreamCommands()
         }
     }
     
-    static async runJetstreamCommands() {
+    async runJetstreamCommands() {
         const command = this.data.usesJetstreamTeams
             ? "jetstream:install livewire --teams --no-interaction"
             : "jetstream:install livewire --no-interaction"
