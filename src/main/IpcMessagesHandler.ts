@@ -321,6 +321,47 @@ export function HandleIpcMessages() {
         })
     })
 
+    ipcMain.handle("php:execute:on-path", (event, path, command) => {
+        return handleError(event, async () => {
+            try {
+                return await CommandExecutor.executePhpOnPath(path, command, true)
+            } catch (error) {
+                return false
+            }
+        })
+    })
+
+    ipcMain.handle("composer:is:installed", (event) => {
+        return handleError(event, async () => {
+            try {
+                const result = await CommandExecutor.executeComposerOnPath("", "--version", true)
+                return result.includes("Composer")
+            } catch (error) {
+                return false
+            }
+        })
+    })
+
+    ipcMain.handle("composer:execute:on-path", (event, path, command) => {
+        return handleError(event, async () => {
+            try {
+                return await CommandExecutor.executeComposerOnPath(path, command, true)
+            } catch (error) {
+                return false
+            }
+        })
+    })
+
+    ipcMain.handle("artisan:execute:on-path", (event, path, command) => {
+        return handleError(event, async () => {
+            try {
+                return await CommandExecutor.executeArtisanOnPath(path, command, true)
+            } catch (error) {
+                return false
+            }
+        })
+    })
+
     ipcMain.handle("open:issue", async (event, title, body) => {
         let debugInfoData = debugInfo()
 

@@ -140,4 +140,16 @@ contextBridge.exposeInMainWorld("api", {
     phpIsInstalled: () => {
         return ipcRenderer.invoke("php:is:installed")
     },
+    executePhpOnPath: (path: string, command: string) => {
+        return ipcRenderer.invoke("php:execute:on-path", path, command)
+    },
+    composerIsInstalled: () => {
+        return ipcRenderer.invoke("composer:is:installed")
+    },
+    executeComposerOnPath: (path: string, command: string) => {
+        return ipcRenderer.invoke("composer:execute:on-path", path, command)
+    },
+    executeArtisanOnPath: (path: string, command: string) => {
+        return ipcRenderer.invoke("artisan:execute:on-path", path, command)
+    },
 })
