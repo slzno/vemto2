@@ -100,7 +100,7 @@
             </div>
 
             <div>
-                <UiText v-model="composerPath" label="Composer Path"></UiText>
+                <UiText v-model="composerPath" label="Composer Path (folder + executable)"></UiText>
             </div>
             
             <div class="mt-2">

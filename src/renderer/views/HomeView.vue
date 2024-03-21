@@ -72,7 +72,7 @@
         getProjects()
         
         nextTick(() => {
-            openPath(path)
+            openPath(path, true)
         })
     }
 
@@ -124,7 +124,7 @@
         }
     }
 
-    const openPath = async (path) => {
+    const openPath = async (path: string, isNewProject: boolean = false) => {
         currentConnectingFolder.value = path
 
         const projectInfo = new ProjectInfo(path)
@@ -146,11 +146,11 @@
             return
         }
 
-        buildConnectingFolderSettings(projectInfo)
+        buildConnectingFolderSettings(projectInfo, isNewProject)
         showingConnectingFolderModal.value = true
     }
 
-    const buildConnectingFolderSettings = (projectInfo) => {
+    const buildConnectingFolderSettings = (projectInfo, isNewProject: boolean) => {
         connectingFolderSettings.value.cssFramework = projectInfo.getCssFramework()
         connectingFolderSettings.value.uiStarterKit = projectInfo.getStarterKit()
         connectingFolderSettings.value.usesLivewire = projectInfo.hasLivewire
@@ -159,6 +159,7 @@
         connectingFolderSettings.value.usesReact = projectInfo.hasReact
         connectingFolderSettings.value.usesSvelte = projectInfo.hasSvelte
         connectingFolderSettings.value.laravelVersion = projectInfo.laravelVersion
+        connectingFolderSettings.value.isFreshLaravelProject = isNewProject
     }
 
     const openSchema = async () => {

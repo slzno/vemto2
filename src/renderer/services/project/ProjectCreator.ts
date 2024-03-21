@@ -22,7 +22,7 @@ export default class ProjectCreator {
 
         const uiKitsMethodNames = {
             jetstream: 'installJetstream',
-            breeze: 'installBreeze'
+            breeze: 'installBreeze',
         }
         
         const uiKitMethodName = uiKitsMethodNames[this.data.starterKit] || null

@@ -19,7 +19,7 @@
         errors = ref({}) as Ref<any>,
         creatingProject = ref(false),
         currentState = ref(""),
-        projectCreator = ref<null | ProjectCreator>(null)
+        projectCreator = new ProjectCreator()
 
     const emit = defineEmits(["reloadProjectListAndOpenPath"])
 
@@ -50,9 +50,9 @@
 
                 settings.value.completePath = PathUtil.join(settings.value.path, settings.value.name)
 
-                projectCreator.value.create(settings.value, (state) => currentState.value = state)
+                projectCreator.create(settings.value, (state) => currentState.value = state)
                     .then(() => {
-                        if(projectCreator.value.hasErrors) return
+                        if(projectCreator.hasErrors) return
 
                         Alert.success("App created successfully")
 
@@ -114,8 +114,6 @@
 
             Alert.info(value)
         })
-
-        projectCreator.value = new ProjectCreator()
 
         resetSettings()
     })
