@@ -117,6 +117,10 @@ class ReadTablesFromDatabase
             $columns = $tableSchema->getColumns();
             $columns->each(function (SchemaColumn $column) use ($table) : void {
                 $newColumn = Column::fromSchemaColumn($column);
+                
+                if(!$newColumn) {
+                    return;
+                }
 
                 $table->addColumn($newColumn);
             });
@@ -124,6 +128,10 @@ class ReadTablesFromDatabase
             $indexes = $tableSchema->getIndexes();
             $indexes->each(function ($index) use ($table) : void {
                 $newIndex = Index::fromSchemaIndex($index);
+
+                if(!$newIndex) {
+                    return;
+                }
 
                 $table->addIndex($newIndex);
             });

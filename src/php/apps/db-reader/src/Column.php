@@ -34,4 +34,29 @@ class Column {
 
         return $newColumn;
     }
+
+    public function isAutoIncrement(): bool
+    {
+        return !! $this->autoIncrement;
+    }
+
+    public function setUnsigned(bool $isUnsigned = false) {
+        $this->unsigned = $isUnsigned;
+    }
+
+    public function setIndex(bool $isIndex = false) {
+        $this->index = $isIndex;
+    }
+
+    public function setUnique(bool $isUnique = false) {
+        $this->unique = $isUnique;
+    }
+
+    public function setDefault(string $default = null) {
+        $this->default = $default;
+    }
+
+    public function setNullable(bool $isNullable = false) {
+        $this->nullable = $isNullable;
+    }
 }

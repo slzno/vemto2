@@ -15,8 +15,6 @@ class TableRepository
 
     public function addTable(Table $table): void
     {
-        Vemto::log("Adding table {$table->name} to TableRepository.");
-
         if (isset($this->tables[$table->name])) {
             throw new \Exception("Table {$table->name} already exists on TableRepository.");
         }
