@@ -91,7 +91,8 @@
         settings.value = {
             path: "",
             name: "",
-            starterKit: "jetstream"
+            starterKit: "jetstream",
+            database: "mysql"
         } as ProjectCreatorData
     }
 
@@ -108,13 +109,16 @@
         }
     }
 
+    const onDatabaseChanged = () => {
+        if(!["sqlite", "mysql", "postgresql", "sqlsrv"].includes(settings.value.database)) {
+            errors.value.database = "Invalid database"
+            return
+        }
+
+        delete errors.value.database
+    }
+
     onMounted(() => {
-        watch(currentState, (value) => {
-            if(!value || !value?.length) return
-
-            Alert.info(value)
-        })
-
         resetSettings()
     })
 </script>
@@ -145,15 +149,29 @@
                     </template>
                 </div>
 
-                <div>
-                    <UiSelect v-model="settings.starterKit" label="UI Starter Kit" @change="onStarterKitChanged">
-                        <option value="jetstream">Jetstream</option>
-                        <option value="breeze">Breeze</option>
-                    </UiSelect>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <UiSelect v-model="settings.starterKit" label="UI Starter Kit" @change="onStarterKitChanged">
+                            <option value="jetstream">Jetstream</option>
+                            <option value="breeze">Breeze</option>
+                        </UiSelect>
 
-                    <template v-if="errors.starterKit !== undefined">
-                        <span class="dark:text-red-500 text-sm pl-2">{{ errors.starterKit }}</span>
-                    </template>
+                        <template v-if="errors.starterKit !== undefined">
+                            <span class="dark:text-red-500 text-sm pl-2">{{ errors.starterKit }}</span>
+                        </template>
+                    </div>
+                    <div>
+                        <UiSelect v-model="settings.database" label="Database" @change="onDatabaseChanged">
+                            <option value="sqlite">SQLite</option>
+                            <option value="mysql">MySQL</option>
+                            <option value="postgresql">PostgreSQL</option>
+                            <option value="sqlsrv">SQL Server</option>
+                        </UiSelect>
+
+                        <template v-if="errors.database !== undefined">
+                            <span class="dark:text-red-500 text-sm pl-2">{{ errors.database }}</span>
+                        </template>
+                    </div>
                 </div>
 
                 <div v-if="settings.starterKit === 'jetstream'">
@@ -166,6 +184,26 @@
                     </UiButton>
                 </div>
             </div>
+
+            <div v-if="creatingProject" class="space-y-2 p-4 mt-2 bg-slate-950 rounded-b-lg border-t border-slate-700">
+                <span class="text-sm">{{ currentState }}</span>
+                <span class="points-animation relative"></span>
+            </div>
         </UiModal>
     </div>
 </template>
+<style>
+.points-animation::after {
+    content: '.';
+    animation: points 1.5s infinite;
+}
+
+@keyframes points {
+    45% {
+        content: '..';
+    }
+    80% {
+        content: '...';
+    }
+}
+</style>

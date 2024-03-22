@@ -79,6 +79,9 @@ contextBridge.exposeInMainWorld("api", {
     writeProjectFile: (path: string, content: string) => {
         return ipcRenderer.invoke("file:project:write", path, content)
     },
+    writeFile: (path: string, content: string) => {
+        return ipcRenderer.invoke("file:write", path, content)
+    },
     projectFileExists: (path: string) => {
         return ipcRenderer.invoke("file:project:exists", path)
     },

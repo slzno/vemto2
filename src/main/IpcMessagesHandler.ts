@@ -73,6 +73,12 @@ export function HandleIpcMessages() {
         })
     })
 
+    ipcMain.handle("file:write", (event, filePath, content) => {
+        return handleError(event, () => {
+            return FileSystem.writeFile(filePath, content)
+        })
+    })
+
     ipcMain.handle("file:project:exists", (event, filePath) => {
         const project = Project.find(1)
         if(!project) return null

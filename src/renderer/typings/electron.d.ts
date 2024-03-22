@@ -31,6 +31,7 @@ export default interface ElectronApi {
     folderExists: (path: string) => Promise<boolean>,
     readProjectFile: (path: string) => Promise<string>,
     writeProjectFile: (path: string, content: string) => Promise<void>,
+    writeFile: (path: string, content: string) => Promise<void>,
     projectFileExists: (path: string) => Promise<boolean>,
     readTemplateFile: (path: string) => Promise<string>,
     writeTemplateFile: (path: string, content: string) => Promise<void>,
