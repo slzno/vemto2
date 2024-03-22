@@ -13,7 +13,7 @@ class TableRepository
         return $this->tables;
     }
 
-    public function addTable(Table $table): void
+    public function add(Table $table): void
     {
         if (isset($this->tables[$table->name])) {
             throw new \Exception("Table {$table->name} already exists on TableRepository.");

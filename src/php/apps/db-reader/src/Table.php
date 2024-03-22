@@ -60,6 +60,12 @@ class Table {
         $this->indexes[$index->name] = $index;
     }
 
+    public function addMigration(Migration $migration): void
+    {   
+        \Vemto\Vemto::dump($migration->toArray());
+        $this->migrations[] = $migration->toArray();
+    }
+
     public function getColumnByName(string $name): Column
     {
         return isset($this->columns[$name]) ? $this->columns[$name] : null;

@@ -4,11 +4,14 @@
 require_once 'load.php';
 
 use Vemto\Vemto;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Facade;
+
 use VemtoDBReader\TableRepository;
+use VemtoDBReader\MigrationRepository;
 use VemtoDBReader\ReadTablesFromDatabase;
 
 Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
@@ -41,6 +44,10 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
         return new TableRepository;
     });
 
+    $app->singleton(MigrationRepository::class, function () {
+        return new MigrationRepository;
+    });
+
     // Config::set('database.connections.vemto_db_connection', [
     //     'driver'   => 'sqlite',
     //     'database' => ':memory:',
@@ -71,11 +78,20 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
     $repository->createRepository();
 
     // migrate
+    $migrationsPath = $APP_DIRECTORY . '/database/migrations';
     $migrator = $app->make('migrator');
-    $migrator->run($APP_DIRECTORY . '/database/migrations');
+    $migrator->path($migrationsPath);
+    $migrator->run($migrationsPath);
 
     $reader = new ReadTablesFromDatabase($app, $APP_DIRECTORY);
     $tables = $reader->handle();
+
+    $migrationRepository = $app->make(MigrationRepository::class);
+    $migrationsFiles = $migrator->getMigrationFiles($migrator->paths());
+
+    foreach ($migrationsFiles as $migrationFile) {
+        $migrationRepository->addFromPath($migrationFile);
+    }
     
     Vemto::respondWith([
         'status' => 'success',

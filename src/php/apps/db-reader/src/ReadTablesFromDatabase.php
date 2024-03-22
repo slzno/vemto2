@@ -110,7 +110,7 @@ class ReadTablesFromDatabase
             $table = new Table;
             $table->name = $tableSchema->getName();
 
-            $this->tableRepository->addTable($table);
+            $this->tableRepository->add($table);
 
             $columns = $tableSchema->getColumns();
             $table->addColumns($columns);
