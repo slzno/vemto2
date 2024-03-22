@@ -3,7 +3,6 @@
 namespace VemtoDBReader;
 
 use Exception;
-use Vemto\Vemto;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Application;
@@ -15,6 +14,7 @@ use KitLoong\MigrationsGenerator\Schema\PgSQLSchema;
 use KitLoong\MigrationsGenerator\Schema\SQLiteSchema;
 use KitLoong\MigrationsGenerator\Schema\SQLSrvSchema;
 use KitLoong\MigrationsGenerator\Schema\Models\Column as SchemaColumn;
+use KitLoong\MigrationsGenerator\Schema\Models\ForeignKey as SchemaForeignKey;
 
 class ReadTablesFromDatabase
 {
@@ -113,26 +113,10 @@ class ReadTablesFromDatabase
             $this->tableRepository->addTable($table);
 
             $columns = $tableSchema->getColumns();
-            $columns->each(function (SchemaColumn $column) use ($table) : void {
-                $newColumn = Column::fromSchemaColumn($column);
-                
-                if(!$newColumn) {
-                    return;
-                }
-
-                $table->addColumn($newColumn);
-            });
+            $table->addColumns($columns);
 
             $indexes = $tableSchema->getIndexes();
-            $indexes->each(function ($index) use ($table) : void {
-                $newIndex = Index::fromSchemaIndex($index);
-
-                if(!$newIndex) {
-                    return;
-                }
-
-                $table->addIndex($newIndex);
-            });
+            $table->addIndexes($indexes);
         });
     }
 
@@ -145,8 +129,16 @@ class ReadTablesFromDatabase
                 return;
             }
 
-            // Vemto::log("Foreign keys for table: $table");
-            // Vemto::dump($foreignKeys);
+            $this->addForeignKeys($table, $foreignKeys);
+        });
+    }
+
+    protected function addForeignKeys(string $tableName, Collection $foreignKeys): void
+    {
+        $table = $this->tableRepository->getTableByName($tableName);
+
+        $foreignKeys->each(function (SchemaForeignKey $foreignKey) use ($table) : void {
+            $table->updateForeignKeyIndex($foreignKey);
         });
     }
 }

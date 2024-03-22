@@ -2,8 +2,8 @@
 
 namespace VemtoDBReader;
 
-use Vemto\Vemto;
 use KitLoong\MigrationsGenerator\Schema\Models\Index as SchemaIndex;
+use KitLoong\MigrationsGenerator\Schema\Models\ForeignKey as SchemaForeignKey;
 
 class Index {
     public string $name;
@@ -69,6 +69,51 @@ class Index {
         }
 
         return $newIndex;
+    }
+
+    public static function fromSchemaForeignKey(SchemaForeignKey $foreignKey): Index|NULL
+    {
+        $newIndex = new Index;
+        $newIndex->updateFromSchemaForeignKey($foreignKey);
+
+        return $newIndex;
+    }
+
+    public function updateFromSchemaForeignKey(SchemaForeignKey $foreignKey): void
+    {
+        $foreignKeyName = $foreignKey->getName();
+        $columns = $foreignKey->getLocalColumns();
+
+        if(empty($columns)) {
+            throw new \Exception("Foreign key with no columns not supported: $foreignKeyName");
+        }
+
+        if(count($columns) > 1) {
+            throw new \Exception("Foreign key with multiple columns not supported: $foreignKeyName");
+        }
+
+        $foreignColumn = $columns[0];
+
+        $this->type = 'foreign';
+        $this->name = $foreignKeyName;
+        $this->references = $foreignColumn;
+        $this->table = $foreignKey->getTableName();
+        $this->on = $foreignKey->getForeignTableName();
+        $this->onDelete = $foreignKey->getOnDelete();
+        $this->onUpdate = $foreignKey->getOnUpdate();
+
+        $this->columns = [];
+        $table = $this->getTable();
+
+        foreach ($columns as $columnName) {
+            $tableColumn = $table->getColumnByName($columnName);
+
+            if (!$tableColumn) {
+                continue;
+            }
+
+            $this->addColumn($tableColumn);
+        }
     }
 
     public function hasDefaultLaravelName(): bool
