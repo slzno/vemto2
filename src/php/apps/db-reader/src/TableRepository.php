@@ -26,4 +26,11 @@ class TableRepository
     {
         return isset($this->tables[$name]) ? $this->tables[$name] : null;
     }
+
+    public function attachTablesOldNames(): void
+    {
+        // foreach ($this->tables as $table) {
+        //     $table->attachOldNames();
+        // }
+    }
 }
