@@ -83,16 +83,17 @@ class Index {
     {
         $foreignKeyName = $foreignKey->getName();
         $columns = $foreignKey->getLocalColumns();
+        $foreignColumn = $foreignKey->getForeignColumns();
 
-        if(empty($columns)) {
+        if(empty($columns) || empty($foreignColumn)) {
             throw new \Exception("Foreign key with no columns not supported: $foreignKeyName");
         }
 
-        if(count($columns) > 1) {
+        if(count($columns) > 1 || count($foreignColumn) > 1){
             throw new \Exception("Foreign key with multiple columns not supported: $foreignKeyName");
         }
 
-        $foreignColumn = $columns[0];
+        $foreignColumn = $foreignColumn[0];
 
         $this->type = 'foreign';
         $this->name = $foreignKeyName;
