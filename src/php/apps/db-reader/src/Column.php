@@ -7,10 +7,10 @@ use KitLoong\MigrationsGenerator\Schema\Models\Column as SchemaColumn;
 class Column {
     public string $name;
     public string $type;
-    public string|NULL $total;
-    public string|NULL $length;
-    public string|NULL $places;
-    public string|NULL $default;
+    public ?string $total;
+    public ?string $length;
+    public ?string $places;
+    public ?string $default;
     public bool $index;
     public bool $unique;
     public bool $nullable;

@@ -77,8 +77,6 @@ class Migration {
             $matchesWithDoubleQuotes
         );
 
-        \Vemto\Vemto::dump($allMatches);
-
         $allMatches = array_filter($allMatches);
         $allMatches = array_unique($allMatches);
         $allMatches = array_values($allMatches);

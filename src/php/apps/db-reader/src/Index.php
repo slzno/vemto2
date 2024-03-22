@@ -8,11 +8,11 @@ use KitLoong\MigrationsGenerator\Schema\Models\ForeignKey as SchemaForeignKey;
 class Index {
     public string $name;
     public array $columns = [];
-    public string|NULL $algorithm;
-    public string|NULL $references;
-    public string|NULL $on;
-    public string|NULL $onDelete;
-    public string|NULL $onUpdate;
+    public ?string $algorithm;
+    public ?string $references;
+    public ?string $on;
+    public ?string $onDelete;
+    public ?string $onUpdate;
     public string $type; // primary, unique, index, foreign, spatialIndex, fullText, fulltext
 
     public string $table;
@@ -29,7 +29,7 @@ class Index {
         $this->columns[] = $column;
     }
 
-    public static function fromSchemaIndex(SchemaIndex $index): Index|NULL
+    public static function fromSchemaIndex(SchemaIndex $index): ?Index
     {
         $newIndex = new Index;
         $newIndex->name = $index->getName();
@@ -71,7 +71,7 @@ class Index {
         return $newIndex;
     }
 
-    public static function fromSchemaForeignKey(SchemaForeignKey $foreignKey): Index|NULL
+    public static function fromSchemaForeignKey(SchemaForeignKey $foreignKey):? Index
     {
         $newIndex = new Index;
         $newIndex->updateFromSchemaForeignKey($foreignKey);

@@ -22,7 +22,7 @@ class TableRepository
         $this->tables[$table->name] = $table;
     }
 
-    public function getTableByName(string $name): Table
+    public function getTableByName(string $name): ?Table
     {
         return isset($this->tables[$name]) ? $this->tables[$name] : null;
     }

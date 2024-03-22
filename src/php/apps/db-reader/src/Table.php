@@ -74,12 +74,12 @@ class Table {
         return in_array($migration->toArray(), $this->migrations);
     }
 
-    public function getColumnByName(string $name): Column
+    public function getColumnByName(string $name): ?Column
     {
         return isset($this->columns[$name]) ? $this->columns[$name] : null;
     }
 
-    public function getIndexByName(string $name): Index
+    public function getIndexByName(string $name): ?Index
     {
         return isset($this->indexes[$name]) ? $this->indexes[$name] : null;
     }
