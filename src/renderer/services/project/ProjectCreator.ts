@@ -1,3 +1,4 @@
+import PathUtil from "@Common/util/PathUtil";
 import Main from "../wrappers/Main"
 import Alert from "@Renderer/components/utils/Alert"
 
@@ -6,6 +7,7 @@ export interface ProjectCreatorData {
     path: string;
     completePath: string;
     starterKit: string; // Jetstream, Fortify, Breeze
+    database: string;
 
     // Jetstream options
     usesJetstreamTeams: boolean;
@@ -34,6 +36,7 @@ export default class ProjectCreator {
             await this.generateStorageLink()
 
             await this[uiKitMethodName]()
+            await this.changeDatabase()
 
             this.data = null
             this.hasErrors = false
@@ -46,19 +49,19 @@ export default class ProjectCreator {
     }
 
     async createProject() {
-        this.stateCallback("Creating project! Please, wait... This may take a while.")
+        this.stateCallback("Creating project, please wait! This may take a while")
 
         await Main.API.executeComposerOnPath(this.data.path, `create-project laravel/laravel:^11.0 ${this.data.name}`)
     }
 
     async generateStorageLink() {
-        this.stateCallback("Generating storage link...")
+        this.stateCallback("Generating storage link")
 
         await Main.API.executeArtisanOnPath(this.data.completePath, "storage:link")
     }
 
     async installJetstream() {
-        const state = this.data.usesJetstreamTeams ? "Installing Jetstream with Teams..." : "Installing Jetstream..."
+        const state = this.data.usesJetstreamTeams ? "Installing Jetstream with Teams" : "Installing Jetstream"
 
         this.stateCallback(state)
 
@@ -71,21 +74,40 @@ export default class ProjectCreator {
             ? "jetstream:install livewire --teams --no-interaction"
             : "jetstream:install livewire --no-interaction"
 
-        this.stateCallback("Running Jetstream commands...")
+        this.stateCallback("Running Jetstream commands")
 
         await Main.API.executeArtisanOnPath(this.data.completePath, command)
     }
 
     async installBreeze() {
-        this.stateCallback("Installing Breeze...")
+        this.stateCallback("Installing Breeze")
 
         await Main.API.executeComposerOnPath(this.data.completePath, "require laravel/breeze --dev --no-interaction")
         await this.runBreezeCommands()
     }
 
     async runBreezeCommands() {
-        this.stateCallback("Running Breeze commands...")
+        this.stateCallback("Running Breeze commands")
 
         await Main.API.executeArtisanOnPath(this.data.completePath, "breeze:install livewire --no-interaction")
+    }
+
+    async changeDatabase() {
+        if(this.data.database === "sqlite") return
+
+        this.stateCallback("Changing database to " + this.data.database)
+
+        await Main.API.readFile(
+            PathUtil.join(this.data.completePath, ".env")
+        ).then(async (fileContent: string) => {
+            fileContent = fileContent.toString()
+                .replace("DB_CONNECTION=sqlite", `DB_CONNECTION=${this.data.database}`)
+
+            await Main.API.writeFile(PathUtil.join(this.data.completePath, ".env"), fileContent)
+        })
+        .catch(error => {
+            console.log(error)
+            throw new Error("Could not open .env file")
+        })
     }
 }
