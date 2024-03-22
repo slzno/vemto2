@@ -58,7 +58,12 @@ class Index {
             $indexColumn = $newIndex->getFirstColumn();
             $indexColumn->setUnique(true);
 
-            Vemto::log("Setting unique for index: $newIndex->name on table: $newIndex->table on column: $indexColumn->name");
+            return null;
+        }
+
+        if($newIndex->isIndexForSingleColumn()) {
+            $indexColumn = $newIndex->getFirstColumn();
+            $indexColumn->setIndex(true);
 
             return null;
         }
@@ -96,6 +101,13 @@ class Index {
     public function isUniqueForSingleColumn(): bool
     {
         return $this->type === 'unique' 
+            && $this->isSingleColumn()
+            && $this->hasDefaultLaravelName();
+    }
+
+    public function isIndexForSingleColumn(): bool
+    {
+        return $this->type === 'index' 
             && $this->isSingleColumn()
             && $this->hasDefaultLaravelName();
     }

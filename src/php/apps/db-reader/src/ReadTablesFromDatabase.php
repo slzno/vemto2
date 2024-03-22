@@ -106,8 +106,6 @@ class ReadTablesFromDatabase
     {
         $tables->each(function (string $table): void {
             $tableSchema = $this->schema->getTable($table);
-            // Vemto::log("Table: $table");
-            // Vemto::dump($this->schema->getTable($table));
 
             $table = new Table;
             $table->name = $tableSchema->getName();
@@ -140,8 +138,6 @@ class ReadTablesFromDatabase
 
     protected function generateForeignKeys(Collection $tables): void
     {
-        Vemto::dump($tables);
-
         $tables->each(function (string $table): void {
             $foreignKeys = $this->schema->getForeignKeys($table);
 
@@ -149,8 +145,8 @@ class ReadTablesFromDatabase
                 return;
             }
 
-            Vemto::log("Foreign keys for table: $table");
-            Vemto::dump($foreignKeys);
+            // Vemto::log("Foreign keys for table: $table");
+            // Vemto::dump($foreignKeys);
         });
     }
 }
