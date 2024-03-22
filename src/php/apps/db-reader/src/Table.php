@@ -62,8 +62,16 @@ class Table {
 
     public function addMigration(Migration $migration): void
     {   
-        \Vemto\Vemto::dump($migration->toArray());
+        if($this->hasMigration($migration)) {
+            return;
+        }
+
         $this->migrations[] = $migration->toArray();
+    }
+
+    public function hasMigration(Migration $migration): bool
+    {
+        return in_array($migration->toArray(), $this->migrations);
     }
 
     public function getColumnByName(string $name): Column

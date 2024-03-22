@@ -41,9 +41,25 @@ class Migration {
         $this->fillContent();
 
         $matches = [];
-        preg_match_all('/Schema::create\(\'(.*?)\'/', $this->content, $matches);
+        preg_match_all('/Schema::create\((?:\'(.*?)\'|"(.*?)")/', $this->content, $matches);
 
-        $this->createdTables = $matches[1];
+        $matchesWithSingleQuotes = $matches[1];
+        $matchesWithDoubleQuotes = $matches[2];
+        
+        $allMatches = array_merge(
+            $matchesWithSingleQuotes, 
+            $matchesWithDoubleQuotes
+        );
+
+        $allMatches = array_filter($allMatches);
+        $allMatches = array_unique($allMatches);
+        $allMatches = array_values($allMatches);
+
+        if (empty($allMatches)) {
+            return;
+        }
+
+        $this->createdTables = $allMatches;
     }
 
     public function calculateChangedTables(): void
@@ -51,9 +67,27 @@ class Migration {
         $this->fillContent();
 
         $matches = [];
-        preg_match_all('/Schema::table\(\'(.*?)\'/', $this->content, $matches);
+        preg_match_all('/Schema::table\((?:\'(.*?)\'|"(.*?)")/', $this->content, $matches);
 
-        $this->changedTables = $matches[1];
+        $matchesWithSingleQuotes = $matches[1];
+        $matchesWithDoubleQuotes = $matches[2];
+        
+        $allMatches = array_merge(
+            $matchesWithSingleQuotes, 
+            $matchesWithDoubleQuotes
+        );
+
+        \Vemto\Vemto::dump($allMatches);
+
+        $allMatches = array_filter($allMatches);
+        $allMatches = array_unique($allMatches);
+        $allMatches = array_values($allMatches);
+
+        if (empty($allMatches)) {
+            return;
+        }
+
+        $this->changedTables = $allMatches;
     }
 
     public function attachToTables(): void
@@ -77,10 +111,6 @@ class Migration {
 
             $table->addMigration($this);
         }
-
-        // make changed tables and created tables unique
-        $this->createdTables = array_unique($this->createdTables);
-        $this->changedTables = array_unique($this->changedTables);
     }
 
     public function fillContent(): void
@@ -104,8 +134,8 @@ class Migration {
             'migrationName' => $this->migrationName,
             'datePrefix' => $this->datePrefix,
             'fullPrefix' => $this->fullPrefix,
-            'createdTables' => $this->createdTables,
-            'changedTables' => $this->changedTables,
+            'createdTables' => array_unique($this->createdTables),
+            'changedTables' => array_unique($this->changedTables),
         ];
     }
 }
