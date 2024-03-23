@@ -59,6 +59,11 @@ class ReadTablesFromDatabase
         }
     }
 
+    public function finalize()
+    {
+        $this->tableRepository->attachTablesOldNames();
+    }
+
     protected function setup(string $connection): void
     {
         $setting = new Setting;
@@ -98,11 +103,11 @@ class ReadTablesFromDatabase
 
     protected function generate(Collection $tables): void
     {
-        $this->generateTables($tables);
-        $this->generateForeignKeys($tables);
+        $this->readTables($tables);
+        $this->readForeignKeys($tables);
     }
 
-    protected function generateTables(Collection $tables): void
+    protected function readTables(Collection $tables): void
     {
         $tables->each(function (string $table): void {
             $tableSchema = $this->schema->getTable($table);
@@ -120,7 +125,7 @@ class ReadTablesFromDatabase
         });
     }
 
-    protected function generateForeignKeys(Collection $tables): void
+    protected function readForeignKeys(Collection $tables): void
     {
         $tables->each(function (string $table): void {
             $foreignKeys = $this->schema->getForeignKeys($table);

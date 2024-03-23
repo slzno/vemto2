@@ -83,8 +83,8 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
     $migrator->path($migrationsPath);
     $migrator->run($migrationsPath);
 
-    $reader = new ReadTablesFromDatabase($app, $APP_DIRECTORY);
-    $tables = $reader->handle();
+    $tablesReader = new ReadTablesFromDatabase($app, $APP_DIRECTORY);
+    $tables = $tablesReader->handle();
 
     $migrationRepository = $app->make(MigrationRepository::class);
     $migrationsFiles = $migrator->getMigrationFiles($migrator->paths());
@@ -92,6 +92,8 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
     foreach ($migrationsFiles as $migrationFile) {
         $migrationRepository->addFromPath($migrationFile);
     }
+
+    $tablesReader->finalize();
     
     Vemto::respondWith([
         'status' => 'success',

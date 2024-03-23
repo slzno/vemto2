@@ -92,7 +92,6 @@ class Migration {
         $this->changedTables = $allMatches;
     }
 
-    // get all table renames Schema::rename('old_table_name', 'new_table_name');, and save to $renamedTables as an array like ['old' => 'old_table_name', 'new' => 'new_table_name']
     public function calculateTableRenames(): void
     {
         $this->fillContent();

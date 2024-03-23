@@ -69,6 +69,13 @@ class Table {
         $this->migrations[] = $migration->toArray();
     }
 
+    public function addOldName(string $oldName): void
+    {
+        if(!in_array($oldName, $this->oldNames)) {
+            $this->oldNames[] = $oldName;
+        }
+    }
+
     public function hasMigration(Migration $migration): bool
     {
         return in_array($migration->toArray(), $this->migrations);
