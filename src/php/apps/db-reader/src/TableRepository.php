@@ -39,30 +39,28 @@ class TableRepository
         $renames = $this->migrationRepository->getRenamedTables();
         $renames = array_reverse($renames); // Reverse to start from the oldest rename
 
-        Vemto::dump($renames);
-
         // Build a map of new names to a list of their old names
-        $newToOldNamesMap = [];
-        foreach ($renames as $rename) {
-            if (!isset($newToOldNamesMap[$rename['new']])) {
-                $newToOldNamesMap[$rename['new']] = [];
-            }
-            array_unshift($newToOldNamesMap[$rename['new']], $rename['old']);
-        }
+        // $newToOldNamesMap = [];
+        // foreach ($renames as $rename) {
+        //     if (!isset($newToOldNamesMap[$rename['new']])) {
+        //         $newToOldNamesMap[$rename['new']] = [];
+        //     }
+        //     array_unshift($newToOldNamesMap[$rename['new']], $rename['old']);
+        // }
 
-        foreach ($this->tables as $tableName => $table) {
-            if (isset($newToOldNamesMap[$tableName])) {
-                // If the current table has old names, trace back to the original name
-                // and attach each old name to the table
-                $currentName = $tableName;
-                while (isset($newToOldNamesMap[$currentName])) {
-                    foreach ($newToOldNamesMap[$currentName] as $oldName) {
-                        $table->addOldName($oldName);
-                        $currentName = $oldName; // Move back in the rename history
-                    }
-                }
-            }
-        }
+        // foreach ($this->tables as $tableName => $table) {
+        //     if (isset($newToOldNamesMap[$tableName])) {
+        //         // If the current table has old names, trace back to the original name
+        //         // and attach each old name to the table
+        //         $currentName = $tableName;
+        //         while (isset($newToOldNamesMap[$currentName])) {
+        //             foreach ($newToOldNamesMap[$currentName] as $oldName) {
+        //                 $table->addOldName($oldName);
+        //                 $currentName = $oldName; // Move back in the rename history
+        //             }
+        //         }
+        //     }
+        // }
     }
 
 }
