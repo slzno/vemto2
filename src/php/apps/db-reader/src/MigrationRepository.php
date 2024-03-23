@@ -4,6 +4,7 @@ namespace VemtoDBReader;
 
 class MigrationRepository {
     protected array $migrations = [];
+    protected array $tablesOldNames = [];
 
     public function get(): array
     {

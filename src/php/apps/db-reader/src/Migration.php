@@ -4,6 +4,7 @@ namespace VemtoDBReader;
 
 class Migration {
     private string $content;    
+    private string $simplifiedContent;
     protected string $migration;
     protected string $relativePath;
     protected string $migrationName;
@@ -11,6 +12,7 @@ class Migration {
     protected string $fullPrefix;
     protected array $createdTables = [];
     protected array $changedTables = [];
+    protected array $tableRenames = [];
 
     private TableRepository $tableRepository;
 
@@ -32,6 +34,7 @@ class Migration {
 
         $this->calculateCreatedTables();
         $this->calculateChangedTables();
+        $this->calculateTableRenames();
 
         $this->attachToTables();
     }
@@ -41,7 +44,7 @@ class Migration {
         $this->fillContent();
 
         $matches = [];
-        preg_match_all('/Schema::create\((?:\'(.*?)\'|"(.*?)")/', $this->content, $matches);
+        preg_match_all('/Schema::create\((?:\'(.*?)\'|"(.*?)")/', $this->simplifiedContent, $matches);
 
         $matchesWithSingleQuotes = $matches[1];
         $matchesWithDoubleQuotes = $matches[2];
@@ -67,7 +70,7 @@ class Migration {
         $this->fillContent();
 
         $matches = [];
-        preg_match_all('/Schema::table\((?:\'(.*?)\'|"(.*?)")/', $this->content, $matches);
+        preg_match_all('/Schema::table\((?:\'(.*?)\'|"(.*?)")/', $this->simplifiedContent, $matches);
 
         $matchesWithSingleQuotes = $matches[1];
         $matchesWithDoubleQuotes = $matches[2];
@@ -86,6 +89,29 @@ class Migration {
         }
 
         $this->changedTables = $allMatches;
+    }
+
+    // get all table renames Schema::rename('old_table_name', 'new_table_name');, and save to $tableRenames as an array like ['old' => 'old_table_name', 'new' => 'new_table_name']
+    public function calculateTableRenames(): void
+    {
+        $this->fillContent();
+
+        // Ensure $this->tableRenames is an array and clear it each time the method is called.
+        $this->tableRenames = [];
+
+        // Regular expression to match the Schema::rename('old_table_name', 'new_table_name') pattern
+        $pattern = "/Schema::rename\(\s*'([^']+)',\s*'([^']+)'\s*\);/";
+
+        // Use preg_match_all to find all matches in $this->migrationContent
+        if (preg_match_all($pattern, $this->simplifiedContent, $matches)) {
+            // Iterate over matches and save them to $this->tableRenames
+            foreach ($matches[1] as $index => $oldTableName) {
+                $newTableName = $matches[2][$index];
+                $this->tableRenames[] = ['old' => $oldTableName, 'new' => $newTableName];
+            }
+        }
+
+        \Vemto\Vemto::dump($this->tableRenames);
     }
 
     public function attachToTables(): void
@@ -122,6 +148,9 @@ class Migration {
         }
 
         $this->content = file_get_contents($this->migration);
+
+        $this->simplifiedContent = preg_replace('/\s+/', '', $this->content);
+        $this->simplifiedContent = str_replace('"', "'", $this->simplifiedContent);
     }
 
     public function toArray(): array
