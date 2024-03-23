@@ -39,6 +39,8 @@ class TableRepository
         $renames = $this->migrationRepository->getRenamedTables();
         $renames = array_reverse($renames); // Reverse to start from the oldest rename
 
+        \Vemto\Vemto::dump($renames);
+
         // Build a map of new names to a list of their old names
         // $newToOldNamesMap = [];
         // foreach ($renames as $rename) {

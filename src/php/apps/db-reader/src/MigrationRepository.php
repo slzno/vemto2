@@ -37,7 +37,5 @@ class MigrationRepository {
         foreach ($renamedTables as $rename) {
             $this->renamedTables[] = $rename;
         }
-
-        \Vemto\Vemto::dump($this->renamedTables);
     }
 }
