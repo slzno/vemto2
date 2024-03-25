@@ -48,4 +48,8 @@ export default class RenderableFilamentListComponent extends Renderable {
             crud: this.crud,
         }
     }
+
+    addDependencies() {
+        Renderable.addComposerDependency("filament/filament", this.getTemplateFile())
+    }
 }

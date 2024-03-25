@@ -50,4 +50,8 @@ export default class RenderableFilamentMorphToManyRelationManager extends Render
             detail: this.detail
         }
     }
+
+    addDependencies() {
+        Renderable.addComposerDependency("filament/filament", this.getTemplateFile())
+    }
 }

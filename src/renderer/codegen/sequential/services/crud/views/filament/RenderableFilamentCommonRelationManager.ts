@@ -52,4 +52,8 @@ export default class RenderableFilamentCommonRelationManager extends Renderable 
             detail: this.detail
         }
     }
+
+    addDependencies() {
+        Renderable.addComposerDependency("filament/filament", this.getTemplateFile())
+    }
 }

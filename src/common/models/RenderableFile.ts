@@ -33,6 +33,7 @@ export enum RenderableFileStatus {
     CAN_REMOVE = 'can-remove',
     REMOVED = 'removed',
     IGNORED = 'ignored',
+    SKIPPED = 'skipped'
 }
 
 export default class RenderableFile extends RelaDB.Model {

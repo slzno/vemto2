@@ -23,6 +23,7 @@
     import UiInfo from "@Renderer/components/ui/UiInfo.vue"
     import LicenseModal from "./components/System/LicenseModal.vue"
     import LicenseHandler from "@Renderer/services/LicenseHandler"
+import PackageChecker from "@Renderer/codegen/sequential/services/PackageChecker"
 
     const canShow = ref(false),
         projectStore = useProjectStore(),
@@ -157,20 +158,41 @@
 
         try {
             await new SequentialGenerator(projectStore.project).run()
+                .then((generated: boolean) => {
+                    if(!generated) {
+                        treatProjectGenerationError()
+                        return
+                    }
 
-            setTimeout(() => {
-                appStore.finishGeneratingCode()
-                const elapsedTime = SequentialGenerator.getElapsedTimeInSeconds()
-                
-                Alert.success(
-                    `Code generated successfully in ${elapsedTime} seconds`,
-                    2000
-                )
-            }, 500)
+                    setTimeout(() => {
+                        const elapsedTime = SequentialGenerator.getElapsedTimeInSeconds()
+                        
+                        Alert.success(
+                            `Code generated successfully in ${elapsedTime} seconds`,
+                            2000
+                        )
+                    }, 500)
+                })
+                .catch((error: any) => {
+                    console.error(error)
+                })
+                .finally(() => {
+                    appStore.finishGeneratingCode()
+                })
         } catch (error) {
             appStore.finishGeneratingCode()
             throw error
         }
+    }
+
+    const treatProjectGenerationError = () => {
+        if(PackageChecker.hasMissingDependencies()) {
+            openMissingDependenciesModal()
+        }
+    }
+
+    const openMissingDependenciesModal = () => {
+        console.log('Will open missing dependencies modal')
     }
 
     const openURL = (url: string) => {

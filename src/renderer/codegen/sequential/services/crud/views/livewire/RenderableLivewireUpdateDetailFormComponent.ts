@@ -51,4 +51,8 @@ export default class RenderableLivewireUpdateDetailFormComponent extends Rendera
             crud: this.detail.detailCrud,
         }
     }
+
+    addDependencies() {
+        Renderable.addComposerDependency("livewire/livewire", this.getTemplateFile())
+    }
 }

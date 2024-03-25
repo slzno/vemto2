@@ -47,4 +47,8 @@ export default class RenderableLivewireIndexView extends Renderable {
             crud: this.crud,
         }
     }
+
+    addDependencies() {
+        Renderable.addComposerDependency("livewire/livewire", this.getTemplateFile())
+    }
 }

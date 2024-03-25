@@ -51,4 +51,8 @@ export default class RenderableFilamentBelongsToManyRelationManager extends Rend
             detail: this.detail
         }
     }
+
+    addDependencies() {
+        Renderable.addComposerDependency("filament/filament", this.getTemplateFile())
+    }
 }

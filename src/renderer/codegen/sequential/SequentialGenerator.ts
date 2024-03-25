@@ -11,6 +11,8 @@ import Main from "@Renderer/services/wrappers/Main"
 import GenerateDatabaseSeeder from "./services/database/GenerateDatabaseSeeder"
 import GenerateFilamentResources from "./services/crud/GenerateFilamentResources"
 import GenerateLivewireLayout from "./services/crud/GenerateLivewireLayout"
+import Renderable from "./services/foundation/Renderable"
+import PackageChecker from "./services/PackageChecker"
 
 export default class SequentialGenerator {
     static startTime: number = 0
@@ -22,18 +24,31 @@ export default class SequentialGenerator {
         this.project = project
     }
 
-    // async checkDependencies(): Promise<boolean> {
-        // Renderable.setMode("checker")
-        // await this.runGenerators()
-        // Renderable.setMode("generate")
-        // return await PackageChecker.hasMissingDependencies()
+    async checkDependencies(): Promise<boolean> {
+        PackageChecker.reset()
 
-        // JetstreamInstaller.run()
-    // }
+        Renderable.setMode("checker")
+        await this.runGenerators()
+        Renderable.setMode("generate")
 
-    async run() {
+        return await PackageChecker.hasMissingDependencies()
+    }
+
+    async run(): Promise<boolean> {
         try {
-            await this.runGeneration() 
+            return await this.checkDependencies()
+                .then(async (hasMissingDependencies) => {
+                    if (hasMissingDependencies) return false
+
+                    await this.runGeneration()
+
+                    return true
+                })
+                .catch(error => {
+                    console.error("Error while checking dependencies: ", error)
+
+                    return false
+                })
         } catch (error) {
             console.error("Error while running generation: ", error)
             
