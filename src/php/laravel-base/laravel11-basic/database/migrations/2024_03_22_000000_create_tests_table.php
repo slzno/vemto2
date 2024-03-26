@@ -15,7 +15,13 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained();
             $table->string('title')->index()->nullable();
+            $table->ipAddress('visitor_ip');
+            $table->macAddress('device_mac');
+            $table->float('some_float', 8, 2);
+            $table->decimal('some_decimal', 8, 2);
+            $table->unsignedBigInteger('some_unsigned_big_int');
             $table->timestamps();
+            $table->softDeletesTz('deleted_at', precision: 0);
         });
 
         // Rename table
