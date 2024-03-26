@@ -20,6 +20,7 @@ class Column {
     public bool $nullable;
     public bool $unsigned;
     public bool $autoIncrement;
+    public bool $isRawDefault;
     
     public static function fromSchemaColumn(SchemaColumn $column, int $order = 0): Column
     {
@@ -33,6 +34,7 @@ class Column {
         $newColumn->type = $column->getType()->value;
         $newColumn->comment = $column->getComment();
         $newColumn->precision = $column->getPrecision();
+        $newColumn->isRawDefault = $column->isRawDefault();
         $newColumn->index = false;
         $newColumn->unique = false;
         $newColumn->default = $column->getDefault();
