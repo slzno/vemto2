@@ -8,12 +8,13 @@ class Column {
     
     public string $name;
     public string $type;
-    public ?string $total;
+    public ?int $total;
+    public ?int $places;
     public ?string $length;
-    public ?string $places;
     public ?string $default;
     public ?string $comment;
     public ?int $precision;
+    public ?int $scale;
     public ?int $order;
     public bool $index;
     public bool $unique;
@@ -34,12 +35,18 @@ class Column {
         $newColumn->type = $column->getType()->value;
         $newColumn->comment = $column->getComment();
         $newColumn->precision = $column->getPrecision();
+        $newColumn->scale = $column->getScale();
         $newColumn->isRawDefault = $column->isRawDefault();
         $newColumn->index = false;
         $newColumn->unique = false;
         $newColumn->default = $column->getDefault();
-        $newColumn->total = null;
-        $newColumn->places = null;
+
+        // Set total and places for decimal type to adequate with the
+        // old schema reader implementation
+        if($newColumn->type === 'decimal') {
+            $newColumn->total = $column->getPrecision();
+            $newColumn->places = $column->getScale();
+        }
 
         $newColumn->fixAliasType();
 
