@@ -8,7 +8,7 @@ use KitLoong\MigrationsGenerator\Schema\Models\Column as SchemaColumn;
 use KitLoong\MigrationsGenerator\Schema\Models\ForeignKey as SchemaForeignKey;
 
 class Table {
-    public string $name;
+    public string $name = '';
     public array $oldNames = [];
     public array $migrations = [];
     public array $columns = [];
@@ -111,5 +111,20 @@ class Table {
         }
 
         return $index;
+    }
+
+    public function getFormatted(): array
+    {
+        return [
+            'name' => $this->name,
+            'oldNames' => $this->oldNames,
+            'migrations' => $this->migrations,
+            'columns' => collect($this->columns)->map(function(Column $column) {
+                return $column->getFormatted();
+            })->toArray(),
+            'indexes' => collect($this->indexes)->map(function(Index $index) {
+                return $index->getFormatted();
+            })->toArray(),
+        ];
     }
 }

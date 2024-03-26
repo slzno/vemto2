@@ -53,7 +53,7 @@ class ReadTablesFromDatabase
 
             $this->generate($tables);
 
-            return $this->tableRepository->get();
+            return $this->tableRepository->getFormatted();
         } finally {
             DB::setDefaultConnection($connection);
         }

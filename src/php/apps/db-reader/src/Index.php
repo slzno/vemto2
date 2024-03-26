@@ -6,14 +6,14 @@ use KitLoong\MigrationsGenerator\Schema\Models\Index as SchemaIndex;
 use KitLoong\MigrationsGenerator\Schema\Models\ForeignKey as SchemaForeignKey;
 
 class Index {
-    public string $name;
+    public string $name = '';
     public array $columns = [];
-    public ?string $algorithm;
-    public ?string $references;
-    public ?string $on;
-    public ?string $onDelete;
-    public ?string $onUpdate;
-    public string $type; // primary, unique, index, foreign, spatialIndex, fullText, fulltext
+    public ?string $algorithm = null;
+    public ?string $references = null;
+    public ?string $on = null;
+    public ?string $onDelete = null;
+    public ?string $onUpdate = null;
+    public string $type = 'index'; // primary, unique, index, foreign, spatialIndex, fullText, fulltext
 
     public string $table;
 
@@ -192,5 +192,21 @@ class Index {
         }
 
         return null;
+    }
+
+    public function getFormatted(): array
+    {
+        return [
+            'name' => $this->name,
+            'columns' => collect($this->columns)->map(function($column) {
+                return $column->name;
+            })->toArray(),
+            'algorithm' => $this->algorithm,
+            'references' => $this->references,
+            'on' => $this->on,
+            'onDelete' => $this->onDelete,
+            'onUpdate' => $this->onUpdate,
+            'type' => $this->type,
+        ];
     }
 }

@@ -6,22 +6,22 @@ use KitLoong\MigrationsGenerator\Schema\Models\Column as SchemaColumn;
 
 class Column {
     
-    public string $name;
-    public string $type;
-    public ?int $total;
-    public ?int $places;
-    public ?string $length;
-    public ?string $default;
-    public ?string $comment;
-    public ?int $precision;
-    public ?int $scale;
-    public ?int $order;
-    public bool $index;
-    public bool $unique;
-    public bool $nullable;
-    public bool $unsigned;
-    public bool $autoIncrement;
-    public bool $isRawDefault;
+    public string $name = '';
+    public string $type = '';
+    public ?int $total = null;
+    public ?int $places = null;
+    public ?string $length = null;
+    public ?string $default = null;
+    public ?string $comment = null;
+    public ?int $precision = null;
+    public ?int $scale = null;
+    public ?int $order = null;
+    public bool $index = false;
+    public bool $unique = false;
+    public bool $nullable = false;
+    public bool $unsigned = false;
+    public bool $autoIncrement = false;
+    public bool $isRawDefault = false;
     
     public static function fromSchemaColumn(SchemaColumn $column, int $order = 0): Column
     {
@@ -161,5 +161,27 @@ class Column {
             $this->type = 'tinyInteger';
             $this->unsigned = true;
         }
+    }
+
+    public function getFormatted(): array
+    {
+        return [
+            'name' => $this->name,
+            'type' => $this->type,
+            'total' => $this->total,
+            'places' => $this->places,
+            'length' => $this->length,
+            'default' => $this->default,
+            'comment' => $this->comment,
+            'precision' => $this->precision,
+            'scale' => $this->scale,
+            'order' => $this->order,
+            'index' => $this->index,
+            'unique' => $this->unique,
+            'nullable' => $this->nullable,
+            'unsigned' => $this->unsigned,
+            'autoIncrement' => $this->autoIncrement,
+            'isRawDefault' => $this->isRawDefault,
+        ];
     }
 }

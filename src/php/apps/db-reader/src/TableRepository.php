@@ -2,8 +2,6 @@
 
 namespace VemtoDBReader;
 
-use Vemto\Vemto;
-
 class TableRepository
 {
     protected array $tables = [];
@@ -13,6 +11,15 @@ class TableRepository
     public function __construct()
     {
         $this->migrationRepository = app(MigrationRepository::class);
+    }
+
+    public function getFormatted(): array
+    {
+        $tables = collect($this->tables);
+
+        return $tables->map(function($table) {
+            return $table->getFormatted();
+        })->toArray();
     }
 
     public function get(): array
