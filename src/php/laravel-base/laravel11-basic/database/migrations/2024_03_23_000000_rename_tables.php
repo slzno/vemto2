@@ -11,11 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Schema::rename('tests', 'test');
-        // Schema::rename('test', 'tests');
-        // Schema::rename('tests', 'tests_renamed');
-        // Schema::rename('tests_renamed', 'new_tests');
-        // Schema::rename('new_tests', 'tests');
+        // tests table
+        Schema::rename('tests', 'test');
+        Schema::rename('test', 'tests');
+        Schema::rename('tests', 'tests_renamed');
+        Schema::rename('tests_renamed', 'new_tests');
+        Schema::rename('new_tests', 'tests');
+
+        // posts table
+        Schema::rename('posts', 'post');
+        Schema::rename('post', 'posts');
     }
 
     /**

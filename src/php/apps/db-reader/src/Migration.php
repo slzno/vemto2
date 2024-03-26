@@ -100,7 +100,7 @@ class Migration {
         $this->renamedTables = [];
 
         // Regular expression to match the Schema::rename('old_table_name', 'new_table_name') pattern
-        $pattern = "/Schema::rename\(\s*'([^']+)',\s*'([^']+)'\s*\);/";
+        $pattern = "/(?<!\/\/)Schema::rename\(\s*'([^']+)',\s*'([^']+)'\s*\);/";
 
         // Use preg_match_all to find all matches in $this->migrationContent
         if (preg_match_all($pattern, $this->simplifiedContent, $matches)) {
