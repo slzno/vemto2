@@ -5,6 +5,7 @@ namespace VemtoDBReader;
 use KitLoong\MigrationsGenerator\Schema\Models\Column as SchemaColumn;
 
 class Column {
+    
     public string $name;
     public string $type;
     public ?string $total;
@@ -13,15 +14,17 @@ class Column {
     public ?string $default;
     public ?string $comment;
     public ?int $precision;
+    public ?int $order;
     public bool $index;
     public bool $unique;
     public bool $nullable;
     public bool $unsigned;
     public bool $autoIncrement;
     
-    public static function fromSchemaColumn(SchemaColumn $column): Column
+    public static function fromSchemaColumn(SchemaColumn $column, int $order = 0): Column
     {
         $newColumn = new Column;
+        $newColumn->order = $order;
         $newColumn->name = $column->getName();
         $newColumn->length = $column->getLength();
         $newColumn->nullable = (bool) $column->isNotNull() ? false : true;

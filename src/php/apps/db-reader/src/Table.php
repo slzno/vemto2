@@ -23,7 +23,8 @@ class Table {
 
     public function addColumnIfNotEmpty(SchemaColumn $column): void
     {
-        $newColumn = Column::fromSchemaColumn($column);
+        $columnOrder = count($this->columns);
+        $newColumn = Column::fromSchemaColumn($column, $columnOrder);
         
         if(!$newColumn) {
             return;
