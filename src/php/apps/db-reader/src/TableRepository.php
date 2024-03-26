@@ -37,32 +37,29 @@ class TableRepository
     public function attachTablesOldNames(): void
     {
         $renames = $this->migrationRepository->getRenamedTables();
-        $renames = array_reverse($renames); // Reverse to start from the oldest rename
 
-        \Vemto\Vemto::dump($renames);
+        $oldTablesNames = [];
 
-        // Build a map of new names to a list of their old names
-        // $newToOldNamesMap = [];
-        // foreach ($renames as $rename) {
-        //     if (!isset($newToOldNamesMap[$rename['new']])) {
-        //         $newToOldNamesMap[$rename['new']] = [];
-        //     }
-        //     array_unshift($newToOldNamesMap[$rename['new']], $rename['old']);
-        // }
+        foreach($renames as $rename) {
+            $oldTableName = $rename['old'];
+            $newTableName = $rename['new'];
 
-        // foreach ($this->tables as $tableName => $table) {
-        //     if (isset($newToOldNamesMap[$tableName])) {
-        //         // If the current table has old names, trace back to the original name
-        //         // and attach each old name to the table
-        //         $currentName = $tableName;
-        //         while (isset($newToOldNamesMap[$currentName])) {
-        //             foreach ($newToOldNamesMap[$currentName] as $oldName) {
-        //                 $table->addOldName($oldName);
-        //                 $currentName = $oldName; // Move back in the rename history
-        //             }
-        //         }
-        //     }
-        // }
+            if(!isset($oldTablesNames[$oldTableName])) {
+                $oldTablesNames[$oldTableName] = [];
+            }
+
+            array_push($oldTablesNames[$oldTableName], $oldTableName);
+
+            $oldTablesNames[$newTableName] = $oldTablesNames[$oldTableName];
+
+            unset($oldTablesNames[$oldTableName]);
+        }
+
+        foreach ($this->tables as $tableName => $table) {
+            if(isset($oldTablesNames[$tableName])) {
+                $table->oldNames = $oldTablesNames[$tableName];
+            }
+        }
     }
 
 }
