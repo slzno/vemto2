@@ -435,6 +435,14 @@ export default class Project extends RelaDB.Model {
         )
     }
 
+    getSkippedRenderableFiles(ordered: boolean = true): RenderableFile[] {
+        const renderableFiles = ordered ? this.getOrderedRenderableFiles() : this.renderableFiles
+
+        return renderableFiles.filter(
+            (renderableFile) => renderableFile.wasSkipped()
+        )
+    }
+
     getOrderedRenderableFiles(): RenderableFile[] {
         return this.renderableFiles.sort((a, b) => {
             if (a.status === RenderableFileStatus.ERROR) return -1

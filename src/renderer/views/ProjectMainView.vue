@@ -22,8 +22,9 @@
     import UiWarning from "@Renderer/components/ui/UiWarning.vue"
     import UiInfo from "@Renderer/components/ui/UiInfo.vue"
     import LicenseModal from "./components/System/LicenseModal.vue"
+    import DependenciesModal from "./components/Common/DependenciesModal.vue"
     import LicenseHandler from "@Renderer/services/LicenseHandler"
-import PackageChecker from "@Renderer/codegen/sequential/services/PackageChecker"
+    import PackageChecker from "@Renderer/codegen/sequential/services/PackageChecker"
 
     const canShow = ref(false),
         projectStore = useProjectStore(),
@@ -33,6 +34,7 @@ import PackageChecker from "@Renderer/codegen/sequential/services/PackageChecker
         confirmDialog = ref(null),
         aiConfirmDialog = ref(null),
         licenseModal = ref(null),
+        dependenciesModal = ref(null),
         licenseModalWarningMessage = ref(""),
         confirmDialogMessage = ref(""),
         confirmDialogTitle = ref(""),
@@ -191,8 +193,8 @@ import PackageChecker from "@Renderer/codegen/sequential/services/PackageChecker
         }
     }
 
-    const openMissingDependenciesModal = () => {
-        console.log('Will open missing dependencies modal')
+    const openMissingDependenciesModal = async () => {
+        await dependenciesModal.value.show()
     }
 
     const openURL = (url: string) => {
@@ -215,6 +217,10 @@ import PackageChecker from "@Renderer/codegen/sequential/services/PackageChecker
         <!-- Content -->
         <div v-if="canShow" class="flex-1">
             <RouterView />
+
+            <DependenciesModal
+                ref="dependenciesModal"
+            />
 
             <LicenseModal
                 ref="licenseModal" 

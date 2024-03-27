@@ -18,6 +18,7 @@
         allRemovedFiles = ref([]) as Ref<RenderableFile[]>,
         allConflictFiles = ref([]) as Ref<RenderableFile[]>,
         allIgnoredFiles = ref([]) as Ref<RenderableFile[]>,
+        allSkippedFiles = ref([]) as Ref<RenderableFile[]>,
         loadingFiles = ref(false),
         uiTabs = ref(null)
 
@@ -50,6 +51,7 @@
             allRemovedFiles.value = projectStore.project.getRemovedRenderableFiles()
             allConflictFiles.value = projectStore.project.getConflictRenderableFiles()
             allIgnoredFiles.value = projectStore.project.getIgnoredRenderableFiles()
+            allSkippedFiles.value = projectStore.project.getSkippedRenderableFiles()
     
             loadingFiles.value = false
             uiTabs.value.clearLoadingTab()
@@ -78,6 +80,11 @@
             label: "Removed",
             value: "removed",
             badge: () => allRemovedFiles.value.length,
+        },
+        {
+            label: "Skipped",
+            value: "skipped",
+            badge: () => allSkippedFiles.value.length,
         },
         // { label: "Settings", value: "settings" },
     ]
@@ -115,6 +122,15 @@
 
             return filterBySearch(
                 allIgnoredFiles.value,
+                search
+            )
+        }),
+        skippedFiles = computed(() => {
+            if (!projectStore.project || !projectStore.project.renderableFiles)
+                return []
+
+            return filterBySearch(
+                allSkippedFiles.value,
                 search
             )
         })
@@ -268,6 +284,33 @@
                 <div v-if="removedFiles.length">
                     <RenderableFileViewer
                         v-for="file in removedFiles"
+                        :key="file.id"
+                        :file="file"
+                    >
+                    </RenderableFileViewer>
+                </div>
+            </div>
+    
+            <div class="p-4" v-if="selectedTab === 'skipped'">
+                <UiEmptyMessage v-show="!skippedFiles.length">
+                    <span>There are no skipped files</span>
+                </UiEmptyMessage>
+    
+                <div class="flex top-0 left-0 space-x-2 text-sm z-20 mb-4">
+                    <div>
+                        <!-- Search -->
+                        <div class="flex items-center">
+                            <UiText
+                                v-model="search"
+                                placeholder="Search files..."
+                            />
+                        </div>
+                    </div>
+                </div>
+                
+                <div v-if="skippedFiles.length">
+                    <RenderableFileViewer
+                        v-for="file in skippedFiles"
                         :key="file.id"
                         :file="file"
                     >

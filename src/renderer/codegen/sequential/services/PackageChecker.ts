@@ -2,6 +2,11 @@ import Project from "@Common/models/Project"
 import ProjectInfo from "@Renderer/services/project/ProjectInfo"
 import Renderable, { RenderableDependency } from "./foundation/Renderable"
 
+export interface DependenciesMissing {
+    composer: RenderableDependency[]
+    packages: RenderableDependency[]
+}
+
 export default class PackageChecker {
     static projectInfo: null | ProjectInfo = null
 
@@ -48,6 +53,17 @@ export default class PackageChecker {
 
     static getComposerDependenciesMissing(): RenderableDependency[] {
         return this.composerDependenciesMissing
+    }
+
+    static getPackagesDependenciesMissing(): RenderableDependency[] {
+        return this.packagesDependenciesMissing
+    }
+
+    static getDependenciesMissing(): DependenciesMissing {
+        return {
+            composer: this.getComposerDependenciesMissing(),
+            packages: this.getPackagesDependenciesMissing()
+        } as DependenciesMissing
     }
 
     static reset(): void {
