@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Facade;
 
 use VemtoDBReader\TableRepository;
+use VemtoDBReader\ModelRepository;
 use VemtoDBReader\MigrationRepository;
 use VemtoDBReader\ReadTablesFromDatabase;
 
@@ -98,9 +99,12 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
 
     $tableRepository = $app->make(TableRepository::class);
     $tables = $tableRepository->getFormatted();
+
+    // $modelRepository = new ModelRepository($APP_DIRECTORY);
+    // $models = $modelRepository->getFormatted();
     
     Vemto::respondWith([
-        'status' => 'success',
-        'tables' => $tables
+        'tables' => $tables,
+        'models' => [],
     ]);
 });

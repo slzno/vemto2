@@ -1,7 +1,10 @@
 <?php
 
+namespace VemtoDBReader;
+
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use ReflectionClass;
 
 /**
  * TODO: Refactor this class to have a cleaner code (it was experimental but turned out 
@@ -9,18 +12,23 @@ use Illuminate\Database\Eloquent\Relations\Relation;
  */
 
 class ModelRepository {
-    protected $models = [];
+    protected array $models = [];
+    protected string $projectPath;
     
-    public static function getModelsFormatted() {
-        $models = self::getModels();
+    public function __construct(string $projectPath) {
+        $this->projectPath = $projectPath;
+    }
+
+    public function getFormatted() {
+        $models = $this->get();
 
         $formattedModels = [];
 
         foreach ($models as $model) {
-            $allImports = self::getAllImports($model);
+            $allImports = $this->getAllImports($model);
 
             $allImports = collect($allImports)->map(function ($importData) {
-                return self::buildImportStatementFromData($importData);
+                return $this->buildImportStatementFromData($importData);
             })->values()->toArray();
 
             $reflection = new \ReflectionClass($model['class']);
@@ -36,12 +44,12 @@ class ModelRepository {
                 return ! $parentClass || ! $parentClass->implementsInterface($interface->name);
             })->values()->toArray();
             $interfaces = collect($interfaces)->map(function ($interface) use ($model) {
-                return self::buildImportStatement($model, $interface);
+                return $this->buildImportStatement($model, $interface);
             })->values()->toArray();
 
             // get the model traits
             $traits = collect($reflection->getTraits())->map(function ($trait) use ($model) {
-                return self::buildImportStatement($model, $trait);
+                return $this->buildImportStatement($model, $trait);
             })->values()->toArray();
 
             // remove traits from allImports (because the regex to get the imports also gets the traits)
@@ -158,7 +166,7 @@ class ModelRepository {
                 'namespace' => $reflection->getNamespaceName(),
                 'path' => $model['path'],
                 'allImports' => $allImports,
-                'parentClass' => self::buildImportStatement($model, $parentClass),
+                'parentClass' => $this->buildImportStatement($model, $parentClass),
                 'interfaces' => $interfaces,
                 'traits' => $traits,
                 'hasFillable' => $hasProperty('protected', 'fillable'),
@@ -184,14 +192,14 @@ class ModelRepository {
         return $formattedModels;
     }
 
-    public static function buildImportStatement(array $modelData, $import)
+    public function buildImportStatement(array $modelData, $import)
     {
-        $importData = self::getImportData($modelData, $import);
+        $importData = $this->getImportData($modelData, $import);
 
-        return self::buildImportStatementFromData($importData);
+        return $this->buildImportStatementFromData($importData);
     }
 
-    public static function buildImportStatementFromData($importData)
+    public function buildImportStatementFromData($importData)
     {
         if($importData['name'] === $importData['alias']) {
             return $importData['import'];
@@ -200,15 +208,15 @@ class ModelRepository {
         return sprintf("%s as %s", $importData['import'], $importData['alias']);
     }
 
-    public static function getImportData(array $modelData, $import) {
+    public function getImportData(array $modelData, $import) {
         return [
             'import' => $import->name,
             'name' => $import->getShortName(),
-            'alias' => self::getAlias($modelData['fileContent'], $import),
+            'alias' => $this->getAlias($modelData['fileContent'], $import),
         ];
     }
 
-    public static function getAlias(string $classContent, $import) {
+    public function getAlias(string $classContent, $import) {
         $useStatement = $import->name;
         $alias = $import->getShortName();
     
@@ -224,7 +232,7 @@ class ModelRepository {
         return $alias;
     }
 
-    public static function getAllImports($model)
+    public function getAllImports($model)
     {
         $fileContent = $model['fileContent'];
 
@@ -264,16 +272,20 @@ class ModelRepository {
      * https://gist.github.com/mohammad425/231242958edb640601108bdea7bcf9ac
      * @return array
      */
-    public static function getModels() {
+    public function get() {
+        $composerPath = $this->projectPath . DIRECTORY_SEPARATOR . 'composer.json';
+
         $composerData = json_decode(
-            file_get_contents(base_path('composer.json')), 
+            file_get_contents($composerPath), 
             true
         );
 
         $models = [];
         
         foreach ((array) data_get($composerData, 'autoload.psr-4') as $namespace => $path) {
-            $models = array_merge(collect(File::allFiles(base_path($path)))
+            $finalPath = $this->projectPath . DIRECTORY_SEPARATOR . $path;
+
+            $models = array_merge(collect(File::allFiles($finalPath))
                 ->map(function ($item) use ($namespace) {
                     $path = $item->getRelativePathName();
                     
@@ -291,6 +303,10 @@ class ModelRepository {
                     ];
                 })
                 ->filter(function ($classData) {
+                    \Vemto\Vemto::dump($classData['class']);
+
+                    require_once $classData['fullPath'];
+
                     $valid = false;
 
                     if (class_exists($classData['class'])) {
