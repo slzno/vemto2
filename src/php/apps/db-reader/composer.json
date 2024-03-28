@@ -1,5 +1,5 @@
 {
-    "name": "vemto/schema-reader",
+    "name": "vemto/db-reader",
     "type": "project",
     "description": "A small tool for read Laravel schema from migrations.",
     "require": {
@@ -12,11 +12,9 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app/",
-            "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/",
             "Vemto\\": "common/",
-            "VemtoDBReader\\": "src/"
+            "VemtoDBReader\\": "src/",
+            "KitLoong\\MigrationsGenerator\\": "vendor/kitloong/laravel-migrations-generator/src/"
         }
     },
     "autoload-dev": {

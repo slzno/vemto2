@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use App\Models\ExistingModel;
-
 class Check extends ExistingModel
 {
-    
+    public static function canRun()
+    {
+        return true;
+    }
 }

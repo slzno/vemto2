@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Check;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,6 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if(!Check::canRun()) {
+            throw new \Exception('Check failed, cannot run migrations');
+        }
+
         Schema::create('test', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
