@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\InexistentModel;
+// use Illuminate\Database\Eloquent\InexistentModel;
 
-class Test extends InexistentModel
+class Test extends Model
 {
     
 }

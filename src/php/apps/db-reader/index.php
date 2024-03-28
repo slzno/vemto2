@@ -100,11 +100,11 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
     $tableRepository = $app->make(TableRepository::class);
     $tables = $tableRepository->getFormatted();
 
-    // $modelRepository = new ModelRepository($APP_DIRECTORY);
-    // $models = $modelRepository->getFormatted();
+    $modelRepository = new ModelRepository($APP_DIRECTORY);
+    $models = $modelRepository->getFormatted();
     
     Vemto::respondWith([
         'tables' => $tables,
-        'models' => [],
+        'models' => $models,
     ]);
 });
