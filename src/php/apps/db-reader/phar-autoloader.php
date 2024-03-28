@@ -1,7 +1,5 @@
 <?php
 
-use SebastianBergmann\CodeCoverage\Report\PHP;
-
 spl_autoload_register(function ($class) {
     // Define the base directory inside the PHAR for your custom namespaces
     $baseDir = __DIR__;
@@ -34,8 +32,7 @@ spl_autoload_register(function ($class) {
             require $file;
             return;
         } else {
-            throw new \Exception("File not found: $file");
+            throw new \Exception("Secondary Autoloader | File not found: $file");
         }
     }
-    // If not found, the execution will continue to the next registered autoloader
 });
