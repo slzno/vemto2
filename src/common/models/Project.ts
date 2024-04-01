@@ -825,6 +825,10 @@ export default class Project extends RelaDB.Model {
         return this.settings.uiStarterKit === ProjectUIStarterKit.JETSTREAM
     }
 
+    isBreeze(): boolean {
+        return this.settings.uiStarterKit === ProjectUIStarterKit.BREEZE
+    }
+
     isFreshLaravelProject(): boolean {
         return this.settings.isFreshLaravelProject
     }

@@ -21,7 +21,7 @@ Route::prefix('/<$ section.routeBasePath $>')
     <% if(section.hasRoutePrefix()) { %>
         ->name('<$ section.routePrefix $>.')
     <% } %>
-    <% if(section.requiresAuthentication()) { %>
+    <% if(section.requiresAuthentication() && this.project.isJetstream()) { %>
         ->middleware([
             'auth:sanctum',
             config('jetstream.auth_session'),

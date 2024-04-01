@@ -68,7 +68,7 @@ export default class SequentialGenerator {
     async runGenerators() {
         await new GenerateUiComponentsFiles().start()
 
-        await new GenerateMenu().start()
+        await new GenerateMenu().start(this.project)
 
         await new GenerateRoutes().start(this.project)
 

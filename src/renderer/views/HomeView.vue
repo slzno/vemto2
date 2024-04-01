@@ -1,8 +1,9 @@
 <script setup lang="ts">
-    import { ref, onMounted, computed, Ref } from "vue"
+    import { ref, onMounted, computed, Ref, nextTick } from "vue"
     import { useRouter } from "vue-router"
     import { ProjectSettings } from "@Common/models/Project"
     import Main from "@Renderer/services/wrappers/Main"
+    import CreateProjectView from "@Renderer/views/components/Home/CreateProjectView.vue"
     import { compareVersions } from 'compare-versions'
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
@@ -78,6 +79,14 @@
         })
     })
 
+    const reloadProjectListAndOpenPath = (path: string) => {
+        getProjects()
+        
+        nextTick(() => {
+            openPath(path, true)
+        })
+    }
+
     const openFolder = async () => {
         const phpInstalled = await Main.API.phpIsInstalled()
         
@@ -130,7 +139,7 @@
         }
     }
 
-    const openPath = async (path) => {
+    const openPath = async (path: string, isNewProject: boolean = false) => {
         currentConnectingFolder.value = path
 
         const projectInfo = new ProjectInfo(path)
@@ -162,11 +171,11 @@
             return
         }
 
-        buildConnectingFolderSettings(projectInfo)
+        buildConnectingFolderSettings(projectInfo, isNewProject)
         showingConnectingFolderModal.value = true
     }
 
-    const buildConnectingFolderSettings = (projectInfo) => {
+    const buildConnectingFolderSettings = (projectInfo, isNewProject: boolean) => {
         connectingFolderSettings.value.cssFramework = projectInfo.getCssFramework()
         connectingFolderSettings.value.uiStarterKit = projectInfo.getStarterKit()
         connectingFolderSettings.value.usesLivewire = projectInfo.hasLivewire
@@ -175,6 +184,7 @@
         connectingFolderSettings.value.usesReact = projectInfo.hasReact
         connectingFolderSettings.value.usesSvelte = projectInfo.hasSvelte
         connectingFolderSettings.value.laravelVersion = projectInfo.laravelVersion
+        connectingFolderSettings.value.isFreshLaravelProject = isNewProject
     }
 
     const openSchema = async () => {
@@ -188,10 +198,6 @@
         await projectManager.disconnect(project.id)
 
         getProjects()
-    }
-
-    const newApp = async () => {
-        Alert.info("Applications creation wizard is not available yet. Please create a project manually then connect it to Vemto")
     }
 
     const connectSSH = async () => {
@@ -392,10 +398,7 @@
         <header class="flex w-full justify-center mt-10">
             <div class="flex flex-col">
                 <div class="flex gap-2">
-                    <UiButton class="gap-1.5" @click="newApp()">
-                        <PlusCircleIcon class="w-5 h-5 text-red-500" />
-                        New App
-                    </UiButton>
+                    <CreateProjectView @reloadProjectListAndOpenPath="reloadProjectListAndOpenPath" />
                     <UiButton class="gap-1.5" @click="openFolder()">
                         <FolderIcon class="w-5 h-5 text-red-500" />
                         Connect Folder
