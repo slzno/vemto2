@@ -19,7 +19,7 @@ class ModelRepository {
         $this->projectPath = $projectPath;
     }
 
-    public function getFormatted() {
+    public function getFormatted(): array {
         $models = $this->get();
 
         $formattedModels = [];
@@ -272,7 +272,7 @@ class ModelRepository {
      * https://gist.github.com/mohammad425/231242958edb640601108bdea7bcf9ac
      * @return array
      */
-    public function get() {
+    public function get(): array {
         $composerPath = $this->projectPath . DIRECTORY_SEPARATOR . 'composer.json';
 
         $composerData = json_decode(
@@ -303,10 +303,6 @@ class ModelRepository {
                     ];
                 })
                 ->filter(function ($classData) {
-                    \Vemto\Vemto::dump($classData['class']);
-
-                    require_once $classData['fullPath'];
-
                     $valid = false;
 
                     if (class_exists($classData['class'])) {
