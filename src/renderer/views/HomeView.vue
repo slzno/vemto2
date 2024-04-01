@@ -58,7 +58,7 @@
 
         fillAppVersion()
 
-        showWelcomeModal()
+        checkAndShowWelcomeModal()
 
         window.addEventListener("error", (event) => {
             console.log("Error happened in the renderer process")
@@ -222,7 +222,7 @@
         Main.API.openURL(url)
     }
 
-    const showWelcomeModal = () => {
+    const checkAndShowWelcomeModal = () => {
         const welcomeModalClosedAt = localStorage.getItem("welcomeModalClosedAt")
 
         if(welcomeModalClosedAt) {
@@ -234,7 +234,26 @@
             if(diffInHours < 24) return
         }
 
+        showWelcomeModal()
+    }
+
+    const showWelcomeModal = async () => {
         showingWelcomeModal.value = true
+
+        nextTick(async () => {
+            const welcomeModalContentResponse = await fetch("https://raw.githubusercontent.com/TiagoSilvaPereira/vemto2-releases/main/alert.html"),
+                welcomeModalContent = await welcomeModalContentResponse.text()
+
+            document.getElementById("welcomeModalContent").innerHTML = welcomeModalContent
+
+            // change all links href inside welcomeModalContent to open in the default browser using the openURL method
+            document.querySelectorAll("#welcomeModalContent a").forEach((link) => {
+                link.addEventListener("click", (event) => {
+                    event.preventDefault()
+                    openURL(link.getAttribute("href"))
+                })
+            })
+        })
     }
 
     const closeWelcomeModal = () => {
@@ -262,65 +281,8 @@
         :show="showingWelcomeModal"
         @close="closeWelcomeModal"
     >
-        <div>
-            <div class="p-4 pb-24 font-serif text-lg">
-                <div class="flex w-full justify-end px-4">
-                    <div class="flex space-x-3 text-sm">
-                        <a @click="openURL('https://vemto.app')" class="text-red-500 cursor-pointer">Site</a>
-                        <a @click="openURL('https://twitter.com/VemtoApp')" class="text-red-500 cursor-pointer">Twitter</a>
-                        <a @click="openURL('https://github.com/TiagoSilvaPereira/vemto2-issues/issues/new')" class="text-red-500 cursor-pointer">Issues</a>
-                    </div>
-                </div>
-                <h1 class="text-bold text-lg">Please, read this carefully!</h1>
-                <br><br>
-                Hello!
-                <br><br>
-                I can't express how happy I am that you're seeing this screen! 😊
-                <br><br>
-                It was a year and a half of development, full of ups and downs. I'll soon make a blog post telling everything about this period, but let's get to the point:
-                <br><br>
-                <span class="text-red-500 font-bold">Vemto 2 is finally here </span>
-                <br><br>
-                It's still a pre-alpha version; of course, there will probably be bugs. But I'm happy because this version has the correct architecture, which has been rewritten several times during this period and will now only be improved (hopefully for the next 10 years).
-                <br><br>
-                I recommend using it cautiously (always commit your code before connecting it to Vemto). It's essential to consider a few things now:
-                <br><br>
-                1 - Vemto 2 requires at least basic knowledge of Laravel and PHP. At least for now, we have decided not to do basic things like creating a new project, installing composer packages, etc. Vemto now assumes that you know how to do these things and focuses on the most crucial thing, visualizing and generating code. However, we will soon have tools to take care of these parts correctly (Composer Manager, Project Creator, etc.)
-                <br><br>
-                2 - Unlike version 1, Vemto is now not just a boilerplate tool. It connects directly to your project and creates a .vemto folder inside it (you can put this folder in .gitigore if you wish, but be sure to back it up, as it represents your project)
-                <br><br>
-                3 - Vemto can read any project with a .vemto folder. If you upload your project to another computer (using GIT or manually) with this folder inside, Vemto can open it normally. This means there is no need to export projects.
-                <br><br>
-                4 - When Vemto 2 generates code, it does just that. It does not install packages or modify composer.json or package.json during generation. This was a significant source of problems in version 1, and we found another way to do this, which will be implemented soon (Composer Manager, NPM Manager, etc.)
-                <br><br>
-                5 - Some features from Vemto 1 are still under development as we needed to resolve the entire architecture before bringing them, which took almost the whole development period. Now, we are focused on these features, and soon, we will have:
-                <br><br>
-                <ul>
-                    <li>- Generation of API Endpoints</li>
-                    <li>- Template Editor</li>
-                    <li>- Tests Generation</li>
-                    <li>- Plugin support</li>
-                    <li>- More AI features</li>
-                </ul>
-                <br><br>
-                6 - You may prefer to create your Laravel project with Jetstream/Livewire for CRUD generation. Any other boilerplate with Livewire will work (Breeze, Laravel UI, etc), but we haven't created the menu file yet, so you'll probably have to edit it manually
-                <br><br>
-                7 - Vemto 1 still works very well for generating API Endpoints. You can use it for this and connect Vemto 2 to your project.
-                <br><br>
-                8 - Small Tip: Test Filament code generation—it's awesome now! Just remember to install the Filament package in your project.
-                <br><br>
-                9 - Please report any bug in the <a @click="openURL('https://github.com/TiagoSilvaPereira/vemto2-issues/issues/new')" class="text-red-500 cursor-pointer">Issues Repository</a> or email <b>contact@vemto.app</b> (Issues repository is preferred).
-                <br><br>
-                We are focused on improving Vemto 2 and reaching the Release version as quickly as possible (our plans are for the middle of the year).
-                <br><br>
-                I am immensely grateful to everyone who believed in and supported me, even when I was unable to release any more Vemto updates.
-                <br><br>
-                Thank you for your attention and support! 
-                <br><br>
-                Yours sincerely,
-                <br>
-                Tiago Rodrigues - Creator of Vemto
-            </div>
+        <div id="welcomeModalContent">
+            
         </div>
 
         <template #footer>
@@ -495,7 +457,7 @@
 
                         <button
                             title="About Vemto"
-                            @click="showingWelcomeModal = true"
+                            @click="showWelcomeModal()"
                             class="relative cursor-pointer"
                         >
                             <InformationCircleIcon
