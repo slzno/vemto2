@@ -47,7 +47,7 @@
         await HandleProjectDatabase.populate(() => {
             canShow.value = true
 
-            checkSourceChanges()
+            // checkSourceChanges()
         })
     })
 

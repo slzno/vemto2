@@ -9,7 +9,7 @@ export default class ReadProjectSchema {
         const isDevelopment = process.env.NODE_ENV === "development",
             staticFolderPath = isDevelopment ? app.getAppPath() : process.resourcesPath
             
-        const apiFilePath = path.join(staticFolderPath, "static", "VMTTL1")
+        const apiFilePath = path.join(staticFolderPath, "static", "VMTTL2")
 
         return await CommandExecutor.executePhpOnPath(projectPath, apiFilePath)
     }

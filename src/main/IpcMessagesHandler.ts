@@ -113,6 +113,11 @@ export function HandleIpcMessages() {
 
     ipcMain.handle("folder:open", (event, folderPath) => {
         return handleError(event, () => {
+            // if on Windows, replace / with \ to open the folder in the file explorer
+            if(process.platform === "win32") {
+                folderPath = folderPath.replace(/\//g, "\\")
+            }
+
             shell.openPath(folderPath)
         })
     })

@@ -4,9 +4,11 @@ spl_autoload_register(function ($class) {
     // Define the base directory inside the PHAR for your custom namespaces
     $baseDir = __DIR__;
     
-    // Mapping from namespace prefix to base directory from PHAR composer.json
-    $composerJson = json_decode(file_get_contents($baseDir . '/composer.json'), true);
-    $prefixes = $composerJson['autoload']['psr-4'];
+    $prefixes = [
+        "Vemto\\" => "common/",
+        "VemtoDBReader\\" => "src/",
+        "KitLoong\\MigrationsGenerator\\" => "vendor/kitloong/laravel-migrations-generator/src/"
+    ];
 
     // Add base directory to the namespace prefix
     $prefixes = array_map(function ($dir) use ($baseDir) {
