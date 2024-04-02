@@ -12,6 +12,9 @@ export default abstract class Renderable {
     hooksEnabled: boolean = true
     logEnabled: boolean = false
 
+    static mode: "generate" | "checker" = "generate"
+    static composerDependencies: string[] = []
+
     constructor() {
         const project = Project.find(1)
 
@@ -29,6 +32,10 @@ export default abstract class Renderable {
     protected hooks?(): any
     protected beforeRender?(): void
     protected afterRender?(renderedContent: string): void
+
+    composerDependencies(): string[] {
+        return []
+    }
 
     setProject(project: Project) {
         this.project = project
@@ -49,6 +56,11 @@ export default abstract class Renderable {
     }
 
     async render() {
+        if(Renderable.mode === "checker") {
+            // PackagesChecker.addDependencies(Renderable.composerDependencies())
+            return
+        }
+
         if(!this.canRender()) {
             console.log(`Skipping ${this.getTemplateFile()} for file ${this.getFullFilePath()}...`)
             return

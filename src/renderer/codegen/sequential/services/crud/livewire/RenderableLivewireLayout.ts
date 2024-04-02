@@ -21,7 +21,11 @@ export default class RenderableLivewireLayout extends Renderable {
     }
 
     getTemplateFile(): string {
-        return "crud/views/livewire/LayoutComponent.vemtl"
+        if(this.project.isBreeze()) {
+            return "crud/views/livewire/BreezeLayoutComponent.vemtl"
+        }
+
+        return "crud/views/livewire/JetstreamLayoutComponent.vemtl"
     }
 
     getPath(): string {

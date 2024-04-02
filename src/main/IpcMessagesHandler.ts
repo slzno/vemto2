@@ -77,6 +77,12 @@ export function HandleIpcMessages() {
         })
     })
 
+    ipcMain.handle("file:write", (event, filePath, content) => {
+        return handleError(event, () => {
+            return FileSystem.writeFile(filePath, content)
+        })
+    })
+
     ipcMain.handle("file:project:exists", (event, filePath) => {
         const project = Project.find(1)
         if(!project) return null
@@ -320,6 +326,47 @@ export function HandleIpcMessages() {
             try {
                 const result = await CommandExecutor.executePhpOnPath("", "--version", true)
                 return result.includes("PHP")
+            } catch (error) {
+                return false
+            }
+        })
+    })
+
+    ipcMain.handle("php:execute:on-path", (event, path, command) => {
+        return handleError(event, async () => {
+            try {
+                return await CommandExecutor.executePhpOnPath(path, command, true)
+            } catch (error) {
+                return false
+            }
+        })
+    })
+
+    ipcMain.handle("composer:is:installed", (event) => {
+        return handleError(event, async () => {
+            try {
+                const result = await CommandExecutor.executeComposerOnPath("", "--version", true)
+                return result.includes("Composer")
+            } catch (error) {
+                return false
+            }
+        })
+    })
+
+    ipcMain.handle("composer:execute:on-path", (event, path, command) => {
+        return handleError(event, async () => {
+            try {
+                return await CommandExecutor.executeComposerOnPath(path, command, true)
+            } catch (error) {
+                return false
+            }
+        })
+    })
+
+    ipcMain.handle("artisan:execute:on-path", (event, path, command) => {
+        return handleError(event, async () => {
+            try {
+                return await CommandExecutor.executeArtisanOnPath(path, command, true)
             } catch (error) {
                 return false
             }

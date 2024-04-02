@@ -52,8 +52,8 @@ export default class ProjectInfo {
         this.hasJetstream = this.hasComposerPackage("laravel/jetstream")
         this.jetsreamVersion =
             this.getComposerPackageVersion("laravel/jetstream")
-        this.hasBreeze = this.hasComposerPackage("laravel/breeze")
-        this.breezeVersion = this.getComposerPackageVersion("laravel/breeze")
+        this.hasBreeze = this.hasComposerPackage("laravel/breeze") || this.hasComposerDevPackage("laravel/breeze")
+        this.breezeVersion = this.getComposerPackageVersion("laravel/breeze") || this.getComposerPackageVersion("laravel/breeze")
         this.hasLaravelUi = this.hasComposerPackage("laravel/ui")
         this.laravelUiVersion = this.getComposerPackageVersion("laravel/ui")
         this.hasSanctum = this.hasComposerPackage("laravel/sanctum")
@@ -101,16 +101,25 @@ export default class ProjectInfo {
         )
     }
 
+    hasComposerDevPackage(packageName: string): boolean {
+        return (
+            !!this.composerData["require-dev"] &&
+            !!this.composerData["require-dev"][packageName]
+        )
+    }
+
     getComposerPackageVersion(packageName: string): string {
-        if (!this.composerData.require || !this.composerData.require[packageName]) {
-            return ""
-        }
+        const hasComposerPackage = this.hasComposerPackage(packageName),
+              hasComposerDevPackage = this.hasComposerDevPackage(packageName)
+
+        if (!hasComposerPackage && !hasComposerDevPackage) return ""
 
         let packageVersion: string[] = [],
-            sliceLength: number = 0
+            sliceLength: number = 0,
+            composerVersion = this.composerData.require[packageName] || this.composerData["require-dev"][packageName]
 
         try {
-            packageVersion = getVersionMatches(this.composerData.require[packageName])
+            packageVersion = getVersionMatches(composerVersion)
             sliceLength = packageVersion[1] !== undefined ? 2 : 1
         } catch (error) {
             return ""

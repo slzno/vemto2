@@ -83,6 +83,9 @@ contextBridge.exposeInMainWorld("api", {
     writeProjectFile: (path: string, content: string) => {
         return ipcRenderer.invoke("file:project:write", path, content)
     },
+    writeFile: (path: string, content: string) => {
+        return ipcRenderer.invoke("file:write", path, content)
+    },
     projectFileExists: (path: string) => {
         return ipcRenderer.invoke("file:project:exists", path)
     },
@@ -139,5 +142,17 @@ contextBridge.exposeInMainWorld("api", {
     },
     phpIsInstalled: () => {
         return ipcRenderer.invoke("php:is:installed")
+    },
+    executePhpOnPath: (path: string, command: string) => {
+        return ipcRenderer.invoke("php:execute:on-path", path, command)
+    },
+    composerIsInstalled: () => {
+        return ipcRenderer.invoke("composer:is:installed")
+    },
+    executeComposerOnPath: (path: string, command: string) => {
+        return ipcRenderer.invoke("composer:execute:on-path", path, command)
+    },
+    executeArtisanOnPath: (path: string, command: string) => {
+        return ipcRenderer.invoke("artisan:execute:on-path", path, command)
     },
 })

@@ -22,6 +22,15 @@ export default class SequentialGenerator {
         this.project = project
     }
 
+    // async checkDependencies(): Promise<boolean> {
+        // Renderable.setMode("checker")
+        // await this.runGenerators()
+        // Renderable.setMode("generate")
+        // return await PackageChecker.hasMissingDependencies()
+
+        // JetstreamInstaller.run()
+    // }
+
     async run() {
         try {
             await this.runGeneration() 
@@ -43,9 +52,23 @@ export default class SequentialGenerator {
         this.project.clearCurrentRenderedFilesPaths()
         this.project.clearRemovedRenderableFiles()
 
+        await this.runGenerators()
+
+        this.project.processRemovableFiles()
+
+        await this.waitForProcessingFilesQueue()
+
+        await this.readSchema()
+
+        SchemaBuilder.enableSchemaChangesCheck()
+
+        SequentialGenerator.stopTimer()
+    }
+
+    async runGenerators() {
         await new GenerateUiComponentsFiles().start()
 
-        await new GenerateMenu().start()
+        await new GenerateMenu().start(this.project)
 
         await new GenerateRoutes().start(this.project)
 
@@ -58,16 +81,6 @@ export default class SequentialGenerator {
         
         await new GenerateDatabaseSeeder().start()
         await new GenerateLivewireLayout().start()
-
-        this.project.processRemovableFiles()
-
-        await this.waitForProcessingFilesQueue()
-
-        await this.readSchema()
-
-        SchemaBuilder.enableSchemaChangesCheck()
-
-        SequentialGenerator.stopTimer()
     }
 
     async clearVemtoFolders() {

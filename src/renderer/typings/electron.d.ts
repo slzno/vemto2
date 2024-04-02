@@ -32,6 +32,7 @@ export default interface ElectronApi {
     folderExists: (path: string) => Promise<boolean>,
     readProjectFile: (path: string) => Promise<string>,
     writeProjectFile: (path: string, content: string) => Promise<void>,
+    writeFile: (path: string, content: string) => Promise<void>,
     projectFileExists: (path: string) => Promise<boolean>,
     projectFolderExists: (path: string) => Promise<boolean>,
     readTemplateFile: (path: string) => Promise<string>,
@@ -51,4 +52,8 @@ export default interface ElectronApi {
     copyInternalFolderIfNotExists: (path: string, destination: string) => Promise<void>,
     mergePHPFile: (relativePath: string) => Promise<any>,
     phpIsInstalled: () => Promise<boolean>,
+    executePhpOnPath: (path: string, command: string) => Promise<string>,
+    composerIsInstalled: () => Promise<boolean>,
+    executeComposerOnPath: (path: string, command: string) => Promise<string>,
+    executeArtisanOnPath: (path: string, command: string) => Promise<string>
 }

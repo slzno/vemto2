@@ -10,7 +10,7 @@
     import LicenseHandler from "@Renderer/services/LicenseHandler"
     import { CheckIcon, PencilSquareIcon } from "@heroicons/vue/24/outline"
     import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
-import Alert from "@Renderer/components/utils/Alert"
+    import Alert from "@Renderer/components/utils/Alert"
     
     const licenseHandler = new LicenseHandler()
     
@@ -18,7 +18,8 @@ import Alert from "@Renderer/components/utils/Alert"
         selectedTab = ref("license"),
         licenseModal = ref(null),
         licenseIsActive = ref(false),
-        phpPath = ref("")
+        phpPath = ref(""),
+        composerPath = ref("")
 
     const tabs = [
         { label: "License", value: "license" },
@@ -28,7 +29,9 @@ import Alert from "@Renderer/components/utils/Alert"
 
     const show = () => {
         showingModal.value = true
+
         phpPath.value = localStorage.getItem("phpPath") || ""
+        composerPath.value = localStorage.getItem("composerPath") || ""
         
         readLicenseStatus()
     }
@@ -41,10 +44,11 @@ import Alert from "@Renderer/components/utils/Alert"
         licenseIsActive.value = licenseHandler.isActive()
     }
 
-    const savePhpPath = () => {
+    const savePaths = () => {
         localStorage.setItem("phpPath", phpPath.value)
+        localStorage.setItem("composerPath", composerPath.value)
 
-        Alert.info("PHP Path saved")
+        Alert.info("Paths updated successfully")
     }
 
     defineExpose({
@@ -91,10 +95,16 @@ import Alert from "@Renderer/components/utils/Alert"
         </div>
 
         <div class="space-y-2 p-4" v-if="selectedTab === 'paths'">
-            <UiText v-model="phpPath" label="PHP Path (folder + executable)"></UiText>
+            <div>
+                <UiText v-model="phpPath" label="PHP Path (folder + executable)"></UiText>
+            </div>
 
+            <div>
+                <UiText v-model="composerPath" label="Composer Path (folder + executable)"></UiText>
+            </div>
+            
             <div class="mt-2">
-                <UiButton @click="savePhpPath()">
+                <UiButton @click="savePaths()">
                     <CheckIcon class="h-4 w-4 mr-1 text-green-500" />
                     <span>Save</span>
                 </UiButton>
