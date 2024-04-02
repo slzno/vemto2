@@ -19,6 +19,8 @@ export const useErrorsStore = defineStore("errors", {
 
     actions: {
         addError(error: Error) {
+            error.stack = error.stack.replaceAll("VEMTO_EOL", "\n")
+            
             console.log("Adding error", error)
 
             if(this.lastErrorMessage === error.message) {
