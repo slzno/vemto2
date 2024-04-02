@@ -187,6 +187,12 @@
         connectingFolderSettings.value.isFreshLaravelProject = isNewProject
     }
 
+    const closeConnectingFolderModal = () => {
+        loadingProjectId.value = null
+        processingConnectFolder.value = false
+        showingConnectingFolderModal.value = false
+    }
+
     const openSchema = async () => {
         router.push("/project/schema")
     }
@@ -299,7 +305,7 @@
         title="Connect Folder"
         :show="showingConnectingFolderModal"
         :processing="processingConnectFolder"
-        @close="showingConnectingFolderModal = false"
+        @close="closeConnectingFolderModal()"
     >
         <div class="p-4">
             <div class="m-1 flex flex-col gap-4">
