@@ -16,7 +16,7 @@ export interface RenderableDependency {
 export default abstract class Renderable {
     project: Project
     hooksEnabled: boolean = true
-    logEnabled: boolean = false
+    logEnabled: boolean = true
 
     static mode: "generate" | "checker" = "generate"
 
@@ -91,7 +91,7 @@ export default abstract class Renderable {
     }
 
     addDependencies() {
-        
+        // Override this method to add dependencies
     }
 
     setProject(project: Project) {
@@ -115,6 +115,7 @@ export default abstract class Renderable {
     async render() {
         if(Renderable.mode === "checker") {
             this.addDependencies()
+            console.log('Renderable mode is checker, skipping render...')
             return
         }
 

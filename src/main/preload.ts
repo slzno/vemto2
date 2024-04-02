@@ -146,13 +146,28 @@ contextBridge.exposeInMainWorld("api", {
     executePhpOnPath: (path: string, command: string) => {
         return ipcRenderer.invoke("php:execute:on-path", path, command)
     },
+    executePhpOnProject: (command: string) => {
+        return ipcRenderer.invoke("php:execute:on-project", command)
+    },
     composerIsInstalled: () => {
         return ipcRenderer.invoke("composer:is:installed")
     },
     executeComposerOnPath: (path: string, command: string) => {
         return ipcRenderer.invoke("composer:execute:on-path", path, command)
     },
+    executeComposerOnProject: (command: string) => {
+        return ipcRenderer.invoke("composer:execute:on-project", command)
+    },
     executeArtisanOnPath: (path: string, command: string) => {
         return ipcRenderer.invoke("artisan:execute:on-path", path, command)
+    },
+    executeArtisanOnProject: (command: string) => {
+        return ipcRenderer.invoke("artisan:execute:on-project", command)
+    },
+    executeYarnOnPath: (path: string, command: string) => {
+        return ipcRenderer.invoke("yarn:execute:on-path", path, command)
+    },
+    executeYarnOnProject: (command: string) => {
+        return ipcRenderer.invoke("yarn:execute:on-project", command)
     },
 })

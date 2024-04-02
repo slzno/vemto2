@@ -26,6 +26,13 @@ export default class CommandExecutor {
         return await this.executeOnPath(executionPath, composerCommand, plainReturn)
     }
 
+    static async executeYarnOnPath(executionPath: string, command: string, plainReturn:boolean = false): Promise<string> {
+        const yarnPath = await Storage.get("yarnPath") || "yarn",
+            yarnCommand = `${yarnPath} ${command}`
+
+        return await this.executeOnPath(executionPath, yarnCommand, plainReturn)
+    }
+
     static async executeOnPath(executionPath: string, command: string, plainReturn: boolean = false): Promise<string> {
         const isDevelopment = process.env.NODE_ENV === "development"
 

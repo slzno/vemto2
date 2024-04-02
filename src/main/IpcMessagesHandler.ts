@@ -337,6 +337,19 @@ export function HandleIpcMessages() {
         })
     })
 
+    ipcMain.handle("php:execute:on-project", (event, command) => {
+        const project = Project.find(1)
+        if(!project) return null
+
+        return handleError(event, async () => {
+            try {
+                return await CommandExecutor.executePhpOnPath(project.getPath(), command, true)
+            } catch (error) {
+                return false
+            }
+        })
+    })
+
     ipcMain.handle("composer:is:installed", (event) => {
         return handleError(event, async () => {
             try {
@@ -358,10 +371,59 @@ export function HandleIpcMessages() {
         })
     })
 
+    ipcMain.handle("composer:execute:on-project", (event, command) => {
+        const project = Project.find(1)
+        if(!project) return null
+
+        return handleError(event, async () => {
+            try {
+                return await CommandExecutor.executeComposerOnPath(project.getPath(), command, true)
+            } catch (error) {
+                return false
+            }
+        })
+    })
+
     ipcMain.handle("artisan:execute:on-path", (event, path, command) => {
         return handleError(event, async () => {
             try {
                 return await CommandExecutor.executeArtisanOnPath(path, command, true)
+            } catch (error) {
+                return false
+            }
+        })
+    })
+
+    ipcMain.handle("artisan:execute:on-project", (event, command) => {
+        const project = Project.find(1)
+        if(!project) return null
+
+        return handleError(event, async () => {
+            try {
+                return await CommandExecutor.executeArtisanOnPath(project.getPath(), command, true)
+            } catch (error) {
+                return false
+            }
+        })
+    })
+
+    ipcMain.handle("yarn:execute:on-path", (event, path, command) => {
+        return handleError(event, async () => {
+            try {
+                return await CommandExecutor.executeYarnOnPath(path, command, true)
+            } catch (error) {
+                return false
+            }
+        })
+    })
+
+    ipcMain.handle("yarn:execute:on-project", (event, command) => {
+        const project = Project.find(1)
+        if(!project) return null
+
+        return handleError(event, async () => {
+            try {
+                return await CommandExecutor.executeYarnOnPath(project.getPath(), command, true)
             } catch (error) {
                 return false
             }

@@ -53,7 +53,12 @@ export default interface ElectronApi {
     mergePHPFile: (relativePath: string) => Promise<any>,
     phpIsInstalled: () => Promise<boolean>,
     executePhpOnPath: (path: string, command: string) => Promise<string>,
+    executePhpOnProject: (command: string) => Promise<string>,
     composerIsInstalled: () => Promise<boolean>,
     executeComposerOnPath: (path: string, command: string) => Promise<string>,
-    executeArtisanOnPath: (path: string, command: string) => Promise<string>
+    executeComposerOnProject: (command: string) => Promise<string>,
+    executeArtisanOnPath: (path: string, command: string) => Promise<string>,
+    executeArtisanOnProject: (command: string) => Promise<string>,
+    executeYarnOnPath: (path: string, command: string) => Promise<string>,
+    executeYarnOnProject: (command: string) => Promise<string>,
 }
