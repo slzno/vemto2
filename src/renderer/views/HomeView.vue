@@ -8,7 +8,7 @@
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import ProjectManager from "@Renderer/services/project/ProjectManager"
-    import { ClipboardDocumentIcon, Cog6ToothIcon, CommandLineIcon, FolderIcon, PlusCircleIcon, ShieldExclamationIcon, XMarkIcon, InformationCircleIcon } from "@heroicons/vue/24/outline"
+    import { ClipboardDocumentIcon, Cog6ToothIcon, CommandLineIcon, FolderIcon, PlusCircleIcon, ShieldExclamationIcon, XMarkIcon, InformationCircleIcon, CheckIcon } from "@heroicons/vue/24/outline"
     import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
     import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
     import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
@@ -23,7 +23,9 @@
     import LicenseHandler from "@Renderer/services/LicenseHandler"
     import { useErrorsStore } from "@Renderer/stores/useErrorsStore"
     import MainErrorsDialog from "./components/System/MainErrorsDialog.vue"
-import UiInfo from "@Renderer/components/ui/UiInfo.vue"
+    import UiInfo from "@Renderer/components/ui/UiInfo.vue"
+    import UiTabs from "@Renderer/components/ui/UiTabs.vue"
+    
 
     const projectManager = new ProjectManager(),
         search = ref(""),
@@ -38,6 +40,7 @@ import UiInfo from "@Renderer/components/ui/UiInfo.vue"
         processingConnectFolder = ref(false),
         settingsModal = ref(null),
         vemtoVersion = ref("2.0.0"),
+        connectingModalSelectedTab = ref("main"),
         connectingFolderSettings = ref({
             cssFramework: "tailwind",
             uiStarterKit: "jetstream",
@@ -57,6 +60,11 @@ import UiInfo from "@Renderer/components/ui/UiInfo.vue"
         }) as Ref<ProjectSettings>
 
     const router = useRouter()
+
+    const connectingFolderModalTabs = [
+        { label: "Project", value: "main" },
+        { label: "Stack", value: "other" },
+    ]
 
     onMounted(async () => {
         const licenseHandler = new LicenseHandler()
@@ -197,6 +205,17 @@ import UiInfo from "@Renderer/components/ui/UiInfo.vue"
         connectingFolderSettings.value.usesSvelte = projectInfo.hasSvelte
         connectingFolderSettings.value.laravelVersion = projectInfo.laravelVersion
         connectingFolderSettings.value.isFreshLaravelProject = isNewProject
+
+        if(isNewProject) {
+            connectingFolderSettings.value.schemaReaderMode = "db"
+        }
+        
+        connectingFolderSettings.value.schemaReaderDbDriver = projectInfo.envData.getKey("DB_CONNECTION") || "mysql"
+        connectingFolderSettings.value.schemaReaderDbHost = projectInfo.envData.getKey("DB_HOST") || "127.0.0.1"
+        connectingFolderSettings.value.schemaReaderDbPort = projectInfo.envData.getKey("DB_PORT") || "3306"
+        connectingFolderSettings.value.schemaReaderDbUsername = projectInfo.envData.getKey("DB_USERNAME") || "root"
+        connectingFolderSettings.value.schemaReaderDbPassword = projectInfo.envData.getKey("DB_PASSWORD") || null
+        connectingFolderSettings.value.schemaReaderDbDatabase = "vemto_schema_reader"
     }
 
     const closeConnectingFolderModal = () => {
@@ -319,37 +338,21 @@ import UiInfo from "@Renderer/components/ui/UiInfo.vue"
         :processing="processingConnectFolder"
         @close="closeConnectingFolderModal()"
     >
-        <div class="p-4">
+        <div class="pt-4">
+            <UiTabs
+                name="connectingFolderModalTabs"
+                :tabs="connectingFolderModalTabs" 
+                v-model="connectingModalSelectedTab" 
+                selectedClass="bg-slate-850"
+            />
+        </div>
+
+        <div class="p-4" v-show="connectingModalSelectedTab == 'main'">
             <div class="m-1 flex flex-col gap-4">
 
-                <div class="flex justify-end">
-                    <div class="px-2 py-1 bg-slate-100 dark:bg-slate-850 rounded-md w-auto inline text-slate-750 dark:text-slate-300">
-                        Connecting to <span class="text-red-450">{{ currentConnectingFolder }}</span>
-                    </div>
+                <div class="flex">
+                    <UiText v-model="currentConnectingFolder" label="Path" disabled />
                 </div>
-
-                <!-- <div class="flex flex-col gap-2">
-                    <UiSelect v-model="connectingFolderSettings.cssFramework" label="CSS Framework">
-                        <option value="tailwind">TailwindCSS</option>
-                        <option value="bootstrap">Bootstrap</option>
-                        <option value="bulma">Bulma</option>
-                        <option value="foundation">Foundation</option>
-                        <option value="other">Other</option>
-                    </UiSelect>
-    
-                    <UiSelect v-model="connectingFolderSettings.uiStarterKit" label="Starter Kit">
-                        <option value="jetstream">Jetstream</option>
-                        <option value="breeze">Breeze</option>
-                        <option value="laravel_ui">Laravel UI</option>
-                        <option value="other">Other</option>
-                    </UiSelect>
-                </div>
-
-                <div class="flex flex-col">
-                    <UiCheckbox v-model="connectingFolderSettings.usesLivewire" label="Has Livewire installed"></UiCheckbox>
-                    <UiCheckbox v-model="connectingFolderSettings.usesInertia" label="Has Inertia installed"></UiCheckbox>
-                    <UiCheckbox v-model="connectingFolderSettings.usesVue" label="Has Vue installed"></UiCheckbox>
-                </div> -->
 
                 <div>
                     <UiCheckbox v-model="connectingFolderSettings.isFreshLaravelProject" label="It is a fresh Laravel project"></UiCheckbox>
@@ -367,10 +370,10 @@ import UiInfo from "@Renderer/components/ui/UiInfo.vue"
                     <div class="flex space-x-8">
                         <div class="w-1/3">
                             <div class="text-slate-400">
-                                The Migration mode is only recommended for simple projects and prototypes (including new ones). 
+                                The Migration mode is recommended for simple projects and prototypes. 
                                 <br>
                                 <br>
-                                If your project has a complex schema, or the migrations files have complex logic, it is recommended to use the Database mode. The database mode is also recommended if your migrations are squashed.
+                                If your project has a complex schema, or the migrations files have complex logic, it is recommended to use the Database mode. The database mode is also mandatory if your migrations are squashed.
                                 <br>
                                 <br>
                                 If you have doubts, prefer the Database mode.
@@ -405,10 +408,40 @@ import UiInfo from "@Renderer/components/ui/UiInfo.vue"
                                     <UiText v-model="connectingFolderSettings.schemaReaderDbUsername" class="w-1/2" label="Username"></UiText>
                                     <UiText v-model="connectingFolderSettings.schemaReaderDbPassword" class="w-1/2" label="Password"></UiText>
                                 </div>
+
+                                <UiText v-model="connectingFolderSettings.schemaReaderDbDatabase" label="Vemto Database"></UiText>
                             </div>
 
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-4" v-show="connectingModalSelectedTab == 'other'">
+            <div class="m-1 flex flex-col gap-4">
+
+                <div class="flex flex-col gap-2">
+                    <UiSelect v-model="connectingFolderSettings.cssFramework" label="CSS Framework">
+                        <option value="tailwind">TailwindCSS</option>
+                        <option value="bootstrap">Bootstrap</option>
+                        <option value="bulma">Bulma</option>
+                        <option value="foundation">Foundation</option>
+                        <option value="other">Other</option>
+                    </UiSelect>
+    
+                    <UiSelect v-model="connectingFolderSettings.uiStarterKit" label="Starter Kit">
+                        <option value="jetstream">Jetstream</option>
+                        <option value="breeze">Breeze</option>
+                        <option value="laravel_ui">Laravel UI</option>
+                        <option value="other">Other</option>
+                    </UiSelect>
+                </div>
+
+                <div class="flex flex-col">
+                    <UiCheckbox v-model="connectingFolderSettings.usesLivewire" label="Has Livewire installed"></UiCheckbox>
+                    <UiCheckbox v-model="connectingFolderSettings.usesInertia" label="Has Inertia installed"></UiCheckbox>
+                    <UiCheckbox v-model="connectingFolderSettings.usesVue" label="Has Vue installed"></UiCheckbox>
                 </div>
             </div>
         </div>
@@ -420,7 +453,10 @@ import UiInfo from "@Renderer/components/ui/UiInfo.vue"
                         <UiLoading></UiLoading> 
                         <div>Connecting...</div>
                     </div>
-                    <div v-else>Connect</div>
+                    <div class="flex items-center" v-else>
+                        <CheckIcon class="h-4 w-4 mr-1 text-green-500" />
+                        <span>Connect</span>
+                    </div>
                 </UiButton>
             </div>
         </template>

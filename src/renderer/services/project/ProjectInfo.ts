@@ -2,11 +2,13 @@ import Main from "../wrappers/Main"
 import PathUtil from "@Common/util/PathUtil"
 import { ProjectCssFramework, ProjectUIStarterKit } from "@Common/models/Project"
 import { validateAndParse as getVersionMatches } from 'compare-versions/lib/esm/utils'
+import EnvParser from "@Renderer/util/EnvParser"
 
 export default class ProjectInfo {
     path: string
     composerData: any = {}
     packageData: any = {}
+    envData: EnvParser
     alreadyConnected: boolean = false
     phpVersion: string = ""
     isLaravelProject: boolean = false
@@ -43,6 +45,7 @@ export default class ProjectInfo {
     async read() {
         this.composerData = await this.readComposerJson()
         this.packageData = await this.readPackageJson()
+        this.envData = await this.readEnvFile()
 
         this.alreadyConnected = await this.isAlreadyConnected()
         this.phpVersion = this.getComposerPackageVersion("php") || "8.0"
@@ -92,7 +95,6 @@ export default class ProjectInfo {
 
         return ProjectCssFramework.OTHER
     }
-
 
     hasComposerPackage(packageName: string): boolean {
         return (
@@ -168,6 +170,18 @@ export default class ProjectInfo {
             return JSON.parse(packageData) || {}
         } catch (e) {
             return {}
+        }
+    }
+
+    async readEnvFile(): Promise<any> {
+        try {
+            const envData = await Main.API.readFile(
+                PathUtil.join(this.path, ".env")
+            )
+
+            return new EnvParser(envData)
+        } catch (e) {
+            return ""
         }
     }
 
