@@ -73,6 +73,13 @@ export interface ProjectSettings {
     usesSvelte: boolean
     isFreshLaravelProject: boolean,
     laravelVersion: string
+    schemaReaderMode: string
+    schemaReaderDbDriver: string
+    schemaReaderDbHost: string
+    schemaReaderDbPort: string
+    schemaReaderDbDatabase: string
+    schemaReaderDbUsername: string
+    schemaReaderDbPassword: string
 }
 
 export default class Project extends RelaDB.Model {

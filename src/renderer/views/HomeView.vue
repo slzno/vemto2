@@ -47,6 +47,13 @@ import UiInfo from "@Renderer/components/ui/UiInfo.vue"
             usesReact: false,
             usesSvelte: false,
             isFreshLaravelProject: false,
+            schemaReaderMode: "migration",
+            schemaReaderDbDriver: "mysql",
+            schemaReaderDbHost: "127.0.0.1",
+            schemaReaderDbPort: "3306",
+            schemaReaderDbUsername: "root",
+            schemaReaderDbPassword: null,
+            schemaReaderDbDatabase: "vemto_schema_reader",
         }) as Ref<ProjectSettings>
 
     const router = useRouter()
@@ -305,7 +312,7 @@ import UiInfo from "@Renderer/components/ui/UiInfo.vue"
 
     <!-- Connect folder modal -->
     <UiModal
-        width="800px"
+        width="1000px"
         height="800px"
         title="Connect Folder"
         :show="showingConnectingFolderModal"
@@ -316,7 +323,7 @@ import UiInfo from "@Renderer/components/ui/UiInfo.vue"
             <div class="m-1 flex flex-col gap-4">
 
                 <div class="flex justify-end">
-                    <div class="px-2 py-1 bg-slate-100 dark:bg-slate-850 rounded-md text-sm w-auto inline text-slate-750 dark:text-slate-300 font-mono">
+                    <div class="px-2 py-1 bg-slate-100 dark:bg-slate-850 rounded-md w-auto inline text-slate-750 dark:text-slate-300">
                         Connecting to <span class="text-red-450">{{ currentConnectingFolder }}</span>
                     </div>
                 </div>
@@ -360,24 +367,46 @@ import UiInfo from "@Renderer/components/ui/UiInfo.vue"
                     <div class="flex space-x-8">
                         <div class="w-1/3">
                             <div class="text-slate-400">
-                                Vemto will create a new database called <span class="text-red-500">vemto_schema_db</span> using these connection settings. This database is not related to the project database, and is used to read the project schema.
+                                The Migration mode is only recommended for simple projects and prototypes (including new ones). 
+                                <br>
+                                <br>
+                                If your project has a complex schema, or the migrations files have complex logic, it is recommended to use the Database mode. The database mode is also recommended if your migrations are squashed.
+                                <br>
+                                <br>
+                                If you have doubts, prefer the Database mode.
                             </div>
                         </div>
 
                         <div class="w-2/3 space-y-2">
-                            <UiSelect label="Database Type">
-                                <option value="mysql">MySQL</option>
+                            <UiSelect v-model="connectingFolderSettings.schemaReaderMode" label="Mode">
+                                <option value="migration">Migration - Read from migrations files</option>
+                                <option value="db">Database - Read from a database</option>
                             </UiSelect>
-
-                            <div class="flex flex-row space-x-2">
-                                <UiText class="w-1/2" label="Host"></UiText>
-                                <UiText class="w-1/2" label="Port"></UiText>
+                            
+                            <div 
+                                :class="{
+                                    'opacity-30 cursor-not-allowed pointer-events-none': connectingFolderSettings.schemaReaderMode !== 'db'
+                                }"
+                                class="space-y-2"
+                            >
+                                <UiSelect v-model="connectingFolderSettings.schemaReaderDbDriver" label="Database Type">
+                                    <option value="sqlite">SQLite</option>
+                                    <option value="mysql">MySQL</option>
+                                    <option value="pgsql">PostgreSQL</option>
+                                    <option value="sqlsrv">SQL Server</option>
+                                </UiSelect>
+    
+                                <div class="flex flex-row space-x-2">
+                                    <UiText v-model="connectingFolderSettings.schemaReaderDbHost" class="w-1/2" label="Host"></UiText>
+                                    <UiText v-model="connectingFolderSettings.schemaReaderDbPort" class="w-1/2" label="Port"></UiText>
+                                </div>
+    
+                                <div class="flex flex-row space-x-2">
+                                    <UiText v-model="connectingFolderSettings.schemaReaderDbUsername" class="w-1/2" label="Username"></UiText>
+                                    <UiText v-model="connectingFolderSettings.schemaReaderDbPassword" class="w-1/2" label="Password"></UiText>
+                                </div>
                             </div>
 
-                            <div class="flex flex-row space-x-2">
-                                <UiText class="w-1/2" label="Username"></UiText>
-                                <UiText class="w-1/2" label="Password"></UiText>
-                            </div>
                         </div>
                     </div>
                 </div>

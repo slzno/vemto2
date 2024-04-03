@@ -164,7 +164,7 @@
                         <UiSelect v-model="settings.database" label="Database" @change="onDatabaseChanged">
                             <option value="sqlite">SQLite</option>
                             <option value="mysql">MySQL</option>
-                            <option value="postgresql">PostgreSQL</option>
+                            <option value="pgsql">PostgreSQL</option>
                             <option value="sqlsrv">SQL Server</option>
                         </UiSelect>
 
