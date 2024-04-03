@@ -375,11 +375,14 @@
 
                     <div class="flex space-x-8">
                         <div class="w-1/3">
-                            <div class="text-slate-400">
+                            <div class="text-slate-400 font-serif">
                                 The Migration mode is recommended for simple projects and prototypes. 
                                 <br>
                                 <br>
-                                If your project has a complex schema, or the migrations files have complex logic, it is recommended to use the Database mode. The database mode is also mandatory if your migrations are squashed.
+                                If your project has a complex schema, or the migrations files have complex logic, it is recommended to use the Database mode. 
+                                <br>
+                                <br>
+                                The database mode is also mandatory if your migrations are squashed.
                                 <br>
                                 <br>
                                 If you have doubts, prefer the Database mode.
