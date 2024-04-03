@@ -23,7 +23,7 @@
     import LicenseHandler from "@Renderer/services/LicenseHandler"
     import { useErrorsStore } from "@Renderer/stores/useErrorsStore"
     import MainErrorsDialog from "./components/System/MainErrorsDialog.vue"
-    import UiInfo from "@Renderer/components/ui/UiInfo.vue"
+    import UiHint from "@Renderer/components/ui/UiHint.vue"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     
 
@@ -357,12 +357,15 @@
                     <UiText v-model="currentConnectingFolder" label="Path" disabled />
                 </div>
 
-                <div>
+                <div class="flex">
                     <UiCheckbox v-model="connectingFolderSettings.isFreshLaravelProject" label="It is a fresh Laravel project"></UiCheckbox>
 
-                    <UiInfo class="mt-2 p-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 font-mono text-sm text-slate-700 dark:text-slate-300" v-if="connectingFolderSettings.isFreshLaravelProject">
-                        When a project is marked as fresh, Vemto will automatically generate some specific files after connecting it. It is not recommended to mark a project as fresh if it is a previous existing project, as it may overwrite some files.
-                    </UiInfo>
+                    <UiHint type="warning">
+                        When a project is marked as fresh, Vemto will automatically generate some specific files after connecting it. 
+                        <br>
+                        <br>
+                        <b>It is not recommended</b> to mark a project as fresh if it is a previous existing project, as it may overwrite some files.
+                    </UiHint>
                 </div>
 
                 <div class="mt-8">
