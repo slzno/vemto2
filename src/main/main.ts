@@ -12,9 +12,9 @@ const isTesting = process.env.NODE_ENV === "test",
     isDevelopment = process.env.NODE_ENV === "development"
 
 // Disable hardware acceleration on macOS if not available.
-if (process.platform === "darwin") {
-    app.disableHardwareAcceleration()
-}
+// if (process.platform === "darwin") {
+//     app.disableHardwareAcceleration()
+// }
 
 HandleDatabase()
 HandleFileQueue()

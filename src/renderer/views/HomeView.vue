@@ -193,6 +193,7 @@ import UiInfo from "@Renderer/components/ui/UiInfo.vue"
     }
 
     const closeConnectingFolderModal = () => {
+        loadingProjectId.value = null
         processingConnectFolder.value = false
         showingConnectingFolderModal.value = false
     }
@@ -316,7 +317,7 @@ import UiInfo from "@Renderer/components/ui/UiInfo.vue"
 
                 <div class="flex justify-end">
                     <div class="px-2 py-1 bg-slate-100 dark:bg-slate-850 rounded-md text-sm w-auto inline text-slate-750 dark:text-slate-300 font-mono">
-                        Connecting to <span class="text-red-500">{{ currentConnectingFolder }}</span>
+                        Connecting to <span class="text-red-450">{{ currentConnectingFolder }}</span>
                     </div>
                 </div>
 
@@ -353,7 +354,7 @@ import UiInfo from "@Renderer/components/ui/UiInfo.vue"
 
                 <div class="mt-8">
                     <div class="mb-4">
-                        <span>Internal Database Options</span>
+                        <span>Schema Reader Options</span>
                     </div>
 
                     <div class="flex space-x-8">

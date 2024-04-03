@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Facade;
-
+use VemtoDBReader\DatabaseManager;
 use VemtoDBReader\TableRepository;
 use VemtoDBReader\ModelRepository;
 use VemtoDBReader\MigrationRepository;
@@ -48,6 +48,9 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
         return new MigrationRepository;
     });
 
+    // 1 - se for sqlite, simplesmente usa o banco em memória
+    // 2 - se não for mysql, chama o serviço DatabaseManager para criar o banco
+
     // Config::set('database.connections.vemto_db_connection', [
     //     'driver'   => 'sqlite',
     //     'database' => ':memory:',
@@ -59,19 +62,13 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
         'username' => 'root',
     ]);
 
-    // create the database if it doesn't exist
-    $pdoConnection = DB::connection('vemto_db_connection')->getPdo();
-    $pdoConnection->exec('CREATE DATABASE IF NOT EXISTS laravel11_basic');
+    $dbManager = new DatabaseManager('mysql');
+    $dbManager->createDatabase('laravel11_basic');
+    $dbManager->dropTables('laravel11_basic');
 
     $defaultConnection = "vemto_db_connection";
 
     DB::setDefaultConnection($defaultConnection);
-
-    // Drop all tables (TODO: use Laravel internal code)
-    $tables = DB::select('SHOW TABLES');
-    foreach ($tables as $table) {
-        DB::statement("DROP TABLE $table");
-    }
 
     // create the migration repository
     $repository = $app->make('migration.repository');
