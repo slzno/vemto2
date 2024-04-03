@@ -13,7 +13,7 @@
 </script>
 
 <template>
-    <div class="relative px-1">
+    <div class="relative px-1 text-lg font-thin">
         <div @mouseenter="showing = true" @mouseleave="showing = false">
             <ExclamationCircleIcon 
                 :class="{ 
@@ -34,11 +34,11 @@
             <div
                 v-show="showing"
                 :class="{
-                    'text-blue-100 border-blue-500': type === 'info',
-                    'text-orange-50 border-orange-500': type === 'warning',
-                    'text-red-50 border-red-500': type === 'alert',
+                    'border-blue-500': type === 'info',
+                    ' border-orange-500': type === 'warning',
+                    'border-red-500': type === 'alert',
                 }"
-                class="absolute top-6 left-3 shadow-lg bg-slate-900 rounded-lg border border-slate-700 p-4 flex items-center space-x-2 w-96"
+                class="absolute top-6 left-3 shadow-lg bg-slate-950 rounded-lg border text-white p-4 flex items-center space-x-2 w-96"
                 style="
                     z-index: 9999;
                 "

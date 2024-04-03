@@ -415,7 +415,11 @@
                                     <UiText v-model="connectingFolderSettings.schemaReaderDbPassword" class="w-1/2" label="Password"></UiText>
                                 </div>
 
-                                <UiText v-model="connectingFolderSettings.schemaReaderDbDatabase" label="Vemto Database"></UiText>
+                                <UiText 
+                                    v-model="connectingFolderSettings.schemaReaderDbDatabase" label="Vemto Database"
+                                    hint="Do not use the same database as your project database. Vemto will drop and create tables in this database to read the schema."
+                                    hint-type="warning"
+                                ></UiText>
                             </div>
 
                         </div>

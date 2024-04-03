@@ -1,4 +1,5 @@
 <script setup lang="ts">
+    import UiLabel from "@Renderer/components/ui/UiLabel.vue"
     import { defineProps, defineEmits, computed } from "vue"
 
     const props = defineProps({
@@ -29,6 +30,15 @@
             type: Boolean,
             default: false
         },
+
+        hint: {
+            type: String,
+        },
+
+        hintType: {
+            type: String,
+            default: "info",
+        },
     })
 
     const emit = defineEmits(["update:modelValue", "input", "blur", "focus"]),
@@ -46,7 +56,14 @@
 
 <template>
     <div class="flex gap-1 flex-1" :class="{ 'flex-col': !inlineLabel, 'items-center': inlineLabel }">
-        <label v-if="label" class="text-xs text-slate-500 dark:text-slate-400">{{ label }}</label>
+        <UiLabel v-if="label" :for="id" :hint-type="hintType" >
+            {{ label }}
+
+            <template v-if="hint" #hint>
+                {{ hint }}
+            </template>
+        </UiLabel>
+        
         <input
             :class="{ 'flex-1': inlineLabel }"
             class="border border-slate-300 dark:border-slate-650 focus:border-red-500 dark:focus:border-red-500 dark:focus:text-slate-200 dark:text-slate-300 focus:ring-transparent bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed placeholder-slate-400 dark:placeholder-slate-500 placeholder:font-thin"
