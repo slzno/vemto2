@@ -334,7 +334,7 @@
     <!-- Connect folder modal -->
     <UiModal
         width="1000px"
-        height="1000px"
+        height="800px"
         title="Connect Folder"
         :show="showingConnectingFolderModal"
         :processing="processingConnectFolder"
