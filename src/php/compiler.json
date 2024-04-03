@@ -14,7 +14,17 @@
             "commonFiles": [
                 "Vemto.php"
             ],
-            "defaultTesterProject": "laravel11-basic"
+            "defaultTesterProject": "laravel11-basic",
+            "defaultOptions": {
+                "driver": "mysql",
+                "database": "laravel11_basic",
+                "username": "root",
+                "host": "localhost",
+                "port": "3306",
+                "password": "",
+                "create-database": "",
+                "drop-tables": ""
+            }
         },
         "php-merger": {
             "outputName": "VMTTL3",

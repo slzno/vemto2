@@ -65,33 +65,24 @@ class DatabaseManager {
     }
 
     public function dropTables($dbName) {
-        try {
-            $this->pdo->exec("USE `$dbName`;");
+        $this->pdo->exec("USE `$dbName`;");
             
-            $result = [];
-            
-            switch ($this->dbType) {
-                case 'mysql':
-                    $result = $this->pdo->query("SHOW TABLES")->fetchAll(PDO::FETCH_COLUMN);
-                    break;
-                case 'pgsql':
-                    $result = $this->pdo->query("SELECT tablename FROM pg_tables WHERE schemaname = 'public'")->fetchAll(PDO::FETCH_COLUMN);
-                    break;
-                case 'sqlsrv':
-                    $result = $this->pdo->query("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'")->fetchAll(PDO::FETCH_COLUMN);
-                    break;
-            }
+        $tables = [];
+        
+        switch ($this->dbType) {
+            case 'mysql':
+                $tables = $this->pdo->query("SHOW TABLES")->fetchAll(PDO::FETCH_COLUMN);
+                break;
+            case 'pgsql':
+                $tables = $this->pdo->query("SELECT tablename FROM pg_tables WHERE schemaname = 'public'")->fetchAll(PDO::FETCH_COLUMN);
+                break;
+            case 'sqlsrv':
+                $tables = $this->pdo->query("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'")->fetchAll(PDO::FETCH_COLUMN);
+                break;
+        }
 
-            if ($result) {
-                foreach ($result as $tableName) {
-                    $this->pdo->exec("DROP TABLE IF EXISTS \"$tableName\";");
-                    echo "Table `$tableName` dropped successfully.\n";
-                }
-            } else {
-                echo "No tables found to drop.\n";
-            }
-        } catch (PDOException $e) {
-            throw $e;
+        foreach ($tables as $tableName) {
+            $this->pdo->exec("DROP TABLE IF EXISTS `$tableName`;");
         }
     }
 

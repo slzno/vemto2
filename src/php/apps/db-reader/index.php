@@ -16,6 +16,13 @@ use VemtoDBReader\MigrationRepository;
 use VemtoDBReader\ReadTablesFromDatabase;
 
 Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
+    
+    $settings = Vemto::getSettings();
+    
+    if($settings['SCHEMA_READER_MODE'] !== 'db') {
+        throw new \Exception('Trying to read database schema without the correct mode');
+    }
+
     $app = Application::configure(basePath: dirname(__DIR__))
         ->withExceptions(function () {})
         ->create();
@@ -48,19 +55,21 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
         return new MigrationRepository;
     });
 
-    // 1 - se for sqlite, simplesmente usa o banco em memória
-    // 2 - se não for mysql, chama o serviço DatabaseManager para criar o banco
-
-    // Config::set('database.connections.vemto_db_connection', [
-    //     'driver'   => 'sqlite',
-    //     'database' => ':memory:',
-    // ]);
-
-    Config::set('database.connections.vemto_db_connection', [
-        'driver'   => 'mysql',
-        'database' => 'laravel11_basic',
-        'username' => 'root',
-    ]);
+    if($settings['SCHEMA_READER_DB_DRIVER'] === 'sqlite') {
+        Config::set('database.connections.vemto_db_connection', [
+            'driver'   => 'sqlite',
+            'database' => ':memory:',
+        ]);
+    } else {
+        Config::set('database.connections.vemto_db_connection', [
+            'driver'   => $settings['SCHEMA_READER_DB_DRIVER'],
+            'host'     => $settings['SCHEMA_READER_DB_HOST'],
+            'port'     => $settings['SCHEMA_READER_DB_PORT'],
+            'database' => $settings['SCHEMA_READER_DB_DATABASE'],
+            'username' => $settings['SCHEMA_READER_DB_USERNAME'],
+            'password' => $settings['SCHEMA_READER_DB_PASSWORD'],
+        ]);
+    }
 
     $dbManager = new DatabaseManager('mysql');
     $dbManager->createDatabase('laravel11_basic');

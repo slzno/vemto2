@@ -176,4 +176,16 @@ class Vemto
 
         return realpath(__DIR__ . '/../../../../main/static');
     }
+
+    public static function getSettings(string $basePath = null)
+    {
+        $basePath = $basePath ?? getcwd();
+        $settingsFile = $basePath . DIRECTORY_SEPARATOR . '.vemto_settings';
+    
+        if(!file_exists($settingsFile)) {
+            throw new \Exception('No .vemto_settings file found');
+        }
+
+        return parse_ini_file($settingsFile);
+    }
 }
