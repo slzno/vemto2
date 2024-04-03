@@ -192,6 +192,8 @@
         }
 
         buildConnectingFolderSettings(projectInfo, isNewProject)
+
+        connectingModalSelectedTab.value = "main"
         showingConnectingFolderModal.value = true
     }
 
@@ -332,7 +334,7 @@
     <!-- Connect folder modal -->
     <UiModal
         width="1000px"
-        height="800px"
+        height="1000px"
         title="Connect Folder"
         :show="showingConnectingFolderModal"
         :processing="processingConnectFolder"
@@ -344,6 +346,7 @@
                 :tabs="connectingFolderModalTabs" 
                 v-model="connectingModalSelectedTab" 
                 selectedClass="bg-slate-850"
+                freeze
             />
         </div>
 
@@ -358,7 +361,7 @@
                     <UiCheckbox v-model="connectingFolderSettings.isFreshLaravelProject" label="It is a fresh Laravel project"></UiCheckbox>
 
                     <UiInfo class="mt-2 p-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 font-mono text-sm text-slate-700 dark:text-slate-300" v-if="connectingFolderSettings.isFreshLaravelProject">
-                        When a project is marked as fresh, Vemto will automatically generate some specific files after connecting it. This is useful when you want to connect a new project that was created manually. It is not recommended to mark a project as fresh if it is a previous existing project, as it may overwrite some files.
+                        When a project is marked as fresh, Vemto will automatically generate some specific files after connecting it. It is not recommended to mark a project as fresh if it is a previous existing project, as it may overwrite some files.
                     </UiInfo>
                 </div>
 

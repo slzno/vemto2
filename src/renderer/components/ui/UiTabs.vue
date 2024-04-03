@@ -35,12 +35,21 @@
             type: String,
             default: "bg-white dark:bg-slate-900",
         },
+
+        freeze: {
+            type: Boolean,
+            default: false,
+        },
     })
 
     const emit = defineEmits(["update:modelValue"])
 
     onMounted((): void => {
         localValue.value = props.modelValue
+
+        if (props.freeze) {
+            return
+        }
 
         const lastSelectedTab = localStorage.getItem(getLastSelectedKey())
 
