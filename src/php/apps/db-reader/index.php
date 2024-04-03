@@ -16,7 +16,6 @@ use VemtoDBReader\MigrationRepository;
 use VemtoDBReader\ReadTablesFromDatabase;
 
 Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
-
     $app = Application::configure(basePath: dirname(__DIR__))
         ->withExceptions(function () {})
         ->create();
@@ -60,6 +59,10 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
         'username' => 'root',
     ]);
 
+    // create the database if it doesn't exist
+    $pdoConnection = DB::connection('vemto_db_connection')->getPdo();
+    $pdoConnection->exec('CREATE DATABASE IF NOT EXISTS laravel11_basic');
+
     $defaultConnection = "vemto_db_connection";
 
     DB::setDefaultConnection($defaultConnection);
@@ -67,9 +70,6 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
     // Drop all tables (TODO: use Laravel internal code)
     $tables = DB::select('SHOW TABLES');
     foreach ($tables as $table) {
-        $table = (array) $table;
-        $table = array_values($table);
-        $table = $table[0];
         DB::statement("DROP TABLE $table");
     }
 

@@ -6,8 +6,8 @@
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import { CheckCircleIcon, FlagIcon, ShieldExclamationIcon, XMarkIcon } from "@heroicons/vue/24/outline"
     import { ref, watch, defineExpose, nextTick } from "vue"
-import TemplateErrorViewer from "../Common/TemplateErrorViewer.vue"
-import TextUtil from "@Common/util/TextUtil"
+    import TemplateErrorViewer from "../Common/TemplateErrorViewer.vue"
+    import TextUtil from "@Common/util/TextUtil"
 
     const projectStore = useProjectStore(),
         errorsStore = useErrorsStore()
