@@ -48,7 +48,7 @@ export function HandleIpcMessages() {
 
     ipcMain.handle("file:read", (event, filePath) => {
         return handleError(event, () => {
-            return FileSystem.readFile(filePath)
+            return FileSystem.readFileIfExists(filePath)
         })
     })
 

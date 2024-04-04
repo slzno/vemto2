@@ -158,6 +158,18 @@
         }
     }
 
+    const openConnectionSettings = async (project: any) => {
+        currentConnectingFolder.value = project.path
+
+        const projectInfo = new ProjectInfo(project.path)
+        await projectInfo.read()
+
+        buildConnectingFolderSettings(projectInfo, false)
+
+        connectingModalSelectedTab.value = "main"
+        showingConnectingFolderModal.value = true
+    }
+
     const openPath = async (path: string, isNewProject: boolean = false) => {
         currentConnectingFolder.value = path
 
@@ -210,15 +222,29 @@
         connectingFolderSettings.value.isFreshLaravelProject = isNewProject
 
         if(isNewProject) {
-            connectingFolderSettings.value.schemaReaderMode = "db"
+            connectingFolderSettings.value.schemaReaderMode = "migration"
+        } else {
+            const schemaReaderMode = projectInfo.settingsData.getKey("SCHEMA_READER_MODE") || "migration"
+            connectingFolderSettings.value.schemaReaderMode = schemaReaderMode
         }
         
-        connectingFolderSettings.value.schemaReaderDbDriver = projectInfo.envData.getKey("DB_CONNECTION") || "mysql"
-        connectingFolderSettings.value.schemaReaderDbHost = projectInfo.envData.getKey("DB_HOST") || "127.0.0.1"
-        connectingFolderSettings.value.schemaReaderDbPort = projectInfo.envData.getKey("DB_PORT") || "3306"
-        connectingFolderSettings.value.schemaReaderDbUsername = projectInfo.envData.getKey("DB_USERNAME") || "root"
-        connectingFolderSettings.value.schemaReaderDbPassword = projectInfo.envData.getKey("DB_PASSWORD") || null
-        connectingFolderSettings.value.schemaReaderDbDatabase = "vemto_schema_reader"
+        const dbDriver = projectInfo.settingsData.getKey("SCHEMA_READER_DB_DRIVER") || projectInfo.envData.getKey("DB_CONNECTION") || "mysql"
+        connectingFolderSettings.value.schemaReaderDbDriver = dbDriver
+
+        const dbHost = projectInfo.settingsData.getKey("SCHEMA_READER_DB_HOST") || projectInfo.envData.getKey("DB_HOST") || "127.0.0.1"
+        connectingFolderSettings.value.schemaReaderDbHost = dbHost
+
+        const dbPort = projectInfo.settingsData.getKey("SCHEMA_READER_DB_PORT") || projectInfo.envData.getKey("DB_PORT") || "3306"
+        connectingFolderSettings.value.schemaReaderDbPort = dbPort
+
+        const dbUsername = projectInfo.settingsData.getKey("SCHEMA_READER_DB_USERNAME") || projectInfo.envData.getKey("DB_USERNAME") || "root"
+        connectingFolderSettings.value.schemaReaderDbUsername = dbUsername
+
+        const dbPassword = projectInfo.settingsData.getKey("SCHEMA_READER_DB_PASSWORD") || projectInfo.envData.getKey("DB_PASSWORD") || null
+        connectingFolderSettings.value.schemaReaderDbPassword = dbPassword
+
+        const dbName = projectInfo.settingsData.getKey("SCHEMA_READER_DB_DATABASE") || "vemto_schema_reader"
+        connectingFolderSettings.value.schemaReaderDbDatabase = dbName
     }
 
     const closeConnectingFolderModal = () => {
@@ -412,22 +438,29 @@
                                     <option value="pgsql">PostgreSQL</option>
                                     <option value="sqlsrv">SQL Server</option>
                                 </UiSelect>
+                                
+                                <div
+                                    :class="{
+                                        'opacity-30 cursor-not-allowed pointer-events-none': connectingFolderSettings.schemaReaderDbDriver === 'sqlite'
+                                    }"
+                                    class="space-y-2"
+                                >
+                                    <div class="flex flex-row space-x-2">
+                                        <UiText v-model="connectingFolderSettings.schemaReaderDbHost" class="w-1/2" label="Host"></UiText>
+                                        <UiText v-model="connectingFolderSettings.schemaReaderDbPort" class="w-1/2" label="Port"></UiText>
+                                    </div>
+        
+                                    <div class="flex flex-row space-x-2">
+                                        <UiText v-model="connectingFolderSettings.schemaReaderDbUsername" class="w-1/2" label="Username"></UiText>
+                                        <UiText v-model="connectingFolderSettings.schemaReaderDbPassword" class="w-1/2" label="Password"></UiText>
+                                    </div>
     
-                                <div class="flex flex-row space-x-2">
-                                    <UiText v-model="connectingFolderSettings.schemaReaderDbHost" class="w-1/2" label="Host"></UiText>
-                                    <UiText v-model="connectingFolderSettings.schemaReaderDbPort" class="w-1/2" label="Port"></UiText>
+                                    <UiText 
+                                        v-model="connectingFolderSettings.schemaReaderDbDatabase" label="Vemto Database"
+                                        hint="This is not your project's database. Vemto will drop and create tables on it to read the schema. The database name must start with the <span class='text-red-450 font-bold'>vemto_</span> prefix. <br><br>Vemto will try to create the database if it does not exist. You can also create it manually if necessary."
+                                        hint-type="warning"
+                                    ></UiText>
                                 </div>
-    
-                                <div class="flex flex-row space-x-2">
-                                    <UiText v-model="connectingFolderSettings.schemaReaderDbUsername" class="w-1/2" label="Username"></UiText>
-                                    <UiText v-model="connectingFolderSettings.schemaReaderDbPassword" class="w-1/2" label="Password"></UiText>
-                                </div>
-
-                                <UiText 
-                                    v-model="connectingFolderSettings.schemaReaderDbDatabase" label="Vemto Database"
-                                    hint="This is not your project's database. Vemto will drop and create tables on it to read the schema. The database name must start with the <span class='text-red-450 font-bold'>vemto_</span> prefix. <br><br>Vemto will try to create the database if it does not exist. You can also create it manually if necessary."
-                                    hint-type="warning"
-                                ></UiText>
                             </div>
 
                         </div>
@@ -517,18 +550,21 @@
                                 :size="15"
                                 :strokeWidth="2"
                             ></UiLoading>
-                            <UiOptionsDropdown v-else>
+                            <UiOptionsDropdown size="w-64" v-else>
+                                <UiDropdownItem @click="openConnectionSettings(project)">
+                                    <Cog6ToothIcon class="h-5 w-5 mr-2 text-red-400" /> Connection Settings
+                                </UiDropdownItem>
                                 <UiDropdownItem @click="copyProjectPath(project)">
-                                    <ClipboardDocumentIcon class="h-5 w-5 mr-1 text-red-400" /> Copy Path
+                                    <ClipboardDocumentIcon class="h-5 w-5 mr-2 text-red-400" /> Copy Path
                                 </UiDropdownItem>
                                 <UiDropdownItem @click="openProjectPath(project)">
-                                    <FolderIcon class="h-5 w-5 mr-1 text-red-400" /> Open Folder
+                                    <FolderIcon class="h-5 w-5 mr-2 text-red-400" /> Open Folder
                                 </UiDropdownItem>
                                 <UiDropdownItem @click="openProjectOnTerminal(project)">
-                                    <CommandLineIcon class="h-5 w-5 mr-1 text-red-400" /> Open Terminal
+                                    <CommandLineIcon class="h-5 w-5 mr-2 text-red-400" /> Open Terminal
                                 </UiDropdownItem>
                                 <UiDropdownItem @click="disconnectProject(project)">
-                                    <XMarkIcon class="h-5 w-5 mr-1 text-red-400" /> Disconnect
+                                    <XMarkIcon class="h-5 w-5 mr-2 text-red-400" /> Disconnect
                                 </UiDropdownItem>
                             </UiOptionsDropdown>
                         </div>

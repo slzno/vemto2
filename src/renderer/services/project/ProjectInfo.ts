@@ -9,6 +9,7 @@ export default class ProjectInfo {
     composerData: any = {}
     packageData: any = {}
     envData: EnvParser
+    settingsData: EnvParser
     hasSettingsFile: boolean = false
     alreadyConnected: boolean = false
     phpVersion: string = ""
@@ -47,6 +48,7 @@ export default class ProjectInfo {
         this.composerData = await this.readComposerJson()
         this.packageData = await this.readPackageJson()
         this.envData = await this.readEnvFile()
+        this.settingsData = await this.readSettingsFile()
 
         this.alreadyConnected = await this.isAlreadyConnected()
         this.hasSettingsFile = await this.checkForSettingsFile()
@@ -184,7 +186,19 @@ export default class ProjectInfo {
 
             return new EnvParser(envData)
         } catch (e) {
-            return ""
+            return new EnvParser()
+        }
+    }
+
+    async readSettingsFile(): Promise<any> {
+        try {
+            const settingsData = await Main.API.readFile(
+                PathUtil.join(this.path, ".vemto_settings")
+            )
+
+            return new EnvParser(settingsData)
+        } catch (e) {
+            return new EnvParser()
         }
     }
 
