@@ -3,8 +3,10 @@
 namespace VemtoDBReader;
 
 use PDO;
+use Exception;
 use PDOException;
 use Illuminate\Support\Facades\Config;
+use Vemto\ValidationException;
 
 class DatabaseManager {
 
@@ -50,6 +52,8 @@ class DatabaseManager {
     }
 
     public function createDatabase($dbName) {
+        $this->checkDatabasePrefix($dbName);
+
         try {
             if ($this->dbType == 'pgsql') {
                 // PostgreSQL does not support IF NOT EXISTS in CREATE DATABASE
@@ -65,6 +69,8 @@ class DatabaseManager {
     }
 
     public function dropTables($dbName) {
+        $this->checkDatabasePrefix($dbName);
+
         $this->pdo->exec("USE `$dbName`;");
             
         $tables = [];
@@ -83,6 +89,21 @@ class DatabaseManager {
 
         foreach ($tables as $tableName) {
             $this->pdo->exec("DROP TABLE IF EXISTS `$tableName`;");
+        }
+    }
+
+    /**
+     * If the database name does not start with "vemto_", exit the script
+     *
+     * @param [type] $dbName
+     * @return void
+     */
+    protected function checkDatabasePrefix($dbName)
+    {
+        if (strpos($dbName, 'vemto_') !== 0) {
+            throw new ValidationException("Database name must start with 'vemto_' prefix.", [
+                "database_name" => "Database name must start with 'vemto_' prefix."
+            ]);
         }
     }
 

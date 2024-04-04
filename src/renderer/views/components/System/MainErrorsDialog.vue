@@ -16,12 +16,8 @@
         { label: "Vemto Log", value: "vemto_log" },
     ]
 
-    watch(() => errorsStore.hasErrors, (hasErrors) => {
-        if(hasErrors) {
-            show()
-        } else {
-            close()
-        }
+    watch(() => errorsStore.lastErrorTime, () => {
+        show()
     })
 
     const show = () => {

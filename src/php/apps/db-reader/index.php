@@ -71,9 +71,12 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
         ]);
     }
 
+    $databaseName = $settings['SCHEMA_READER_DB_DATABASE'];
+
     $dbManager = new DatabaseManager('mysql');
-    $dbManager->createDatabase('laravel11_basic');
-    $dbManager->dropTables('laravel11_basic');
+    
+    $dbManager->createDatabase($databaseName);
+    $dbManager->dropTables($databaseName);
 
     $defaultConnection = "vemto_db_connection";
 

@@ -14,12 +14,20 @@
 
     onMounted(() => {
         Main.API.onDefaultError((error) => {
+            if(error.isFromValidation) {
+                treatValidationError(error)
+                return
+            }
+
             if (isSchemaReaderError(error)) {
                 treatSchemaReaderError(error)
                 return
             }
             
-            if (errorsStore.lastErrorMessage === error.message) return
+            if (errorsStore.lastErrorMessage === error.message) {
+                errorsStore.report()
+                return
+            }
 
             // Alert.error("Error from background process")
             console.error(error.message)
@@ -51,12 +59,30 @@
 
             const error = event.reason
 
+            if(error.message.includes("VALIDATION_ERROR")) {
+                return
+            }
+
             addErrorToStore(error)
         })
     })
 
     const isSchemaReaderError = (error: any): boolean => {
         return error.message.includes("schema-reader")
+    }
+
+    const treatValidationError = (error: any): void => {
+        const jsonData = error.message.match(/VALIDATION_ERROR\((.*)\)/)?.[1]
+
+        console.log(jsonData)
+
+        if (!jsonData) {
+            return
+        }
+
+        const data = JSON.parse(jsonData)
+
+        Alert.error(data.message)
     }
 
     const treatSchemaReaderError = (error: any): void => {

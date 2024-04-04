@@ -29,6 +29,7 @@ export default interface ElectronApi {
     databaseDataUpdated: (data: any) => void,
     addFileToGenerationQueue: (filePath: string, content: string) => Promise<void>,
     readFile: (path: string) => Promise<string>,
+    fileExists: (path: string) => Promise<boolean>,
     folderExists: (path: string) => Promise<boolean>,
     readProjectFile: (path: string) => Promise<string>,
     writeProjectFile: (path: string, content: string) => Promise<void>,

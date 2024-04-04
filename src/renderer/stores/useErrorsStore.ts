@@ -14,7 +14,8 @@ interface Error {
 export const useErrorsStore = defineStore("errors", {
     state: () => ({ 
         errors: [] as Error[],
-        lastErrorMessage: "" as String
+        lastErrorMessage: "" as String,
+        lastErrorTime: 0 as number,
     }),
 
     actions: {
@@ -22,6 +23,8 @@ export const useErrorsStore = defineStore("errors", {
             error.stack = error.stack.replaceAll("VEMTO_EOL", "\n")
             
             console.log("Adding error", error)
+
+            this.lastErrorTime = Date.now()
 
             if(this.lastErrorMessage === error.message) {
                 // get the last error and prepend the stack if it is different
@@ -41,7 +44,11 @@ export const useErrorsStore = defineStore("errors", {
         clearErrors() {
             this.lastErrorMessage = ""
             this.errors = []
-        }
+        },
+
+        report() {
+            this.lastErrorTime = Date.now()
+        },
     },
 
     getters: {

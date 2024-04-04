@@ -4,7 +4,8 @@
             "outputName": "VMTTL1",
             "enabled": true,
             "commonFiles": [
-                "Vemto.php"
+                "Vemto.php",
+                "ValidationException.php"
             ],
             "defaultTesterProject": "laravel9-basic"
         },
@@ -12,25 +13,17 @@
             "outputName": "VMTTL2",
             "enabled": true,
             "commonFiles": [
-                "Vemto.php"
+                "Vemto.php",
+                "ValidationException.php"
             ],
-            "defaultTesterProject": "laravel11-basic",
-            "defaultOptions": {
-                "driver": "mysql",
-                "database": "laravel11_basic",
-                "username": "root",
-                "host": "localhost",
-                "port": "3306",
-                "password": "",
-                "create-database": "",
-                "drop-tables": ""
-            }
+            "defaultTesterProject": "laravel11-basic"
         },
         "php-merger": {
             "outputName": "VMTTL3",
             "enabled": false,
             "commonFiles": [
-                "Vemto.php"
+                "Vemto.php",
+                "ValidationException.php"
             ],
             "defaultTesterProject": "laravel9-basic"
         }

@@ -52,6 +52,12 @@ export function HandleIpcMessages() {
         })
     })
 
+    ipcMain.handle("file:exists", (event, filePath) => {
+        return handleError(event, () => {
+            return FileSystem.fileExists(filePath)
+        })
+    })
+
     ipcMain.handle("folder:exists", (event, folderPath) => {
         return handleError(event, () => {
             return FileSystem.folderExists(folderPath)

@@ -74,6 +74,9 @@ contextBridge.exposeInMainWorld("api", {
     readFile: (path: string) => {
         return ipcRenderer.invoke("file:read", path)
     },
+    fileExists: (path: string) => {
+        return ipcRenderer.invoke("file:exists", path)
+    },
     folderExists: (path: string) => {
         return ipcRenderer.invoke("folder:exists", path)
     },
