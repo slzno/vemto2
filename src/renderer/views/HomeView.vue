@@ -82,12 +82,6 @@
         })
     })
 
-    watch(processingConnectFolder, (value) => {
-        if(!value) {
-            loadingProjectId.value = null
-        }
-    })
-
     const getProjects = () => {
         projects.value = projectManager.get()
     }
@@ -150,7 +144,7 @@
     
             await projectManager.connectFromPath(path)
             
-            processingConnectFolder.value = false
+            stopLoading()
     
             errorsStore.clearErrors()
 
@@ -158,7 +152,7 @@
         } catch (error) {
             // Alert.error("Please check the application errors before trying to connect")
 
-            processingConnectFolder.value = false
+            stopLoading()
 
             throw error
         }
@@ -179,17 +173,20 @@
         if(!hasComposerVendor) {
             Alert.error("This Laravel project does not have the vendor folder. Please run <b>composer install</b> before connecting it")
             
-            processingConnectFolder.value = false
+            stopLoading()
 
             return
         }
 
-        if(compareVersions(projectInfo.laravelVersion, "9.0.0") < 0) {
-            Alert.error("Vemto only supports <b>Laravel 9+</b> projects. Please upgrade your Laravel version before connecting it")
+        if(compareVersions(projectInfo.laravelVersion, "11.0.0") < 0) {
+            Alert.error("Vemto only supports <b>Laravel 11+</b> projects. Please upgrade your Laravel version before connecting it")
+
+            stopLoading()
+
             return
         }
 
-        if(projectInfo.alreadyConnected) {
+        if(projectInfo.alreadyConnected && projectInfo.hasSettingsFile) {
             await projectManager.connectFromPath(path)
             openSchema()
             return
@@ -225,9 +222,13 @@
     }
 
     const closeConnectingFolderModal = () => {
+        stopLoading()
+        showingConnectingFolderModal.value = false
+    }
+
+    const stopLoading = () => {
         loadingProjectId.value = null
         processingConnectFolder.value = false
-        showingConnectingFolderModal.value = false
     }
 
     const openSchema = async () => {
@@ -424,7 +425,7 @@
 
                                 <UiText 
                                     v-model="connectingFolderSettings.schemaReaderDbDatabase" label="Vemto Database"
-                                    hint="This is not your project's database. Vemto will drop and create tables on it to read the schema. The database name must start with the vemto_ prefix. Vemto will try to create the database if it does not exist."
+                                    hint="This is not your project's database. Vemto will drop and create tables on it to read the schema. The database name must start with the <span class='text-red-450 font-bold'>vemto_</span> prefix. <br><br>Vemto will try to create the database if it does not exist. You can also create it manually if necessary."
                                     hint-type="warning"
                                 ></UiText>
                             </div>

@@ -74,8 +74,8 @@ watch(showing, (newValue) => {
                     'border-orange-500': type === 'warning',
                     'border-red-500': type === 'alert',
                 }"
-                class="shadow-lg bg-slate-950 rounded-lg border text-white p-4 flex items-center space-x-2 w-96"
-                style="z-index: 9999;"
+                class="shadow-lg bg-slate-950 rounded-lg border text-white p-4 flex items-center space-x-2"
+                style="z-index: 9999; width: 40rem;"
                 ref="hintRef"
             >
                 <div>

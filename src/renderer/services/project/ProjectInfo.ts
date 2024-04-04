@@ -9,6 +9,7 @@ export default class ProjectInfo {
     composerData: any = {}
     packageData: any = {}
     envData: EnvParser
+    hasSettingsFile: boolean = false
     alreadyConnected: boolean = false
     phpVersion: string = ""
     isLaravelProject: boolean = false
@@ -48,6 +49,8 @@ export default class ProjectInfo {
         this.envData = await this.readEnvFile()
 
         this.alreadyConnected = await this.isAlreadyConnected()
+        this.hasSettingsFile = await this.checkForSettingsFile()
+
         this.phpVersion = this.getComposerPackageVersion("php") || "8.0"
         this.isLaravelProject = this.hasComposerPackage("laravel/framework")
         this.laravelVersion =
@@ -191,5 +194,9 @@ export default class ProjectInfo {
         return await Main.API.folderExists(vemtoFolder)
     }
 
-        
+    async checkForSettingsFile(): Promise<boolean> {
+        const settingsFile = PathUtil.join(this.path, ".vemto_settings")
+
+        return await Main.API.fileExists(settingsFile)
+    }
 }

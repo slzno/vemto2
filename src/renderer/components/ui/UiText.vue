@@ -60,7 +60,7 @@
             {{ label }}
 
             <template v-if="hint" #hint>
-                {{ hint }}
+                <span v-html="hint"></span>
             </template>
         </UiLabel>
         
