@@ -25,6 +25,7 @@
     import MainErrorsDialog from "./components/System/MainErrorsDialog.vue"
     import UiHint from "@Renderer/components/ui/UiHint.vue"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
+    import ProjectSettingsFileManager from "@Renderer/services/project/ProjectSettingsFileManager"
     
 
     const projectManager = new ProjectManager(),
@@ -141,6 +142,9 @@
     const finishConnect = async (path) => {
         try {
             processingConnectFolder.value = true
+
+            const settingsFileManager = new ProjectSettingsFileManager(path)
+            await settingsFileManager.saveFromSettings(connectingFolderSettings.value)
             
             projectManager.setSettings(connectingFolderSettings.value)
     
