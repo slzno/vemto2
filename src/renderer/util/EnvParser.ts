@@ -65,6 +65,14 @@ export default class EnvParser {
         const item = this.parsedContent.find((env: any) => env.key === key)
 
         if (item) {
+            if(item.value === 'false' || item.value === 'FALSE') {
+                item.value = false
+            } else if(item.value === 'true' || item.value === 'TRUE') {
+                item.value = true
+            } else if(item.value === 'null' || item.value === 'NULL') {
+                item.value = null
+            }
+
             return item.value
         }
 
