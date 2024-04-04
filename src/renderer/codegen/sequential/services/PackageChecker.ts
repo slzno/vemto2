@@ -8,12 +8,17 @@ export interface DependenciesMissing {
 }
 
 export default class PackageChecker {
-    static projectInfo: null | ProjectInfo = null
+    project: Project
+    projectInfo: null | ProjectInfo = null
 
-    static composerDependenciesMissing: RenderableDependency[] = []
-    static packagesDependenciesMissing: RenderableDependency[] = []
+    composerDependenciesMissing: RenderableDependency[] = []
+    packagesDependenciesMissing: RenderableDependency[] = []
 
-    static async hasMissingDependencies(): Promise<boolean> {
+    constructor(project: Project) {
+        this.project = project
+    }
+
+    async hasMissingDependencies(): Promise<boolean> {
         await this.setProjectInfo()
         await this.checkComposerDependencies()
         await this.checkPackagesDependencies()
@@ -22,16 +27,15 @@ export default class PackageChecker {
             || this.packagesDependenciesMissing.length > 0
     }
 
-    static async setProjectInfo(): Promise<void> {
-        const project: Project = Project.find(1),
-            projectInfo = new ProjectInfo(project.getPath())
+    async setProjectInfo(): Promise<void> {
+        const projectInfo = new ProjectInfo(this.project.getPath())
 
         await projectInfo.read()
 
         this.projectInfo = projectInfo
     }
 
-    static async checkComposerDependencies(): Promise<void> {
+    async checkComposerDependencies(): Promise<void> {
         const normalDependencies = Object.keys(this.projectInfo.composerData.require || {}),
             devDependencies = Object.keys(this.projectInfo.composerData["require-dev"] || {})
         
@@ -41,7 +45,7 @@ export default class PackageChecker {
             .filter(dependency => !allProjectComposerDependencies.includes(dependency.name))
     }
 
-    static async checkPackagesDependencies(): Promise<void> {
+    async checkPackagesDependencies(): Promise<void> {
         const normalDependencies = Object.keys(this.projectInfo.packageData.dependencies || {}),
             devDependencies = Object.keys(this.projectInfo.packageData.devDependencies || {})
 
@@ -51,22 +55,22 @@ export default class PackageChecker {
             .filter(dependency => !allProjectPackagesDependencies.includes(dependency.name))
     }
 
-    static getComposerDependenciesMissing(): RenderableDependency[] {
+    getComposerDependenciesMissing(): RenderableDependency[] {
         return this.composerDependenciesMissing
     }
 
-    static getPackagesDependenciesMissing(): RenderableDependency[] {
+    getPackagesDependenciesMissing(): RenderableDependency[] {
         return this.packagesDependenciesMissing
     }
 
-    static getDependenciesMissing(): DependenciesMissing {
+    getDependenciesMissing(): DependenciesMissing {
         return {
             composer: this.getComposerDependenciesMissing(),
             packages: this.getPackagesDependenciesMissing()
         } as DependenciesMissing
     }
 
-    static reset(): void {
+    reset(): void {
         this.projectInfo = null
         this.composerDependenciesMissing = []
         this.packagesDependenciesMissing = []

@@ -329,11 +329,7 @@ export function HandleIpcMessages() {
 
     ipcMain.handle("php:execute:on-path", (event, path, command) => {
         return handleError(event, async () => {
-            try {
-                return await CommandExecutor.executePhpOnPath(path, command, true)
-            } catch (error) {
-                return false
-            }
+            return await CommandExecutor.executePhpOnPath(path, command, true)
         })
     })
 
@@ -342,11 +338,7 @@ export function HandleIpcMessages() {
         if(!project) return null
 
         return handleError(event, async () => {
-            try {
-                return await CommandExecutor.executePhpOnPath(project.getPath(), command, true)
-            } catch (error) {
-                return false
-            }
+            return await CommandExecutor.executePhpOnPath(project.getPath(), command, true)
         })
     })
 
@@ -363,12 +355,8 @@ export function HandleIpcMessages() {
 
     ipcMain.handle("composer:execute:on-path", (event, path, command) => {
         return handleError(event, async () => {
-            try {
-                return await CommandExecutor.executeComposerOnPath(path, command, true)
-            } catch (error) {
-                return false
-            }
-        })
+            return await CommandExecutor.executeComposerOnPath(path, command, true)
+        }, true)
     })
 
     ipcMain.handle("composer:execute:on-project", (event, command) => {
@@ -376,22 +364,14 @@ export function HandleIpcMessages() {
         if(!project) return null
 
         return handleError(event, async () => {
-            try {
-                return await CommandExecutor.executeComposerOnPath(project.getPath(), command, true)
-            } catch (error) {
-                return false
-            }
-        })
+            return await CommandExecutor.executeComposerOnPath(project.getPath(), command, true)
+        }, true)
     })
 
     ipcMain.handle("artisan:execute:on-path", (event, path, command) => {
         return handleError(event, async () => {
-            try {
-                return await CommandExecutor.executeArtisanOnPath(path, command, true)
-            } catch (error) {
-                return false
-            }
-        })
+            return await CommandExecutor.executeArtisanOnPath(path, command, true)
+        }, true)
     })
 
     ipcMain.handle("artisan:execute:on-project", (event, command) => {
@@ -399,22 +379,14 @@ export function HandleIpcMessages() {
         if(!project) return null
 
         return handleError(event, async () => {
-            try {
-                return await CommandExecutor.executeArtisanOnPath(project.getPath(), command, true)
-            } catch (error) {
-                return false
-            }
-        })
+            return await CommandExecutor.executeArtisanOnPath(project.getPath(), command, true)
+        }, true)
     })
 
     ipcMain.handle("yarn:execute:on-path", (event, path, command) => {
         return handleError(event, async () => {
-            try {
-                return await CommandExecutor.executeYarnOnPath(path, command, true)
-            } catch (error) {
-                return false
-            }
-        })
+            return await CommandExecutor.executeYarnOnPath(path, command, true)
+        }, true)
     })
 
     ipcMain.handle("yarn:execute:on-project", (event, command) => {
@@ -422,12 +394,8 @@ export function HandleIpcMessages() {
         if(!project) return null
 
         return handleError(event, async () => {
-            try {
-                return await CommandExecutor.executeYarnOnPath(project.getPath(), command, true)
-            } catch (error) {
-                return false
-            }
-        })
+            return await CommandExecutor.executeYarnOnPath(project.getPath(), command, true)
+        }, true)
     })
 
     ipcMain.handle("open:issue", async (event, title, body) => {

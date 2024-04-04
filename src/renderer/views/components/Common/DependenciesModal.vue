@@ -1,32 +1,27 @@
 <script setup lang="ts">
+    import Project from "@Common/models/Project"
+    import RenderableFile from "@Common/models/RenderableFile"
     import PackageChecker from "@Renderer/codegen/sequential/services/PackageChecker"
     import { RenderableDependency } from "@Renderer/codegen/sequential/services/foundation/Renderable"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import UiModal from "@Renderer/components/ui/UiModal.vue"
-import Alert from "@Renderer/components/utils/Alert"
+    import Alert from "@Renderer/components/utils/Alert"
     import Main from "@Renderer/services/wrappers/Main"
-    import { ref, onMounted, defineExpose, Ref } from "vue"
+    import { ref, defineExpose, Ref, nextTick } from "vue"
 
-    const emit = defineEmits(["close"])
+    const emit = defineEmits(["close", "forceGeneration"])
 
     const showingModal = ref(false),
         composerDependencies = ref([]) as Ref<RenderableDependency[]>,
         packagesDependencies = ref([]) as Ref<RenderableDependency[]>,
-        installing = ref(false)
+        installing = ref(false),
+        currentState = ref("")
 
-    onMounted(() => {
-        fetchMissingDependencies()
-    })
-
-    const fetchMissingDependencies = () => {
-        composerDependencies.value = PackageChecker.getComposerDependenciesMissing()
-        packagesDependencies.value = PackageChecker.getPackagesDependenciesMissing()
-    }
-
-    const show = async () => {
+    const show = async (packageChecker: PackageChecker) => {
         showingModal.value = true
 
-        fetchMissingDependencies()
+        composerDependencies.value = packageChecker.getComposerDependenciesMissing()
+        packagesDependencies.value = packageChecker.getPackagesDependenciesMissing()
     }
 
     const close = () => {
@@ -36,50 +31,47 @@ import Alert from "@Renderer/components/utils/Alert"
     }
 
     const installMissingDependencies = async () => {
-        let hasErrors = false
-
         installing.value = true
 
         try {
             await installComposerDependencies()
             await installPackagesDependencies()
-        } catch (error: any) {
-            hasErrors = true
-            Alert.error("Failed to install dependencies")
-        } finally {
-            installing.value = false
 
-            if(hasErrors) return
-
-            Alert.success("Dependencies installed successfully")
             close()
+            
+            if(installing.value) {
+                Alert.success("Dependencies installed successfully")
+                installing.value = false
+            }
+        } catch (error: any) {
+            Alert.error(error.message)
         }
     }
 
-    const installComposerDependencies = async () => {
-        await Promise.all(
-                composerDependencies.value.map(async (dependency) => {
-                    await Main.API.executeComposerOnProject(`require ${dependency.name}`)
-                })
-            ).catch(e => {
-                Alert.error("Failed to install composer dependencies: " + e.message)
-                installing.value = false
+    const onDependencyInstallError = (error: any) => {
+        installing.value = false
 
-                throw new Error(e)
+        Alert.error(error.message)
+    }
+
+    const installComposerDependencies = async () => {
+        currentState.value = "Installing Composer dependencies"
+
+        await Promise.all(
+            composerDependencies.value.map(async (dependency) => {
+                await Main.API.executeComposerOnProject(`require ${dependency.name}`)
             })
+        ).then(() => {}, (error) => onDependencyInstallError(error))
     }
 
     const installPackagesDependencies = async () => {
+        currentState.value = "Installing Packages dependencies"
+
         await Promise.all(
-                packagesDependencies.value.map(async (dependency) => {
-                    await Main.API.executeYarnOnProject(`add ${dependency.name}`)
-                })
-            ).catch(e => {
-                Alert.error("Failed to install yarn dependencies: " + e.message)
-                installing.value = false
-                
-                throw new Error(e)
+            packagesDependencies.value.map(async (dependency) => {
+                await Main.API.executeYarnOnProject(`add ${dependency.name}`)
             })
+        ).then(() => {}, (error) => onDependencyInstallError(error))
     }
 
     const generateWithMissingDependencies = () => {
@@ -95,8 +87,21 @@ import Alert from "@Renderer/components/utils/Alert"
 
         templatePaths = [...new Set(templatePaths)]
 
+        const project: Project = Project.find(1)
+
+        if(!project) return
+
         templatePaths.forEach((path: string) => {
-            // do something
+            const renderableFile: RenderableFile = project.getRenderableFileByTemplatePath(path)
+
+            if(!renderableFile) return
+
+            renderableFile.setAsSkipped()
+        })
+
+        nextTick(() => {
+            emit("forceGeneration")
+            close()
         })
     }
 
@@ -111,35 +116,36 @@ import Alert from "@Renderer/components/utils/Alert"
         width="700px"
         title="Dependencies Missing"
         :show="showingModal"
+        :processing="installing"
         @close="close"
     >
         <div class="p-4">
-            <table class="w-full">
-                <thead>
-                    <tr>
-                        <th class="text-left p-2">Composer</th>
-                        <th class="text-left p-2">Packages</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="p-2">
-                            <li class="list-none" v-for="dependency in composerDependencies" :key="dependency.name">
-                                <a class="text-red-400 underline hover:text-red-500">
-                                    {{ dependency.name }}
-                                </a>
-                            </li>
-                        </td>
-                        <td class="p-2">
-                            <li class="list-none" v-for="dependency in packagesDependencies" :key="dependency.name">
-                                <a class="text-red-400 underline hover:text-red-500">
-                                    {{ dependency.name }}
-                                </a>
-                            </li>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <template v-if="composerDependencies.length">
+                <div>
+                    <span>Composer</span>
+                    <li class="list-none" v-for="dependency in composerDependencies" :key="dependency.name">
+                        <a class="text-red-400 underline hover:text-red-500">
+                            {{ dependency.name }}
+                        </a>
+                    </li>
+                </div>
+            </template>
+
+            <template v-if="packagesDependencies.length">
+                <div class="mt-4">
+                    <span>Packages</span>
+                    <li class="list-none" v-for="dependency in packagesDependencies" :key="dependency.name">
+                        <a class="text-red-400 underline hover:text-red-500">
+                            {{ dependency.name }}
+                        </a>
+                    </li>
+                </div>
+            </template>
+        </div>
+
+        <div v-if="installing" class="space-y-2 p-4 mt-2 bg-slate-950 rounded-b-lg border-t border-slate-700">
+            <span class="text-sm">{{ currentState }}</span>
+            <span class="points-animation relative"></span>
         </div>
 
         <template #footer>
@@ -156,3 +162,18 @@ import Alert from "@Renderer/components/utils/Alert"
     </UiModal>
 
 </template>
+<style>
+.points-animation::after {
+    content: '.';
+    animation: points 1.5s infinite;
+}
+
+@keyframes points {
+    45% {
+        content: '..';
+    }
+    80% {
+        content: '...';
+    }
+}
+</style>

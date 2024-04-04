@@ -5,12 +5,14 @@ const sendErrorMessage = (event: any, error: any) => {
     })
 }
 
-export async function handleError(event: any, callback: any) {
+export async function handleError(event: any, callback: any, throwError: boolean = false) {
     try {
         return await callback(event)
     } catch (error) {
         sendErrorMessage(event, error)
 
+        if(throwError) throw new Error(error.message)
+        
         return error
     }
 }

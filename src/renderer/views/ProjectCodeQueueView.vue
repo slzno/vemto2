@@ -72,6 +72,11 @@
             badge: () => allConflictFiles.value.length,
         },
         {
+            label: "Skipped",
+            value: "skipped",
+            badge: () => allSkippedFiles.value.length,
+        },
+        {
             label: "Ignored",
             value: "ignored",
             badge: () => allIgnoredFiles.value.length,
@@ -80,12 +85,7 @@
             label: "Removed",
             value: "removed",
             badge: () => allRemovedFiles.value.length,
-        },
-        {
-            label: "Skipped",
-            value: "skipped",
-            badge: () => allSkippedFiles.value.length,
-        },
+        }
         // { label: "Settings", value: "settings" },
     ]
 

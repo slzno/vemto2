@@ -109,6 +109,9 @@
                             'text-red-800':
                                 file.status ===
                                 RenderableFileStatus.CAN_REMOVE,
+                            'text-cyan-500':
+                                file.status ===
+                                RenderableFileStatus.SKIPPED,
                             'text-slate-450':
                                 file.status ===
                                 RenderableFileStatus.REMOVED || file.status === RenderableFileStatus.IGNORED,

@@ -491,7 +491,7 @@ export default class Project extends RelaDB.Model {
             renderableFile = new RenderableFile()
         }
 
-        if (renderableFile.wasIgnored()) {
+        if (renderableFile.wasIgnored() || renderableFile.wasSkipped()) {
             return renderableFile
         }
 
@@ -839,6 +839,10 @@ export default class Project extends RelaDB.Model {
 
     isFreshLaravelProject(): boolean {
         return this.settings.isFreshLaravelProject
+    }
+
+    getRenderableFileByTemplatePath(path: string) {
+        return this.renderableFiles.find(file => file.template === path)
     }
 
 }

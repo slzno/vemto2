@@ -140,7 +140,7 @@
         }
     }
 
-    const generateCode = async () => {
+    const generateCode = async (force: boolean = false) => {
         console.log('Will generate')
         const currentTablesCount = projectStore.project.tables.length
 
@@ -158,11 +158,13 @@
 
         appStore.startGeneratingCode()
 
+        const sequentialGenerator = new SequentialGenerator(projectStore.project)
+
         try {
-            await new SequentialGenerator(projectStore.project).run()
+            await (force ? sequentialGenerator.runGeneration() : sequentialGenerator.run())
                 .then((generated: boolean) => {
                     if(!generated) {
-                        treatProjectGenerationError()
+                        treatProjectGenerationError(sequentialGenerator.packageChecker)
                         return
                     }
 
@@ -187,14 +189,10 @@
         }
     }
 
-    const treatProjectGenerationError = () => {
-        if(PackageChecker.hasMissingDependencies()) {
-            openMissingDependenciesModal()
+    const treatProjectGenerationError = (packageChecker: PackageChecker) => {
+        if(packageChecker.hasMissingDependencies()) {
+            dependenciesModal.value?.show(packageChecker)
         }
-    }
-
-    const openMissingDependenciesModal = async () => {
-        await dependenciesModal.value.show()
     }
 
     const openURL = (url: string) => {
@@ -220,6 +218,7 @@
 
             <DependenciesModal
                 ref="dependenciesModal"
+                @force-generation="generateCode(true)"
             />
 
             <LicenseModal

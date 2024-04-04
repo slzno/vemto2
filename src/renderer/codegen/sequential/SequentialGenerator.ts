@@ -20,18 +20,22 @@ export default class SequentialGenerator {
 
     project: Project
 
+    packageChecker: PackageChecker
+
     constructor(project: Project) {
         this.project = project
+
+        this.packageChecker = new PackageChecker(project)
     }
 
     async checkDependencies(): Promise<boolean> {
-        PackageChecker.reset()
-
+        this.packageChecker.reset()
+        
         Renderable.setMode("checker")
         await this.runGenerators()
         Renderable.setMode("generate")
 
-        return await PackageChecker.hasMissingDependencies()
+        return await this.packageChecker.hasMissingDependencies()
     }
 
     async run(): Promise<boolean> {
@@ -56,7 +60,7 @@ export default class SequentialGenerator {
         }
     }
 
-    async runGeneration() {
+    async runGeneration(): Promise<boolean> {
         SequentialGenerator.startTimer()
 
         SchemaBuilder.disableSchemaChangesCheck()
@@ -78,6 +82,8 @@ export default class SequentialGenerator {
         SchemaBuilder.enableSchemaChangesCheck()
 
         SequentialGenerator.stopTimer()
+
+        return true
     }
 
     async runGenerators() {

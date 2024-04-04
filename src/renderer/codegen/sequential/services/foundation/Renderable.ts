@@ -114,8 +114,7 @@ export default abstract class Renderable {
 
     async render() {
         if(Renderable.mode === "checker") {
-            this.addDependencies()
-            console.log('Renderable mode is checker, skipping render...')
+            this.treatCheckerMode()
             return
         }
 
@@ -144,6 +143,15 @@ export default abstract class Renderable {
             
             return
         }
+
+        if(file.wasSkipped()) {
+            console.log('Skipping file...', this.getTemplateFile())
+            if(this.logEnabled) {
+                console.log(`Skipping ${this.getTemplateFile()} for file ${this.getFullFilePath()}...`)
+            }
+            
+            return
+        }
         
         try {
             const compiledTemplate = await this.compile()
@@ -160,6 +168,12 @@ export default abstract class Renderable {
                 file.save()
             }
         }
+    }
+
+    treatCheckerMode() {
+        console.log('Renderable mode is checker, skipping render...')
+        
+        this.addDependencies()
     }
 
     getFullFilePath(): string {
