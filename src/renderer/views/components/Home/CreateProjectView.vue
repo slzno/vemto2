@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref, Ref, onMounted, watch, defineEmits } from "vue"
+    import { ref, Ref, onMounted, defineEmits } from "vue"
     import { PlusCircleIcon } from "@heroicons/vue/24/outline"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import UiModal from "@Renderer/components/ui/UiModal.vue"
@@ -37,6 +37,32 @@
     const create = async () => {
         if(creatingProject.value) return
 
+        if(!validate()) return
+
+        createProject()
+    }
+
+    const validate = () => {
+        if(!settings.value.path?.length) {
+            errors.value.path = "The path is required"
+        }
+
+        if(!settings.value.name?.length) {
+            errors.value.name = "The name is required"
+        }
+
+        if(!settings.value.starterKit?.length) {
+            errors.value.starterKit = "The starter kit is required"
+        }
+
+        if(!settings.value.database?.length) {
+            errors.value.database = "The database is required"
+        }
+
+        return !Object.values(errors).length
+    }
+
+    const createProject = () => {
         creatingProject.value = true
 
         Main.API.folderExists(settings.value.completePath)
@@ -77,6 +103,11 @@
     }
 
     const onProjectNameChanged = debounce(() => {
+        if(!settings.value.name?.length) {
+            errors.value.name = "The name is required"
+            return
+        }
+
         const regex = /^([a-zA-Z0-9\-\_]*)$/g
 
         if (regex.test(settings.value.name)) {
@@ -85,6 +116,15 @@
         }
 
         errors.value.name = "Invalid project name"
+    }, 250)
+
+    const onProjectPathChanged = debounce(() => {
+        if(!settings.value.path?.length) {
+            errors.value.path = "The path is required"
+            return
+        }
+
+        delete errors.value.path
     }, 250)
 
     const resetSettings = () => {
@@ -138,7 +178,11 @@
         >
             <div class="space-y-2 p-4">
                 <div>
-                    <UiPathSelector v-model="settings.path" label="Project Path" />
+                    <UiPathSelector v-model="settings.path" label="Project Path" @input="onProjectPathChanged" />
+
+                    <template v-if="errors.path !== undefined">
+                        <span class="dark:text-red-500 text-sm pl-2">{{ errors.path }}</span>
+                    </template>
                 </div>
 
                 <div>

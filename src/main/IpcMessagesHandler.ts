@@ -330,7 +330,7 @@ export function HandleIpcMessages() {
     ipcMain.handle("php:execute:on-path", (event, path, command) => {
         return handleError(event, async () => {
             return await CommandExecutor.executePhpOnPath(path, command, true)
-        })
+        }, true)
     })
 
     ipcMain.handle("php:execute:on-project", (event, command) => {
@@ -339,7 +339,7 @@ export function HandleIpcMessages() {
 
         return handleError(event, async () => {
             return await CommandExecutor.executePhpOnPath(project.getPath(), command, true)
-        })
+        }, true)
     })
 
     ipcMain.handle("composer:is:installed", (event) => {
