@@ -18,6 +18,7 @@ use VemtoDBReader\ReadTablesFromDatabase;
 Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
     
     $settings = Vemto::getSettings();
+    $envSettings = Vemto::getEnvSettings();
     
     if($settings['SCHEMA_READER_MODE'] !== 'db') {
         throw new \Exception('Trying to read database schema without the correct mode');
@@ -72,9 +73,12 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
     }
 
     $databaseName = $settings['SCHEMA_READER_DB_DATABASE'];
+    $projectDatabaseName = $envSettings['DB_DATABASE'] ?? null;
 
     $dbManager = new DatabaseManager('mysql');
-    
+
+    $dbManager->checkProjectDatabaseIsDifferent($databaseName, $projectDatabaseName);
+
     $dbManager->createDatabase($databaseName);
     $dbManager->dropTables($databaseName);
 

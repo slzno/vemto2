@@ -42,7 +42,7 @@ class Vemto
 
         // If the log file doesn't exist, create it
         // If we are not in debug mode, we also clear the log file
-        if (!file_exists($logFile) || !getenv('VEMTO_DEBUG')) {
+        if (!file_exists($logFile)) {
             file_put_contents($logFile, '');
         }
 
@@ -177,7 +177,30 @@ class Vemto
         return realpath(__DIR__ . '/../../../../main/static');
     }
 
-    public static function getSettings(string $basePath = null)
+    // get env settings
+    public static function getEnvSettings(): array
+    {
+        $envSettingsFile = getcwd() . DIRECTORY_SEPARATOR . '.env';
+        $envExampleSettingsFile = getcwd() . DIRECTORY_SEPARATOR . '.env.example';
+        
+        $envFileExists = file_exists($envSettingsFile);
+        $envExampleFileExists = file_exists($envExampleSettingsFile);
+
+        if (!$envFileExists && !$envExampleFileExists) {
+            throw new \Exception('No .env file found');
+        }
+
+        $envSettings = $envFileExists ? Vemto::parseEnv($envSettingsFile) : null;
+        $envExampleSettings = $envExampleFileExists ? Vemto::parseEnv($envExampleSettingsFile) : null;
+
+        if(!empty($envSettings)) {
+            return $envSettings;
+        }
+
+        return $envExampleSettings;
+    }
+
+    public static function getSettings(string $basePath = null): array
     {
         $basePath = $basePath ?? getcwd();
         $settingsFile = $basePath . DIRECTORY_SEPARATOR . '.vemto_settings';
@@ -186,6 +209,54 @@ class Vemto
             throw new \Exception('No .vemto_settings file found');
         }
 
-        return parse_ini_file($settingsFile);
+        return Vemto::parseEnv($settingsFile);
     }
+
+    public static function parseEnv($filePath): array {
+        $result = [];
+
+        // Check if the file exists
+        if (!file_exists($filePath)) {
+            return $result;
+        }
+    
+        // Read file line by line
+        $lines = file($filePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+
+        if ($lines === false) {
+            return $result;
+        }
+    
+        foreach ($lines as $line) {
+            // Skip comments
+            if (strpos(trim($line), '#') === 0) {
+                continue;
+            }
+    
+            // Find the first position of '='
+            $firstEqualsPosition = strpos($line, '=');
+            if ($firstEqualsPosition === false) {
+                continue; // Skip invalid lines
+            }
+    
+            $key = trim(substr($line, 0, $firstEqualsPosition));
+            $value = trim(substr($line, $firstEqualsPosition + 1));
+    
+            // Remove surrounding quotes from the value
+            $value = trim($value, "\"'");
+            
+            if ($value === 'true' || $value === 'TRUE') {
+                $value = true;
+            } elseif ($value === 'false' || $value === 'FALSE') {
+                $value = false;
+            } elseif ($value === 'null' || $value === 'NULL') {
+                $value = null;
+            }
+
+            $result[$key] = $value;
+        }
+    
+        return $result;
+    }
+    
 }

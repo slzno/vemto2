@@ -131,7 +131,7 @@
             
             await openPath(project.path)
         } catch (error) {
-            Alert.error("Please check the application errors before trying to open")
+            // Alert.error("Please check the application errors before trying to open")
 
             loadingProjectId.value = null
 
@@ -156,7 +156,7 @@
 
             openSchema()
         } catch (error) {
-            Alert.error("Please check the application errors before trying to connect")
+            // Alert.error("Please check the application errors before trying to connect")
 
             processingConnectFolder.value = false
 
@@ -338,7 +338,7 @@
     <!-- Connect folder modal -->
     <UiModal
         width="1000px"
-        height="800px"
+        height="700px"
         title="Connect Folder"
         :show="showingConnectingFolderModal"
         :processing="processingConnectFolder"
@@ -424,7 +424,7 @@
 
                                 <UiText 
                                     v-model="connectingFolderSettings.schemaReaderDbDatabase" label="Vemto Database"
-                                    hint="Do not use the same database as your project database. Vemto will drop and create tables in this database to read the schema."
+                                    hint="This is not your project's database. Vemto will drop and create tables on it to read the schema. The database name must start with the vemto_ prefix. Vemto will try to create the database if it does not exist."
                                     hint-type="warning"
                                 ></UiText>
                             </div>

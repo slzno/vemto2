@@ -98,11 +98,19 @@ class DatabaseManager {
      * @param [type] $dbName
      * @return void
      */
-    protected function checkDatabasePrefix($dbName)
+    public function checkDatabasePrefix($dbName)
     {
         if (strpos($dbName, 'vemto_') !== 0) {
             throw new ValidationException("Database name must start with 'vemto_' prefix.", [
                 "database_name" => "Database name must start with 'vemto_' prefix."
+            ]);
+        }
+    }
+
+    public function checkProjectDatabaseIsDifferent($dbName, $projectDatabaseName) {
+        if ($dbName == $projectDatabaseName) {
+            throw new ValidationException("Database name must be different from the project database name.", [
+                "database_name" => "Database name must be different from the project database name."
             ]);
         }
     }
