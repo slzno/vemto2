@@ -13,6 +13,7 @@ import GenerateFilamentResources from "./services/crud/GenerateFilamentResources
 import GenerateLivewireLayout from "./services/crud/GenerateLivewireLayout"
 import Renderable from "./services/foundation/Renderable"
 import PackageChecker from "./services/PackageChecker"
+import RenderableFile from "@Common/models/RenderableFile"
 
 export default class SequentialGenerator {
     static startTime: number = 0
@@ -26,6 +27,35 @@ export default class SequentialGenerator {
         this.project = project
 
         this.packageChecker = new PackageChecker(project)
+    }
+
+    async prepareGeneration() {
+        await this.checkDependencies()
+        
+        this.project.clearSkippedRenderableFiles()
+
+        let templatePaths = []
+
+        const composerMissingDependencies = this.packageChecker.getComposerMissingDependencies(),
+                packagesMissingDependencies = this.packageChecker.getPackagesMissingDependencies()
+
+        composerMissingDependencies.forEach((dependency) => {
+            templatePaths.push(...dependency.templatePaths)
+        })
+
+        packagesMissingDependencies.forEach((dependency) => {
+            templatePaths.push(...dependency.templatePaths)
+        })
+
+        templatePaths = [...new Set(templatePaths)]
+
+        templatePaths.forEach((path: string) => {
+            const renderableFile: RenderableFile = this.project.getRenderableFileByTemplatePath(path)
+
+            if(!renderableFile) return
+
+            renderableFile.setAsSkipped()
+        })
     }
 
     async checkDependencies(): Promise<boolean> {

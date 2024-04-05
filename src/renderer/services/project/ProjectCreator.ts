@@ -1,6 +1,5 @@
 import PathUtil from "@Common/util/PathUtil";
 import Main from "../wrappers/Main"
-import Alert from "@Renderer/components/utils/Alert"
 
 export interface ProjectCreatorData {
     name: string;
@@ -44,7 +43,7 @@ export default class ProjectCreator {
         } catch (error: any) {
             this.hasErrors = true
 
-            Alert.error("Error creating project: " + error.message)
+            throw error
         }
     }
 

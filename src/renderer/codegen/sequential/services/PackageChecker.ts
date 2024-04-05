@@ -11,8 +11,8 @@ export default class PackageChecker {
     project: Project
     projectInfo: null | ProjectInfo = null
 
-    composerDependenciesMissing: RenderableDependency[] = []
-    packagesDependenciesMissing: RenderableDependency[] = []
+    composerMissingDependencies: RenderableDependency[] = []
+    packagesMissingDependencies: RenderableDependency[] = []
 
     constructor(project: Project) {
         this.project = project
@@ -23,8 +23,8 @@ export default class PackageChecker {
         await this.checkComposerDependencies()
         await this.checkPackagesDependencies()
 
-        return this.composerDependenciesMissing.length > 0
-            || this.packagesDependenciesMissing.length > 0
+        return this.composerMissingDependencies.length > 0
+            || this.packagesMissingDependencies.length > 0
     }
 
     async setProjectInfo(): Promise<void> {
@@ -41,7 +41,7 @@ export default class PackageChecker {
         
         const allProjectComposerDependencies = normalDependencies.concat(devDependencies)
 
-        this.composerDependenciesMissing = Renderable.getComposerDependencies()
+        this.composerMissingDependencies = Renderable.getComposerDependencies()
             .filter(dependency => !allProjectComposerDependencies.includes(dependency.name))
     }
 
@@ -51,28 +51,28 @@ export default class PackageChecker {
 
         const allProjectPackagesDependencies = normalDependencies.concat(devDependencies)
 
-        this.packagesDependenciesMissing = Renderable.getPackagesDependencies()
+        this.packagesMissingDependencies = Renderable.getPackagesDependencies()
             .filter(dependency => !allProjectPackagesDependencies.includes(dependency.name))
     }
 
-    getComposerDependenciesMissing(): RenderableDependency[] {
-        return this.composerDependenciesMissing
+    getComposerMissingDependencies(): RenderableDependency[] {
+        return this.composerMissingDependencies
     }
 
-    getPackagesDependenciesMissing(): RenderableDependency[] {
-        return this.packagesDependenciesMissing
+    getPackagesMissingDependencies(): RenderableDependency[] {
+        return this.packagesMissingDependencies
     }
 
     getDependenciesMissing(): DependenciesMissing {
         return {
-            composer: this.getComposerDependenciesMissing(),
-            packages: this.getPackagesDependenciesMissing()
+            composer: this.getComposerMissingDependencies(),
+            packages: this.getPackagesMissingDependencies()
         } as DependenciesMissing
     }
 
     reset(): void {
         this.projectInfo = null
-        this.composerDependenciesMissing = []
-        this.packagesDependenciesMissing = []
+        this.composerMissingDependencies = []
+        this.packagesMissingDependencies = []
     }
 }

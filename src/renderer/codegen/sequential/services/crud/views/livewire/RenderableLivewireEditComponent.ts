@@ -51,6 +51,5 @@ export default class RenderableLivewireEditComponent extends Renderable {
 
     addDependencies() {
         Renderable.addComposerDependency("livewire/livewire", this.getTemplateFile())
-        Renderable.addComposerDependency("laravel/ui", this.getTemplateFile())
     }
 }

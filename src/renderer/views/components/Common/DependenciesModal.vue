@@ -1,12 +1,14 @@
 <script setup lang="ts">
     import Project from "@Common/models/Project"
     import RenderableFile from "@Common/models/RenderableFile"
+    import SequentialGenerator from "@Renderer/codegen/sequential/SequentialGenerator"
     import PackageChecker from "@Renderer/codegen/sequential/services/PackageChecker"
     import { RenderableDependency } from "@Renderer/codegen/sequential/services/foundation/Renderable"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import UiModal from "@Renderer/components/ui/UiModal.vue"
     import Alert from "@Renderer/components/utils/Alert"
     import Main from "@Renderer/services/wrappers/Main"
+    import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import { ref, defineExpose, Ref, nextTick } from "vue"
 
     const emit = defineEmits(["close", "forceGeneration"])
@@ -17,11 +19,13 @@
         installing = ref(false),
         currentState = ref("")
 
+    const projectStore = useProjectStore()
+
     const show = async (packageChecker: PackageChecker) => {
         showingModal.value = true
 
-        composerDependencies.value = packageChecker.getComposerDependenciesMissing()
-        packagesDependencies.value = packageChecker.getPackagesDependenciesMissing()
+        composerDependencies.value = packageChecker.getComposerMissingDependencies()
+        packagesDependencies.value = packageChecker.getPackagesMissingDependencies()
     }
 
     const close = () => {
@@ -48,10 +52,8 @@
         }
     }
 
-    const onDependencyInstallError = (error: any) => {
+    const onDependencyInstallError = () => {
         installing.value = false
-
-        Alert.error(error.message)
     }
 
     const installComposerDependencies = async () => {
@@ -61,7 +63,7 @@
             composerDependencies.value.map(async (dependency) => {
                 await Main.API.executeComposerOnProject(`require ${dependency.name}`)
             })
-        ).then(() => {}, (error) => onDependencyInstallError(error))
+        ).then(() => {}, (error) => onDependencyInstallError())
     }
 
     const installPackagesDependencies = async () => {
@@ -71,36 +73,16 @@
             packagesDependencies.value.map(async (dependency) => {
                 await Main.API.executeYarnOnProject(`add ${dependency.name}`)
             })
-        ).then(() => {}, (error) => onDependencyInstallError(error))
+        ).then(() => {}, (error) => onDependencyInstallError())
     }
 
     const generateWithMissingDependencies = () => {
-        let templatePaths = []
+       const sequentialGenerator = new SequentialGenerator(projectStore.project)
 
-        composerDependencies.value.forEach((dependency) => {
-            templatePaths.push(...dependency.templatePaths)
-        })
-
-        packagesDependencies.value.forEach((dependency) => {
-            templatePaths.push(...dependency.templatePaths)
-        })
-
-        templatePaths = [...new Set(templatePaths)]
-
-        const project: Project = Project.find(1)
-
-        if(!project) return
-
-        templatePaths.forEach((path: string) => {
-            const renderableFile: RenderableFile = project.getRenderableFileByTemplatePath(path)
-
-            if(!renderableFile) return
-
-            renderableFile.setAsSkipped()
-        })
+       sequentialGenerator.prepareGeneration()
 
         nextTick(() => {
-            emit("forceGeneration")
+            emit('forceGeneration')
             close()
         })
     }
@@ -124,7 +106,7 @@
                 <div>
                     <span>Composer</span>
                     <li class="list-none" v-for="dependency in composerDependencies" :key="dependency.name">
-                        <a class="text-red-400 underline hover:text-red-500">
+                        <a class="text-red-400">
                             {{ dependency.name }}
                         </a>
                     </li>
@@ -135,7 +117,7 @@
                 <div class="mt-4">
                     <span>Packages</span>
                     <li class="list-none" v-for="dependency in packagesDependencies" :key="dependency.name">
-                        <a class="text-red-400 underline hover:text-red-500">
+                        <a class="text-red-400">
                             {{ dependency.name }}
                         </a>
                     </li>

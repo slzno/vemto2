@@ -37,8 +37,10 @@
     const create = async () => {
         if(creatingProject.value) return
 
+        console.log('antes do validation')
         if(!validate()) return
 
+        console.log('criou')
         createProject()
     }
 
@@ -59,7 +61,7 @@
             errors.value.database = "The database is required"
         }
 
-        return !Object.values(errors).length
+        return !Object.values(errors.value).length
     }
 
     const createProject = () => {
@@ -103,11 +105,6 @@
     }
 
     const onProjectNameChanged = debounce(() => {
-        if(!settings.value.name?.length) {
-            errors.value.name = "The name is required"
-            return
-        }
-
         const regex = /^([a-zA-Z0-9\-\_]*)$/g
 
         if (regex.test(settings.value.name)) {
@@ -178,7 +175,7 @@
         >
             <div class="space-y-2 p-4">
                 <div>
-                    <UiPathSelector v-model="settings.path" label="Project Path" @input="onProjectPathChanged" />
+                    <UiPathSelector v-model="settings.path" label="Project Path" />
 
                     <template v-if="errors.path !== undefined">
                         <span class="dark:text-red-500 text-sm pl-2">{{ errors.path }}</span>
