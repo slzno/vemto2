@@ -5,7 +5,7 @@
     import UiSmallButton from "@Renderer/components/ui/UiSmallButton.vue"
     import { CheckCircleIcon, ShieldExclamationIcon, XMarkIcon, FlagIcon } from "@heroicons/vue/24/outline"
     import Main from "@Renderer/services/wrappers/Main"
-import UiTip from "@Renderer/components/ui/UiTip.vue"
+    import UiTip from "@Renderer/components/ui/UiTip.vue"
 
     const errorsStore = useErrorsStore()
 
