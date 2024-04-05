@@ -66,6 +66,10 @@ class TableRepository {
             $newColumnOrder = $previousColumn ? $previousColumn['order'] + 1 : $column['order'];
 
             $columns = array_map(function($column) use ($newColumnOrder) {
+                if(!isset($column['order'])) {
+                    $column['order'] = 0;
+                }
+
                 if ($column['order'] >= $newColumnOrder) {
                     $column['order']++;
                 }
