@@ -2,7 +2,7 @@ import Main from "../wrappers/Main"
 import PathUtil from "@Common/util/PathUtil"
 import { ProjectCssFramework, ProjectUIStarterKit } from "@Common/models/Project"
 import { validateAndParse as getVersionMatches } from 'compare-versions/lib/esm/utils'
-import EnvParser from "@Renderer/util/EnvParser"
+import EnvParser from "@Common/util/EnvParser"
 
 export default class ProjectInfo {
     path: string

@@ -15,6 +15,8 @@ require_once 'classes/ExtendedMigrator.php';
 require_once 'classes/ExtendedBlueprint.php';
 require_once 'classes/MigrationRepository.php';
 
+use Vemto\Vemto;
+
 Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
     // Set the database connection to SQLite
     // config(['database.default' => 'sqlite']);
