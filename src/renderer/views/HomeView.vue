@@ -458,6 +458,7 @@
                                 <UiSelect v-model="connectingFolderSettings.schemaReaderDbDriver" label="Database Type">
                                     <option value="sqlite">SQLite</option>
                                     <option value="mysql">MySQL</option>
+                                    <option value="mariadb">MariaDB</option>
                                     <option value="pgsql">PostgreSQL</option>
                                     <option value="sqlsrv">SQL Server</option>
                                 </UiSelect>
@@ -567,7 +568,7 @@
                 There are no connected apps
             </UiEmptyMessage>
 
-            <div class="flex flex-col gap-2 w-1/2 max-w-xl">
+            <div class="flex flex-col gap-2 w-1/2 max-w-xl px-2 pb-8 overflow-y-auto" style="height: calc(100vh - 300px);">
                 <div v-for="project in filteredProjects" @click="openProject(project)" class="p-2 rounded-lg border border-slate-300 dark:border-slate-650 bg-slate-50 dark:bg-slate-850 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800">
                     <div class="flex justify-between text-slate-200">
                         <span>{{ project.path.split(/\/|\\/).pop() }}</span>
