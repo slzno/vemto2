@@ -39,6 +39,7 @@
         showingWelcomeModal = ref(false),
         showingConnectingFolderModal = ref(false),
         processingConnectFolder = ref(false),
+        processingConnectFolderFromDialog = ref(false),
         settingsModal = ref(null),
         vemtoVersion = ref("2.0.0"),
         connectingModalSelectedTab = ref("main"),
@@ -116,7 +117,7 @@
 
         if (!path) return
 
-        await openPath(path)
+        await openPath(path, false, true)
     }
 
     const openProject = async (project: any) => {
@@ -173,7 +174,7 @@
         showingConnectingFolderModal.value = true
     }
 
-    const openPath = async (path: string, isNewProject: boolean = false) => {
+    const openPath = async (path: string, isNewProject: boolean = false, fromFolderDialog: false) => {
         currentConnectingFolder.value = path
 
         const projectInfo = new ProjectInfo(path)
@@ -185,6 +186,10 @@
         if(projectInfo.alreadyConnected && projectInfo.hasSettingsFile) {
             try {
                 processingConnectFolder.value = true
+                if(fromFolderDialog) {
+                    processingConnectFolderFromDialog.value = true
+                }
+
                 await projectManager.connectFromPath(path)
                 openSchema()
 
@@ -272,6 +277,7 @@
     const stopLoading = () => {
         loadingProjectId.value = null
         processingConnectFolder.value = false
+        processingConnectFolderFromDialog.value = false
     }
 
     const openSchema = async () => {
@@ -536,7 +542,7 @@
                 <div class="flex gap-2">
                     <CreateProjectView @reloadProjectListAndOpenPath="reloadProjectListAndOpenPath" />
                     <UiButton class="gap-1.5" @click="openFolder()">
-                        <div v-if="processingConnectFolder">
+                        <div v-if="processingConnectFolderFromDialog">
                             <UiLoading :stroke-width="2"</UiLoading> 
                         </div>
                         <div v-else>
