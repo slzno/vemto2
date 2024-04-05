@@ -13,7 +13,7 @@
     import UiConfirm from '@Renderer/components/ui/UiConfirm.vue'
     import UiWarning from '@Renderer/components/ui/UiWarning.vue'
     import { useSchemaStore } from '@Renderer/stores/useSchemaStore'
-import UiLoading from '@Renderer/components/ui/UiLoading.vue'
+    import UiLoading from '@Renderer/components/ui/UiLoading.vue'
 
     const showingCreateTableModal = ref(false),
         showingCreateSectionModal = ref(false),

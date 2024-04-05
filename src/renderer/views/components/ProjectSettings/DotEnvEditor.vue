@@ -9,7 +9,7 @@
     import { ArrowDownTrayIcon, ArrowPathIcon, Bars2Icon, Bars3Icon, ClipboardDocumentListIcon, TrashIcon } from '@heroicons/vue/24/outline'
     import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
     import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
-    import EnvParser from "@Renderer/util/EnvParser"
+    import EnvParser from "@Common/util/EnvParser"
 
     const projectStore = useProjectStore(),
         envSettings = ref([])
