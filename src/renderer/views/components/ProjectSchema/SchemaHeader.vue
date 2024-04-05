@@ -13,6 +13,7 @@
     import UiConfirm from '@Renderer/components/ui/UiConfirm.vue'
     import UiWarning from '@Renderer/components/ui/UiWarning.vue'
     import { useSchemaStore } from '@Renderer/stores/useSchemaStore'
+import UiLoading from '@Renderer/components/ui/UiLoading.vue'
 
     const showingCreateTableModal = ref(false),
         showingCreateSectionModal = ref(false),
@@ -25,6 +26,13 @@
         search = ref(''),
         searchInput = ref(null),
         searchIsFocused = ref(false)
+
+    const props = defineProps({
+        'loadingSchema': {
+            type: Boolean,
+            default: false
+        }
+    })
 
     const emit = defineEmits(['tableAdded', 'syncSchema'])
 
@@ -430,9 +438,14 @@
                     title="Sync Schema"
                     @click="syncSchema()"
                 >
-                    <ArrowPathIcon
-                        class="w-7 h-7 stroke-1"
-                    />
+                    <div class="w-7 h-7 flex items-center justify-center" v-if="loadingSchema">
+                        <UiLoading :stroke-width="2"></UiLoading>
+                    </div>
+                    <div v-else>
+                        <ArrowPathIcon
+                            class="w-7 h-7 stroke-1"
+                        />
+                    </div>
                 </button>
             </div>
 
