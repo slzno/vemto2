@@ -35,9 +35,16 @@
         })
     }
 
-    const openFile = (file: RenderableFile): void => {
+    const openFile = async (file: RenderableFile): void => {
         if (file.wasRemoved()) {
             Alert.warning("This file was removed from the project")
+            return
+        }
+
+        const fileExists = await Main.API.projectFileExists(file.getRelativeFilePath())
+
+        if(!fileExists) {
+            Alert.error("File not found")
             return
         }
 

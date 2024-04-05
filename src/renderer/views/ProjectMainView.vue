@@ -161,31 +161,30 @@
         const sequentialGenerator = new SequentialGenerator(projectStore.project)
 
         try {
-            await (force ? sequentialGenerator.runGeneration() : sequentialGenerator.run())
-                .then((generated: boolean) => {
-                    if(!generated) {
-                        treatProjectGenerationError(sequentialGenerator.packageChecker)
-                        return
-                    }
+            if(force) {
+                await sequentialGenerator.run()
+                return
+            }
 
-                    setTimeout(() => {
-                        const elapsedTime = SequentialGenerator.getElapsedTimeInSeconds()
-                        
-                        Alert.success(
-                            `Code generated successfully in ${elapsedTime} seconds`,
-                            2000
-                        )
-                    }, 500)
-                })
-                .catch((error: any) => {
-                    console.error(error)
-                })
-                .finally(() => {
-                    appStore.finishGeneratingCode()
-                })
+            const generated = await sequentialGenerator.checkDependenciesBeforeGeneration()
+
+            if(!generated) {
+                treatProjectGenerationError(sequentialGenerator.packageChecker)
+                return
+            }
+
+            setTimeout(() => {
+                const elapsedTime = SequentialGenerator.getElapsedTimeInSeconds()
+                
+                Alert.success(
+                    `Code generated successfully in ${elapsedTime} seconds`,
+                    2000
+                )
+            }, 500)
         } catch (error) {
-            appStore.finishGeneratingCode()
             throw error
+        } finally {
+            appStore.finishGeneratingCode()
         }
     }
 

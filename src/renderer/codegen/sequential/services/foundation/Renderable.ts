@@ -16,7 +16,7 @@ export interface RenderableDependency {
 export default abstract class Renderable {
     project: Project
     hooksEnabled: boolean = true
-    logEnabled: boolean = true
+    logEnabled: boolean = false
 
     static mode: "generate" | "checker" = "generate"
 

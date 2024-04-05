@@ -30,9 +30,9 @@ export default class SequentialGenerator {
     }
 
     async prepareGeneration() {
-        await this.checkDependencies()
-        
         this.project.clearSkippedRenderableFiles()
+        
+        await this.checkDependencies()
 
         let templatePaths = []
 
@@ -68,21 +68,25 @@ export default class SequentialGenerator {
         return await this.packageChecker.hasMissingDependencies()
     }
 
-    async run(): Promise<boolean> {
+    async checkDependenciesBeforeGeneration(): Promise<boolean> {
         try {
-            return await this.checkDependencies()
-                .then(async (hasMissingDependencies) => {
-                    if (hasMissingDependencies) return false
+            const hasMissingDependencies = await this.checkDependencies()
 
-                    await this.runGeneration()
+            if (hasMissingDependencies) return false
 
-                    return true
-                })
-                .catch(error => {
-                    console.error("Error while checking dependencies: ", error)
+            await this.runGeneration()
 
-                    return false
-                })
+            return true
+        } catch (error) {
+            console.error("Error while checking dependencies: ", error)
+
+            return false
+        }
+    }
+
+    async run(): Promise<void> {
+        try {
+            await this.runGeneration()
         } catch (error) {
             console.error("Error while running generation: ", error)
             

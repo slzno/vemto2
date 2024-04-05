@@ -58,22 +58,26 @@
 
     const installComposerDependencies = async () => {
         currentState.value = "Installing Composer dependencies"
-
-        await Promise.all(
-            composerDependencies.value.map(async (dependency) => {
+        
+        try {
+            for (const dependency of composerDependencies.value) {
                 await Main.API.executeComposerOnProject(`require ${dependency.name}`)
-            })
-        ).then(() => {}, (error) => onDependencyInstallError())
+            }
+        } catch (error) {
+            onDependencyInstallError()
+        }
     }
 
     const installPackagesDependencies = async () => {
         currentState.value = "Installing Packages dependencies"
 
-        await Promise.all(
-            packagesDependencies.value.map(async (dependency) => {
+        try {
+            for (const dependency of packagesDependencies.value) {
                 await Main.API.executeYarnOnProject(`add ${dependency.name}`)
-            })
-        ).then(() => {}, (error) => onDependencyInstallError())
+            }
+        } catch (error) {
+            onDependencyInstallError()
+        }
     }
 
     const generateWithMissingDependencies = () => {
