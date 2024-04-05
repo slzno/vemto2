@@ -75,12 +75,12 @@ export default class CommandExecutor {
     
                         console.error(errorMessage)
                         console.log(stdout)
-                        console.error(error)
+                        console.error(error.message)
     
                         let errorData = {
                             message: errorMessage,
                             error: stdout,
-                            stack: stdout
+                            stack: error.stack
                         }
     
                         reject(errorData)
