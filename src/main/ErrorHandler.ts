@@ -11,7 +11,7 @@ export async function handleError(event: any, callback: any, throwError: boolean
     } catch (error) {
         sendErrorMessage(event, error)
 
-        if(throwError) throw new Error(error.message)
+        if(throwError) throw error
         
         return error
     }
