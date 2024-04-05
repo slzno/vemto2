@@ -150,7 +150,7 @@
     }
 
     const onDatabaseChanged = () => {
-        if(!["sqlite", "mysql", "postgresql", "sqlsrv"].includes(settings.value.database)) {
+        if(!["sqlite", "mysql", "mariadb", "pgsql", "sqlsrv"].includes(settings.value.database)) {
             errors.value.database = "Invalid database"
             return
         }
@@ -208,7 +208,8 @@
                         <UiSelect v-model="settings.database" label="Database" @change="onDatabaseChanged">
                             <option value="sqlite">SQLite</option>
                             <option value="mysql">MySQL</option>
-                            <option value="postgresql">PostgreSQL</option>
+                            <option value="mariadb">MariaDB</option>
+                            <option value="pgsql">PostgreSQL</option>
                             <option value="sqlsrv">SQL Server</option>
                         </UiSelect>
 
