@@ -183,9 +183,16 @@
         if(!canConnect) return
 
         if(projectInfo.alreadyConnected && projectInfo.hasSettingsFile) {
-            await projectManager.connectFromPath(path)
-            openSchema()
-            return
+            try {
+                processingConnectFolder.value = true
+                await projectManager.connectFromPath(path)
+                openSchema()
+
+                return
+            } catch (error) {
+                stopLoading()
+                throw error
+            }
         }
 
         buildConnectingFolderSettings(projectInfo, isNewProject)
@@ -529,8 +536,13 @@
                 <div class="flex gap-2">
                     <CreateProjectView @reloadProjectListAndOpenPath="reloadProjectListAndOpenPath" />
                     <UiButton class="gap-1.5" @click="openFolder()">
-                        <FolderIcon class="w-5 h-5 text-red-500" />
-                        Connect Folder
+                        <div v-if="processingConnectFolder">
+                            <UiLoading :stroke-width="2"</UiLoading> 
+                        </div>
+                        <div v-else>
+                            <FolderIcon class="w-5 h-5 text-red-500" />
+                        </div>
+                        <span>Connect Folder</span>
                     </UiButton>
                     <UiButton class="gap-1.5" @click="connectSSH">
                         <CommandLineIcon class="w-5 h-5 text-red-500" />
