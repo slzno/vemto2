@@ -24,14 +24,17 @@ class ReadTablesFromDatabase
 
     protected string $appPath;
 
+    protected array $settings;
+
     protected array $tables = [];
 
     protected TableRepository $tableRepository;
 
-    public function __construct(Application $app, string $appPath)
+    public function __construct(Application $app, string $appPath, array $settings = [])
     {
         $this->app = $app;
         $this->appPath = $appPath;
+        $this->settings = $settings;
 
         $this->tableRepository = app(TableRepository::class);
     }
@@ -128,13 +131,21 @@ class ReadTablesFromDatabase
     protected function readForeignKeys(Collection $tables): void
     {
         $tables->each(function (string $table): void {
-            $foreignKeys = $this->schema->getForeignKeys($table);
+            try {
+                $foreignKeys = $this->schema->getForeignKeys($table);
 
-            if (!$foreignKeys->isNotEmpty()) {
-                return;
+                if (!$foreignKeys->isNotEmpty()) {
+                    return;
+                }
+
+                $this->addForeignKeys($table, $foreignKeys);
+            } catch (\Throwable $th) {
+                if($this->settings['SCHEMA_READER_DB_DRIVER'] === 'sqlite') {
+                    return;
+                }
+
+                throw $th;
             }
-
-            $this->addForeignKeys($table, $foreignKeys);
         });
     }
 

@@ -100,7 +100,7 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
     $migrator->path($migrationsPath);
     $migrator->run($migrationsPath);
 
-    $tablesReader = new ReadTablesFromDatabase($app, $APP_DIRECTORY);
+    $tablesReader = new ReadTablesFromDatabase($app, $APP_DIRECTORY, $settings);
     $tablesReader->handle();
 
     $migrationRepository = $app->make(MigrationRepository::class);

@@ -92,7 +92,7 @@ class Table {
         return isset($this->indexes[$name]) ? $this->indexes[$name] : null;
     }
 
-    public function updateForeignKeyIndex(SchemaForeignKey $foreignKey): Index {
+    public function updateForeignKeyIndex(SchemaForeignKey $foreignKey): ?Index {
         $foreignKeyHasMultipleColumns = count($foreignKey->getLocalColumns()) > 1;
 
         if($foreignKeyHasMultipleColumns) {
@@ -101,6 +101,10 @@ class Table {
 
         $foreignKeyName = $foreignKey->getName();
         
+        if(empty($foreignKeyName)) {
+            return null;
+        }
+
         $index = $this->getIndexByName($foreignKeyName);
 
         if(!$index) {
