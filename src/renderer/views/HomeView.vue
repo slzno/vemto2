@@ -164,6 +164,9 @@
         const projectInfo = new ProjectInfo(project.path)
         await projectInfo.read()
 
+        const canConnect = await checkProjectInfo(projectInfo)
+        if(!canConnect) return
+
         buildConnectingFolderSettings(projectInfo, false)
 
         connectingModalSelectedTab.value = "main"
@@ -176,27 +179,8 @@
         const projectInfo = new ProjectInfo(path)
         await projectInfo.read()
 
-        if(!projectInfo.isLaravelProject) {
-            Alert.error("This folder is not a Laravel project")
-            return
-        }
-
-        const hasComposerVendor = await projectManager.projectHasComposerVendor(path)
-        if(!hasComposerVendor) {
-            Alert.error("This Laravel project does not have the vendor folder. Please run <b>composer install</b> before connecting it")
-            
-            stopLoading()
-
-            return
-        }
-
-        if(compareVersions(projectInfo.laravelVersion, "11.0.0") < 0) {
-            Alert.error("Vemto only supports <b>Laravel 11+</b> projects. Please upgrade your Laravel version before connecting it")
-
-            stopLoading()
-
-            return
-        }
+        const canConnect = await checkProjectInfo(projectInfo)
+        if(!canConnect) return
 
         if(projectInfo.alreadyConnected && projectInfo.hasSettingsFile) {
             await projectManager.connectFromPath(path)
@@ -208,6 +192,32 @@
 
         connectingModalSelectedTab.value = "main"
         showingConnectingFolderModal.value = true
+    }
+
+    const checkProjectInfo = async (projectInfo: ProjectInfo) => {
+        if(!projectInfo.isLaravelProject) {
+            Alert.error("This folder is not a Laravel project")
+            return false
+        }
+
+        const hasComposerVendor = await projectManager.projectHasComposerVendor(projectInfo.path)
+        if(!hasComposerVendor) {
+            Alert.error("This Laravel project does not have the vendor folder. Please run <b>composer install</b> before connecting it")
+            
+            stopLoading()
+
+            return false
+        }
+
+        if(compareVersions(projectInfo.laravelVersion, "11.0.0") < 0) {
+            Alert.error("Vemto only supports <b>Laravel 11+</b> projects. Please upgrade your Laravel version before connecting it")
+
+            stopLoading()
+
+            return false
+        }
+
+        return true
     }
 
     const buildConnectingFolderSettings = (projectInfo, isNewProject: boolean) => {
