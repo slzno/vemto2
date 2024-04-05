@@ -12,10 +12,17 @@ class DatabaseManager {
 
     protected $pdo;
     protected $dbType;
+    protected $projectDatabaseName;
+    protected $projectDatabaseNameWasSet = false;
 
     public function __construct($dbType = 'mysql') {
         $this->dbType = $dbType;
         $this->connect();
+    }
+
+    public function setProjectDatabaseName($projectDatabaseName) {
+        $this->projectDatabaseName = $projectDatabaseName;
+        $this->projectDatabaseNameWasSet = true;
     }
 
     protected function connect() {
@@ -51,27 +58,38 @@ class DatabaseManager {
         }
     }
 
-    public function createDatabase($dbName) {
-        $this->checkDatabasePrefix($dbName);
+    public function createDatabase($databaseName) {
+        $this->checkProjectDatabaseIsDifferent($databaseName);
+        $this->checkDatabasePrefix($databaseName);
 
         try {
             if ($this->dbType == 'pgsql') {
                 // PostgreSQL does not support IF NOT EXISTS in CREATE DATABASE
-                $this->pdo->exec("SELECT 'CREATE DATABASE \"$dbName\"' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '$dbName')");
+                $this->pdo->exec("SELECT 'CREATE DATABASE \"$databaseName\"' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '$databaseName')");
             } else {
                 // MySQL and SQL Server support this syntax
-                $this->pdo->exec("CREATE DATABASE IF NOT EXISTS `$dbName`");
+                $this->pdo->exec("CREATE DATABASE IF NOT EXISTS `$databaseName`");
             }
-            echo "Database `$dbName` created successfully.\n";
         } catch (PDOException $e) {
-            throw new Exception("Could not create database `$dbName`: " . $e->getMessage());
+            throw new Exception("Could not create database `$databaseName`: " . $e->getMessage());
         }
     }
 
-    public function dropTables($dbName) {
-        $this->checkDatabasePrefix($dbName);
+    public function dropDatabase($databaseName) {
+        $this->checkProjectDatabaseIsDifferent($databaseName);
+        $this->checkDatabasePrefix($databaseName);
 
-        $this->pdo->exec("USE `$dbName`;");
+        try {
+            $this->pdo->exec("DROP DATABASE IF EXISTS `$databaseName`");
+        } catch (PDOException $e) {
+            throw new Exception("Could not drop database `$databaseName`: " . $e->getMessage());
+        }
+    }
+
+    public function dropTables($databaseName) {
+        $this->checkDatabasePrefix($databaseName);
+
+        $this->pdo->exec("USE `$databaseName`;");
             
         $tables = [];
         
@@ -95,20 +113,24 @@ class DatabaseManager {
     /**
      * If the database name does not start with "vemto_", exit the script
      *
-     * @param [type] $dbName
+     * @param [type] $databaseName
      * @return void
      */
-    public function checkDatabasePrefix($dbName)
+    public function checkDatabasePrefix($databaseName)
     {
-        if (strpos($dbName, 'vemto_') !== 0) {
+        if (strpos($databaseName, 'vemto_') !== 0) {
             throw new ValidationException("Database name must start with 'vemto_' prefix.", [
                 "database_name" => "Database name must start with 'vemto_' prefix."
             ]);
         }
     }
 
-    public function checkProjectDatabaseIsDifferent($dbName, $projectDatabaseName) {
-        if ($dbName == $projectDatabaseName) {
+    public function checkProjectDatabaseIsDifferent($databaseName) {
+        if(!$this->projectDatabaseNameWasSet) {
+            throw new Exception("Project database name was not set.");
+        }
+
+        if ($databaseName == $this->projectDatabaseName) {
             throw new ValidationException("Database name must be different from the project database name.", [
                 "database_name" => "Database name must be different from the project database name."
             ]);

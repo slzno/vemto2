@@ -28,8 +28,11 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
         ->withExceptions(function () {})
         ->create();
 
-    $app->useStoragePath(sys_get_temp_dir());
-    $app->useBootstrapPath(sys_get_temp_dir());
+    $storagePath = $APP_DIRECTORY . DIRECTORY_SEPARATOR . 'storage';
+    $bootstrapPath = $APP_DIRECTORY . DIRECTORY_SEPARATOR . 'bootstrap';
+
+    $app->useStoragePath($storagePath);
+    $app->useBootstrapPath($bootstrapPath);
 
     $app->bootstrapWith([
         \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
@@ -78,11 +81,10 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
 
     if($databaseDriver !== 'sqlite') {
         $dbManager = new DatabaseManager($databaseDriver);
+        $dbManager->setProjectDatabaseName($projectDatabaseName);
     
-        $dbManager->checkProjectDatabaseIsDifferent($databaseName, $projectDatabaseName);
-    
+        $dbManager->dropDatabase($databaseName);
         $dbManager->createDatabase($databaseName);
-        $dbManager->dropTables($databaseName);
     }
 
     $defaultConnection = "vemto_db_connection";
