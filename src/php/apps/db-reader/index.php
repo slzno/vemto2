@@ -72,15 +72,18 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
         ]);
     }
 
+    $databaseDriver = $settings['SCHEMA_READER_DB_DRIVER'];
     $databaseName = $settings['SCHEMA_READER_DB_DATABASE'];
     $projectDatabaseName = $envSettings['DB_DATABASE'] ?? null;
 
-    $dbManager = new DatabaseManager('mysql');
-
-    $dbManager->checkProjectDatabaseIsDifferent($databaseName, $projectDatabaseName);
-
-    $dbManager->createDatabase($databaseName);
-    $dbManager->dropTables($databaseName);
+    if($databaseDriver !== 'sqlite') {
+        $dbManager = new DatabaseManager($databaseDriver);
+    
+        $dbManager->checkProjectDatabaseIsDifferent($databaseName, $projectDatabaseName);
+    
+        $dbManager->createDatabase($databaseName);
+        $dbManager->dropTables($databaseName);
+    }
 
     $defaultConnection = "vemto_db_connection";
 

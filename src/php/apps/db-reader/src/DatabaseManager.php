@@ -47,7 +47,7 @@ class DatabaseManager {
                 $this->pdo->exec("USE {$config['database']}");
             }
         } catch (PDOException $e) {
-            die("DB connection failed: " . $e->getMessage());
+            throw new Exception("DB connection failed: " . $e->getMessage());
         }
     }
 
@@ -64,7 +64,7 @@ class DatabaseManager {
             }
             echo "Database `$dbName` created successfully.\n";
         } catch (PDOException $e) {
-            die("Could not create database `$dbName`: " . $e->getMessage());
+            throw new Exception("Could not create database `$dbName`: " . $e->getMessage());
         }
     }
 
