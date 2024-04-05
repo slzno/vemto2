@@ -80,7 +80,7 @@ class ModelRepository {
                     $methodContent .= $lines[$i] . PHP_EOL;
                 }
 
-                if (preg_match('/return \$this->(hasOne|hasMany|belongsTo|belongsToMany|hasOneThrough|hasManyThrough|morphOne|morphMany|morphToMany|through)/', $methodContent)) {
+                if (preg_match('/return \$this->(hasOne\(|hasMany\(|belongsTo\(|belongsToMany\(|hasOneThrough\(|hasManyThrough\(|morphOne\(|morphMany\(|morphToMany\()/', $methodContent)) {
                     $return = $method->invoke(new $model['class']);
                     
                     if ($return instanceof Relation) {
