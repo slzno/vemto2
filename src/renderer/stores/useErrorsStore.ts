@@ -59,5 +59,13 @@ export const useErrorsStore = defineStore("errors", {
 
             return state.errors.length > 0
         },
+
+        hasSchemaReaderErrors(state): boolean {
+            const projectStore = useProjectStore()
+
+            if(!projectStore.projectIsEmpty && projectStore.project.hasCurrentSchemaError()) return true
+
+            return state.errors.some(error => error.message.includes("schema-reader"))
+        },
     }
 })
