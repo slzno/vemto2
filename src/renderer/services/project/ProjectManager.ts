@@ -76,7 +76,9 @@ export default class ProjectManager {
         this.setLatestProjectPath(projectItem.path)
         
         this.update(projectItem.id, {
-            laravelVersion: project.settings.laravelVersion
+            path: PathUtil.normalize(projectItem.path),
+            laravelVersion: project.settings.laravelVersion,
+            schemaReaderMode: project.settings.schemaReaderMode,
         })
 
         return projectItem
@@ -148,6 +150,7 @@ export default class ProjectManager {
                 path, 
                 type: "Folder",
                 laravelVersion: null,
+                schemaReaderMode: "db",
                 createdAt: new Date(), 
                 updatedAt: new Date() 
             }

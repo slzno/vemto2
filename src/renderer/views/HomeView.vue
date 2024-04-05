@@ -599,8 +599,15 @@
                         </div>
                     </div>
                     <div class="flex flex-col space-y-1">
-                        <span class="text-slate-450">{{ project.path }}</span>
-                        <span v-if="project.laravelVersion" class="text-xs text-slate-500">Laravel {{ project.laravelVersion }}</span>
+                        
+                        <span class="text-slate-400 font-thin">{{ project.path }}</span>
+
+                        <div class="flex space-x-1 text-xs">
+                            <span v-if="project.laravelVersion" class="text-slate-500">Laravel {{ project.laravelVersion }}</span>
+                            <span v-if="project.schemaReaderMode" class=" text-slate-500">
+                                - {{ project.schemaReaderMode === 'db' ? 'Database Schema Reader' : 'Migration Schema Reader'}}
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
