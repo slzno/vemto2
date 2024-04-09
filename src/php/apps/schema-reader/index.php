@@ -5,22 +5,22 @@ require_once 'load.php';
 
 // Load Vemto classes
 require_once 'common/Vemto.php';
+require_once 'common/ModelRepository.php';
 
 require_once 'classes/ExtendedKernel.php';
 require_once 'classes/ExtendedBuilder.php';
 require_once 'classes/TableRepository.php';
-require_once 'classes/ModelRepository.php';
 require_once 'classes/MigrationDecoder.php';
 require_once 'classes/ExtendedMigrator.php';
 require_once 'classes/ExtendedBlueprint.php';
 require_once 'classes/MigrationRepository.php';
 
 use Vemto\Vemto;
+use Vemto\ModelRepository;
 use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Facade;
 
-Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
+Vemto::execute('schema-reader', function () use ($APP_DIRECTORY) {
 
     $settings = Vemto::getSettings();
     
@@ -103,10 +103,11 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
 
     $tables = $tablesRepository->getTables();
 
-    // $models = [];
-    $models = ModelRepository::getModelsFormatted();
+    $modelRepository = new ModelRepository($APP_DIRECTORY);
+    $models = $modelRepository->getFormatted();
 
     Vemto::respondWith([
+        'mode' => 'migration',
         'tables' => $tables,
         'models' => $models,
     ]);

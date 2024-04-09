@@ -4,6 +4,7 @@
 require_once 'load.php';
 
 use Vemto\Vemto;
+use Vemto\ModelRepository;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Application;
@@ -11,7 +12,6 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Facade;
 use VemtoDBReader\DatabaseManager;
 use VemtoDBReader\TableRepository;
-use VemtoDBReader\ModelRepository;
 use VemtoDBReader\MigrationRepository;
 use VemtoDBReader\ReadTablesFromDatabase;
 
@@ -122,6 +122,7 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
     $models = $modelRepository->getFormatted();
     
     Vemto::respondWith([
+        'mode' => 'db',
         'tables' => $tables,
         'models' => $models,
     ]);
