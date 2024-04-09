@@ -24,8 +24,8 @@ contextBridge.exposeInMainWorld("api", {
     },
 
     // Common messages
-    prepareDatabase: (path: string) => {
-        return ipcRenderer.invoke("prepare:project:database", path)
+    prepareProject: (path: string) => {
+        return ipcRenderer.invoke("prepare:project", path)
     },
     loadProjectDatabase: (path: string) => { 
         return ipcRenderer.invoke("get:project:database", path) 

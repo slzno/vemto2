@@ -1,4 +1,5 @@
 import { join } from "path"
+import ProjectHandler from "./ProjectHandler"
 import { autoUpdater } from "electron-updater"
 import { HandleDatabase } from "./DatabaseHandler"
 import { HandleFileQueue } from "./FileQueueHandler"
@@ -11,10 +12,7 @@ import Storage from "./services/Storage"
 const isTesting = process.env.NODE_ENV === "test",
     isDevelopment = process.env.NODE_ENV === "development"
 
-// Disable hardware acceleration on macOS if not available.
-// if (process.platform === "darwin") {
-//     app.disableHardwareAcceleration()
-// }
+ProjectHandler.handle()
 
 HandleDatabase()
 HandleFileQueue()

@@ -6,6 +6,7 @@ import RelaDB from "@tiago_silva_pereira/reladb"
 import Project from "../common/models/Project"
 import ModelRegistry from "../common/ModelRegistry"
 import ProjectPathResolver from "@Common/services/ProjectPathResolver"
+import ProjectHandler from "./ProjectHandler"
 
 export function HandleDatabase() {
     const database = new RelaDB.Database
@@ -16,19 +17,7 @@ export function HandleDatabase() {
     RelaDB.Resolver.setDatabase(database)
     RelaDB.Resolver.db().driver.feedDatabaseData({})
 
-    let needsToSave = false,
-        isOpen = false
-
-    ipcMain.handle("prepare:project:database", async (event, projectPath) => {
-        return handleError(event, async () => {
-            console.log('Preparing database...')
-
-            isOpen = true
-            ProjectPathResolver.setPath(projectPath)
-
-            console.log('Project path set to:', projectPath)
-        })
-    })
+    let needsToSave = false
 
     ipcMain.handle("get:project:database", (event, projectPath) => {
         return handleError(event, () => {
@@ -52,7 +41,7 @@ export function HandleDatabase() {
         return handleError(event, () => {
             console.log('Closing database...')
 
-            isOpen = false
+            ProjectHandler.projectIsOpen = false
             RelaDB.Resolver.db().driver.feedDatabaseData({})
 
             ProjectPathResolver.clearPath()
@@ -62,7 +51,7 @@ export function HandleDatabase() {
     })
 
     ipcMain.handle("database:data:updated", (event, data) => {
-        if (!isOpen) {
+        if (!ProjectHandler.projectIsOpen) {
             console.log('Database is not open')
             return
         }
@@ -76,7 +65,7 @@ export function HandleDatabase() {
     })
 
     setInterval(() => {
-        if (!isOpen) return
+        if (!ProjectHandler.projectIsOpen) return
         if (!needsToSave) return
 
         console.log('Saving database data...')
