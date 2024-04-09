@@ -41,7 +41,8 @@ export function HandleDatabase() {
         return handleError(event, () => {
             console.log('Closing database...')
 
-            ProjectHandler.projectIsOpen = false
+            ProjectHandler.close()
+
             RelaDB.Resolver.db().driver.feedDatabaseData({})
 
             ProjectPathResolver.clearPath()
@@ -51,7 +52,7 @@ export function HandleDatabase() {
     })
 
     ipcMain.handle("database:data:updated", (event, data) => {
-        if (!ProjectHandler.projectIsOpen) {
+        if (!ProjectHandler.isOpen()) {
             console.log('Database is not open')
             return
         }
@@ -65,7 +66,7 @@ export function HandleDatabase() {
     })
 
     setInterval(() => {
-        if (!ProjectHandler.projectIsOpen) return
+        if (!ProjectHandler.isOpen()) return
         if (!needsToSave) return
 
         console.log('Saving database data...')
