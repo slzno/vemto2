@@ -46,8 +46,6 @@
 
         await HandleProjectDatabase.populate(() => {
             canShow.value = true
-
-            // checkSourceChanges()
         })
     })
 
@@ -68,29 +66,9 @@
      * Take care before changing the methods below.
      */
     const checkSourceChanges = async () => {
-        if (sourceCheckerTimeout) clearTimeout(sourceCheckerTimeout)
-
-        if (projectStore.projectIsEmpty) {
-            scheduleNextCheck() // Schedule the next check if the current project is empty.
-            return
-        }
-
-        if(projectStore.project.codeChangesDetectorDisabled) {
-            scheduleNextCheck()
-            return
-        }
-
         const schemaBuilder = new SchemaBuilder(projectStore.project)
 
         await schemaBuilder.checkSchemaChanges()
-
-        scheduleNextCheck() // Schedule the next check after the current one finishes.
-    }
-
-    const scheduleNextCheck = () => {
-        if (sourceCheckerTimeout) clearTimeout(sourceCheckerTimeout)
-
-        sourceCheckerTimeout = setTimeout(checkSourceChanges, 3000)
     }
 
     const setupLicenseModal = () => {

@@ -198,6 +198,10 @@ export default class SchemaBuilder {
         return this
     }
 
+    static scheckSchemaChangesForProject(project: Project) {
+        return (new SchemaBuilder(project)).checkSchemaChanges()
+    }
+
     async checkSchemaChanges() {
         if (this.currentOpenProjectIsDifferent()) {
             console.log("Project is different, stop checking schema changes")

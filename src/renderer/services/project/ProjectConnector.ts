@@ -14,8 +14,6 @@ export default class ProjectConnector {
 
     async connect(settings: ProjectSettings) {
         try {
-            // await SchemaBuilder.checkForErrors(this.project.getPath())
-
             if(this.project.connectionFinished) {
                 return
             }

@@ -81,6 +81,8 @@ export default class ProjectManager {
             schemaReaderMode: project.settings.schemaReaderMode,
         })
 
+        await SchemaBuilder.scheckSchemaChangesForProject(project)
+
         return projectItem
     }
 

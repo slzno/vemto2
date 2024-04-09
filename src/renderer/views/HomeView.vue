@@ -174,7 +174,7 @@
         showingConnectingFolderModal.value = true
     }
 
-    const openPath = async (path: string, isNewProject: boolean = false, fromFolderDialog: false) => {
+    const openPath = async (path: string, isNewProject: boolean = false, fromFolderDialog:boolean = false) => {
         currentConnectingFolder.value = path
 
         const projectInfo = new ProjectInfo(path)
