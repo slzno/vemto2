@@ -60,6 +60,14 @@
         }, { passive: false })
     }
 
+    const checkForChanges = async () => {
+        if (projectStore.projectIsEmpty) return
+
+        const schemaBuilder = new SchemaBuilder(projectStore.project)
+
+        await schemaBuilder.checkSchemaChanges()
+    }
+
     const syncSchema = async (syncTables: boolean, syncModels: boolean) => {
         await loadSchema(syncTables, syncModels)
     }
@@ -228,6 +236,7 @@
             :loading-schema="loadingSchema"
             @tableAdded="tableAdded"
             @syncSchema="syncSchema" 
+            @checkForChanges="checkForChanges"
         />
         <SchemaTables 
             v-if="canDrawTables" 
