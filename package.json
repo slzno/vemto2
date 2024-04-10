@@ -51,7 +51,7 @@
         "autoprefixer": "^10.4.12",
         "babel-plugin-module-resolver": "^4.1.0",
         "chalk": "^4.1.2",
-        "chokidar": "^3.5.3",
+        "chokidar": "^3.6.0",
         "cross-env": "^7.0.3",
         "electron": "^20.1.0",
         "electron-builder": "^23.3.3",

@@ -44,15 +44,18 @@ contextBridge.exposeInMainWorld("api", {
 
     // Error messages
     onDefaultError: (callback: Callback) => { 
+        ipcRenderer.removeAllListeners("error:default")
         ipcRenderer.on("error:default", (event, error) => callback(error))
     },
 
     // Data Synchronization messages
     onModelDataUpdated: (callback: Callback) => {
+        ipcRenderer.removeAllListeners("model:data:updated")
         ipcRenderer.on("model:data:updated", (event, data) => callback(data))
     },
 
     onFilesChanged: (callback: Callback) => {
+        ipcRenderer.removeAllListeners("files:changed")
         ipcRenderer.on("files:changed", (event, data) => callback(data))
     },
 

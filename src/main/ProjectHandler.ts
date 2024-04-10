@@ -1,12 +1,12 @@
+import chokidar from "chokidar"
 import { BrowserWindow, ipcMain } from "electron"
-import watcher from "@parcel/watcher"
 import { handleError } from "./ErrorHandler"
 import ProjectPathResolver from "@Common/services/ProjectPathResolver"
 
 export default class ProjectHandler {
 
+    static watcher: any
     static window: BrowserWindow
-    static watcherSubscription: any
     static projectIsOpen: boolean = false
 
     static init(window: BrowserWindow) {
@@ -36,37 +36,44 @@ export default class ProjectHandler {
 
         console.log('START: Starting watcher...')
 
-        ProjectHandler.watcherSubscription = await watcher.subscribe(ProjectPathResolver.getPath(), (err, events) => {
-            if (err) {
-                console.error(err)
-                return
-            }
-
-            if (!events.length) return
-
-            const allChangedFiles = events.map((event: any) => event.path),
-                allNotIgnoredFiles = allChangedFiles.filter((path: string) => !ProjectHandler.isIgnoredPath(path))
-
-            if (!allNotIgnoredFiles.length) {
-                return
-            }
-
-            console.log('File change detected')
-
-            ProjectHandler.window.webContents.send("files:changed", {
-                files: allNotIgnoredFiles
+        ProjectHandler.watcher = chokidar
+            .watch(ProjectPathResolver.getPath(), {
+                ignoreInitial: true,
+                ignored: [
+                    /(^|[\/\\])\../,
+                    /node_modules/,
+                    /vendor/
+                ]
             })
-        })
+            .on("change", (event) => {
+                ProjectHandler.window.webContents.send("files:changed", {
+                    file: event
+                })
+            })
+            .on("add", (event) => {
+                ProjectHandler.window.webContents.send("files:changed", {
+                    file: event
+                })
+            })
+            .on("unlink", (event) => {
+                ProjectHandler.window.webContents.send("files:changed", {
+                    file: event
+                })
+            })
+
     }
 
     static async close() {
         ProjectHandler.projectIsOpen = false
 
-        if (ProjectHandler.watcherSubscription) {
+        if (ProjectHandler.watcher) {
             console.log('Closing previous watcher subscription...')
-            await ProjectHandler.watcherSubscription.unsubscribe(
-                ProjectPathResolver.getPath()
-            )
+
+            await ProjectHandler.watcher.close().then(() => {
+                console.log('Watcher closed')
+            })
+
+            ProjectHandler.watcher = null
         }
     }
 
