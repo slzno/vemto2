@@ -12,12 +12,6 @@ import Storage from "./services/Storage"
 const isTesting = process.env.NODE_ENV === "test",
     isDevelopment = process.env.NODE_ENV === "development"
 
-ProjectHandler.handle()
-
-HandleDatabase()
-HandleFileQueue()
-HandleIpcMessages()
-
 async function createWindow() {
     const mainWindow = new BrowserWindow({
         width: 1320,
@@ -58,10 +52,19 @@ async function createWindow() {
 
     mainWindow.maximize()
 
+    ProjectHandler.init(mainWindow)
+
+    ProjectHandler.handle()
+
+    HandleDatabase()
+    HandleFileQueue()
+
     HandleRenderableFileQueue(mainWindow)
 }
 
 app.whenReady().then(() => {
+    HandleIpcMessages()
+    
     createWindow()
 
     session.defaultSession.webRequest.onHeadersReceived((details, callback) => {

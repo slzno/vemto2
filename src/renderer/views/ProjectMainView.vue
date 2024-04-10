@@ -46,6 +46,8 @@
 
         await HandleProjectDatabase.populate(() => {
             canShow.value = true
+
+            setupFileChangesListener()
         })
     })
 
@@ -58,6 +60,14 @@
             if (e.key === "F5") generateCode()
             if (e.key === "F6") openProjectFolder()
             if (e.key === "F7") openProjectOnTerminal()
+        })
+    }
+
+    const setupFileChangesListener = () => {
+        console.log("Setting up file changes listener")
+
+        Main.API.onFilesChanged(() => {
+            console.log("Files changed")
         })
     }
 

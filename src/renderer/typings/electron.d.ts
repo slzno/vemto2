@@ -24,6 +24,7 @@ export default interface ElectronApi {
     loadSchema: (path: string) => Promise<any>,
     onDefaultError: (callback: Callback) => void,
     onModelDataUpdated: (callback: Callback) => void,
+    onFilesChanged: (callback: Callback) => void,
     loadProjectDatabase: (path: string) => Promise<any>,
     closeProjectDatabase: () => Promise<void>,
     databaseDataUpdated: (data: any) => void,

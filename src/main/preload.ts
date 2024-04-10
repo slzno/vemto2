@@ -52,6 +52,10 @@ contextBridge.exposeInMainWorld("api", {
         ipcRenderer.on("model:data:updated", (event, data) => callback(data))
     },
 
+    onFilesChanged: (callback: Callback) => {
+        ipcRenderer.on("files:changed", (event, data) => callback(data))
+    },
+
     // System windows messages
     confirm: (message: string) => {
         return ipcRenderer.invoke("confirm", message)
