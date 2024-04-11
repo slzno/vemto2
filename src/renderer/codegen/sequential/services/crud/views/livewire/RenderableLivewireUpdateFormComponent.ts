@@ -49,4 +49,8 @@ export default class RenderableLivewireUpdateFormComponent extends Renderable {
             crud: this.crud,
         }
     }
+
+    addDependencies() {
+        Renderable.addComposerDependency("livewire/livewire", this.getTemplateFile())
+    }
 }

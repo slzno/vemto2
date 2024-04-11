@@ -11,6 +11,9 @@ import Main from "@Renderer/services/wrappers/Main"
 import GenerateDatabaseSeeder from "./services/database/GenerateDatabaseSeeder"
 import GenerateFilamentResources from "./services/crud/GenerateFilamentResources"
 import GenerateLivewireLayout from "./services/crud/GenerateLivewireLayout"
+import Renderable from "./services/foundation/Renderable"
+import PackageChecker from "./services/PackageChecker"
+import RenderableFile from "@Common/models/RenderableFile"
 
 export default class SequentialGenerator {
     static startTime: number = 0
@@ -18,22 +21,72 @@ export default class SequentialGenerator {
 
     project: Project
 
+    packageChecker: PackageChecker
+
     constructor(project: Project) {
         this.project = project
+
+        this.packageChecker = new PackageChecker(project)
     }
 
-    // async checkDependencies(): Promise<boolean> {
-        // Renderable.setMode("checker")
-        // await this.runGenerators()
-        // Renderable.setMode("generate")
-        // return await PackageChecker.hasMissingDependencies()
+    async prepareGeneration() {
+        this.project.clearSkippedRenderableFiles()
+        
+        await this.checkDependencies()
 
-        // JetstreamInstaller.run()
-    // }
+        let templatePaths = []
 
-    async run() {
+        const composerMissingDependencies = this.packageChecker.getComposerMissingDependencies(),
+                packagesMissingDependencies = this.packageChecker.getPackagesMissingDependencies()
+
+        composerMissingDependencies.forEach((dependency) => {
+            templatePaths.push(...dependency.templatePaths)
+        })
+
+        packagesMissingDependencies.forEach((dependency) => {
+            templatePaths.push(...dependency.templatePaths)
+        })
+
+        templatePaths = [...new Set(templatePaths)]
+
+        templatePaths.forEach((path: string) => {
+            const renderableFile: RenderableFile = this.project.getRenderableFileByTemplatePath(path)
+
+            if(!renderableFile) return
+
+            renderableFile.setAsSkipped()
+        })
+    }
+
+    async checkDependencies(): Promise<boolean> {
+        this.packageChecker.reset()
+        
+        Renderable.setMode("checker")
+        await this.runGenerators()
+        Renderable.setMode("generate")
+
+        return await this.packageChecker.hasMissingDependencies()
+    }
+
+    async checkDependenciesBeforeGeneration(): Promise<boolean> {
         try {
-            await this.runGeneration() 
+            const hasMissingDependencies = await this.checkDependencies()
+
+            if (hasMissingDependencies) return false
+
+            await this.runGeneration()
+
+            return true
+        } catch (error) {
+            console.error("Error while checking dependencies: ", error)
+
+            return false
+        }
+    }
+
+    async run(): Promise<void> {
+        try {
+            await this.runGeneration()
         } catch (error) {
             console.error("Error while running generation: ", error)
             
@@ -41,7 +94,7 @@ export default class SequentialGenerator {
         }
     }
 
-    async runGeneration() {
+    async runGeneration(): Promise<boolean> {
         SequentialGenerator.startTimer()
 
         SchemaBuilder.disableSchemaChangesCheck()
@@ -63,6 +116,8 @@ export default class SequentialGenerator {
         SchemaBuilder.enableSchemaChangesCheck()
 
         SequentialGenerator.stopTimer()
+
+        return true
     }
 
     async runGenerators() {

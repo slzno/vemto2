@@ -1,9 +1,8 @@
-import PathUtil from "@Common/util/PathUtil";
 import Main from "../wrappers/Main"
-import Alert from "@Renderer/components/utils/Alert"
+import PathUtil from "@Common/util/PathUtil";
+import BreezeInstaller from "./installer/composer/BreezeInstaller";
 import FilamentInstaller from "./installer/composer/FilamentInstaller";
 import JetstreamInstaller from "./installer/composer/JetstreamInstaller";
-import BreezeInstaller from "./installer/composer/BreezeInstaller";
 
 export interface ProjectCreatorData {
     name: string;
@@ -45,7 +44,7 @@ export default class ProjectCreator {
         } catch (error: any) {
             this.hasErrors = true
 
-            Alert.error("Error creating project: " + error.message)
+            return
         }
     }
 

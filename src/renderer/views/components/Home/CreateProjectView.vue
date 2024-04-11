@@ -37,6 +37,34 @@
     const create = async () => {
         if(creatingProject.value) return
 
+        console.log('antes do validation')
+        if(!validate()) return
+
+        console.log('criou')
+        createProject()
+    }
+
+    const validate = () => {
+        if(!settings.value.path?.length) {
+            errors.value.path = "The path is required"
+        }
+
+        if(!settings.value.name?.length) {
+            errors.value.name = "The name is required"
+        }
+
+        if(!settings.value.starterKit?.length) {
+            errors.value.starterKit = "The starter kit is required"
+        }
+
+        if(!settings.value.database?.length) {
+            errors.value.database = "The database is required"
+        }
+
+        return !Object.values(errors.value).length
+    }
+
+    const createProject = () => {
         creatingProject.value = true
 
         Main.API.folderExists(settings.value.completePath)
@@ -87,6 +115,15 @@
         errors.value.name = "Invalid project name"
     }, 250)
 
+    const onProjectPathChanged = debounce(() => {
+        if(!settings.value.path?.length) {
+            errors.value.path = "The path is required"
+            return
+        }
+
+        delete errors.value.path
+    }, 250)
+
     const resetSettings = () => {
         settings.value = {
             path: "",
@@ -110,7 +147,7 @@
     }
 
     const onDatabaseChanged = () => {
-        if(!["sqlite", "mysql", "postgresql", "sqlsrv"].includes(settings.value.database)) {
+        if(!["sqlite", "mysql", "mariadb", "pgsql", "sqlsrv"].includes(settings.value.database)) {
             errors.value.database = "Invalid database"
             return
         }
@@ -139,6 +176,10 @@
             <div class="space-y-2 p-4">
                 <div>
                     <UiPathSelector v-model="settings.path" label="Project Path" />
+
+                    <template v-if="errors.path !== undefined">
+                        <span class="dark:text-red-500 text-sm pl-2">{{ errors.path }}</span>
+                    </template>
                 </div>
 
                 <div>
@@ -164,6 +205,7 @@
                         <UiSelect v-model="settings.database" label="Database" @change="onDatabaseChanged">
                             <option value="sqlite">SQLite</option>
                             <option value="mysql">MySQL</option>
+                            <option value="mariadb">MariaDB</option>
                             <option value="pgsql">PostgreSQL</option>
                             <option value="sqlsrv">SQL Server</option>
                         </UiSelect>

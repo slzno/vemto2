@@ -14,6 +14,8 @@
     import UiWarning from '@Renderer/components/ui/UiWarning.vue'
     import { useSchemaStore } from '@Renderer/stores/useSchemaStore'
     import UiLoading from '@Renderer/components/ui/UiLoading.vue'
+    import UiOptionsDropdown from '@Renderer/components/ui/UiOptionsDropdown.vue'
+    import UiDropdownItem from '@Renderer/components/ui/UiDropdownItem.vue'
 
     const showingCreateTableModal = ref(false),
         showingCreateSectionModal = ref(false),
@@ -34,7 +36,7 @@
         }
     })
 
-    const emit = defineEmits(['tableAdded', 'syncSchema'])
+    const emit = defineEmits(['tableAdded', 'syncSchema', 'checkForChanges'])
 
     const filteredTables = computed(() => {
         return projectStore.project.tables.filter(table => {
@@ -245,6 +247,10 @@
         })
     }
 
+    const checkForChanges = () => {
+        emit('checkForChanges')
+    }
+
     const syncSchema = async () => {
         schemaStore.deselectTable()
         
@@ -419,21 +425,6 @@
                 </button>
 
                 <button
-                    @click="info('Save as Image: Coming soon...')"
-                    class="p-2 cursor-pointer text-slate-600 dark:text-slate-350 hover:text-red-500 dark:hover:text-red-500 border border-transparent focus:border-red-500 dark:focus:border-red-500 outline-none rounded"
-                >
-                    <svg
-                        class="w-7 h-7 stroke-1"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <PhotoIcon class="w-7 h-7 stroke-1" />
-                    </svg>
-                </button>
-
-                <button
                     class="p-2 cursor-pointer text-slate-600 dark:text-slate-350 hover:text-red-500 dark:hover:text-red-500 border border-transparent focus:border-red-500 dark:focus:border-red-500 outline-none rounded"
                     title="Sync Schema"
                     @click="syncSchema()"
@@ -447,6 +438,20 @@
                         />
                     </div>
                 </button>
+
+                <div class="flex items-center text-slate-300 text-base">
+                    <UiOptionsDropdown icon-size="w-6 h-6" size="w-56" right-side>
+                        <UiDropdownItem @click="checkForChanges()">
+                            <ArrowPathIcon class="w-5 h-5 mr-3 text-red-450" />
+                            Check for Changes
+                        </UiDropdownItem>
+    
+                        <UiDropdownItem @click="info('Save as Image: Coming soon...')">
+                            <PhotoIcon class="w-5 h-5 mr-3 text-red-450" />
+                            Save as Image
+                        </UiDropdownItem>
+                    </UiOptionsDropdown>
+                </div>
             </div>
 
             <!-- Control -->

@@ -24,8 +24,8 @@ contextBridge.exposeInMainWorld("api", {
     },
 
     // Common messages
-    prepareDatabase: (path: string) => {
-        return ipcRenderer.invoke("prepare:project:database", path)
+    prepareProject: (path: string) => {
+        return ipcRenderer.invoke("prepare:project", path)
     },
     loadProjectDatabase: (path: string) => { 
         return ipcRenderer.invoke("get:project:database", path) 
@@ -44,12 +44,19 @@ contextBridge.exposeInMainWorld("api", {
 
     // Error messages
     onDefaultError: (callback: Callback) => { 
+        ipcRenderer.removeAllListeners("error:default")
         ipcRenderer.on("error:default", (event, error) => callback(error))
     },
 
     // Data Synchronization messages
     onModelDataUpdated: (callback: Callback) => {
+        ipcRenderer.removeAllListeners("model:data:updated")
         ipcRenderer.on("model:data:updated", (event, data) => callback(data))
+    },
+
+    onFilesChanged: (callback: Callback) => {
+        ipcRenderer.removeAllListeners("files:changed")
+        ipcRenderer.on("files:changed", (event, data) => callback(data))
     },
 
     // System windows messages
@@ -149,13 +156,28 @@ contextBridge.exposeInMainWorld("api", {
     executePhpOnPath: (path: string, command: string) => {
         return ipcRenderer.invoke("php:execute:on-path", path, command)
     },
+    executePhpOnProject: (command: string) => {
+        return ipcRenderer.invoke("php:execute:on-project", command)
+    },
     composerIsInstalled: () => {
         return ipcRenderer.invoke("composer:is:installed")
     },
     executeComposerOnPath: (path: string, command: string) => {
         return ipcRenderer.invoke("composer:execute:on-path", path, command)
     },
+    executeComposerOnProject: (command: string) => {
+        return ipcRenderer.invoke("composer:execute:on-project", command)
+    },
     executeArtisanOnPath: (path: string, command: string) => {
         return ipcRenderer.invoke("artisan:execute:on-path", path, command)
+    },
+    executeArtisanOnProject: (command: string) => {
+        return ipcRenderer.invoke("artisan:execute:on-project", command)
+    },
+    executeYarnOnPath: (path: string, command: string) => {
+        return ipcRenderer.invoke("yarn:execute:on-path", path, command)
+    },
+    executeYarnOnProject: (command: string) => {
+        return ipcRenderer.invoke("yarn:execute:on-project", command)
     },
 })

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+    import debounce from "lodash/debounce"
     import { RouterView } from "vue-router"
     import ProjectNavbar from "@Renderer/views/components/ProjectNavbar.vue"
     import { onMounted, onUnmounted, ref, Ref } from "vue"
@@ -22,7 +23,9 @@
     import UiWarning from "@Renderer/components/ui/UiWarning.vue"
     import UiInfo from "@Renderer/components/ui/UiInfo.vue"
     import LicenseModal from "./components/System/LicenseModal.vue"
+    import DependenciesModal from "./components/Common/DependenciesModal.vue"
     import LicenseHandler from "@Renderer/services/LicenseHandler"
+    import PackageChecker from "@Renderer/codegen/sequential/services/PackageChecker"
 
     const canShow = ref(false),
         projectStore = useProjectStore(),
@@ -32,6 +35,7 @@
         confirmDialog = ref(null),
         aiConfirmDialog = ref(null),
         licenseModal = ref(null),
+        dependenciesModal = ref(null),
         licenseModalWarningMessage = ref(""),
         confirmDialogMessage = ref(""),
         confirmDialogTitle = ref(""),
@@ -46,6 +50,8 @@
 
         await HandleProjectDatabase.populate(() => {
             canShow.value = true
+
+            setupFileChangesListener()
         })
     })
 
@@ -61,10 +67,20 @@
         })
     }
 
-    /**
-     * Checks for source changes every 750ms.
-     * Take care before changing the methods below.
-     */
+    const setupFileChangesListener = () => {
+        console.log("Setting up file changes listener")
+
+        Main.API.onFilesChanged(() => {
+            checkSourceChangesDebounced()
+        })
+    }
+
+    const checkSourceChangesDebounced = debounce(() => {
+        console.log("Checking source changes")
+
+        checkSourceChanges()
+    }, 500)
+
     const checkSourceChanges = async () => {
         const schemaBuilder = new SchemaBuilder(projectStore.project)
 
@@ -115,7 +131,7 @@
         }
     }
 
-    const generateCode = async () => {
+    const generateCode = async (force: boolean = false) => {
         console.log('Will generate')
         const currentTablesCount = projectStore.project.tables.length
 
@@ -133,11 +149,22 @@
 
         appStore.startGeneratingCode()
 
+        const sequentialGenerator = new SequentialGenerator(projectStore.project)
+
         try {
-            await new SequentialGenerator(projectStore.project).run()
+            if(force) {
+                await sequentialGenerator.run()
+                return
+            }
+
+            const generated = await sequentialGenerator.checkDependenciesBeforeGeneration()
+
+            if(!generated) {
+                treatProjectGenerationError(sequentialGenerator.packageChecker)
+                return
+            }
 
             setTimeout(() => {
-                appStore.finishGeneratingCode()
                 const elapsedTime = SequentialGenerator.getElapsedTimeInSeconds()
                 
                 Alert.success(
@@ -146,8 +173,15 @@
                 )
             }, 500)
         } catch (error) {
-            appStore.finishGeneratingCode()
             throw error
+        } finally {
+            appStore.finishGeneratingCode()
+        }
+    }
+
+    const treatProjectGenerationError = (packageChecker: PackageChecker) => {
+        if(packageChecker.hasMissingDependencies()) {
+            dependenciesModal.value?.show(packageChecker)
         }
     }
 
@@ -171,6 +205,11 @@
         <!-- Content -->
         <div v-if="canShow" class="flex-1">
             <RouterView />
+
+            <DependenciesModal
+                ref="dependenciesModal"
+                @force-generation="generateCode(true)"
+            />
 
             <LicenseModal
                 ref="licenseModal" 

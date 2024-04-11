@@ -1,4 +1,3 @@
-import * as changeCase from "change-case"
 import Crud from "@Common/models/crud/Crud"
 import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
 import {
@@ -48,5 +47,9 @@ export default class RenderableLivewireEditComponent extends Renderable {
         return {
             crud: this.crud,
         }
+    }
+
+    addDependencies() {
+        Renderable.addComposerDependency("livewire/livewire", this.getTemplateFile())
     }
 }

@@ -35,9 +35,16 @@
         })
     }
 
-    const openFile = (file: RenderableFile): void => {
+    const openFile = async (file: RenderableFile): void => {
         if (file.wasRemoved()) {
             Alert.warning("This file was removed from the project")
+            return
+        }
+
+        const fileExists = await Main.API.projectFileExists(file.getRelativeFilePath())
+
+        if(!fileExists) {
+            Alert.error("File not found")
             return
         }
 
@@ -109,6 +116,9 @@
                             'text-red-800':
                                 file.status ===
                                 RenderableFileStatus.CAN_REMOVE,
+                            'text-cyan-500':
+                                file.status ===
+                                RenderableFileStatus.SKIPPED,
                             'text-slate-450':
                                 file.status ===
                                 RenderableFileStatus.REMOVED || file.status === RenderableFileStatus.IGNORED,

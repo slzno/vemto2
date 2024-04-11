@@ -52,4 +52,8 @@ export default class RenderableLivewireHasManyDetailView extends Renderable {
             hasManyDetail: this.hasManyDetail,
         }
     }
+
+    addDependencies() {
+        Renderable.addComposerDependency("livewire/livewire", this.getTemplateFile())
+    }
 }

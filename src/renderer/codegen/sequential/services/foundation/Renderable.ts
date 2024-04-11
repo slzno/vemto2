@@ -7,13 +7,20 @@ import BladeFormatter from "@Renderer/codegen/formatters/BladeFormatter"
 import PathUtil from "@Common/util/PathUtil"
 import TemplateHelpers from "../helpers/TemplateHelpers"
 
+export interface RenderableDependency {
+    name: string
+    type: "composer" | "package",
+    templatePaths: Set<string>
+}
+
 export default abstract class Renderable {
     project: Project
     hooksEnabled: boolean = true
     logEnabled: boolean = false
 
     static mode: "generate" | "checker" = "generate"
-    static composerDependencies: string[] = []
+
+    static dependencies: RenderableDependency[] = []
 
     constructor() {
         const project = Project.find(1)
@@ -33,8 +40,58 @@ export default abstract class Renderable {
     protected beforeRender?(): void
     protected afterRender?(renderedContent: string): void
 
-    composerDependencies(): string[] {
-        return []
+    static setMode(mode: "generate" | "checker") {
+        Renderable.mode = mode
+    }
+
+    static addComposerDependency(name: string, templatePath: string) {
+        const dependency = Renderable.dependencies.find(dependency => dependency.name === name)
+
+        if(dependency) {
+            dependency.templatePaths.add(templatePath)
+            return
+        }
+
+        const templatePaths: Set<string> = new Set()
+
+        templatePaths.add(templatePath)
+
+        Renderable.dependencies.push({
+            name,
+            type: "composer",
+            templatePaths
+        })
+    }
+
+    static addPackageDependency(name: string, templatePath: string) {
+        const dependency = Renderable.dependencies.find(dependency => dependency.name === name)
+
+        if(dependency) {
+            dependency.templatePaths.add(templatePath)
+            return
+        }
+
+        const templatePaths: Set<string> = new Set()
+        
+        templatePaths.add(templatePath)
+
+        Renderable.dependencies.push({
+            name,
+            type: "package",
+            templatePaths
+        })
+    }
+
+    static getComposerDependencies(): RenderableDependency[] {
+        return Renderable.dependencies.filter(dependency => dependency.type === "composer")
+    }
+
+    static getPackagesDependencies(): RenderableDependency[] {
+        return Renderable.dependencies.filter(dependency => dependency.type === "package")
+    }
+
+    addDependencies() {
+        // Override this method to add dependencies
     }
 
     setProject(project: Project) {
@@ -57,7 +114,7 @@ export default abstract class Renderable {
 
     async render() {
         if(Renderable.mode === "checker") {
-            // PackagesChecker.addDependencies(Renderable.composerDependencies())
+            this.treatCheckerMode()
             return
         }
 
@@ -86,6 +143,15 @@ export default abstract class Renderable {
             
             return
         }
+
+        if(file.wasSkipped()) {
+            console.log('Skipping file...', this.getTemplateFile())
+            if(this.logEnabled) {
+                console.log(`Skipping ${this.getTemplateFile()} for file ${this.getFullFilePath()}...`)
+            }
+            
+            return
+        }
         
         try {
             const compiledTemplate = await this.compile()
@@ -102,6 +168,12 @@ export default abstract class Renderable {
                 file.save()
             }
         }
+    }
+
+    treatCheckerMode() {
+        console.log('Renderable mode is checker, skipping render...')
+        
+        this.addDependencies()
     }
 
     getFullFilePath(): string {

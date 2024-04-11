@@ -1,4 +1,5 @@
 import { join } from "path"
+import ProjectHandler from "./ProjectHandler"
 import { autoUpdater } from "electron-updater"
 import { HandleDatabase } from "./DatabaseHandler"
 import { HandleFileQueue } from "./FileQueueHandler"
@@ -10,15 +11,6 @@ import Storage from "./services/Storage"
 
 const isTesting = process.env.NODE_ENV === "test",
     isDevelopment = process.env.NODE_ENV === "development"
-
-// Disable hardware acceleration on macOS if not available.
-// if (process.platform === "darwin") {
-//     app.disableHardwareAcceleration()
-// }
-
-HandleDatabase()
-HandleFileQueue()
-HandleIpcMessages()
 
 async function createWindow() {
     const mainWindow = new BrowserWindow({
@@ -60,10 +52,19 @@ async function createWindow() {
 
     mainWindow.maximize()
 
+    ProjectHandler.init(mainWindow)
+
+    ProjectHandler.handle()
+
+    HandleDatabase()
+    HandleFileQueue()
+
     HandleRenderableFileQueue(mainWindow)
 }
 
 app.whenReady().then(() => {
+    HandleIpcMessages()
+    
     createWindow()
 
     session.defaultSession.webRequest.onHeadersReceived((details, callback) => {

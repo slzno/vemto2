@@ -33,6 +33,7 @@ export enum RenderableFileStatus {
     CAN_REMOVE = 'can-remove',
     REMOVED = 'removed',
     IGNORED = 'ignored',
+    SKIPPED = 'skipped'
 }
 
 export default class RenderableFile extends RelaDB.Model {
@@ -131,6 +132,10 @@ export default class RenderableFile extends RelaDB.Model {
         return this.status === RenderableFileStatus.CONFLICT
     }
 
+    wasSkipped() {
+        return this.status === RenderableFileStatus.SKIPPED
+    }
+
     solveConflicts() {
         this.status = RenderableFileStatus.RENDERED
         this.conflictFileName = null
@@ -152,5 +157,11 @@ export default class RenderableFile extends RelaDB.Model {
 
     wasIgnored() {
         return this.status === RenderableFileStatus.IGNORED
+    }
+
+    setAsSkipped() {
+        this.status = RenderableFileStatus.SKIPPED
+
+        this.save()
     }
 }

@@ -1,6 +1,6 @@
 import os from "os"
 import path from "path"
-import { exec } from "child_process"
+import { exec, ExecException } from "child_process"
 import Storage from "@Main/services/Storage"
 
 export default class CommandExecutor {
@@ -30,6 +30,13 @@ export default class CommandExecutor {
         return await this.executeOnPath(executionPath, composerCommand, plainReturn)
     }
 
+    static async executeYarnOnPath(executionPath: string, command: string, plainReturn:boolean = false): Promise<string> {
+        const yarnPath = await Storage.get("yarnPath") || "yarn",
+            yarnCommand = `${yarnPath} ${command}`
+
+        return await this.executeOnPath(executionPath, yarnCommand, plainReturn)
+    }
+
     static async executeOnPath(executionPath: string, command: string, plainReturn: boolean = false): Promise<string> {
         const isDevelopment = process.env.NODE_ENV === "development"
 
@@ -43,71 +50,50 @@ export default class CommandExecutor {
             try {
                 exec(command, {
                     cwd: path.join("", executionPath),
-                }, (error, stdout, stderr) => {
+                }, (error: ExecException, stdout: string, stderr: string) => {
                     if(stdout.includes("VEMTO_ERROR_START")) {
                         console.error("(vemto error) FAILED to execute command: " + command)
                         console.error(stderr)
-
+    
                         let errorMessage = this.parseErrorData(stdout),
                             errorStack = this.parseErrorStack(stdout)
-
+    
                         console.log(errorStack)
-
+    
                         let error = {
                             error: errorMessage,
                             message: errorMessage,
                             stack: errorStack
                         }
-
+    
                         reject(error)
                     }
-
+    
                     if(stdout.includes("Warning:")) {
                         console.error("(stderr) WARNING when executing command: " + command)
                         console.error(stdout)
                     }
-                    
-                    // We need to check for "Loaded config default." because PHP CS Fixer outputs this to stderr,
-                    // instead of stdout, for some reason. There is a closed issue on their repo about this.
-                    // https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/issues/3725
-                    if (stderr && !stderr.includes("Loaded config default")) {
-                        let errorMessage = "(stderr) FAILED to execute command: " + command + "\n\n" + stderr
-
-                        console.error(errorMessage)
-
-                        console.error(stderr)
-                        console.error("Error: " + error)
-                        console.error("Stdout: " + stdout)
-
-                        let errorData = {
-                            error: errorMessage,
-                            message: errorMessage,
-                            stack: null
-                        }
-
-                        reject(errorData)
-                    }
-
-                    if (error) { 
+    
+                    if (error && error.code !== 0) { 
                         const errorMessage = "(error) FAILED to execute command: " + command
-
+    
                         console.error(errorMessage)
                         console.log(stdout)
-                        console.error(error)
-
+                        console.error(error.message)
+    
                         let errorData = {
                             message: errorMessage,
-                            error: stdout,
-                            stack: stdout
+                            error: errorMessage,
+                            stack: error.stack
                         }
-
+    
                         reject(errorData)
                     }
-                    
+                
                     if (plainReturn) {
                         resolve(stdout)
                     }
-
+    
                     resolve(this.parseJsonData(stdout))
                 })
             } catch (error) {
@@ -115,7 +101,6 @@ export default class CommandExecutor {
                 console.error(error)
                 reject(error)
             }
-
         })
     }
 

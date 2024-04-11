@@ -1,7 +1,7 @@
 import path from "path"
 import { app, ipcMain, shell, dialog } from "electron"
 import FileSystem from "./base/FileSystem"
-import { handleError } from "./ErrorHandler"
+import { handleError, handleErrorThrowingException } from "./ErrorHandler"
 import Project from "../common/models/Project"
 import ReadProjectSchema from "./services/ReadProjectSchema"
 import RenderableFile from "../common/models/RenderableFile"
@@ -339,12 +339,17 @@ export function HandleIpcMessages() {
     })
 
     ipcMain.handle("php:execute:on-path", (event, path, command) => {
-        return handleError(event, async () => {
-            try {
-                return await CommandExecutor.executePhpOnPath(path, command, true)
-            } catch (error) {
-                return false
-            }
+        return handleErrorThrowingException(event, async () => {
+            return await CommandExecutor.executePhpOnPath(path, command, true)
+        })
+    })
+
+    ipcMain.handle("php:execute:on-project", (event, command) => {
+        const project = Project.find(1)
+        if(!project) return null
+
+        return handleErrorThrowingException(event, async () => {
+            return await CommandExecutor.executePhpOnPath(project.getPath(), command, true)
         })
     })
 
@@ -360,22 +365,47 @@ export function HandleIpcMessages() {
     })
 
     ipcMain.handle("composer:execute:on-path", (event, path, command) => {
-        return handleError(event, async () => {
-            try {
-                return await CommandExecutor.executeComposerOnPath(path, command, true)
-            } catch (error) {
-                return false
-            }
+        return handleErrorThrowingException(event, async () => {
+            return await CommandExecutor.executeComposerOnPath(path, command, true)
+        })
+    })
+
+    ipcMain.handle("composer:execute:on-project", (event, command) => {
+        const project = Project.find(1)
+        if(!project) return null
+
+        return handleErrorThrowingException(event, async () => {
+            return await CommandExecutor.executeComposerOnPath(project.getPath(), command, true)
         })
     })
 
     ipcMain.handle("artisan:execute:on-path", (event, path, command) => {
-        return handleError(event, async () => {
-            try {
-                return await CommandExecutor.executeArtisanOnPath(path, command, true)
-            } catch (error) {
-                return false
-            }
+        return handleErrorThrowingException(event, async () => {
+            return await CommandExecutor.executeArtisanOnPath(path, command, true)
+        })
+    })
+
+    ipcMain.handle("artisan:execute:on-project", (event, command) => {
+        const project = Project.find(1)
+        if(!project) return null
+
+        return handleErrorThrowingException(event, async () => {
+            return await CommandExecutor.executeArtisanOnPath(project.getPath(), command, true)
+        })
+    })
+
+    ipcMain.handle("yarn:execute:on-path", (event, path, command) => {
+        return handleErrorThrowingException(event, async () => {
+            return await CommandExecutor.executeYarnOnPath(path, command, true)
+        })
+    })
+
+    ipcMain.handle("yarn:execute:on-project", (event, command) => {
+        const project = Project.find(1)
+        if(!project) return null
+
+        return handleErrorThrowingException(event, async () => {
+            return await CommandExecutor.executeYarnOnPath(project.getPath(), command, true)
         })
     })
 

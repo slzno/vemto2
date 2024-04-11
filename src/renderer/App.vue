@@ -48,6 +48,8 @@
 
         // catch all uncaught errors
         window.addEventListener("error", (event) => {
+            console.error("Uncaught Error at:", event.error)
+
             const error = event.error
 
             addErrorToStore(error)

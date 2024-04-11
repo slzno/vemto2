@@ -573,7 +573,7 @@
                     <div class="flex justify-between text-slate-200">
                         <span>{{ project.path.split(/\/|\\/).pop() }}</span>
 
-                        <div class="h-6">
+                        <div class="h-6 text-slate-400">
                             <UiLoading 
                                 v-if="loadingProjectId === project.id"
                                 :size="15"

@@ -5,7 +5,8 @@
             "enabled": true,
             "commonFiles": [
                 "Vemto.php",
-                "ValidationException.php"
+                "ValidationException.php",
+                "ModelRepository.php"
             ],
             "defaultTesterProject": "laravel9-basic"
         },
@@ -14,7 +15,8 @@
             "enabled": true,
             "commonFiles": [
                 "Vemto.php",
-                "ValidationException.php"
+                "ValidationException.php",
+                "ModelRepository.php"
             ],
             "defaultTesterProject": "laravel11-basic"
         },

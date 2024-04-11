@@ -180,7 +180,7 @@ export default class Project extends RelaDB.Model {
         return project
     }
 
-    isEmtpy(): boolean {
+    isEmpty(): boolean {
         return this.id === undefined
     }
 
@@ -442,6 +442,14 @@ export default class Project extends RelaDB.Model {
         )
     }
 
+    getSkippedRenderableFiles(ordered: boolean = true): RenderableFile[] {
+        const renderableFiles = ordered ? this.getOrderedRenderableFiles() : this.renderableFiles
+
+        return renderableFiles.filter(
+            (renderableFile) => renderableFile.wasSkipped()
+        )
+    }
+
     getOrderedRenderableFiles(): RenderableFile[] {
         return this.renderableFiles.sort((a, b) => {
             if (a.status === RenderableFileStatus.ERROR) return -1
@@ -490,7 +498,7 @@ export default class Project extends RelaDB.Model {
             renderableFile = new RenderableFile()
         }
 
-        if (renderableFile.wasIgnored()) {
+        if (renderableFile.wasIgnored() || renderableFile.wasSkipped()) {
             return renderableFile
         }
 
@@ -521,6 +529,12 @@ export default class Project extends RelaDB.Model {
 
     clearRemovedRenderableFiles() {
         this.getRemovedRenderableFiles(false).forEach((renderableFile) =>
+            renderableFile.delete()
+        )
+    }
+
+    clearSkippedRenderableFiles() {
+        this.getSkippedRenderableFiles(false).forEach((renderableFile) =>
             renderableFile.delete()
         )
     }
@@ -838,6 +852,10 @@ export default class Project extends RelaDB.Model {
 
     isFreshLaravelProject(): boolean {
         return this.settings.isFreshLaravelProject
+    }
+
+    getRenderableFileByTemplatePath(path: string) {
+        return this.renderableFiles.find(file => file.template === path)
     }
 
 }
