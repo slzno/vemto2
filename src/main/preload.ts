@@ -24,8 +24,8 @@ contextBridge.exposeInMainWorld("api", {
     },
 
     // Common messages
-    prepareDatabase: (path: string) => {
-        return ipcRenderer.invoke("prepare:project:database", path)
+    prepareProject: (path: string) => {
+        return ipcRenderer.invoke("prepare:project", path)
     },
     loadProjectDatabase: (path: string) => { 
         return ipcRenderer.invoke("get:project:database", path) 
@@ -44,12 +44,19 @@ contextBridge.exposeInMainWorld("api", {
 
     // Error messages
     onDefaultError: (callback: Callback) => { 
+        ipcRenderer.removeAllListeners("error:default")
         ipcRenderer.on("error:default", (event, error) => callback(error))
     },
 
     // Data Synchronization messages
     onModelDataUpdated: (callback: Callback) => {
+        ipcRenderer.removeAllListeners("model:data:updated")
         ipcRenderer.on("model:data:updated", (event, data) => callback(data))
+    },
+
+    onFilesChanged: (callback: Callback) => {
+        ipcRenderer.removeAllListeners("files:changed")
+        ipcRenderer.on("files:changed", (event, data) => callback(data))
     },
 
     // System windows messages
@@ -73,6 +80,9 @@ contextBridge.exposeInMainWorld("api", {
     // Files Management
     readFile: (path: string) => {
         return ipcRenderer.invoke("file:read", path)
+    },
+    fileExists: (path: string) => {
+        return ipcRenderer.invoke("file:exists", path)
     },
     folderExists: (path: string) => {
         return ipcRenderer.invoke("folder:exists", path)

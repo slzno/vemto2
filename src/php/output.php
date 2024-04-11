@@ -22,7 +22,7 @@ if (isset($argv[1])) {
 
 foreach ($apps as $app => $appSettings) {
     
-    $output = executeApp($app);
+    $output = executeApp($app, $appSettings);
     $vemtoOutput = parseResponse($output);
     
     echo $output . PHP_EOL;
@@ -38,12 +38,32 @@ foreach ($apps as $app => $appSettings) {
     file_put_contents($outputFile, $jsonOutput);
 }
 
-function executeApp(string $app = 'schema-reader', string $laravelApp = 'laravel9-basic')
+function executeApp(string $app, stdClass $appSettings)
 {
+    $laravelApp = $appSettings->defaultTesterProject ?? 'laravel11-basic';
+
     $output = '';
 
+    echo "Executing $app with $laravelApp" . PHP_EOL;
+
     chdir(realpath(__DIR__ . '/laravel-base/' . $laravelApp));
-    $output = exec('php ' . __DIR__ . '/apps/' . $app . '/index.php');
+
+    $command = 'php ' . __DIR__ . '/apps/' . $app . '/index.php';
+
+    $options = '';
+
+    if(isset($appSettings->defaultOptions)) {
+        foreach ($appSettings->defaultOptions as $key => $value) {
+            $options .= " --$key $value";
+        }
+    }
+
+    $command .= $options;
+
+    echo "Running command: $command" . PHP_EOL;
+
+    $output = exec($command);
+
     chdir(__DIR__);
 
     return $output;

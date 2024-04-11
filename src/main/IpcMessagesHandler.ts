@@ -48,7 +48,13 @@ export function HandleIpcMessages() {
 
     ipcMain.handle("file:read", (event, filePath) => {
         return handleError(event, () => {
-            return FileSystem.readFile(filePath)
+            return FileSystem.readFileIfExists(filePath)
+        })
+    })
+
+    ipcMain.handle("file:exists", (event, filePath) => {
+        return handleError(event, () => {
+            return FileSystem.fileExists(filePath)
         })
     })
 
@@ -119,6 +125,11 @@ export function HandleIpcMessages() {
 
     ipcMain.handle("folder:open", (event, folderPath) => {
         return handleError(event, () => {
+            // if on Windows, replace / with \ to open the folder in the file explorer
+            if(process.platform === "win32") {
+                folderPath = folderPath.replace(/\//g, "\\")
+            }
+
             shell.openPath(folderPath)
         })
     })

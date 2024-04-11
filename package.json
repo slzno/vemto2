@@ -1,7 +1,7 @@
 {
     "name": "vemto",
     "productName": "Vemto",
-    "version": "2.0.5",
+    "version": "2.0.6",
     "description": "The ultimate studio for Laravel",
     "main": "build/src/main/main.js",
     "scripts": {
@@ -21,6 +21,7 @@
         "php:test": "cross-env VEMTO_DEBUG=1 php ./src/php/tests/vendor/bin/phpunit ./src/php/tests/src --verbose",
         "php:test-output": "cross-env VEMTO_DEBUG=1 php ./src/php/output.php",
         "php:test-schema": "cross-env VEMTO_DEBUG=1 php ./src/php/output.php schema-reader",
+        "php:test-db-reader": "cross-env VEMTO_DEBUG=1 php ./src/php/output.php db-reader",
         "php:test-merger": "cross-env VEMTO_DEBUG=1 php ./src/php/output-merger.php",
         "test:mock": "yarn php:test-output && php ./mock.php",
         "test": "jest --runInBand",
@@ -50,7 +51,7 @@
         "autoprefixer": "^10.4.12",
         "babel-plugin-module-resolver": "^4.1.0",
         "chalk": "^4.1.2",
-        "chokidar": "^3.5.3",
+        "chokidar": "^3.6.0",
         "cross-env": "^7.0.3",
         "electron": "^20.1.0",
         "electron-builder": "^23.3.3",

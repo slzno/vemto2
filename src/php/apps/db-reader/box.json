@@ -1,0 +1,17 @@
+{
+    "output": "../../dist/db-reader.phar",
+    "files": [
+        "index.php",
+        "load.php",
+        "phar-autoloader.php",
+        "composer.json"
+    ],
+    "directories": [
+        "src",
+        "common",
+        "vendor/kitloong"
+    ],
+    "blacklist": [
+        "vendor"
+    ]
+}

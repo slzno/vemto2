@@ -6,8 +6,8 @@
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import { CheckCircleIcon, FlagIcon, ShieldExclamationIcon, XMarkIcon } from "@heroicons/vue/24/outline"
     import { ref, watch, defineExpose, nextTick } from "vue"
-import TemplateErrorViewer from "../Common/TemplateErrorViewer.vue"
-import TextUtil from "@Common/util/TextUtil"
+    import TemplateErrorViewer from "../Common/TemplateErrorViewer.vue"
+    import TextUtil from "@Common/util/TextUtil"
 
     const projectStore = useProjectStore(),
         errorsStore = useErrorsStore()
@@ -18,7 +18,6 @@ import TextUtil from "@Common/util/TextUtil"
     const tabs = [
         { label: "Main", value: "errors" },
         { label: "Schema", value: "schema" },
-        { label: "Vemto Log", value: "vemto_log" },
     ]
 
     watch(() => errorsStore.hasErrors, (hasErrors) => {
@@ -179,13 +178,6 @@ import TextUtil from "@Common/util/TextUtil"
                         <div v-else class="flex flex-col gap-2 text-slate-400 w-full h-full justify-center items-center font-thin">
                             <CheckCircleIcon class="h-20 w-20 stroke-1 text-slate-500" />
                             No errors found
-                        </div>
-                    </div>
-    
-                    <div v-if="selectedTab === 'vemto_log'" class="w-full h-full overflow-y-scroll">
-                        <div class="flex flex-col gap-2 text-slate-400 w-full h-full justify-center items-center font-thin">
-                            <CheckCircleIcon class="h-20 w-20 stroke-1 text-slate-500" />
-                            The file vemto.log is empty
                         </div>
                     </div>
                 </div>

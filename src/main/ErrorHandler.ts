@@ -1,7 +1,10 @@
 const sendErrorMessage = (event: any, error: any) => {
+    const isFromValidation = error.message && error.message.includes("VALIDATION_ERROR(")
+
     event.sender.send("error:default", {
         message: error.message || error.error || error, 
-        stack: error.stack
+        stack: error.stack,
+        isFromValidation
     })
 }
 

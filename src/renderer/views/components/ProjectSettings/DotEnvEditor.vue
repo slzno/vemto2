@@ -9,6 +9,7 @@
     import { ArrowDownTrayIcon, ArrowPathIcon, Bars2Icon, Bars3Icon, ClipboardDocumentListIcon, TrashIcon } from '@heroicons/vue/24/outline'
     import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
     import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
+    import EnvParser from "@Common/util/EnvParser"
 
     const projectStore = useProjectStore(),
         envSettings = ref([])
@@ -96,24 +97,7 @@
     }
 
     const parseEnv = (envContent) => {
-        const lines = envContent.split(/\r?\n/) // Split the content by line breaks
-        const result = []
-
-        lines.forEach(line => {
-            // Check for empty line (line break)
-            if (line.trim() === '') {
-                result.push({ key: "ENV_LINE_SEPARATOR", value: "ENV_LINE_SEPARATOR" })
-            } else {
-                let [key, value] = line.split('=')
-
-                // remove any line breaks from the value
-                value = value.replace(/\r?\n|\r/g, "")
-
-                result.push({ key: key.trim(), value: value.trim() })
-            }
-        })
-
-        return result
+        return (new EnvParser(envContent)).get()
     }
 </script>
 

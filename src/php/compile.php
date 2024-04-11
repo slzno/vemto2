@@ -10,6 +10,8 @@ $compilerSettings = json_decode(file_get_contents(__DIR__ . '/compiler.json'));
 $apps = $compilerSettings->apps;
 
 foreach ($apps as $app => $appSettings) {
+    echo "Will compile $app...\n";
+
     // if the app is not enabled, skip it
     if (!$appSettings->enabled) {
         echo "Skipping $app...\n";

@@ -5,29 +5,49 @@ require_once 'load.php';
 
 // Load Vemto classes
 require_once 'common/Vemto.php';
+require_once 'common/ModelRepository.php';
 
 require_once 'classes/ExtendedKernel.php';
 require_once 'classes/ExtendedBuilder.php';
 require_once 'classes/TableRepository.php';
-require_once 'classes/ModelRepository.php';
 require_once 'classes/MigrationDecoder.php';
 require_once 'classes/ExtendedMigrator.php';
 require_once 'classes/ExtendedBlueprint.php';
 require_once 'classes/MigrationRepository.php';
 
-Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
-    // Set the database connection to SQLite
-    // config(['database.default' => 'sqlite']);
-    // config(['database.connections.sqlite.database' => ':memory:']);
+use Vemto\Vemto;
+use Vemto\ModelRepository;
+use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Facade;
 
-    // Start the application with the extended kernel
-    $app->bind(Illuminate\Contracts\Console\Kernel::class, ExtendedKernel::class);
-    $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
+Vemto::execute('schema-reader', function () use ($APP_DIRECTORY) {
 
-    $kernel->handle(
-        new Symfony\Component\Console\Input\ArgvInput,
-        new Symfony\Component\Console\Output\ConsoleOutput
-    );
+    $settings = Vemto::getSettings();
+    
+    if($settings['SCHEMA_READER_MODE'] !== 'migration') {
+        throw new \Exception('Trying to read migrations schema without the correct mode');
+    }
+
+    $app = Application::configure(basePath: dirname(__DIR__))
+        ->withExceptions(function () {})
+        ->create();
+
+    $storagePath = $APP_DIRECTORY . DIRECTORY_SEPARATOR . 'storage';
+    $bootstrapPath = $APP_DIRECTORY . DIRECTORY_SEPARATOR . 'bootstrap';
+
+    $app->useStoragePath($storagePath);
+    $app->useBootstrapPath($bootstrapPath);
+
+    $app->bootstrapWith([
+        \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
+        \Illuminate\Foundation\Bootstrap\LoadConfiguration::class,
+        // \Illuminate\Foundation\Bootstrap\HandleExceptions::class,
+        \Illuminate\Foundation\Bootstrap\RegisterFacades::class,
+        \Illuminate\Foundation\Bootstrap\RegisterProviders::class,
+        \Illuminate\Foundation\Bootstrap\BootProviders::class,
+    ]);
+
+    Facade::setFacadeApplication($app);
 
     // Register the migrator
     $migrationServiceProvider = new Illuminate\Database\MigrationServiceProvider($app);
@@ -83,10 +103,11 @@ Vemto::execute('schema-reader', function () use ($app, $APP_DIRECTORY) {
 
     $tables = $tablesRepository->getTables();
 
-    // $models = [];
-    $models = ModelRepository::getModelsFormatted();
+    $modelRepository = new ModelRepository($APP_DIRECTORY);
+    $models = $modelRepository->getFormatted();
 
     Vemto::respondWith([
+        'mode' => 'migration',
         'tables' => $tables,
         'models' => $models,
     ]);

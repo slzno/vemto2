@@ -1,4 +1,5 @@
 <script setup lang="ts">
+    import debounce from "lodash/debounce"
     import { RouterView } from "vue-router"
     import ProjectNavbar from "@Renderer/views/components/ProjectNavbar.vue"
     import { onMounted, onUnmounted, ref, Ref } from "vue"
@@ -50,7 +51,7 @@
         await HandleProjectDatabase.populate(() => {
             canShow.value = true
 
-            checkSourceChanges()
+            setupFileChangesListener()
         })
     })
 
@@ -66,34 +67,24 @@
         })
     }
 
-    /**
-     * Checks for source changes every 750ms.
-     * Take care before changing the methods below.
-     */
+    const setupFileChangesListener = () => {
+        console.log("Setting up file changes listener")
+
+        Main.API.onFilesChanged(() => {
+            checkSourceChangesDebounced()
+        })
+    }
+
+    const checkSourceChangesDebounced = debounce(() => {
+        console.log("Checking source changes")
+
+        checkSourceChanges()
+    }, 500)
+
     const checkSourceChanges = async () => {
-        if (sourceCheckerTimeout) clearTimeout(sourceCheckerTimeout)
-
-        if (projectStore.projectIsEmpty) {
-            scheduleNextCheck() // Schedule the next check if the current project is empty.
-            return
-        }
-
-        if(projectStore.project.codeChangesDetectorDisabled) {
-            scheduleNextCheck()
-            return
-        }
-
         const schemaBuilder = new SchemaBuilder(projectStore.project)
 
         await schemaBuilder.checkSchemaChanges()
-
-        scheduleNextCheck() // Schedule the next check after the current one finishes.
-    }
-
-    const scheduleNextCheck = () => {
-        if (sourceCheckerTimeout) clearTimeout(sourceCheckerTimeout)
-
-        sourceCheckerTimeout = setTimeout(checkSourceChanges, 3000)
     }
 
     const setupLicenseModal = () => {

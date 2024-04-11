@@ -4,15 +4,30 @@
             "outputName": "VMTTL1",
             "enabled": true,
             "commonFiles": [
-                "Vemto.php"
-            ]
+                "Vemto.php",
+                "ValidationException.php",
+                "ModelRepository.php"
+            ],
+            "defaultTesterProject": "laravel9-basic"
+        },
+        "db-reader": {
+            "outputName": "VMTTL2",
+            "enabled": true,
+            "commonFiles": [
+                "Vemto.php",
+                "ValidationException.php",
+                "ModelRepository.php"
+            ],
+            "defaultTesterProject": "laravel11-basic"
         },
         "php-merger": {
-            "outputName": "VMTTL2",
+            "outputName": "VMTTL3",
             "enabled": false,
             "commonFiles": [
-                "Vemto.php"
-            ]
+                "Vemto.php",
+                "ValidationException.php"
+            ],
+            "defaultTesterProject": "laravel9-basic"
         }
     }
 }

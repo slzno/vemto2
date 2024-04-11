@@ -12,6 +12,13 @@ export default class CommandExecutor {
         return await this.executeOnPath(executionPath, phpCommand, plainReturn)
     }
 
+<<<<<<< HEAD
+=======
+    static async executeCommand(command: string, plainReturn: boolean = false): Promise<string> {
+        return await this.executeOnPath("", command, plainReturn)
+    }
+    
+>>>>>>> develop
     static async executeArtisanOnPath(executionPath: string, command: string, plainReturn:boolean = false): Promise<string> {
         const phpPath = await Storage.get("phpPath") || "php",
             artisanCommand = `"${phpPath}" artisan ${command}`
@@ -24,6 +31,7 @@ export default class CommandExecutor {
             composerCommand = `${composerPath} ${command}`
 
         return await this.executeOnPath(executionPath, composerCommand, plainReturn)
+<<<<<<< HEAD
     }
 
     static async executeYarnOnPath(executionPath: string, command: string, plainReturn:boolean = false): Promise<string> {
@@ -31,6 +39,8 @@ export default class CommandExecutor {
             yarnCommand = `${yarnPath} ${command}`
 
         return await this.executeOnPath(executionPath, yarnCommand, plainReturn)
+=======
+>>>>>>> develop
     }
 
     static async executeOnPath(executionPath: string, command: string, plainReturn: boolean = false): Promise<string> {

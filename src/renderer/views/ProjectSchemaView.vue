@@ -24,6 +24,7 @@
         currentConnections = {},
         currentNodes = {},
         canDrawTables = ref(false),
+        loadingSchema = ref(false),
         jsPlumbInstance: BrowserJsPlumbInstance = null
 
     onMounted(async () => {
@@ -59,6 +60,14 @@
         }, { passive: false })
     }
 
+    const checkForChanges = async () => {
+        if (projectStore.projectIsEmpty) return
+
+        const schemaBuilder = new SchemaBuilder(projectStore.project)
+
+        await schemaBuilder.checkSchemaChanges()
+    }
+
     const syncSchema = async (syncTables: boolean, syncModels: boolean) => {
         await loadSchema(syncTables, syncModels)
     }
@@ -75,11 +84,17 @@
         if (isDragging) return
         if (projectStore.projectIsEmpty) return
 
+        loadingSchema.value = true
+
+        await nextTick()
+
         const schemaBuilder = new SchemaBuilder(projectStore.project)
 
-        schemaBuilder.build(syncTables, syncModels)
+        await schemaBuilder.build(syncTables, syncModels)
 
         drawConnectionsOnNextTick()
+
+        loadingSchema.value = false
     }
 
     const drawConnectionsOnNextTick = () => {
@@ -218,10 +233,11 @@
         v-if="projectStore.projectIsReady"
     >
         <SchemaHeader 
+            :loading-schema="loadingSchema"
             @tableAdded="tableAdded"
             @syncSchema="syncSchema" 
+            @checkForChanges="checkForChanges"
         />
-
         <SchemaTables 
             v-if="canDrawTables" 
             @tablesLoaded="drawConnectionsOnNextTick()" 

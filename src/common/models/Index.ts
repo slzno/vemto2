@@ -10,6 +10,16 @@ import AbstractSchemaModel from "./composition/AbstractSchemaModel"
 import { uniq } from 'lodash'
 import CircularRelationError from "./errors/CircularRelationError"
 
+export enum IndexType {
+    PRIMARY = "primary",
+    FOREIGN = "foreign",
+    UNIQUE = "unique",
+    INDEX = "index",
+    FULLTEXT = "fullText",
+    FULLTEXT_CHAIN = "fulltext",
+    SPATIAL = "spatialIndex"
+}
+
 export default class Index extends AbstractSchemaModel implements SchemaModel {
     id: string
 
@@ -18,7 +28,7 @@ export default class Index extends AbstractSchemaModel implements SchemaModel {
     onTable: Table
 
     name: string
-    type: string
+    type: IndexType
     table: Table
     tableId: string
     language: string
@@ -89,11 +99,11 @@ export default class Index extends AbstractSchemaModel implements SchemaModel {
     }
 
     isPrimary(): boolean {
-        return this.type === "primary"
+        return this.type === IndexType.PRIMARY
     }
 
     isForeign(): boolean {
-        return this.type === "foreign"
+        return this.type === IndexType.FOREIGN
     }
 
     isNotForeign(): boolean {
@@ -101,19 +111,23 @@ export default class Index extends AbstractSchemaModel implements SchemaModel {
     }
 
     isUnique(): boolean {
-        return this.type === "unique"
+        return this.type === IndexType.UNIQUE
     }
 
     isCommon(): boolean {
-        return this.type === "index"
+        return this.type === IndexType.INDEX
     }
 
     isFullText(): boolean {
-        return this.type === "fulltext"
+        return this.type === IndexType.FULLTEXT
+    }
+
+    isFullTextChain(): boolean {
+        return this.type === IndexType.FULLTEXT_CHAIN
     }
 
     isSpatial(): boolean {
-        return this.type === "spatialIndex"
+        return this.type === IndexType.SPATIAL
     }
 
     isSingleColumn(): boolean {

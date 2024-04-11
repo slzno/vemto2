@@ -2,11 +2,15 @@ import Main from "../wrappers/Main"
 import PathUtil from "@Common/util/PathUtil"
 import { ProjectCssFramework, ProjectUIStarterKit } from "@Common/models/Project"
 import { validateAndParse as getVersionMatches } from 'compare-versions/lib/esm/utils'
+import EnvParser from "@Common/util/EnvParser"
 
 export default class ProjectInfo {
     path: string
     composerData: any = {}
     packageData: any = {}
+    envData: EnvParser
+    settingsData: EnvParser
+    hasSettingsFile: boolean = false
     alreadyConnected: boolean = false
     phpVersion: string = ""
     isLaravelProject: boolean = false
@@ -43,8 +47,12 @@ export default class ProjectInfo {
     async read() {
         this.composerData = await this.readComposerJson()
         this.packageData = await this.readPackageJson()
+        this.envData = await this.readEnvFile()
+        this.settingsData = await this.readSettingsFile()
 
         this.alreadyConnected = await this.isAlreadyConnected()
+        this.hasSettingsFile = await this.checkForSettingsFile()
+
         this.phpVersion = this.getComposerPackageVersion("php") || "8.0"
         this.isLaravelProject = this.hasComposerPackage("laravel/framework")
         this.laravelVersion =
@@ -92,7 +100,6 @@ export default class ProjectInfo {
 
         return ProjectCssFramework.OTHER
     }
-
 
     hasComposerPackage(packageName: string): boolean {
         return (
@@ -171,11 +178,39 @@ export default class ProjectInfo {
         }
     }
 
+    async readEnvFile(): Promise<any> {
+        try {
+            const envData = await Main.API.readFile(
+                PathUtil.join(this.path, ".env")
+            )
+
+            return new EnvParser(envData)
+        } catch (e) {
+            return new EnvParser()
+        }
+    }
+
+    async readSettingsFile(): Promise<any> {
+        try {
+            const settingsData = await Main.API.readFile(
+                PathUtil.join(this.path, ".vemto_settings")
+            )
+
+            return new EnvParser(settingsData)
+        } catch (e) {
+            return new EnvParser()
+        }
+    }
+
     async isAlreadyConnected(): Promise<boolean> {
         const vemtoFolder = PathUtil.join(this.path, ".vemto")
         
         return await Main.API.folderExists(vemtoFolder)
     }
 
-        
+    async checkForSettingsFile(): Promise<boolean> {
+        const settingsFile = PathUtil.join(this.path, ".vemto_settings")
+
+        return await Main.API.fileExists(settingsFile)
+    }
 }

@@ -14,19 +14,24 @@ interface Error {
 export const useErrorsStore = defineStore("errors", {
     state: () => ({ 
         errors: [] as Error[],
-        lastErrorMessage: "" as String
+        lastErrorMessage: "" as String,
+        lastErrorTime: 0 as number,
     }),
 
     actions: {
         addError(error: Error) {
+            error.stack = error.stack.replaceAll("VEMTO_EOL", "\n")
+            
             console.log("Adding error", error)
+
+            this.lastErrorTime = Date.now()
 
             if(this.lastErrorMessage === error.message) {
                 // get the last error and prepend the stack if it is different
                 const lastError = this.errors[0]
 
                 if(lastError.stack !== error.stack) {
-                    lastError.stack = error.stack + "\n--------\n" + lastError.stack
+                    lastError.stack = error.stack + "\n\n--------\n\n" + lastError.stack
                 }
 
                 return
@@ -39,7 +44,11 @@ export const useErrorsStore = defineStore("errors", {
         clearErrors() {
             this.lastErrorMessage = ""
             this.errors = []
-        }
+        },
+
+        report() {
+            this.lastErrorTime = Date.now()
+        },
     },
 
     getters: {
@@ -49,6 +58,14 @@ export const useErrorsStore = defineStore("errors", {
             if(!projectStore.projectIsEmpty && projectStore.project.hasCurrentSchemaError()) return true
 
             return state.errors.length > 0
+        },
+
+        hasSchemaReaderErrors(state): boolean {
+            const projectStore = useProjectStore()
+
+            if(!projectStore.projectIsEmpty && projectStore.project.hasCurrentSchemaError()) return true
+
+            return state.errors.some(error => error.message.includes("schema-reader"))
         },
     }
 })

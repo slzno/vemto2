@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref, onMounted, computed, Ref, nextTick } from "vue"
+    import { ref, onMounted, computed, Ref, nextTick, watch } from "vue"
     import { useRouter } from "vue-router"
     import { ProjectSettings } from "@Common/models/Project"
     import Main from "@Renderer/services/wrappers/Main"
@@ -8,7 +8,7 @@
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import ProjectManager from "@Renderer/services/project/ProjectManager"
-    import { ClipboardDocumentIcon, Cog6ToothIcon, CommandLineIcon, FolderIcon, PlusCircleIcon, ShieldExclamationIcon, XMarkIcon, InformationCircleIcon } from "@heroicons/vue/24/outline"
+    import { ClipboardDocumentIcon, Cog6ToothIcon, CommandLineIcon, FolderIcon, PlusCircleIcon, ShieldExclamationIcon, XMarkIcon, InformationCircleIcon, CheckIcon } from "@heroicons/vue/24/outline"
     import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
     import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
     import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
@@ -23,6 +23,10 @@
     import LicenseHandler from "@Renderer/services/LicenseHandler"
     import { useErrorsStore } from "@Renderer/stores/useErrorsStore"
     import MainErrorsDialog from "./components/System/MainErrorsDialog.vue"
+    import UiHint from "@Renderer/components/ui/UiHint.vue"
+    import UiTabs from "@Renderer/components/ui/UiTabs.vue"
+    import ProjectSettingsFileManager from "@Renderer/services/project/ProjectSettingsFileManager"
+    
 
     const projectManager = new ProjectManager(),
         search = ref(""),
@@ -35,8 +39,10 @@
         showingWelcomeModal = ref(false),
         showingConnectingFolderModal = ref(false),
         processingConnectFolder = ref(false),
+        processingConnectFolderFromDialog = ref(false),
         settingsModal = ref(null),
         vemtoVersion = ref("2.0.0"),
+        connectingModalSelectedTab = ref("main"),
         connectingFolderSettings = ref({
             cssFramework: "tailwind",
             uiStarterKit: "jetstream",
@@ -46,9 +52,21 @@
             usesReact: false,
             usesSvelte: false,
             isFreshLaravelProject: false,
+            schemaReaderMode: "migration",
+            schemaReaderDbDriver: "mysql",
+            schemaReaderDbHost: "127.0.0.1",
+            schemaReaderDbPort: "3306",
+            schemaReaderDbUsername: "root",
+            schemaReaderDbPassword: null,
+            schemaReaderDbDatabase: "vemto_schema_reader",
         }) as Ref<ProjectSettings>
 
     const router = useRouter()
+
+    const connectingFolderModalTabs = [
+        { label: "Project", value: "main" },
+        { label: "Stack", value: "other" },
+    ]
 
     onMounted(async () => {
         const licenseHandler = new LicenseHandler()
@@ -58,7 +76,7 @@
 
         fillAppVersion()
 
-        showWelcomeModal()
+        checkAndShowWelcomeModal()
 
         window.addEventListener("error", (event) => {
             console.log("Error happened in the renderer process")
@@ -99,7 +117,7 @@
 
         if (!path) return
 
-        await openPath(path)
+        await openPath(path, false, true)
     }
 
     const openProject = async (project: any) => {
@@ -108,7 +126,7 @@
             
             await openPath(project.path)
         } catch (error) {
-            Alert.error("Please check the application errors before trying to open")
+            // Alert.error("Please check the application errors before trying to open")
 
             loadingProjectId.value = null
 
@@ -119,60 +137,99 @@
     const finishConnect = async (path) => {
         try {
             processingConnectFolder.value = true
+
+            const settingsFileManager = new ProjectSettingsFileManager(path)
+            await settingsFileManager.saveFromSettings(connectingFolderSettings.value)
             
             projectManager.setSettings(connectingFolderSettings.value)
     
             await projectManager.connectFromPath(path)
             
-            processingConnectFolder.value = false
+            stopLoading()
     
             errorsStore.clearErrors()
 
             openSchema()
         } catch (error) {
-            Alert.error("Please check the application errors before trying to connect")
+            // Alert.error("Please check the application errors before trying to connect")
 
-            showingConnectingFolderModal.value = false
-            processingConnectFolder.value = false
+            stopLoading()
 
             throw error
         }
     }
 
-    const openPath = async (path: string, isNewProject: boolean = false) => {
+    const openConnectionSettings = async (project: any) => {
+        currentConnectingFolder.value = project.path
+
+        const projectInfo = new ProjectInfo(project.path)
+        await projectInfo.read()
+
+        const canConnect = await checkProjectInfo(projectInfo)
+        if(!canConnect) return
+
+        buildConnectingFolderSettings(projectInfo, false)
+
+        connectingModalSelectedTab.value = "main"
+        showingConnectingFolderModal.value = true
+    }
+
+    const openPath = async (path: string, isNewProject: boolean = false, fromFolderDialog:boolean = false) => {
         currentConnectingFolder.value = path
 
         const projectInfo = new ProjectInfo(path)
         await projectInfo.read()
 
-        if(!projectInfo.isLaravelProject) {
-            Alert.error("This folder is not a Laravel project")
-            return
-        }
+        const canConnect = await checkProjectInfo(projectInfo)
+        if(!canConnect) return
 
-        const hasComposerVendor = await projectManager.projectHasComposerVendor(path)
-        if(!hasComposerVendor) {
-            Alert.error("This Laravel project does not have the vendor folder. Please run <b>composer install</b> before connecting it")
-            
-            loadingProjectId.value = null
-            processingConnectFolder.value = false
+        if(projectInfo.alreadyConnected && projectInfo.hasSettingsFile) {
+            try {
+                processingConnectFolder.value = true
+                if(fromFolderDialog) {
+                    processingConnectFolderFromDialog.value = true
+                }
 
-            return
-        }
+                await projectManager.connectFromPath(path)
+                openSchema()
 
-        if(compareVersions(projectInfo.laravelVersion, "9.0.0") < 0) {
-            Alert.error("Vemto only supports <b>Laravel 9+</b> projects. Please upgrade your Laravel version before connecting it")
-            return
-        }
-
-        if(projectInfo.alreadyConnected) {
-            await projectManager.connectFromPath(path)
-            openSchema()
-            return
+                return
+            } catch (error) {
+                stopLoading()
+                throw error
+            }
         }
 
         buildConnectingFolderSettings(projectInfo, isNewProject)
+
+        connectingModalSelectedTab.value = "main"
         showingConnectingFolderModal.value = true
+    }
+
+    const checkProjectInfo = async (projectInfo: ProjectInfo) => {
+        if(!projectInfo.isLaravelProject) {
+            Alert.error("This folder is not a Laravel project")
+            return false
+        }
+
+        const hasComposerVendor = await projectManager.projectHasComposerVendor(projectInfo.path)
+        if(!hasComposerVendor) {
+            Alert.error("This Laravel project does not have the vendor folder. Please run <b>composer install</b> before connecting it")
+            
+            stopLoading()
+
+            return false
+        }
+
+        if(compareVersions(projectInfo.laravelVersion, "11.0.0") < 0) {
+            Alert.error("Vemto only supports <b>Laravel 11+</b> projects. Please upgrade your Laravel version before connecting it")
+
+            stopLoading()
+
+            return false
+        }
+
+        return true
     }
 
     const buildConnectingFolderSettings = (projectInfo, isNewProject: boolean) => {
@@ -185,6 +242,42 @@
         connectingFolderSettings.value.usesSvelte = projectInfo.hasSvelte
         connectingFolderSettings.value.laravelVersion = projectInfo.laravelVersion
         connectingFolderSettings.value.isFreshLaravelProject = isNewProject
+
+        if(isNewProject) {
+            connectingFolderSettings.value.schemaReaderMode = "migration"
+        } else {
+            const schemaReaderMode = projectInfo.settingsData.getKey("SCHEMA_READER_MODE") || "migration"
+            connectingFolderSettings.value.schemaReaderMode = schemaReaderMode
+        }
+        
+        const dbDriver = projectInfo.settingsData.getKey("SCHEMA_READER_DB_DRIVER") || projectInfo.envData.getKey("DB_CONNECTION") || "mysql"
+        connectingFolderSettings.value.schemaReaderDbDriver = dbDriver
+
+        const dbHost = projectInfo.settingsData.getKey("SCHEMA_READER_DB_HOST") || projectInfo.envData.getKey("DB_HOST") || "127.0.0.1"
+        connectingFolderSettings.value.schemaReaderDbHost = dbHost
+
+        const dbPort = projectInfo.settingsData.getKey("SCHEMA_READER_DB_PORT") || projectInfo.envData.getKey("DB_PORT") || "3306"
+        connectingFolderSettings.value.schemaReaderDbPort = dbPort
+
+        const dbUsername = projectInfo.settingsData.getKey("SCHEMA_READER_DB_USERNAME") || projectInfo.envData.getKey("DB_USERNAME") || "root"
+        connectingFolderSettings.value.schemaReaderDbUsername = dbUsername
+
+        const dbPassword = projectInfo.settingsData.getKey("SCHEMA_READER_DB_PASSWORD") || projectInfo.envData.getKey("DB_PASSWORD") || null
+        connectingFolderSettings.value.schemaReaderDbPassword = dbPassword
+
+        const dbName = projectInfo.settingsData.getKey("SCHEMA_READER_DB_DATABASE") || "vemto_schema_reader"
+        connectingFolderSettings.value.schemaReaderDbDatabase = dbName
+    }
+
+    const closeConnectingFolderModal = () => {
+        stopLoading()
+        showingConnectingFolderModal.value = false
+    }
+
+    const stopLoading = () => {
+        loadingProjectId.value = null
+        processingConnectFolder.value = false
+        processingConnectFolderFromDialog.value = false
     }
 
     const openSchema = async () => {
@@ -222,7 +315,7 @@
         Main.API.openURL(url)
     }
 
-    const showWelcomeModal = () => {
+    const checkAndShowWelcomeModal = () => {
         const welcomeModalClosedAt = localStorage.getItem("welcomeModalClosedAt")
 
         if(welcomeModalClosedAt) {
@@ -234,7 +327,26 @@
             if(diffInHours < 24) return
         }
 
+        showWelcomeModal()
+    }
+
+    const showWelcomeModal = async () => {
         showingWelcomeModal.value = true
+
+        nextTick(async () => {
+            const welcomeModalContentResponse = await fetch("https://raw.githubusercontent.com/TiagoSilvaPereira/vemto2-releases/main/alert.html"),
+                welcomeModalContent = await welcomeModalContentResponse.text()
+
+            document.getElementById("welcomeModalContent").innerHTML = welcomeModalContent
+
+            // change all links href inside welcomeModalContent to open in the default browser using the openURL method
+            document.querySelectorAll("#welcomeModalContent a").forEach((link) => {
+                link.addEventListener("click", (event) => {
+                    event.preventDefault()
+                    openURL(link.getAttribute("href"))
+                })
+            })
+        })
     }
 
     const closeWelcomeModal = () => {
@@ -262,65 +374,8 @@
         :show="showingWelcomeModal"
         @close="closeWelcomeModal"
     >
-        <div>
-            <div class="p-4 pb-24 font-serif text-lg">
-                <div class="flex w-full justify-end px-4">
-                    <div class="flex space-x-3 text-sm">
-                        <a @click="openURL('https://vemto.app')" class="text-red-500 cursor-pointer">Site</a>
-                        <a @click="openURL('https://twitter.com/VemtoApp')" class="text-red-500 cursor-pointer">Twitter</a>
-                        <a @click="openURL('https://github.com/TiagoSilvaPereira/vemto2-issues/issues/new')" class="text-red-500 cursor-pointer">Issues</a>
-                    </div>
-                </div>
-                <h1 class="text-bold text-lg">Please, read this carefully!</h1>
-                <br><br>
-                Hello!
-                <br><br>
-                I can't express how happy I am that you're seeing this screen! 😊
-                <br><br>
-                It was a year and a half of development, full of ups and downs. I'll soon make a blog post telling everything about this period, but let's get to the point:
-                <br><br>
-                <span class="text-red-500 font-bold">Vemto 2 is finally here </span>
-                <br><br>
-                It's still a pre-alpha version; of course, there will probably be bugs. But I'm happy because this version has the correct architecture, which has been rewritten several times during this period and will now only be improved (hopefully for the next 10 years).
-                <br><br>
-                I recommend using it cautiously (always commit your code before connecting it to Vemto). It's essential to consider a few things now:
-                <br><br>
-                1 - Vemto 2 requires at least basic knowledge of Laravel and PHP. At least for now, we have decided not to do basic things like creating a new project, installing composer packages, etc. Vemto now assumes that you know how to do these things and focuses on the most crucial thing, visualizing and generating code. However, we will soon have tools to take care of these parts correctly (Composer Manager, Project Creator, etc.)
-                <br><br>
-                2 - Unlike version 1, Vemto is now not just a boilerplate tool. It connects directly to your project and creates a .vemto folder inside it (you can put this folder in .gitigore if you wish, but be sure to back it up, as it represents your project)
-                <br><br>
-                3 - Vemto can read any project with a .vemto folder. If you upload your project to another computer (using GIT or manually) with this folder inside, Vemto can open it normally. This means there is no need to export projects.
-                <br><br>
-                4 - When Vemto 2 generates code, it does just that. It does not install packages or modify composer.json or package.json during generation. This was a significant source of problems in version 1, and we found another way to do this, which will be implemented soon (Composer Manager, NPM Manager, etc.)
-                <br><br>
-                5 - Some features from Vemto 1 are still under development as we needed to resolve the entire architecture before bringing them, which took almost the whole development period. Now, we are focused on these features, and soon, we will have:
-                <br><br>
-                <ul>
-                    <li>- Generation of API Endpoints</li>
-                    <li>- Template Editor</li>
-                    <li>- Tests Generation</li>
-                    <li>- Plugin support</li>
-                    <li>- More AI features</li>
-                </ul>
-                <br><br>
-                6 - You may prefer to create your Laravel project with Jetstream/Livewire for CRUD generation. Any other boilerplate with Livewire will work (Breeze, Laravel UI, etc), but we haven't created the menu file yet, so you'll probably have to edit it manually
-                <br><br>
-                7 - Vemto 1 still works very well for generating API Endpoints. You can use it for this and connect Vemto 2 to your project.
-                <br><br>
-                8 - Small Tip: Test Filament code generation—it's awesome now! Just remember to install the Filament package in your project.
-                <br><br>
-                9 - Please report any bug in the <a @click="openURL('https://github.com/TiagoSilvaPereira/vemto2-issues/issues/new')" class="text-red-500 cursor-pointer">Issues Repository</a> or email <b>contact@vemto.app</b> (Issues repository is preferred).
-                <br><br>
-                We are focused on improving Vemto 2 and reaching the Release version as quickly as possible (our plans are for the middle of the year).
-                <br><br>
-                I am immensely grateful to everyone who believed in and supported me, even when I was unable to release any more Vemto updates.
-                <br><br>
-                Thank you for your attention and support! 
-                <br><br>
-                Yours sincerely,
-                <br>
-                Tiago Rodrigues - Creator of Vemto
-            </div>
+        <div id="welcomeModalContent">
+            
         </div>
 
         <template #footer>
@@ -332,21 +387,114 @@
 
     <!-- Connect folder modal -->
     <UiModal
-        width="700px"
-        height="600px"
+        width="1000px"
+        height="700px"
         title="Connect Folder"
         :show="showingConnectingFolderModal"
         :processing="processingConnectFolder"
-        @close="showingConnectingFolderModal = false"
+        @close="closeConnectingFolderModal()"
     >
-        <div class="p-4">
+        <div class="pt-4">
+            <UiTabs
+                name="connectingFolderModalTabs"
+                :tabs="connectingFolderModalTabs" 
+                v-model="connectingModalSelectedTab" 
+                selectedClass="bg-slate-850"
+                freeze
+            />
+        </div>
+
+        <div class="p-4" v-show="connectingModalSelectedTab == 'main'">
             <div class="m-1 flex flex-col gap-4">
 
-                <div class="flex justify-end">
-                    <div class="px-2 py-1 bg-slate-100 dark:bg-slate-950 rounded-md text-sm w-auto inline text-slate-750 dark:text-slate-300 font-mono">
-                        Connecting to <span class="text-red-500 dark:text-red-400">{{ currentConnectingFolder }}</span>
+                <div class="flex">
+                    <UiText v-model="currentConnectingFolder" label="Path" disabled />
+                </div>
+
+                <div class="flex">
+                    <UiCheckbox v-model="connectingFolderSettings.isFreshLaravelProject" label="It is a fresh Laravel project"></UiCheckbox>
+
+                    <UiHint type="warning">
+                        When a project is marked as fresh, Vemto will automatically generate some specific files after connecting it. 
+                        <br>
+                        <br>
+                        <b>It is not recommended</b> to mark a project as fresh if it is a previous existing project, as it may overwrite some files.
+                    </UiHint>
+                </div>
+
+                <div class="mt-8">
+                    <div class="mb-4">
+                        <span>Schema Reader Options</span>
+                    </div>
+
+                    <div class="flex space-x-8">
+                        <div class="w-1/3">
+                            <div class="text-slate-400 font-serif">
+                                The Migration mode is recommended for simple projects and prototypes. 
+                                <br>
+                                <br>
+                                If your project has a complex schema, or the migrations files have complex logic, it is recommended to use the Database mode. 
+                                <br>
+                                <br>
+                                The database mode is also mandatory if your migrations are squashed.
+                                <br>
+                                <br>
+                                If you have doubts, prefer the Database mode.
+                            </div>
+                        </div>
+
+                        <div class="w-2/3 space-y-2">
+                            <UiSelect v-model="connectingFolderSettings.schemaReaderMode" label="Mode">
+                                <option value="migration">Migration - Read from migrations files</option>
+                                <option value="db">Database - Read from a database</option>
+                            </UiSelect>
+                            
+                            <div 
+                                :class="{
+                                    'opacity-30 cursor-not-allowed pointer-events-none': connectingFolderSettings.schemaReaderMode !== 'db'
+                                }"
+                                class="space-y-2"
+                            >
+                                <UiSelect v-model="connectingFolderSettings.schemaReaderDbDriver" label="Database Type">
+                                    <option value="sqlite">SQLite</option>
+                                    <option value="mysql">MySQL</option>
+                                    <option value="mariadb">MariaDB</option>
+                                    <option value="pgsql">PostgreSQL</option>
+                                    <option value="sqlsrv">SQL Server</option>
+                                </UiSelect>
+                                
+                                <div
+                                    :class="{
+                                        'opacity-30 cursor-not-allowed pointer-events-none': connectingFolderSettings.schemaReaderDbDriver === 'sqlite'
+                                    }"
+                                    class="space-y-2"
+                                >
+                                    <div class="flex flex-row space-x-2">
+                                        <UiText v-model="connectingFolderSettings.schemaReaderDbHost" class="w-1/2" label="Host"></UiText>
+                                        <UiText v-model="connectingFolderSettings.schemaReaderDbPort" class="w-1/2" label="Port"></UiText>
+                                    </div>
+        
+                                    <div class="flex flex-row space-x-2">
+                                        <UiText v-model="connectingFolderSettings.schemaReaderDbUsername" class="w-1/2" label="Username"></UiText>
+                                        <UiText v-model="connectingFolderSettings.schemaReaderDbPassword" class="w-1/2" label="Password"></UiText>
+                                    </div>
+    
+                                    <UiText 
+                                        v-model="connectingFolderSettings.schemaReaderDbDatabase" label="Vemto Database"
+                                        hint="This is not your project's database. Vemto will drop and create tables on it to read the schema. The database name must start with the <span class='text-red-450 font-bold'>vemto_</span> prefix. <br><br>Vemto will try to create the database if it does not exist. You can also create it manually if necessary."
+                                        hint-type="warning"
+                                    ></UiText>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div class="p-4" v-show="connectingModalSelectedTab == 'other'">
+            <div class="m-1 flex flex-col gap-4">
 
                 <div class="flex flex-col gap-2">
                     <UiSelect v-model="connectingFolderSettings.cssFramework" label="CSS Framework">
@@ -370,14 +518,6 @@
                     <UiCheckbox v-model="connectingFolderSettings.usesInertia" label="Has Inertia installed"></UiCheckbox>
                     <UiCheckbox v-model="connectingFolderSettings.usesVue" label="Has Vue installed"></UiCheckbox>
                 </div>
-
-                <div>
-                    <UiCheckbox v-model="connectingFolderSettings.isFreshLaravelProject" label="It is a fresh Laravel project"></UiCheckbox>
-
-                    <div class="mt-2 p-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-900 font-mono text-sm text-slate-700 dark:text-slate-300" v-if="connectingFolderSettings.isFreshLaravelProject">
-                        When a project is marked as fresh, Vemto will automatically generate some specific files after connecting it. This is useful when you want to connect a new project that was created manually. It is not recommended to mark a project as fresh if it is a previous existing project, as it may overwrite some files.
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -388,7 +528,10 @@
                         <UiLoading></UiLoading> 
                         <div>Connecting...</div>
                     </div>
-                    <div v-else>Connect</div>
+                    <div class="flex items-center" v-else>
+                        <CheckIcon class="h-4 w-4 mr-1 text-green-500" />
+                        <span>Connect</span>
+                    </div>
                 </UiButton>
             </div>
         </template>
@@ -400,8 +543,13 @@
                 <div class="flex gap-2">
                     <CreateProjectView @reloadProjectListAndOpenPath="reloadProjectListAndOpenPath" />
                     <UiButton class="gap-1.5" @click="openFolder()">
-                        <FolderIcon class="w-5 h-5 text-red-500" />
-                        Connect Folder
+                        <div v-if="processingConnectFolderFromDialog">
+                            <UiLoading :stroke-width="2"</UiLoading> 
+                        </div>
+                        <div v-else>
+                            <FolderIcon class="w-5 h-5 text-red-500" />
+                        </div>
+                        <span>Connect Folder</span>
                     </UiButton>
                     <UiButton class="gap-1.5" @click="connectSSH">
                         <CommandLineIcon class="w-5 h-5 text-red-500" />
@@ -420,7 +568,7 @@
                 There are no connected apps
             </UiEmptyMessage>
 
-            <div class="flex flex-col gap-2 w-1/2 max-w-xl">
+            <div class="flex flex-col gap-2 w-1/2 max-w-xl px-2 pb-8 overflow-y-auto" style="height: calc(100vh - 300px);">
                 <div v-for="project in filteredProjects" @click="openProject(project)" class="p-2 rounded-lg border border-slate-300 dark:border-slate-650 bg-slate-50 dark:bg-slate-850 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800">
                     <div class="flex justify-between text-slate-200">
                         <span>{{ project.path.split(/\/|\\/).pop() }}</span>
@@ -431,25 +579,35 @@
                                 :size="15"
                                 :strokeWidth="2"
                             ></UiLoading>
-                            <UiOptionsDropdown v-else>
+                            <UiOptionsDropdown size="w-64" v-else>
+                                <UiDropdownItem @click="openConnectionSettings(project)">
+                                    <Cog6ToothIcon class="h-5 w-5 mr-2 text-red-400" /> Connection Settings
+                                </UiDropdownItem>
                                 <UiDropdownItem @click="copyProjectPath(project)">
-                                    <ClipboardDocumentIcon class="h-5 w-5 mr-1 text-red-400" /> Copy Path
+                                    <ClipboardDocumentIcon class="h-5 w-5 mr-2 text-red-400" /> Copy Path
                                 </UiDropdownItem>
                                 <UiDropdownItem @click="openProjectPath(project)">
-                                    <FolderIcon class="h-5 w-5 mr-1 text-red-400" /> Open Folder
+                                    <FolderIcon class="h-5 w-5 mr-2 text-red-400" /> Open Folder
                                 </UiDropdownItem>
                                 <UiDropdownItem @click="openProjectOnTerminal(project)">
-                                    <CommandLineIcon class="h-5 w-5 mr-1 text-red-400" /> Open Terminal
+                                    <CommandLineIcon class="h-5 w-5 mr-2 text-red-400" /> Open Terminal
                                 </UiDropdownItem>
                                 <UiDropdownItem @click="disconnectProject(project)">
-                                    <XMarkIcon class="h-5 w-5 mr-1 text-red-400" /> Disconnect
+                                    <XMarkIcon class="h-5 w-5 mr-2 text-red-400" /> Disconnect
                                 </UiDropdownItem>
                             </UiOptionsDropdown>
                         </div>
                     </div>
                     <div class="flex flex-col space-y-1">
-                        <span class="text-slate-450">{{ project.path }}</span>
-                        <span v-if="project.laravelVersion" class="text-xs text-slate-500">Laravel {{ project.laravelVersion }}</span>
+                        
+                        <span class="text-slate-400 font-thin">{{ project.path }}</span>
+
+                        <div class="flex space-x-1 text-xs">
+                            <span v-if="project.laravelVersion" class="text-slate-500">Laravel {{ project.laravelVersion }}</span>
+                            <span v-if="project.schemaReaderMode" class=" text-slate-500">
+                                - {{ project.schemaReaderMode === 'db' ? 'Database Schema Reader' : 'Migration Schema Reader'}}
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -495,7 +653,7 @@
 
                         <button
                             title="About Vemto"
-                            @click="showingWelcomeModal = true"
+                            @click="showWelcomeModal()"
                             class="relative cursor-pointer"
                         >
                             <InformationCircleIcon
