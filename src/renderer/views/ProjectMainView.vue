@@ -61,7 +61,7 @@
 
     const handleKeyInputs = () => {
         document.addEventListener("keydown", (e) => {
-            if (e.key === "F5") generateCode()
+            if (e.key === "F5") checkAndGenerateCode()
             if (e.key === "F6") openProjectFolder()
             if (e.key === "F7") openProjectOnTerminal()
         })
@@ -131,8 +131,32 @@
         }
     }
 
-    const generateCode = async (force: boolean = false) => {
+    const checkAndGenerateCode = async () => {
+        appStore.startGeneratingCode()
+
+        try {
+            const sequentialGenerator = new SequentialGenerator(projectStore.project)
+            
+            await sequentialGenerator.checkDependencies()
+    
+            const hasMissingDependencies = sequentialGenerator.hasMissingDependencies()
+    
+            if(hasMissingDependencies) {
+                dependenciesModal.value?.show(sequentialGenerator.packageChecker)
+                return
+            }
+            
+            await generateCode()
+        } catch (error) {
+            appStore.finishGeneratingCode()
+            
+            throw error
+        }
+    }
+
+    const generateCode = async () => {
         console.log('Will generate')
+
         const currentTablesCount = projectStore.project.tables.length
 
         if(!window.licenseIsActive() && currentTablesCount > 15) {
@@ -152,17 +176,7 @@
         const sequentialGenerator = new SequentialGenerator(projectStore.project)
 
         try {
-            if(force) {
-                await sequentialGenerator.run()
-                return
-            }
-
-            const generated = await sequentialGenerator.checkDependenciesBeforeGeneration()
-
-            if(!generated) {
-                treatProjectGenerationError(sequentialGenerator.packageChecker)
-                return
-            }
+            await sequentialGenerator.run()
 
             setTimeout(() => {
                 const elapsedTime = SequentialGenerator.getElapsedTimeInSeconds()
@@ -176,12 +190,6 @@
             throw error
         } finally {
             appStore.finishGeneratingCode()
-        }
-    }
-
-    const treatProjectGenerationError = (packageChecker: PackageChecker) => {
-        if(packageChecker.hasMissingDependencies()) {
-            dependenciesModal.value?.show(packageChecker)
         }
     }
 
@@ -208,7 +216,8 @@
 
             <DependenciesModal
                 ref="dependenciesModal"
-                @force-generation="generateCode(true)"
+                @generate="generateCode()"
+                @close="appStore.finishGeneratingCode()"
             />
 
             <LicenseModal
@@ -270,7 +279,7 @@
                             <button
                                 class="flex text-slate-600 dark:text-slate-300 outline-none focus:text-red-500 dark:focus:text-red-500 cursor-pointer hover:text-red-500 dark:hover:text-red-500"
                                 title="Generate Code (F5)"
-                                @click="generateCode()"
+                                @click="checkAndGenerateCode()"
                             >
                                 <div
                                     v-if="appStore.isGenerating"

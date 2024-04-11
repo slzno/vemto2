@@ -29,15 +29,57 @@ export default class SequentialGenerator {
         this.packageChecker = new PackageChecker(project)
     }
 
-    async prepareGeneration() {
+    hasMissingDependencies(): boolean {
+        return this.packageChecker.hasMissingDependencies()
+    }
+
+    async run(): Promise<void> {
+        try {
+            await this.runGeneration()
+        } catch (error) {
+            console.error("Error while running generation: ", error)
+            
+            throw error
+        }
+    }
+
+    async runGeneration(): Promise<boolean> {
+        SequentialGenerator.startTimer()
+
+        SchemaBuilder.disableSchemaChangesCheck()
+1
+        await this.clearVemtoFolders()
+
+        this.project.setFilesQueueStatusProcessing()
+        this.project.clearCurrentRenderedFilesPaths()
+        this.project.clearRemovedRenderableFiles()
+        
         this.project.clearSkippedRenderableFiles()
         
+        await this.prepareGeneration()
+
+        await this.runGenerators()
+
+        this.project.processRemovableFiles()
+
+        await this.waitForProcessingFilesQueue()
+
+        await this.readSchema()
+
+        SchemaBuilder.enableSchemaChangesCheck()
+
+        SequentialGenerator.stopTimer()
+
+        return true
+    }
+
+    async prepareGeneration() {
         await this.checkDependencies()
 
         let templatePaths = []
 
         const composerMissingDependencies = this.packageChecker.getComposerMissingDependencies(),
-                packagesMissingDependencies = this.packageChecker.getPackagesMissingDependencies()
+            packagesMissingDependencies = this.packageChecker.getPackagesMissingDependencies()
 
         composerMissingDependencies.forEach((dependency) => {
             templatePaths.push(...dependency.templatePaths)
@@ -58,66 +100,12 @@ export default class SequentialGenerator {
         })
     }
 
-    async checkDependencies(): Promise<boolean> {
-        this.packageChecker.reset()
-        
+    async checkDependencies(): Promise<void> {
         Renderable.setMode("checker")
         await this.runGenerators()
         Renderable.setMode("generate")
 
-        return await this.packageChecker.hasMissingDependencies()
-    }
-
-    async checkDependenciesBeforeGeneration(): Promise<boolean> {
-        try {
-            const hasMissingDependencies = await this.checkDependencies()
-
-            if (hasMissingDependencies) return false
-
-            await this.runGeneration()
-
-            return true
-        } catch (error) {
-            console.error("Error while checking dependencies: ", error)
-
-            return false
-        }
-    }
-
-    async run(): Promise<void> {
-        try {
-            await this.runGeneration()
-        } catch (error) {
-            console.error("Error while running generation: ", error)
-            
-            throw error
-        }
-    }
-
-    async runGeneration(): Promise<boolean> {
-        SequentialGenerator.startTimer()
-
-        SchemaBuilder.disableSchemaChangesCheck()
-
-        await this.clearVemtoFolders()
-
-        this.project.setFilesQueueStatusProcessing()
-        this.project.clearCurrentRenderedFilesPaths()
-        this.project.clearRemovedRenderableFiles()
-
-        await this.runGenerators()
-
-        this.project.processRemovableFiles()
-
-        await this.waitForProcessingFilesQueue()
-
-        await this.readSchema()
-
-        SchemaBuilder.enableSchemaChangesCheck()
-
-        SequentialGenerator.stopTimer()
-
-        return true
+        await this.packageChecker.checkForMissingDependencies()
     }
 
     async runGenerators() {

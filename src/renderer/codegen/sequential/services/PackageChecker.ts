@@ -18,13 +18,15 @@ export default class PackageChecker {
         this.project = project
     }
 
-    async hasMissingDependencies(): Promise<boolean> {
+    hasMissingDependencies(): boolean {
+        return this.composerMissingDependencies.length > 0
+            || this.packagesMissingDependencies.length > 0
+    }
+
+    async checkForMissingDependencies(): Promise<void> {
         await this.setProjectInfo()
         await this.checkComposerDependencies()
         await this.checkPackagesDependencies()
-
-        return this.composerMissingDependencies.length > 0
-            || this.packagesMissingDependencies.length > 0
     }
 
     async setProjectInfo(): Promise<void> {

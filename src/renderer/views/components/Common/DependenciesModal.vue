@@ -1,6 +1,4 @@
 <script setup lang="ts">
-    import Project from "@Common/models/Project"
-    import RenderableFile from "@Common/models/RenderableFile"
     import SequentialGenerator from "@Renderer/codegen/sequential/SequentialGenerator"
     import PackageChecker from "@Renderer/codegen/sequential/services/PackageChecker"
     import { RenderableDependency } from "@Renderer/codegen/sequential/services/foundation/Renderable"
@@ -11,7 +9,7 @@
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import { ref, defineExpose, Ref, nextTick } from "vue"
 
-    const emit = defineEmits(["close", "forceGeneration"])
+    const emit = defineEmits(["close", "generate"])
 
     const showingModal = ref(false),
         composerDependencies = ref([]) as Ref<RenderableDependency[]>,
@@ -40,53 +38,44 @@
         try {
             await installComposerDependencies()
             await installPackagesDependencies()
-
-            close()
             
             if(installing.value) {
                 Alert.success("Dependencies installed successfully")
                 installing.value = false
             }
-        } catch (error: any) {
-            Alert.error(error.message)
-        }
-    }
 
-    const onDependencyInstallError = () => {
-        installing.value = false
+            emit('generate')
+            
+            close()
+        } catch (error: any) {
+            installing.value = false
+
+            throw error
+        }
     }
 
     const installComposerDependencies = async () => {
         currentState.value = "Installing Composer dependencies"
-        
-        try {
-            for (const dependency of composerDependencies.value) {
-                await Main.API.executeComposerOnProject(`require ${dependency.name}`)
-            }
-        } catch (error) {
-            onDependencyInstallError()
+
+        for (const dependency of composerDependencies.value) {
+            await Main.API.executeComposerOnProject(`require ${dependency.name}`)
         }
+
     }
 
     const installPackagesDependencies = async () => {
         currentState.value = "Installing Packages dependencies"
 
-        try {
-            for (const dependency of packagesDependencies.value) {
-                await Main.API.executeYarnOnProject(`add ${dependency.name}`)
-            }
-        } catch (error) {
-            onDependencyInstallError()
+        for (const dependency of packagesDependencies.value) {
+            await Main.API.executeYarnOnProject(`add ${dependency.name}`)
         }
     }
 
-    const generateWithMissingDependencies = () => {
+    const justGenerate = () => {
        const sequentialGenerator = new SequentialGenerator(projectStore.project)
 
-       sequentialGenerator.prepareGeneration()
-
         nextTick(() => {
-            emit('forceGeneration')
+            emit('generate')
             close()
         })
     }
@@ -136,7 +125,7 @@
 
         <template #footer>
             <div class="flex justify-between p-2">
-                <UiButton @click="generateWithMissingDependencies()">
+                <UiButton @click="justGenerate()">
                     <div>Continue generating</div>
                 </UiButton>
 

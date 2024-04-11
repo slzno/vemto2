@@ -2,7 +2,7 @@ import Project from "@Common/models/Project"
 import Main from "@Renderer/services/wrappers/Main"
 import PhpFormatter from "@Renderer/codegen/formatters/PhpFormatter"
 import TemplateCompiler from "@Renderer/codegen/templates/base/TemplateCompiler"
-import { RenderableFileFormatter, RenderableFileType } from "@Common/models/RenderableFile"
+import { RenderableFileFormatter, RenderableFileStatus, RenderableFileType } from "@Common/models/RenderableFile"
 import BladeFormatter from "@Renderer/codegen/formatters/BladeFormatter"
 import PathUtil from "@Common/util/PathUtil"
 import TemplateHelpers from "../helpers/TemplateHelpers"
@@ -115,7 +115,6 @@ export default abstract class Renderable {
     async render() {
         if(Renderable.mode === "checker") {
             this.treatCheckerMode()
-            return
         }
 
         if(!this.canRender()) {
@@ -129,11 +128,16 @@ export default abstract class Renderable {
             console.log(`Rendering ${this.getTemplateFile()} as ${this.getFullFilePath()}...`)
         }
 
+        const fileStatus: RenderableFileStatus = Renderable.mode === "checker" 
+            ? RenderableFileStatus.IDLE 
+            : RenderableFileStatus.PENDING
+
         const file = this.project.registerRenderableFile(
             this.getPath(), 
             this.getFilename(),
             this.getTemplateFile(), 
             this.getType(),
+            fileStatus
         )
 
         if(file.wasIgnored()) {

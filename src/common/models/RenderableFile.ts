@@ -149,6 +149,12 @@ export default class RenderableFile extends RelaDB.Model {
         this.save()
     }
 
+    setAsPending() {
+        this.status = RenderableFileStatus.PENDING
+
+        this.save()
+    }
+
     setAsIgnored() {
         this.status = RenderableFileStatus.IGNORED
 
