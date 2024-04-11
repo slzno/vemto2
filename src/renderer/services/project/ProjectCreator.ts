@@ -43,7 +43,7 @@ export default class ProjectCreator {
         } catch (error: any) {
             this.hasErrors = true
 
-            throw error
+            return
         }
     }
 
