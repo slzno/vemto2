@@ -45,7 +45,12 @@ foreach ($apps as $app => $appSettings) {
 
     // move compiled file to bin folder
     $compiledFile = realpath(__DIR__ . "/dist/$app.phar");
-    $destinationFolder = realpath(__DIR__ . '/../../build/src/main/static');
+    $destinationFolder = realpath(__DIR__ . "/../../build/src/main/static");
+
+    echo "Compiled $app to $compiledFile\n";
+
+    echo "Destination folder: $destinationFolder\n";
+
     $destinationFile = "$destinationFolder/$appSettings->outputName";
 
     echo "Copying $compiledFile to $destinationFile...\n";
