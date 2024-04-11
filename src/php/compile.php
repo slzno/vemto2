@@ -42,6 +42,7 @@ foreach ($apps as $app => $appSettings) {
     echo "Compiling $app...\n";
     $command = "box compile";
     exec($command);
+    echo "Compiled $app \n";
 
     // move compiled file to bin folder
     $compiledFile = realpath(__DIR__ . "/dist/$app.phar");
