@@ -14,8 +14,8 @@
     import UiWarning from '@Renderer/components/ui/UiWarning.vue'
     import { useSchemaStore } from '@Renderer/stores/useSchemaStore'
     import UiLoading from '@Renderer/components/ui/UiLoading.vue'
-import UiOptionsDropdown from '@Renderer/components/ui/UiOptionsDropdown.vue'
-import UiDropdownItem from '@Renderer/components/ui/UiDropdownItem.vue'
+    import UiOptionsDropdown from '@Renderer/components/ui/UiOptionsDropdown.vue'
+    import UiDropdownItem from '@Renderer/components/ui/UiDropdownItem.vue'
 
     const showingCreateTableModal = ref(false),
         showingCreateSectionModal = ref(false),
