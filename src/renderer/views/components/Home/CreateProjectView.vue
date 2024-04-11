@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import { ref, Ref, onMounted, defineEmits } from "vue"
-    import { PlusCircleIcon } from "@heroicons/vue/24/outline"
+    import { CheckIcon, PlusCircleIcon } from "@heroicons/vue/24/outline"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import UiModal from "@Renderer/components/ui/UiModal.vue"
     import Main from "@Renderer/services/wrappers/Main"
@@ -201,6 +201,7 @@
                             <span class="dark:text-red-500 text-sm pl-2">{{ errors.starterKit }}</span>
                         </template>
                     </div>
+
                     <div>
                         <UiSelect v-model="settings.database" label="Database" @change="onDatabaseChanged">
                             <option value="sqlite">SQLite</option>
@@ -216,12 +217,14 @@
                     </div>
                 </div>
 
-                <div v-if="settings.starterKit === 'jetstream'">
-                    <UiCheckbox v-model="settings.usesJetstreamTeams" label="Use Jetstream Teams" />
-                </div>
+                <div class="flex flex-col">
+                    <div v-if="settings.starterKit === 'jetstream'">
+                        <UiCheckbox v-model="settings.usesJetstreamTeams" label="Use Jetstream Teams" />
+                    </div>
 
-                <div>
-                    <UiCheckbox v-model="settings.mustInstallFilament" label="Install Filament" />
+                    <div>
+                        <UiCheckbox v-model="settings.mustInstallFilament" label="Install Filament" />
+                    </div>
                 </div>
             </div>
 
@@ -233,6 +236,7 @@
             <template #footer>
                 <div class="flex justify-end p-2">
                     <UiButton :disabled="Object.values(errors).length > 0" @click="create()">
+                        <CheckIcon class="h-4 w-4 mr-1 text-green-500" />
                         <span>Create App</span>
                     </UiButton>
                 </div>
