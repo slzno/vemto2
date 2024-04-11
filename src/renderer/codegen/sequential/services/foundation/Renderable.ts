@@ -2,7 +2,7 @@ import Project from "@Common/models/Project"
 import Main from "@Renderer/services/wrappers/Main"
 import PhpFormatter from "@Renderer/codegen/formatters/PhpFormatter"
 import TemplateCompiler from "@Renderer/codegen/templates/base/TemplateCompiler"
-import { RenderableFileFormatter, RenderableFileStatus, RenderableFileType } from "@Common/models/RenderableFile"
+import RenderableFile, { RenderableFileFormatter, RenderableFileStatus, RenderableFileType } from "@Common/models/RenderableFile"
 import BladeFormatter from "@Renderer/codegen/formatters/BladeFormatter"
 import PathUtil from "@Common/util/PathUtil"
 import TemplateHelpers from "../helpers/TemplateHelpers"
@@ -113,8 +113,11 @@ export default abstract class Renderable {
     }
 
     async render() {
+        console.log("Renderable mode", Renderable.mode)
+
         if(Renderable.mode === "checker") {
             this.treatCheckerMode()
+            return
         }
 
         if(!this.canRender()) {
@@ -128,17 +131,7 @@ export default abstract class Renderable {
             console.log(`Rendering ${this.getTemplateFile()} as ${this.getFullFilePath()}...`)
         }
 
-        const fileStatus: RenderableFileStatus = Renderable.mode === "checker" 
-            ? RenderableFileStatus.IDLE 
-            : RenderableFileStatus.PENDING
-
-        const file = this.project.registerRenderableFile(
-            this.getPath(), 
-            this.getFilename(),
-            this.getTemplateFile(), 
-            this.getType(),
-            fileStatus
-        )
+        const file = this.registerFile()
 
         if(file.wasIgnored()) {
             if(this.logEnabled) {
@@ -148,7 +141,7 @@ export default abstract class Renderable {
             return
         }
 
-        if(file.wasSkipped()) {
+        if(file.wasSkipped() || file.isIdle()) {
             console.log('Skipping file...', this.getTemplateFile())
             if(this.logEnabled) {
                 console.log(`Skipping ${this.getTemplateFile()} for file ${this.getFullFilePath()}...`)
@@ -174,10 +167,31 @@ export default abstract class Renderable {
         }
     }
 
+    registerIdleFile(): RenderableFile {
+        return this.project.registerRenderableFile(
+            this.getPath(), 
+            this.getFilename(),
+            this.getTemplateFile(), 
+            this.getType(),
+            RenderableFileStatus.IDLE
+        )
+    }
+
+    registerFile(): RenderableFile {
+        return this.project.registerRenderableFile(
+            this.getPath(), 
+            this.getFilename(),
+            this.getTemplateFile(), 
+            this.getType()
+        )
+    }
+
     treatCheckerMode() {
         console.log('Renderable mode is checker, skipping render...')
         
         this.addDependencies()
+
+        this.registerIdleFile()
     }
 
     getFullFilePath(): string {

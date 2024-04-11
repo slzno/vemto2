@@ -44,9 +44,9 @@
                 installing.value = false
             }
 
-            emit('generate')
-            
             close()
+            
+            emit('generate')
         } catch (error: any) {
             installing.value = false
 
@@ -72,12 +72,8 @@
     }
 
     const justGenerate = () => {
-       const sequentialGenerator = new SequentialGenerator(projectStore.project)
-
-        nextTick(() => {
-            emit('generate')
-            close()
-        })
+        close()
+        emit('generate')
     }
 
     defineExpose({

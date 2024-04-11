@@ -47,7 +47,7 @@ export default class SequentialGenerator {
         SequentialGenerator.startTimer()
 
         SchemaBuilder.disableSchemaChangesCheck()
-1
+
         await this.clearVemtoFolders()
 
         this.project.setFilesQueueStatusProcessing()
@@ -105,7 +105,7 @@ export default class SequentialGenerator {
         await this.runGenerators()
         Renderable.setMode("generate")
 
-        await this.packageChecker.checkForMissingDependencies()
+        await this.packageChecker.checkForMissingDependencies() 
     }
 
     async runGenerators() {

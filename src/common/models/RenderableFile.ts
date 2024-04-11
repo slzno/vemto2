@@ -61,6 +61,10 @@ export default class RenderableFile extends RelaDB.Model {
         }
     }
 
+    isIdle(): boolean {
+        return this.status === RenderableFileStatus.IDLE
+    }
+
     isPending(): boolean {
         return this.status === RenderableFileStatus.PENDING
     }
@@ -74,6 +78,7 @@ export default class RenderableFile extends RelaDB.Model {
     }
 
     setContent(content: string) {
+        if(this.status === RenderableFileStatus.IDLE) return
         if(this.status === RenderableFileStatus.PENDING) return
 
         this.content = content

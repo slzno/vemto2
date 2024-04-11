@@ -2,7 +2,7 @@
     import debounce from "lodash/debounce"
     import { RouterView } from "vue-router"
     import ProjectNavbar from "@Renderer/views/components/ProjectNavbar.vue"
-    import { onMounted, onUnmounted, ref, Ref } from "vue"
+    import { nextTick, onMounted, onUnmounted, ref, Ref } from "vue"
     import HandleProjectDatabase from "@Renderer/services/HandleProjectDatabase"
     import {
         CommandLineIcon,
@@ -25,7 +25,6 @@
     import LicenseModal from "./components/System/LicenseModal.vue"
     import DependenciesModal from "./components/Common/DependenciesModal.vue"
     import LicenseHandler from "@Renderer/services/LicenseHandler"
-    import PackageChecker from "@Renderer/codegen/sequential/services/PackageChecker"
 
     const canShow = ref(false),
         projectStore = useProjectStore(),
@@ -41,7 +40,8 @@
         confirmDialogTitle = ref(""),
         confirmDialogOptions = ref({}) as Ref<any>
 
-    let sourceCheckerTimeout = null
+    let sourceCheckerTimeout = null,
+        sequentialGenerator = null
 
     onMounted(async () => {
         handleKeyInputs()
@@ -134,13 +134,17 @@
     const checkAndGenerateCode = async () => {
         appStore.startGeneratingCode()
 
+        console.log('Checking dependencies')
+
+        sequentialGenerator = new SequentialGenerator(projectStore.project)
+
         try {
-            const sequentialGenerator = new SequentialGenerator(projectStore.project)
-            
             await sequentialGenerator.checkDependencies()
     
             const hasMissingDependencies = sequentialGenerator.hasMissingDependencies()
-    
+
+            console.log('Has missing dependencies', hasMissingDependencies)
+            
             if(hasMissingDependencies) {
                 dependenciesModal.value?.show(sequentialGenerator.packageChecker)
                 return
@@ -173,8 +177,6 @@
 
         appStore.startGeneratingCode()
 
-        const sequentialGenerator = new SequentialGenerator(projectStore.project)
-
         try {
             await sequentialGenerator.run()
 
@@ -189,6 +191,7 @@
         } catch (error) {
             throw error
         } finally {
+            console.log('Will finish generating')
             appStore.finishGeneratingCode()
         }
     }
