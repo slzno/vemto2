@@ -1,6 +1,6 @@
 <?php
 <% const pascalCase = this.require('pascalCase') %>
-<% const parentResourceName = `${this.detail.crud.name}Resource` %>
+<% const parentResourceName = pascalCase(`${this.detail.crud.name}Resource`) %>
 <% const tableIsSoftDeletes = this.detail.detailCrud.table.hasSoftDeletes() %>
 <% const isManyToManyDetail = this.detail.detailCrud.isManyToManyDetail() %>
 <% const firstRelatedModelCrud = this.detail.relationship.relatedModel.getFirstCrud() %>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref, Ref, onMounted, watch, defineEmits } from "vue"
+    import { ref, Ref, onMounted, defineEmits } from "vue"
     import { PlusCircleIcon } from "@heroicons/vue/24/outline"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import UiModal from "@Renderer/components/ui/UiModal.vue"
@@ -178,10 +178,8 @@
                     <UiCheckbox v-model="settings.usesJetstreamTeams" label="Use Jetstream Teams" />
                 </div>
 
-                <div class="flex justify-end">
-                    <UiButton :disabled="Object.values(errors).length > 0" @click="create()">
-                        <span>Create App</span>
-                    </UiButton>
+                <div>
+                    <UiCheckbox v-model="settings.mustInstallFilament" label="Install Filament" />
                 </div>
             </div>
 
@@ -189,6 +187,14 @@
                 <span class="text-sm">{{ currentState }}</span>
                 <span class="points-animation relative"></span>
             </div>
+
+            <template #footer>
+                <div class="flex justify-end p-2">
+                    <UiButton :disabled="Object.values(errors).length > 0" @click="create()">
+                        <span>Create App</span>
+                    </UiButton>
+                </div>
+            </template>
         </UiModal>
     </div>
 </template>

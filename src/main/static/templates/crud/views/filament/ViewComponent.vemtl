@@ -1,6 +1,7 @@
 <?php
 
-<% const parentResourceName = `${this.crud.name}Resource` %>
+<% const pascalCase = this.require('pascalCase') %>
+<% const parentResourceName = pascalCase(`${this.crud.name}Resource`) %>
 
 namespace App\Filament\Resources\<$ this.crud.section.name $>\<$ parentResourceName $>\Pages;
 
