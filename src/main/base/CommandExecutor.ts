@@ -83,7 +83,7 @@ export default class CommandExecutor {
     
                         let errorData = {
                             message: errorMessage,
-                            error: stdout,
+                            error: errorMessage,
                             stack: error.stack
                         }
     
