@@ -70,11 +70,11 @@
                 autocomplete="false"
                 :disabled="disabled"
             />
-            <button
-                class="h-full border border-l-0 px-4 py-1 rounded-r-lg group border-slate-300 dark:border-slate-650 cursor-pointer bg-slate-800"
+            <button 
                 @click="selectFolder()"
+                class="flex px-3 items-center bg-transparent border border-slate-300 dark:border-slate-650 border-l-0 rounded-lg rounded-l-none cursor-pointer text-white hover:text-red-500"
             >
-                <FolderPlusIcon class="w-6 h-6 text-slate-300 group-hover:text-red-500" />
+                <FolderPlusIcon class="w-5 h-5 stroke-1.1" />
             </button>
         </div>
     </div>

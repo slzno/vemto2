@@ -98,9 +98,9 @@
             />
             <button 
                 @click="showingModal = true"
-                class="flex px-2 items-center bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-650 border-l-0 rounded-lg rounded-l-none cursor-pointer hover:text-red-500"
+                class="flex px-3 items-center bg-transparent border border-slate-300 dark:border-slate-650 border-l-0 rounded-lg rounded-l-none cursor-pointer text-white hover:text-red-500"
             >
-                <GlobeAltIcon class="w-4 h-4 stroke-2" />
+                <GlobeAltIcon class="w-5 h-5 stroke-1.1" />
             </button>
 
             <UiModal
