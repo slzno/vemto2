@@ -52,10 +52,10 @@
 
 <template>
     <div class="flex items-center relative overflow-visible" ref="dropdown">
-        <button @click.prevent.stop="clicked()" class="border border-transparent focus:border-red-500 dark:focus:border-red-500 outline-none rounded">
+        <button @click.prevent.stop="clicked()" class="border border-transparent focus:border-red-500 dark:focus:border-red-500 outline-none rounded hover:text-red-500 group">
             <EllipsisVerticalIcon 
                 :class="iconSize"
-                class="text-inherit dark:text-inherit cursor-pointer select-none hover:text-slate-400 dark:hover:text-slate-300" 
+                class="text-inherit dark:text-inherit cursor-pointer select-none" 
             />
         </button>
 
