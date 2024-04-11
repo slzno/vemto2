@@ -544,7 +544,7 @@
                     <CreateProjectView @reloadProjectListAndOpenPath="reloadProjectListAndOpenPath" />
                     <UiButton class="gap-1.5" @click="openFolder()">
                         <div v-if="processingConnectFolderFromDialog">
-                            <UiLoading :stroke-width="2"</UiLoading> 
+                            <UiLoading :stroke-width="2"></UiLoading> 
                         </div>
                         <div v-else>
                             <FolderIcon class="w-5 h-5 text-red-500" />
