@@ -10,7 +10,7 @@
     import CrudSettings from './components/ProjectCrud/Settings/CrudSettings.vue'
     import CrudValidation from './components/ProjectCrud/Validation/CrudValidation.vue'
     import UiEmptyMessage from '@Renderer/components/ui/UiEmptyMessage.vue'
-import { ChevronLeftIcon } from '@heroicons/vue/24/outline'
+    import { ChevronLeftIcon } from '@heroicons/vue/24/outline'
 
     const projectStore = useProjectStore()
 
@@ -36,6 +36,7 @@ import { ChevronLeftIcon } from '@heroicons/vue/24/outline'
 
 <template>
     <div
+        v-if="projectStore.projectIsReady"
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-hidden"
     >
         <div v-if="crud">
