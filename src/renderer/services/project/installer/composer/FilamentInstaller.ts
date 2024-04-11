@@ -24,7 +24,7 @@ export default class FilamentInstaller {
     }
 
     static async updateUserModel(data: ProjectCreatorData, stateCallback: (state: string) => void = () => {}) {
-        stateCallback("Updating User model")
+        stateCallback("Updating User model for Filament")
 
         const completePath = PathUtil.join(data.completePath, "App", "Models", "User.php")
 
