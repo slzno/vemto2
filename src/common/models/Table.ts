@@ -206,7 +206,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     getPrimaryKeyColumn(): Column {
-        return this.getColumns().find((column) => column.isPrimaryKey())
+        return this.getValidColumns().find((column) => column.isPrimaryKey())
     }
 
     getPrimaryKeyName(): string {
@@ -236,7 +236,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     getRenamedColumns(): Column[] {
-        return this.getColumns().filter((column) => column.wasRenamed())
+        return this.getValidColumns().filter((column) => column.wasRenamed())
     }
 
     getRemovedColumns(): Column[] {
@@ -244,11 +244,11 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     getNewColumns(): Column[] {
-        return this.getColumns().filter((column) => column.isNew())
+        return this.getValidColumns().filter((column) => column.isNew())
     }
 
     getChangedColumns(): Column[] {
-        return this.getColumns().filter((column) => column.hasLocalChanges())
+        return this.getValidColumns().filter((column) => column.hasLocalChanges())
     }
 
     getNotRenamedChangedColumns(): Column[] {
@@ -330,7 +330,12 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
 
     getColumns(): Column[] {
         if(!this.columns) return []
+
         return this.columns.filter((column) => !column.isRemoved())
+    }
+
+    getValidColumns(): Column[] {
+        return this.getColumns().filter((column) => !! column.type?.length && !! column.name?.length)
     }
 
     getAllOrderedColumns(): Column[] {
