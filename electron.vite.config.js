@@ -23,6 +23,9 @@ export default defineConfig({
             minify: true,
             outDir: Path.join(__dirname, "build", "src", "main"),
             emptyOutDir: true,
+            rollupOptions: {
+                external: ["fsevents"]
+            }
         },
 
         rollupOptions: {
