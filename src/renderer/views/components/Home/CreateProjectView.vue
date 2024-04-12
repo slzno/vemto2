@@ -32,6 +32,7 @@
         }
 
         showingModal.value = true
+        errors.value = {}
     }
 
     const create = async () => {
@@ -175,7 +176,7 @@
         >
             <div class="space-y-2 p-4">
                 <div>
-                    <UiPathSelector v-model="settings.path" label="Project Path" />
+                    <UiPathSelector v-model="settings.path" label="Project Path" @input="onProjectPathChanged" />
 
                     <template v-if="errors.path !== undefined">
                         <span class="dark:text-red-500 text-sm pl-2">{{ errors.path }}</span>
