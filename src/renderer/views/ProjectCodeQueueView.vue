@@ -28,20 +28,15 @@
         loadFiles()
     })
 
-    onBeforeUnmount(() => {
-        console.log("Before Unmounting ProjectCodeQueueView")
-        loadingFiles.value = true
-    })
-
-    onUnmounted(() => {
-        console.log("Unmounting ProjectCodeQueueView")
-    })
-
     watch(() => projectStore.project.renderableFiles, () => {
         console.log("Project renderable files changed")
 
-        loadFiles()
+        loadFilesDebounced()
     })
+
+    const loadFilesDebounced = debounce(async () => {
+        loadFiles()
+    }, 300)
 
     const loadFiles = async () => {
         console.log("Loading files...")
@@ -51,25 +46,21 @@
 
         await nextTick()
 
-        loadFilesDebounced()
-    }
-
-    const loadFilesDebounced = debounce(async () => {
         setTimeout(async () => {
             if(projectStore.projectIsEmpty) return
-
-            console.log("Loading files debounced...")
 
             allFiles.value = projectStore.project.getAllRenderableFiles()
             allRemovedFiles.value = allFiles.value.filter(file => file.wasRemoved())
             allConflictFiles.value = allFiles.value.filter(file => file.hasConflict())
             allIgnoredFiles.value = allFiles.value.filter(file => file.wasIgnored())
             allSkippedFiles.value = allFiles.value.filter(file => file.wasSkipped())
-    
-            loadingFiles.value = false
-            uiTabs.value.clearLoadingTab()
+            
+            setTimeout(() => {
+                loadingFiles.value = false
+                uiTabs.value.clearLoadingTab()
+            }, 100)
         }, 0)
-    }, 300)
+    }
 
     const selectedTab = ref("queue")
 
