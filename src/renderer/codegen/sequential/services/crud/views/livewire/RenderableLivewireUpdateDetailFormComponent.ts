@@ -53,6 +53,6 @@ export default class RenderableLivewireUpdateDetailFormComponent extends Rendera
     }
 
     addDependencies() {
-        Renderable.addComposerDependency("livewire/livewire", this.getTemplateFile())
+        this.addComposerDependency("livewire/livewire")
     }
 }

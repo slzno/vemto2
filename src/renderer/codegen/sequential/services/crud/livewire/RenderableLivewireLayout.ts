@@ -45,6 +45,6 @@ export default class RenderableLivewireLayout extends Renderable {
     }
 
     addDependencies(): void {
-        Renderable.addComposerDependency("livewire/livewire", this.getTemplateFile())
+        this.addComposerDependency("livewire/livewire")
     }
 }

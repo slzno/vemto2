@@ -44,8 +44,9 @@ export default abstract class Renderable {
         Renderable.mode = mode
     }
 
-    static addComposerDependency(name: string, templatePath: string) {
-        const dependency = Renderable.dependencies.find(dependency => dependency.name === name)
+    addComposerDependency(name: string) {
+        const templatePath = this.getTemplateFile(), 
+            dependency = Renderable.dependencies.find(dependency => dependency.name === name)
 
         if(dependency) {
             dependency.templatePaths.add(templatePath)
@@ -63,8 +64,9 @@ export default abstract class Renderable {
         })
     }
 
-    static addPackageDependency(name: string, templatePath: string) {
-        const dependency = Renderable.dependencies.find(dependency => dependency.name === name)
+    addPackageDependency(name: string) {
+        const templatePath = this.getTemplateFile(), 
+            dependency = Renderable.dependencies.find(dependency => dependency.name === name)
 
         if(dependency) {
             dependency.templatePaths.add(templatePath)

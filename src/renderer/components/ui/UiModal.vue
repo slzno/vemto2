@@ -1,7 +1,7 @@
 <script setup lang="ts">
-    import { toRef, useSlots, onMounted, defineEmits, watch } from "vue"
+    import UiLoading from "./UiLoading.vue"
+    import { toRef, useSlots, defineEmits, watch } from "vue"
     import { XMarkIcon } from "@heroicons/vue/24/outline"
-import UiLoading from "./UiLoading.vue"
 
     const props = defineProps({
         show: Boolean,
@@ -32,15 +32,6 @@ import UiLoading from "./UiLoading.vue"
     // watch show prop and emit show event when it changes to true
     watch(show, (value) => {
         if (value) emit("show")
-    })
-
-    onMounted(() => {
-        // window.addEventListener("keydown", (e) => {
-        //     console.log("escape")
-        //     if (e.key === "Escape") {
-        //         if (show.value) emit("close")
-        //     }
-        // })
     })
 
     const close = () => {

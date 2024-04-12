@@ -25,8 +25,8 @@ export default class PackageChecker {
 
     async checkForMissingDependencies(): Promise<void> {
         await this.setProjectInfo()
-        await this.checkComposerDependencies()
-        await this.checkPackagesDependencies()
+        this.checkComposerDependencies()
+        this.checkPackagesDependencies()
     }
 
     async setProjectInfo(): Promise<void> {
@@ -37,7 +37,7 @@ export default class PackageChecker {
         this.projectInfo = projectInfo
     }
 
-    async checkComposerDependencies(): Promise<void> {
+    checkComposerDependencies() {
         const normalDependencies = Object.keys(this.projectInfo.composerData.require || {}),
             devDependencies = Object.keys(this.projectInfo.composerData["require-dev"] || {})
         
@@ -47,7 +47,7 @@ export default class PackageChecker {
             .filter(dependency => !allProjectComposerDependencies.includes(dependency.name))
     }
 
-    async checkPackagesDependencies(): Promise<void> {
+    checkPackagesDependencies() {
         const normalDependencies = Object.keys(this.projectInfo.packageData.dependencies || {}),
             devDependencies = Object.keys(this.projectInfo.packageData.devDependencies || {})
 

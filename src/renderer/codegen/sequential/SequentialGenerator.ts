@@ -18,8 +18,9 @@ import RenderableFile from "@Common/models/RenderableFile"
 export default class SequentialGenerator {
     static startTime: number = 0
     static elapsedTime: number = 0
-
+    
     project: Project
+    static running: boolean = false
 
     packageChecker: PackageChecker
 
@@ -29,8 +30,8 @@ export default class SequentialGenerator {
         this.packageChecker = new PackageChecker(project)
     }
 
-    hasMissingDependencies(): boolean {
-        return this.packageChecker.hasMissingDependencies()
+    static isRunning(): boolean {
+        return SequentialGenerator.running
     }
 
     async run(): Promise<void> {
@@ -44,6 +45,12 @@ export default class SequentialGenerator {
     }
 
     async runGeneration(): Promise<boolean> {
+        if(SequentialGenerator.running) {
+            throw new Error("Generation is already running")
+        }
+
+        SequentialGenerator.running = true
+
         SequentialGenerator.startTimer()
 
         SchemaBuilder.disableSchemaChangesCheck()
@@ -56,9 +63,9 @@ export default class SequentialGenerator {
         
         this.project.clearSkippedRenderableFiles()
         
-        await this.prepareGeneration()
+        await this.calculateSkippedFilesByMissingDependencies()
 
-        await this.runGenerators()
+        await this.runGeneratorsServices()
 
         this.project.processRemovableFiles()
 
@@ -70,12 +77,12 @@ export default class SequentialGenerator {
 
         SequentialGenerator.stopTimer()
 
+        SequentialGenerator.running = false
+
         return true
     }
 
-    async prepareGeneration() {
-        await this.checkDependencies()
-
+    async calculateSkippedFilesByMissingDependencies() {
         let templatePaths = []
 
         const composerMissingDependencies = this.packageChecker.getComposerMissingDependencies(),
@@ -100,15 +107,21 @@ export default class SequentialGenerator {
         })
     }
 
-    async checkDependencies(): Promise<void> {
-        Renderable.setMode("checker")
-        await this.runGenerators()
-        Renderable.setMode("generate")
-
-        await this.packageChecker.checkForMissingDependencies() 
+    hasMissingDependencies(): boolean {
+        return this.packageChecker.hasMissingDependencies()
     }
 
-    async runGenerators() {
+    async checkDependencies(): Promise<void> {
+        Renderable.setMode("checker")
+
+        await this.runGeneratorsServices()
+
+        await this.packageChecker.checkForMissingDependencies()
+
+        Renderable.setMode("generate")
+    }
+
+    async runGeneratorsServices() {
         await new GenerateUiComponentsFiles().start()
 
         await new GenerateMenu().start(this.project)

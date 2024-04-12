@@ -50,6 +50,6 @@ export default class RenderableFilamentCreateComponent extends Renderable {
     }
 
     addDependencies() {
-        Renderable.addComposerDependency("filament/filament", this.getTemplateFile())
+        this.addComposerDependency("filament/filament")
     }
 }

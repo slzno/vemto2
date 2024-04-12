@@ -60,10 +60,17 @@
     })
 
     const handleKeyInputs = () => {
-        document.addEventListener("keydown", (e) => {
+        const keyDownHandler = (e) => {
             if (e.key === "F5") checkAndGenerateCode()
             if (e.key === "F6") openProjectFolder()
             if (e.key === "F7") openProjectOnTerminal()
+        }
+
+        document.addEventListener("keydown", keyDownHandler)
+
+        onUnmounted(() => {
+            console.log("Removing keydown listener")
+            document.removeEventListener("keydown", keyDownHandler)
         })
     }
 
@@ -132,9 +139,12 @@
     }
 
     const checkAndGenerateCode = async () => {
-        appStore.startGeneratingCode()
+        if(SequentialGenerator.isRunning()) {
+            console.log('Generator is already running')
+            return
+        }
 
-        console.log('Checking dependencies')
+        appStore.startGeneratingCode()
 
         sequentialGenerator = new SequentialGenerator(projectStore.project)
 
