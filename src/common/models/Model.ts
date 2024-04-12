@@ -119,6 +119,10 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         return modelData
     }
 
+    static updated(model: Model): void {
+        model.addDeletedAtColumnIfNecessary()
+    }
+
     static fixData(modelData: any): any {
         if(!modelData.methods) modelData.methods = []
 
@@ -915,5 +919,21 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
 
     getSeederQuantity(): number {
         return this.seederQuantity || 5
+    }
+
+    addDeletedAtColumnIfNecessary() {
+        if(this.table.hasColumn('deleted_at') || !this.hasSoftDeletes) return
+
+        const column = new Column({
+            name: 'deleted_at',
+            type: 'timestamp',
+            project: this.project.id,
+            tableId: this.table.id,
+            nullable: true
+        })
+        
+        column.order = column.calculateNextOrder()
+
+        column.save()
     }
 }
