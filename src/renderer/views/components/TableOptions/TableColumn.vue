@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { PropType, Ref, toRef, ref, defineEmits } from "vue"
+    import { PropType, Ref, toRef, ref, defineEmits, nextTick } from "vue"
     import Column from "@Common/models/Column"
     import ColumnTypeList from "@Common/models/column-types/base/ColumnTypeList"
     import UiText from "@Renderer/components/ui/UiText.vue"
@@ -14,6 +14,7 @@
     import UiOptionsDropdown from '@Renderer/components/ui/UiOptionsDropdown.vue'
     import UiDropdownItem from '@Renderer/components/ui/UiDropdownItem.vue'
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
+    import debounce from "@Common/tools/debounce"
 
     const onDevelopment = Main.API.onDevelopment() && !Main.API.isRecording(),
         projectStore = useProjectStore()
@@ -31,16 +32,17 @@
         columnTypes = ColumnTypeList.getEnabled(projectStore.project),
         confirmDeleteDialog = ref(null)
 
-    const onNameUpdated = () => {
-        const hasDuplicateColumnName = column.value.table.hasColumnExceptId(column.value.name, column.value.id)
-
-        if(hasDuplicateColumnName) {
-            onColumnNameDuplicated()
-            return
-        }
-
+    const onNameUpdated = debounce(() => {
         column.value.setDefaultSettingsByName()
         saveColumn()
+    }, 250)
+
+    const onNameBlur = () => {
+        const hasDuplicateColumnName = column.value.table.hasColumnExceptId(column.value.name, column.value.id)
+
+        if(!hasDuplicateColumnName) return
+     
+        onColumnNameDuplicated()
     }
 
     const saveColumn = () => {
@@ -53,7 +55,9 @@
         column.value.name = ''
         column.value.saveFromInterface()
 
-        document.getElementById(`table-column-${column.value.id}`)?.focus()
+        nextTick(() => {
+            document.getElementById(`table-column-${column.value.id}`)?.focus()
+        })
     }
 
     const onUniqueChanged = () => {
@@ -138,7 +142,7 @@
 
             <div class="flex flex-grow space-x-2">
                 <div class="flex flex-col flex-grow">
-                    <UiText placeholder="Name" :id="`table-column-${column.id}`" v-model="column.name" @input="onNameUpdated" />
+                    <UiText placeholder="Name" :id="`table-column-${column.id}`" v-model="column.name" @input="onNameUpdated" @blur="onNameBlur" />
                 </div>
 
                 <div class="flex flex-col w-36">
