@@ -42,6 +42,12 @@ import UiLoading from "./UiLoading.vue"
         //     }
         // })
     })
+
+    const close = () => {
+        if (props.processing) return
+
+        emit("close")
+    }
 </script>
 
 <template>
@@ -55,17 +61,17 @@ import UiLoading from "./UiLoading.vue"
         >
             
             <div
-                @keydown.escape="$emit('close')"
+                @keydown.escape="close()"
                 style="z-index: 70;"
                 :style="onTopOfEverything ? 'z-index: 100000 !important' : ''"
-                :class="{
-                    'select-none pointer-events-none': processing,
-                }"
                 class="fixed left-0 top-0 w-full h-full dark:text-slate-200 flex items-center justify-center bg-slate-200 dark:bg-slate-900 bg-opacity-95"
                 v-if="show"
             >
                 <!-- Modal -->
                 <div
+                    :class="{
+                        'select-none pointer-events-none': processing,
+                    }"
                     class="flex flex-col relative rounded-lg bg-white dark:bg-slate-850 shadow-2xl border border-slate-200 dark:border-slate-700"
                     style="max-height: calc(100vh - 5rem);"
                     :style="{ width: width, height: height }"
