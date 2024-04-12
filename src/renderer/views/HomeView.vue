@@ -370,7 +370,7 @@
     <UiModal
         width="700px"
         height="600px"
-        title="Welcome to Vemto 2 Pre-Alpha"
+        title="Vemto 2 - Alpha"
         :show="showingWelcomeModal"
         @close="closeWelcomeModal"
     >
@@ -380,7 +380,7 @@
 
         <template #footer>
             <div class="flex justify-end p-2 space-x-2 text-slate-500">
-                Vemto {{ vemtoVersion }}
+                Vemto {{ vemtoVersion }} Alpha
             </div>
         </template>
     </UiModal>
