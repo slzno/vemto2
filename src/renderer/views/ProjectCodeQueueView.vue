@@ -3,7 +3,7 @@
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import RenderableFile from "@Common/models/RenderableFile"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
-    import { computed, ref, onMounted, Ref, watch, nextTick } from "vue"
+    import { computed, ref, onMounted, Ref, watch, nextTick, onUnmounted, onBeforeUnmount } from "vue"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
@@ -14,7 +14,7 @@
     const projectStore = useProjectStore(),
         search = ref(""),
         searchRemoved = ref(""),
-        allNonRemovedFiles = ref([]) as Ref<RenderableFile[]>,
+        allFiles = ref([]) as Ref<RenderableFile[]>,
         allRemovedFiles = ref([]) as Ref<RenderableFile[]>,
         allConflictFiles = ref([]) as Ref<RenderableFile[]>,
         allIgnoredFiles = ref([]) as Ref<RenderableFile[]>,
@@ -28,7 +28,18 @@
         loadFiles()
     })
 
+    onBeforeUnmount(() => {
+        console.log("Before Unmounting ProjectCodeQueueView")
+        loadingFiles.value = true
+    })
+
+    onUnmounted(() => {
+        console.log("Unmounting ProjectCodeQueueView")
+    })
+
     watch(() => projectStore.project.renderableFiles, () => {
+        console.log("Project renderable files changed")
+
         loadFiles()
     })
 
@@ -47,11 +58,13 @@
         setTimeout(async () => {
             if(projectStore.projectIsEmpty) return
 
-            allNonRemovedFiles.value = projectStore.project.getNonRemovedRenderableFiles()
-            allRemovedFiles.value = projectStore.project.getRemovedRenderableFiles()
-            allConflictFiles.value = projectStore.project.getConflictRenderableFiles()
-            allIgnoredFiles.value = projectStore.project.getIgnoredRenderableFiles()
-            allSkippedFiles.value = projectStore.project.getSkippedRenderableFiles()
+            console.log("Loading files debounced...")
+
+            allFiles.value = projectStore.project.getAllRenderableFiles()
+            allRemovedFiles.value = allFiles.value.filter(file => file.wasRemoved())
+            allConflictFiles.value = allFiles.value.filter(file => file.hasConflict())
+            allIgnoredFiles.value = allFiles.value.filter(file => file.wasIgnored())
+            allSkippedFiles.value = allFiles.value.filter(file => file.wasSkipped())
     
             loadingFiles.value = false
             uiTabs.value.clearLoadingTab()
@@ -64,7 +77,7 @@
         {
             label: "Queue",
             value: "queue",
-            badge: () => allNonRemovedFiles.value.length,
+            badge: () => allFiles.value.length,
         },
         {
             label: "Conflicts",
@@ -94,7 +107,7 @@
                 return []
 
             return filterBySearch(
-                allNonRemovedFiles.value,
+                allFiles.value,
                 search
             )
         }),
@@ -232,7 +245,7 @@
                 </div>
             </div>
     
-            <div class="p-4" v-if="selectedTab === 'ignored'">
+            <div class="p-4" v-show="selectedTab === 'ignored'">
                 <UiEmptyMessage v-show="!ignoredFiles.length">
                     <span>There are no ignored files</span>
                 </UiEmptyMessage>
@@ -259,7 +272,7 @@
                 </div>
             </div>
     
-            <div class="p-4" v-if="selectedTab === 'removed'">
+            <div class="p-4" v-show="selectedTab === 'removed'">
                 <UiEmptyMessage v-show="!removedFiles.length">
                     <span>There are no removed files</span>
                 </UiEmptyMessage>
@@ -291,7 +304,7 @@
                 </div>
             </div>
     
-            <div class="p-4" v-if="selectedTab === 'skipped'">
+            <div class="p-4" v-show="selectedTab === 'skipped'">
                 <UiEmptyMessage v-show="!skippedFiles.length">
                     <span>There are no skipped files</span>
                 </UiEmptyMessage>
@@ -318,7 +331,7 @@
                 </div>
             </div>
     
-            <div class="p-4" v-if="selectedTab === 'settings'">
+            <div class="p-4" v-show="selectedTab === 'settings'">
                 <UiCheckbox
                     v-model="projectStore.project.codeGenerationSettings.models"
                     label="Generate Models"

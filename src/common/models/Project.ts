@@ -410,6 +410,10 @@ export default class Project extends RelaDB.Model {
         )
     }
 
+    getAllRenderableFiles(ordered: boolean = true): RenderableFile[] {
+        return ordered ? this.getOrderedRenderableFiles() : this.renderableFiles
+    }
+
     getNonRemovedRenderableFiles(ordered: boolean = true): RenderableFile[] {
         const renderableFiles = ordered ? this.getOrderedRenderableFiles() : this.renderableFiles
 
@@ -458,8 +462,11 @@ export default class Project extends RelaDB.Model {
             if (a.status === RenderableFileStatus.CONFLICT) return -1
             if (b.status === RenderableFileStatus.CONFLICT) return 1
 
-            if (a.status === RenderableFileStatus.REMOVED) return -1
-            if (b.status === RenderableFileStatus.REMOVED) return 1
+            if (a.status === RenderableFileStatus.SKIPPED) return -1
+            if (b.status === RenderableFileStatus.SKIPPED) return 1
+
+            if (a.status === RenderableFileStatus.RENDERED) return -1
+            if (b.status === RenderableFileStatus.RENDERED) return 1
 
             if (a.path < b.path) return -1
             if (a.path > b.path) return 1
