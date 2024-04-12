@@ -85,7 +85,7 @@
 <template>
     <UiModal
         width="700px"
-        title="Dependencies Missing"
+        title="Missing Dependencies"
         :show="showingModal"
         :processing="installing"
         @close="close"
