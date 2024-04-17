@@ -12,20 +12,26 @@
     import ProjectCreator, { ProjectCreatorData } from "@Renderer/services/project/ProjectCreator"
     import PathUtil from "@Common/util/PathUtil"
     import UiSelect from "@Renderer/components/ui/UiSelect.vue"
+import UiLoading from "@Renderer/components/ui/UiLoading.vue"
 
     const showingModal = ref(false)
     
     const settings = ref({}) as Ref<ProjectCreatorData>,
         errors = ref({}) as Ref<any>,
         creatingProject = ref(false),
+        checkingDependencies = ref(false),
         currentState = ref(""),
         projectCreator = new ProjectCreator()
 
     const emit = defineEmits(["reloadProjectListAndOpenPath"])
 
     const show = async () => {
+        checkingDependencies.value = true
+
         const composerInstalled = await Main.API.composerIsInstalled()
         
+        checkingDependencies.value = false
+
         if(!composerInstalled) {
             Alert.warning("Composer was not detected. Please install Composer or set the correct path in the settings to create a new app.")
             return
@@ -163,7 +169,12 @@
 <template>
     <div>
         <UiButton class="gap-1.5" @click="show()">
-            <PlusCircleIcon class="w-5 h-5 text-red-500" />
+            <div v-if="checkingDependencies">
+                <UiLoading :stroke-width="2"></UiLoading> 
+            </div>
+            <div v-else>
+                <PlusCircleIcon class="w-5 h-5 text-red-500" />
+            </div>
             New App
         </UiButton>
 
