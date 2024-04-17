@@ -180,6 +180,10 @@
         const projectInfo = new ProjectInfo(path)
         await projectInfo.read()
 
+        buildConnectingFolderSettings(projectInfo, isNewProject)
+
+        projectManager.setSettings(connectingFolderSettings.value)
+
         const canConnect = await checkProjectInfo(projectInfo)
         if(!canConnect) return
 
@@ -199,8 +203,6 @@
                 throw error
             }
         }
-
-        buildConnectingFolderSettings(projectInfo, isNewProject)
 
         connectingModalSelectedTab.value = "main"
         showingConnectingFolderModal.value = true

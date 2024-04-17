@@ -74,11 +74,19 @@ export default class ProjectManager {
         ProjectManager.free()
 
         this.setLatestProjectPath(projectItem.path)
-        
+
+        const laravelVersion = this.projectSettings 
+            ? this.projectSettings.laravelVersion 
+            : project.settings.laravelVersion
+
+        const schemaReaderMode = this.projectSettings
+            ? this.projectSettings.schemaReaderMode
+            : project.settings.schemaReaderMode
+
         this.update(projectItem.id, {
             path: PathUtil.normalize(projectItem.path),
-            laravelVersion: project.settings.laravelVersion,
-            schemaReaderMode: project.settings.schemaReaderMode,
+            laravelVersion,
+            schemaReaderMode,
         })
 
         await SchemaBuilder.scheckSchemaChangesForProject(project)
