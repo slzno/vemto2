@@ -24,15 +24,9 @@ Vemto::execute('schema-reader', function () use ($APP_DIRECTORY) {
         throw new \Exception('Trying to read database schema without the correct mode');
     }
 
-    $app = Application::configure(basePath: dirname(__DIR__))
+    $app = Application::configure(basePath: $APP_DIRECTORY)
         ->withExceptions(function () {})
         ->create();
-
-    $storagePath = $APP_DIRECTORY . DIRECTORY_SEPARATOR . 'storage';
-    $bootstrapPath = $APP_DIRECTORY . DIRECTORY_SEPARATOR . 'bootstrap';
-
-    $app->useStoragePath($storagePath);
-    $app->useBootstrapPath($bootstrapPath);
 
     $app->bootstrapWith([
         \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,
