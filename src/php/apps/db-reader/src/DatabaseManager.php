@@ -28,16 +28,15 @@ class DatabaseManager {
     protected function connect() {
         $config = Config::get("database.connections.vemto_db_connection");
 
+        Vemto::dump($config);
         $port = $config['port'];
 
         if(empty($port)) {
-            if ($this->dbType == 'mysql') {
-                $port = 3306;
-            } else if ($this->dbType == 'pgsql') {
-                $port = 5432;
-            } else if ($this->dbType == 'sqlsrv') {
-                $port = 1433;
-            }
+            $port = match ($this->dbType) {
+                'pgsql' => 5432,
+                'sqlsrv' => 1433,
+                default => 3306
+            };
         }
         
         $user = $config['username'];
@@ -63,13 +62,12 @@ class DatabaseManager {
         $this->checkDatabasePrefix($databaseName);
 
         try {
-            if ($this->dbType == 'pgsql') {
-                // PostgreSQL does not support IF NOT EXISTS in CREATE DATABASE
-                $this->pdo->exec("SELECT 'CREATE DATABASE \"$databaseName\"' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '$databaseName')");
-            } else {
-                // MySQL and SQL Server support this syntax
-                $this->pdo->exec("CREATE DATABASE IF NOT EXISTS `$databaseName`");
-            }
+            $createDatabaseSQL = match ($this->dbType) {
+                'pgsql' => "CREATE DATABASE \"$databaseName\"",
+                default => "CREATE DATABASE `$databaseName`",
+            };
+
+            $this->pdo->exec($createDatabaseSQL);
         } catch (PDOException $e) {
             throw new Exception("Could not create database `$databaseName`: " . $e->getMessage());
         }
@@ -80,7 +78,12 @@ class DatabaseManager {
         $this->checkDatabasePrefix($databaseName);
 
         try {
-            $this->pdo->exec("DROP DATABASE IF EXISTS `$databaseName`");
+            $dropDatabaseSQL = match ($this->dbType) {
+                'pgsql' => "DROP DATABASE IF EXISTS \"$databaseName\"",
+                default => "DROP DATABASE IF EXISTS `$databaseName`",
+            };
+
+            $this->pdo->exec($dropDatabaseSQL);
         } catch (PDOException $e) {
             throw new Exception("Could not drop database `$databaseName`: " . $e->getMessage());
         }

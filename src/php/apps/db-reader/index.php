@@ -59,14 +59,17 @@ Vemto::execute('schema-reader', function () use ($APP_DIRECTORY) {
             'database' => ':memory:',
         ]);
     } else {
-        Config::set('database.connections.vemto_db_connection', [
-            'driver'   => $settings['SCHEMA_READER_DB_DRIVER'],
-            'host'     => $settings['SCHEMA_READER_DB_HOST'],
-            'port'     => $settings['SCHEMA_READER_DB_PORT'],
-            'database' => $settings['SCHEMA_READER_DB_DATABASE'],
-            'username' => $settings['SCHEMA_READER_DB_USERNAME'],
-            'password' => $settings['SCHEMA_READER_DB_PASSWORD'],
-        ]);
+        $databaseConfigs = include 'config/database.php';
+        $connectionConfig = $databaseConfigs['connections'][$settings['SCHEMA_READER_DB_DRIVER']];
+
+        $connectionConfig['driver'] = $settings['SCHEMA_READER_DB_DRIVER'];
+        $connectionConfig['host'] = $settings['SCHEMA_READER_DB_HOST'];
+        $connectionConfig['port'] = $settings['SCHEMA_READER_DB_PORT'];
+        $connectionConfig['database'] = $settings['SCHEMA_READER_DB_DATABASE'];
+        $connectionConfig['username'] = $settings['SCHEMA_READER_DB_USERNAME'];
+        $connectionConfig['password'] = $settings['SCHEMA_READER_DB_PASSWORD'];
+
+        Config::set('database.connections.vemto_db_connection', $connectionConfig);
     }
 
     $databaseDriver = $settings['SCHEMA_READER_DB_DRIVER'];

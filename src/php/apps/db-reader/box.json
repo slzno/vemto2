@@ -9,6 +9,7 @@
     "directories": [
         "src",
         "common",
+        "config",
         "vendor/kitloong"
     ],
     "blacklist": [
