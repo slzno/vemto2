@@ -28,7 +28,6 @@ class DatabaseManager {
     protected function connect() {
         $config = Config::get("database.connections.vemto_db_connection");
 
-        Vemto::dump($config);
         $port = $config['port'];
 
         if(empty($port)) {
