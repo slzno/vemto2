@@ -18,7 +18,7 @@
                 "ValidationException.php",
                 "ModelRepository.php"
             ],
-            "defaultTesterProject": "laravel11-postgres"
+            "defaultTesterProject": "laravel11-basic"
         },
         "php-merger": {
             "outputName": "VMTTL3",
