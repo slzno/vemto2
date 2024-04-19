@@ -2,6 +2,7 @@ import Main from "../wrappers/Main"
 import SchemaBuilder from "../schema/SchemaBuilder"
 import Project, { ProjectSettings, ProjectUIStarterKit } from "@Common/models/Project"
 import GenerateBasicProjectData from "@Renderer/services/project/GenerateBasicProjectData"
+import GenerateLivewireLayout from "@Renderer/codegen/sequential/services/crud/GenerateLivewireLayout"
 
 export default class ProjectConnector {
 
@@ -51,7 +52,9 @@ export default class ProjectConnector {
         if(this.isJetstreamLivewire()) {
             console.log("Creating files for Jetstream Livewire project")
             const templatesPath = "file-templates/starter-kits/jetstream-livewire/resources"
+            
             await Main.API.copyInternalFolderToProject(templatesPath, "/")
+            await new GenerateLivewireLayout().start()
         }
     }
 
