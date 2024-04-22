@@ -33,7 +33,7 @@ import UiLoading from "@Renderer/components/ui/UiLoading.vue"
         checkingDependencies.value = false
 
         if(!composerInstalled) {
-            Alert.warning("Composer was not detected. Please install Composer or set the correct path in the settings to create a new app.")
+            Alert.warning("Composer was not found. <br/><br/> Please install Composer or set the correct path in the settings to create a new app. <br/><br/> <b>If you are on Windows</b>, you may also need to execute Vemto as an administrator (depending on the way you installed Composer).", 7000)
             return
         }
 
