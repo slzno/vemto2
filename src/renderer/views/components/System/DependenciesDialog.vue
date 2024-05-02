@@ -6,6 +6,7 @@
     import { XMarkIcon, ListBulletIcon, CheckBadgeIcon } from "@heroicons/vue/24/outline"
 import UiLoading from "@Renderer/components/ui/UiLoading.vue"
 import UiActiveOrInactive from "@Renderer/components/ui/UiActiveOrInactive.vue"
+import UiHint from "@Renderer/components/ui/UiHint.vue"
 
     const mainDependencies = new MainDependenciesInfo()
 
@@ -19,8 +20,16 @@ import UiActiveOrInactive from "@Renderer/components/ui/UiActiveOrInactive.vue"
     // })
 
     onMounted(() => {
-        checkDependencies()
+        checkDependenciesAndShowIfNotValid()
     })
+
+    const checkDependenciesAndShowIfNotValid = async () => {
+        await checkDependencies()
+
+        if(mainDependencies.hasMissingDependencies()) {
+            show()
+        }
+    }
 
     const checkDependencies = async () => {
         loading.value = true
@@ -28,10 +37,11 @@ import UiActiveOrInactive from "@Renderer/components/ui/UiActiveOrInactive.vue"
         await mainDependencies.check()
 
         loading.value = false
+    }
 
-        if(mainDependencies.hasMissingDependencies()) {
-            show()
-        }
+    const showAndCheckDependencies = async () => {
+        show()
+        await checkDependencies()
     }
 
     const show = async () => {
@@ -46,7 +56,7 @@ import UiActiveOrInactive from "@Renderer/components/ui/UiActiveOrInactive.vue"
         if(showing.value) {
             close()
         } else {
-            show()
+            showAndCheckDependencies()
         }
     }
 
@@ -107,15 +117,10 @@ import UiActiveOrInactive from "@Renderer/components/ui/UiActiveOrInactive.vue"
                         <UiActiveOrInactive :active="mainDependencies.hasExtension('zip')" />
                         <span>Zip</span>
                     </div>
-
+                    
                     <div class="flex items-center space-x-1">
                         <UiActiveOrInactive :active="mainDependencies.hasExtension('PDO')" />
                         <span>PDO</span>
-                    </div>
-
-                    <div class="flex items-center space-x-1">
-                        <UiActiveOrInactive :active="mainDependencies.hasExtension('pdo_sqlite')" />
-                        <span>PDO SQLite</span>
                     </div>
 
                     <div class="flex items-center space-x-1">
@@ -176,6 +181,26 @@ import UiActiveOrInactive from "@Renderer/components/ui/UiActiveOrInactive.vue"
                     <div class="flex items-center space-x-1">
                         <UiActiveOrInactive :active="mainDependencies.hasExtension('xml')" />
                         <span>XML</span>
+                    </div>
+
+                    <div class="flex items-center space-x-1">
+                        <UiActiveOrInactive :active="mainDependencies.hasExtension('sqlite3')" />
+                        <div class="flex items-center">
+                            SQLite
+                            <UiHint width="24rem">
+                                SQlite is necessary when creating a new Laravel project from Vemto, because the command <i>`composer create-project laravel/laravel`</i> uses SQLite as the default database.
+                            </UiHint>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-1">
+                        <UiActiveOrInactive :active="mainDependencies.hasExtension('pdo_sqlite')" />
+                        <div class="flex items-center">
+                            PDO SQLite
+                            <UiHint width="24rem">
+                                SQlite is necessary when creating a new Laravel project from Vemto, because the command <i>`composer create-project laravel/laravel`</i> uses SQLite as the default database.
+                            </UiHint>
+                        </div>
                     </div>
                 </div>
             </div>

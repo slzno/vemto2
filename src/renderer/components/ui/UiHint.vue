@@ -11,6 +11,11 @@ const props = defineProps({
         type: String,
         default: "info",
     },
+
+    width: {
+        type: String,
+        default: "40rem",
+    },
 });
 
 const adjustHintPosition = () => {
@@ -75,7 +80,8 @@ watch(showing, (newValue) => {
                     'border-red-500': type === 'alert',
                 }"
                 class="shadow-lg bg-slate-950 rounded-lg border text-white p-4 flex items-center space-x-2"
-                style="z-index: 9999; width: 40rem;"
+                style="z-index: 9999"
+                :style="{ width }"
                 ref="hintRef"
             >
                 <div>

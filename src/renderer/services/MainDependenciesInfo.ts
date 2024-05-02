@@ -8,13 +8,22 @@ export default class MainDependenciesInfo {
     composerIsInstalled: boolean = false
 
     async check() {
-        const phpInfo: any = await Main.API.getPhpInfo()
+        try {
+            this.phpIsInstalled = await Main.API.phpIsInstalled()
+            this.composerIsInstalled = await Main.API.composerIsInstalled()
+            
+            const phpInfo: any = await Main.API.getPhpInfo()
+            
+            console.log(phpInfo)
 
-        this.phpIsInstalled = await Main.API.phpIsInstalled()
-        this.composerIsInstalled = await Main.API.composerIsInstalled()
+            this.phpVersion = phpInfo.version
+            this.phpExtensions = phpInfo.extensions
+        } catch (error) {
+            this.phpIsInstalled = false
+            this.composerIsInstalled = false
 
-        this.phpVersion = phpInfo.version
-        this.phpExtensions = phpInfo.extensions
+            console.error(error)
+        }
     }
 
     isPhpVersionValid() {
@@ -46,6 +55,7 @@ export default class MainDependenciesInfo {
             && this.isComposerInstalled() 
             && this.hasExtension("zip")
             && this.hasExtension("PDO")
+            && this.hasExtension("sqlite3")
             && this.hasExtension("pdo_sqlite")
             && this.hasExtension("ctype")
             && this.hasExtension("curl")
