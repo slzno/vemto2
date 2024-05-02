@@ -75,7 +75,7 @@ import UiHint from "@Renderer/components/ui/UiHint.vue"
             leave-from-class="transition duration-200 translate-y-0"
             leave-to-class="transition duration-200 translate-y-full"
         >
-            <div v-show="showing" class="fixed rounded-lg shadow bg-slate-900 border border-slate-700 dark:text-slate-300" style="bottom: 60px; right: 10px; width: 350px; height: 40rem; z-index: 9998;">
+            <div v-show="showing" class="fixed rounded-lg shadow bg-slate-900 border border-slate-700 dark:text-slate-300" style="bottom: 60px; right: 10px; width: 370px; height: 37rem; z-index: 9998;">
                 <!-- Header: 66px -->
                 <header>
                     <div class="flex items-center text-center px-1 py-0.5 w-full bg-slate-850 border-b border-slate-700 rounded-t-lg">
@@ -116,6 +116,26 @@ import UiHint from "@Renderer/components/ui/UiHint.vue"
                     <div class="flex items-center space-x-1">
                         <UiActiveOrInactive :active="mainDependencies.hasExtension('zip')" />
                         <span>Zip</span>
+                    </div>
+
+                    <div class="flex items-center space-x-1">
+                        <UiActiveOrInactive :active="mainDependencies.hasExtension('sqlite3')" />
+                        <div class="flex items-center">
+                            SQLite
+                            <UiHint width="15rem">
+                                SQlite is necessary when creating a new Laravel project from Vemto, because the command <i>`composer create-project laravel/laravel`</i> uses SQLite as the default database.
+                            </UiHint>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-1">
+                        <UiActiveOrInactive :active="mainDependencies.hasExtension('pdo_sqlite')" />
+                        <div class="flex items-center">
+                            PDO SQLite
+                            <UiHint width="15rem">
+                                SQlite is necessary when creating a new Laravel project from Vemto, because the command <i>`composer create-project laravel/laravel`</i> uses SQLite as the default database.
+                            </UiHint>
+                        </div>
                     </div>
                     
                     <div class="flex items-center space-x-1">
@@ -181,26 +201,6 @@ import UiHint from "@Renderer/components/ui/UiHint.vue"
                     <div class="flex items-center space-x-1">
                         <UiActiveOrInactive :active="mainDependencies.hasExtension('xml')" />
                         <span>XML</span>
-                    </div>
-
-                    <div class="flex items-center space-x-1">
-                        <UiActiveOrInactive :active="mainDependencies.hasExtension('sqlite3')" />
-                        <div class="flex items-center">
-                            SQLite
-                            <UiHint width="24rem">
-                                SQlite is necessary when creating a new Laravel project from Vemto, because the command <i>`composer create-project laravel/laravel`</i> uses SQLite as the default database.
-                            </UiHint>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center space-x-1">
-                        <UiActiveOrInactive :active="mainDependencies.hasExtension('pdo_sqlite')" />
-                        <div class="flex items-center">
-                            PDO SQLite
-                            <UiHint width="24rem">
-                                SQlite is necessary when creating a new Laravel project from Vemto, because the command <i>`composer create-project laravel/laravel`</i> uses SQLite as the default database.
-                            </UiHint>
-                        </div>
                     </div>
                 </div>
             </div>
