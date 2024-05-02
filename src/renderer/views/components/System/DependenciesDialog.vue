@@ -75,7 +75,7 @@ import UiHint from "@Renderer/components/ui/UiHint.vue"
             leave-from-class="transition duration-200 translate-y-0"
             leave-to-class="transition duration-200 translate-y-full"
         >
-            <div v-show="showing" class="fixed rounded-lg shadow bg-slate-900 border border-slate-700 dark:text-slate-300" style="bottom: 60px; right: 10px; width: 500px; height: 40rem; z-index: 9998;">
+            <div v-show="showing" class="fixed rounded-lg shadow bg-slate-900 border border-slate-700 dark:text-slate-300" style="bottom: 60px; right: 10px; width: 350px; height: 40rem; z-index: 9998;">
                 <!-- Header: 66px -->
                 <header>
                     <div class="flex items-center text-center px-1 py-0.5 w-full bg-slate-850 border-b border-slate-700 rounded-t-lg">
@@ -94,7 +94,7 @@ import UiHint from "@Renderer/components/ui/UiHint.vue"
                     <UiLoading :stroke-width="2" />
                 </div>
 
-                <div v-else class="p-4" style="height: calc(100% - 66px)">
+                <div v-else class="p-4 overflow-y-auto" style="height: calc(100% - 66px)">
                     <div class="mb-4" v-if="mainDependencies.hasMissingDependencies()">
                         <UiWarning>
                             You need to have the following dependencies installed on your system to be able to use Vemto properly.
