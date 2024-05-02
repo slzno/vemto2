@@ -7,7 +7,7 @@ export default class MainDependenciesInfo {
     phpIsInstalled: boolean = false
     composerIsInstalled: boolean = false
 
-    async read() {
+    async check() {
         const phpInfo: any = await Main.API.getPhpInfo()
 
         this.phpIsInstalled = await Main.API.phpIsInstalled()
@@ -45,7 +45,7 @@ export default class MainDependenciesInfo {
         return this.isPhpVersionValid() 
             && this.isComposerInstalled() 
             && this.hasExtension("zip")
-            && this.hasExtension("pdo")
+            && this.hasExtension("PDO")
             && this.hasExtension("pdo_sqlite")
             && this.hasExtension("ctype")
             && this.hasExtension("curl")

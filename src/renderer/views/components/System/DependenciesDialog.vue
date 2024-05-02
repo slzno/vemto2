@@ -1,16 +1,16 @@
 <script setup lang="ts">
-    import UiTabs from "@Renderer/components/ui/UiTabs.vue"
-    import { ref, watch, defineExpose, nextTick, onMounted } from "vue"
-    import { useErrorsStore } from "@Renderer/stores/useErrorsStore"
-    import UiSmallButton from "@Renderer/components/ui/UiSmallButton.vue"
-    import { CheckCircleIcon, ShieldExclamationIcon, XMarkIcon, FlagIcon, ListBulletIcon, CheckBadgeIcon } from "@heroicons/vue/24/outline"
-    import Main from "@Renderer/services/wrappers/Main"
-    import UiTip from "@Renderer/components/ui/UiTip.vue"
     import UiWarning from "@Renderer/components/ui/UiWarning.vue"
+    import { ref, watch, defineExpose, nextTick, onMounted } from "vue"
+    import UiSmallButton from "@Renderer/components/ui/UiSmallButton.vue"
+    import MainDependenciesInfo from "@Renderer/services/MainDependenciesInfo"
+    import { XMarkIcon, ListBulletIcon, CheckBadgeIcon } from "@heroicons/vue/24/outline"
+import UiLoading from "@Renderer/components/ui/UiLoading.vue"
+import UiActiveOrInactive from "@Renderer/components/ui/UiActiveOrInactive.vue"
 
-    const errorsStore = useErrorsStore()
+    const mainDependencies = new MainDependenciesInfo()
 
-    const showing = ref(false)
+    const showing = ref(false),
+        loading = ref(false)
 
     // watch(() => errorsStore.hasErrors, (hasErrors) => {
     //     if(!hasErrors) {
@@ -23,15 +23,19 @@
     })
 
     const checkDependencies = async () => {
-        const result = await Main.API.getPhpInfo()
+        loading.value = true
 
-        console.log(result)
+        await mainDependencies.check()
+
+        loading.value = false
+
+        if(mainDependencies.hasMissingDependencies()) {
+            show()
+        }
     }
 
     const show = async () => {
         showing.value = true
-
-        checkDependencies()
     }
 
     const close = () => {
@@ -75,98 +79,102 @@
                         </div>
                     </div>
                 </header>
-    
-                <div class="p-4" style="height: calc(100% - 66px)">
-                    <div class="mb-4">
+                
+                <div v-if="loading" class="p-4">
+                    <UiLoading :stroke-width="2" />
+                </div>
+
+                <div v-else class="p-4" style="height: calc(100% - 66px)">
+                    <div class="mb-4" v-if="mainDependencies.hasMissingDependencies()">
                         <UiWarning>
                             You need to have the following dependencies installed on your system to be able to use Vemto properly.
                         </UiWarning>
                     </div>
 
                     <div class="flex items-center space-x-1">
-                        <CheckBadgeIcon class="h-5 w-5 text-green-500 stroke-2" />
+                        <UiActiveOrInactive :active="mainDependencies.isPhpVersionValid()" />
                         <span>PHP 8.2+</span>
                     </div>
 
                     <div class="flex items-center space-x-1">
-                        <XMarkIcon class="h-5 w-5 text-red-500 stroke-2" />
+                        <UiActiveOrInactive :active="mainDependencies.isComposerInstalled()" />
                         <span>Composer</span>
                     </div>
 
                     <div class="text-white font-semibold mt-3 mb-2">PHP Extensions</div>
 
                     <div class="flex items-center space-x-1">
-                        <CheckBadgeIcon class="h-5 w-5 text-green-500 stroke-2" />
+                        <UiActiveOrInactive :active="mainDependencies.hasExtension('zip')" />
                         <span>Zip</span>
                     </div>
 
                     <div class="flex items-center space-x-1">
-                        <CheckBadgeIcon class="h-5 w-5 text-green-500 stroke-2" />
+                        <UiActiveOrInactive :active="mainDependencies.hasExtension('PDO')" />
                         <span>PDO</span>
                     </div>
 
                     <div class="flex items-center space-x-1">
-                        <CheckBadgeIcon class="h-5 w-5 text-green-500 stroke-2" />
+                        <UiActiveOrInactive :active="mainDependencies.hasExtension('pdo_sqlite')" />
                         <span>PDO SQLite</span>
                     </div>
 
                     <div class="flex items-center space-x-1">
-                        <CheckBadgeIcon class="h-5 w-5 text-green-500 stroke-2" />
+                        <UiActiveOrInactive :active="mainDependencies.hasExtension('ctype')" />
                         <span>Ctype</span>
                     </div>
 
                     <div class="flex items-center space-x-1">
-                        <CheckBadgeIcon class="h-5 w-5 text-green-500 stroke-2" />
+                        <UiActiveOrInactive :active="mainDependencies.hasExtension('curl')" />
                         <span>cURL</span>
                     </div>
 
                     <div class="flex items-center space-x-1">
-                        <CheckBadgeIcon class="h-5 w-5 text-green-500 stroke-2" />
+                        <UiActiveOrInactive :active="mainDependencies.hasExtension('dom')" />
                         <span>DOM</span>
                     </div>
 
                     <div class="flex items-center space-x-1">
-                        <CheckBadgeIcon class="h-5 w-5 text-green-500 stroke-2" />
+                        <UiActiveOrInactive :active="mainDependencies.hasExtension('fileinfo')" />
                         <span>Fileinfo</span>
                     </div>
 
                     <div class="flex items-center space-x-1">
-                        <CheckBadgeIcon class="h-5 w-5 text-green-500 stroke-2" />
+                        <UiActiveOrInactive :active="mainDependencies.hasExtension('filter')" />
                         <span>Filter</span>
                     </div>
 
                     <div class="flex items-center space-x-1">
-                        <CheckBadgeIcon class="h-5 w-5 text-green-500 stroke-2" />
+                        <UiActiveOrInactive :active="mainDependencies.hasExtension('hash')" />
                         <span>Hash</span>
                     </div>
 
                     <div class="flex items-center space-x-1">
-                        <CheckBadgeIcon class="h-5 w-5 text-green-500 stroke-2" />
+                        <UiActiveOrInactive :active="mainDependencies.hasExtension('mbstring')" />
                         <span>Mbstring</span>
                     </div>
 
                     <div class="flex items-center space-x-1">
-                        <CheckBadgeIcon class="h-5 w-5 text-green-500 stroke-2" />
+                        <UiActiveOrInactive :active="mainDependencies.hasExtension('openssl')" />
                         <span>OpenSSL</span>
                     </div>
 
                     <div class="flex items-center space-x-1">
-                        <CheckBadgeIcon class="h-5 w-5 text-green-500 stroke-2" />
+                        <UiActiveOrInactive :active="mainDependencies.hasExtension('pcre')" />
                         <span>PCRE</span>
                     </div>
 
                     <div class="flex items-center space-x-1">
-                        <CheckBadgeIcon class="h-5 w-5 text-green-500 stroke-2" />
+                        <UiActiveOrInactive :active="mainDependencies.hasExtension('session')" />
                         <span>Session</span>
                     </div>
 
                     <div class="flex items-center space-x-1">
-                        <CheckBadgeIcon class="h-5 w-5 text-green-500 stroke-2" />
+                        <UiActiveOrInactive :active="mainDependencies.hasExtension('tokenizer')" />
                         <span>Tokenizer</span>
                     </div>
 
                     <div class="flex items-center space-x-1">
-                        <CheckBadgeIcon class="h-5 w-5 text-green-500 stroke-2" />
+                        <UiActiveOrInactive :active="mainDependencies.hasExtension('xml')" />
                         <span>XML</span>
                     </div>
                 </div>
