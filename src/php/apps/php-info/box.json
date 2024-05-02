@@ -1,0 +1,7 @@
+{
+    "output": "../../dist/php-info.phar",
+    "files": [
+        "index.php"
+    ],
+    "directories": []
+}

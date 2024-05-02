@@ -8,7 +8,7 @@
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import ProjectManager from "@Renderer/services/project/ProjectManager"
-    import { ClipboardDocumentIcon, Cog6ToothIcon, CommandLineIcon, FolderIcon, PlusCircleIcon, ShieldExclamationIcon, XMarkIcon, InformationCircleIcon, CheckIcon } from "@heroicons/vue/24/outline"
+    import { ClipboardDocumentIcon, Cog6ToothIcon, CommandLineIcon, FolderIcon, PlusCircleIcon, ShieldExclamationIcon, XMarkIcon, InformationCircleIcon, CheckIcon, ListBulletIcon } from "@heroicons/vue/24/outline"
     import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
     import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
     import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
@@ -23,6 +23,7 @@
     import LicenseHandler from "@Renderer/services/LicenseHandler"
     import { useErrorsStore } from "@Renderer/stores/useErrorsStore"
     import MainErrorsDialog from "./components/System/MainErrorsDialog.vue"
+    import DependenciesDialog from "./components/System/DependenciesDialog.vue"
     import UiHint from "@Renderer/components/ui/UiHint.vue"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import ProjectSettingsFileManager from "@Renderer/services/project/ProjectSettingsFileManager"
@@ -33,6 +34,7 @@
         projects = ref([]),
         errorsStore = useErrorsStore(),
         errorsDialog = ref(null),
+        dependenciesDialog = ref(null),
         loadingProjectId = ref(null),
         confirmDisconnectDialog = ref(null),
         currentConnectingFolder = ref(null),
@@ -617,6 +619,8 @@
             <div
                 class="fixed flex justify-end bottom-0 right-0 z-50 w-[194px]"
             >
+                <DependenciesDialog ref="dependenciesDialog" />
+                
                 <MainErrorsDialog ref="errorsDialog" />
 
                 <div class="p-2 bg-slate-200 dark:bg-slate-900 rounded-l-full">
@@ -649,6 +653,26 @@
                             class="relative cursor-pointer"
                         >
                             <Cog6ToothIcon
+                                class="w-7 h-7 stroke-1 hover:text-red-500 dark:hover:text-red-500"
+                            />
+                        </button>
+
+                        <button
+                            title="Dependencies"
+                            @click="dependenciesDialog.toggle()"
+                            class="relative cursor-pointer"
+                        >
+                            <!-- Errors alert animation -->
+                            <div
+                                v-show="errorsStore.hasErrors"
+                                class="absolute rounded-full w-3 h-3 bg-red-600 animate-ping"
+                                style="left: 25px; bottom: 20px"
+                            ></div>
+                            <ListBulletIcon
+                                :class="{
+                                    'text-red-500': errorsStore.hasErrors,
+                                    'text-slate-600 dark:text-slate-300': !errorsStore.hasErrors,
+                                }"
                                 class="w-7 h-7 stroke-1 hover:text-red-500 dark:hover:text-red-500"
                             />
                         </button>

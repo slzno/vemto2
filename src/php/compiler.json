@@ -20,6 +20,12 @@
             ],
             "defaultTesterProject": "laravel11-basic"
         },
+        "php-info": {
+            "outputName": "VMTTL3",
+            "enabled": true,
+            "commonFiles": [],
+            "defaultTesterProject": "laravel9-basic"
+        },
         "php-merger": {
             "outputName": "VMTTL3",
             "enabled": false,

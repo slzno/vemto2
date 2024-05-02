@@ -11,6 +11,7 @@ import ConflictManager from "./services/ConflictManager"
 import PHPMerger from "./services/PHPMerger"
 import CommandExecutor from "./base/CommandExecutor"
 import {openNewGitHubIssue, debugInfo} from "electron-util"
+import ReadPhpInfo from "./services/ReadPhpInfo"
 
 export function HandleIpcMessages() {
     ipcMain.handle("get:app:version", (event) => {
@@ -335,6 +336,12 @@ export function HandleIpcMessages() {
             } catch (error) {
                 return false
             }
+        })
+    })
+
+    ipcMain.handle("php:get:info", (event) => {
+        return handleError(event, async () => {
+            return await ReadPhpInfo.run()
         })
     })
 

@@ -153,6 +153,9 @@ contextBridge.exposeInMainWorld("api", {
     phpIsInstalled: () => {
         return ipcRenderer.invoke("php:is:installed")
     },
+    getPhpInfo: () => {
+        return ipcRenderer.invoke("php:get:info")
+    },
     executePhpOnPath: (path: string, command: string) => {
         return ipcRenderer.invoke("php:execute:on-path", path, command)
     },
