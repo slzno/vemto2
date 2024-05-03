@@ -185,14 +185,20 @@ class CalculateManyToManyRelationshipsData extends CalculateRelationshipService 
     }
 
     hasDifferentPivot(): boolean {
+        if(!this.relationship.pivotId) return false
+
         return this.relationship.pivot.name !== this.getDefaultPivotName()
     }
 
     hasDifferentRelatedPivot(): boolean {
+        if(!this.relationship.relatedPivotKeyId) return false
+
         return this.relationship.relatedPivotKey.name !== this.getRelatedPivotKeyName()
     }
 
     hasDifferentForeignKey(): boolean {
+        if(!this.relationship.foreignPivotKeyId) return false
+        
         return this.relationship.foreignPivotKey.name !== this.getForeignPivotKeyName()
     }
 
