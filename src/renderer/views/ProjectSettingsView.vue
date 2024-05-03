@@ -20,6 +20,7 @@ import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
 
 <template>
     <div
+        v-if="projectStore.projectIsReady"
         class="bg-slate-100 dark:bg-slate-900 w-full h-full relative overflow-scroll"
     >
         <div class="mt-3">

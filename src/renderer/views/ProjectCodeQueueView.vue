@@ -39,6 +39,8 @@
     }, 300)
 
     const loadFiles = async () => {
+        if(projectStore.projectIsEmpty) return
+
         console.log("Loading files...")
 
         loadingFiles.value = true
