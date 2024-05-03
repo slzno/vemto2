@@ -662,17 +662,7 @@
                             @click="dependenciesDialog.toggle()"
                             class="relative cursor-pointer"
                         >
-                            <!-- Errors alert animation -->
-                            <div
-                                v-show="errorsStore.hasErrors"
-                                class="absolute rounded-full w-3 h-3 bg-red-600 animate-ping"
-                                style="left: 25px; bottom: 20px"
-                            ></div>
                             <ListBulletIcon
-                                :class="{
-                                    'text-red-500': errorsStore.hasErrors,
-                                    'text-slate-600 dark:text-slate-300': !errorsStore.hasErrors,
-                                }"
                                 class="w-7 h-7 stroke-1 hover:text-red-500 dark:hover:text-red-500"
                             />
                         </button>
