@@ -2,7 +2,6 @@ import Main from "../wrappers/Main"
 import SchemaBuilder from "../schema/SchemaBuilder"
 import Project, { ProjectSettings, ProjectUIStarterKit } from "@Common/models/Project"
 import GenerateBasicProjectData from "@Renderer/services/project/GenerateBasicProjectData"
-import GenerateLivewireLayout from "@Renderer/codegen/sequential/services/crud/GenerateLivewireLayout"
 
 export default class ProjectConnector {
 
@@ -39,13 +38,18 @@ export default class ProjectConnector {
 
     async createNecessaryFiles() {
         if(!this.projectSettings.isFreshLaravelProject) {
-            console.log("Skip creating files for fresh Laravel project")
+            console.log("Skip creating files for non-fresh Laravel project")
             return;
         }
 
+        console.log("Creating files for fresh Laravel project")
+
+        const bootstrapPath = "file-templates/starter-kits/default/bootstrap"
+        await Main.API.copyInternalFolderToProject(bootstrapPath, "/")
+
         if(this.isBreezeLivewire()) {
             console.log("Creating files for Breeze project")
-            const templatesPath = "file-templates/starter-kits/breeze/resources"
+            const templatesPath = "file-templates/starter-kits/breeze-livewire/resources"
             await Main.API.copyInternalFolderToProject(templatesPath, "/")
         }
 
@@ -54,7 +58,6 @@ export default class ProjectConnector {
             const templatesPath = "file-templates/starter-kits/jetstream-livewire/resources"
             
             await Main.API.copyInternalFolderToProject(templatesPath, "/")
-            await new GenerateLivewireLayout().start()
         }
     }
 

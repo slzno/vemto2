@@ -1,10 +1,8 @@
-import * as changeCase from "change-case"
-import Crud from "@Common/models/crud/Crud"
-import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
 import {
     RenderableFileFormatter,
     RenderableFileType,
 } from "@Common/models/RenderableFile"
+import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
 
 export default class RenderableLivewireLayout extends Renderable {
 

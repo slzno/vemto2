@@ -95,7 +95,9 @@ export function HandleIpcMessages() {
         if(!project) return null
 
         return handleError(event, () => {
-            return FileSystem.fileExists(path.join(app.getAppPath(), filePath))
+            const completePath = path.join(project.getPath(), filePath)
+
+            return FileSystem.fileExists(completePath)
         })
     })
 

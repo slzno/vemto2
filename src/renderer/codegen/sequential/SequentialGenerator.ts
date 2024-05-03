@@ -13,6 +13,7 @@ import GenerateFilamentResources from "./services/crud/GenerateFilamentResources
 import Renderable from "./services/foundation/Renderable"
 import PackageChecker from "./services/PackageChecker"
 import RenderableFile from "@Common/models/RenderableFile"
+import GenerateLivewireLayout from "./services/crud/GenerateLivewireLayout"
 
 export default class SequentialGenerator {
     static startTime: number = 0
@@ -135,6 +136,8 @@ export default class SequentialGenerator {
         await new GeneratePageFiles().start()
         
         await new GenerateDatabaseSeeder().start()
+
+        await new GenerateLivewireLayout().start()
     }
 
     async clearVemtoFolders() {
