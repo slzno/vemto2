@@ -1,0 +1,6 @@
+[
+  {
+    "type": "sqlite",
+    "path": "c:\\laragon\\www\\postgre\\database\\database.sqlite"
+  }
+]
