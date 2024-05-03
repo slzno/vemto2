@@ -10,7 +10,6 @@ import SchemaBuilder from "@Renderer/services/schema/SchemaBuilder"
 import Main from "@Renderer/services/wrappers/Main"
 import GenerateDatabaseSeeder from "./services/database/GenerateDatabaseSeeder"
 import GenerateFilamentResources from "./services/crud/GenerateFilamentResources"
-import GenerateLivewireLayout from "./services/crud/GenerateLivewireLayout"
 import Renderable from "./services/foundation/Renderable"
 import PackageChecker from "./services/PackageChecker"
 import RenderableFile from "@Common/models/RenderableFile"
@@ -136,7 +135,6 @@ export default class SequentialGenerator {
         await new GeneratePageFiles().start()
         
         await new GenerateDatabaseSeeder().start()
-        await new GenerateLivewireLayout().start()
     }
 
     async clearVemtoFolders() {
