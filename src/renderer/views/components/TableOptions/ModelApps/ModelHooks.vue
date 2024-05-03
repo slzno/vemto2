@@ -34,19 +34,26 @@
     }
 
     const setModelHookContent = async () => {
-        const renderableClasses = {
-            'model': RenderableModel,
-            'factory': RenderableFactory,
-            'seeder': RenderableSeeder,
-            'policy': RenderablePolicy
+        try {
+            
+            const renderableClasses = {
+                'model': RenderableModel,
+                'factory': RenderableFactory,
+                'seeder': RenderableSeeder,
+                'policy': RenderablePolicy
+            }
+    
+            if(! renderableClasses[activeHookName.value]) return
+    
+            const renderableClass = new renderableClasses[activeHookName.value](model.value)
+            renderableClass.disableHooks()
+    
+            modelHooksContent.value = await renderableClass.compileWithErrorThreatment()
+        } catch (error) {
+            console.log("ERROR setting model hook content")
+
+            throw error
         }
-
-        if(! renderableClasses[activeHookName.value]) return
-
-        const renderableClass = new renderableClasses[activeHookName.value](model.value)
-        renderableClass.disableHooks()
-
-        modelHooksContent.value = await renderableClass.compile()
     }
 </script>
 <template>

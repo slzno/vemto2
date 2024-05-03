@@ -220,13 +220,19 @@ export default abstract class Renderable {
             return await this.compile()
         } catch (error: any) {
             if(error.hasTemplateError) {
-                console.error(`Error compiling ${this.getTemplateFile()} at line ${error.templateLine}: ${error.message}`)
+                const templateLine = error.templateErrorLine || error.templateLine || 0
+
+                console.error(`Error compiling ${this.getTemplateFile()} at line ${templateLine}: ${error.message}`)
 
                 error.hasTemplateError = true
-                error.templateErrorLine = error.templateErrorLine
+                error.templateErrorLine = templateLine
                 error.templateName = this.getTemplateFile() || error.templateName || ""
                 error.templateLines = error.templateLines || []
-                error.templateContent = this.getTemplateFile()
+
+                if(error.templateName) {
+                    const content = await Main.API.readTemplateFile(error.templateName)
+                    error.templateContent = content
+                }
             } else {
                 console.error(`Error compiling ${this.getTemplateFile()}: ${error.message}`)
             }

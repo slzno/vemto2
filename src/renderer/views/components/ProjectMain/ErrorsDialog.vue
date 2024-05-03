@@ -66,7 +66,9 @@
                 4
             )
 
-            issueBody += `\n\n**Template Error Line:**\n\`\`\`\n${error.templateErrorLine}\n\`\`\`\n\n**Template Section:**\n\`\`\`\n${templateLines}\n\`\`\``
+            issueBody += `\n\n**Template Name:**\n\`\`\`\n${error.templateName}\n\`\`\``
+
+            issueBody += `\n\n**Template Error Line:**\n\`\`\`\n${error.templateErrorLine}\n\`\`\`\n\n**Template Section:**\n\`\`\`js\n${templateLines}\n\`\`\``
         }
 
         // How to reproduce
