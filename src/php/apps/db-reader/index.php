@@ -59,8 +59,8 @@ Vemto::execute('schema-reader', function () use ($APP_DIRECTORY) {
             'database' => ':memory:',
         ]);
     } else {
-        $databaseConfigs = require_once 'config/database.php';
-        $connectionConfig = $databaseConfigs['connections'][$settings['SCHEMA_READER_DB_DRIVER']];
+        $databaseConfig = require_once 'config/database.php';
+        $connectionConfig = $databaseConfig['connections'][$settings['SCHEMA_READER_DB_DRIVER']];
 
         $connectionConfig['driver'] = $settings['SCHEMA_READER_DB_DRIVER'];
         $connectionConfig['host'] = $settings['SCHEMA_READER_DB_HOST'];

@@ -10,3 +10,4 @@ logs
 .vemto/
 .DS_Store
 notarization-error.log
+.devdbrc
