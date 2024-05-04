@@ -643,6 +643,8 @@ export default class Project extends RelaDB.Model {
     treatErrorStack(stack: string): string {
         if (!stack) return null
 
+        stack = stack.replace(/VEMTO_EOL/g, "\n")
+
         const lines = stack.split("\n").map(line => { 
             line = line.replace('schema-reader Error: ', '')
             line = line.trim() 
