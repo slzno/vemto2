@@ -67,5 +67,20 @@ export const useErrorsStore = defineStore("errors", {
 
             return state.errors.some(error => error.message.includes("schema-reader"))
         },
+
+        hasErrorWithText(state) {
+            return (text: string) => {
+                const projectStore = useProjectStore()
+
+                let hasMatchingSchemaError = false
+
+                if(!projectStore.projectIsEmpty && projectStore.project.hasCurrentSchemaError()) {
+                    console.log("Checking schema error", text)
+                    hasMatchingSchemaError = projectStore.project.currentSchemaError.includes(text)
+                }
+
+                return hasMatchingSchemaError || state.errors.some(error => error.message.includes(text))
+            }
+        },
     }
 })

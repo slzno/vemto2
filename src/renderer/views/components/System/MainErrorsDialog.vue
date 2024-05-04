@@ -6,6 +6,7 @@
     import { CheckCircleIcon, ShieldExclamationIcon, XMarkIcon, FlagIcon } from "@heroicons/vue/24/outline"
     import Main from "@Renderer/services/wrappers/Main"
     import UiTip from "@Renderer/components/ui/UiTip.vue"
+import ErrorTips from "./ErrorTips.vue"
 
     const errorsStore = useErrorsStore()
 
@@ -101,11 +102,7 @@
                             </UiSmallButton>
                         </div>
 
-                        <div class="mb-2" v-if="errorsStore.hasSchemaReaderErrors">
-                            <UiTip>
-                                it seems like there are errors in the schema reader. Maybe you want to use Database Schema Reader mode.
-                            </UiTip>
-                        </div>
+                        <ErrorTips />
 
                         <div class="p-2 text-sm rounded border border-slate-750 mb-2" v-if="errorsStore.errors.length" v-for="error in errorsStore.errors">
                             <div class="flex justify-start mb-2">

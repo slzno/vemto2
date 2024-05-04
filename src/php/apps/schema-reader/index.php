@@ -20,7 +20,7 @@ use Vemto\ModelRepository;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Facade;
 
-Vemto::execute('schema-reader', function () use ($APP_DIRECTORY) {
+Vemto::execute('schema-reader-mg', function () use ($APP_DIRECTORY) {
 
     $settings = Vemto::getSettings();
     

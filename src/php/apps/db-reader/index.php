@@ -15,7 +15,7 @@ use VemtoDBReader\TableRepository;
 use VemtoDBReader\MigrationRepository;
 use VemtoDBReader\ReadTablesFromDatabase;
 
-Vemto::execute('schema-reader', function () use ($APP_DIRECTORY) {
+Vemto::execute('schema-reader-db', function () use ($APP_DIRECTORY) {
     
     $settings = Vemto::getSettings();
     $envSettings = Vemto::getEnvSettings();
