@@ -115,7 +115,7 @@
     }
 
     const log = (column: Column) => {
-        console.log(column.isNew())
+        console.log(JSON.parse(JSON.stringify(column)))
     }
 </script>
 

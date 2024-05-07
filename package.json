@@ -26,9 +26,9 @@
         "test:mock": "yarn php:test-output && php ./mock.php",
         "test": "jest --runInBand",
         "test:watch": "jest --watch",
-        "test:features": "npm run test -- --selectProjects test-features",
-        "test:templates": "npm run test -- --selectProjects test-templates",
-        "test:unit": "npm run test -- --selectProjects test-unit"
+        "test:features": "npm run test -- --selectProjects test-features --",
+        "test:templates": "npm run test -- --selectProjects test-templates --",
+        "test:unit": "npm run test -- --selectProjects test-unit --"
     },
     "homepage": "https://vemto.app",
     "repository": {

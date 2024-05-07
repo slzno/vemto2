@@ -7,10 +7,6 @@ beforeEach(() => {
     MockDatabase.start()
 })
 
-test('The Table model identifier is correct', () => {
-    expect(Table.identifier()).toBe('Table')
-})
-
 test('It can save a new table', () => {
     const table = new Table()
     

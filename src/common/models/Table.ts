@@ -592,6 +592,8 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
             })
         }
 
+        // TODO: save column order
+
         // If is related with the same model, the field needs to be nullable
         if(this.id === relatedModel.id) {
             column.nullable = true
