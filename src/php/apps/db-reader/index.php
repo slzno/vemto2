@@ -24,11 +24,15 @@ Vemto::execute('schema-reader-db', function () use ($APP_DIRECTORY) {
         throw new \Exception('Trying to read database schema without the correct mode');
     }
 
-    // $app = Application::configure(basePath: $APP_DIRECTORY)
-    //     ->withExceptions(function () {})
-    //     ->create();
-
-    $app = require_once $APP_DIRECTORY . '/bootstrap/app.php';
+    $bootstrapFile = $APP_DIRECTORY . '/bootstrap/app.php';
+    
+    if(file_exists($bootstrapFile)) {
+        $app = require_once $bootstrapFile;
+    } else {
+        $app = Application::configure(basePath: $APP_DIRECTORY)
+            ->withExceptions(function () {})
+            ->create();
+    }
 
     $app->bootstrapWith([
         \Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables::class,

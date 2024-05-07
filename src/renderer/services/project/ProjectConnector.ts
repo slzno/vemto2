@@ -44,8 +44,9 @@ export default class ProjectConnector {
 
         console.log("Creating files for fresh Laravel project")
 
-        const bootstrapPath = "file-templates/starter-kits/default/bootstrap"
-        await Main.API.copyInternalFolderToProject(bootstrapPath, "/")
+        // TODO: change this to render the files instead of copying
+        // const bootstrapPath = "file-templates/starter-kits/default/bootstrap"
+        // await Main.API.copyInternalFolderToProject(bootstrapPath, "/")
 
         if(this.isBreezeLivewire()) {
             console.log("Creating files for Breeze project")
