@@ -7,6 +7,7 @@ import Index from "@Common/models/Index"
 import Column from "@Common/models/Column"
 import Project from "@Common/models/Project"
 import FileSystem from "@Main/base/FileSystem"
+import Model from "@Common/models/Model"
 
 export default new class TestHelper {
 
@@ -58,6 +59,22 @@ export default new class TestHelper {
         table.saveSchemaState()
 
         return table
+    }
+
+    createModel(data = {}) {
+        const table = this.createTable(),
+            model = new Model(),
+            project = this.getProject()
+
+        model.projectId = project.id
+        model.tableId = table.id
+        
+        model.name = data.name || "User"
+        model.plural = data.plural || "Users"
+
+        model.save()
+
+        return model
     }
 
     createColumn(data = {}) {
