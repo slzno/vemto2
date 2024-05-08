@@ -1,10 +1,10 @@
 import path from 'path'
+import TestHelper from '@Tests/base/TestHelper'
 import MockDatabase from '@Tests/base/MockDatabase'
-import GenerateTableChangerMigration from './GenerateTableChangerMigration'
 import { test, expect, beforeEach, jest } from '@jest/globals'
-import TestHelper from '@Renderer/../../tests/base/TestHelper'
-import schemaData from '@Common/services/tests/input/schema-reader-L9.json'
-import TablesFromMigrationsBuilder from '@Common/services/TablesFromMigrationsBuilder'
+import TablesBuilder from '@Renderer/services/schema/TablesBuilder'
+import GenerateTableChangerMigration from './GenerateTableChangerMigration'
+import schemaData from '@Renderer/services/schema/tests/input/schema-reader-L9.json'
 
 jest.mock('@Renderer/services/wrappers/Main')
 
@@ -16,12 +16,12 @@ const processSchemaData = (project, mockMigrationsPaths = true) => {
     // Clone data to avoid mutation (as data is being manipulated in the RAM)
     const schemaDataClone = JSON.parse(JSON.stringify(schemaData))
 
-    TablesFromMigrationsBuilder
+    TablesBuilder
         .setProject(project)
         .setSchemaData(schemaDataClone)
         .checkSchemaChanges()
         
-    TablesFromMigrationsBuilder.build()
+    TablesBuilder.build()
 
     // Mock paths to get migrations files from the tests directory
     // instead of the real project migrations directory

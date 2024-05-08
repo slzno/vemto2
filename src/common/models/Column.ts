@@ -71,6 +71,8 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
     static created(column: Column) {
         column.faker = column.getDefaultFaker()
 
+        console.log('Column created', column.name, column.order)
+
         if(typeof column.order === "undefined") {
             column.order = column.calculateNextOrder()
         }

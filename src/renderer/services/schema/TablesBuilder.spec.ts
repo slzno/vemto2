@@ -1,8 +1,8 @@
 import TestHelper from '@Tests/base/TestHelper'
 import MockDatabase from '@Tests/base/MockDatabase'
 import { test, expect, beforeEach } from '@jest/globals'
-import schemaData from '../../../common/services/tests/input/schema-reader-L9.json'
-import TablesFromMigrationsBuilder from './TablesBuilder'
+import TablesBuilder from './TablesBuilder'
+import schemaData from '@Renderer/services/schema/tests/input/schema-reader-L9.json'
 
 beforeEach(() => {
     MockDatabase.start()
@@ -12,12 +12,12 @@ const processSchemaData = (project) => {
     // Clone data to avoid mutation (as data is being manipulated in the RAM)
     const schemaDataClone = JSON.parse(JSON.stringify(schemaData))
 
-    TablesFromMigrationsBuilder
+    TablesBuilder
         .setProject(project)
         .setSchemaData(schemaDataClone)
         .checkSchemaChanges()
     
-    TablesFromMigrationsBuilder.build()
+    TablesBuilder.build()
 
     return schemaDataClone
 }
