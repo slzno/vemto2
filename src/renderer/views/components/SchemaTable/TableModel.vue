@@ -32,7 +32,7 @@
                 </div>
             </div>
 
-            <div class="px-2 my-2" v-for="relationship in model.ownRelationships" :key="relationship.id">
+            <div class="px-2 my-2" :title="relationship.isInvalid() ? 'Invalid relationship' : ''" :class="{ 'border-2 border-red-500 rounded': relationship.isInvalid() }" v-for="relationship in model.ownRelationships" :key="relationship.id">
                 <div class="w-full flex items-center">
                     <span
                         class="flex-grow pr-8 flex items-center text-slate-400"
@@ -41,6 +41,7 @@
                             >{{ relationship.type }}:</span
                         >
                         <span
+                            v-if="relationship.isValid()"
                             class="font-normal ml-1 text-slate-700 dark:text-slate-300 text-sm"
                             >{{ relationship.relatedModel.name }}</span
                         >

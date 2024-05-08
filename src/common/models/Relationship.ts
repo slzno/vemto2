@@ -163,6 +163,10 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
         this.save()
     }
 
+    isInvalid(): boolean {
+        return ! this.isValid()
+    }
+
     isValid(): boolean {
         return !! this.model && !! this.relatedModel
     }

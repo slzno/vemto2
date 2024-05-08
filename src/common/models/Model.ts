@@ -482,6 +482,10 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         return Model.get().filter((model) => model.isValid())
     }
 
+    isInvalid(): boolean {
+        return ! this.isValid()
+    }
+
     isValid(): boolean {
         return this.hasTable() && !this.isRemoved()
     }
