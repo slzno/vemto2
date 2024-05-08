@@ -11,6 +11,48 @@ beforeEach(() => {
     MockDatabase.start()
 })
 
+test('It returns only valid model traits', async () => {
+    const userModel = TestHelper.createModel()
+
+    expect(userModel.hasTraits()).toBe(false)
+
+    userModel.traits = [
+        'HasFactory',
+        'SoftDeletes',
+        ''
+    ]
+
+    userModel.save()
+
+    const traits = userModel.getTraits()
+
+    expect(traits.length).toBe(2)
+    expect(userModel.hasTraits()).toBe(true)
+    expect(traits.includes('HasFactory')).toBe(true)
+    expect(traits.includes('SoftDeletes')).toBe(true)
+})
+
+test('It returns only valid model interaces', async () => {
+    const userModel = TestHelper.createModel()
+
+    expect(userModel.hasInterfaces()).toBe(false)
+
+    userModel.interfaces = [
+        'UserInterface',
+        'ModelInterface',
+        ''
+    ]
+
+    userModel.save()
+
+    const interfaces = userModel.getInterfaces()
+
+    expect(interfaces.length).toBe(2)
+    expect(userModel.hasInterfaces()).toBe(true)
+    expect(interfaces.includes('UserInterface')).toBe(true)
+    expect(interfaces.includes('ModelInterface')).toBe(true)
+})
+
 test('It can render the template with an invalid relationship', async () => {
     const userModel = TestHelper.createModel()
 

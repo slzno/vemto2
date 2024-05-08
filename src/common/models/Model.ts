@@ -874,7 +874,7 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     }
 
     getInterfaces(): string[] {
-        return this.interfaces || []
+        return this.interfaces ? this.interfaces.filter((interfaceName) => !!interfaceName) : []
     }
 
     hasTraits(): boolean {
@@ -882,7 +882,7 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     }
 
     getTraits(): string[] {
-        return this.traits || []
+        return this.traits ? this.traits.filter((trait) => !!trait) : []
     }
 
     hasOtherImports(): boolean {
