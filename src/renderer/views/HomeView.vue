@@ -80,6 +80,8 @@
 
         checkAndShowWelcomeModal()
 
+        errorsStore.clearErrors()
+
         window.addEventListener("error", (event) => {
             console.log("Error happened in the renderer process")
         })
@@ -148,8 +150,6 @@
             await projectManager.connectFromPath(path)
             
             stopLoading()
-    
-            errorsStore.clearErrors()
 
             openSchema()
         } catch (error) {
