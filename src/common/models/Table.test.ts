@@ -40,6 +40,8 @@ test('It can check if a table does not have changes', () => {
 
     const hasSchemaChanges = table.hasSchemaChanges({
         name: 'users',
+        oldNames: [],
+        migrations: [],
     })
 
     expect(hasSchemaChanges).toBe(false)
