@@ -280,7 +280,8 @@
             </UiConfirm>
 
             <div
-                class="fixed flex justify-end bottom-0 right-0 z-50 w-[194px]"
+                v-if="projectStore.projectIsReady"
+                class="fixed flex justify-end bottom-0 right-0 z-50 w-[524px]"
             >
                 <ErrorsDialog ref="errorsDialog" />
 
@@ -288,6 +289,9 @@
                     <div
                         class="py-2 px-5 rounded-full shadow bg-slate-100 dark:bg-slate-850 border border-slate-300 dark:border-slate-700 flex space-x-2"
                     >
+                        <div :title="projectStore.project.getPath()" class="flex items-center justify-center text-sm text-slate-450 font-light capitalize px-2">
+                            {{ projectStore.project.getPath()?.split(/\/|\\/).pop() }}
+                        </div>
                         <div>
                             <button
                                 class="flex text-slate-600 dark:text-slate-300 outline-none focus:text-red-500 dark:focus:text-red-500 cursor-pointer hover:text-red-500 dark:hover:text-red-500"
