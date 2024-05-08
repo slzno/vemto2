@@ -187,9 +187,9 @@ implements
     <% } %>
 
     // hook:BEFORE_METHODS
-    <% if(this.model.ownRelationships.length) { %>
+    <% if(this.model.getValidOwnRelationships().length) { %>
         <# Relationships #>
-        <% for (let relationship of this.model.ownRelationships) { %>
+        <% for (let relationship of this.model.getValidOwnRelationships()) { %>
             <# Belongs To #>
             <% if(relationship.type == "BelongsTo") { %>
             <% if(this.model.methodsComments) { %>

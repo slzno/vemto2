@@ -191,6 +191,7 @@
         <div>
             <div
                 class="mb-2 bg-slate-850 p-3 rounded-md space-y-1.5 border border-slate-700"
+                :class="{ '!border-red-500': relationship.isInvalid() }"
                 v-for="relationship in relationships"
                 :key="relationship.id"
                 @keyup.escape="onEscapePressed(relationship)"

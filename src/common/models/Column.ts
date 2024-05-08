@@ -386,6 +386,10 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         return ['decimal', 'double', 'float', 'unsignedDecimal'].includes(this.type)
     }
 
+    isInvalid(): boolean {
+        return ! this.isValid()
+    }
+
     isValid(): boolean {
         return !! (this.name && this.type)
     }
@@ -478,10 +482,6 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         } catch {
             return null
         }
-    }
-
-    isInvalid(): boolean {
-        return ! this.isValid()
     }
 
     setDefaultSettingsByName() {
