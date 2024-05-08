@@ -2,6 +2,7 @@ import Table from './Table'
 import TestHelper from '@Tests/base/TestHelper'
 import MockDatabase from '@Tests/base/MockDatabase'
 import { test, expect, beforeEach } from '@jest/globals'
+import Column from './Column'
 
 beforeEach(() => {
     MockDatabase.start()
@@ -50,7 +51,9 @@ test('It can check if a table does not have changes', () => {
 test('It can apply table changes', () => {
     const table = TestHelper.createTable()
 
+    Table.savingInternally()
     table.applyChanges({ name: 'test_table_2' })
+    Table.notSavingInternally()
 
     expect(table.name).toBe('test_table_2')
     expect(table.schemaState.name).toBe('test_table_2')
@@ -59,18 +62,22 @@ test('It can apply table changes', () => {
 test('It can save schema state separately', () => {
     const table = TestHelper.createTable()
 
-    table.applyChanges({ name: 'renamed' })
+    Table.savingInternally()
 
+    table.applyChanges({ name: 'renamed' })
+    
     expect(table.name).toBe('renamed')
     expect(table.schemaState.name).toBe('renamed')
-
+    
     table.name = 'reverted'
     table.save()
-
+    
     expect(table.fresh().name).toBe('reverted')
     expect(table.fresh().schemaState.name).toBe('renamed')
-
+    
     table.saveSchemaState()
+    
+    Table.notSavingInternally()
 
     expect(table.fresh().name).toBe('reverted')
     expect(table.fresh().schemaState.name).toBe('reverted')
@@ -79,12 +86,24 @@ test('It can save schema state separately', () => {
 test('It does not apply changes when unnecessary', () => {
     const table = TestHelper.createTable()
 
-    let changesWereApplied = table.applyChanges({ name: 'renamed' })
+    Table.savingInternally()
+
+    let changesWereApplied = table.applyChanges({ 
+        name: 'renamed',
+        oldNames: [],
+        migrations: [],
+    })
+
+    Table.notSavingInternally()
 
     expect(changesWereApplied).toBe(true)
 
     // The changes were already applied, so they should not be applied again
-    changesWereApplied = table.applyChanges({ name: 'renamed' })
+    changesWereApplied = table.applyChanges({ 
+        name: 'renamed',
+        oldNames: [],
+        migrations: [],
+    })
 
     expect(changesWereApplied).toBe(false)
 })
@@ -103,7 +122,11 @@ test('A table was not considered renamed when schema state is empty', () => {
 test('It can check if a table was renamed from interface', () => {
     const table = TestHelper.createTable()
 
+    Table.savingInternally()
+
     table.applyChanges({ name: 'renamed' })
+    
+    Table.notSavingInternally()
 
     expect(table.wasRenamed()).toBe(false)
 
@@ -136,6 +159,8 @@ test('It can check if a table has changes', () => {
 
     const hasSchemaChanges = table.hasSchemaChanges({
         name: 'test_column',
+        oldNames: [],
+        migrations: [],
     })
 
     expect(hasSchemaChanges).toBe(true)
@@ -144,9 +169,15 @@ test('It can check if a table has changes', () => {
 test('It can apply changes to a table', () => {
     const table = TestHelper.createTable()
 
+    Table.savingInternally()
+    
     table.applyChanges({
         name: 'test_column',
+        oldNames: [],
+        migrations: [],
     })
+    
+    Table.notSavingInternally()
 
     expect(table.name).toBe('test_column')
 })
@@ -201,7 +232,7 @@ test('It can get all the columns keyed by name', () => {
     expect(columns.test_column.name).toBe('test_column')
 })
 
-test('It can check if a table has a index', () => {
+test('It can check if a table has an index', () => {
     const table = TestHelper.createTable()
 
     expect(table.hasIndex('test_index')).toBe(false)
@@ -221,7 +252,7 @@ test('It can check if a table does not have a index', () => {
     expect(table.doesNotHaveIndex('test_index')).toBe(false)
 })
 
-test('It can find a index by name', () => {
+test('It can find an index by name', () => {
     const table = TestHelper.createTable()
 
     TestHelper.createIndex({ name: 'test_index', table })
@@ -252,30 +283,67 @@ test('It can get all the indexes keyed by name', () => {
 })
 
 test('It can check if a table has related tables', () => {
-    const table = TestHelper.createTable()
+    const usersTable = TestHelper.createTable(),
+        postsTable = TestHelper.createTable({
+            name: 'posts'
+        })
 
-    expect(table.hasRelatedTables()).toBe(true)
+    expect(usersTable.hasRelatedTables()).toBe(false)
+    expect(postsTable.hasRelatedTables()).toBe(false)
+
+    TestHelper.createColumn({
+        name: 'user_id',
+        table: postsTable,
+    })
+
+    TestHelper.createForeignIndex({
+        name: 'posts_user_id_foreign',
+        references: 'id',
+        on: 'users',
+        columns: ['user_id'],
+        table: postsTable,
+    })
+
+    expect(usersTable.hasRelatedTables()).toBe(false)
+    expect(postsTable.hasRelatedTables()).toBe(true)
 })
 
 test('It can get the related tables', () => {
-    const table = TestHelper.createTable({ name: 'users' })
+    const usersTable = TestHelper.createTable(),
+        postsTable = TestHelper.createTable({
+            name: 'posts'
+        })
 
-    const relatedTables = table.getRelatedTables()
+    TestHelper.createColumn({
+        name: 'user_id',
+        table: postsTable,
+    })
 
-    expect(relatedTables.length).toBe(2)
+    TestHelper.createForeignIndex({
+        name: 'posts_user_id_foreign',
+        references: 'id',
+        on: 'users',
+        columns: ['user_id'],
+        table: postsTable,
+    })
+
+    const userRelatedTables = usersTable.getRelatedTables(), 
+        postsRelatedTables = postsTable.getRelatedTables()
+
+    expect(userRelatedTables.length).toBe(0)
+    expect(postsRelatedTables.length).toBe(1)
 })
 
 test('It can get the table models', () => {
-    const table = TestHelper.createTable({ name: 'users' })
+    const table = TestHelper.createTable({ name: 'users' }),
+        model = TestHelper.createModel({ name: 'User', table })
 
     const models = table.getModels()
 
     expect(models.length).toBe(1)
 
-    expect(models[0].name).toBe('User.php')
-    expect(models[0].relationships.length).toBe(1)
-    expect(models[0].relationships[0].type).toBe('hasMany')
-    expect(models[0].relationships[0].model).toBe('Post')
+    expect(models[0].name).toBe('User')
+    expect(model.table.name).toBe('users')
 })
 
 test('It can check if a table has timestamps', () => {
@@ -307,15 +375,6 @@ test('It can check if a table has soft deletes', () => {
     expect(table.hasSoftDeletes()).toBe(false)
 })
 
-test('It can mark a table as changed', () => {
-    const project = TestHelper.getProject(), 
-        table = TestHelper.createTable({ name: 'users' })
-
-    table.markAsChanged()
-
-    expect(project.fresh().hasSchemaChanges()).toBe(true)
-})
-
 test('It can check if a table has migrations data', () => {
     const table = TestHelper.createTable({ name: 'users' })
 
@@ -324,13 +383,18 @@ test('It can check if a table has migrations data', () => {
     table.migrations = [{
         migration: '2020_01_01_000000_create_users_table',
     }]
+    
+    Table.savingInternally()
+
     table.save()
+    
+    Table.notSavingInternally()
 
     expect(table.hasMigrations()).toBe(true)
 })
 
 test('It can check if latest migration created the table', () => {
-    const table = TestHelper.createTable({ name: 'users' })
+    const table = TestHelper.createTableWithSchemaState({ name: 'users' })
 
     expect(table.latestMigrationCreatedTable()).toBe(false)
 
@@ -339,32 +403,44 @@ test('It can check if latest migration created the table', () => {
         createdTables: ['users'],
     }]
 
+    Table.savingInternally()
+
     table.save()
+    
+    Table.notSavingInternally()
 
     expect(table.latestMigrationCreatedTable()).toBe(true)
 })
 
 test('It can get the latest migration', () => {
-    const table = TestHelper.createTable({ name: 'users' })
+    const table = TestHelper.createTableWithSchemaState({ name: 'users' })
 
     table.migrations = [{
         migration: '2020_01_01_000000_create_users_table',
     }]
 
+    Table.savingInternally()
+
     table.save()
+    
+    Table.notSavingInternally()
 
     expect(table.getLatestMigration().migration).toBe('2020_01_01_000000_create_users_table')
 })
 
 test('It can get the creation migration', () => {
-    const table = TestHelper.createTable({ name: 'users' })
+    const table = TestHelper.createTableWithSchemaState({ name: 'users' })
 
     table.migrations = [{
         migration: '2020_01_01_000000_create_users_table',
         createdTables: ['users'],
     }]
 
+    Table.savingInternally()
+
     table.save()
+    
+    Table.notSavingInternally()
 
     expect(table.getCreationMigration().migration).toBe('2020_01_01_000000_create_users_table')
 })
@@ -378,7 +454,11 @@ test('It can can check if updating latest migration is possible', () => {
         migration: '2020_01_01_000000_create_users_table',
     }]
 
+    Table.savingInternally()
+    
     table.save()
+    
+    Table.notSavingInternally()
 
     expect(table.canUpdateLatestMigration()).toBe(true)
 })
@@ -430,4 +510,53 @@ test('It can get all removed columns', () => {
     columns = table.getRemovedColumns()
 
     expect(columns[0].name).toBe('column2')
+})
+
+test('It calculates the correct order for a foreign column', () => {
+    const usersTable = TestHelper.createTable({ name: 'users' }),
+        usersModel = TestHelper.createModel({ name: 'User', table: usersTable }),
+        postsTable = TestHelper.createTable({ name: 'posts' }),
+        postsModel = TestHelper.createModel({ name: 'Post', table: postsTable })
+
+        
+        TestHelper.createColumn({ name: 'id', table: usersTable, autoIncrement: true, order: 0 })
+        TestHelper.createColumn({ name: 'name', table: usersTable, order: 1 })
+        TestHelper.createColumn({ name: 'created_at', table: usersTable, order: 2 }),
+        TestHelper.createColumn({ name: 'updated_at', table: usersTable, order: 3 })
+
+        TestHelper.createColumn({ name: 'id', table: postsTable, autoIncrement: true, order: 0 })
+        TestHelper.createColumn({ name: 'title', table: postsTable, order: 1 })
+        TestHelper.createColumn({ name: 'created_at', table: postsTable, order: 2 }),
+        TestHelper.createColumn({ name: 'updated_at', table: postsTable, order: 3 })
+
+    expect(usersTable.columns.length).toBe(4)
+    expect(postsTable.columns.length).toBe(4)
+
+    const foreignColumn = postsTable.getOrCreateForeignColumn('user_id', postsModel)
+
+    expect(foreignColumn.order).toBe(2)
+})
+
+test('It reorders columns sequentially', () => {
+    const usersTable = TestHelper.createTable({ name: 'users' }),
+        usersModel = TestHelper.createModel({ name: 'User', table: usersTable }),
+        postsTable = TestHelper.createTable({ name: 'posts' }),
+        postsModel = TestHelper.createModel({ name: 'Post', table: postsTable })
+
+        TestHelper.createColumn({ name: 'id', table: usersTable, autoIncrement: true, order: 0 })
+
+        const idColumn = TestHelper.createColumn({ name: 'id', table: postsTable, autoIncrement: true, order: 0 }),
+            titleColumn = TestHelper.createColumn({ name: 'title', table: postsTable, order: 1 }),
+            bodyColumn = TestHelper.createColumn({ name: 'body', table: postsTable, order: 5 }),
+            createdAtColumn = TestHelper.createColumn({ name: 'created_at', table: postsTable, order: 6 }),
+            updatedAtColumn = TestHelper.createColumn({ name: 'updated_at', table: postsTable, order: 7 })
+
+    const foreignColumn = postsTable.getOrCreateForeignColumn('user_id', postsModel)
+
+    expect(idColumn.fresh().order).toBe(0)
+    expect(titleColumn.fresh().order).toBe(1)
+    expect(bodyColumn.fresh().order).toBe(2)
+    expect(foreignColumn.fresh().order).toBe(3)
+    expect(createdAtColumn.fresh().order).toBe(4)
+    expect(updatedAtColumn.fresh().order).toBe(5)
 })

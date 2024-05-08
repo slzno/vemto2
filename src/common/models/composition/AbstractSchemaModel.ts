@@ -7,7 +7,7 @@ export default abstract class AbstractSchemaModel extends RelaDB.Model {
     removed: boolean
     static isSavingInternally = false
 
-    static updating(newData: any, currentData: any): any {
+    static beforeUpdate(newData: any, currentData: any): any {
         if(!AbstractSchemaModel.isSavingInternally) {
             const modelClass = (this as any),
                 nonTouchableProperties = modelClass.nonTouchableProperties().concat(['schemaState'])

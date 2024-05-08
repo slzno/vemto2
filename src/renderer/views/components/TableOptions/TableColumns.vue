@@ -19,8 +19,6 @@
             tableId: table.value.id
         }).saveFromInterface()
 
-        newColumn.reorderFromInterface()
-
         columns.value = table.value.getOrderedColumns()
 
         nextTick(() => {

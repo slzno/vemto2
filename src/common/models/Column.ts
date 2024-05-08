@@ -71,13 +71,11 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
     static created(column: Column) {
         column.faker = column.getDefaultFaker()
 
-        console.log('Column created', column.name, column.order)
-
         if(typeof column.order === "undefined") {
-            column.order = column.calculateNextOrder()
+            column.reorder()
         }
 
-        column.saveFromInterface()
+        column.save()
     }
 
     static deleting(column: Column) {
@@ -88,17 +86,7 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         })
     }
 
-    calculateNextOrder(): number {
-        const tableColumns = this.table.getOrderedColumns()
-
-        if(tableColumns.length > 0) {
-            return tableColumns[tableColumns.length - 1].order + 1
-        }
-
-        return 0
-    }
-
-    reorderFromInterface(): void {
+    reorder(): void {
         let nextOrder = 0
         
         const tableColumns = this.table.getOrderedColumns(),
@@ -118,7 +106,17 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         }
 
         this.order = nextOrder
-        this.saveFromInterface()
+
+        this.save()
+
+        this.table.getOrderedColumns().forEach((orderedColumn, index) => {
+            if(orderedColumn.id === this.id) {
+                this.order = index
+            }
+
+            orderedColumn.order = index
+            orderedColumn.save()
+        })
     }
 
     saveFromInterface() {

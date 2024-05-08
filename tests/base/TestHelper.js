@@ -54,15 +54,17 @@ export default new class TestHelper {
     }
 
     createTableWithSchemaState(data = {}) {
+        Table.savingInternally()
         const table = this.createTable(data)
 
         table.saveSchemaState()
+        Table.notSavingInternally()
 
         return table
     }
 
     createModel(data = {}) {
-        const table = this.createTable(),
+        const table = data.table || this.createTable(),
             model = new Model(),
             project = this.getProject()
 
@@ -83,7 +85,7 @@ export default new class TestHelper {
         }
 
         const column = new Column
-        column.order = data.hasOwnProperty("order") ? data.order : 0
+        column.order = data.hasOwnProperty("order") ? data.order : undefined
         column.name = data.name || "name"
 
         if(data.hasOwnProperty("length") || data.type === "string") {
@@ -101,9 +103,11 @@ export default new class TestHelper {
     }
 
     createColumnWithSchemaState(data = {}) {
+        Column.savingInternally()
         const column = this.createColumn(data)
 
         column.saveSchemaState()
+        Column.notSavingInternally()
 
         return column
     }
@@ -151,9 +155,11 @@ export default new class TestHelper {
     }
 
     createIndexWithSchemaState(data = {}) {
+        Index.savingInternally()
         const index = this.createIndex(data)
 
         index.saveSchemaState()
+        Index.notSavingInternally()
 
         return index
     }

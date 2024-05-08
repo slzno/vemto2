@@ -3,7 +3,6 @@ export default class ColumnData {
         return {
             name: '',
             type: '',
-            order: 0,
             index: false,
             length: null,
             unique: false,

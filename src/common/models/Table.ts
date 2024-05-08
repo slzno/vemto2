@@ -48,6 +48,10 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         return data
     }
 
+    static created(table: Table) {
+        table.centerPosition()
+    }
+
     static updating(data: any): any {
         data = Table.addSectionToTableDataIfNecessary(data)
 
