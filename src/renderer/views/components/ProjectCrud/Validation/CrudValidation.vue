@@ -126,35 +126,71 @@
 
 <template>
     <div class="p-4">
-        <table>
-            <thead>
-                <tr>
-                    <th class="font-normal text-lg text-slate-950 dark:text-slate-300 pb-4 text-right px-4"></th>
-                    <th class="font-normal text-lg text-slate-950 dark:text-slate-300 pb-4">Creation Validation</th>
-                    <th class="font-normal text-lg text-slate-950 dark:text-slate-300 pb-4">Update Validation</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <tr class="hover:bg-slate-300 dark:hover:bg-slate-850 group" v-for="input in crud.inputs" :key="input.id">
-                    <td class="px-4 py-3 text-right group-hover:text-red-500 italic">
-                        <div class="w-full bg-slate-800 py-1 pl-2 pr-6 rounded-r-full border border-slate-700">
-                            {{ input.name }}
-                        </div>
-                    </td>
-                    <td class="px-4 w-2/4">
-                        <div>
+        <div class="overflow-y-auto pb-36" style="height: calc(100vh - 130px);">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="font-normal text-lg text-slate-950 dark:text-slate-300 pb-4 text-right px-4"></th>
+                        <th class="font-normal text-lg text-slate-950 dark:text-slate-300 pb-4">Creation Validation</th>
+                        <th class="font-normal text-lg text-slate-950 dark:text-slate-300 pb-4">Update Validation</th>
+                    </tr>
+                </thead>
+    
+                <tbody>
+                    <tr class="hover:bg-slate-300 dark:hover:bg-slate-850 group" v-for="input in crud.inputs" :key="input.id">
+                        <td class="px-4 py-3 text-right group-hover:text-red-500 italic">
+                            <div class="w-full bg-slate-800 py-1 pl-2 pr-6 rounded-r-full border border-slate-700">
+                                {{ input.name }}
+                            </div>
+                        </td>
+                        <td class="px-4 w-2/4">
+                            <div>
+                                <Vue3TagsInput
+                                    :add-tag-on-blur="true"
+                                    :duplicate-select-item="false"
+                                    :select="true"
+                                    placeholder="Add validation rule"
+                                    class="flex dark:text-slate-200 dark:!bg-slate-950 dark:!border-slate-650 dark:!shadow-none"
+                                    :tags="tagsFromValidation(input)"
+                                    @onTagsChanged="saveCreationRules($event, input)"
+                                    :select-items="filteredCreationValidations(input)"
+                                    @onSelect="saveCreationSelectedRule($event, input)"
+                                    v-model="creationRuleInputs[input.id]"
+                                >
+                                    <template #item="{ tag, index }">
+                                        <span
+                                            contenteditable="true"
+                                            @click.stop
+                                            class="bg-transparent"
+                                            spellcheck="false"
+                                            @input="saveCreationRuleUpdatedManually($event, index, input)"
+                                        >{{ tag.value }}</span>
+                                    </template>
+                                    
+                                    <template #select-item="item">
+                                        <div>
+                                            <div class="text-xl dark:text-slate-200">{{ item.text }}</div>
+                                            <div class="text-sm dark:text-slate-400" v-if="item.description">{{ item.description }}</div>
+                                            <div class="text-sm">
+                                                <a :href="item.link" class="underline text-red-500" @click.prevent.stop="openURL(item.link)">See more</a>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </Vue3TagsInput>
+                            </div>
+                        </td>
+                        <td class="px-4 w-2/4">
                             <Vue3TagsInput
                                 :add-tag-on-blur="true"
                                 :duplicate-select-item="false"
                                 :select="true"
                                 placeholder="Add validation rule"
                                 class="flex dark:text-slate-200 dark:!bg-slate-950 dark:!border-slate-650 dark:!shadow-none"
-                                :tags="tagsFromValidation(input)"
-                                @onTagsChanged="saveCreationRules($event, input)"
-                                :select-items="filteredCreationValidations(input)"
-                                @onSelect="saveCreationSelectedRule($event, input)"
-                                v-model="creationRuleInputs[input.id]"
+                                :tags="tagsFromValidation(input, 'updateRules')"
+                                @onTagsChanged="saveUpdateRules($event, input)"
+                                :select-items="filteredUpdateValidations(input)"
+                                @onSelect="saveUpdateSelectedRule($event, input)"
+                                v-model="updateRuleInputs[input.id]"
                             >
                                 <template #item="{ tag, index }">
                                     <span
@@ -162,7 +198,7 @@
                                         @click.stop
                                         class="bg-transparent"
                                         spellcheck="false"
-                                        @input="saveCreationRuleUpdatedManually($event, index, input)"
+                                        @input="saveUpdateRuleUpdatedManually($event, index, input)"
                                     >{{ tag.value }}</span>
                                 </template>
                                 
@@ -176,44 +212,10 @@
                                     </div>
                                 </template>
                             </Vue3TagsInput>
-                        </div>
-                    </td>
-                    <td class="px-4 w-2/4">
-                        <Vue3TagsInput
-                            :add-tag-on-blur="true"
-                            :duplicate-select-item="false"
-                            :select="true"
-                            placeholder="Add validation rule"
-                            class="flex dark:text-slate-200 dark:!bg-slate-950 dark:!border-slate-650 dark:!shadow-none"
-                            :tags="tagsFromValidation(input, 'updateRules')"
-                            @onTagsChanged="saveUpdateRules($event, input)"
-                            :select-items="filteredUpdateValidations(input)"
-                            @onSelect="saveUpdateSelectedRule($event, input)"
-                            v-model="updateRuleInputs[input.id]"
-                        >
-                            <template #item="{ tag, index }">
-                                <span
-                                    contenteditable="true"
-                                    @click.stop
-                                    class="bg-transparent"
-                                    spellcheck="false"
-                                    @input="saveUpdateRuleUpdatedManually($event, index, input)"
-                                >{{ tag.value }}</span>
-                            </template>
-                            
-                            <template #select-item="item">
-                                <div>
-                                    <div class="text-xl dark:text-slate-200">{{ item.text }}</div>
-                                    <div class="text-sm dark:text-slate-400" v-if="item.description">{{ item.description }}</div>
-                                    <div class="text-sm">
-                                        <a :href="item.link" class="underline text-red-500" @click.prevent.stop="openURL(item.link)">See more</a>
-                                    </div>
-                                </div>
-                            </template>
-                        </Vue3TagsInput>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </template>
