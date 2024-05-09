@@ -160,15 +160,15 @@
             <UiText v-model="input.filamentSettings.formData.onColor" placeholder="On Color" label="Color when the toggle is active" @input="saveInput()" />
         </div>
 
-        <div v-if="filamentInputTypeIs(['date-picker', 'datetime-picker', 'time-picker'])">
+        <div v-if="filamentInputTypeIs(['date-picker', 'date-time-picker', 'time-picker'])">
             <UiText v-model="input.filamentSettings.formData.timezone" placeholder="Timezone" label="Timezone" @input="saveInput()" />
         </div>
 
-        <div v-if="filamentInputTypeIs(['date-picker', 'datetime-picker', 'time-picker'])">
+        <div v-if="filamentInputTypeIs(['date-picker', 'date-time-picker', 'time-picker'])">
             <UiText v-model="input.filamentSettings.formData.dateFormat" placeholder="Date format for storing" label="Date Format" @input="saveInput()" />
         </div>
 
-        <div v-if="filamentInputTypeIs(['date-picker', 'datetime-picker', 'time-picker'])">
+        <div v-if="filamentInputTypeIs(['date-picker', 'date-time-picker', 'time-picker'])">
             <UiText v-model="input.filamentSettings.formData.displayFormat" placeholder="Date format for display" label="Display Form" @input="saveInput()" />
         </div>
 
@@ -221,7 +221,7 @@
             </small>
         </div>
 
-        <div class="flex flex-col gap-2" v-if="filamentInputTypeIs(['text-input', 'datetime-picker', 'date-picker'])">
+        <div class="flex flex-col gap-2" v-if="filamentInputTypeIs(['text-input', 'date-time-picker', 'date-picker'])">
             <label class="text-xs text-slate-400">Datalist</label>
 
             <div class="flex-1 flex gap-2 items-center" v-for="(option, index) of input.filamentSettings.formData.dataList">
@@ -249,7 +249,7 @@
             </div>
         </div>
 
-        <div class="flex flex-col gap-2" v-if="filamentInputTypeIs(['date-picker', 'datetime-picker'])">
+        <div class="flex flex-col gap-2" v-if="filamentInputTypeIs(['date-picker', 'date-time-picker'])">
             <label class="text-xs text-slate-400">Disabled Dates</label>
 
             <div class="flex-1 flex gap-2 items-center" v-for="(option, index) of input.filamentSettings.formData.disabledDates">
@@ -413,11 +413,11 @@
             
             <UiCheckbox v-if="filamentInputTypeIs('radio')" v-model="input.filamentSettings.formData.inlineLabel" label="Inline Label" @input="saveInput()" />
 
-            <UiCheckbox v-if="filamentInputTypeIs(['select', 'datetime-picker', 'date-picker', 'time-picker'])" v-model="input.filamentSettings.formData.useCustomInput" label="Use custom input (not HTML5)" @input="saveInput()" />
+            <UiCheckbox v-if="filamentInputTypeIs(['select', 'date-time-picker', 'date-picker', 'time-picker'])" v-model="input.filamentSettings.formData.useCustomInput" label="Use custom input (not HTML5)" @input="saveInput()" />
 
-            <UiCheckbox v-if="filamentInputTypeIs(['datetime-picker', 'time-picker'])" v-model="input.filamentSettings.formData.disableSeconds" label="Disable seconds on input" @input="saveInput()" />
+            <UiCheckbox v-if="filamentInputTypeIs(['date-time-picker', 'time-picker'])" v-model="input.filamentSettings.formData.disableSeconds" label="Disable seconds on input" @input="saveInput()" />
 
-            <UiCheckbox v-if="filamentInputTypeIs(['datetime-picker', 'date-picker', 'time-picker'])" v-model="input.filamentSettings.formData.closeOnDateSelection" label="Close on date selection" @input="saveInput()" />
+            <UiCheckbox v-if="filamentInputTypeIs(['date-time-picker', 'date-picker', 'time-picker'])" v-model="input.filamentSettings.formData.closeOnDateSelection" label="Close on date selection" @input="saveInput()" />
         </div>
     </div>
 </template>
