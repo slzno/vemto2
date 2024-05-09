@@ -79,7 +79,10 @@ export default class CommandExecutor {
                     }
     
                     if (error && error.code !== 0) { 
-                        const errorMessage = "(error) FAILED to execute command: " + command + " | " + stdout
+                        let errorMessage = "(error) FAILED to execute command: " + command
+
+                        if(stdout) errorMessage += "\n    |> " + stdout
+                        if(stderr) errorMessage += "\n    |> " + stderr
     
                         console.error(errorMessage)
                         console.log(stdout)
