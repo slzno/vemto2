@@ -85,6 +85,10 @@
             if (setting.key === "ENV_LINE_SEPARATOR") {
                 return "\n"
             }
+
+            if (setting.value.includes(" ")) {
+                return `${setting.key}="${setting.value}"\n`
+            }
             
             return `${setting.key}=${setting.value}\n`
         }).join("")
