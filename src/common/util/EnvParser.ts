@@ -3,8 +3,20 @@ export default class EnvParser {
     parsedContent: any
 
     constructor(content: string = "") {
+        this.setContent(content)
+    }
+
+    setContent(content: string) {
         this.content = content
         this.parsedContent = this.parse()
+
+        return this
+    }
+
+    setParsedContent(parsedContent: any) {
+        this.parsedContent = parsedContent
+
+        return this
     }
 
     add(key: string, value: string) {
@@ -98,5 +110,23 @@ export default class EnvParser {
         })
 
         return result
+    }
+
+    unparse() {
+        let content = this.parsedContent.map(setting => {
+            if (setting.key === "ENV_LINE_SEPARATOR") {
+                return "\n"
+            }
+
+            if (setting.value.includes(" ") && !setting.value.startsWith('"')) {
+                setting.value = `"${setting.value}"`
+            }
+            
+            return `${setting.key}=${setting.value}\n`
+        }).join("")
+
+        content = content.slice(0, -1)
+
+        return content
     }
 }

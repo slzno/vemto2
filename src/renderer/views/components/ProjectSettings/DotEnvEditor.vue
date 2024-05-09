@@ -12,6 +12,7 @@
     import EnvParser from "@Common/util/EnvParser"
 
     const projectStore = useProjectStore(),
+        envParser = new EnvParser(""),
         envSettings = ref([])
     
     let currentEnvSettings = null
@@ -81,17 +82,7 @@
     }
 
     const saveEnvSettings = async () => {
-        let content = envSettings.value.map(setting => {
-            if (setting.key === "ENV_LINE_SEPARATOR") {
-                return "\n"
-            }
-
-            if (setting.value.includes(" ")) {
-                return `${setting.key}="${setting.value}"\n`
-            }
-            
-            return `${setting.key}=${setting.value}\n`
-        }).join("")
+        let content = envParser.setParsedContent(envSettings.value).unparse()
 
         content = content.slice(0, -1)
 
@@ -101,7 +92,7 @@
     }
 
     const parseEnv = (envContent) => {
-        return (new EnvParser(envContent)).get()
+        return envParser.setContent(envContent).get()
     }
 </script>
 
