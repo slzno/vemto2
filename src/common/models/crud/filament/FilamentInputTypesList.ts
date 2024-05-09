@@ -7,7 +7,7 @@ export enum FilamentInputType {
     TOGGLE = "toggle",
     RADIO = "radio",
     DATE_PICKER = "date-picker",
-    DATETIME_PICKER = "datetime-picker",
+    DATETIME_PICKER = "date-time-picker",
     FILE_UPLOAD = "file-upload",
     RICH_EDITOR = "rich-editor",
     MARKDOWN_EDITOR = "markdown-editor",

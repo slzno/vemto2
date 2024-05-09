@@ -115,7 +115,7 @@
         ->default('<$ input.defaultValue $>')
     <% } %>
     <# --- #>
-    <% if(['text-input', 'datetime-picker'].includes(inputFormData.inputType) && inputFormData.dataList && inputFormData.dataList.length) { %>
+    <% if(['text-input', 'date-time-picker'].includes(inputFormData.inputType) && inputFormData.dataList && inputFormData.dataList.length) { %>
         ->datalist([
             <% for(let option of inputFormData.dataList) { %>
                 '<$ option $>',
@@ -200,7 +200,7 @@
         ->closeOnDateSelection()
     <% } %>
     <# --- #>
-    <% if(input.readOnly && ['textarea', 'text-input', 'datetime-picker'].includes(inputFormData.inputType)) { %>
+    <% if(input.readOnly && ['textarea', 'text-input', 'date-time-picker'].includes(inputFormData.inputType)) { %>
         ->readonly()
     <% } %>
     <# --- #>
