@@ -103,6 +103,61 @@
   @apply font-semibold;
 }
 
+/* Vue3 Tags Input */
+
+.v3ti {
+  @apply rounded-lg !important;
+  @apply p-[0.05rem] !important;
+}
+
+.v3ti .v3ti-tag {
+  @apply text-slate-300 !important;
+  @apply border border-slate-700 !important;
+  @apply bg-slate-800 !important;
+  @apply rounded-md !important;
+  @apply pl-2 !important;
+  @apply font-thin !important;
+}
+
+.v3ti .v3ti-tag .v3ti-remove-tag {
+  color: #222 !important;
+  transition: color .3s;
+}
+
+.v3ti .v3ti-tag span {
+  @apply outline-none !important;
+  @apply px-2 !important;
+  @apply border border-transparent !important;
+  @apply rounded !important;
+}
+
+.v3ti .v3ti-tag span:focus {
+  @apply border-red-500 !important;
+}
+
+.v3ti .v3ti-tag .v3ti-remove-tag {
+  @apply text-red-500 !important;
+  @apply pl-2;
+}
+
+.v3ti .v3ti-tag .v3ti-remove-tag:hover {
+  @apply text-red-500 !important;
+}
+
+.v3ti .v3ti-new-tag::placeholder {
+  @apply font-thin !important;
+  @apply text-slate-400 dark:text-slate-500 !important;
+}
+
+.v3ti-context-menu {
+  background: #1e293b !important; /* bg-slate-800 */
+  max-height: 300px !important;
+}
+
+.v3ti .v3ti-context-menu .v3ti-context-item:hover {
+  background: #334155 !important; /* bg-slate-700 */
+}
+
 /* Turn on custom 8px wide scrollbar */
 ::-webkit-scrollbar {
   width: 10px; /* 1px wider than Lion. */
