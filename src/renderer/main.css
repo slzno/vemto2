@@ -111,7 +111,7 @@
 }
 
 .v3ti .v3ti-tag {
-  @apply text-slate-300 !important;
+  @apply text-slate-200 !important;
   @apply border border-slate-700 !important;
   @apply bg-slate-800 !important;
   @apply rounded-md !important;
