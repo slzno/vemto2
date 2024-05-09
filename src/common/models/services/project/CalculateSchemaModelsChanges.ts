@@ -121,7 +121,7 @@ export default class CalculateSchemaModelsChanges {
         this.changedModels = []
         this.removedModels = []
 
-        for (const model of this.project.models) {
+        for (const model of this.project.getValidModels()) {
             if (model.isNew()) {
                 this.addedModels.push(model)
             } else if (model.isDirty()) {

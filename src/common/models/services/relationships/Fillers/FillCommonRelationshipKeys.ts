@@ -17,8 +17,6 @@ class FillCommonRelationshipKeys {
     fill(): void {
         this.calculateRelatedModel()
 
-        const modelsNames = this.relationship.project.getModelsNames()
-
         if(! this.relationship.relatedModelId) return
         
         this.relationship.getServiceFromType().calculateKeys()

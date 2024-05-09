@@ -270,17 +270,19 @@ export default class Project extends RelaDB.Model {
     }
 
     getModelsNames(): string[] {
-        return this.models.map((model) => model.name)
+        return this.getValidModels().map((model) => model.name)
     }
 
     getModelsPlurals(): string[] {
-        return this.models.map((model) => model.plural)
+        return this.getValidModels().map((model) => model.plural)
     }
 
     getAllModelsKeyedByName(): { [key: string]: Model } {
         let models: { [key: string]: Model } = {}
 
         this.models.forEach((model) => {
+            if(!model.name) return
+            
             models[model.name] = model
         })
 
@@ -289,6 +291,10 @@ export default class Project extends RelaDB.Model {
 
     getModelsClasses(): string[] {
         return this.models.map((model) => model.class)
+    }
+
+    getValidModels(): Model[] {
+        return this.models.filter((model) => model.isValid())
     }
 
     getAllModelsKeyedByClass(): { [key: string]: Model } {
