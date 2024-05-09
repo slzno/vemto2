@@ -487,7 +487,7 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     }
 
     isValid(): boolean {
-        return this.hasTable() && !this.isRemoved()
+        return !!this.name && this.hasTable() && !this.isRemoved()
     }
 
     hasTable(): boolean {

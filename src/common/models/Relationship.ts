@@ -168,7 +168,10 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
     }
 
     isValid(): boolean {
-        return !! this.model && !! this.relatedModel
+        return !! this.model 
+            && !! this.relatedModel 
+            && this.model.isValid() 
+            && this.relatedModel.isValid()
     }
 
     maybeInverseOf(relationship: Relationship) {

@@ -53,6 +53,52 @@ test('It returns only valid model interaces', async () => {
     expect(interfaces.includes('ModelInterface')).toBe(true)
 })
 
+test('It can render the template with an empty model name', async () => {
+    const userModel = TestHelper.createModel()
+
+    userModel.name = ''
+
+    userModel.save()
+
+    expect(userModel.isInvalid()).toBe(true)
+
+    const renderedTemplateContent = await new RenderableModel(userModel).compileWithErrorThreatment(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/model/template-with-empty-name.php'), renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
+})
+
+test('It can render the template with a model with invalid relationships', async () => {
+    const userModel = TestHelper.createModel(),
+        postsModel = TestHelper.createModel()
+
+    // Making the posts model invalid to invalidate the relationship
+    postsModel.name = ''
+    postsModel.save()
+
+    const relationship = new Relationship()
+
+    relationship.name = "posts"
+    relationship.projectId = userModel.projectId
+    relationship.type = 'HasMany'
+
+    relationship.modelId = userModel.id
+    relationship.relatedModelId = postsModel.id
+
+    relationship.save()
+
+    expect(relationship.isInvalid()).toBe(true)
+
+    const renderedTemplateContent = await new RenderableModel(userModel).compileWithErrorThreatment(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/model/template-with-invalid-relationship.php'), renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
+})
+
 test('It can render the template with an invalid relationship', async () => {
     const userModel = TestHelper.createModel()
 

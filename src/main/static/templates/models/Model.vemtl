@@ -34,7 +34,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 <% } %>
 // hook:IMPORTS
 
-class <$ this.model.name $> 
+class <$ this.model?.name || 'UnknownModelName' $> 
 <# Extends parent class #>
 <% if(this.model.hasParentClass()) { %>
 extends <$ this.model.getImportAlias(this.model.parentClass) $> 

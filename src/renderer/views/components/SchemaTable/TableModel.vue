@@ -8,8 +8,12 @@
 
 <template>
     <div :class="{
+        'border-2 border-red-500 rounded': model.isInvalid(),
         'line-through opacity-50': model.isRemoved(),
-    }" class="dark:text-slate-300 space-y-2">
+    }" 
+        :title="model.isInvalid() ? 'Invalid model' : ''"
+        class="dark:text-slate-300 space-y-2"
+    >
         <div class="rounded bg-slate-50 dark:bg-slate-900 px-2 py-1">
             <div class="font-semibold text-sm flex justify-between">
                 <div class="flex items-center space-x-1 pr-4 text-slate-300">
