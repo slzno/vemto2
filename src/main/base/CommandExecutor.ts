@@ -59,6 +59,10 @@ export default class CommandExecutor {
                             errorStack = this.parseErrorStack(stdout)
     
                         console.log(errorStack)
+
+                        if(errorMessage === 'Unknown Error') {
+                            errorMessage = `${stdout} | ${stderr}`
+                        }
     
                         let error = {
                             error: errorMessage,
@@ -75,7 +79,7 @@ export default class CommandExecutor {
                     }
     
                     if (error && error.code !== 0) { 
-                        const errorMessage = "(error) FAILED to execute command: " + command
+                        const errorMessage = "(error) FAILED to execute command: " + command + " | " + stdout
     
                         console.error(errorMessage)
                         console.log(stdout)
