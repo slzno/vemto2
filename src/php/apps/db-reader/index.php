@@ -76,6 +76,10 @@ Vemto::execute('schema-reader-db', function () use ($APP_DIRECTORY) {
         $connectionConfig['username'] = $settings['SCHEMA_READER_DB_USERNAME'];
         $connectionConfig['password'] = $settings['SCHEMA_READER_DB_PASSWORD'];
 
+        if(isset($settings['SCHEMA_READER_DB_ENGINE'])) {
+            $connectionConfig['engine'] = $settings['SCHEMA_READER_DB_ENGINE'];
+        }
+
         Config::set('database.connections.vemto_db_connection', $connectionConfig);
     }
 
