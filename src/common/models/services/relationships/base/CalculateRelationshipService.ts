@@ -5,6 +5,10 @@ import RelationshipTypes from '@Common/models/static/RelationshipTypes'
 export default abstract class RelationshipService {
     abstract get relationship(): Relationship
 
+    hasValidRequiredData(): boolean {
+        return false
+    }
+
     calculateName(): string {
         const finalName = this.getFinalDefaultName()
 

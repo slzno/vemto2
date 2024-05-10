@@ -68,6 +68,10 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         return data
     }
 
+    isValid(): boolean {
+        return !! this.name
+    }
+
     saveFromInterface(addModel: boolean = false) {
         let creating = false
 

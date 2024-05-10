@@ -99,6 +99,30 @@ test('It can render the template with a model with invalid relationships', async
     expect(contentIsEqual).toBe(true)
 })
 
+test('It can render the template with a model with invalid relationship data', async () => {
+    const userModel = TestHelper.createModel(),
+        postsModel = TestHelper.createModel()
+
+    // create a relationship without keys (in this case, parentkey and foreignkey)
+    const relationship = new Relationship()
+    relationship.name = "posts"
+    relationship.projectId = userModel.projectId
+    relationship.type = 'HasMany'
+    relationship.modelId = userModel.id
+    relationship.relatedModelId = postsModel.id
+
+    relationship.save()
+
+    expect(relationship.isInvalid()).toBe(true)
+
+    const renderedTemplateContent = await new RenderableModel(userModel).compileWithErrorThreatment(),
+        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/model/template-with-invalid-relationship.php'), renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
+})
+
 test('It can render the template with an invalid relationship', async () => {
     const userModel = TestHelper.createModel()
 

@@ -13,6 +13,13 @@ class CalculateMorphRelationshipsData extends CalculateRelationshipService {
         return this
     }
 
+    hasValidRequiredData(): boolean {
+        return !! this.relationship.idColumn
+            && !! this.relationship.typeColumn
+            && this.relationship.idColumn.isValid()
+            && this.relationship.typeColumn.isValid()
+    }
+
     calculateDefaultData(): void {
         this.calculateName()
         this.calculateMorphTo()

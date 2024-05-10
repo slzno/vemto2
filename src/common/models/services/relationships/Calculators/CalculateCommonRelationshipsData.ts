@@ -14,6 +14,13 @@ class CalculateCommonRelationshipsData extends CalculateRelationshipService {
         return this
     }
 
+    hasValidRequiredData(): boolean {
+        return !! this.relationship.parentKey
+            && !! this.relationship.foreignKey
+            && this.relationship.parentKey.isValid()
+            && this.relationship.foreignKey.isValid()
+    }
+
     processAndSave(createInverse: boolean = false): void {
         this.process(createInverse)
         this.saveAndFinish()

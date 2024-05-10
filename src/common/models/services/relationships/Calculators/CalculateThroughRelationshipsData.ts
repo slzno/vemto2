@@ -11,6 +11,13 @@ class CalculateThroughRelationshipsData extends CalculateRelationshipService {
         return this
     }
 
+    hasValidRequiredData(): boolean {
+        return !! this.relationship.firstKeyName
+            && !! this.relationship.secondKeyName
+            && this.relationship.through
+            && this.relationship.through.isValid()
+    }
+
     calculateDefaultData(): void {
         this.calculateName()
         this.calculateFirstKeyName()

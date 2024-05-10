@@ -10,7 +10,7 @@
     <div class="grid flex-1 grid-cols-2 gap-1">
         <div>
             <UiDropdownSelect
-                label="Name"
+                label="Related Model"
                 v-model="relationship.relatedModelId"
                 :may-open="relationship.isNew() && !relationship.hasRelatedModel() && !relationship.throughId"
                 placeholder="Related Model"

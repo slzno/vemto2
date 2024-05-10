@@ -13,6 +13,15 @@ class CalculateManyToManyRelationshipsData extends CalculateRelationshipService 
         return this
     }
 
+    hasValidRequiredData(): boolean {
+        return !! this.relationship.foreignPivotKey
+            && !! this.relationship.relatedPivotKey
+            && this.relationship.foreignPivotKey.isValid()
+            && this.relationship.relatedPivotKey.isValid()
+            && this.relationship.pivot
+            && this.relationship.pivot.isValid()
+    }
+
     calculateDefaultData(): CalculateManyToManyRelationshipsData {
         this.calculateName()
         this.calculateForeignsKeysNames()
