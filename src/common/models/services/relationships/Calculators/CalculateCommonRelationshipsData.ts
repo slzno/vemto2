@@ -174,18 +174,18 @@ class CalculateCommonRelationshipsData extends CalculateRelationshipService {
         return WordManipulator.snakeCase(this.relationship.getParentModel().name) + '_id'
     }
 
+    hasDifferentForeignOrParentKey(): boolean {
+        return this.hasDifferentForeignKey()
+            || this.hasDifferentParentKey()
+            || ! this.nameFollowsDefaultRule()
+    }
+
     hasDifferentParentKey(): boolean {
         return this.relationship.parentKey.name !== 'id'
     }
 
     hasDifferentForeignKey(): boolean {
         return this.relationship.foreignKey.name !== this.getDefaultForeignKeyName()
-    }
-
-    hasDifferentForeignOrParentKey(): boolean {
-        return this.hasDifferentForeignKey()
-            || this.hasDifferentParentKey()
-            || ! this.nameFollowsDefaultRule()
     }
 
     getForeignModel(): Model {

@@ -28,5 +28,17 @@
                 </div>
             </UiTip>
         </div>
+
+        <div class="mb-2" v-if="errorsStore.hasErrorWithText('The openssl extension is required')">
+            <UiTip>
+                it seems you need to enable the <b>openssl</b> extension in your <b>php.ini</b> file.
+            </UiTip>
+        </div>
+
+        <div class="mb-2" v-if="errorsStore.hasErrorWithText('does not exist, but schema directory')">
+            <UiTip>
+                it seems you need to drop the schema folder from your MySQL data directory and re-run the command. <b>Or, you can choose another database name.</b>
+            </UiTip>
+        </div>
     </div>
 </template>
