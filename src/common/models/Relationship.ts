@@ -487,6 +487,38 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
         return !! this.createdFromInterface
     }
 
+    getForeignModel(): Model {
+        return this.getServiceFromType().getForeignModel()
+    }
+
+    hasDifferentForeignOrParentKey(): boolean {
+        return this.getServiceFromType().hasDifferentForeignOrParentKey()
+    }
+
+    hasDifferentParentKey(): boolean {
+        return this.getServiceFromType().hasDifferentParentKey()
+    }
+
+    hasDifferentForeignOrRelatedPivotKeys(): boolean {
+        return this.getServiceFromType().hasDifferentForeignOrRelatedPivotKeys()
+    }
+
+    hasDifferentRelatedPivot(): boolean {
+        return this.getServiceFromType().hasDifferentRelatedPivot()
+    }
+
+    needsToAddPivotToModelTemplate(): boolean {
+        return this.getServiceFromType().needsToAddPivotToModelTemplate()
+    }
+
+    needsToAddFirstKeyNameToModelTemplate(): boolean {
+        return this.getServiceFromType().needsToAddFirstKeyNameToModelTemplate()
+    }
+
+    hasDifferentSecondKeyName(): boolean {
+        return this.getServiceFromType().hasDifferentSecondKeyName()
+    }
+
     getServiceFromType(): any {
         if(this.isCommon()) {
             return CalculateCommonRelationshipsData.setRelationship(this)

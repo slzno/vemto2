@@ -203,11 +203,11 @@ implements
             {
                 return $this->belongsTo(<$ relationship.relatedModel.name $>::class
                 <# Check if foreign key or parent key are different #>
-                <up if(relationship.getServiceFromType().hasDifferentForeignOrParentKey()) { up>
+                <up if(relationship.hasDifferentForeignOrParentKey()) { up>
                 , '<$ relationship.foreignKeyName $>'
                 <up } up>
                 <# --- #>
-                <up if(relationship.getServiceFromType().hasDifferentParentKey()) { up>
+                <up if(relationship.hasDifferentParentKey()) { up>
                 , '<$ relationship.parentKey.name $>'
                 <up } up>);
             }
@@ -226,11 +226,11 @@ implements
             {
                 return $this->hasMany(<$ relationship.relatedModel.name $>::class
                 <# Check if foreign key or parent key are different #>
-                <up if(relationship.getServiceFromType().hasDifferentForeignOrParentKey()) { up>
+                <up if(relationship.hasDifferentForeignOrParentKey()) { up>
                 , '<$ relationship.foreignKeyName $>'
                 <up } up>
                 <# --- #>
-                <up if(relationship.getServiceFromType().hasDifferentParentKey()) { up>
+                <up if(relationship.hasDifferentParentKey()) { up>
                 , '<$ relationship.parentKey.name $>'
                 <up } up>);
             }
@@ -249,11 +249,11 @@ implements
             {
                 return $this->hasOne(<$ relationship.relatedModel.name $>::class
                 <# Check if foreign key or parent key are different #>
-                <up if(relationship.getServiceFromType().hasDifferentForeignOrParentKey()) { up>
+                <up if(relationship.hasDifferentForeignOrParentKey()) { up>
                 , '<$ relationship.foreignKeyName $>'
                 <up } up>
                 <# --- #>
-                <up if(relationship.getServiceFromType().hasDifferentParentKey()) { up>
+                <up if(relationship.hasDifferentParentKey()) { up>
                 , '<$ relationship.parentKey.name $>'
                 <up } up>);
             }
@@ -272,15 +272,15 @@ implements
                 {
                     return $this->belongsToMany(<$ relationship.relatedModel.name $>::class
                     <# Needs to add the pivot table if localKey or foreignKey are not default #>
-                    <up if(relationship.getServiceFromType().needsToAddPivotToModelTemplate()) { up>
+                    <up if(relationship.needsToAddPivotToModelTemplate()) { up>
                     , '<$ relationship.pivot.name $>'
                     <up } up>
                     <# --- #>
-                    <up if(relationship.getServiceFromType().hasDifferentForeignOrRelatedPivotKeys()) { up>
+                    <up if(relationship.hasDifferentForeignOrRelatedPivotKeys()) { up>
                     , '<$ relationship.foreignPivotKey.name $>'
                     <up } up>
                     <# --- #>
-                    <up if(relationship.getServiceFromType().hasDifferentRelatedPivot()) { up>
+                    <up if(relationship.hasDifferentRelatedPivot()) { up>
                     , '<$ relationship.relatedPivotKey.name $>'
                     <up } up>)
                     <# --- #>
@@ -331,10 +331,10 @@ implements
                 public function <$ relationship.name $>() 
                 {
                     return $this-><$ relationship.getTypeCamelCase() $>(<$ relationship.relatedModel.name $>::class, <$ relationship.through.name $>::class
-                    <up if(relationship.getServiceFromType().needsToAddFirstKeyNameToModelTemplate()) { up>
+                    <up if(relationship.needsToAddFirstKeyNameToModelTemplate()) { up>
                     , '<$ relationship.firstKeyName $>'
                     <up } up>
-                    <up if(relationship.getServiceFromType().hasDifferentSecondKeyName()) { up>
+                    <up if(relationship.hasDifferentSecondKeyName()) { up>
                     , '<$ relationship.secondKeyName $>'
                     <up } up>);
                 }

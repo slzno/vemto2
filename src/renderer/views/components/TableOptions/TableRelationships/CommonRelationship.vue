@@ -30,7 +30,7 @@
                     label="Foreign Key"
                     v-model="relationship.foreignKeyId"
                     placeholder="Select the Foreign Key"
-                    :options="getForSelect(relationship.getServiceFromType().getForeignModel().table.columns)"
+                    :options="getForSelect(relationship.getForeignModel().table.columns)"
                     @change="$emit('save')"
                 />
             </div>
