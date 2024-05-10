@@ -488,38 +488,38 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
     }
 
     getForeignModel(): Model {
-        return this.getServiceFromType().getForeignModel()
+        return this.getCalculatorService().getForeignModel()
     }
 
     hasDifferentForeignOrParentKey(): boolean {
-        return this.getServiceFromType().hasDifferentForeignOrParentKey()
+        return this.getCalculatorService().hasDifferentForeignOrParentKey()
     }
 
     hasDifferentParentKey(): boolean {
-        return this.getServiceFromType().hasDifferentParentKey()
+        return this.getCalculatorService().hasDifferentParentKey()
     }
 
     hasDifferentForeignOrRelatedPivotKeys(): boolean {
-        return this.getServiceFromType().hasDifferentForeignOrRelatedPivotKeys()
+        return this.getCalculatorService().hasDifferentForeignOrRelatedPivotKeys()
     }
 
     hasDifferentRelatedPivot(): boolean {
-        return this.getServiceFromType().hasDifferentRelatedPivot()
+        return this.getCalculatorService().hasDifferentRelatedPivot()
     }
 
     needsToAddPivotToModelTemplate(): boolean {
-        return this.getServiceFromType().needsToAddPivotToModelTemplate()
+        return this.getCalculatorService().needsToAddPivotToModelTemplate()
     }
 
     needsToAddFirstKeyNameToModelTemplate(): boolean {
-        return this.getServiceFromType().needsToAddFirstKeyNameToModelTemplate()
+        return this.getCalculatorService().needsToAddFirstKeyNameToModelTemplate()
     }
 
     hasDifferentSecondKeyName(): boolean {
-        return this.getServiceFromType().hasDifferentSecondKeyName()
+        return this.getCalculatorService().hasDifferentSecondKeyName()
     }
 
-    getServiceFromType(): any {
+    getCalculatorService(): any {
         if(this.isCommon()) {
             return CalculateCommonRelationshipsData.setRelationship(this)
         }

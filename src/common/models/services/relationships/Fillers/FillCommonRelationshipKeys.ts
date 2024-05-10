@@ -19,7 +19,7 @@ class FillCommonRelationshipKeys {
 
         if(! this.relationship.relatedModelId) return
         
-        this.relationship.getServiceFromType().calculateKeys()
+        this.relationship.getCalculatorService().calculateKeys()
     }
 
     calculateRelatedModel(): void {

@@ -21,10 +21,10 @@ class FillMorphRelationshipKeys {
 
         if(this.relationship.type === 'MorphToMany') {
             this.calculatePivotTable()
-            this.relationship.getServiceFromType().createPivotData(false)
+            this.relationship.getCalculatorService().createPivotData(false)
         }
 
-        this.relationship.getServiceFromType().calculateMorphTo()
+        this.relationship.getCalculatorService().calculateMorphTo()
     }
 
     calculatePivotTable(): void {
