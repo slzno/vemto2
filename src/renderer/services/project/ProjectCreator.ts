@@ -31,12 +31,16 @@ export default class ProjectCreator {
             await this.createProject()
             await this.generateStorageLink()
 
+            await this.fixFolderPermissions(this.data.completePath)
+
             await this.installStarterKit()
             await this.changeDatabase()
 
             if(this.data.mustInstallFilament) {
                 await FilamentInstaller.installFromProjectCreator(this.data, stateCallback)
             }
+
+            await this.fixFolderPermissions(this.data.completePath)
 
             this.data = null
             this.hasErrors = false
@@ -87,5 +91,11 @@ export default class ProjectCreator {
             console.log(error)
             throw new Error("Could not open .env file")
         })
+    }
+
+    async fixFolderPermissions(path: string) {
+        this.stateCallback("Fixing folder permissions")
+
+        await Main.API.fixFolderPermissions(path)
     }
 }
