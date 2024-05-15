@@ -246,6 +246,12 @@ export function HandleIpcMessages() {
         })
     })
 
+    ipcMain.handle("folder:fix-permissions", (event, folderPath) => {
+        return handleError(event, () => {
+            return FileSystem.fixPermissions(folderPath)
+        })
+    })
+
     ipcMain.handle("folder:project:read", (event, folderPath, removeBasePath) => {
         const project = Project.find(1)
         if(!project) return null
