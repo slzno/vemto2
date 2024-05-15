@@ -91,6 +91,8 @@ class FileSystem {
 
         fs.writeFileSync(destFilePath, content)
 
+        fs.chmodSync(destFilePath, 0o644)
+
         return this
     }
 
