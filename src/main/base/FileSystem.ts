@@ -313,6 +313,16 @@ class FileSystem {
     fixPermissions(folderPath: string): FileSystem {
         console.log('Fixing Permissions: ' + folderPath)
 
+        const excludedPaths = [
+            '.git',
+            '/vendor',
+            '/node_modules',
+        ]
+
+        if(excludedPaths.some(p => folderPath.includes(p))) {
+            return this
+        }
+
         fs.chmodSync(folderPath, 0o755)
 
         fs.readdirSync(folderPath).forEach((file) => {
