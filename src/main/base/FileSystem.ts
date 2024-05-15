@@ -317,8 +317,8 @@ class FileSystem {
 
         const excludedPaths = [
             '.git',
-            '/vendor',
-            '/node_modules',
+            'vendor',
+            'node_modules',
         ]
 
         if(excludedPaths.some(p => folderPath.includes(p))) {
