@@ -118,6 +118,8 @@ async function start() {
     if(rimrafSync(Path.join(__dirname, "..", "build"))) {
         console.log(Chalk.greenBright("Build folder deleted."))
 
+        copyStaticFiles()
+
         ChildProcess.exec("yarn php:compile", {
             cwd: Path.join(__dirname, ".."),
         }, (error, stdout, stderr) => {
@@ -140,7 +142,6 @@ async function start() {
 
     console.log(`Using port ${rendererPort} for renderer process.`)
 
-    copyStaticFiles()
     startElectron()
 
     const path = Path.join(__dirname, "..", "src", "main")
