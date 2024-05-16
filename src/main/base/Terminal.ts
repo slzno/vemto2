@@ -10,15 +10,16 @@ export default class Terminal {
         if (isMacOs) {
             await Terminal.executeCommand(`osascript -e 'tell application "Terminal"' -e 'activate' -e 'do script "cd ${path}" in window 1' -e 'end tell'`)
         } else if (isLinux) {
-            const gnomeTerminalResult = await CommandExecutor.executeCommand("which gnome-terminal", true),
-                kdeTerminalResult = await CommandExecutor.executeCommand("which konsole", true)
+            const hasGnomeTerminal = await Terminal.checkGnomeTerminal(),
+                hasKdeTerminal = await Terminal.checkKonsole()
 
-            if (gnomeTerminalResult.includes("gnome-terminal")) {
+            if (hasGnomeTerminal) {
+                console.log(`FOUND GNOME_TERMINAL`)
                 await Terminal.executeCommand(`gnome-terminal --working-directory=${path}`)
                 return
             }
 
-            if (kdeTerminalResult.includes("konsole")) {
+            if (hasKdeTerminal) {
                 await Terminal.executeCommand(`konsole --workdir ${path}`)
                 return
             }
@@ -27,6 +28,26 @@ export default class Terminal {
                 commandToExecute = fullCommand.replace(/;/g, '\\;')
             
             await Terminal.executeCommand(`start wt.exe -w 0 -d . -p "PowerShell" powershell.exe -NoExit -Command "${commandToExecute}"`)
+        }
+    }
+
+    static async checkGnomeTerminal() {
+        try {
+            const result = await CommandExecutor.executeCommand("which gnome-terminal", true)
+            return result.includes("gnome-terminal")
+        } catch (error) {
+            console.error(error)
+            return false
+        }
+    }
+
+    static async checkKonsole() {
+        try {
+            const result = await CommandExecutor.executeCommand("which konsole", true)
+            return result.includes("konsole")
+        } catch (error) {
+            console.error(error)
+            return false
         }
     }
 
