@@ -49,6 +49,78 @@ test('It reorders columns sequentially', () => {
     expect(updatedAtColumn.fresh().order).toBe(5)
 })
 
+test('It reorders columns sequentially when orders are incorrect', () => {
+    const usersTable = TestHelper.createTable({ name: 'users' }),
+        usersModel = TestHelper.createModel({ name: 'User', table: usersTable }),
+        postsTable = TestHelper.createTable({ name: 'posts' }),
+        postsModel = TestHelper.createModel({ name: 'Post', table: postsTable })
+
+        TestHelper.createColumn({ name: 'id', table: usersTable, autoIncrement: true, order: 0 })
+
+        const idColumn = TestHelper.createColumn({ name: 'id', table: postsTable, autoIncrement: true, order: 0 }),
+            titleColumn = TestHelper.createColumn({ name: 'title', table: postsTable, order: 3 }),
+            bodyColumn = TestHelper.createColumn({ name: 'body', table: postsTable, order: 5 }),
+            createdAtColumn = TestHelper.createColumn({ name: 'created_at', table: postsTable, order: 6 }),
+            updatedAtColumn = TestHelper.createColumn({ name: 'updated_at', table: postsTable, order: 10 })
+
+    const foreignColumn = postsTable.getOrCreateForeignColumn('user_id', postsModel)
+
+    expect(idColumn.fresh().order).toBe(0)
+    expect(titleColumn.fresh().order).toBe(1)
+    expect(bodyColumn.fresh().order).toBe(2)
+    expect(foreignColumn.fresh().order).toBe(3)
+    expect(createdAtColumn.fresh().order).toBe(4)
+    expect(updatedAtColumn.fresh().order).toBe(5)
+})
+
+test('It can send a column to the bottom', () => {
+    const postsTable = TestHelper.createTable({ name: 'posts' })
+
+    TestHelper.createColumn({ name: 'id', table: postsTable, autoIncrement: true, order: 0 })
+    TestHelper.createColumn({ name: 'title', table: postsTable, order: 1 })
+
+    const createdAtColumn = TestHelper.createColumn({ name: 'created_at', table: postsTable, order: 2 })
+
+    const bodyColumn = TestHelper.createColumn({ name: 'body', table: postsTable })
+
+    expect(bodyColumn.fresh().order).toBe(2)
+    expect(createdAtColumn.fresh().order).toBe(3)
+
+    bodyColumn.sendToBottom()
+
+    expect(bodyColumn.fresh().order).toBe(3)
+    expect(createdAtColumn.fresh().order).toBe(2)
+
+    createdAtColumn.sendToBottom()
+
+    expect(bodyColumn.fresh().order).toBe(2)
+    expect(createdAtColumn.fresh().order).toBe(3)
+})
+
+test('It can send a column to the bottom when orders are incorrect', () => {
+    const postsTable = TestHelper.createTable({ name: 'posts' })
+
+    TestHelper.createColumn({ name: 'id', table: postsTable, autoIncrement: true, order: 0 })
+    TestHelper.createColumn({ name: 'title', table: postsTable, order: 5 })
+
+    const createdAtColumn = TestHelper.createColumn({ name: 'created_at', table: postsTable, order: 10 })
+
+    const bodyColumn = TestHelper.createColumn({ name: 'body', table: postsTable })
+
+    expect(bodyColumn.fresh().order).toBe(2)
+    expect(createdAtColumn.fresh().order).toBe(3)
+
+    bodyColumn.sendToBottom()
+
+    expect(bodyColumn.fresh().order).toBe(3)
+    expect(createdAtColumn.fresh().order).toBe(2)
+
+    createdAtColumn.sendToBottom()
+
+    expect(bodyColumn.fresh().order).toBe(2)
+    expect(createdAtColumn.fresh().order).toBe(3)
+})
+
 test('It can check if a column has changes', () => {
     const column = TestHelper.createColumnWithSchemaState()
 

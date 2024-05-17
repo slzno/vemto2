@@ -935,9 +935,9 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
             tableId: this.table.id,
             nullable: true
         })
-        
-        column.order = column.calculateNextOrder()
 
         column.save()
+
+        column.sendToBottom()
     }
 }

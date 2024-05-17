@@ -354,6 +354,30 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         return this.getColumns().sort((a, b) => a.order - b.order)
     }
 
+    getFirstColumn(): Column {
+        const columns = this.getOrderedColumns()
+
+        if(!columns.length) return null
+
+        return columns[0]
+    }
+
+    getLastColumn(): Column {
+        const columns = this.getOrderedColumns()
+
+        if(!columns.length) return null
+
+        return columns[columns.length - 1]
+    }
+
+    getFirstDefaultDateColumn(): Column {
+        return this.getOrderedColumns().find((column) => column.isDefaultDate())
+    }
+
+    getLastDefaultDateColumn(): Column {
+        return this.getOrderedColumns().reverse().find((column) => column.isDefaultDate())
+    }
+
     getIndexes(): Index[] {
         return this.indexes.filter((index) => !index.isRemoved())
     }
@@ -682,5 +706,21 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
             "team_user", 
             "team_invitations"
         ].includes(this.name)
+    }
+
+    getColumnsOrders(): any[] {
+        return this.getOrderedColumns().map((column) => {
+            return {
+                name: column.name,
+                order: column.order
+            }
+        })
+    }
+
+    fixAllColumnsOrder() {
+        this.getOrderedColumns().forEach((column, index) => {
+            column.order = index
+            column.save()
+        })
     }
 }
