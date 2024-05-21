@@ -382,6 +382,10 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         return this.indexes.filter((index) => !index.isRemoved())
     }
     
+    hasDirtyRelatedTables(): boolean {
+        return this.getRelatedTables().some((table) => table.isDirty())
+    }
+
     hasRelatedTables(): boolean {
         return !! this.getRelatedTables().length
     }
@@ -568,7 +572,9 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     canUpdateLatestMigration(): boolean {
-        return this.hasMigrations() && !this.isRemoved()
+        return this.hasMigrations() 
+            && !this.isRemoved() 
+            && !this.hasDirtyRelatedTables()
     }
 
     wasCreatedFromInterface(): boolean {

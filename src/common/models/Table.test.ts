@@ -536,3 +536,43 @@ test('It calculates the correct order for a foreign column', () => {
 
     expect(foreignColumn.order).toBe(2)
 })
+
+/**
+ * This test is necessary for cases when a parent table is created after a child table. 
+ * In this case, we can't change the last migration of the child table because it 
+ * would break the migrations order, causing SQL errors when running the migrations.
+ */
+test('It cannot update the latest migration when a table has dirty related ables', () => {
+    const childTable = TestHelper.createTableWithSchemaState({ name: 'books' }),
+        parentTable = TestHelper.createTableWithSchemaState({ name: 'authors' })
+
+    childTable.migrations = [{
+        migration: '2020_01_01_000000_create_books_table',
+        createdTables: ['books'],
+    }]
+
+    parentTable.oldNames = ['writers']
+
+    Table.savingInternally()
+
+    parentTable.save()
+    childTable.save()
+    
+    Table.notSavingInternally()
+
+    expect(childTable.fresh().hasDirtyRelatedTables()).toBe(false)
+    expect(childTable.fresh().canUpdateLatestMigration()).toBe(true)
+
+    TestHelper.createColumn({ name: 'author_id', table: childTable })
+
+    TestHelper.createForeignIndex({
+        name: 'books_author_id_foreign',
+        references: 'id',
+        on: 'authors',
+        columns: ['author_id'],
+        table: childTable,
+    })
+
+    expect(childTable.fresh().hasDirtyRelatedTables()).toBe(true)
+    expect(childTable.fresh().canUpdateLatestMigration()).toBe(false)
+})
