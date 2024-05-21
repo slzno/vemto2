@@ -542,9 +542,9 @@ test('It calculates the correct order for a foreign column', () => {
  * In this case, we can't change the last migration of the child table because it 
  * would break the migrations order, causing SQL errors when running the migrations.
  */
-test('It cannot update the latest migration when a table has dirty related ables', () => {
+test('It cannot update the latest migration when a table has new related tables', () => {
     const childTable = TestHelper.createTableWithSchemaState({ name: 'books' }),
-        parentTable = TestHelper.createTableWithSchemaState({ name: 'authors' })
+        parentTable = TestHelper.createTable({ name: 'authors' })
 
     childTable.migrations = [{
         migration: '2020_01_01_000000_create_books_table',
@@ -552,15 +552,15 @@ test('It cannot update the latest migration when a table has dirty related ables
     }]
 
     parentTable.oldNames = ['writers']
+    parentTable.save()
 
     Table.savingInternally()
 
-    parentTable.save()
     childTable.save()
     
     Table.notSavingInternally()
 
-    expect(childTable.fresh().hasDirtyRelatedTables()).toBe(false)
+    expect(childTable.fresh().hasNewRelatedTables()).toBe(false)
     expect(childTable.fresh().canUpdateLatestMigration()).toBe(true)
 
     TestHelper.createColumn({ name: 'author_id', table: childTable })
@@ -573,6 +573,6 @@ test('It cannot update the latest migration when a table has dirty related ables
         table: childTable,
     })
 
-    expect(childTable.fresh().hasDirtyRelatedTables()).toBe(true)
+    expect(childTable.fresh().hasNewRelatedTables()).toBe(true)
     expect(childTable.fresh().canUpdateLatestMigration()).toBe(false)
 })
