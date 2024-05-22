@@ -1,5 +1,7 @@
 <?php
 
+ini_set('display_errors', 'On');
+
 $data = [
     'version' => phpversion(),
     'extensions' => get_loaded_extensions(),

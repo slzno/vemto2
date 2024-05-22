@@ -1,5 +1,7 @@
 <?php
 
+ini_set('display_errors', 'On');
+
 // Load the basic Laravel classes
 require_once 'load.php';
 
