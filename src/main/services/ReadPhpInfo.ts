@@ -10,7 +10,22 @@ export default class ReadPhpInfo {
             
         const apiFilePath = path.join(staticFolderPath, "static", "VMTTL3")
 
+        const phpIsInstalled = await this.phpIsInstalled()
+
+        if (!phpIsInstalled) {
+            return {}
+        }
+
         return await CommandExecutor.executePhpOnPath("", apiFilePath)
+    }
+
+    static async phpIsInstalled(): Promise<boolean> {
+        try {
+            const result = await CommandExecutor.executePhpOnPath("", "--version", true)
+            return result.includes("PHP")
+        } catch (error) {
+            return false
+        }
     }
 
 }
