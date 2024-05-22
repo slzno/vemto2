@@ -727,7 +727,7 @@ export default class Project extends RelaDB.Model {
 
     zoomOut() {
         this.initZoom()
-        if (this.currentZoom <= 50) return
+        if (this.currentZoom <= 10) return
         this.currentZoom -= 10
         this.save()
     }
