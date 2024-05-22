@@ -71,8 +71,7 @@
     ]
 
     onMounted(async () => {
-        const licenseHandler = new LicenseHandler()
-        licenseHandler.checkLicense()
+        checkLicense()
 
         getProjects()
 
@@ -86,6 +85,15 @@
             console.log("Error happened in the renderer process")
         })
     })
+
+    const checkLicense = async () => {
+        try {
+            const licenseHandler = new LicenseHandler()
+            licenseHandler.checkLicense()
+        } catch (error) {
+            console.error("Error checking license", error)
+        }
+    }
 
     const getProjects = () => {
         projects.value = projectManager.get()

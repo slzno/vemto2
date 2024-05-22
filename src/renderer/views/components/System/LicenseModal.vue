@@ -28,14 +28,19 @@
     })
 
     const checkLicense = async () => {
-        processing.value = true
-
-        await licenseHandler.checkLicense()
-
-        licenseData.value = licenseHandler.getLicense() || {} as LicenseData
-        licenseIsActive.value = licenseHandler.isActive()
-
-        processing.value = false
+        try {
+            processing.value = true
+    
+            await licenseHandler.checkLicense()
+    
+            licenseData.value = licenseHandler.getLicense() || {} as LicenseData
+            licenseIsActive.value = licenseHandler.isActive()
+    
+            processing.value = false
+        } catch (error) {
+            console.error(error)
+            processing.value = false
+        }
     }
 
     const show = async () => {
@@ -51,26 +56,36 @@
     }
 
     const activateLicense = async () => {
-        processing.value = true
-
-        await licenseHandler.activateLicense(licenseData.value.email, licenseData.value.code)
-
-        if(licenseHandler.hasLicense()) {
-            licenseIsActive.value = licenseHandler.isActive()
-            licenseData.value = licenseHandler.getLicense()
+        try {
+            processing.value = true
+    
+            await licenseHandler.activateLicense(licenseData.value.email, licenseData.value.code)
+    
+            if(licenseHandler.hasLicense()) {
+                licenseIsActive.value = licenseHandler.isActive()
+                licenseData.value = licenseHandler.getLicense()
+            }
+    
+            processing.value = false
+        } catch (error) {
+            console.error(error)
+            processing.value = false
         }
-
-        processing.value = false
     }
 
     const revokeLicense = async () => {
-        processing.value = true
-
-        await licenseHandler.revokeLicense()
-
-        licenseIsActive.value = licenseHandler.isActive()
-
-        processing.value = false
+        try {
+            processing.value = true
+    
+            await licenseHandler.revokeLicense()
+    
+            licenseIsActive.value = licenseHandler.isActive()
+    
+            processing.value = false
+        } catch (error) {
+            console.error(error)
+            processing.value = false
+        }
     }
 
     const buyLicense = () => {
