@@ -22,6 +22,7 @@ class Column {
     public bool $unsigned = false;
     public bool $autoIncrement = false;
     public bool $isRawDefault = false;
+    public array $options = [];
     
     public static function fromSchemaColumn(SchemaColumn $column, int $order = 0): Column
     {
@@ -40,6 +41,7 @@ class Column {
         $newColumn->index = false;
         $newColumn->unique = false;
         $newColumn->default = $column->getDefault();
+        $newColumn->options = $column->getPresetValues();
 
         // Set total and places for decimal type to adequate with the
         // old schema reader implementation
@@ -182,6 +184,7 @@ class Column {
             'unsigned' => $this->unsigned,
             'autoIncrement' => $this->autoIncrement,
             'isRawDefault' => $this->isRawDefault,
+            'options' => $this->options,
         ];
     }
 }

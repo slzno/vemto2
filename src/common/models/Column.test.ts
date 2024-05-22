@@ -25,6 +25,14 @@ test('A column has changes when schema state is empty', () => {
     expect(column.hasSchemaChanges({})).toBe(true)
 })
 
+test('It adds column options to the schema state', () => {
+    const column = TestHelper.createColumnWithSchemaState()
+
+    const hasOptions = typeof column.schemaState.options !== undefined
+
+    expect(hasOptions).toBe(true)
+})
+
 test('It reorders columns sequentially', () => {
     const usersTable = TestHelper.createTable({ name: 'users' }),
         usersModel = TestHelper.createModel({ name: 'User', table: usersTable }),

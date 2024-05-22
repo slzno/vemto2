@@ -291,6 +291,7 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         this.default = data.default
         this.total = data.total
         this.places = data.places
+        this.options = data.options
 
         this.fillSchemaState()
 
@@ -327,7 +328,8 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
             unique: this.unique,
             default: this.default,
             total: this.total,
-            places: this.places
+            places: this.places,
+            options: DataComparator.cloneArray(this.options),
         }
     }
 
@@ -344,6 +346,7 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
             default: DataComparator.stringsAreDifferent(this.schemaState.default, comparisonData.default),
             total: DataComparator.numbersAreDifferent(this.schemaState.total, comparisonData.total),
             places: DataComparator.numbersAreDifferent(this.schemaState.places, comparisonData.places),
+            options: DataComparator.arraysAreDifferent(this.schemaState.options, comparisonData.options),
         }
     }
 
