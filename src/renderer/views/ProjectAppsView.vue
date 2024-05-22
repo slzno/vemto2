@@ -22,7 +22,7 @@
         search = ref("")
 
     const filteredApplications = computed(() => {
-        return projectStore.project.getApplications().filter((app) => {
+        return projectStore.project.getNonDetailApplications().filter((app) => {
             return app.getLabel().toLowerCase().includes(search.value.toLowerCase())
         })
     })

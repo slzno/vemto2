@@ -192,6 +192,12 @@ export default class Project extends RelaDB.Model {
         return ProjectPathResolver.getPath()
     }
 
+    getNonDetailApplications(): any[] {
+        const cruds = this.cruds.filter((crud) => !crud.isDetail())
+
+        return [...cruds, ...this.pages]
+    }
+
     getApplications(): any[] {
         return [...this.cruds, ...this.pages]
     }
