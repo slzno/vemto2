@@ -221,6 +221,9 @@
     const checkProjectInfo = async (projectInfo: ProjectInfo) => {
         if(!projectInfo.isLaravelProject) {
             Alert.error("This folder is not a Laravel project")
+
+            stopLoading()
+            
             return false
         }
 
