@@ -14,6 +14,7 @@ import BelongsToManyDetail from "./BelongsToManyDetail"
 import Route, { RouteType } from "@Common/models/Route"
 import WordManipulator from "@Common/util/WordManipulator"
 import { camelCase, capitalCase, paramCase, pascalCase } from "change-case"
+import test from "node:test"
 
 export enum CrudType {
     DEFAULT = "Default",
@@ -184,7 +185,7 @@ export default class Crud extends RelaDB.Model {
             || defaultSearchColumn
 
         const defaultSection = crudIsForFilament
-            ? AppSection.findDefaultAdminSection()
+            ? AppSection.findDefaultFilamentPanelSection()
             : AppSection.findDefaultDashboardSection()
 
         const crud = new Crud()
@@ -237,7 +238,7 @@ export default class Crud extends RelaDB.Model {
             || defaultSearchColumn
 
         const defaultSection = crudIsForFilament
-            ? AppSection.findDefaultAdminSection()
+            ? AppSection.findDefaultFilamentPanelSection()
             : AppSection.findDefaultDashboardSection()
 
         const crud = new Crud()
@@ -281,7 +282,7 @@ export default class Crud extends RelaDB.Model {
             || defaultSearchColumn
 
         const defaultSection = crudIsForFilament
-            ? AppSection.findDefaultAdminSection()
+            ? AppSection.findDefaultFilamentPanelSection()
             : AppSection.findDefaultDashboardSection()
 
         const crudName = WordManipulator.runMultiple(
@@ -334,7 +335,7 @@ export default class Crud extends RelaDB.Model {
             || defaultSearchColumn
 
         const defaultSection = crudIsForFilament
-            ? AppSection.findDefaultAdminSection()
+            ? AppSection.findDefaultFilamentPanelSection()
             : AppSection.findDefaultDashboardSection()
 
         const crudName = WordManipulator.runMultiple(

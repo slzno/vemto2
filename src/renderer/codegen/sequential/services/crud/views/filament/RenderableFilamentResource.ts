@@ -5,6 +5,7 @@ import {
     RenderableFileType,
 } from "@Common/models/RenderableFile"
 import Namespace from "@Renderer/codegen/util/Namespace"
+import { pascalCase } from "pascal-case"
 
 export default class RenderableFilamentResource extends Renderable {
     crud: Crud
@@ -28,7 +29,7 @@ export default class RenderableFilamentResource extends Renderable {
     }
 
     getPath(): string {
-        return Namespace.from(`App\\Filament\\Resources\\${this.crud.section.name}`).toPath()
+        return Namespace.from(`App\\Filament\\Resources\\${this.crud.section.getFileBasePath()}`).toPath()
     }
 
     getFilename(): string {
