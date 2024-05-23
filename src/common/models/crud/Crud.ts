@@ -14,9 +14,11 @@ import BelongsToManyDetail from "./BelongsToManyDetail"
 import Route, { RouteType } from "@Common/models/Route"
 import WordManipulator from "@Common/util/WordManipulator"
 import { camelCase, capitalCase, paramCase, pascalCase } from "change-case"
+import GenerateCrudApiRoutes from "./services/GenerateCrudApiRoutes"
 
 export enum CrudType {
     DEFAULT = "Default",
+    API = "API",
     VUE = "Vue",
     LIVEWIRE = "Livewire",
     FILAMENT = "Filament"
@@ -149,16 +151,24 @@ export default class Crud extends RelaDB.Model {
         return Crud.get().filter((crud: Crud) => crud.isBasic())
     }
 
+    static getApis() {
+        return Crud.get().filter((crud: Crud) => crud.isApi())
+    }
+
     static getFilamentResources() {
         return Crud.get().filter((crud: Crud) => crud.isForFilament() && !crud.isDetail())
     }
 
     isBasic() {
-        return !this.isDetail() && !this.isForFilament()
+        return !this.isDetail() && !this.isForFilament() && !this.isApi()
     }
 
     isDetail() {
         return this.isHasManyDetail || this.isMorphManyDetail || this.isBelongsToManyDetail || this.isMorphToManyDetail
+    }
+
+    isApi() {
+        return this.type === CrudType.API
     }
 
     hasDefaultSearchColumn(): boolean {
@@ -211,13 +221,15 @@ export default class Crud extends RelaDB.Model {
 
         crud.addInputsFromModel(model, excludedColumns)
 
-        if(!crudIsForFilament) {
-            crud.addRoutes()
-            crud.addNavs()
-        }
-
         if(generateDetails) {
             crud.addHasManyDetails()
+            crud.addBelongsToManyDetails()
+        }
+
+        if(!crudIsForFilament) {
+            crud.addRoutes()
+            
+            if(crud.type != CrudType.API) crud.addNavs()
         }
 
         return crud
@@ -390,9 +402,10 @@ export default class Crud extends RelaDB.Model {
     }
 
     getAppType(): string {
-        if(this.type === CrudType.FILAMENT) return 'FILAMENT'
+        if(this.type === CrudType.FILAMENT) return "FILAMENT"
+        if(this.type === CrudType.API) return "API Resource"
 
-        return 'CRUD'
+        return "CRUD"
     }
 
     isManyToManyDetail(): boolean {
@@ -574,6 +587,11 @@ export default class Crud extends RelaDB.Model {
     }
 
     addRoutes() {
+        if(this.type == CrudType.API) {
+            new GenerateCrudApiRoutes(this).generate()
+            return;
+        }
+
         Route.create({
             name: `${this.getBaseRouteName()}.index`,
             tag: "index",
@@ -692,6 +710,14 @@ export default class Crud extends RelaDB.Model {
     addHasManyDetails() {
         this.model.getHasManyRelations().forEach((relationship) => {
             HasManyDetail.createFromRelation(this, relationship)
+        })
+
+        return this
+    }
+
+    addBelongsToManyDetails() {
+        this.model.getBelongsToRelations().forEach((relationship) => {
+            BelongsToManyDetail.createFromRelation(this, relationship)
         })
 
         return this

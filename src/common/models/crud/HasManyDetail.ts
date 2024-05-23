@@ -2,6 +2,7 @@ import Crud, { CrudType } from './Crud'
 import Relationship from '../Relationship'
 import RelaDB from '@tiago_silva_pereira/reladb'
 import { camelCase, capitalCase, paramCase } from 'change-case'
+import Route from '../Route'
 
 export default class HasManyDetail extends RelaDB.Model {
     id: string
@@ -14,6 +15,8 @@ export default class HasManyDetail extends RelaDB.Model {
 
     relationships() {
         return {
+            routes: () => this.morphMany(Route, 'routable').cascadeDelete(),
+
             crud: () => this.belongsTo(Crud),
             detailCrud: () => this.belongsTo(Crud, "detailCrudId"),
             relationship: () => this.belongsTo(Relationship),
@@ -55,5 +58,9 @@ export default class HasManyDetail extends RelaDB.Model {
             componentPath = `${sectionPath}.${paramCase(this.crud.name)}-${paramCase(this.detailCrud.plural)}-detail`
 
         return `<livewire:${componentPath} :${paramCase(this.crud.name)}="$${camelCase(this.crud.name)}" />`
+    }
+
+    getRouteContent(): string {
+        return ''
     }
 }

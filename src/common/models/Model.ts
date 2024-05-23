@@ -940,4 +940,8 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
 
         column.save()
     }
+
+    getControllerName() {
+        return `${this.name}Controller`
+    }
 }

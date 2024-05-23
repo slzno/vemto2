@@ -194,7 +194,10 @@ import { PlusIcon } from "@heroicons/vue/24/outline";
                     </div>
                 </div>
         
-                <div>
+                <div class="space-x-2">
+                    <div title="Api Route" v-if="route.isApiRoute()" class="rounded px-1 py-1 bg-slate-700 inline-block text-xs">
+                        API
+                    </div>
                     <div class="rounded px-2 py-1 bg-slate-800 inline-block text-sm">
                         {{ route.getName() }}
                     </div>

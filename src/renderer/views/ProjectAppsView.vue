@@ -2,6 +2,7 @@
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import CrudManager from "./components/ProjectApps/CrudManager.vue"
+    import CrudApiManager from "./components/ProjectApps/CrudApiManager.vue"
     import FilamentResourceManager from "./components/ProjectApps/FilamentResourceManager.vue"
     import { useRouter } from "vue-router"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
@@ -28,10 +29,10 @@
     })
 
     const openApp = (app: Crud | Page) => {
-        if (["CRUD", "FILAMENT"].includes(app.getAppType())) {
-            router.push({ name: "project-crud", params: { crudId: app.id } })
-        } else {
+        if (["Page"].includes(app.getAppType())) {
             router.push({ name: "project-page", params: { pageId: app.id } })
+        } else {
+            router.push({ name: "project-crud", params: { crudId: app.id } })
         }
     }
 
@@ -81,10 +82,7 @@
                 <CrudManager />
                 <PageManager />
                 <FilamentResourceManager />
-                <UiButton disabled>
-                    <PlusIcon class="w-4 h-4 mr-1" />
-                    API Resource
-                </UiButton>
+                <CrudApiManager />
                 <UiButton disabled>
                     <PlusIcon class="w-4 h-4 mr-1" />
                     Nova Resource

@@ -4,6 +4,7 @@ import RelaDB from '@tiago_silva_pereira/reladb'
 import { capitalCase } from 'change-case'
 import { InputType } from './InputType'
 import { FilamentInputType } from './filament/FilamentInputTypesList'
+import Route from '../Route'
 
 export default class BelongsToManyDetail extends RelaDB.Model {
     id: string
@@ -16,6 +17,8 @@ export default class BelongsToManyDetail extends RelaDB.Model {
 
     relationships() {
         return {
+            routes: () => this.morphMany(Route, 'routable').cascadeDelete(),
+
             crud: () => this.belongsTo(Crud),
             detailCrud: () => this.belongsTo(Crud, "detailCrudId"),
             relationship: () => this.belongsTo(Relationship),
@@ -65,5 +68,9 @@ export default class BelongsToManyDetail extends RelaDB.Model {
         }
         
         return belongsToManyDetail
+    }
+
+    getRouteContent(): string {
+        return ''
     }
 }

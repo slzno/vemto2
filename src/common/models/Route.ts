@@ -7,6 +7,7 @@ export enum RouteType {
     RESOURCE = "resource",
     MIDDLEWARE = "middleware",
     GROUP = "group",
+    API_ROUTE = "apiRoute",
 }
 
 export default class Route extends RelaDB.Model {
@@ -36,8 +37,20 @@ export default class Route extends RelaDB.Model {
         }
     }
 
+    static getWebRoutes() {
+        return Route.get().filter((route: Route) => !route.isApiRoute())
+    }
+
+    static getApiRoutes() {
+        return Route.get().filter((route: Route) => route.isApiRoute())
+    }
+
     getLaravelMethod(): string {
         return this.method
+    }
+
+    isApiRoute(): boolean {
+        return this.type === RouteType.API_ROUTE
     }
 
     getContent(): string {

@@ -14,6 +14,7 @@ import Renderable from "./services/foundation/Renderable"
 import PackageChecker from "./services/PackageChecker"
 import RenderableFile from "@Common/models/RenderableFile"
 import GenerateLivewireLayout from "./services/crud/GenerateLivewireLayout"
+import GenerateCrudApiFiles from "./services/crud/GenerateCrudApiFiles"
 
 export default class SequentialGenerator {
     static startTime: number = 0
@@ -132,6 +133,7 @@ export default class SequentialGenerator {
         
         await new GenerateModelFiles().start()
         await new GenerateCrudFiles().start()
+        await new GenerateCrudApiFiles().start()
         await new GenerateFilamentResources().start()
         await new GeneratePageFiles().start()
         
