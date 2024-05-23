@@ -13,7 +13,7 @@
         <span
             :class="{
                 'text-yellow-500 dark:text-yellow-400 font-semibold':
-                    column.autoIncrement,
+                    column.isAutoIncrement(),
                 'text-red-500 dark:text-red-400 font-semibold':
                     column.isForeign(),
                 'text-orange-500 dark:text-orange-400 font-semibold':
@@ -25,8 +25,8 @@
         >
             <div
                 :class="{
-                    'bg-slate-200 dark:bg-slate-700': !column.autoIncrement,
-                    'bg-yellow-400 dark:bg-yellow-400': column.autoIncrement,
+                    'bg-slate-200 dark:bg-slate-700': column.isNotAutoIncrement(),
+                    'bg-yellow-400 dark:bg-yellow-400': column.isAutoIncrement(),
                     'bg-red-500 dark:bg-red-400': column.isForeign(),
                     'bg-orange-500 dark:bg-orange-400': column.isUnique(),
                     'bg-blue-400 dark:bg-blue-300': column.isNotForeignIndex(),
