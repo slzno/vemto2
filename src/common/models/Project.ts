@@ -749,7 +749,7 @@ export default class Project extends RelaDB.Model {
     }
 
     getDefaultTranslation(key: string): string {
-        return this.getTranslation(this.defaultLanguage, key)
+        return this.getTranslation(this.defaultLanguage, key) || ""
     }
 
     getTranslation(language: string, key: string): string {
