@@ -2,7 +2,7 @@
     import { ref, onMounted, nextTick, defineEmits, computed } from 'vue'
     import Table from "@Common/models/Table"
     import SchemaSection from "@Common/models/SchemaSection"
-    import { ArrowDownTrayIcon, ArrowPathIcon, ChatBubbleLeftEllipsisIcon, MagnifyingGlassMinusIcon, MagnifyingGlassPlusIcon, PhotoIcon, PlusCircleIcon, PlusIcon, XMarkIcon } from "@heroicons/vue/24/outline"
+    import { ArrowDownTrayIcon, ArrowPathIcon, ChatBubbleLeftEllipsisIcon, MagnifyingGlassMinusIcon, MagnifyingGlassPlusIcon, PhotoIcon, PlusCircleIcon, PlusIcon, ViewfinderCircleIcon, XMarkIcon } from "@heroicons/vue/24/outline"
     import UiModal from '@Renderer/components/ui/UiModal.vue'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
     import UiText from '@Renderer/components/ui/UiText.vue'
@@ -36,7 +36,12 @@
         }
     })
 
-    const emit = defineEmits(['tableAdded', 'syncSchema', 'checkForChanges'])
+    const emit = defineEmits([
+        'tableAdded', 
+        'syncSchema', 
+        'checkForChanges',
+        'scrollChanged',
+    ])
 
     const filteredTables = computed(() => {
         return projectStore.project.tables.filter(table => {
@@ -308,6 +313,12 @@
             Alert.error(error.message)
         }
     }
+
+    const centerScroll = () => {
+        if(!schemaStore.selectedSchemaSection) return
+
+        schemaStore.selectedSchemaSection.requestScrollCentering()
+    }
 </script>
 
 <template>
@@ -449,6 +460,11 @@
                         <UiDropdownItem @click="info('Save as Image: Coming soon...')">
                             <PhotoIcon class="w-5 h-5 mr-3 text-red-450" />
                             Save as Image
+                        </UiDropdownItem>
+
+                        <UiDropdownItem @click="centerScroll()">
+                            <ViewfinderCircleIcon class="w-5 h-5 mr-3 text-red-450" />
+                            Centralize View
                         </UiDropdownItem>
                     </UiOptionsDropdown>
                 </div>

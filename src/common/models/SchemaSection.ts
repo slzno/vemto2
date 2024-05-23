@@ -10,6 +10,7 @@ export default class SchemaSection extends RelaDB.Model {
     projectId: string
     scrollX: number
     scrollY: number
+    scrollCenteringRequested: boolean
 
     relationships() {
         return {
@@ -58,5 +59,15 @@ export default class SchemaSection extends RelaDB.Model {
         }
 
         this.delete()
+    }
+
+    requestScrollCentering() {
+        this.scrollCenteringRequested = true
+        this.save()
+    }
+
+    clearScrollCenteringRequest() {
+        this.scrollCenteringRequested = false
+        this.save()
     }
 }

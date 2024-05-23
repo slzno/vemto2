@@ -28,6 +28,14 @@
         loadTables()
     })
 
+    watch(() => schemaStore.selectedSchemaSection.scrollCenteringRequested, (value) => {
+        if(value) {
+            centerScroll()
+            setCanvasScroll()
+            schemaStore.selectedSchemaSection.clearScrollCenteringRequest()
+        }
+    })
+
     watch(() => projectStore.project.tables, () => {
         loadTables()
     })
@@ -120,6 +128,10 @@
     const centerScrollIfNecessary = () => {
         if(schemaStore.selectedSchemaSection.hasScroll()) return
 
+        centerScroll()
+    }
+
+    const centerScroll = () => {
         const windowWidth = window.innerWidth,
             windowHeight = window.innerHeight,
             sidebarNavWidth = 80,
