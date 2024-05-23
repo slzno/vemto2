@@ -4,7 +4,7 @@
 <% const tableIsSoftDeletes = this.crud.table.hasSoftDeletes() %>
 <% const navigationIcon = this.crud.filamentSettings.navigationIcon ?? 'heroicon-o-rectangle-stack' %>
 
-namespace App\Filament\Resources\<$ this.crud.section.name $>;
+namespace App\Filament\Resources\<$ this.crud.section.getFileBasePath() $>;
 
 use Filament\Forms;
 use Filament\Tables;
@@ -14,11 +14,11 @@ use Livewire\Component;
 use <$ this.crud.model.class $>;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Resources\<$ this.crud.section.name $>\<$ this.filenameWithoutExtension $>\Pages;
+use App\Filament\Resources\<$ this.crud.section.getFileBasePath() $>\<$ this.filenameWithoutExtension $>\Pages;
 <% if(tableIsSoftDeletes) { %>
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 <% } %>
-use App\Filament\Resources\<$ this.crud.section.name $>\<$ this.filenameWithoutExtension $>\RelationManagers;
+use App\Filament\Resources\<$ this.crud.section.getFileBasePath() $>\<$ this.filenameWithoutExtension $>\RelationManagers;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 <% for(let input of this.crud.inputs) { %>

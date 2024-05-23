@@ -3,11 +3,11 @@
 <% const pascalCase = this.require('pascalCase') %>
 <% const parentResourceName = pascalCase(`${this.crud.name}Resource`) %>
 
-namespace App\Filament\Resources\<$ this.crud.section.name $>\<$ parentResourceName $>\Pages;
+namespace App\Filament\Resources\<$ this.crud.section.getFileBasePath() $>\<$ parentResourceName $>\Pages;
 
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
-use App\Filament\Resources\<$ this.crud.section.name $>\<$ parentResourceName $>;
+use App\Filament\Resources\<$ this.crud.section.getFileBasePath() $>\<$ parentResourceName $>;
 // hook:IMPORTS
 
 class <$ this.filenameWithoutExtension $> extends ViewRecord

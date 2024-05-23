@@ -5,6 +5,7 @@ import {
 } from "@Common/models/RenderableFile"
 import Namespace from "@Renderer/codegen/util/Namespace"
 import MorphToManyDetail from "../../../../../../../common/models/crud/MorphToManyDetail"
+import { pascalCase } from "pascal-case"
 
 export default class RenderableFilamentMorphToManyRelationManager extends Renderable {
     detail: MorphToManyDetail
@@ -30,11 +31,11 @@ export default class RenderableFilamentMorphToManyRelationManager extends Render
     getPath(): string {
         const crud = this.detail.crud
 
-        return Namespace.from(`App\\Filament\\Resources\\${crud.section.name}\\${crud.name}Resource\\RelationManagers`).toPath()
+        return Namespace.from(`App\\Filament\\Resources\\${crud.section.getFileBasePath()}\\${pascalCase(crud.name)}Resource\\RelationManagers`).toPath()
     }
 
     getFilename(): string {
-        return `${this.detail.relationship.relatedModel.plural}RelationManager.php`
+        return `${pascalCase(this.detail.relationship.relatedModel.plural)}RelationManager.php`
     }
 
     getFormatter(): RenderableFileFormatter {

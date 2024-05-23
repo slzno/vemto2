@@ -27,9 +27,9 @@ export default class GenerateBasicSections {
         })
 
         AppSection.create({
-            name: "Admin",
-            routePrefix: "admin",
-            routeBasePath: "admin",
+            name: "Filament Panel",
+            routePrefix: "panel",
+            routeBasePath: "panel",
             projectId: this.project.id,
             requiresAuth: false,
         })

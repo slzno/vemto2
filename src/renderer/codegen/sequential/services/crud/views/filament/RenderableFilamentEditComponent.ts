@@ -5,6 +5,7 @@ import {
     RenderableFileType,
 } from "@Common/models/RenderableFile"
 import Namespace from "@Renderer/codegen/util/Namespace"
+import { pascalCase } from "pascal-case"
 
 export default class RenderableFilamentEditComponent extends Renderable {
     crud: Crud
@@ -28,11 +29,11 @@ export default class RenderableFilamentEditComponent extends Renderable {
     }
 
     getPath(): string {
-        return Namespace.from(`App\\Filament\\Resources\\${this.crud.section.name}\\${this.crud.name}Resource\\Pages`).toPath()
+        return Namespace.from(`App\\Filament\\Resources\\${this.crud.section.getFileBasePath()}\\${pascalCase(this.crud.name)}Resource\\Pages`).toPath()
     }
 
     getFilename(): string {
-        return `Edit${this.crud.name}.php`
+        return `Edit${pascalCase(this.crud.name)}.php`
     }
 
     getFormatter(): RenderableFileFormatter {
