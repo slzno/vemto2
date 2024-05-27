@@ -342,6 +342,14 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         return this.columns.filter((column) => !column.isRemoved())
     }
 
+    hasUniqueColumns(): boolean {
+        return !! this.getUniqueColumns().length
+    }
+
+    getUniqueColumns(): Column[] {
+        return this.getColumns().filter((column) => column.isUnique())
+    }
+
     getValidColumns(): Column[] {
         return this.getColumns().filter((column) => !! column.type?.length && !! column.name?.length)
     }

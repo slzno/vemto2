@@ -231,6 +231,14 @@ export default class Input extends RelaDB.Model {
         return !! this.required
     }
 
+    isJson(): boolean {
+        return this.column.isJson()
+    }
+
+    isRequiredOnCreation(): boolean {
+        return this.isRequired() && this.showOnCreation
+    }
+
     needsMaxValidation() {
         return [InputType.TEXT, InputType.TEXTAREA, InputType.NUMBER, InputType.FILE, InputType.IMAGE].includes(this.type) && this.max
     }
@@ -344,6 +352,38 @@ export default class Input extends RelaDB.Model {
 
                 if(ruleName === 'unique' && rules === this.updateRules) {
                     rule += `->ignore($this->${crud.settings.itemName})`
+                }
+
+                return rule
+            }
+
+            return `"${rule}"`
+        })
+    }
+
+    getCreationRulesForCrudRequest() {
+        return this.getRulesForCrudRequest(this.creationRules)
+    }
+
+    getUpdateRulesForCrudRequest() {
+        return this.getRulesForCrudRequest(this.updateRules)
+    }
+
+    getRulesForCrudRequest(rules: InputValidationRule[]) {
+        let allRules: string[] = rules.map((rule) => rule.value)
+
+        const dynamicVariables = ['unique', 'exists']
+
+        return allRules.map((rule: string) => {
+            const [ruleName, ruleArgs] = rule.split(':')
+
+            if(dynamicVariables.includes(ruleName)) {
+                let args = ruleArgs.split(',').map((arg) => `'${arg}'`).join(', ')
+            
+                let rule = `Rule::${ruleName}(${args})`
+
+                if(ruleName === 'unique' && rules === this.updateRules) {
+                    rule += `->ignore($this->${changeCase.camelCase(this.crud.settings.itemName)})`
                 }
 
                 return rule

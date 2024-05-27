@@ -586,6 +586,10 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         return foreigns
     }
 
+    hasTimestampsColumns(): boolean {
+        return this.hasTimestamps
+    }
+
     getSelfRelationships(): Relationship[] {
         return this.ownRelationships.filter((relationship) => relationship.isCommon() && relationship.modelId == this.id)
     }

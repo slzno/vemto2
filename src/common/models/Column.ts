@@ -370,6 +370,10 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         return this.type === 'enum'
     }
 
+    isJson(): boolean {
+        return ["jsonb", "json"].includes(this.type)
+    }
+
     isSet(): boolean {
         return this.type === 'set'
     }

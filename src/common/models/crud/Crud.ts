@@ -424,6 +424,10 @@ export default class Crud extends RelaDB.Model {
         return this.inputs.filter((input) => input.isCommon())
     }
 
+    hasFileInputs(): boolean {
+        return this.getFileInputs().length > 0
+    }
+
     getFileInputs(): Input[] {
         return this.inputs.filter((input) => input.isFileOrImage())
     }
@@ -454,6 +458,14 @@ export default class Crud extends RelaDB.Model {
 
     getPasswordInputs(): Input[] {
         return this.inputs.filter((input) => input.isPassword())
+    }
+
+    hasJsonInputs(): boolean {
+        return this.getJsonInputs().length > 0
+    }
+
+    getJsonInputs(): Input[] {
+        return this.inputs.filter((input) => input.isJson())
     }
 
     getInputsForIndexExcept(excludedInputs: Input | Input[]): Input[] {
