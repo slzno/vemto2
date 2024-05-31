@@ -380,6 +380,49 @@ export default class Crud extends RelaDB.Model {
         return crud
     }
 
+    static createFakeFromModel(
+        model: Model,
+        data: any = {},
+        crudType: CrudType = CrudType.LIVEWIRE,
+        excludedColumns: Column[] = []
+    ) {
+        const defaultSearchColumn = model.table.getLabelColumn(),
+            crudIsForFilament = crudType == CrudType.FILAMENT
+
+        const defaultSortColumn = model.table.getUpdatedAtColumn() 
+            || model.table.getCreatedAtColumn()
+            || model.table.getPrimaryKeyColumn()
+            || defaultSearchColumn
+
+        const defaultSection = crudIsForFilament
+            ? AppSection.findDefaultAdminSection()
+            : AppSection.findDefaultDashboardSection()
+
+        const crud = new Crud()
+        crud.type = crudType
+        crud.name = data.name || capitalCase(model.name)
+        crud.plural = capitalCase(model.plural)
+        crud.sectionId = defaultSection ? defaultSection.id : null
+        crud.modelId = model.id
+        crud.tableId = model.tableId
+        crud.projectId = model.projectId
+        crud.basePath = capitalCase(model.plural)
+
+        crud.calculateSettings()
+        crud.calculateLivewireSpecificData()
+
+        if(defaultSearchColumn) crud.defaultSearchColumnId = defaultSearchColumn.id
+        if(defaultSortColumn) crud.defaultSortColumnId = defaultSortColumn.id
+
+        crud.defaultSortDirection = "desc"
+
+        if(crudIsForFilament) crud.calculateFilamentSettings()
+
+        crud.addFakeInputsFromModel(model, excludedColumns)
+
+        return crud
+    }
+
     isOnlyTableCrud(): boolean {
         return !this.modelId && !!this.tableId
     }
@@ -563,6 +606,30 @@ export default class Crud extends RelaDB.Model {
             const input = Input.createFromColumn(this, column)
             input.panelId = panel.id
             input.save()
+        })
+    }
+
+    addFakeInputsFromModel(model: Model, excludedColumns: Column[] = []) {
+        const panel = new CrudPanel()
+        panel.title = 'Main'
+        panel.crudId = this.id
+        panel.order = 0
+
+        const excludedColumnsIds = excludedColumns
+            .filter((column) => column)
+            .map((column: Column) => column.id)
+
+        model.table.getColumns().forEach((column: Column) => {
+            if(excludedColumnsIds.includes(column.id)) return
+            if(column.isPrimaryKey()) return
+            if(column.isDefaultLaravelTimestamp()) return
+
+            if(model.columnIsHiddenForCrudCreation(column)) return
+
+            const input = Input.createFakeFromColumn(this, column)
+            input.panel = panel
+
+            this.inputs.push(input)
         })
     }
 

@@ -1,6 +1,8 @@
 import Route, { RouteType } from "@Common/models/Route";
 import Crud from "../Crud";
 import { camelCase, paramCase } from "change-case";
+import HasManyDetail from "../HasManyDetail";
+import BelongsToManyDetail from "../BelongsToManyDetail";
 
 export default class GenerateCrudApiRoutes {
     crud: Crud
@@ -29,28 +31,37 @@ export default class GenerateCrudApiRoutes {
     }
 
     generateCrudRelationshipRoutes() {
-        this.crud.hasManyDetails.forEach(detail => {
-            const detailCrudModelPlural = paramCase(detail.detailCrud.model.plural),
-                detailCrudModelName = camelCase(detail.detailCrud.model.name)
-
-            const indexStoreRoutePath = this.getRoutePath(detailCrudModelPlural, `{${detailCrudModelName}}`)
-
-            this.createRoute("index", "get", indexStoreRoutePath, detail.id, "HasManyDetail")
-            this.createRoute("store", "post", indexStoreRoutePath, detail.id, "HasManyDetail")
+        this.crud.hasManyDetails.forEach((detail: HasManyDetail) => {
+            this.generateHasManyRelationshipRoutes(detail)
         })
 
-        this.crud.belongsToManyDetails.forEach(detail => {
-            const detailCrudModelName = camelCase(detail.crud.model.name),
-                detailRelatedCrudModelPlural = paramCase(detail.detailCrud.model.plural),
-                detailRelatedCrudModelName = camelCase(detail.detailCrud.model.name)
-
-            const indexRoutePath = this.getRoutePath(`{${detailCrudModelName}}`, detailRelatedCrudModelPlural),
-                storeDestroyRoutePath = this.getRoutePath(`{${detailCrudModelName}}`, detailRelatedCrudModelPlural, `{${detailRelatedCrudModelName}}`)
-
-            this.createRoute("index", "get", indexRoutePath, detail.id, "BelonsToManyDetail")
-            this.createRoute("store", "post", storeDestroyRoutePath, detail.id, "BelonsToManyDetail")
-            this.createRoute("destroy", "delete", storeDestroyRoutePath, detail.id, "BelonsToManyDetail")
+        this.crud.belongsToManyDetails.forEach((detail: BelongsToManyDetail) => {
+            this.generateBelongsToManyRelationshipRoutes(detail)
         })
+    }
+
+    generateHasManyRelationshipRoutes(detail: HasManyDetail) {
+        const detailCrudModelPlural = paramCase(detail.detailCrud.model.plural),
+            detailCrudModelName = camelCase(detail.detailCrud.model.name)
+
+        const indexStoreRoutePath = this.getRoutePath(detailCrudModelPlural, `{${detailCrudModelName}}`)
+
+        this.createRoute("index", "get", indexStoreRoutePath, detail.id, "HasManyDetail")
+        this.createRoute("store", "post", indexStoreRoutePath, detail.id, "HasManyDetail")
+
+    }
+
+    generateBelongsToManyRelationshipRoutes(detail: BelongsToManyDetail) {
+        const detailCrudModelName = camelCase(detail.crud.model.name),
+            detailRelatedCrudModelPlural = paramCase(detail.detailCrud.model.plural),
+            detailRelatedCrudModelName = camelCase(detail.detailCrud.model.name)
+
+        const indexRoutePath = this.getRoutePath(`{${detailCrudModelName}}`, detailRelatedCrudModelPlural),
+            storeDestroyRoutePath = this.getRoutePath(`{${detailCrudModelName}}`, detailRelatedCrudModelPlural, `{${detailRelatedCrudModelName}}`)
+
+        this.createRoute("index", "get", indexRoutePath, detail.id, "BelonsToManyDetail")
+        this.createRoute("store", "post", storeDestroyRoutePath, detail.id, "BelonsToManyDetail")
+        this.createRoute("destroy", "delete", storeDestroyRoutePath, detail.id, "BelonsToManyDetail")
     }
 
     createRoute(name: string, method: string, path: string, routableId: string, routableType: String) {

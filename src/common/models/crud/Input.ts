@@ -128,6 +128,50 @@ export default class Input extends RelaDB.Model {
         return input
     }
 
+    static createFakeFromColumn(crud: Crud, column: Column, forceType?: InputType | null, ignoreColumnHidden: boolean = false) {
+        const input = new Input()
+
+        input.disableAutomaticRelations()
+
+        input.crud = crud
+        input.column = column
+        input.name = column.name
+        input.label = input.generateTranslationForLabel()
+        input.placeholder = input.generateTranslationForPlaceholder()
+        input.readOnly = false
+        input.required = !column.nullable
+        input.hidden = false
+        input.defaultValue = ""
+        input.checked = false
+        input.max = 0
+        input.min = 0
+        input.step = 0
+        input.items = []
+        input.showOnCreation = true
+        input.showOnUpdate = true
+
+        let columnIsHidden = false
+        
+        if(crud.model) {
+            columnIsHidden = ignoreColumnHidden ? false : crud.model.hidden && crud.model.hidden.indexOf(column.name) !== -1
+        }
+
+        input.showOnDetails = !columnIsHidden
+        input.showOnIndex = !columnIsHidden
+
+        input.calculateType(column)
+
+        if (forceType) {
+            input.type = forceType
+        }
+
+        input.calculateInputParamsByType()
+        input.generateItemsFromColumn()
+        input.generateValidationRules()
+
+        return input
+    }
+
     calculateType(column: Column) {
         const defaultInputType = column.getDefaultInputType() as InputType
 
@@ -175,8 +219,16 @@ export default class Input extends RelaDB.Model {
         return this.relationship ? this.relationship.relatedModel : null
     }
 
+    isRelatedToModel(model: Model) {
+        return this.isForRelationship() && this.relationship.modelId === model.id
+    }
+
     isBelongsTo(): boolean {
         return this.type === InputType.BELONGS_TO && !! this.relationshipId
+    }
+
+    isForRelationship(): boolean {
+        return this.isBelongsTo() || this.column.isForeignKey()
     }
 
     getColumnNameForFilament(isBelongsToManyDetail: boolean = false, manyToManyRelationshipInputKey: Column): string {

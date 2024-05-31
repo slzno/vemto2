@@ -3,6 +3,7 @@ import Relationship from '../Relationship'
 import RelaDB from '@tiago_silva_pereira/reladb'
 import { camelCase, capitalCase, paramCase } from 'change-case'
 import Route from '../Route'
+import GenerateCrudApiRoutes from './services/GenerateCrudApiRoutes'
 
 export default class HasManyDetail extends RelaDB.Model {
     id: string
@@ -49,6 +50,10 @@ export default class HasManyDetail extends RelaDB.Model {
         hasManyDetail.detailCrudId = detailCrud.id
 
         hasManyDetail.save()
+
+        if(crud.isApi()) {
+            new GenerateCrudApiRoutes(crud).generateHasManyRelationshipRoutes(hasManyDetail)
+        }
         
         return hasManyDetail
     }

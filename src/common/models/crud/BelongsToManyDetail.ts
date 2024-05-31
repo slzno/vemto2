@@ -5,6 +5,7 @@ import { capitalCase } from 'change-case'
 import { InputType } from './InputType'
 import { FilamentInputType } from './filament/FilamentInputTypesList'
 import Route from '../Route'
+import GenerateCrudApiRoutes from './services/GenerateCrudApiRoutes'
 
 export default class BelongsToManyDetail extends RelaDB.Model {
     id: string
@@ -65,6 +66,10 @@ export default class BelongsToManyDetail extends RelaDB.Model {
             input.type = InputType.BELONGS_TO
             input.relationshipId = relationship.id
             input.save()
+        }
+
+        if(crud.isApi()) {
+            new GenerateCrudApiRoutes(crud).generateBelongsToManyRelationshipRoutes(belongsToManyDetail)
         }
         
         return belongsToManyDetail

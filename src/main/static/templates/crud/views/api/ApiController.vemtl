@@ -32,8 +32,6 @@ class <$ controllerName $> extends Controller
 {
     public function index(Request $request): <$ modelNamePascalCase $>Collection
     {
-        $this->authorize('view-any', <$ modelNamePascalCase $>::class);
-
         $search = $request->get('search', '');
 
         $<$ modelPluralCamelCase $> = <$ modelNamePascalCase $>::search($search)
@@ -86,15 +84,11 @@ class <$ controllerName $> extends Controller
 
     public function show(Request $request, <$ modelNamePascalCase $> $<$ modelNameCamelCase $>): <$ modelNamePascalCase $>Resource
     {
-        $this->authorize('view', $<$ modelNameCamelCase $>);
-
         return new <$ modelNamePascalCase $>Resource($<$ modelNameCamelCase $>);
     }
 
     public function update(<$ modelNamePascalCase $>UpdateRequest $request, <$ modelNamePascalCase $> $<$ modelNameCamelCase $>): <$ modelNamePascalCase $>Resource
     {
-        $this->authorize('update', $<$ modelNameCamelCase $>);
-
         $validated = $request->validated();
 
         <% if(this.crud.hasPasswordInputs()) { %>
@@ -138,8 +132,6 @@ class <$ controllerName $> extends Controller
 
     public function destroy(Request $request, <$ modelNamePascalCase $> $<$ modelNameCamelCase $>): Response
     {
-        $this->authorize('delete', $<$ modelNameCamelCase $>);
-
         <% if(this.crud.hasFileInputs()) { %>
             <###>
             <% for(let input of this.crud.getFileInputs()) { %>
