@@ -86,8 +86,12 @@
 
     const getLastSelectedKey = () => `lastSelectedTab-${props.name}`
 
-    const setLoadingTab = (tab: string): void => {
-        loadingTab.value = tab
+    const setLoadingTab = (tab: string, isLoading: true): void => {
+        if (isLoading) {
+            loadingTab.value = tab
+        } else {
+            clearLoadingTab()
+        }
     }
 
     const clearLoadingTab = (): void => {
@@ -117,11 +121,11 @@
         >
             <div>{{ tab.label }}</div>
 
-            <div class="h-4 w-5" v-if="isLoadingTab(tab.value)">
+            <div class="h-4 w-2" v-if="isLoadingTab(tab.value)">
                 <UiLoading class="w-4 h-4" :size="15" :stroke-width="2"/>
             </div>
 
-            <div v-else>
+            <div class="h-4 w-2" v-else>
                 <!-- Tab badge -->
                 <div
                     class="flex items-center justify-center h-4 w-5 text-xs border border-slate-700 rounded"

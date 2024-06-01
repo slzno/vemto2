@@ -1,10 +1,12 @@
 <script setup lang="ts">
     import Model from "@Common/models/Model"
     import TableModel from "./TableModel.vue"
-    import { PropType, toRef, reactive, watch } from "vue"
+    import { PropType, toRef, reactive, watch, onMounted } from "vue"
     import Table from "@Common/models/Table"
     import { PlusCircleIcon } from "@heroicons/vue/24/outline"
     import CreateDefaultTableModel from "@Common/models/services/tables/CreateDefaultTableModel"
+
+    const emit = defineEmits(["loading"])
 
     const props = defineProps({
             table: {
@@ -13,12 +15,27 @@
             },
         })
 
-    const table = toRef(props, "table"),
-        allTableModels = reactive(table.value.getModels())
+    const table = toRef(props, "table")
+    
+    let allTableModels = reactive([] as Model[])
     
     watch(table, () => {
-        allTableModels.splice(0, allTableModels.length, ...table.value.getModels())
+        loadModels()
     })
+
+    onMounted(() => {
+        loadModels()
+    })
+
+    const loadModels = (): void => {
+        emit("loading", true)
+
+        setTimeout(() => {
+            allTableModels.splice(0, allTableModels.length, ...table.value.getModels())
+
+            emit("loading", false)
+        }, 100)
+    }
 
     const addModel = (): void => {
         if(!table.value.getModels().length) {

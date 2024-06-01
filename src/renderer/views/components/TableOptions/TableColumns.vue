@@ -5,6 +5,8 @@
     import Draggable from "vuedraggable"
     import { PlusCircleIcon } from "@heroicons/vue/24/outline"
 
+    const emit = defineEmits(["loading"])
+
     const props = defineProps(["table"]),
         table = toRef(props, "table")
 
@@ -13,6 +15,20 @@
     watch(table, () => {
         columns.value = table.value.getOrderedColumns()
     })
+
+    onMounted(async () => {
+        loadColumns()
+    })
+
+    const loadColumns = async () => {
+        emit("loading", true)
+
+        setTimeout(() => {
+            columns.value = table.value.getOrderedColumns()
+
+            emit("loading", false)
+        }, 100)
+    }
 
     const addColumn = () => {
         const newColumn = new Column({
@@ -47,10 +63,6 @@
     const removeColumn = (column: Column) => {
         columns.value.splice(columns.value.indexOf(column), 1)
     }
-
-    onMounted(() => {
-        columns.value = table.value.getOrderedColumns()
-    })
 </script>
 
 <template>
