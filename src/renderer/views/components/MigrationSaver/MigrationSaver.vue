@@ -68,19 +68,22 @@
     })
 
     const show = async () => {
-        calculatingChanges.value = true
         showingModal.value = true
         
         await nextTick()
 
+        calculatingChanges.value = true
+        SchemaBuilder.disableSchemaChangesCheck()
+
+        await new Promise((resolve) => requestAnimationFrame(resolve))
+        await nextTick()
+
         setTimeout(async () => {
             MigrationOrganizer.storeTablesOrders(projectStore.project)
-
+    
             await buildSettings()
             await selectFirstTableOrModel()
-        }, 100);
-
-        SchemaBuilder.disableSchemaChangesCheck()
+        }, 1000)
     }
 
     const close = () => {
@@ -420,6 +423,7 @@
                 @close="close()"
                 width="1400px"
                 height="calc(100vh - 5rem)"
+                :processing="calculatingChanges || savingSchemaChanges"
             >
                 <section
                     :class="{

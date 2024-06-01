@@ -34,10 +34,9 @@
             schemaStore.selectLatestSchemaSection()
 
             nextTick(() => {
-                drawConnections()
                 zoomWithMouseWheel()
             })
-        }, 1);
+        }, 1)
     })
 
     watch(() => projectStore.project.currentZoom, () => changeSchemaZoom())
@@ -113,61 +112,63 @@
         currentNodes = {}
         currentConnections = {}
 
-        jsPlumbInstance.deleteEveryConnection({
-            force: true,
-        })
-
-        const tables = projectStore.project.getTablesBySection(schemaStore.selectedSchemaSection)
-
-        tables.forEach((table: Table) => {
-            if(!table || !table.id) return
-
-            if(!currentNodes[table.id]) {
-                currentNodes[table.id] = document.getElementById("table_" + table.id)!
-
-                if(!currentNodes[table.id]) return
-                jsPlumbInstance.manage(currentNodes[table.id])
-            }
-            
-            const node = currentNodes[table.id],
-                relatedTablesRelations = table.getRelatedTablesRelationsOnSection(
-                    schemaStore.selectedSchemaSection
-                )
-
-            // connect tables
-            if (relatedTablesRelations.length > 0) {
-                relatedTablesRelations.forEach((relation: any) => {
-                    if(!relation.table || !relation.table.id) return
-
-                    let relatedNode = document.getElementById(
-                            "table_" + relation.table.id
-                        ),
-                        connectionName = table.name + "_" + relation.table.name,
-                        connectionNameReverse =
-                            relation.table.name + "_" + table.name
-
-                    if (relatedNode && !currentConnections[connectionName]) {
-                        const cssClass = relation.type === "relationship" ? "connector" : "connector dotted"
-
-                        jsPlumbInstance.connect({
-                            source: node!,
-                            target: relatedNode!,
-                            anchor: "Continuous",
-                            anchors: [["Right", "Left"], ["Left", "Right"]],
-                            cssClass: cssClass,
-                            connector: {
-                                type: BezierConnector.type,
-                                options: {
-                                    curviness: 70,
+        jsPlumbInstance.batch(() => {
+            jsPlumbInstance.deleteEveryConnection({
+                force: true,
+            })
+    
+            const tables = projectStore.project.getTablesBySection(schemaStore.selectedSchemaSection)
+    
+            tables.forEach((table: Table) => {
+                if(!table || !table.id) return
+    
+                if(!currentNodes[table.id]) {
+                    currentNodes[table.id] = document.getElementById("table_" + table.id)!
+    
+                    if(!currentNodes[table.id]) return
+                    jsPlumbInstance.manage(currentNodes[table.id])
+                }
+                
+                const node = currentNodes[table.id],
+                    relatedTablesRelations = table.getRelatedTablesRelationsOnSection(
+                        schemaStore.selectedSchemaSection
+                    )
+    
+                // connect tables
+                if (relatedTablesRelations.length > 0) {
+                    relatedTablesRelations.forEach((relation: any) => {
+                        if(!relation.table || !relation.table.id) return
+    
+                        let relatedNode = document.getElementById(
+                                "table_" + relation.table.id
+                            ),
+                            connectionName = table.name + "_" + relation.table.name,
+                            connectionNameReverse =
+                                relation.table.name + "_" + table.name
+    
+                        if (relatedNode && !currentConnections[connectionName]) {
+                            const cssClass = relation.type === "relationship" ? "connector" : "connector dotted"
+    
+                            jsPlumbInstance.connect({
+                                source: node!,
+                                target: relatedNode!,
+                                anchor: "Continuous",
+                                anchors: [["Right", "Left"], ["Left", "Right"]],
+                                cssClass: cssClass,
+                                connector: {
+                                    type: BezierConnector.type,
+                                    options: {
+                                        curviness: 70,
+                                    },
                                 },
-                            },
-                        })
-
-                        currentConnections[connectionName] = true
-                        currentConnections[connectionNameReverse] = true
-                    }
-                })
-            }
+                            })
+    
+                            currentConnections[connectionName] = true
+                            currentConnections[connectionNameReverse] = true
+                        }
+                    })
+                }
+            })
         })
     }
 

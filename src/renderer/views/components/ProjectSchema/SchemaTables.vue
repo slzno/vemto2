@@ -52,21 +52,23 @@
 
         projectStore.project.addListener('tables:changed', debounce(() => {
             loadTables()
-        }, 300))
+        }, 100))
 
         loadTables()
     })
 
-    const loadTables = () => {
-        if(!canLoadTables.value) return
-
-        if(projectStore.projectIsEmpty) return
-
-        tables.value = projectStore.project.getTablesBySection(schemaStore.selectedSchemaSection)
-
-        nextTick(() => {
-            emit('tablesLoaded')
-        })
+    const loadTables = async () => {
+        setTimeout(() => {
+            if(!canLoadTables.value) return
+    
+            if(projectStore.projectIsEmpty) return
+    
+            tables.value = projectStore.project.getTablesBySection(schemaStore.selectedSchemaSection)
+    
+            nextTick(() => {
+                emit('tablesLoaded')
+            })
+        }, 1)
     }
 
     /**
