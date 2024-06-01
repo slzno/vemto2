@@ -17,6 +17,15 @@
 
     let positionTracking: any = { top: 0, left: 0, x: 0, y: 0 }
 
+    watch(() => schemaStore.selectedTable, table => {
+        if(!table.id) {
+            clearHighlight()
+            return
+        }
+
+        highlightTable(table)
+    })
+
     watch(() => schemaStore.focusedTable, table => {
         if(!table) return
 
@@ -87,7 +96,7 @@
 
         centerOnPosition(positionX, positionY)
 
-        highlightTable(table)
+        focusTable(table)
     }
     
     /**
@@ -116,7 +125,7 @@
         tableCanvas.scrollTop = scrollTop
     }
 
-    const highlightTable = (table) => {
+    const focusTable = (table) => {
         const tableElement = document.getElementById(`table_${table.id}`)
 
         if(!tableElement) return
@@ -126,6 +135,27 @@
         setTimeout(() => {
             tableElement.classList.remove('animate__animated','animate__pulse', 'animate__faster')
         }, 500)
+    }
+
+    const highlightTable = (table) => {
+        // add opacity-30 to all other .schema-table tables
+        const tables = document.querySelectorAll('.schema-table')
+
+        tables.forEach((tableElement) => {
+            if(tableElement.id === `table_${table.id}`) {
+                tableElement.classList.remove('opacity-30')
+            } else {
+                tableElement.classList.add('opacity-30')
+            }
+        })
+    }
+
+    const clearHighlight = () => {
+        const tables = document.querySelectorAll('.schema-table')
+
+        tables.forEach((tableElement) => {
+            tableElement.classList.remove('opacity-30')
+        })
     }
 
     const centerScrollIfNecessary = () => {

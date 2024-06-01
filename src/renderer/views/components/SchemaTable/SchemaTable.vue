@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { nextTick, ref, toRef } from "vue"
+    import { nextTick, ref, toRef, computed } from "vue"
     import Table from "@Common/models/Table"
     import TableModel from "./TableModel.vue"
     import TableColumn from "./TableColumn.vue"
@@ -84,6 +84,19 @@
 
         table.value.moveToSection(section)
     }
+
+    const titleClasses = computed(() => {
+        return {
+            'line-through': table.value.isRemoved(),
+        }
+    })
+
+    const tableStyles = computed(() => {
+        return {
+            top: getTablePosition(table.value).top,
+            left: getTablePosition(table.value).left,
+        }
+    })
 </script>
 
 <template>
@@ -92,29 +105,21 @@
     </UiConfirm>
 
     <div
+    v-once
         :id="`table_${table.id}`"
         :ref="`table_${table.id}`"
         :data-table-id="table.id"
-        :class="{
-            'opacity-30': schemaStore.hasSelectedTable && schemaStore.selectedTableIsNot(table),
-            'border border-transparent': schemaStore.selectedTableIsNot(table),
-            'border border-slate-400 dark:border-slate-500': schemaStore.selectedTableIs(table),
-        }"
-        class="schema-table group absolute shadow-lg rounded-lg hover:border-slate-400 dark:hover:border-slate-500 bg-white dark:bg-slate-850 z-10 space-y-4 pb-4 select-none cursor-default"
+        
+        class="schema-table group absolute shadow-lg rounded-lg border border-transparent hover:border-slate-400 dark:hover:border-slate-500 bg-white dark:bg-slate-850 z-10 space-y-4 pb-4 select-none cursor-default"
         style="min-width: 270px"
-        :style="{
-            top: getTablePosition(table).top,
-            left: getTablePosition(table).left,
-        }"
+        :style="tableStyles"
     >
         <!-- Table title -->
         <div 
             class="w-full cursor-move hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-t-lg px-4 pt-2 pb-2 flex justify-between items-center"
         >
             <span class="title w-full font-bold text-lg text-slate-750 dark:text-slate-300 flex items-center space-x-1">
-                <div class="flex items-center" :class="{
-                    'line-through': table.isRemoved(),
-                }">
+                <div class="flex items-center" :class="titleClasses">
                     <div title="The table will be removed after saving the migration" v-show="table.isRemoved()">
                         <ExclamationCircleIcon
                             class="w-5 h-5 text-red-500 mr-2"/>
