@@ -1,5 +1,6 @@
 <script setup lang="ts">
     import 'animate.css'
+    import { debounce } from 'lodash'
     import Table from '@Common/models/Table'
     import { onMounted, watch, ref, Ref, defineEmits, nextTick } from "vue"
     import SchemaTable from "../SchemaTable/SchemaTable.vue"
@@ -36,10 +37,6 @@
         }
     })
 
-    watch(() => projectStore.project.tables, () => {
-        loadTables()
-    })
-
     onMounted(() => {
         canLoadTables.value = true
 
@@ -52,6 +49,10 @@
         setCanvasScroll()
 
         tablesCanvas.addEventListener('mousedown', mouseDownHandler)
+
+        projectStore.project.addListener('tables:changed', debounce(() => {
+            loadTables()
+        }, 300))
 
         loadTables()
     })

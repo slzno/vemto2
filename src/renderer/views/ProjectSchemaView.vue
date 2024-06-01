@@ -179,28 +179,10 @@
         if (!containerElement) return false
 
         jsPlumbInstance = newInstance({
-            container: document.getElementById("tablesReference")!,
-            // dragOptions: {
-            //     grid: {
-            //         w: 25,
-            //         h: 25,
-            //     },
-            // }
-        })
-
-        jsPlumbInstance.bind(EVENT_DRAG_START, (p: any) => {
-            if(!schemaStore.canDragTable) return false
-
-            isDragging = true
-
-            const tableId = parseInt(p.el.getAttribute("data-table-id")).toString()
-
-            schemaStore.setDraggingTableId(tableId)
+            container: document.getElementById("tablesReference")!
         })
 
         jsPlumbInstance.bind(EVENT_DRAG_STOP, (p: any) => {
-            schemaStore.resetDraggingTableId()
-            
             isDragging = false
 
             const tableId = parseInt(p.el.getAttribute("data-table-id")).toString(),

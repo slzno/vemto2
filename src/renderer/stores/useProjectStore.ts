@@ -16,17 +16,7 @@ export const useProjectStore = defineStore("project", {
         reloadProject() {
             if(!this.project.id) return
 
-            const currentProject = this.project
-
-            // Reset project to empty. This is necessary because if we use
-            // this.project.fresh(), it changes the instance of the project
-            // and its relationships, which breaks some things. By doing this,
-            // we can keep the same instance of the project and its relationships,
-            // but still make the reactivity detect the changes
-            this.project = null
-
-            // reload project
-            this.project = currentProject
+            this.project = this.project.fresh()
         },
 
         setHasSourceChanges(hasSourceChanges: boolean) {

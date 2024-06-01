@@ -1,31 +1,29 @@
+import { debounce } from "lodash"
 import { defineStore } from "pinia"
 import Table from "@Common/models/Table"
-import SchemaSection from "@Common/models/SchemaSection"
 import { useProjectStore } from "./useProjectStore"
+import SchemaSection from "@Common/models/SchemaSection"
 
 export const useSchemaStore = defineStore("schema", {
     state: () => ({ 
-        canDragTable: false,
         focusedTable: {} as Table,
         selectedTable: {} as Table,
         selectedSchemaSection: {} as SchemaSection,
-        draggingTableId: null as string | null,
-        lastDraggedTableId: null as string | null,
     }),
 
     actions: {
-        enableTableDragging(): void {
-            this.canDragTable = true
-        },
-
-        disableTableDragging(): void {
-            this.canDragTable = false
+        reloadSelectedTable() {
+            this.selectedTable = this.selectedTable.fresh()
         },
 
         selectTable(table: Table): void {
             this.deselectTable()
 
             this.selectedTable = table
+
+            this.selectedTable.addListener('relationships:changed', debounce(() => {
+                this.reloadSelectedTable()
+            }, 100))
         },
 
         deselectTable(): void {
@@ -81,20 +79,6 @@ export const useSchemaStore = defineStore("schema", {
 
             return `selectedSchemaSection_${projectStore.project.id}`
         },
-
-        setDraggingTableId(tableId: string | null): void {
-            this.draggingTableId = tableId
-            this.lastDraggedTableId = tableId
-        },
-
-        resetDraggingTableId(): void {
-            this.draggingTableId = null
-        },
-
-        wasLastDraggedTable(table: Table): boolean {
-            console.log(this.lastDraggedTableId, table.id)
-            return this.lastDraggedTableId == table.id
-        }
     },
 
     getters: {

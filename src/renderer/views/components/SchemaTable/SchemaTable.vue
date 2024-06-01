@@ -22,7 +22,6 @@
     let clickedQuickly = false,
         isClickingOptions = false
 
-
     const removeTable = async () => {
         itIsClickingOptions()
 
@@ -110,8 +109,6 @@
     >
         <!-- Table title -->
         <div 
-            @mouseover="schemaStore.enableTableDragging()"
-            @mouseleave="schemaStore.disableTableDragging()"
             class="w-full cursor-move hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-t-lg px-4 pt-2 pb-2 flex justify-between items-center"
         >
             <span class="title w-full font-bold text-lg text-slate-750 dark:text-slate-300 flex items-center space-x-1">
