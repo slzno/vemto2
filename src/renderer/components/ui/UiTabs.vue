@@ -121,11 +121,11 @@
         >
             <div>{{ tab.label }}</div>
 
-            <div class="h-4 w-2" v-if="isLoadingTab(tab.value)">
+            <div class="h-4 w-4" v-if="isLoadingTab(tab.value)">
                 <UiLoading class="w-4 h-4" :size="15" :stroke-width="2"/>
             </div>
 
-            <div class="h-4 w-2" v-else>
+            <div class="h-4 w-4" v-else>
                 <!-- Tab badge -->
                 <div
                     class="flex items-center justify-center h-4 w-5 text-xs border border-slate-700 rounded"

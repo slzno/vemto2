@@ -40,7 +40,7 @@
     const tabs = [
         { label: "Data", value: "data" },
         { label: "Relationships", value: "relationships" },
-        { label: "Code Hooks", value: "code" },
+        { label: "Code", value: "code" },
         { label: "Imports", value: "imports" },
         { label: "Settings", value: "settings" },
     ]
