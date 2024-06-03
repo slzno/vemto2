@@ -612,7 +612,7 @@ export default class Crud extends RelaDB.Model {
     addFakeInputsFromModel(model: Model, excludedColumns: Column[] = []) {
         const panel = new CrudPanel()
         panel.title = 'Main'
-        panel.crudId = this.id
+        panel.crud = this
         panel.order = 0
 
         const excludedColumnsIds = excludedColumns

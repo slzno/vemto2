@@ -208,13 +208,13 @@
 
         switch(creatingRelationshipType.value) {
             case 'hasManyDetail':
-                HasManyDetail.createFromRelation(crud.value, relationship)
+                HasManyDetail.createFromRelation(crud.value, relationship, true)
                 break
             case 'morphMany':
                 MorphManyDetail.createFromRelation(crud.value, relationship)
                 break
             case 'belongsToMany':
-                BelongsToManyDetail.createFromRelation(crud.value, relationship)
+                BelongsToManyDetail.createFromRelation(crud.value, relationship, true)
                 break
             case 'morphToMany':
                 MorphToManyDetail.createFromRelation(crud.value, relationship)

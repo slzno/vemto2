@@ -31,9 +31,11 @@ Route::prefix('/<$ section.routeBasePath $>')
 ->group(function () {
     <% for(let app of section.getApplications()) { %>
         <% for(let route of app.routes) { %>
-        Route::<$ route.getLaravelMethod() $>('<$ route.path $>', <$ route.getContent() $>)
-            ->name('<$ route.name $>');
-        
+            <% if(!route.isApiRoute()) { %>
+                Route::<$ route.getLaravelMethod() $>('<$ route.path $>', <$ route.getContent() $>)
+                    ->name('<$ route.name $>');
+                    
+            <% } %>
         <% } %>
     <% } %>
 });

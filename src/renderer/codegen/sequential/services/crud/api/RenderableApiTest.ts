@@ -3,6 +3,7 @@ import {
     RenderableFileFormatter,
     RenderableFileType,
 } from "@Common/models/RenderableFile"
+import Crud from "@Common/models/crud/Crud"
 import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
 import { pascalCase } from "change-case"
 
@@ -32,7 +33,7 @@ export default class RenderableApiTest extends Renderable {
     }
 
     getFilename(): string {
-        return `${pascalCase(this.crud.name)}Collection.php`
+        return `${pascalCase(this.crud.model.name)}Test.php`
     }
 
     getFormatter(): RenderableFileFormatter {

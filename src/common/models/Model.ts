@@ -634,6 +634,16 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         return this.table.getColumnByName(columnName)
     }
 
+    getNotFillableColumns(): Column[] {
+        return this.table.columns.filter((column: Column) => !this.fillable.includes(column.name))
+    }
+
+    getFillableColumnsWithoutInputs(): Column[] {
+        return this.table.columns.filter(
+            (column: Column) => this.fillable.includes(column.name) && column.inputs.length <= 0
+        )
+    }
+
     tableNameIsDifferentFromDefault(): boolean {
         const currentTableName = this.table.name,
             defaultTableName = snakeCase(WordManipulator.pluralize(this.name))

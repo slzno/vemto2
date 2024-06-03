@@ -1,1 +1,70 @@
 <?php
+<# TEMPLATE VARIABLES #>
+<% const snakeCase = this.require('snakeCase') %>
+<% const camelCase = this.require('camelCase') %>
+<% const paramCase = this.require('paramCase') %>
+<####>
+
+use <$ this.crud.model.getClassString() $>;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+uses(RefreshDatabase::class, WithFaker::class, TestCase::class);
+
+beforeEach(function () {
+    $this->withoutExceptionHandling();
+});
+
+test('it gets <$ snakeCase(this.crud.model.plural) $> list', function () {
+    $<$ camelCase(this.crud.model.plural) $> = <$ this.crud.model.name $>::factory()->count(5)->create();
+
+    $response = $this->get(route('api.<$ paramCase(this.crud.model.plural) $>.index'));
+
+    $response->assertOk()
+        ->assertSee($<$ camelCase(this.crud.model.plural) $>[0]-><$ this.crud.table.getLabelColumnName() $>);
+});
+
+test('it stores the <$ snakeCase(this.crud.model.name) $>', function () {
+    $data = <$ this.crud.model.name $>::factory()->make()->toArray();
+
+    <% for (let input of this.crud.getPasswordInputs()) { %>
+        <###>
+        <% if(input.isRequiredOnCreation()) { %>
+            $data['<$ input.name $>'] = \Str::random('8');
+        <% } %>
+    <% } %>
+
+    $response = $this->postJson(route('api.<$ paramCase(this.crud.model.plural) $>.store'), $data);
+
+    <% for(let input of this.crud.getPasswordInputs()) { %>
+        <###>
+        <% if(input.isRequiredOnCreation()) { %>
+            unset($data['<$ input.name $>']);
+        <% } %>
+    <% } %>
+
+    <% for(let column of this.crud.model.getNotFillableColumns()) { %>
+        <###>
+        <up if(!this.crud.model.hidden.includes(column.name) && !column.isPrimaryKey()) { up>
+            unset($data['<$ column.name $>']);
+        <up } up>
+    <% } %>
+    <###>
+    <% for(let columnName of this.crud.model.appends) { %>
+        unset($data['<$ columnName $>']);
+    <% } %>
+    <###>
+    <% for(let column of this.crud.model.getFillableColumnsWithoutInputs()) { %>
+        <###>
+        <% if(!this.crud.model.hidden.includes(column.name) && !column.isPrimaryKey()) { %>
+            unset($data['<$ column.name $>']);
+        <% } %>
+    <% } %>
+
+    $this->assertDatabaseHas('<$ this.crud.model.table.name $>', $data);
+
+    $response
+        ->assertStatus(201)
+        ->assertJsonFragment($data);
+});

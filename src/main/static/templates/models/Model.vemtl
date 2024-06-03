@@ -5,6 +5,7 @@
 namespace App\Models;
 
 // hook:BEFORE_IMPORTS
+use App\Models\Scopes\Searchable;
 <% if(this.model.hasParentClass()) { %>
 use <$ this.model.getParentClass() $>;
 <% } %>
@@ -58,9 +59,12 @@ implements
     <% if(this.model.hasSoftDeletes) { %>
     use SoftDeletes;
     <% } %>
+    use Searchable;
     // hook:TRAITS
 
     // hook:BEFORE_VARIABLES
+    protected $searchableFields = ['*'];
+
     <% if(this.model.tableNameIsDifferentFromDefault()) { %>
     protected $table = '<$ this.model.table.name $>';
     <% } %>

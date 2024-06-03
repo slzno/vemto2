@@ -4,14 +4,17 @@ import {
     RenderableFileFormatter,
     RenderableFileType,
 } from "@Common/models/RenderableFile"
+import Crud from "@Common/models/crud/Crud"
 
 export default class ApiRoutes extends Renderable {
     routes: Route[]
+    cruds: Crud[]
 
-    constructor(routes: Route[]) {
+    constructor(routes: Route[], cruds: Crud[]) {
         super()
 
         this.routes = routes
+        this.cruds = cruds
     }
 
     canRender(): boolean {
@@ -41,6 +44,7 @@ export default class ApiRoutes extends Renderable {
     getData() {
         return {
             routes: this.routes,
+            cruds: this.cruds,
         }
     }
 }

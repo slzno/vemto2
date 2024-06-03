@@ -4,6 +4,8 @@
 <% const camelCase = this.require('camelCase') %>
 <% const modelNamePascalCase = pascalCase(this.crud.model.name) %>
 <% const modelNameCamelCase = camelCase(this.crud.model.name) %>
+<% const relatedModelNamePascalCase = pascalCase(this.crud.relatedModel.name) %>
+<% const relatedModelNameCamelCase = camelCase(this.crud.relatedModel.name) %>
 <####>
 
 namespace App\Controllers\Api;
@@ -34,50 +36,19 @@ class <$ this.filenameWithoutExtension $> extends Controller
         return new <$ this.relationship.relatedModel.name $>Collection($<$ camelCase(this.relationship.relatedModel.plural) $>);
     }
 
-    public function store(Request $request, <$ modelNamePascalCase $> $<$ modelNameCamelCase $>): <$ this.relationship.relatedModel.name $>Resource
+    public function store(Request $request, <$ modelNamePascalCase $> $<$ modelNameCamelCase $>, <$ relatedModelNamePascalCase $> $<$ relatedModelNameCamelCase $>): Response
     {
-        $validated = $request->validate([
-            <% for (let input of this.relationshipCrud.inputs) { %>
-                <% if(!! input.creationRules.length && !input.isRelatedToModel(this.crud.model)) { %>
-                    '<$ input.name $>' => [<$ input.getCreationRulesForCrudRequest() $>],
-                <% } %>
-            <% } %>
+        $<$ modelNameCamelCase $>-><$ this.relationship.name $>()->syncWithoutDetaching([
+            $<$ relatedModelNameCamelCase $>-><$ this.relationship.relatedModel.getPrimaryKeyName() $>
         ]);
-        
-        <% if(this.crud.hasPasswordInputs()) { %>
-            <###>
-            <% for(let input of this.crud.getPasswordInputs()) { %>
-                <% if(!input.isRequiredOnCreation()) { %>
-                    if(!empty($validated['<$ input.name $>'])) {
-                <% } %>
-                $validated['<$ input.name $>'] = Hash::make($validated['<$ input.name $>']);
-                <% if(!input.isRequiredOnCreation()) { %>
-                    }
-                <% } %>
 
-            <% } %>
-        <% } %>
+        return response()->noContent();
+    }
 
-        <% if(this.crud.hasFileInputs()) { %>
-            <###>
-            <% for(let input of this.crud.getFileInputs()) { %>
-                if($request->hasFile('<$ input.name $>')) {
-                    $validated['<$ input.name $>'] = $request->file('<$ input.name $>')->store('public');
-                }
-                
-            <% } %>
-        <% } %>
+    public function destroy(Request $request, <$ modelNamePascalCase $> $<$ modelNameCamelCase $>, <$ relatedModelNamePascalCase $> $<$ relatedModelNameCamelCase $>): Response
+    {
+        $<$ modelNameCamelCase $>-><$ this.relationship.name $>()->detach($<$ relatedModelNameCamelCase $>);
 
-        <% if(this.crud.hasJsonInputs()) { %>
-            <###>
-            <% for(let input of this.crud.getJsonInputs()) { %>
-                $validated['<$ input.name $>'] = json_encode($validated['<$ input.name $>'], true);
-
-            <% } %>
-        <% } %>
-
-        $<$ camelCase(this.relationship.relatedModel.name) $> = $<$ modelNameCamelCase $>-><$ this.relationship.name $>()->create($validated);
-
-        return new <$ this.relationship.relatedModel.name $>Resource($<$ camelCase(this.relationship.relatedModel.name) $>);
+        return response()->noContent();
     }
 }
