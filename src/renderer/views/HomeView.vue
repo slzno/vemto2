@@ -592,7 +592,6 @@
                             <UiLoading 
                                 v-if="loadingProjectId === project.id"
                                 :size="15"
-                                :strokeWidth="2"
                             ></UiLoading>
                             <UiOptionsDropdown size="w-64" v-else>
                                 <UiDropdownItem @click="openConnectionSettings(project)">

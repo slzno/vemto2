@@ -33,7 +33,8 @@
         modelPluralReference = ref(null),
         selectedTab = ref("data"),
         modelHooksContent = ref(""),
-        modelCasts = ref([])
+        modelCasts = ref([]),
+        uiTabs = ref(null)
     
     let models: Ref<Array<Model>> = ref([])
 
@@ -216,6 +217,7 @@
     >
         <div class="mb-2">
             <UiTabs 
+                ref="uiTabs"
                 :name="projectStore.project.getTabNameFor(`table${model.table.id}-model${model.id}`)"
                 :tabs="tabs" 
                 v-model="selectedTab" 
@@ -377,6 +379,7 @@
                 <TableModelRelationships
                     :model="model"
                     :models="models"
+                    @loading="uiTabs.setLoadingTab('relationships', $event)"
                 />
             </div>
     

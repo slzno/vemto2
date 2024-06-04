@@ -73,7 +73,9 @@
         localValue.value = value
         emit("update:modelValue", value)
 
-        localStorage.setItem(getLastSelectedKey(), value)
+        setTimeout(() => {
+            localStorage.setItem(getLastSelectedKey(), value)
+        }, 0)
     }
 
     const calculateSelectedClasses = (tabValue: string): any => {

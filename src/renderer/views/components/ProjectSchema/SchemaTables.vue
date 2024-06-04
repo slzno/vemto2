@@ -7,10 +7,12 @@
     import TableOptions from "../TableOptions/TableOptions.vue"
     import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
+import UiLoading from '@Renderer/components/ui/UiLoading.vue'
 
     const projectStore = useProjectStore(),
         schemaStore = useSchemaStore(),
         tables = ref([]) as Ref<Table[]>,
+        loading = ref(true),
         canLoadTables = ref(false)
 
     const emit = defineEmits(["tablesLoaded"])
@@ -67,17 +69,21 @@
     })
 
     const loadTables = async () => {
+        loading.value = true
+
         setTimeout(() => {
             if(!canLoadTables.value) return
     
             if(projectStore.projectIsEmpty) return
     
             tables.value = projectStore.project.getTablesBySection(schemaStore.selectedSchemaSection)
-    
+            
+            loading.value = false
+
             nextTick(() => {
                 emit('tablesLoaded')
             })
-        }, 1)
+        }, 100)
     }
 
     /**
@@ -251,6 +257,10 @@
         @scroll.passive="onScroll"
         class="relative block overflow-auto cursor-grab scrollbar-thin scrollbar-thumb-slate-400 scrollbar-track-slate-300 dark:scrollbar-thumb-black dark:scrollbar-track-slate-900"
     >
+        <div v-show="loading" class="fixed top-0 left-0 w-full h-full flex items-center justify-center space-x-2 z-50">
+            <UiLoading></UiLoading> 
+            <span>Loading...</span>
+        </div>
         <div
             id="tablesContainer"
             class="flex justify-center items-center"

@@ -19,6 +19,8 @@
     import UiMessage from '@Renderer/components/ui/UiMessage.vue'
     import UiInfo from '@Renderer/components/ui/UiInfo.vue'
 
+    const emit = defineEmits(["loading"])
+
     const props = defineProps(['model', 'models']),
         models = toRef(props, 'models'),
         model = toRef(props, 'model'),
@@ -35,7 +37,13 @@
     })
 
     const loadRelationships = () => {
-        relationships.value = model.value.ownRelationships
+        emit('loading', true)
+
+        setTimeout(() => {
+            relationships.value = model.value.ownRelationships
+
+            emit('loading', false)
+        }, 100)
     }
 
     const getRelatedModelRelationshipsForSelect = (relationship: Relationship) => {
