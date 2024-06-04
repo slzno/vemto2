@@ -31,7 +31,7 @@ import UiEmptyMessage from '@Renderer/components/ui/UiEmptyMessage.vue';
                 <div class="text-yellow-400" v-else>
                     Update migration
                 </div>
-                <div>
+                <div class="w-full overflow-hidden">
                     {{ migration.relativePath }}
                 </div>
             </div>
