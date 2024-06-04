@@ -61,10 +61,6 @@ import UiLoading from '@Renderer/components/ui/UiLoading.vue'
 
         tablesCanvas.addEventListener('mousedown', mouseDownHandler)
 
-        projectStore.project.addListener('tables:changed', debounce(() => {
-            loadTables()
-        }, 100))
-
         loadTables()
     })
 
