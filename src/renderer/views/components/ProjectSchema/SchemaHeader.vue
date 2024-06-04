@@ -510,7 +510,7 @@
 
                 <div 
                     v-show="searchIsFocused"
-                    class="absolute p-4 rounded-lg shadow border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 w-72"
+                    class="absolute p-4 rounded-lg shadow border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 w-72 max-h-96 overflow-y-auto z-50"
                     style="top: 110%; left: 0;"
                 >
                     <div @click="focusTable(table)" class="cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-700 rounded px-2 py-1" v-for="table in filteredTables" :key="table.id">
