@@ -13,7 +13,6 @@ export default class GenerateCrudApiRoutes {
 
     generate() {
         this.generateCrudRoutes()
-        this.generateCrudRelationshipRoutes()
     }
 
     getRoutePath(...paths: string[]) {
@@ -30,16 +29,6 @@ export default class GenerateCrudApiRoutes {
         this.createRoute(`${crudModelPlural}.show`, "get", this.getRoutePath(`{${crudModelName}}`), this.crud.id, "Crud", completeRouteAction('show'))
         this.createRoute(`${crudModelPlural}.update`, "put", this.getRoutePath(`{${crudModelName}}`), this.crud.id, "Crud", completeRouteAction('update'))
         this.createRoute(`${crudModelPlural}.destroy`, "delete", this.getRoutePath(`{${crudModelName}}`), this.crud.id, "Crud", completeRouteAction('destroy'))
-    }
-
-    generateCrudRelationshipRoutes() {
-        this.crud.hasManyDetails.forEach((detail: HasManyDetail) => {
-            this.generateHasManyRelationshipRoutes(detail)
-        })
-
-        this.crud.belongsToManyDetails.forEach((detail: BelongsToManyDetail) => {
-            this.generateBelongsToManyRelationshipRoutes(detail)
-        })
     }
 
     generateHasManyRelationshipRoutes(detail: HasManyDetail) {

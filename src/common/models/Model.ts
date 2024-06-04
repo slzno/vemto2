@@ -635,12 +635,16 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     }
 
     getNotFillableColumns(): Column[] {
-        return this.table.columns.filter((column: Column) => !this.fillable.includes(column.name))
+        return this.table.columns.filter((column: Column) => (this.hasFillable && !this.fillable.includes(column.name)) || (this.hasGuarded && this.guarded.includes(column.name)))
     }
 
     getFillableColumnsWithoutInputs(): Column[] {
+        return this.getFillableColumns().filter((column: Column) => column.inputs.length <= 0)
+    }
+
+    getFillableColumns(): Column[] {
         return this.table.columns.filter(
-            (column: Column) => this.fillable.includes(column.name) && column.inputs.length <= 0
+            (column: Column) => (this.hasFillable && this.fillable.includes(column.name)) || (this.hasGuarded && (this.guarded.length == 0 || !this.guarded.includes(column.name)))
         )
     }
 

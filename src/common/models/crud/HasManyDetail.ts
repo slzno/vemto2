@@ -28,12 +28,12 @@ export default class HasManyDetail extends RelaDB.Model {
         this.detailCrud.delete()
     }
 
-    static createFromRelation(crud: Crud, relationship: Relationship, createApiRoutes: boolean = false) {
+    static createFromRelation(crud: Crud, relationship: Relationship) {
         let hasManyDetail = new HasManyDetail()
         hasManyDetail.crudId = crud.id
         hasManyDetail.relationshipId = relationship.id
 
-        const excludedColumns = [
+        const excludedColumns = crud.isApi() ? [] : [
             relationship.foreignKey,
         ]
 
@@ -51,7 +51,7 @@ export default class HasManyDetail extends RelaDB.Model {
 
         hasManyDetail.save()
 
-        if(createApiRoutes && crud.isApi()) {
+        if(crud.isApi()) {
             new GenerateCrudApiRoutes(crud).generateHasManyRelationshipRoutes(hasManyDetail)
         }
         

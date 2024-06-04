@@ -276,6 +276,10 @@ export default class Crud extends RelaDB.Model {
 
         crud.addInputsFromModel(model, excludedColumns)
 
+        if(crudType == CrudType.API) {
+            crud.addRoutes()
+        }
+
         return crud
     }
 
@@ -374,6 +378,10 @@ export default class Crud extends RelaDB.Model {
         if(crudIsForFilament) crud.calculateFilamentSettings()
 
         crud.save()
+
+        if(crudType == CrudType.API) {
+            crud.addRoutes()
+        }
 
         crud.addInputsFromTable(table, excludedColumns)
 
