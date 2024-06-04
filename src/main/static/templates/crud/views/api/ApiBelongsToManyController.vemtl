@@ -8,7 +8,7 @@
 <% const relatedModelNameCamelCase = camelCase(this.crud.relatedModel.name) %>
 <####>
 
-namespace App\Controllers\Api;
+namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Response;
 use <$ this.crud.model.getClassString() $>;

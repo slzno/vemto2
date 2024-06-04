@@ -6,7 +6,7 @@
 <% const modelNameCamelCase = camelCase(this.crud.model.name) %>
 <####>
 
-namespace App\Controllers\Api;
+namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Response;
 use <$ this.crud.model.getClassString() $>;
@@ -44,9 +44,9 @@ class <$ this.filenameWithoutExtension $> extends Controller
             <% } %>
         ]);
         
-        <% if(this.crud.hasPasswordInputs()) { %>
+        <% if(this.relationshipCrud.hasPasswordInputs()) { %>
             <###>
-            <% for(let input of this.crud.getPasswordInputs()) { %>
+            <% for(let input of this.relationshipCrud.getPasswordInputs()) { %>
                 <% if(!input.isRequiredOnCreation()) { %>
                     if(!empty($validated['<$ input.name $>'])) {
                 <% } %>
@@ -58,9 +58,9 @@ class <$ this.filenameWithoutExtension $> extends Controller
             <% } %>
         <% } %>
 
-        <% if(this.crud.hasFileInputs()) { %>
+        <% if(this.relationshipCrud.hasFileInputs()) { %>
             <###>
-            <% for(let input of this.crud.getFileInputs()) { %>
+            <% for(let input of this.relationshipCrud.getFileInputs()) { %>
                 if($request->hasFile('<$ input.name $>')) {
                     $validated['<$ input.name $>'] = $request->file('<$ input.name $>')->store('public');
                 }
@@ -68,9 +68,9 @@ class <$ this.filenameWithoutExtension $> extends Controller
             <% } %>
         <% } %>
 
-        <% if(this.crud.hasJsonInputs()) { %>
+        <% if(this.relationshipCrud.hasJsonInputs()) { %>
             <###>
-            <% for(let input of this.crud.getJsonInputs()) { %>
+            <% for(let input of this.relationshipCrud.getJsonInputs()) { %>
                 $validated['<$ input.name $>'] = json_encode($validated['<$ input.name $>'], true);
 
             <% } %>

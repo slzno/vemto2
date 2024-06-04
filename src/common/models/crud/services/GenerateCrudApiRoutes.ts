@@ -33,11 +33,11 @@ export default class GenerateCrudApiRoutes {
 
     generateHasManyRelationshipRoutes(detail: HasManyDetail) {
         const detailCrudModelPlural = paramCase(detail.detailCrud.model.plural),
-            detailCrudModelName = camelCase(detail.detailCrud.model.name),
+            crudModelName = camelCase(detail.crud.model.name),
             crudModelPlural = paramCase(this.crud.model.plural),
             completeRouteAction = (methodName: string) => `[${detail.getApiControllerName()}::class, '${methodName}']`
 
-        const indexStoreRoutePath = this.getRoutePath(detailCrudModelPlural, `{${detailCrudModelName}}`)
+        const indexStoreRoutePath = this.getRoutePath(`{${crudModelName}}`, detailCrudModelPlural)
 
         this.createRoute(`${crudModelPlural}.${detailCrudModelPlural}.index`, "get", indexStoreRoutePath, detail.id, "HasManyDetail", completeRouteAction('index'))
         this.createRoute(`${crudModelPlural}.${detailCrudModelPlural}.store`, "post", indexStoreRoutePath, detail.id, "HasManyDetail", completeRouteAction('store'))

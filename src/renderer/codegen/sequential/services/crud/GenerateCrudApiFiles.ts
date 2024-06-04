@@ -7,6 +7,7 @@ import RenderableApiUpdateRequest from "./api/RenderableApiUpdateRequest"
 import RenderableApiTest from "./api/RenderableApiTest"
 import Relationship from "@Common/models/Relationship"
 import RenderableApiHasManyController from "./controllers/RenderableApiHasManyController"
+import RenderableApiHasManyTest from "./api/RenderableApiHasManyTest"
 
 export default class GenerateCrudApiFiles {
     async start() {
@@ -28,6 +29,8 @@ export default class GenerateCrudApiFiles {
                 await new RenderableApiCollection(relationship.model).render()
 
                 await new RenderableApiHasManyController(crud, relationship).render()
+                
+                await new RenderableApiHasManyTest(crud, relationship).render()
             })
         }
     }

@@ -1,0 +1,25 @@
+<?php
+<# TEMPLATE VARIABLES #>
+<% const snakeCase = this.require('snakeCase') %>
+<% const camelCase = this.require('camelCase') %>
+<% const paramCase = this.require('paramCase') %>
+<% const pascalCase = this.require('pascalCase') %>
+<% const modelName = this.crud.model.name %>
+<% const relModelName = this.relationship.relatedModel.name %>
+<% const relModelPlural = this.relationship.relatedModel.plural %>
+<% const relModelNameCamelCase = camelCase(relModelName) %>
+<% const modelNameCamelCase = camelCase(modelName) %>
+<% const modelNameSnakeCase = snakeCase(modelName) %>
+<% const modelPluralParamCase = paramCase(this.crud.model.plural.case) %>
+<####>
+
+use <$ this.crud.model.getClassString() $>;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+uses(RefreshDatabase::class, WithFaker::class, TestCase::class);
+
+beforeEach(function () {
+    $this->withoutExceptionHandling();
+});
