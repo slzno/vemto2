@@ -177,8 +177,8 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     isDirty(): boolean {
-        const hasDirtyColumns = this.columns.some((column) => column.isDirty()),
-            hasDirtyIndexes = this.indexes.some((index) => index.isDirty())
+        const hasDirtyColumns = this.columns && this.columns.some((column) => column.isDirty()),
+            hasDirtyIndexes = this.indexes && this.indexes.some((index) => index.isDirty())
 
         return !this.isRemoved() && (this.hasLocalChanges() || hasDirtyColumns || hasDirtyIndexes)
     }
@@ -347,6 +347,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     getAllOrderedColumns(): Column[] {
+        if(!this.columns) return []
         return this.columns.sort((a, b) => a.order - b.order)
     }
 
