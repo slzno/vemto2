@@ -20,10 +20,6 @@ export const useSchemaStore = defineStore("schema", {
             this.deselectTable()
 
             this.selectedTable = table
-
-            this.selectedTable.addListener('relationships:changed', debounce(() => {
-                this.reloadSelectedTable()
-            }, 100))
         },
 
         deselectTable(): void {

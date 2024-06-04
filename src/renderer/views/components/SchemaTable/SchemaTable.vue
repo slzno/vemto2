@@ -1,8 +1,11 @@
 <script setup lang="ts">
-    import { nextTick, ref, toRef, computed } from "vue"
+    import debounce from 'lodash/debounce'
     import Table from "@Common/models/Table"
+    import Model from "@Common/models/Model"
+    import Column from "@Common/models/Column"
     import TableModel from "./TableModel.vue"
     import TableColumn from "./TableColumn.vue"
+    import { nextTick, ref, Ref, toRef, computed, onMounted, onUnmounted } from "vue"
     import { ArrowRightIcon, ArrowUturnDownIcon, ExclamationCircleIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
     import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
@@ -15,12 +18,31 @@
         table = toRef(props, "table"),
         confirmDeleteDialog = ref(null),
         schemaStore = useSchemaStore(),
-        projectStore = useProjectStore()
+        projectStore = useProjectStore(),
+        tableColumns = ref([]) as Ref<Column[]>,
+        tableModels = ref([]) as Ref<Model[]>
 
     const emit = defineEmits(["highlight"])
     
     let clickedQuickly = false,
         isClickingOptions = false
+
+    onMounted(() => {
+        loadTableData()
+
+        table.value.addListener('relationships:changed', debounce(async () => {
+            loadTableData()
+        }, 100))
+    })
+
+    onUnmounted(() => {
+        table.value.clearListeners()
+    })
+
+    const loadTableData = () => {
+        tableColumns.value = table.value.getAllOrderedColumns()
+        tableModels.value = table.value.models
+    }
 
     const removeTable = async () => {
         itIsClickingOptions()
@@ -72,10 +94,10 @@
     }
 
     const selectTable = () => {
-        schemaStore.selectTable(table.value.fresh())
+        schemaStore.selectTable(table.value)
 
         nextTick(() => {
-            emit("highlight", table.value.fresh())
+            emit("highlight", table.value)
         })
     }
 
@@ -105,11 +127,9 @@
     </UiConfirm>
 
     <div
-    v-once
         :id="`table_${table.id}`"
         :ref="`table_${table.id}`"
         :data-table-id="table.id"
-        
         class="schema-table group absolute shadow-lg rounded-lg border border-transparent hover:border-slate-400 dark:hover:border-slate-500 bg-white dark:bg-slate-850 z-10 space-y-4 pb-4 select-none cursor-default"
         style="min-width: 270px"
         :style="tableStyles"
@@ -172,7 +192,7 @@
                 }" 
                 class="font-mono px-4">
                 <TableColumn
-                    v-for="column in table.getAllOrderedColumns()"
+                    v-for="column in tableColumns"
                     :key="column.name"
                     :column="column"
                 />
@@ -180,7 +200,7 @@
     
             <div class="font-mono px-4">
                 <TableModel
-                    v-for="model in table.models"
+                    v-for="model in tableModels"
                     :key="model.name"
                     :model="model"
                 />
