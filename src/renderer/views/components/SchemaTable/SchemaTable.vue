@@ -141,7 +141,7 @@
     >
         <!-- Table title -->
         <div 
-            class="w-full cursor-move hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-t-lg px-4 pt-2 pb-2 flex justify-between items-center"
+            class="w-full cursor-move dark:bg-slate-800 rounded-t-lg px-4 pt-2 pb-2 flex justify-between items-center"
         >
             <span class="title w-full font-bold text-lg text-slate-750 dark:text-slate-300 flex items-center space-x-1">
                 <div class="flex items-center" :class="titleClasses">
