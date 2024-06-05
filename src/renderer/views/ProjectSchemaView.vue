@@ -69,6 +69,8 @@
 
     const syncSchema = async (syncTables: boolean, syncModels: boolean) => {
         await loadSchema(syncTables, syncModels)
+
+        schemaStore.setNeedsReload()
     }
 
     const tableAdded = async (table: Table) => {
