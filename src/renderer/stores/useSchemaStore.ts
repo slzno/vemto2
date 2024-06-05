@@ -9,9 +9,18 @@ export const useSchemaStore = defineStore("schema", {
         focusedTable: {} as Table,
         selectedTable: {} as Table,
         selectedSchemaSection: {} as SchemaSection,
+        needsReload: false,
     }),
 
     actions: {
+        setNeedsReload() {
+            this.needsReload = true
+        },
+
+        clearNeedsReload() {
+            this.needsReload = false
+        },
+
         reloadSelectedTable() {
             this.selectedTable = this.selectedTable.fresh()
         },

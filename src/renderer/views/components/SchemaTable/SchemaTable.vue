@@ -27,15 +27,20 @@
     let clickedQuickly = false,
         isClickingOptions = false
 
+    let relationshipsListenerId = null
+
     onMounted(() => {
         loadTableData()
 
-        table.value.addListener('relationships:changed', debounce(async () => {
+        relationshipsListenerId = table.value.addListener('relationships:changed', debounce(async () => {
+            console.log('relationships changed from schema table')
             loadTableData()
         }, 100))
     })
 
     onUnmounted(() => {
+        table.value.removeListener(relationshipsListenerId)
+
         table.value.clearListeners()
     })
 

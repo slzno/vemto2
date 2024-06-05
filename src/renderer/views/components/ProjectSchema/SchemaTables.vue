@@ -2,12 +2,12 @@
     import 'animate.css'
     import { debounce } from 'lodash'
     import Table from '@Common/models/Table'
-    import { onMounted, watch, ref, Ref, defineEmits, nextTick } from "vue"
+    import { onMounted, onUnmounted, watch, ref, Ref, defineEmits, nextTick } from "vue"
     import SchemaTable from "../SchemaTable/SchemaTable.vue"
     import TableOptions from "../TableOptions/TableOptions.vue"
     import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
-import UiLoading from '@Renderer/components/ui/UiLoading.vue'
+    import UiLoading from '@Renderer/components/ui/UiLoading.vue'
 
     const projectStore = useProjectStore(),
         schemaStore = useSchemaStore(),
@@ -34,6 +34,11 @@ import UiLoading from '@Renderer/components/ui/UiLoading.vue'
         centerOnTable(table)
     })
 
+    watch(() => schemaStore.needsReload, (needsReload) => {
+        if(!needsReload) return
+        loadTables()
+    })
+
     watch(() => schemaStore.selectedSchemaSection, () => {
         centerScrollIfNecessary()
         setCanvasScroll()
@@ -48,6 +53,9 @@ import UiLoading from '@Renderer/components/ui/UiLoading.vue'
         }
     })
 
+    let tablesCreatedListenerId = null,
+        tablesDeletedListenerId = null
+
     onMounted(() => {
         canLoadTables.value = true
 
@@ -61,7 +69,22 @@ import UiLoading from '@Renderer/components/ui/UiLoading.vue'
 
         tablesCanvas.addEventListener('mousedown', mouseDownHandler)
 
+        tablesCreatedListenerId = projectStore.project.addListener('tables:created', debounce(() => {
+            console.log('table created from schema tables')
+            loadTables()
+        }, 100))
+
+        tablesDeletedListenerId = projectStore.project.addListener('tables:deleted', debounce(() => {
+            console.log('table deleted from schema tables')
+            loadTables()
+        }, 100))
+
         loadTables()
+    })
+
+    onUnmounted(() => {
+        projectStore.project.removeListener(tablesCreatedListenerId)
+        projectStore.project.removeListener(tablesDeletedListenerId)
     })
 
     const loadTables = async () => {
@@ -75,6 +98,8 @@ import UiLoading from '@Renderer/components/ui/UiLoading.vue'
             tables.value = projectStore.project.getTablesBySection(schemaStore.selectedSchemaSection)
             
             loading.value = false
+
+            schemaStore.clearNeedsReload()
 
             nextTick(() => {
                 emit('tablesLoaded')

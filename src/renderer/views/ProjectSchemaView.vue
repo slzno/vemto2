@@ -207,6 +207,10 @@
             projectStore.project.getZoomAsScale()
         )
     }
+
+    const reloadTables = () => {
+        schemaStore.setNeedsReload()
+    }
 </script>
 
 <template>
@@ -221,12 +225,13 @@
             @syncSchema="syncSchema" 
             @checkForChanges="checkForChanges"
         />
+
         <SchemaTables 
             v-if="canDrawTables" 
             @tablesLoaded="drawConnectionsOnNextTick()" 
         />
 
-        <MigrationSaver />
+        <MigrationSaver @schemaSaved="reloadTables()" />
     </div>
 </template>
 

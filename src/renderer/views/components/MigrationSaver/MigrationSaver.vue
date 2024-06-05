@@ -1,4 +1,5 @@
 <script setup lang="ts">
+    import debounce from 'lodash/debounce'
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import { ArrowDownTrayIcon, ArrowPathIcon, ArrowRightIcon, ArrowUturnDownIcon, CircleStackIcon, CodeBracketIcon, DocumentIcon, MinusIcon, PlusIcon, TableCellsIcon, TrashIcon } from "@heroicons/vue/24/outline"
@@ -21,6 +22,8 @@
     import InternalFiles from "@Renderer/util/InternalFiles"
     import MigrationOrganizer from "@Common/services/tables/MigrationOrganizer"
 
+    const emit = defineEmits(["schemaSaved"])
+
     const projectStore = useProjectStore(),
         showingModal = ref(false),
         confirmSaveDialog = ref(null),
@@ -29,7 +32,8 @@
         savingSchemaChanges = ref(false),
         currentReviewingMode = ref("table") as Ref<"table"|"model">,
         conflictsSolver = ref(null),
-        calculatingChanges = ref(false)
+        calculatingChanges = ref(false),
+        hasSchemaChanges = ref(false)
 
     const tablesSettings = reactive({} as any),
         modelsSettings = reactive({} as any)
@@ -49,11 +53,31 @@
         selectedModel = ref(null) as Ref<Model|null>,
         selectedModelMode = ref("created") as Ref<"created"|"updated"|"removed">
 
+    let tablesListenerId: any = null,
+        modelsListenerId: any = null
+
+    onMounted(() => {
+        hasSchemaChanges.value = projectStore.project.hasSchemaChanges()
+
+        tablesListenerId = projectStore.project.addListener('tables:changed', debounce(() => {
+            console.log("Tables changed from migration saver")
+            hasSchemaChanges.value = projectStore.project.hasSchemaChanges()
+        }, 100))
+
+        modelsListenerId = projectStore.project.addListener('models:changed', debounce(() => {
+            console.log("Models changed from migration saver")
+            hasSchemaChanges.value = projectStore.project.hasSchemaChanges()
+        }, 100))
+    })
+
     onUnmounted(() => {
+        projectStore.project.removeListener(tablesListenerId)
+        projectStore.project.removeListener(modelsListenerId)
+
         close()
     })
 
-    watch(() => projectStore.hasSchemaChanges, async (hasChanges) => {
+    watch(hasSchemaChanges, async (hasChanges) => {
         if(!hasChanges) close()
     })
 
@@ -233,8 +257,10 @@
     
             await readSchema()
     
+            emit("schemaSaved")
+
             savingSchemaChanges.value = false
-    
+
             close()
         } catch (error: any) {
             savingSchemaChanges.value = false
@@ -386,7 +412,7 @@
         <div
             class="absolute bottom-0 left-0 p-4"
             style="z-index: 60;"
-            v-if="projectStore.project.hasSchemaChanges()"
+            v-if="hasSchemaChanges"
         >
             <div class="flex flex-col space-y-2 bg-white dark:bg-slate-850 border border-slate-300 dark:border-slate-700 rounded-lg shadow-lg">
                 <div class="flex items-center space-x-1 text-sm pt-3 pb-3 px-3 bg-white dark:bg-slate-800 rounded-t-lg text-slate-900 dark:text-slate-300 font-thin border-b border-transparent dark:border-slate-700">

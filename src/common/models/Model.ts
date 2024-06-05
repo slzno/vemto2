@@ -926,6 +926,8 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     }
 
     addDeletedAtColumnIfNecessary() {
+        if(!this.table) return
+        
         if(this.table.hasColumn('deleted_at') || !this.hasSoftDeletes) return
 
         const column = new Column({
