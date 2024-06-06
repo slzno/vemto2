@@ -3,7 +3,7 @@
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import RenderableFile from "@Common/models/RenderableFile"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
-    import { computed, ref, onMounted, Ref, watch, nextTick, onUnmounted, onBeforeUnmount } from "vue"
+    import { computed, ref, onMounted, Ref, watch, nextTick, onBeforeUnmount } from "vue"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
@@ -22,21 +22,21 @@
         loadingFiles = ref(false),
         uiTabs = ref(null)
 
+    let filesListenerId = null
+
     onMounted(() => {
         projectStore.project.startCodeGenerationSettings()
 
+        filesListenerId = projectStore.project.addListener('renderableFiles:changed', debounce(async () => {
+            loadFiles()
+        }, 100))
+
         loadFiles()
     })
 
-    watch(() => projectStore.project.renderableFiles, () => {
-        console.log("Project renderable files changed")
-
-        loadFilesDebounced()
+    onBeforeUnmount(() => {
+        projectStore.project.removeListener(filesListenerId)
     })
-
-    const loadFilesDebounced = debounce(async () => {
-        loadFiles()
-    }, 300)
 
     const loadFiles = async () => {
         if(projectStore.projectIsEmpty) return
