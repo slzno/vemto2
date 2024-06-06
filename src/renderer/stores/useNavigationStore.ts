@@ -9,7 +9,9 @@ export const useNavigationStore = defineStore("navigation", {
         setActiveTab(tab: string) {
             this.activeTab = tab
 
-            window.localStorage.setItem("activeProjectTab", tab)
+            setTimeout(() => {
+                window.localStorage.setItem("activeProjectTab", tab)
+            }, 100)
         },
 
         clearActiveTab() {

@@ -1,4 +1,3 @@
-import { debounce } from "lodash"
 import { defineStore } from "pinia"
 import Table from "@Common/models/Table"
 import { useProjectStore } from "./useProjectStore"
@@ -69,10 +68,12 @@ export const useSchemaStore = defineStore("schema", {
         selectSchemaSection(section: SchemaSection): void {
             this.selectedSchemaSection = section
 
-            window.localStorage.setItem(
-                this.getSelectedSchemaSectionKey(), 
-                section.id
-            )
+            setTimeout(() => {
+                window.localStorage.setItem(
+                    this.getSelectedSchemaSectionKey(), 
+                    section.id
+                )
+            }, 100)
         },
 
         deselectSchemaSection(): void {

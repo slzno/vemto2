@@ -3,13 +3,17 @@
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import RenderableFile from "@Common/models/RenderableFile"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
-    import { computed, ref, onMounted, Ref, watch, nextTick, onBeforeUnmount } from "vue"
+    import { computed, ref, onMounted, Ref, nextTick, onBeforeUnmount } from "vue"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
     import RenderableFileViewer from "./components/CodeQueue/RenderableFileViewer.vue"
     import { CubeTransparentIcon } from "@heroicons/vue/24/outline"
+    import ConflictsSolver from "./components/CodeQueue/ConflictsSolver.vue"
+    import Main from "@Renderer/services/wrappers/Main"
+    import InternalFiles from "@Renderer/util/InternalFiles"
+import Alert from "@Renderer/components/utils/Alert"
 
     const projectStore = useProjectStore(),
         search = ref(""),
@@ -20,7 +24,12 @@
         allIgnoredFiles = ref([]) as Ref<RenderableFile[]>,
         allSkippedFiles = ref([]) as Ref<RenderableFile[]>,
         loadingFiles = ref(false),
-        uiTabs = ref(null)
+        uiTabs = ref(null),
+        conflictsSolver = ref(null),
+        currentConflictsFile = ref(null) as Ref<RenderableFile>,
+        conflictsFilePath = ref(""),
+        conflictsFileContent = ref(""),
+        conflictsNewFileContent = ref("")
 
     let filesListenerId = null
 
@@ -35,6 +44,8 @@
     })
 
     onBeforeUnmount(() => {
+        if(projectStore.projectIsEmpty) return
+
         projectStore.project.removeListener(filesListenerId)
     })
 
@@ -160,6 +171,41 @@
 
         projectStore.project?.clearRemovedFiles()
     }
+
+    const showConflictsSolver = async (file: RenderableFile): Promise<void> => {
+        currentConflictsFile.value = file
+        conflictsFilePath.value = file.getRelativeFilePath()
+        conflictsFileContent.value = await Main.API.readProjectFile(conflictsFilePath.value)
+        conflictsNewFileContent.value = await InternalFiles.readGeneratedFile(conflictsFilePath.value)
+
+        nextTick(() => {
+            conflictsSolver.value.show()
+        })
+    }
+
+    const conflictsSolved = async (content) => {
+        if (!conflictsFilePath.value) {
+            return
+        }
+        
+        await Main.API.writeProjectFile(conflictsFilePath.value, content)
+
+        currentConflictsFile.value.solveConflicts()
+
+        conflictsFilePath.value = ""
+        conflictsFileContent.value = ""
+        conflictsNewFileContent.value = ""
+
+        Alert.success("Conflicts solved successfully")
+
+        loadFiles()
+    }
+
+    const ignoreFile = async (file: RenderableFile) => {
+        file.setAsIgnored()
+
+        loadFiles()
+    }
 </script>
 
 <template>
@@ -175,6 +221,16 @@
                 v-model="selectedTab" 
             />
         </div>
+
+        <ConflictsSolver 
+            can-ignore
+            ref="conflictsSolver"
+            :relativeFilePath="conflictsFilePath"
+            :currentFileContent="conflictsFileContent"
+            :newFileContent="conflictsNewFileContent"
+            @solved="conflictsSolved"
+            @ignored="ignoreFile(currentConflictsFile)"
+        />
 
         <div>
             <div class="p-4" v-show="selectedTab === 'queue'">
@@ -206,6 +262,7 @@
                         v-for="file in filteredFiles"
                         :key="file.id"
                         :file="file"
+                        @showConflictsSolver="showConflictsSolver"
                     >
                     </RenderableFileViewer>
                 </div>
@@ -233,6 +290,7 @@
                         v-for="file in conflictFiles"
                         :key="file.id"
                         :file="file"
+                        @showConflictsSolver="showConflictsSolver"
                     >
                     </RenderableFileViewer>
                 </div>
@@ -260,6 +318,7 @@
                         v-for="file in ignoredFiles"
                         :key="file.id"
                         :file="file"
+                        @showConflictsSolver="showConflictsSolver"
                     >
                     </RenderableFileViewer>
                 </div>
@@ -292,6 +351,7 @@
                         v-for="file in removedFiles"
                         :key="file.id"
                         :file="file"
+                        @showConflictsSolver="showConflictsSolver"
                     >
                     </RenderableFileViewer>
                 </div>
@@ -319,6 +379,7 @@
                         v-for="file in skippedFiles"
                         :key="file.id"
                         :file="file"
+                        @showConflictsSolver="showConflictsSolver"
                     >
                     </RenderableFileViewer>
                 </div>

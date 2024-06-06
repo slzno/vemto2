@@ -209,6 +209,8 @@
         if(!confirmed) return
 
         emit('ignored')
+
+        close()
     }
 </script>
 
