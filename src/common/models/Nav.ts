@@ -69,7 +69,7 @@ export default class Nav extends RelaDB.Model {
         }
     }
 
-    static updated(nav: Nav) {
+    static created(nav: Nav) {
         const defaultTranslation = nav.project.getDefaultTranslation(nav.name)
         
         nav.generateTranslationForName(defaultTranslation)
