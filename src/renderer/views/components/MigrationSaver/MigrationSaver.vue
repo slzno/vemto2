@@ -71,10 +71,12 @@
     })
 
     onUnmounted(() => {
+        close()
+
+        if(projectStore.projectIsEmpty) return
+
         projectStore.project.removeListener(tablesListenerId)
         projectStore.project.removeListener(modelsListenerId)
-
-        close()
     })
 
     watch(hasSchemaChanges, async (hasChanges) => {

@@ -83,6 +83,8 @@
     })
 
     onUnmounted(() => {
+        if(projectStore.projectIsEmpty) return
+        
         projectStore.project.removeListener(tablesCreatedListenerId)
         projectStore.project.removeListener(tablesDeletedListenerId)
     })

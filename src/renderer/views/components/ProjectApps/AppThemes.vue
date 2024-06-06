@@ -11,7 +11,7 @@
     import UiModal from "@Renderer/components/ui/UiModal.vue"
     import UiSelect from "@Renderer/components/ui/UiSelect.vue"
     import { ProjectCssFramework } from "@Common/models/Project"
-import { PlusIcon } from "@heroicons/vue/24/outline"
+    import { PlusIcon } from "@heroicons/vue/24/outline"
 
     const projectStore = useProjectStore()
 
@@ -59,8 +59,8 @@ import { PlusIcon } from "@heroicons/vue/24/outline"
     }
 
     const saveVthemeKeys = async () => {
-        preview()
         await projectStore.project.saveVthemeKeys(vthemeKeys)
+        preview()
     }
 
     const preview = async () => {

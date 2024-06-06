@@ -8,7 +8,7 @@
     import { useProjectStore } from "@Renderer/stores/useProjectStore";
     import UiText from "@Renderer/components/ui/UiText.vue";
     import GenerateBasicMenu from "@Renderer/services/project/GenerateBasicMenu";
-import { PlusIcon } from "@heroicons/vue/24/outline";
+    import { PlusIcon } from "@heroicons/vue/24/outline";
 
     const projectStore = useProjectStore(),
         editingNavigation = ref<null | Nav>(null),
@@ -20,7 +20,7 @@ import { PlusIcon } from "@heroicons/vue/24/outline";
         name = ref<string | null>(null)
 
     onMounted(() => {
-        reloadNavigations()
+        loadNavs()
     })
 
     const editNavigation = (navigation: Nav) => {
@@ -53,7 +53,7 @@ import { PlusIcon } from "@heroicons/vue/24/outline";
 
         close()
         resetModalData()
-        reloadNavigations()
+        loadNavs()
     }
 
     const resetModalData = () => {
@@ -66,7 +66,7 @@ import { PlusIcon } from "@heroicons/vue/24/outline";
         showingCreateNavigationModal.value = false
     }
     
-    const reloadNavigations = () => {
+    const loadNavs = () => {
         navigations.value = projectStore.project.getRootNavs()
     }
 
@@ -88,7 +88,7 @@ import { PlusIcon } from "@heroicons/vue/24/outline";
             targetNavigation.parentNavId = null
             targetNavigation.save()
 
-            reloadNavigations()
+            loadNavs()
             return
         }
 
@@ -105,13 +105,13 @@ import { PlusIcon } from "@heroicons/vue/24/outline";
             child.save()
         })
 
-        reloadNavigations()
+        loadNavs()
     }
 
     const createBasicNavs = () => {
         new GenerateBasicMenu(projectStore.project).handle()
 
-        reloadNavigations()
+        loadNavs()
     }
 </script>
 
@@ -171,7 +171,7 @@ import { PlusIcon } from "@heroicons/vue/24/outline";
                 @editNavigation="editNavigation"
                 @cancelEditing="cancelEditing"
                 @saveNavigation="saveNavigation"
-                @childrenNavigationUpdated="reloadNavigations"
+                @childrenNavigationUpdated="loadNavs"
             />
         </template>
     </div>

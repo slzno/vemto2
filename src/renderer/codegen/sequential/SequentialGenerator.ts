@@ -67,7 +67,7 @@ export default class SequentialGenerator {
 
         await this.runGeneratorsServices()
 
-        this.project.processRemovableFiles()
+        await this.processRemovableFiles()
 
         await this.waitForProcessingFilesQueue()
 
@@ -138,6 +138,10 @@ export default class SequentialGenerator {
         await new GenerateDatabaseSeeder().start()
 
         await new GenerateLivewireLayout().start()
+    }
+
+    async processRemovableFiles() {
+        await this.project.fresh().processRemovableFiles()
     }
 
     async clearVemtoFolders() {
