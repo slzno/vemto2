@@ -99,7 +99,7 @@ export default class SequentialGenerator {
         templatePaths = [...new Set(templatePaths)]
 
         templatePaths.forEach((path: string) => {
-            const renderableFile: RenderableFile = this.project.getRenderableFileByTemplatePath(path)
+            const renderableFile: RenderableFile = this.project.fresh().getRenderableFileByTemplatePath(path)
 
             if(!renderableFile) return
 
