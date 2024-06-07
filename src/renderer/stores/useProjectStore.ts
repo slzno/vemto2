@@ -1,3 +1,4 @@
+import debounce from "lodash/debounce"
 import { defineStore } from "pinia"
 import Project from "@Common/models/Project"
 import { useSchemaStore } from "./useSchemaStore"
@@ -6,17 +7,20 @@ export const useProjectStore = defineStore("project", {
     state: () => ({ 
         project: {} as Project,
         hasSourceChanges: false,
+        projectUpdatedListenerId: null as string | null,
     }),
 
     actions: {
         setProject(project: Project) {
             this.project = project
-        },
 
-        reloadProject() {
-            if(!this.project.id) return
+            if(this.projectUpdatedListenerId) {
+                this.project.removeListener(this.projectUpdatedListenerId)
+            }
 
-            this.project = this.project.fresh()
+            this.projectUpdatedListenerId = this.project.addListener('updated', debounce(() => {
+                this.refreshProject()
+            }, 100))
         },
 
         setHasSourceChanges(hasSourceChanges: boolean) {
@@ -24,10 +28,21 @@ export const useProjectStore = defineStore("project", {
         },
 
         closeProject() {
+            if(this.projectUpdatedListenerId) {
+                this.project.removeListener(this.projectUpdatedListenerId)
+                this.projectUpdatedListenerId = null
+            }
+            
             const schemaStore = useSchemaStore()
+            schemaStore.deselectTable()
             
             this.project = {} as Project
-            schemaStore.deselectTable()
+
+        },
+
+        refreshProject() {
+            console.log("Refreshing project data")
+            this.project.refresh()
         },
     },
 

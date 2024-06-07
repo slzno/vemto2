@@ -2347,10 +2347,10 @@
   dependencies:
     mini-svg-data-uri "^1.2.3"
 
-"@tiago_silva_pereira/reladb@^2.0.6":
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/@tiago_silva_pereira/reladb/-/reladb-2.0.6.tgz#b581e4edda848e2a84d505c4c10182318a7b3e0c"
-  integrity sha512-yqy0mvKr8bqcVRBcKz1bdWfsWNuBpLh/tPh/avm5dqZUCORXkT1wE9c5S8MJkPt+110DY6LvhpowQFYp42Q9Jg==
+"@tiago_silva_pereira/reladb@^2.0.9":
+  version "2.0.9"
+  resolved "https://registry.yarnpkg.com/@tiago_silva_pereira/reladb/-/reladb-2.0.9.tgz#04275960810cf933c205453c31d7cced00f3e07b"
+  integrity sha512-UKenykU8/Q+0/6exuxoxfBBucKkdHI2icwxNEpSSy2gi4Zc2LG1vREPfHTBPkpkdt4aLCAcoO4QAxaI5JxZ/bQ==
   dependencies:
     change-case "^4.1.2"
     moment "^2.29.0"

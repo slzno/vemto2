@@ -68,7 +68,9 @@ export default class HandleProjectDatabase {
 
             await projectManager.connectToLatest()
         }
-
+        
+        projectStore.refreshProject()
+        
         if(callback) callback()
     }
 
