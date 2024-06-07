@@ -202,9 +202,15 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     isDirty(): boolean {
         if(this.hasHooksChanges()) return true
 
-        const hasDirtyRelationships = this.ownRelationships.some((relationship) => relationship.isDirty())
+        const hasDirtyRelationships = this.ownRelationships.some((relationship) => relationship.isDirty()),
+            tableWasRenamed = this.table.wasRenamed() && this.tableNameIsDifferentFromDefault()
 
-        return !this.isRemoved() && (this.hasLocalChanges() || hasDirtyRelationships)
+        return !this.isRemoved() 
+            && (
+                this.hasLocalChanges() 
+                || hasDirtyRelationships
+                || tableWasRenamed
+            )
     }
 
     hasHooksChanges(): boolean {
