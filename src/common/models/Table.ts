@@ -29,6 +29,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     section: SchemaSection
     sectionId: string
     createdFromInterface: boolean
+    pivotRelationships: Relationship[]
 
     relationships() {
         return {
@@ -93,6 +94,8 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         }
         
         this.removed = true
+
+        this.pivotRelationships.forEach((relationship) => relationship.remove())
 
         this.save()
     }

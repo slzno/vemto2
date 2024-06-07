@@ -163,6 +163,12 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
         this.save()
     }
 
+    undoRemove() {
+        this.removed = false
+
+        this.save()
+    }
+
     isInvalid(): boolean {
         return ! this.isValid()
     }
