@@ -21,10 +21,12 @@
     import Alert from "@Renderer/components/utils/Alert"
     import InternalFiles from "@Renderer/util/InternalFiles"
     import MigrationOrganizer from "@Common/services/tables/MigrationOrganizer"
+    import { useSchemaStore } from '@Renderer/stores/useSchemaStore'
 
     const emit = defineEmits(["schemaSaved"])
 
     const projectStore = useProjectStore(),
+        schemaStore = useSchemaStore(),
         showingModal = ref(false),
         confirmSaveDialog = ref(null),
         confirmUndoDialog = ref(null),
@@ -54,24 +56,32 @@
         selectedModelMode = ref("created") as Ref<"created"|"updated"|"removed">
 
     let tablesListenerId: any = null,
-        modelsListenerId: any = null
+        modelsListenerId: any = null,
+        changesCheckerInterval: any = null
 
     onMounted(() => {
         hasSchemaChanges.value = projectStore.project.hasSchemaChanges()
 
-        tablesListenerId = projectStore.project.addListener('tables:changed', debounce(() => {
-            console.log("Tables changed from migration saver")
+        // FIX THIIIISSS WORKAROUND
+        changesCheckerInterval = setInterval(() => {
             hasSchemaChanges.value = projectStore.project.hasSchemaChanges()
-        }, 100))
+        }, 1000)
 
-        modelsListenerId = projectStore.project.addListener('models:changed', debounce(() => {
-            console.log("Models changed from migration saver")
-            hasSchemaChanges.value = projectStore.project.hasSchemaChanges()
-        }, 100))
+        // tablesListenerId = projectStore.project.addListener('tables:changed', debounce(() => {
+        //     console.log("Tables changed from migration saver")
+        //     hasSchemaChanges.value = projectStore.project.hasSchemaChanges()
+        // }, 100))
+
+        // modelsListenerId = projectStore.project.addListener('models:changed', debounce(() => {
+        //     console.log("Models changed from migration saver")
+        //     hasSchemaChanges.value = projectStore.project.hasSchemaChanges()
+        // }, 100))
     })
 
     onUnmounted(() => {
         close()
+
+        if(changesCheckerInterval) clearInterval(changesCheckerInterval)
 
         if(projectStore.projectIsEmpty) return
 
