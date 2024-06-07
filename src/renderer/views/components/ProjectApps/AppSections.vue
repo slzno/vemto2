@@ -91,7 +91,7 @@ import { PlusIcon } from "@heroicons/vue/24/outline"
             v-for="section in appSections"
             :key="section.id"
         >
-            <div @click="editSection(section)" v-if="isNotEditingSection(section)" class="font-mono w-full h-full p-3 space-x-2 flex justify-between">
+            <div @click="editSection(section)" v-if="isNotEditingSection(section)" class="w-full h-full p-3 space-x-2 flex justify-between">
                 <span>{{ section.name }}</span>
                 <small class="text-slate-500">{{ section.getApplicationsCount() }} apps</small>
             </div>

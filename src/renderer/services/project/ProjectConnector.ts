@@ -26,6 +26,8 @@ export default class ProjectConnector {
             await this.doFirstSchemaSync()
             await this.generateBasicProjectData()
             await this.saveProject()
+
+            this.project.refresh()
         } catch (error) {
             throw error
         }
