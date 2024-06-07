@@ -59,6 +59,7 @@
     })
 
     const loadTableData = () => {
+        table.value.refresh()
         tableColumns.value = table.value.getAllOrderedColumns()
         tableModels.value = table.value.models
     }
@@ -70,7 +71,7 @@
         if(!confirmed) return
 
         nextTick(() => {
-            table.value.remove()
+            table.value.fresh().remove()
 
             schemaStore.askToReloadSchema()
         })
@@ -79,7 +80,7 @@
     const undoRemoveTable = (): void => {
         itIsClickingOptions()
 
-        table.value.undoRemove()
+        table.value.fresh().undoRemove()
 
         schemaStore.askToReloadSchema()
     }
