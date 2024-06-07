@@ -319,6 +319,10 @@
 
         schemaStore.selectedSchemaSection.requestScrollCentering()
     }
+
+    const repaintSchema = () => {
+        schemaStore.askToReloadSchema()
+    }
 </script>
 
 <template>
@@ -465,6 +469,11 @@
                         <UiDropdownItem @click="centerScroll()">
                             <ViewfinderCircleIcon class="w-5 h-5 mr-3 text-red-450" />
                             Centralize View
+                        </UiDropdownItem>
+
+                        <UiDropdownItem @click="repaintSchema()">
+                            <ArrowPathIcon class="w-5 h-5 mr-3 text-red-450" />
+                            Repaint Schema
                         </UiDropdownItem>
                     </UiOptionsDropdown>
                 </div>

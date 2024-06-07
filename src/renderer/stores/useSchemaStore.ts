@@ -8,16 +8,40 @@ export const useSchemaStore = defineStore("schema", {
         focusedTable: {} as Table,
         selectedTable: {} as Table,
         selectedSchemaSection: {} as SchemaSection,
-        needsReload: false,
+        needsToReloadSchema: false,
+        needsToReloadEveryTable: false,
+        needsToReloadTableId: null as string | null,
     }),
 
     actions: {
-        setNeedsReload() {
-            this.needsReload = true
+        askToReloadTableById(tableId: string) {
+            this.needsToReloadTableId = tableId
         },
 
-        clearNeedsReload() {
-            this.needsReload = false
+        tableAlreadyReloaded() {
+            this.needsToReloadTableId = null
+        },
+
+        askToReloadSchema() {
+            this.needsToReloadSchema = true
+        },
+
+        schemaAlreadyReloaded() {
+            this.needsToReloadSchema = false
+
+            this.askToReloadEveryTable()
+        },
+
+        askToReloadEveryTable() {
+            this.needsToReloadEveryTable = true
+
+            setTimeout(() => {
+                this.everyTableAlreadyReloaded()
+            }, 100)
+        },
+
+        everyTableAlreadyReloaded() {
+            this.needsToReloadEveryTable = false
         },
 
         reloadSelectedTable() {

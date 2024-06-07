@@ -3,7 +3,7 @@
     import Relationship from "@Renderer/../common/models/Relationship"
     import UiButton from '@Renderer/components/ui/UiButton.vue'
     import UiText from '@Renderer/components/ui/UiText.vue'
-    import { TrashIcon, PlusCircleIcon } from "@heroicons/vue/24/outline"
+    import { TrashIcon, PlusCircleIcon, ArrowUturnLeftIcon } from "@heroicons/vue/24/outline"
     import UiDropdownSelect from '@Renderer/components/ui/UiDropdownSelect.vue'
     import CommonRelationship from './TableRelationships/CommonRelationship.vue'
     import ManyToManyRelationship from './TableRelationships/ManyToManyRelationship.vue'
@@ -104,7 +104,7 @@
         }
     }
 
-    const onRelationshipRemoving = async (relationship: Relationship, force: boolean = false) => {
+    const askToRemoveRelationship = async (relationship: Relationship, force: boolean = false) => {
         const removeRelationshipFromUI = (): void => {
             relationships.value.splice(relationships.value.indexOf(relationship), 1)
         }
@@ -114,7 +114,7 @@
         }
 
         const removeRelationship = (): void => {
-            relationship.delete()
+            relationship.remove()
             removeRelationshipFromUI()
         }
 
@@ -140,7 +140,7 @@
     const checkRelationshipValidity = (): void => {
         relationships.value.forEach((relationship: Relationship) => {
             if(!relationship.type || !relationship.name) {
-                onRelationshipRemoving(relationship, true)
+                askToRemoveRelationship(relationship, true)
             }
         })
     }
@@ -149,7 +149,7 @@
         if(!relationship.isNew()) return
 
         if(!relationship.type || !relationship.name) {
-            onRelationshipRemoving(relationship, true)
+            askToRemoveRelationship(relationship, true)
         }
     }
 
@@ -212,7 +212,10 @@
 
                 <div class="mt-1">
                     <UiOptionsDropdown>
-                        <UiDropdownItem @click="onRelationshipRemoving(relationship)">
+                        <UiDropdownItem @click="relationship.undoRemove()">
+                            <ArrowUturnLeftIcon class="h-5 w-5 mr-1 text-red-400" /> Undo Remove
+                        </UiDropdownItem>
+                        <UiDropdownItem @click="askToRemoveRelationship(relationship)">
                             <TrashIcon class="h-5 w-5 mr-1 text-red-400" /> Delete
                         </UiDropdownItem>
                     </UiOptionsDropdown>

@@ -5,7 +5,7 @@
     import Column from "@Common/models/Column"
     import TableModel from "./TableModel.vue"
     import TableColumn from "./TableColumn.vue"
-    import { nextTick, ref, Ref, toRef, computed, onMounted, onUnmounted } from "vue"
+    import { nextTick, ref, Ref, toRef, computed, onMounted, onUnmounted, watch } from "vue"
     import { ArrowRightIcon, ArrowUturnDownIcon, ExclamationCircleIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
     import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
@@ -28,6 +28,20 @@
         isClickingOptions = false
 
     let relationshipsListenerId = null
+
+    watch(() => schemaStore.needsToReloadEveryTable, (needsToReload) => {
+        if(!needsToReload) return
+        loadTableData()
+    })
+
+    watch(() => schemaStore.needsToReloadTableId, (needsToReloadId) => {
+        if(needsToReloadId !== table.value.id) return
+        
+        console.log('needs to reload table data')
+        loadTableData()
+        schemaStore.tableAlreadyReloaded()
+        
+    })
 
     onMounted(() => {
         loadTableData()
@@ -57,6 +71,8 @@
 
         nextTick(() => {
             table.value.remove()
+
+            schemaStore.askToReloadSchema()
         })
     }
 
@@ -64,6 +80,8 @@
         itIsClickingOptions()
 
         table.value.undoRemove()
+
+        schemaStore.askToReloadSchema()
     }
 
     const itIsClickingOptions = () => {
@@ -110,6 +128,8 @@
         itIsClickingOptions()
 
         table.value.moveToSection(section)
+
+        schemaStore.askToReloadSchema()
     }
 
     const titleClasses = computed(() => {

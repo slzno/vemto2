@@ -70,7 +70,7 @@
     const syncSchema = async (syncTables: boolean, syncModels: boolean) => {
         await loadSchema(syncTables, syncModels)
 
-        schemaStore.setNeedsReload()
+        schemaStore.askToReloadSchema()
     }
 
     const tableAdded = async (table: Table) => {
@@ -115,6 +115,7 @@
         currentConnections = {}
 
         jsPlumbInstance.batch(() => {
+            console.log('deleting every connection')
             jsPlumbInstance.deleteEveryConnection({
                 force: true,
             })
@@ -211,7 +212,7 @@
     }
 
     const reloadTables = () => {
-        schemaStore.setNeedsReload()
+        schemaStore.askToReloadSchema()
     }
 </script>
 

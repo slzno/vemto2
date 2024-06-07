@@ -34,8 +34,11 @@
         centerOnTable(table)
     })
 
-    watch(() => schemaStore.needsReload, (needsReload) => {
+    watch(() => schemaStore.needsToReloadSchema, (needsReload) => {
         if(!needsReload) return
+
+        console.log('needs to reload tables')
+
         loadTables()
     })
 
@@ -101,7 +104,7 @@
             
             loading.value = false
 
-            schemaStore.clearNeedsReload()
+            schemaStore.schemaAlreadyReloaded()
 
             nextTick(() => {
                 emit('tablesLoaded')
