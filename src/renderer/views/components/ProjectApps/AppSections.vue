@@ -6,7 +6,7 @@
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import GenerateBasicSections from "@Renderer/services/project/GenerateBasicSections"
-import { PlusIcon } from "@heroicons/vue/24/outline"
+    import { PlusIcon } from "@heroicons/vue/24/outline"
 
     const projectStore = useProjectStore(),
         editingSection = ref<null | AppSection>(null),
