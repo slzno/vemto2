@@ -55,38 +55,22 @@
         selectedModel = ref(null) as Ref<Model|null>,
         selectedModelMode = ref("created") as Ref<"created"|"updated"|"removed">
 
-    let tablesListenerId: any = null,
-        modelsListenerId: any = null,
-        changesCheckerInterval: any = null
+    let changesCheckerInterval: any = null
 
     onMounted(() => {
         hasSchemaChanges.value = projectStore.project.hasSchemaChanges()
 
-        // FIX THIIIISSS WORKAROUND
         changesCheckerInterval = setInterval(() => {
             hasSchemaChanges.value = projectStore.project.hasSchemaChanges()
         }, 1000)
-
-        // tablesListenerId = projectStore.project.addListener('tables:changed', debounce(() => {
-        //     console.log("Tables changed from migration saver")
-        //     hasSchemaChanges.value = projectStore.project.hasSchemaChanges()
-        // }, 100))
-
-        // modelsListenerId = projectStore.project.addListener('models:changed', debounce(() => {
-        //     console.log("Models changed from migration saver")
-        //     hasSchemaChanges.value = projectStore.project.hasSchemaChanges()
-        // }, 100))
     })
 
     onUnmounted(() => {
         close()
 
-        if(changesCheckerInterval) clearInterval(changesCheckerInterval)
-
-        if(projectStore.projectIsEmpty) return
-
-        projectStore.project.removeListener(tablesListenerId)
-        projectStore.project.removeListener(modelsListenerId)
+        if(changesCheckerInterval) {
+            clearInterval(changesCheckerInterval)
+        }
     })
 
     watch(hasSchemaChanges, async (hasChanges) => {
