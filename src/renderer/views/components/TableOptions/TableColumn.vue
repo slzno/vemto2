@@ -39,9 +39,9 @@ import ReservedKeywords from "@Common/models/services/ReservedKeywords"
     }, 250)
 
     const onNameBlur = () => {
-        const hasDuplicateColumnName = column.value.table.hasColumnExceptId(column.value.name, column.value.id)
-
-        if(hasDuplicateColumnName) treatDuplicatedColumnName()
+        if(column.value.hasDuplicatedName()) {
+            treatDuplicatedColumnName()
+        }
     }
 
     const saveColumn = () => {

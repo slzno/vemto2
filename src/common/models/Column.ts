@@ -563,4 +563,8 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
 
         return this.relationshipsByForeignKey.some(relationship => relationship.relatedModelId === model.id)
     }
+
+    hasDuplicatedName(): boolean {
+        return this.table.hasColumnExceptId(this.name, this.id)
+    }
 }
