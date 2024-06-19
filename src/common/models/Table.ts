@@ -180,10 +180,21 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     isDirty(): boolean {
-        const hasDirtyColumns = this.columns && this.columns.some((column) => column.isDirty()),
-            hasDirtyIndexes = this.indexes && this.indexes.some((index) => index.isDirty())
+        const hasDirtyResources = this.hasDirtyResources()
 
-        return !this.isRemoved() && (this.hasLocalChanges() || hasDirtyColumns || hasDirtyIndexes)
+        return !this.isRemoved() && (this.hasLocalChanges() || hasDirtyResources)
+    }
+
+    hasDirtyResources(): boolean {
+        return this.hasDirtyColumns() || this.hasDirtyIndexes()
+    }
+
+    hasDirtyColumns(): boolean {
+        return this.columns && this.columns.some((column) => column.isDirty())
+    }
+
+    hasDirtyIndexes(): boolean {
+        return this.indexes && this.indexes.some((index) => index.isDirty())
     }
 
     hasLocalChanges(): boolean {
