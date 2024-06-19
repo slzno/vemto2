@@ -162,6 +162,10 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         return this.isAutoIncrement() || this.table.hasPrimaryIndexForColumn(this)
     }
 
+    isNotPrimaryKey(): boolean {
+        return ! this.isPrimaryKey()
+    }
+
     isNotAutoIncrement(): boolean {
         return ! this.isAutoIncrement()
     }

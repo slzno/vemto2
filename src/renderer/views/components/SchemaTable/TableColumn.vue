@@ -1,36 +1,49 @@
 <script setup lang="ts">
-    import { toRef } from "vue"
+    import Column from "@Common/models/Column";
+    import { toRef, Ref, computed } from "vue"
 
     const props = defineProps(["column"]),
-        column = toRef(props, "column")
+        column = toRef(props, "column") as Ref<Column>
+
+    const columnClasses = computed(() => {
+        return {
+            'line-through opacity-50': column.value.isRemoved(),
+            'border-2 border-red-500 rounded': column.value.isInvalid()
+        }
+    })
+
+    const columnNameClasses = computed(() => {
+        return {
+            'text-yellow-500 dark:text-yellow-400 font-semibold':
+                column.value.isPrimaryKey(),
+            'text-red-500 dark:text-red-400 font-semibold':
+                column.value.isForeign(),
+            'text-orange-500 dark:text-orange-400 font-semibold':
+                column.value.isUnique(),
+            'text-blue-400 dark:text-blue-300 font-semibold':
+                column.value.isNotForeignIndex(),
+        }
+    })
+
+    const sphereClasses = computed(() => {
+        return {
+            'bg-slate-200 dark:bg-slate-700': column.value.isNotPrimaryKey(),
+            'bg-yellow-400 dark:bg-yellow-400': column.value.isPrimaryKey(),
+            'bg-red-500 dark:bg-red-400': column.value.isForeign(),
+            'bg-orange-500 dark:bg-orange-400': column.value.isUnique(),
+            'bg-blue-400 dark:bg-blue-300': column.value.isNotForeignIndex(),
+        }
+    })
 </script>
 
 <template>
-    <div :class="{
-        'line-through opacity-50': column.isRemoved(),
-        'border-2 border-red-500 rounded': column.isInvalid()
-    }" class="w-full flex items-center text-slate-700 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 px-1 rounded cursor-default py-[0.05rem]">
+    <div :class="columnClasses" class="w-full flex items-center text-slate-700 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 px-1 rounded cursor-default py-[0.05rem]">
         <span
-            :class="{
-                'text-yellow-500 dark:text-yellow-400 font-semibold':
-                    column.isAutoIncrement(),
-                'text-red-500 dark:text-red-400 font-semibold':
-                    column.isForeign(),
-                'text-orange-500 dark:text-orange-400 font-semibold':
-                    column.isUnique(),
-                'text-blue-400 dark:text-blue-300 font-semibold':
-                    column.isNotForeignIndex(),
-            }"
+            :class="columnNameClasses"
             class="flex-grow pr-8 flex items-center"
         >
             <div
-                :class="{
-                    'bg-slate-200 dark:bg-slate-700': column.isNotAutoIncrement(),
-                    'bg-yellow-400 dark:bg-yellow-400': column.isAutoIncrement(),
-                    'bg-red-500 dark:bg-red-400': column.isForeign(),
-                    'bg-orange-500 dark:bg-orange-400': column.isUnique(),
-                    'bg-blue-400 dark:bg-blue-300': column.isNotForeignIndex(),
-                }"
+                :class="sphereClasses"
                 class="w-2 h-2 mr-2 rounded-full"
             ></div>
             <span class="pr-6">{{ column.name }}</span>

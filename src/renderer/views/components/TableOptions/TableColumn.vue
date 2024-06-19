@@ -15,7 +15,6 @@
     import UiDropdownItem from '@Renderer/components/ui/UiDropdownItem.vue'
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import debounce from "@Common/tools/debounce"
-import ReservedKeywords from "@Common/models/services/ReservedKeywords"
 
     const onDevelopment = Main.API.onDevelopment() && !Main.API.isRecording(),
         projectStore = useProjectStore()
@@ -132,7 +131,7 @@ import ReservedKeywords from "@Common/models/services/ReservedKeywords"
 <template>
     <div
         :class="{
-            'border-yellow-400': column.autoIncrement,
+            'border-yellow-400': column.isPrimaryKey(),
             'border-red-400': column.isForeign(),
             'border-orange-400': column.isUnique(),
             'border-blue-400': column.isNotForeignIndex(),
