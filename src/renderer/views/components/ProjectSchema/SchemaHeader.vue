@@ -16,6 +16,7 @@
     import UiLoading from '@Renderer/components/ui/UiLoading.vue'
     import UiOptionsDropdown from '@Renderer/components/ui/UiOptionsDropdown.vue'
     import UiDropdownItem from '@Renderer/components/ui/UiDropdownItem.vue'
+import ReservedKeywords from '@Common/models/services/ReservedKeywords'
 
     const showingCreateTableModal = ref(false),
         showingCreateSectionModal = ref(false),
@@ -97,6 +98,13 @@
     }
 
     const validateTable = async (): Promise<boolean> => {
+        const reservedKeywordsChecker = new ReservedKeywords()
+
+        if(reservedKeywordsChecker.isReserved(newTable.value.name)) {
+            Alert.error('This table name is a PHP reserved keyword')
+            return false
+        }
+
         const rules = {
             name: 'required|string'
         }

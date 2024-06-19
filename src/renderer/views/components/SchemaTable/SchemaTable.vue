@@ -59,9 +59,14 @@
     })
 
     const loadTableData = () => {
-        table.value.refresh()
-        tableColumns.value = table.value.getAllOrderedColumns()
-        tableModels.value = table.value.models
+        try {
+            table.value.refresh()
+            tableColumns.value = table.value.getAllOrderedColumns()
+            tableModels.value = table.value.models
+        } catch (error) {
+            console.error(error)
+            table.value.clearListeners()
+        }
     }
 
     const removeTable = async () => {
