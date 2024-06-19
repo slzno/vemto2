@@ -101,7 +101,7 @@ import ReservedKeywords from '@Common/models/services/ReservedKeywords'
         const reservedKeywordsChecker = new ReservedKeywords()
 
         if(reservedKeywordsChecker.isReserved(newTable.value.name)) {
-            Alert.error('This table name is a PHP reserved keyword')
+            Alert.error('This table name is a reserved PHP keyword')
             return false
         }
 

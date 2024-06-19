@@ -15,6 +15,7 @@
     import UiDropdownItem from '@Renderer/components/ui/UiDropdownItem.vue'
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import debounce from "@Common/tools/debounce"
+import ReservedKeywords from "@Common/models/services/ReservedKeywords"
 
     const onDevelopment = Main.API.onDevelopment() && !Main.API.isRecording(),
         projectStore = useProjectStore()
@@ -40,17 +41,26 @@
     const onNameBlur = () => {
         const hasDuplicateColumnName = column.value.table.hasColumnExceptId(column.value.name, column.value.id)
 
-        if(!hasDuplicateColumnName) return
-     
-        onColumnNameDuplicated()
+        if(hasDuplicateColumnName) treatDuplicatedColumnName()
     }
 
     const saveColumn = () => {
         column.value.saveFromInterface()
     }
 
-    const onColumnNameDuplicated = () => {
+    const treatDuplicatedColumnName = () => {
         Alert.error(`Column <b class="underline underline-offset-4">${column.value.name}</b> already exists`)
+
+        column.value.name = ''
+        column.value.saveFromInterface()
+
+        nextTick(() => {
+            document.getElementById(`table-column-${column.value.id}`)?.focus()
+        })
+    }
+
+    const treatReservedKeyword = () => {
+        Alert.error(`This column name is a reserved PHP keyword`)
 
         column.value.name = ''
         column.value.saveFromInterface()
