@@ -30,6 +30,12 @@
 <% } %>
 <#  #>
 <#  #>
+<# Columns that changed the unique status from true to false #>
+<% for (let column of this.table.getColumnsWithRemovedUnique()) { %>
+    $table->dropUnique(['<$ column.name $>');
+<% } %>
+<#  #>
+<#  #>
 <# Renamed columns #>
 <% for (let column of this.table.getRenamedColumns()) { %>
     $table->renameColumn('<$ column.getOldName() $>', '<$ column.name $>');

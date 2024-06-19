@@ -274,7 +274,13 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     getNotRenamedChangedColumns(): Column[] {
-        return this.getChangedColumns().filter((column) => !column.wasRenamed())
+        return this.getChangedColumns().filter((column) => {
+            return !column.wasRenamed() && !column.changedOnlyImplicitUnique()
+        })
+    }
+
+    getColumnsWithRemovedUnique(): Column[] {
+        return this.getValidColumns().filter((column) => column.implicitUniqueWasRemoved())
     }
 
     getColumnsNames(): string[] {

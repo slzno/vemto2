@@ -198,6 +198,10 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         return !! this.unique
     }
 
+    implicitUniqueWasRemoved(): boolean {
+        return this.schemaState.unique && ! this.unique
+    }
+
     isSpecialPrimaryKey(): boolean {
         return this.type === 'uuid'
     }
@@ -257,6 +261,18 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
 
     hasImplicitIndex(): boolean {
         return !! this.index
+    }
+
+    changedOnlyImplicitUnique(): boolean {
+        const dataComparisonMap = this.dataComparisonMap(this)
+        
+        let changedOnlyImplicitUnique = true
+
+        Object.keys(dataComparisonMap).forEach(key => {
+            if(key !== 'unique' && dataComparisonMap[key]) changedOnlyImplicitUnique = false
+        })
+
+        return changedOnlyImplicitUnique
     }
 
     isDirty(): boolean {
