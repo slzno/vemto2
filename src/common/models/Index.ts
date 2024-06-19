@@ -327,7 +327,9 @@ export default class Index extends AbstractSchemaModel implements SchemaModel {
     }
 
     hasColumn(column: string): boolean {
-        return this.columns.includes(column)
+        const columns = this.columns || []
+
+        return columns.includes(column)
     }
 
     getForeignTable(): Table {

@@ -31,10 +31,6 @@ $table-><$ column.type $>('<$ column.name $>'
 ->autoIncrement()
 <up } up>
 <# --- #>
-<up if (column.isPrimaryKey() && column.isSpecialPrimaryKey()) { up>
-->primary()
-<up } up>
-<# --- #>
 <up if (column.isUnique()) { up>
 ->unique()
 <up } up>
