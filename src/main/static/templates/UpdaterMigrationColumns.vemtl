@@ -32,7 +32,7 @@
 <#  #>
 <# Columns that changed the unique status from true to false #>
 <% for (let column of this.table.getColumnsWithRemovedUnique()) { %>
-    $table->dropUnique(['<$ column.name $>');
+    $table->dropUnique(['<$ column.name $>']);
 <% } %>
 <#  #>
 <#  #>

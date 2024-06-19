@@ -11,7 +11,7 @@ $table-><$ column.type $>('<$ column.name $>'
 , <$ column.scale $>
 <up } up>
 <# --- #>
-<up if (column.options) { up>
+<up if (column.options && column.options.length) { up>
 , <$ JSON.stringify(column.options).replace(/"/g, '\'') $>
 <up } up>)
 <# --- #>
