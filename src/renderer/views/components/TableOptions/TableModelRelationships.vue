@@ -91,15 +91,11 @@
 
     const saveRelationship = (relationship: Relationship) => {
         try {
-            if(relationship.id) {
-                relationship.saveFromInterface()
-                loadRelationships()
-                return
-            }
-    
             relationship.processAndSave(true)
+            
             loadRelationships()
         } catch (error: any) {
+            console.error(error)
             circularErrorMessage.value.show()
         }
     }
@@ -128,10 +124,18 @@
         const confirmed = await confirmDeleteDialog.value.confirm()
         if(!confirmed) return
 
+        const relatedColumns = relationship.getRelatedColumns(),
+            pivot = relationship.pivot
+
         removeRelationship()
         
         if(confirmed.deleteInverse && inverseRelationship) {
             inverseRelationship.delete()
+        }
+
+        if(confirmed.deleteForeignKeysAndPivot) {
+            pivot?.delete()
+            relatedColumns.forEach((column: Column) => column.delete())
         }
 
         loadRelationships()
@@ -177,7 +181,11 @@
             'deleteInverse': {
                 'label': 'Delete inverse relationship',
                 'value': true
-            }
+            },
+            'deleteForeignKeysAndPivot': {
+                'label': 'Delete foreign keys and pivot if exists',
+                'value': false
+            },
         }">
             Are you sure you want to delete this relationship?
         </UiConfirm>
