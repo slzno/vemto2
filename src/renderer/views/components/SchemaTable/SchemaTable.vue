@@ -34,21 +34,21 @@
         loadTableData()
     })
 
-    watch(() => schemaStore.needsToReloadTableId, (needsToReloadId) => {
-        if(needsToReloadId !== table.value.id) return
+    watch(() => schemaStore.needsToReloadTables, () => {
+        console.log('needs to reload tables', schemaStore.needsToReloadTables)
+        if(!schemaStore.needsToReloadTable(table.value.id)) return
         
-        console.log('needs to reload table data')
+        console.log('needs to reload table data', table.value.name)
         loadTableData()
-        schemaStore.tableAlreadyReloaded()
-        
-    })
+        schemaStore.tableAlreadyReloaded(table.value.id)
+    }, { deep: true })
 
     onMounted(() => {
         loadTableData()
 
         relationshipsListenerId = table.value.addListener('relationships:changed', debounce(async () => {
             console.log('relationships changed from schema table')
-            loadTableData()
+            schemaStore.askToReloadSchema()
         }, 100))
     })
 

@@ -10,16 +10,33 @@ export const useSchemaStore = defineStore("schema", {
         selectedSchemaSection: {} as SchemaSection,
         needsToReloadSchema: false,
         needsToReloadEveryTable: false,
-        needsToReloadTableId: null as string | null,
+        needsToReloadTables: [] as string[],
+        needsToReloadSchemaConnections: false,
     }),
 
     actions: {
         askToReloadTableById(tableId: string) {
-            this.needsToReloadTableId = tableId
+            this.addTableToReload(tableId)
+
+            const table = Table.find(tableId)
+
+            table.getRelatedTables().forEach((relatedTable) => {
+                this.addTableToReload(relatedTable.id)
+            })
+
+            setTimeout(() => {
+                this.askToReloadSchemaConnections()
+            }, 100)
         },
 
-        tableAlreadyReloaded() {
-            this.needsToReloadTableId = null
+        tableAlreadyReloaded(tableId: string) {
+            this.needsToReloadTables = this.needsToReloadTables.filter((id) => id !== tableId)
+        },
+
+        addTableToReload(tableId: string) {
+            if(! this.needsToReloadTables.includes(tableId)) {
+                this.needsToReloadTables.push(tableId)
+            }
         },
 
         askToReloadSchema() {
@@ -42,6 +59,14 @@ export const useSchemaStore = defineStore("schema", {
 
         everyTableAlreadyReloaded() {
             this.needsToReloadEveryTable = false
+        },
+
+        askToReloadSchemaConnections() {
+            this.needsToReloadSchemaConnections = true
+        },
+
+        schemaConnectionsAlreadyReloaded() {
+            this.needsToReloadSchemaConnections = false
         },
 
         reloadSelectedTable() {
@@ -126,6 +151,10 @@ export const useSchemaStore = defineStore("schema", {
 
         selectedSchemaSectionIs(state) {
             return (section: SchemaSection) => state.selectedSchemaSection.id === section.id
+        },
+
+        needsToReloadTable(state) {
+            return (tableId: string) => state.needsToReloadTables.includes(tableId)
         },
     }
 })

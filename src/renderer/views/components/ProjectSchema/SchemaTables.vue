@@ -13,6 +13,7 @@
         schemaStore = useSchemaStore(),
         tables = ref([]) as Ref<Table[]>,
         loading = ref(true),
+        showLoading = ref(false),
         canLoadTables = ref(false)
 
     const emit = defineEmits(["tablesLoaded"])
@@ -92,9 +93,10 @@
         projectStore.project.removeListener(tablesDeletedListenerId)
     })
 
-    const loadTables = async () => {
+    const loadTables = async (showLoadingIndicator: boolean = true) => {
         loading.value = true
-
+        showLoading.value = showLoadingIndicator
+    
         setTimeout(() => {
             if(!canLoadTables.value) return
     
@@ -103,6 +105,7 @@
             tables.value = projectStore.project.getTablesBySection(schemaStore.selectedSchemaSection)
             
             loading.value = false
+            showLoading.value = false
 
             schemaStore.schemaAlreadyReloaded()
 
@@ -283,7 +286,7 @@
         @scroll.passive="onScroll"
         class="relative block overflow-auto cursor-grab scrollbar-thin scrollbar-thumb-slate-400 scrollbar-track-slate-300 dark:scrollbar-thumb-black dark:scrollbar-track-slate-900"
     >
-        <div v-show="loading" class="fixed top-0 left-0 w-full h-full flex items-center justify-center space-x-2 z-50">
+        <div v-show="showLoading" class="fixed top-0 left-0 w-full h-full flex items-center justify-center space-x-2 z-50 opacity-20">
             <UiLoading></UiLoading> 
             <span>Loading...</span>
         </div>

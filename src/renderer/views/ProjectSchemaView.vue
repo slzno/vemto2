@@ -40,6 +40,13 @@
     })
 
     watch(() => projectStore.project.currentZoom, () => changeSchemaZoom())
+    
+    watch(() => schemaStore.needsToReloadSchemaConnections, () => {
+        console.log('needs to reload schema connections')
+        drawConnectionsOnNextTick()
+        schemaStore.schemaConnectionsAlreadyReloaded()
+    })
+    
     watch(() => schemaStore.selectedSchemaSection, () => {
 
         if(jsPlumbInstance) {

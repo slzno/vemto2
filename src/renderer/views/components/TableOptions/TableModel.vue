@@ -66,7 +66,7 @@
 
         relationshipsListenerId = model.value.addListener('relationships:changed', debounce(async () => {
             console.log('relationships changed from table options model')
-            schemaStore.askToReloadTableById(model.value.table.id)
+            schemaStore.askToReloadSchema()
         }, 100))
     })
 
