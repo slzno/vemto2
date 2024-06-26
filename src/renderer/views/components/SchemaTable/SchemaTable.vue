@@ -1,8 +1,11 @@
 <script setup lang="ts">
-    import { nextTick, ref, toRef } from "vue"
+    import debounce from 'lodash/debounce'
     import Table from "@Common/models/Table"
+    import Model from "@Common/models/Model"
+    import Column from "@Common/models/Column"
     import TableModel from "./TableModel.vue"
     import TableColumn from "./TableColumn.vue"
+    import { nextTick, ref, Ref, toRef, computed, onMounted, onUnmounted, watch } from "vue"
     import { ArrowRightIcon, ArrowUturnDownIcon, ExclamationCircleIcon, TrashIcon } from "@heroicons/vue/24/outline"
     import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
     import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
@@ -15,13 +18,56 @@
         table = toRef(props, "table"),
         confirmDeleteDialog = ref(null),
         schemaStore = useSchemaStore(),
-        projectStore = useProjectStore()
+        projectStore = useProjectStore(),
+        tableColumns = ref([]) as Ref<Column[]>,
+        tableModels = ref([]) as Ref<Model[]>
 
     const emit = defineEmits(["highlight"])
     
     let clickedQuickly = false,
         isClickingOptions = false
 
+    let relationshipsListenerId = null
+
+    watch(() => schemaStore.needsToReloadEveryTable, (needsToReload) => {
+        if(!needsToReload) return
+        loadTableData()
+    })
+
+    watch(() => schemaStore.needsToReloadTables, () => {
+        console.log('needs to reload tables', schemaStore.needsToReloadTables)
+        if(!schemaStore.needsToReloadTable(table.value.id)) return
+        
+        console.log('needs to reload table data', table.value.name)
+        loadTableData()
+        schemaStore.tableAlreadyReloaded(table.value.id)
+    }, { deep: true })
+
+    onMounted(() => {
+        loadTableData()
+
+        relationshipsListenerId = table.value.addListener('relationships:changed', debounce(async () => {
+            console.log('relationships changed from schema table')
+            schemaStore.askToReloadSchema()
+        }, 100))
+    })
+
+    onUnmounted(() => {
+        table.value.removeListener(relationshipsListenerId)
+
+        table.value.clearListeners()
+    })
+
+    const loadTableData = () => {
+        try {
+            table.value.refresh()
+            tableColumns.value = table.value.getAllOrderedColumns()
+            tableModels.value = table.value.models
+        } catch (error) {
+            console.error(error)
+            table.value.clearListeners()
+        }
+    }
 
     const removeTable = async () => {
         itIsClickingOptions()
@@ -30,14 +76,18 @@
         if(!confirmed) return
 
         nextTick(() => {
-            table.value.remove()
+            table.value.fresh().remove()
+
+            schemaStore.askToReloadSchema()
         })
     }
 
     const undoRemoveTable = (): void => {
         itIsClickingOptions()
 
-        table.value.undoRemove()
+        table.value.fresh().undoRemove()
+
+        schemaStore.askToReloadSchema()
     }
 
     const itIsClickingOptions = () => {
@@ -73,10 +123,10 @@
     }
 
     const selectTable = () => {
-        schemaStore.selectTable(table.value.fresh())
+        schemaStore.selectTable(table.value)
 
         nextTick(() => {
-            emit("highlight", table.value.fresh())
+            emit("highlight", table.value)
         })
     }
 
@@ -84,7 +134,22 @@
         itIsClickingOptions()
 
         table.value.moveToSection(section)
+
+        schemaStore.askToReloadSchema()
     }
+
+    const titleClasses = computed(() => {
+        return {
+            'line-through': table.value.isRemoved(),
+        }
+    })
+
+    const tableStyles = computed(() => {
+        return {
+            top: getTablePosition(table.value).top,
+            left: getTablePosition(table.value).left,
+        }
+    })
 </script>
 
 <template>
@@ -96,28 +161,16 @@
         :id="`table_${table.id}`"
         :ref="`table_${table.id}`"
         :data-table-id="table.id"
-        :class="{
-            'opacity-30': schemaStore.hasSelectedTable && schemaStore.selectedTableIsNot(table),
-            'border border-transparent': schemaStore.selectedTableIsNot(table),
-            'border border-slate-400 dark:border-slate-500': schemaStore.selectedTableIs(table),
-        }"
-        class="schema-table group absolute shadow-lg rounded-lg hover:border-slate-400 dark:hover:border-slate-500 bg-white dark:bg-slate-850 z-10 space-y-4 pb-4 select-none cursor-default"
+        class="schema-table group absolute shadow-lg rounded-lg border border-transparent hover:border-slate-400 dark:hover:border-slate-500 bg-white dark:bg-slate-850 z-10 space-y-4 pb-4 select-none cursor-default"
         style="min-width: 270px"
-        :style="{
-            top: getTablePosition(table).top,
-            left: getTablePosition(table).left,
-        }"
+        :style="tableStyles"
     >
         <!-- Table title -->
         <div 
-            @mouseover="schemaStore.enableTableDragging()"
-            @mouseleave="schemaStore.disableTableDragging()"
-            class="w-full cursor-move hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-t-lg px-4 pt-2 pb-2 flex justify-between items-center"
+            class="w-full cursor-move dark:bg-slate-800 rounded-t-lg px-4 pt-2 pb-2 flex justify-between items-center"
         >
             <span class="title w-full font-bold text-lg text-slate-750 dark:text-slate-300 flex items-center space-x-1">
-                <div class="flex items-center" :class="{
-                    'line-through': table.isRemoved(),
-                }">
+                <div class="flex items-center" :class="titleClasses">
                     <div title="The table will be removed after saving the migration" v-show="table.isRemoved()">
                         <ExclamationCircleIcon
                             class="w-5 h-5 text-red-500 mr-2"/>
@@ -170,7 +223,7 @@
                 }" 
                 class="font-mono px-4">
                 <TableColumn
-                    v-for="column in table.getAllOrderedColumns()"
+                    v-for="column in tableColumns"
                     :key="column.name"
                     :column="column"
                 />
@@ -178,7 +231,7 @@
     
             <div class="font-mono px-4">
                 <TableModel
-                    v-for="model in table.models"
+                    v-for="model in tableModels"
                     :key="model.name"
                     :model="model"
                 />

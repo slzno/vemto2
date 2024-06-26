@@ -47,9 +47,9 @@
         handleKeyInputs()
         setupLicenseModal()
         setupDefaultConfirmDialog()
-
+        
         errorsStore.clearErrors()
-
+        
         await HandleProjectDatabase.populate(() => {
             canShow.value = true
 

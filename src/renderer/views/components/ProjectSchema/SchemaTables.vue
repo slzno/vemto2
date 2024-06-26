@@ -1,25 +1,46 @@
 <script setup lang="ts">
     import 'animate.css'
+    import { debounce } from 'lodash'
     import Table from '@Common/models/Table'
-    import { onMounted, watch, ref, Ref, defineEmits, nextTick } from "vue"
+    import { onMounted, onUnmounted, watch, ref, Ref, defineEmits, nextTick } from "vue"
     import SchemaTable from "../SchemaTable/SchemaTable.vue"
     import TableOptions from "../TableOptions/TableOptions.vue"
     import { useSchemaStore } from "@Renderer/stores/useSchemaStore"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
+    import UiLoading from '@Renderer/components/ui/UiLoading.vue'
 
     const projectStore = useProjectStore(),
         schemaStore = useSchemaStore(),
         tables = ref([]) as Ref<Table[]>,
+        loading = ref(true),
+        showLoading = ref(false),
         canLoadTables = ref(false)
 
     const emit = defineEmits(["tablesLoaded"])
 
     let positionTracking: any = { top: 0, left: 0, x: 0, y: 0 }
 
+    watch(() => schemaStore.selectedTable, table => {
+        if(!table.id) {
+            clearHighlight()
+            return
+        }
+
+        highlightTable(table)
+    })
+
     watch(() => schemaStore.focusedTable, table => {
         if(!table) return
 
         centerOnTable(table)
+    })
+
+    watch(() => schemaStore.needsToReloadSchema, (needsReload) => {
+        if(!needsReload) return
+
+        console.log('needs to reload tables')
+
+        loadTables()
     })
 
     watch(() => schemaStore.selectedSchemaSection, () => {
@@ -28,9 +49,16 @@
         loadTables()
     })
 
-    watch(() => projectStore.project.tables, () => {
-        loadTables()
+    watch(() => schemaStore.selectedSchemaSection.scrollCenteringRequested, (value) => {
+        if(value) {
+            centerScroll()
+            setCanvasScroll()
+            schemaStore.selectedSchemaSection.clearScrollCenteringRequest()
+        }
     })
+
+    let tablesCreatedListenerId = null,
+        tablesDeletedListenerId = null
 
     onMounted(() => {
         canLoadTables.value = true
@@ -45,19 +73,46 @@
 
         tablesCanvas.addEventListener('mousedown', mouseDownHandler)
 
+        tablesCreatedListenerId = projectStore.project.addListener('tables:created', debounce(() => {
+            console.log('table created from schema tables')
+            loadTables()
+        }, 100))
+
+        tablesDeletedListenerId = projectStore.project.addListener('tables:deleted', debounce(() => {
+            console.log('table deleted from schema tables')
+            loadTables()
+        }, 100))
+
         loadTables()
     })
 
-    const loadTables = () => {
-        if(!canLoadTables.value) return
-
+    onUnmounted(() => {
         if(projectStore.projectIsEmpty) return
+        
+        projectStore.project.removeListener(tablesCreatedListenerId)
+        projectStore.project.removeListener(tablesDeletedListenerId)
+    })
 
-        tables.value = projectStore.project.getTablesBySection(schemaStore.selectedSchemaSection)
+    const loadTables = async (showLoadingIndicator: boolean = true) => {
+        loading.value = true
+        showLoading.value = showLoadingIndicator
+    
+        setTimeout(() => {
+            if(!canLoadTables.value) return
+    
+            if(projectStore.projectIsEmpty) return
+    
+            tables.value = projectStore.project.getTablesBySection(schemaStore.selectedSchemaSection)
+            
+            loading.value = false
+            showLoading.value = false
 
-        nextTick(() => {
-            emit('tablesLoaded')
-        })
+            schemaStore.schemaAlreadyReloaded()
+
+            nextTick(() => {
+                emit('tablesLoaded')
+            })
+        }, 100)
     }
 
     /**
@@ -76,7 +131,7 @@
 
         centerOnPosition(positionX, positionY)
 
-        highlightTable(table)
+        focusTable(table)
     }
     
     /**
@@ -105,7 +160,7 @@
         tableCanvas.scrollTop = scrollTop
     }
 
-    const highlightTable = (table) => {
+    const focusTable = (table) => {
         const tableElement = document.getElementById(`table_${table.id}`)
 
         if(!tableElement) return
@@ -117,9 +172,34 @@
         }, 500)
     }
 
+    const highlightTable = (table) => {
+        // add opacity-30 to all other .schema-table tables
+        const tables = document.querySelectorAll('.schema-table')
+
+        tables.forEach((tableElement) => {
+            if(tableElement.id === `table_${table.id}`) {
+                tableElement.classList.remove('opacity-30')
+            } else {
+                tableElement.classList.add('opacity-30')
+            }
+        })
+    }
+
+    const clearHighlight = () => {
+        const tables = document.querySelectorAll('.schema-table')
+
+        tables.forEach((tableElement) => {
+            tableElement.classList.remove('opacity-30')
+        })
+    }
+
     const centerScrollIfNecessary = () => {
         if(schemaStore.selectedSchemaSection.hasScroll()) return
 
+        centerScroll()
+    }
+
+    const centerScroll = () => {
         const windowWidth = window.innerWidth,
             windowHeight = window.innerHeight,
             sidebarNavWidth = 80,
@@ -206,6 +286,10 @@
         @scroll.passive="onScroll"
         class="relative block overflow-auto cursor-grab scrollbar-thin scrollbar-thumb-slate-400 scrollbar-track-slate-300 dark:scrollbar-thumb-black dark:scrollbar-track-slate-900"
     >
+        <div v-show="showLoading" class="fixed top-0 left-0 w-full h-full flex items-center justify-center space-x-2 z-50 opacity-20">
+            <UiLoading></UiLoading> 
+            <span>Loading...</span>
+        </div>
         <div
             id="tablesContainer"
             class="flex justify-center items-center"

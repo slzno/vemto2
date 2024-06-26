@@ -163,6 +163,12 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
         this.save()
     }
 
+    undoRemove() {
+        this.removed = false
+
+        this.save()
+    }
+
     isInvalid(): boolean {
         return ! this.isValid()
     }
@@ -589,6 +595,16 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
         }
 
         return this.pivot.columns.filter((column: Column) => !exceptColumnsName.includes(column.name))
+    }
+
+    getRelatedColumns(): Column[] {
+        let columns = []
+
+        if(this.foreignKey) columns.push(this.foreignKey)
+        if(this.idColumn) columns.push(this.idColumn)
+        if(this.typeColumn) columns.push(this.typeColumn)
+
+        return columns
     }
 
 }

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+    import debounce from 'lodash/debounce'
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import { ArrowDownTrayIcon, ArrowPathIcon, ArrowRightIcon, ArrowUturnDownIcon, CircleStackIcon, CodeBracketIcon, DocumentIcon, MinusIcon, PlusIcon, TableCellsIcon, TrashIcon } from "@heroicons/vue/24/outline"
@@ -20,8 +21,12 @@
     import Alert from "@Renderer/components/utils/Alert"
     import InternalFiles from "@Renderer/util/InternalFiles"
     import MigrationOrganizer from "@Common/services/tables/MigrationOrganizer"
+    import { useSchemaStore } from '@Renderer/stores/useSchemaStore'
+
+    const emit = defineEmits(["schemaSaved"])
 
     const projectStore = useProjectStore(),
+        schemaStore = useSchemaStore(),
         showingModal = ref(false),
         confirmSaveDialog = ref(null),
         confirmUndoDialog = ref(null),
@@ -29,7 +34,8 @@
         savingSchemaChanges = ref(false),
         currentReviewingMode = ref("table") as Ref<"table"|"model">,
         conflictsSolver = ref(null),
-        calculatingChanges = ref(false)
+        calculatingChanges = ref(false),
+        hasSchemaChanges = ref(false)
 
     const tablesSettings = reactive({} as any),
         modelsSettings = reactive({} as any)
@@ -49,11 +55,25 @@
         selectedModel = ref(null) as Ref<Model|null>,
         selectedModelMode = ref("created") as Ref<"created"|"updated"|"removed">
 
-    onUnmounted(() => {
-        close()
+    let changesCheckerInterval: any = null
+
+    onMounted(() => {
+        hasSchemaChanges.value = projectStore.project.hasSchemaChanges()
+
+        changesCheckerInterval = setInterval(() => {
+            hasSchemaChanges.value = projectStore.project.hasSchemaChanges()
+        }, 1000)
     })
 
-    watch(() => projectStore.hasSchemaChanges, async (hasChanges) => {
+    onUnmounted(() => {
+        close()
+
+        if(changesCheckerInterval) {
+            clearInterval(changesCheckerInterval)
+        }
+    })
+
+    watch(hasSchemaChanges, async (hasChanges) => {
         if(!hasChanges) close()
     })
 
@@ -68,19 +88,22 @@
     })
 
     const show = async () => {
-        calculatingChanges.value = true
         showingModal.value = true
         
         await nextTick()
 
+        calculatingChanges.value = true
+        SchemaBuilder.disableSchemaChangesCheck()
+
+        await new Promise((resolve) => requestAnimationFrame(resolve))
+        await nextTick()
+
         setTimeout(async () => {
             MigrationOrganizer.storeTablesOrders(projectStore.project)
-
+    
             await buildSettings()
             await selectFirstTableOrModel()
-        }, 100);
-
-        SchemaBuilder.disableSchemaChangesCheck()
+        }, 1000)
     }
 
     const close = () => {
@@ -230,8 +253,10 @@
     
             await readSchema()
     
+            emit("schemaSaved")
+
             savingSchemaChanges.value = false
-    
+
             close()
         } catch (error: any) {
             savingSchemaChanges.value = false
@@ -383,7 +408,7 @@
         <div
             class="absolute bottom-0 left-0 p-4"
             style="z-index: 60;"
-            v-if="projectStore.project.hasSchemaChanges()"
+            v-if="hasSchemaChanges"
         >
             <div class="flex flex-col space-y-2 bg-white dark:bg-slate-850 border border-slate-300 dark:border-slate-700 rounded-lg shadow-lg">
                 <div class="flex items-center space-x-1 text-sm pt-3 pb-3 px-3 bg-white dark:bg-slate-800 rounded-t-lg text-slate-900 dark:text-slate-300 font-thin border-b border-transparent dark:border-slate-700">
@@ -420,6 +445,7 @@
                 @close="close()"
                 width="1400px"
                 height="calc(100vh - 5rem)"
+                :processing="calculatingChanges || savingSchemaChanges"
             >
                 <section
                     :class="{

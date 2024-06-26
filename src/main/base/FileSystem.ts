@@ -91,6 +91,8 @@ class FileSystem {
 
         fs.writeFileSync(destFilePath, content)
 
+        fs.chmodSync(destFilePath, 0o644)
+
         return this
     }
 
@@ -104,6 +106,8 @@ class FileSystem {
         this.makeDirectoryFromFileIfNotExists(directoryName)
 
         fs.mkdirSync(directoryName)
+        
+        this.fixPermissions(directoryName)
 
         return true
     }
@@ -123,7 +127,7 @@ class FileSystem {
         const result = shell.cp('-R', templateFolder, destinationFolder)
 
         // set the folder to be writable
-        fs.chmodSync(destinationFolder, 0o755)
+        this.fixPermissions(destinationFolder)
 
         return result.code === 0
     }
@@ -306,6 +310,34 @@ class FileSystem {
         })
     
         return fileList
+    }
+
+    fixPermissions(folderPath: string): FileSystem {
+        console.log('Fixing Permissions: ' + folderPath)
+
+        const excludedPaths = [
+            '.git',
+            'vendor',
+            'node_modules',
+        ]
+
+        if(excludedPaths.some(p => folderPath.includes(p))) {
+            return this
+        }
+
+        fs.chmodSync(folderPath, 0o755)
+
+        fs.readdirSync(folderPath).forEach((file) => {
+            const curPath = path.join(folderPath, file)
+
+            if (fs.lstatSync(curPath).isDirectory()) {
+                this.fixPermissions(curPath)
+            } else {
+                fs.chmodSync(curPath, 0o644)
+            }
+        })
+
+        return this
     }
 
 }

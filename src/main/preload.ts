@@ -84,6 +84,9 @@ contextBridge.exposeInMainWorld("api", {
     fileExists: (path: string) => {
         return ipcRenderer.invoke("file:exists", path)
     },
+    fixFolderPermissions: (path: string) => {
+        return ipcRenderer.invoke("folder:fix-permissions", path)
+    },
     folderExists: (path: string) => {
         return ipcRenderer.invoke("folder:exists", path)
     },

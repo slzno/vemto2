@@ -5,37 +5,24 @@
     import Alert from "@Renderer/components/utils/Alert"
     import Main from "@Renderer/services/wrappers/Main"
     import { sentenceCase } from "change-case"
-    import { ref, Ref, defineProps, nextTick } from "vue"
+    import { defineProps, computed } from "vue"
     import TemplateErrorViewer from "../Common/TemplateErrorViewer.vue"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
-    import { CodeBracketIcon, DocumentMinusIcon, MinusCircleIcon, TrashIcon } from "@heroicons/vue/24/outline"
-    import ConflictsSolver from "./ConflictsSolver.vue"
-    import InternalFiles from "@Renderer/util/InternalFiles"
+    import { CodeBracketIcon, DocumentMinusIcon, MinusCircleIcon } from "@heroicons/vue/24/outline"
     import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
     import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
+
+    const emit = defineEmits(["showConflictsSolver"])
 
     const props = defineProps<{
         file: RenderableFile
     }>()
 
-    const conflictsSolver = ref(null),
-        currentConflictsFile = ref(null) as Ref<RenderableFile>,
-        conflictsFilePath = ref(""),
-        conflictsFileContent = ref(""),
-        conflictsNewFileContent = ref("")
-
     const showConflictsSolver = async (file: RenderableFile): Promise<void> => {
-        currentConflictsFile.value = file
-        conflictsFilePath.value = file.getRelativeFilePath()
-        conflictsFileContent.value = await Main.API.readProjectFile(conflictsFilePath.value)
-        conflictsNewFileContent.value = await InternalFiles.readGeneratedFile(conflictsFilePath.value)
-
-        nextTick(() => {
-            conflictsSolver.value.show()
-        })
+        emit("showConflictsSolver", file)
     }
 
-    const openFile = async (file: RenderableFile): void => {
+    const openFile = async (file: RenderableFile): Promise<void> => {
         if (file.wasRemoved()) {
             Alert.warning("This file was removed from the project")
             return
@@ -51,23 +38,6 @@
         Main.API.openProjectFile(file.getRelativeFilePath())
     }
 
-    const conflictsSolved = async (content) => {
-        if (!conflictsFilePath.value) {
-            return
-        }
-        
-        await Main.API.writeProjectFile(conflictsFilePath.value, content)
-
-
-        currentConflictsFile.value.solveConflicts()
-
-        conflictsFilePath.value = ""
-        conflictsFileContent.value = ""
-        conflictsNewFileContent.value = ""
-
-        Alert.success("Conflicts solved successfully")
-    }
-
     const ignoreFile = async (file: RenderableFile) => {
         file.setAsIgnored()
     }
@@ -75,19 +45,30 @@
     const clearFile = async (file: RenderableFile) => {
         file.setAsIdle()
     }
+
+    const statusClasses = computed(() => {
+        return {
+            'text-green-500':
+                props.file.status === RenderableFileStatus.RENDERED,
+            'text-yellow-500':
+                props.file.status === RenderableFileStatus.PENDING,
+            'text-red-500':
+                props.file.status === RenderableFileStatus.ERROR,
+            'text-orange-500':
+                props.file.status === RenderableFileStatus.CONFLICT,
+            'text-red-700':
+                props.file.status === RenderableFileStatus.ASK_TO_REMOVE,
+            'text-red-800':
+                props.file.status === RenderableFileStatus.CAN_REMOVE,
+            'text-cyan-500':
+                props.file.status === RenderableFileStatus.SKIPPED,
+            'text-slate-450':
+                props.file.status === RenderableFileStatus.REMOVED || props.file.status === RenderableFileStatus.IGNORED,
+        }
+    })
 </script>
 
 <template>
-    <ConflictsSolver 
-        can-ignore
-        ref="conflictsSolver"
-        :relativeFilePath="conflictsFilePath"
-        :currentFileContent="conflictsFileContent"
-        :newFileContent="conflictsNewFileContent"
-        @solved="conflictsSolved"
-        @ignored="ignoreFile(currentConflictsFile)"
-    />
-
     <div
         v-if="file && file.id"
         class="flex flex-col justify-center bg-slate-200 dark:bg-slate-850 dark:hover:bg-slate-800 w-full min-h-[3.5rem] rounded-lg mb-2 p-2 px-2"
@@ -97,32 +78,7 @@
                 <div class="w-24">
                     <div 
                         class="inline-block py-1 px-1.5 rounded-md bg-slate-750 border border-slate-700 mr-2"
-                        :class="{
-                            'text-green-500':
-                                file.status ===
-                                RenderableFileStatus.RENDERED,
-                            'text-yellow-500':
-                                file.status ===
-                                RenderableFileStatus.PENDING,
-                            'text-red-500':
-                                file.status ===
-                                RenderableFileStatus.ERROR,
-                            'text-orange-500':
-                                file.status ===
-                                RenderableFileStatus.CONFLICT,
-                            'text-red-700':
-                                file.status ===
-                                RenderableFileStatus.ASK_TO_REMOVE,
-                            'text-red-800':
-                                file.status ===
-                                RenderableFileStatus.CAN_REMOVE,
-                            'text-cyan-500':
-                                file.status ===
-                                RenderableFileStatus.SKIPPED,
-                            'text-slate-450':
-                                file.status ===
-                                RenderableFileStatus.REMOVED || file.status === RenderableFileStatus.IGNORED,
-                        }"
+                        :class="statusClasses"
                     >
                         <div class="flex items-center space-x-1.5 text-xs">
                             <div
@@ -151,11 +107,6 @@
                     <CodeBracketIcon class="w-4 h-4 mr-1 stroke-2 text-red-500" />
                     Solve Conflicts
                 </UiButton>
-
-                <!-- <UiButton @click="file.delete()">
-                    <TrashIcon class="w-4 h-4 mr-1 text-red-500" />
-                    Clear
-                </UiButton> -->
 
                 <UiOptionsDropdown>
                     <UiDropdownItem @click="ignoreFile(file)">

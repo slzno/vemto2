@@ -192,6 +192,12 @@ export default class Project extends RelaDB.Model {
         return ProjectPathResolver.getPath()
     }
 
+    getNonDetailApplications(): any[] {
+        const cruds = this.cruds.filter((crud) => !crud.isDetail())
+
+        return [...cruds, ...this.pages]
+    }
+
     getApplications(): any[] {
         return [...this.cruds, ...this.pages]
     }
@@ -721,7 +727,7 @@ export default class Project extends RelaDB.Model {
 
     zoomOut() {
         this.initZoom()
-        if (this.currentZoom <= 50) return
+        if (this.currentZoom <= 10) return
         this.currentZoom -= 10
         this.save()
     }
@@ -743,7 +749,7 @@ export default class Project extends RelaDB.Model {
     }
 
     getDefaultTranslation(key: string): string {
-        return this.getTranslation(this.defaultLanguage, key)
+        return this.getTranslation(this.defaultLanguage, key) || ""
     }
 
     getTranslation(language: string, key: string): string {

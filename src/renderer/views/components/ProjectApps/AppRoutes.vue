@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref, nextTick } from "vue";
+    import { ref, Ref, onMounted, nextTick } from "vue";
     import { capitalCase } from "change-case";
     import UiText from "@Renderer/components/ui/UiText.vue";
     import Route, { RouteType } from "@Common/models/Route";
@@ -7,18 +7,29 @@
     import UiModal from "@Renderer/components/ui/UiModal.vue";
     import UiSelect from "@Renderer/components/ui/UiSelect.vue";
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
-import { PlusIcon } from "@heroicons/vue/24/outline";
+    import { PlusIcon } from "@heroicons/vue/24/outline";
 
     const projectStore = useProjectStore(),
         activeRoute = ref<Route|null>(null),
         selectedRoutable = ref(null),
-        showingCreateRouteModal = ref<boolean>(false)
+        showingCreateRouteModal = ref<boolean>(false),
+        routes = ref([]) as Ref<Route[]>
 
     const routableData = ref(null),
         routeMethod = ref<string | null>("get"),
         routeName = ref<string | null>(null),
         routePath = ref<string | null>(null),
         routeTag = ref<string | null>(null)
+
+    onMounted(() => {
+        loadRoutes()
+    })
+
+    const loadRoutes = () => {
+        setTimeout(() => {
+            routes.value = projectStore.project.routes
+        }, 100)
+    }
 
     const onRouteClick = (route: Route) => {
         if(activeRoute.value?.id == route.id) return
@@ -76,6 +87,9 @@ import { PlusIcon } from "@heroicons/vue/24/outline";
         if(!confirmed) return
 
         route.delete()
+
+        routes.value = routes.value.filter(r => r.id != route.id)
+
         cancel()
     }
 
@@ -125,6 +139,8 @@ import { PlusIcon } from "@heroicons/vue/24/outline";
         })
 
         route.save()
+
+        routes.value.push(route)
 
         close(true)
     }
@@ -179,7 +195,7 @@ import { PlusIcon } from "@heroicons/vue/24/outline";
     <div class="bg-slate-950 p-3 rounded-lg border border-slate-700 h-screen">
         <div
             class="w-2/3 mb-2 border border-slate-700 bg-slate-850 rounded-lg p-3 hover:bg-slate-800 flex flex-col gap-3"
-            v-for="route in projectStore.project.routes"
+            v-for="route in routes"
             @click="onRouteClick(route)"
             :key="route.id"
         >

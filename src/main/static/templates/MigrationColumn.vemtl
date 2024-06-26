@@ -11,7 +11,7 @@ $table-><$ column.type $>('<$ column.name $>'
 , <$ column.scale $>
 <up } up>
 <# --- #>
-<up if (column.options) { up>
+<up if (column.options && column.options.length) { up>
 , <$ JSON.stringify(column.options).replace(/"/g, '\'') $>
 <up } up>)
 <# --- #>
@@ -29,10 +29,6 @@ $table-><$ column.type $>('<$ column.name $>'
 <# --- #>
 <up if (column.isAutoIncrement()) { up>
 ->autoIncrement()
-<up } up>
-<# --- #>
-<up if (column.isSpecialPrimaryKey()) { up>
-->primary()
 <up } up>
 <# --- #>
 <up if (column.isUnique()) { up>

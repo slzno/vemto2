@@ -202,9 +202,15 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     isDirty(): boolean {
         if(this.hasHooksChanges()) return true
 
-        const hasDirtyRelationships = this.ownRelationships.some((relationship) => relationship.isDirty())
+        const hasDirtyRelationships = this.ownRelationships.some((relationship) => relationship.isDirty()),
+            tableWasRenamed = this.table.wasRenamed() && this.tableNameIsDifferentFromDefault()
 
-        return !this.isRemoved() && (this.hasLocalChanges() || hasDirtyRelationships)
+        return !this.isRemoved() 
+            && (
+                this.hasLocalChanges() 
+                || hasDirtyRelationships
+                || tableWasRenamed
+            )
     }
 
     hasHooksChanges(): boolean {
@@ -944,6 +950,8 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     }
 
     addDeletedAtColumnIfNecessary() {
+        if(!this.table) return
+        
         if(this.table.hasColumn('deleted_at') || !this.hasSoftDeletes) return
 
         const column = new Column({
@@ -953,10 +961,10 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
             tableId: this.table.id,
             nullable: true
         })
-        
-        column.order = column.calculateNextOrder()
 
         column.save()
+
+        column.sendToBottom()
     }
 
     getControllerName() {

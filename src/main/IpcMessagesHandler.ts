@@ -71,7 +71,7 @@ export function HandleIpcMessages() {
 
         return handleError(event, () => {
             const completePath = path.join(project.getPath(), filePath)
-            return FileSystem.readFile(completePath)
+            return FileSystem.readFileIfExists(completePath)
         })
     })
 
@@ -122,7 +122,7 @@ export function HandleIpcMessages() {
             }
 
             // If the file does not exist in the project, we try to read it from the static folder
-            return FileSystem.readFile(path.join(app.getAppPath(), "static", "templates", filePath))
+            return FileSystem.readFileIfExists(path.join(app.getAppPath(), "static", "templates", filePath))
         })
     })
 
@@ -198,7 +198,7 @@ export function HandleIpcMessages() {
             const completePath = path.join(project.getPath(), ".vemto", "conflicts", filePath)
 
             if(FileSystem.fileExists(completePath)) {
-                return FileSystem.readFile(completePath)
+                return FileSystem.readFileIfExists(completePath)
             }
             
             return null
@@ -243,6 +243,12 @@ export function HandleIpcMessages() {
             FileSystem.writeFile(conflictsPath, JSON.stringify(conflictsData, null, 4))
 
             return true
+        })
+    })
+
+    ipcMain.handle("folder:fix-permissions", (event, folderPath) => {
+        return handleError(event, () => {
+            return FileSystem.fixPermissions(folderPath)
         })
     })
 

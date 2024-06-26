@@ -70,12 +70,11 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
 
     static created(column: Column) {
         column.faker = column.getDefaultFaker()
-
+        column.save()
+        
         if(typeof column.order === "undefined") {
             column.reorder()
         }
-
-        column.save()
     }
 
     static deleting(column: Column) {
@@ -87,36 +86,49 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
     }
 
     reorder(): void {
-        let nextOrder = 0
+        this.table.fixAllColumnsOrder()
         
         const tableColumns = this.table.getOrderedColumns(),
-            firstTableDateColumn = tableColumns.find(orderedColumn => orderedColumn.isDeletedAt() || orderedColumn.isCreatedAt() || orderedColumn.isUpdatedAt())
+            firstTableDateColumn = this.table.getFirstDefaultDateColumn()
 
-        if(firstTableDateColumn) {
-            nextOrder = firstTableDateColumn.order
-
-            tableColumns.forEach(orderedColumn => {
-                if(orderedColumn.order < nextOrder || this.id == orderedColumn.id) return
-
-                orderedColumn.order++
-                orderedColumn.save()
-            })
-        } else {
-            nextOrder = tableColumns[tableColumns.length - 1].order + 1
+        if(!firstTableDateColumn) {
+            this.sendToBottom()
+            return
         }
 
-        this.order = nextOrder
+        let newColumnOrder = firstTableDateColumn.order
+
+        tableColumns.forEach(column => {
+            if(column.order < newColumnOrder || this.id == column.id) return
+
+            column.incrementOrder()
+        })
+
+        this.order = newColumnOrder
+        this.save()
+    }
+
+    incrementOrder(): void {
+        this.order++
 
         this.save()
+    }
 
-        this.table.getOrderedColumns().forEach((orderedColumn, index) => {
-            if(orderedColumn.id === this.id) {
-                this.order = index
-            }
+    sendToBottom() {
+        this.table.fixAllColumnsOrder()
 
-            orderedColumn.order = index
-            orderedColumn.save()
-        })
+        const lastColumn = this.table.getLastColumn()
+
+        if(lastColumn) {
+            this.order = lastColumn.order
+            lastColumn.order = this.order - 1
+
+            lastColumn.save()
+        } else {
+            this.order = 0
+        }
+
+        this.save()
     }
 
     saveFromInterface() {
@@ -150,6 +162,14 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         return this.isAutoIncrement() || this.table.hasPrimaryIndexForColumn(this)
     }
 
+    isNotPrimaryKey(): boolean {
+        return ! this.isPrimaryKey()
+    }
+
+    isNotAutoIncrement(): boolean {
+        return ! this.isAutoIncrement()
+    }
+
     isAutoIncrement(): boolean {
         return !! this.autoIncrement
     }
@@ -178,6 +198,10 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         return !! this.unique
     }
 
+    implicitUniqueWasRemoved(): boolean {
+        return this.schemaState.unique && ! this.unique
+    }
+
     isSpecialPrimaryKey(): boolean {
         return this.type === 'uuid'
     }
@@ -188,6 +212,10 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
 
     isTextual(): boolean {
         return ['string', 'text', 'char', 'date', 'datetime', 'timestamp'].includes(this.type)
+    }
+
+    isDefaultDate(): boolean {
+        return this.isCreatedAt() || this.isUpdatedAt() || this.isDeletedAt()
     }
 
     isCreatedAt(): boolean {
@@ -235,6 +263,18 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         return !! this.index
     }
 
+    changedOnlyImplicitUnique(): boolean {
+        const dataComparisonMap = this.dataComparisonMap(this)
+        
+        let changedOnlyImplicitUnique = true
+
+        Object.keys(dataComparisonMap).forEach(key => {
+            if(key !== 'unique' && dataComparisonMap[key]) changedOnlyImplicitUnique = false
+        })
+
+        return changedOnlyImplicitUnique
+    }
+
     isDirty(): boolean {
         return this.hasLocalChanges() || this.isRemoved() || this.isNew()
     }
@@ -275,6 +315,7 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         this.default = data.default
         this.total = data.total
         this.places = data.places
+        this.options = data.options
 
         this.fillSchemaState()
 
@@ -311,7 +352,8 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
             unique: this.unique,
             default: this.default,
             total: this.total,
-            places: this.places
+            places: this.places,
+            options: DataComparator.cloneArray(this.options),
         }
     }
 
@@ -328,6 +370,7 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
             default: DataComparator.stringsAreDifferent(this.schemaState.default, comparisonData.default),
             total: DataComparator.numbersAreDifferent(this.schemaState.total, comparisonData.total),
             places: DataComparator.numbersAreDifferent(this.schemaState.places, comparisonData.places),
+            options: DataComparator.arraysAreDifferent(this.schemaState.options, comparisonData.options),
         }
     }
 
@@ -543,5 +586,9 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         if(!this.isForeign()) return false;
 
         return this.relationshipsByForeignKey.some(relationship => relationship.relatedModelId === model.id)
+    }
+
+    hasDuplicatedName(): boolean {
+        return this.table.hasColumnExceptId(this.name, this.id)
     }
 }

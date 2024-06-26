@@ -34,13 +34,19 @@
             schemaStore.selectLatestSchemaSection()
 
             nextTick(() => {
-                drawConnections()
                 zoomWithMouseWheel()
             })
-        }, 1);
+        }, 1)
     })
 
     watch(() => projectStore.project.currentZoom, () => changeSchemaZoom())
+    
+    watch(() => schemaStore.needsToReloadSchemaConnections, () => {
+        console.log('needs to reload schema connections')
+        drawConnectionsOnNextTick()
+        schemaStore.schemaConnectionsAlreadyReloaded()
+    })
+    
     watch(() => schemaStore.selectedSchemaSection, () => {
 
         if(jsPlumbInstance) {
@@ -70,6 +76,8 @@
 
     const syncSchema = async (syncTables: boolean, syncModels: boolean) => {
         await loadSchema(syncTables, syncModels)
+
+        schemaStore.askToReloadSchema()
     }
 
     const tableAdded = async (table: Table) => {
@@ -113,61 +121,64 @@
         currentNodes = {}
         currentConnections = {}
 
-        jsPlumbInstance.deleteEveryConnection({
-            force: true,
-        })
-
-        const tables = projectStore.project.getTablesBySection(schemaStore.selectedSchemaSection)
-
-        tables.forEach((table: Table) => {
-            if(!table || !table.id) return
-
-            if(!currentNodes[table.id]) {
-                currentNodes[table.id] = document.getElementById("table_" + table.id)!
-
-                if(!currentNodes[table.id]) return
-                jsPlumbInstance.manage(currentNodes[table.id])
-            }
-            
-            const node = currentNodes[table.id],
-                relatedTablesRelations = table.getRelatedTablesRelationsOnSection(
-                    schemaStore.selectedSchemaSection
-                )
-
-            // connect tables
-            if (relatedTablesRelations.length > 0) {
-                relatedTablesRelations.forEach((relation: any) => {
-                    if(!relation.table || !relation.table.id) return
-
-                    let relatedNode = document.getElementById(
-                            "table_" + relation.table.id
-                        ),
-                        connectionName = table.name + "_" + relation.table.name,
-                        connectionNameReverse =
-                            relation.table.name + "_" + table.name
-
-                    if (relatedNode && !currentConnections[connectionName]) {
-                        const cssClass = relation.type === "relationship" ? "connector" : "connector dotted"
-
-                        jsPlumbInstance.connect({
-                            source: node!,
-                            target: relatedNode!,
-                            anchor: "Continuous",
-                            anchors: [["Right", "Left"], ["Left", "Right"]],
-                            cssClass: cssClass,
-                            connector: {
-                                type: BezierConnector.type,
-                                options: {
-                                    curviness: 70,
+        jsPlumbInstance.batch(() => {
+            console.log('deleting every connection')
+            jsPlumbInstance.deleteEveryConnection({
+                force: true,
+            })
+    
+            const tables = projectStore.project.getTablesBySection(schemaStore.selectedSchemaSection)
+    
+            tables.forEach((table: Table) => {
+                if(!table || !table.id) return
+    
+                if(!currentNodes[table.id]) {
+                    currentNodes[table.id] = document.getElementById("table_" + table.id)!
+    
+                    if(!currentNodes[table.id]) return
+                    jsPlumbInstance.manage(currentNodes[table.id])
+                }
+                
+                const node = currentNodes[table.id],
+                    relatedTablesRelations = table.getRelatedTablesRelationsOnSection(
+                        schemaStore.selectedSchemaSection
+                    )
+    
+                // connect tables
+                if (relatedTablesRelations.length > 0) {
+                    relatedTablesRelations.forEach((relation: any) => {
+                        if(!relation.table || !relation.table.id) return
+    
+                        let relatedNode = document.getElementById(
+                                "table_" + relation.table.id
+                            ),
+                            connectionName = table.name + "_" + relation.table.name,
+                            connectionNameReverse =
+                                relation.table.name + "_" + table.name
+    
+                        if (relatedNode && !currentConnections[connectionName]) {
+                            const cssClass = relation.type === "relationship" ? "connector" : "connector dotted"
+    
+                            jsPlumbInstance.connect({
+                                source: node!,
+                                target: relatedNode!,
+                                anchor: "Continuous",
+                                anchors: [["Right", "Left"], ["Left", "Right"]],
+                                cssClass: cssClass,
+                                connector: {
+                                    type: BezierConnector.type,
+                                    options: {
+                                        curviness: 70,
+                                    },
                                 },
-                            },
-                        })
-
-                        currentConnections[connectionName] = true
-                        currentConnections[connectionNameReverse] = true
-                    }
-                })
-            }
+                            })
+    
+                            currentConnections[connectionName] = true
+                            currentConnections[connectionNameReverse] = true
+                        }
+                    })
+                }
+            })
         })
     }
 
@@ -179,28 +190,10 @@
         if (!containerElement) return false
 
         jsPlumbInstance = newInstance({
-            container: document.getElementById("tablesReference")!,
-            // dragOptions: {
-            //     grid: {
-            //         w: 25,
-            //         h: 25,
-            //     },
-            // }
-        })
-
-        jsPlumbInstance.bind(EVENT_DRAG_START, (p: any) => {
-            if(!schemaStore.canDragTable) return false
-
-            isDragging = true
-
-            const tableId = parseInt(p.el.getAttribute("data-table-id")).toString()
-
-            schemaStore.setDraggingTableId(tableId)
+            container: document.getElementById("tablesReference")!
         })
 
         jsPlumbInstance.bind(EVENT_DRAG_STOP, (p: any) => {
-            schemaStore.resetDraggingTableId()
-            
             isDragging = false
 
             const tableId = parseInt(p.el.getAttribute("data-table-id")).toString(),
@@ -224,6 +217,10 @@
             projectStore.project.getZoomAsScale()
         )
     }
+
+    const reloadTables = () => {
+        schemaStore.askToReloadSchema()
+    }
 </script>
 
 <template>
@@ -238,12 +235,13 @@
             @syncSchema="syncSchema" 
             @checkForChanges="checkForChanges"
         />
+
         <SchemaTables 
             v-if="canDrawTables" 
             @tablesLoaded="drawConnectionsOnNextTick()" 
         />
 
-        <MigrationSaver />
+        <MigrationSaver @schemaSaved="reloadTables()" />
     </div>
 </template>
 

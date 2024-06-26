@@ -194,13 +194,13 @@ export default class Crud extends RelaDB.Model {
             || defaultSearchColumn
 
         const defaultSection = crudIsForFilament
-            ? AppSection.findDefaultAdminSection()
+            ? AppSection.findDefaultFilamentPanelSection()
             : AppSection.findDefaultDashboardSection()
 
         const crud = new Crud()
         crud.type = crudType
-        crud.name = capitalCase(model.name)
-        crud.plural = capitalCase(model.plural)
+        crud.name = pascalCase(model.name)
+        crud.plural = pascalCase(model.plural)
         crud.sectionId = defaultSection ? defaultSection.id : null
         crud.modelId = model.id
         crud.tableId = model.tableId
@@ -249,7 +249,7 @@ export default class Crud extends RelaDB.Model {
             || defaultSearchColumn
 
         const defaultSection = crudIsForFilament
-            ? AppSection.findDefaultAdminSection()
+            ? AppSection.findDefaultFilamentPanelSection()
             : AppSection.findDefaultDashboardSection()
 
         const crud = new Crud()
@@ -297,7 +297,7 @@ export default class Crud extends RelaDB.Model {
             || defaultSearchColumn
 
         const defaultSection = crudIsForFilament
-            ? AppSection.findDefaultAdminSection()
+            ? AppSection.findDefaultFilamentPanelSection()
             : AppSection.findDefaultDashboardSection()
 
         const crudName = WordManipulator.runMultiple(
@@ -350,7 +350,7 @@ export default class Crud extends RelaDB.Model {
             || defaultSearchColumn
 
         const defaultSection = crudIsForFilament
-            ? AppSection.findDefaultAdminSection()
+            ? AppSection.findDefaultFilamentPanelSection()
             : AppSection.findDefaultDashboardSection()
 
         const crudName = WordManipulator.runMultiple(

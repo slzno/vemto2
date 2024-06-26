@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { toRef, ref, onMounted } from "vue"
+    import { toRef, ref, watch, Ref } from "vue"
     import TableIndexes from "./TableIndexes.vue"
     import TableSettings from "./TableSettings.vue"
     import { XMarkIcon } from "@heroicons/vue/24/outline"
@@ -15,8 +15,12 @@
     })
 
     const show = toRef(props, "show"),
+        uiTabs = ref(null),
         schemaStore = useSchemaStore(),
-        projectStore = useProjectStore()
+        projectStore = useProjectStore(),
+        loadingTables = ref(false),
+        loadingModels = ref(false),
+        loadingIndexes = ref(false)
 
     const selectedTab = ref("columns"),
         tableOptionsModal = ref(null)
@@ -28,6 +32,18 @@
         { label: "Migrations", value: "migrations" },
         { label: "Settings", value: "settings" },
     ]
+
+    watch(loadingTables, (value) => {
+        uiTabs.value.setLoadingTab("columns", value)
+    })
+
+    watch(loadingModels, (value) => {
+        uiTabs.value.setLoadingTab("models", value)
+    })
+
+    watch(loadingIndexes, (value) => {
+        uiTabs.value.setLoadingTab("indexes", value)
+    })
 </script>
 
 <template>
@@ -66,6 +82,7 @@
                         </button>
         
                         <UiTabs
+                            ref="uiTabs"
                             :name="projectStore.project.getTabNameFor(`table${schemaStore.selectedTable.id}`)" 
                             :tabs="tabs" 
                             v-model="selectedTab" 
@@ -76,15 +93,24 @@
     
                     <div class="flex-grow overflow-y-scroll pb-40">
                         <div class="p-4 space-y-2" v-if="selectedTab === 'columns'">
-                            <TableColumns :table="schemaStore.selectedTable" />
+                            <TableColumns 
+                                :table="schemaStore.selectedTable" 
+                                @loading="loadingTables = $event"
+                            />
                         </div>
         
                         <div class="p-4 space-y-2" v-if="selectedTab === 'models'">
-                            <TableModels :table="schemaStore.selectedTable" />
+                            <TableModels 
+                                :table="schemaStore.selectedTable" 
+                                @loading="loadingModels = $event"
+                            />
                         </div>
         
                         <div class="p-4 space-y-2" v-if="selectedTab === 'indexes'">
-                            <TableIndexes :table="schemaStore.selectedTable" />
+                            <TableIndexes 
+                                :table="schemaStore.selectedTable" 
+                                @loading="loadingIndexes = $event"
+                            />
                         </div>
         
                         <div class="p-4 space-y-2" v-if="selectedTab === 'settings'">

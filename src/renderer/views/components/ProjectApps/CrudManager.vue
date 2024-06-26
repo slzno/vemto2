@@ -5,7 +5,9 @@
     import UiButton from '@Renderer/components/ui/UiButton.vue'
     import UiSelect from '@Renderer/components/ui/UiSelect.vue'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
-import { PlusIcon } from '@heroicons/vue/24/outline'
+    import { PlusIcon } from '@heroicons/vue/24/outline'
+
+    const emit = defineEmits(['created'])
 
     const showingModal = ref(false),
         selectedModelId = ref(null),
@@ -39,6 +41,8 @@ import { PlusIcon } from '@heroicons/vue/24/outline'
             excludedColumns, 
             generateDetails
         )
+
+        emit('created')
 
         close()
     }

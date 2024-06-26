@@ -31,6 +31,7 @@ export default interface ElectronApi {
     addFileToGenerationQueue: (filePath: string, content: string) => Promise<void>,
     readFile: (path: string) => Promise<string>,
     fileExists: (path: string) => Promise<boolean>,
+    fixFolderPermissions: (path: string) => Promise<void>,
     folderExists: (path: string) => Promise<boolean>,
     readProjectFile: (path: string) => Promise<string>,
     writeProjectFile: (path: string, content: string) => Promise<void>,

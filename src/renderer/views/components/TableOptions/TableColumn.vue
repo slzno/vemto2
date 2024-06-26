@@ -38,19 +38,28 @@
     }, 250)
 
     const onNameBlur = () => {
-        const hasDuplicateColumnName = column.value.table.hasColumnExceptId(column.value.name, column.value.id)
-
-        if(!hasDuplicateColumnName) return
-     
-        onColumnNameDuplicated()
+        if(column.value.hasDuplicatedName()) {
+            treatDuplicatedColumnName()
+        }
     }
 
     const saveColumn = () => {
         column.value.saveFromInterface()
     }
 
-    const onColumnNameDuplicated = () => {
+    const treatDuplicatedColumnName = () => {
         Alert.error(`Column <b class="underline underline-offset-4">${column.value.name}</b> already exists`)
+
+        column.value.name = ''
+        column.value.saveFromInterface()
+
+        nextTick(() => {
+            document.getElementById(`table-column-${column.value.id}`)?.focus()
+        })
+    }
+
+    const treatReservedKeyword = () => {
+        Alert.error(`This column name is a reserved PHP keyword`)
 
         column.value.name = ''
         column.value.saveFromInterface()
@@ -122,7 +131,7 @@
 <template>
     <div
         :class="{
-            'border-yellow-400': column.autoIncrement,
+            'border-yellow-400': column.isPrimaryKey(),
             'border-red-400': column.isForeign(),
             'border-orange-400': column.isUnique(),
             'border-blue-400': column.isNotForeignIndex(),

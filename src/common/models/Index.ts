@@ -130,8 +130,16 @@ export default class Index extends AbstractSchemaModel implements SchemaModel {
         return this.type === IndexType.SPATIAL
     }
 
+    hasValidColumns(): boolean {
+        return this.columns && this.columns.length > 0
+    }
+
     isSingleColumn(): boolean {
         return this.columns && this.columns.length === 1
+    }
+
+    isMultipleColumns(): boolean {
+        return this.columns && this.columns.length > 1
     }
 
     hasLanguage(): boolean {
@@ -319,7 +327,9 @@ export default class Index extends AbstractSchemaModel implements SchemaModel {
     }
 
     hasColumn(column: string): boolean {
-        return this.columns.includes(column)
+        const columns = this.columns || []
+
+        return columns.includes(column)
     }
 
     getForeignTable(): Table {

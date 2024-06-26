@@ -2,7 +2,7 @@
     import { ref, onMounted, nextTick, defineEmits, computed } from 'vue'
     import Table from "@Common/models/Table"
     import SchemaSection from "@Common/models/SchemaSection"
-    import { ArrowDownTrayIcon, ArrowPathIcon, ChatBubbleLeftEllipsisIcon, MagnifyingGlassMinusIcon, MagnifyingGlassPlusIcon, PhotoIcon, PlusCircleIcon, PlusIcon, XMarkIcon } from "@heroicons/vue/24/outline"
+    import { ArrowDownTrayIcon, ArrowPathIcon, ChatBubbleLeftEllipsisIcon, MagnifyingGlassMinusIcon, MagnifyingGlassPlusIcon, PhotoIcon, PlusCircleIcon, PlusIcon, ViewfinderCircleIcon, XMarkIcon } from "@heroicons/vue/24/outline"
     import UiModal from '@Renderer/components/ui/UiModal.vue'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
     import UiText from '@Renderer/components/ui/UiText.vue'
@@ -16,6 +16,7 @@
     import UiLoading from '@Renderer/components/ui/UiLoading.vue'
     import UiOptionsDropdown from '@Renderer/components/ui/UiOptionsDropdown.vue'
     import UiDropdownItem from '@Renderer/components/ui/UiDropdownItem.vue'
+import ReservedKeywords from '@Common/models/services/ReservedKeywords'
 
     const showingCreateTableModal = ref(false),
         showingCreateSectionModal = ref(false),
@@ -36,7 +37,12 @@
         }
     })
 
-    const emit = defineEmits(['tableAdded', 'syncSchema', 'checkForChanges'])
+    const emit = defineEmits([
+        'tableAdded', 
+        'syncSchema', 
+        'checkForChanges',
+        'scrollChanged',
+    ])
 
     const filteredTables = computed(() => {
         return projectStore.project.tables.filter(table => {
@@ -92,6 +98,13 @@
     }
 
     const validateTable = async (): Promise<boolean> => {
+        const reservedKeywordsChecker = new ReservedKeywords()
+
+        if(reservedKeywordsChecker.isReserved(newTable.value.name)) {
+            Alert.error('This table name is a reserved PHP keyword')
+            return false
+        }
+
         const rules = {
             name: 'required|string'
         }
@@ -308,6 +321,16 @@
             Alert.error(error.message)
         }
     }
+
+    const centerScroll = () => {
+        if(!schemaStore.selectedSchemaSection) return
+
+        schemaStore.selectedSchemaSection.requestScrollCentering()
+    }
+
+    const repaintSchema = () => {
+        schemaStore.askToReloadSchema()
+    }
 </script>
 
 <template>
@@ -450,6 +473,16 @@
                             <PhotoIcon class="w-5 h-5 mr-3 text-red-450" />
                             Save as Image
                         </UiDropdownItem>
+
+                        <UiDropdownItem @click="centerScroll()">
+                            <ViewfinderCircleIcon class="w-5 h-5 mr-3 text-red-450" />
+                            Centralize View
+                        </UiDropdownItem>
+
+                        <UiDropdownItem @click="repaintSchema()">
+                            <ArrowPathIcon class="w-5 h-5 mr-3 text-red-450" />
+                            Repaint Schema
+                        </UiDropdownItem>
                     </UiOptionsDropdown>
                 </div>
             </div>
@@ -494,7 +527,7 @@
 
                 <div 
                     v-show="searchIsFocused"
-                    class="absolute p-4 rounded-lg shadow border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 w-72"
+                    class="absolute p-4 rounded-lg shadow border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800 w-72 max-h-96 overflow-y-auto z-50"
                     style="top: 110%; left: 0;"
                 >
                     <div @click="focusTable(table)" class="cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-700 rounded px-2 py-1" v-for="table in filteredTables" :key="table.id">

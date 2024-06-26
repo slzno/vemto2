@@ -29,6 +29,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     section: SchemaSection
     sectionId: string
     createdFromInterface: boolean
+    pivotRelationships: Relationship[]
 
     relationships() {
         return {
@@ -93,6 +94,8 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         }
         
         this.removed = true
+
+        this.pivotRelationships.forEach((relationship) => relationship.remove())
 
         this.save()
     }
@@ -177,10 +180,21 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     isDirty(): boolean {
-        const hasDirtyColumns = this.columns.some((column) => column.isDirty()),
-            hasDirtyIndexes = this.indexes.some((index) => index.isDirty())
+        const hasDirtyResources = this.hasDirtyResources()
 
-        return !this.isRemoved() && (this.hasLocalChanges() || hasDirtyColumns || hasDirtyIndexes)
+        return !this.isRemoved() && (this.hasLocalChanges() || hasDirtyResources)
+    }
+
+    hasDirtyResources(): boolean {
+        return this.hasDirtyColumns() || this.hasDirtyIndexes()
+    }
+
+    hasDirtyColumns(): boolean {
+        return this.columns && this.columns.some((column) => column.isDirty())
+    }
+
+    hasDirtyIndexes(): boolean {
+        return this.indexes && this.indexes.some((index) => index.isDirty())
     }
 
     hasLocalChanges(): boolean {
@@ -260,7 +274,13 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     getNotRenamedChangedColumns(): Column[] {
-        return this.getChangedColumns().filter((column) => !column.wasRenamed())
+        return this.getChangedColumns().filter((column) => {
+            return !column.wasRenamed() && !column.changedOnlyImplicitUnique()
+        })
+    }
+
+    getColumnsWithRemovedUnique(): Column[] {
+        return this.getValidColumns().filter((column) => column.implicitUniqueWasRemoved())
     }
 
     getColumnsNames(): string[] {
@@ -355,6 +375,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     getAllOrderedColumns(): Column[] {
+        if(!this.columns) return []
         return this.columns.sort((a, b) => a.order - b.order)
     }
 
@@ -362,10 +383,42 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         return this.getColumns().sort((a, b) => a.order - b.order)
     }
 
+    getFirstColumn(): Column {
+        const columns = this.getOrderedColumns()
+
+        if(!columns.length) return null
+
+        return columns[0]
+    }
+
+    getLastColumn(): Column {
+        const columns = this.getOrderedColumns()
+
+        if(!columns.length) return null
+
+        return columns[columns.length - 1]
+    }
+
+    getFirstDefaultDateColumn(): Column {
+        return this.getOrderedColumns().find((column) => column.isDefaultDate())
+    }
+
+    getLastDefaultDateColumn(): Column {
+        return this.getOrderedColumns().reverse().find((column) => column.isDefaultDate())
+    }
+
     getIndexes(): Index[] {
         return this.indexes.filter((index) => !index.isRemoved())
     }
     
+    hasNewRelatedTables(): boolean {
+        return this.getRelatedTables().some((table) => table.isNew())
+    }
+
+    hasDirtyRelatedTables(): boolean {
+        return this.getRelatedTables().some((table) => table.isDirty())
+    }
+
     hasRelatedTables(): boolean {
         return !! this.getRelatedTables().length
     }
@@ -552,7 +605,9 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     canUpdateLatestMigration(): boolean {
-        return this.hasMigrations() && !this.isRemoved()
+        return this.hasMigrations() 
+            && !this.isRemoved() 
+            && !this.hasNewRelatedTables()
     }
 
     wasCreatedFromInterface(): boolean {
@@ -690,5 +745,21 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
             "team_user", 
             "team_invitations"
         ].includes(this.name)
+    }
+
+    getColumnsOrders(): any[] {
+        return this.getOrderedColumns().map((column) => {
+            return {
+                name: column.name,
+                order: column.order
+            }
+        })
+    }
+
+    fixAllColumnsOrder() {
+        this.getOrderedColumns().forEach((column, index) => {
+            column.order = index
+            column.save()
+        })
     }
 }

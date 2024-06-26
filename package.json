@@ -1,7 +1,7 @@
 {
     "name": "vemto",
     "productName": "Vemto",
-    "version": "2.0.12",
+    "version": "2.0.21",
     "description": "The ultimate studio for Laravel",
     "main": "build/src/main/main.js",
     "scripts": {
@@ -80,7 +80,7 @@
         "@jsplumb/browser-ui": "^5.12.0",
         "@jsplumb/connector-bezier": "^5.12.0",
         "@prettier/plugin-php": "^0.19.2",
-        "@tiago_silva_pereira/reladb": "^2.0.1",
+        "@tiago_silva_pereira/reladb": "^2.0.9",
         "@tiago_silva_pereira/vemto-template-engine": "^4.0.2",
         "@vueform/multiselect": "^2.6.1",
         "@vueuse/core": "^10.5.0",
@@ -94,6 +94,7 @@
         "crypto-js": "^4.1.1",
         "diff": "^5.1.0",
         "diff2html": "^3.4.33",
+        "electron-log": "^5.1.5",
         "electron-updater": "^6.1.8",
         "electron-util": "0.17.2",
         "highlight.js": "^11.6.0",

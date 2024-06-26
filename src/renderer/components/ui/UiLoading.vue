@@ -11,7 +11,7 @@
 
         strokeWidth: {
             type: Number,
-            default: 4,
+            default: 2,
         },
 
         delay: {

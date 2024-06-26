@@ -69,7 +69,7 @@ export default class SequentialGenerator {
 
         await this.runGeneratorsServices()
 
-        this.project.processRemovableFiles()
+        await this.processRemovableFiles()
 
         await this.waitForProcessingFilesQueue()
 
@@ -101,7 +101,7 @@ export default class SequentialGenerator {
         templatePaths = [...new Set(templatePaths)]
 
         templatePaths.forEach((path: string) => {
-            const renderableFile: RenderableFile = this.project.getRenderableFileByTemplatePath(path)
+            const renderableFile: RenderableFile = this.project.fresh().getRenderableFileByTemplatePath(path)
 
             if(!renderableFile) return
 
@@ -142,6 +142,10 @@ export default class SequentialGenerator {
         await new GenerateDatabaseSeeder().start()
 
         await new GenerateLivewireLayout().start()
+    }
+
+    async processRemovableFiles() {
+        await this.project.fresh().processRemovableFiles()
     }
 
     async clearVemtoFolders() {

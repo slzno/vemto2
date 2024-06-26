@@ -13,6 +13,8 @@
     import UiDropdownItem from '@Renderer/components/ui/UiDropdownItem.vue'
     import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
 
+    const emit = defineEmits(["loading"])
+
     const props = defineProps(['table']),
         table = toRef(props, 'table'),
         tableIndexes = ref([]),
@@ -21,12 +23,22 @@
     const onDevelopment = Main.API.onDevelopment() && !Main.API.isRecording()
 
     onMounted(() => {
-        tableIndexes.value = props.table.getIndexes()
+        loadIndexes()
     })
 
     watch(table, () => {
-        tableIndexes.value = table.value.getIndexes()
+        loadIndexes()
     })
+
+    const loadIndexes = () => {
+        emit('loading', true)
+
+        setTimeout(() => {
+            tableIndexes.value = table.value.getIndexes()
+
+            emit('loading', false)
+        }, 100)
+    }
 
     const getForSelect = (
         collection: any,

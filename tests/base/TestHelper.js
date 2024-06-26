@@ -8,6 +8,8 @@ import Column from "@Common/models/Column"
 import Project from "@Common/models/Project"
 import FileSystem from "@Main/base/FileSystem"
 import Model from "@Common/models/Model"
+import SchemaSection from "@Common/models/SchemaSection"
+import AppSection from "@Common/models/AppSection"
 
 export default new class TestHelper {
 
@@ -30,6 +32,8 @@ export default new class TestHelper {
             return this.createProject()
         }
 
+        this.addProjectBasicData(project)
+
         return project
     }
 
@@ -38,7 +42,44 @@ export default new class TestHelper {
         project.name = "Test Project"
         project.save()
 
+        this.addProjectBasicData(project)
+
         return project
+    }
+
+    addProjectBasicData(project) {
+        if(!project.hasSection("Admin")) {
+            SchemaSection.create({
+                name: "Admin",
+                scrollX: 0,
+                scrollY: 0,
+                projectId: project.id,
+            })
+        }
+
+        AppSection.create({
+            name: "Dashboard",
+            routePrefix: "dashboard",
+            routeBasePath: "dashboard",
+            projectId: project.id,
+            requiresAuth: true,
+        })
+
+        AppSection.create({
+            name: "Site",
+            routePrefix: "",
+            routeBasePath: "",
+            projectId: project.id,
+            requiresAuth: false,
+        })
+
+        AppSection.create({
+            name: "Admin",
+            routePrefix: "admin",
+            routeBasePath: "admin",
+            projectId: project.id,
+            requiresAuth: false,
+        })
     }
 
     createTable(data = {}) {

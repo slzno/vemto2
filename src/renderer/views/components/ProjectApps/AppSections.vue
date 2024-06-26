@@ -1,15 +1,26 @@
 <script setup lang="ts">
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
-    import { ref } from "vue"
+    import { ref, Ref, onMounted } from "vue"
     import AppSection from "@Common/models/AppSection"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import GenerateBasicSections from "@Renderer/services/project/GenerateBasicSections"
-import { PlusIcon } from "@heroicons/vue/24/outline"
+    import { PlusIcon } from "@heroicons/vue/24/outline"
 
     const projectStore = useProjectStore(),
-        editingSection = ref<null | AppSection>(null)
+        editingSection = ref<null | AppSection>(null),
+        appSections = ref([]) as Ref<AppSection[]>
+
+    onMounted(() => {
+        loadSections()
+    })
+
+    const loadSections = () => {
+        setTimeout(() => {
+            appSections.value = projectStore.project.appSections
+        }, 100)
+    }
 
     const editSection = (section: AppSection) => {
         editingSection.value = section
@@ -43,6 +54,8 @@ import { PlusIcon } from "@heroicons/vue/24/outline"
         })
 
         section.save()
+
+        appSections.value.push(section)
     }
 
     const addDefaultSections = async () => {
@@ -55,6 +68,8 @@ import { PlusIcon } from "@heroicons/vue/24/outline"
         if(!confirmed) return
         
         section.delete()
+
+        appSections.value = appSections.value.filter(s => s.id !== section.id)
     }
 </script>
 
@@ -73,10 +88,10 @@ import { PlusIcon } from "@heroicons/vue/24/outline"
     <div class="bg-slate-950 p-3 rounded-lg border border-slate-700 h-screen">
         <div
             class="mb-2 border border-slate-700 bg-slate-850 rounded-lg cursor-pointer hover:bg-slate-800 w-2/3 flex justify-between items-center"
-            v-for="section in projectStore.project.appSections"
+            v-for="section in appSections"
             :key="section.id"
         >
-            <div @click="editSection(section)" v-if="isNotEditingSection(section)" class="font-mono w-full h-full p-3 space-x-2 flex justify-between">
+            <div @click="editSection(section)" v-if="isNotEditingSection(section)" class="w-full h-full p-3 space-x-2 flex justify-between">
                 <span>{{ section.name }}</span>
                 <small class="text-slate-500">{{ section.getApplicationsCount() }} apps</small>
             </div>

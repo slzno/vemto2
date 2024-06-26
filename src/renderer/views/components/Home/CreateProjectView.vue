@@ -44,16 +44,23 @@ import UiLoading from "@Renderer/components/ui/UiLoading.vue"
     const create = async () => {
         if(creatingProject.value) return
 
-        console.log('antes do validation')
-        if(!validate()) return
+        const validated = await validate()
+        if(!validated) {
+            creatingProject.value = false
+            return
+        }
 
-        console.log('criou')
         createProject()
     }
 
-    const validate = () => {
+    const validate = async () => {
         if(!settings.value.path?.length) {
             errors.value.path = "The path is required"
+        }
+
+        const folderExists = await Main.API.folderExists(settings.value.path)
+        if(!folderExists) {
+            errors.value.path = "The path does not exist"
         }
 
         if(!settings.value.name?.length) {
@@ -247,7 +254,7 @@ import UiLoading from "@Renderer/components/ui/UiLoading.vue"
 
             <template #footer>
                 <div class="flex justify-end p-2">
-                    <UiButton :disabled="Object.values(errors).length > 0" @click="create()">
+                    <UiButton @click="create()">
                         <CheckIcon class="h-4 w-4 mr-1 text-green-500" />
                         <span>Create App</span>
                     </UiButton>

@@ -42,7 +42,8 @@ export default class ProjectHandler {
                 ignored: [
                     /(^|[\/\\])\../,
                     /node_modules/,
-                    /vendor/
+                    /vendor/,
+                    /vemto\.log/
                 ]
             })
             .on("change", (event) => {

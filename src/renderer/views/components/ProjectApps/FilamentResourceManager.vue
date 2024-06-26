@@ -5,9 +5,9 @@
     import UiSelect from '@Renderer/components/ui/UiSelect.vue'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
     import { PlusIcon } from '@heroicons/vue/24/outline'
-    import Crud, { CrudType, FilamentSettings } from '@Common/models/crud/Crud'
-    import { paramCase } from 'change-case'
-    import AppSection from '@Common/models/AppSection'
+    import Crud, { CrudType } from '@Common/models/crud/Crud'
+
+    const emit = defineEmits(['created'])
 
     const showingModal = ref(false),
         selectedModelId = ref(null),
@@ -36,6 +36,8 @@
             selectedModel.value,
             CrudType.FILAMENT
         )
+
+        emit('created')
 
         close()
     }

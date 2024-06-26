@@ -94,7 +94,7 @@ export default class LicenseHandler {
 
         url.searchParams.append('email', licenseData.email)
         url.searchParams.append('license', licenseData.code)
-
+        
         const response = await fetch(url, {
             method: 'GET',
             headers: {

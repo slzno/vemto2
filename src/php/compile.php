@@ -41,7 +41,20 @@ foreach ($apps as $app => $appSettings) {
     // execute command
     echo "Compiling $app...\n";
     $command = "box compile";
-    exec($command);
+
+    $compilerOutput = null;
+    $compilerResultCode = null;
+    $compiled = exec($command, $compilerOutput, $compilerResultCode);
+
+    if($compilerResultCode != 0) {
+        echo "RESULT CODE: $compilerResultCode" . PHP_EOL;
+
+        echo join(PHP_EOL, $compilerOutput);
+
+        echo "\n --------------------------- \n";
+        throw new \Exception("Failed compiling $app");
+    }
+
     echo "Compiled $app \n";
 
     // move compiled file to bin folder

@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import Table from '@Common/models/Table';
-import UiEmptyMessage from '@Renderer/components/ui/UiEmptyMessage.vue';
+    import UiEmptyMessage from '@Renderer/components/ui/UiEmptyMessage.vue';
     import Main from '@Renderer/services/wrappers/Main';
     import { defineProps, toRef, Ref } from 'vue'
 
@@ -31,7 +31,7 @@ import UiEmptyMessage from '@Renderer/components/ui/UiEmptyMessage.vue';
                 <div class="text-yellow-400" v-else>
                     Update migration
                 </div>
-                <div>
+                <div class="w-full overflow-hidden">
                     {{ migration.relativePath }}
                 </div>
             </div>

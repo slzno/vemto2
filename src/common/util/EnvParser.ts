@@ -92,6 +92,10 @@ export default class EnvParser {
     }
 
     parse() {
+        if(!this.content) {
+            return []
+        }
+
         const lines = this.content.split(/\r?\n/) // split by line break
         const result = []
 

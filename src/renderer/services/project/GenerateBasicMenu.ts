@@ -19,6 +19,16 @@ export default class GenerateBasicMenu {
 
         appsNav.tag = 'apps'
         appsNav.save()
+
+        this.refreshProject()
+    }
+
+    /**
+     * We need to refresh the project data because each time we create a new nav item
+     * the project data updated from different instances of the project model
+     */
+    refreshProject() {
+        this.project.refresh()
     }
 
 }

@@ -1,4 +1,5 @@
 import { join } from "path"
+import logger from "electron-log"
 import ProjectHandler from "./ProjectHandler"
 import { autoUpdater } from "electron-updater"
 import { HandleDatabase } from "./DatabaseHandler"
@@ -47,6 +48,7 @@ async function createWindow() {
         mainWindow.setMenu(null)
         mainWindow.loadFile(join(app.getAppPath(), "renderer", "index.html"))
 
+        autoUpdater.logger = logger
         autoUpdater.checkForUpdatesAndNotify()
     }
 

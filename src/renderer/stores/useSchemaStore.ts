@@ -1,25 +1,76 @@
 import { defineStore } from "pinia"
 import Table from "@Common/models/Table"
-import SchemaSection from "@Common/models/SchemaSection"
 import { useProjectStore } from "./useProjectStore"
+import SchemaSection from "@Common/models/SchemaSection"
 
 export const useSchemaStore = defineStore("schema", {
     state: () => ({ 
-        canDragTable: false,
         focusedTable: {} as Table,
         selectedTable: {} as Table,
         selectedSchemaSection: {} as SchemaSection,
-        draggingTableId: null as string | null,
-        lastDraggedTableId: null as string | null,
+        needsToReloadSchema: false,
+        needsToReloadEveryTable: false,
+        needsToReloadTables: [] as string[],
+        needsToReloadSchemaConnections: false,
     }),
 
     actions: {
-        enableTableDragging(): void {
-            this.canDragTable = true
+        askToReloadTableById(tableId: string) {
+            this.addTableToReload(tableId)
+
+            const table = Table.find(tableId)
+
+            table.getRelatedTables().forEach((relatedTable) => {
+                this.addTableToReload(relatedTable.id)
+            })
+
+            setTimeout(() => {
+                this.askToReloadSchemaConnections()
+            }, 100)
         },
 
-        disableTableDragging(): void {
-            this.canDragTable = false
+        tableAlreadyReloaded(tableId: string) {
+            this.needsToReloadTables = this.needsToReloadTables.filter((id) => id !== tableId)
+        },
+
+        addTableToReload(tableId: string) {
+            if(! this.needsToReloadTables.includes(tableId)) {
+                this.needsToReloadTables.push(tableId)
+            }
+        },
+
+        askToReloadSchema() {
+            this.needsToReloadSchema = true
+        },
+
+        schemaAlreadyReloaded() {
+            this.needsToReloadSchema = false
+
+            this.askToReloadEveryTable()
+        },
+
+        askToReloadEveryTable() {
+            this.needsToReloadEveryTable = true
+
+            setTimeout(() => {
+                this.everyTableAlreadyReloaded()
+            }, 100)
+        },
+
+        everyTableAlreadyReloaded() {
+            this.needsToReloadEveryTable = false
+        },
+
+        askToReloadSchemaConnections() {
+            this.needsToReloadSchemaConnections = true
+        },
+
+        schemaConnectionsAlreadyReloaded() {
+            this.needsToReloadSchemaConnections = false
+        },
+
+        reloadSelectedTable() {
+            this.selectedTable = this.selectedTable.fresh()
         },
 
         selectTable(table: Table): void {
@@ -66,10 +117,12 @@ export const useSchemaStore = defineStore("schema", {
         selectSchemaSection(section: SchemaSection): void {
             this.selectedSchemaSection = section
 
-            window.localStorage.setItem(
-                this.getSelectedSchemaSectionKey(), 
-                section.id
-            )
+            setTimeout(() => {
+                window.localStorage.setItem(
+                    this.getSelectedSchemaSectionKey(), 
+                    section.id
+                )
+            }, 100)
         },
 
         deselectSchemaSection(): void {
@@ -81,20 +134,6 @@ export const useSchemaStore = defineStore("schema", {
 
             return `selectedSchemaSection_${projectStore.project.id}`
         },
-
-        setDraggingTableId(tableId: string | null): void {
-            this.draggingTableId = tableId
-            this.lastDraggedTableId = tableId
-        },
-
-        resetDraggingTableId(): void {
-            this.draggingTableId = null
-        },
-
-        wasLastDraggedTable(table: Table): boolean {
-            console.log(this.lastDraggedTableId, table.id)
-            return this.lastDraggedTableId == table.id
-        }
     },
 
     getters: {
@@ -112,6 +151,10 @@ export const useSchemaStore = defineStore("schema", {
 
         selectedSchemaSectionIs(state) {
             return (section: SchemaSection) => state.selectedSchemaSection.id === section.id
+        },
+
+        needsToReloadTable(state) {
+            return (tableId: string) => state.needsToReloadTables.includes(tableId)
         },
     }
 })

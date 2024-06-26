@@ -1,4 +1,4 @@
-import { paramCase } from 'change-case'
+import { paramCase, pascalCase } from 'change-case'
 import Crud from './crud/Crud'
 import Page from './page/Page'
 import Project from './Project'
@@ -47,6 +47,10 @@ export default class AppSection extends RelaDB.Model {
         return paramCase(this.name)
     }
 
+    getFileBasePath(): string {
+        return pascalCase(this.routeBasePath)
+    }
+
     static findDefaultDashboardSection(): AppSection {
         return AppSection.findSectionByName('Dashboard')
             || AppSection.findFirstSectionWhichRequiresAuth()
@@ -55,6 +59,11 @@ export default class AppSection extends RelaDB.Model {
     static findDefaultSiteSection(): AppSection {
         return AppSection.findSectionByName('Site')
             || AppSection.findFirstSectionWhichDoesNotRequireAuth()
+    }
+
+    static findDefaultFilamentPanelSection(): AppSection {
+        return AppSection.findSectionByName('Filament Panel')
+            || AppSection.findDefaultAdminSection()
     }
 
     static findDefaultAdminSection(): AppSection {

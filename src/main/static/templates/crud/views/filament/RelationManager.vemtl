@@ -7,7 +7,7 @@
 <% const relationCrudInputs = (isManyToManyDetail && firstRelatedModelCrud) ? new Set([...firstRelatedModelCrud.getInputsForForms(), ...this.detail.detailCrud.getInputsForForms()]) : this.detail.detailCrud.getInputsForForms() %>
 <% const relationCrudTableColumns = (isManyToManyDetail && firstRelatedModelCrud) ? new Set([...firstRelatedModelCrud.getInputsForIndex(), ...this.detail.detailCrud.getInputsForIndex()]) : this.detail.detailCrud.getInputsForIndex() %>
 
-namespace App\Filament\Resources\<$ this.detail.crud.section.name $>\<$ parentResourceName $>\RelationManagers;
+namespace App\Filament\Resources\<$ this.detail.crud.section.getFileBasePath() $>\<$ parentResourceName $>\RelationManagers;
 
 use Filament\Forms;
 use Filament\Tables;
@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 <% } %>
 use Filament\Resources\RelationManagers\RelationManager;
-use App\Filament\Resources\<$ this.detail.crud.section.name $>\<$ this.detail.crud.name $>Resource;
+use App\Filament\Resources\<$ this.detail.crud.section.getFileBasePath() $>\<$ this.detail.crud.name $>Resource;
 <% for(let input of relationCrudInputs) { %>
 use Filament\Forms\Components\<$ pascalCase(input.filamentSettings.formData.inputType) $>;
 <% } %>

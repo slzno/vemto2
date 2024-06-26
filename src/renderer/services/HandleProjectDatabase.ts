@@ -45,17 +45,11 @@ export default class HandleProjectDatabase {
         })
 
         const updateDataDebounced = debounce(() => {
-            const updatedData = RelaDB.Resolver.db().driver.getDatabaseData(),
-                projectStore = useProjectStore()
+            const updatedData = RelaDB.Resolver.db().driver.getDatabaseData()
 
             Main.API.databaseDataUpdated(updatedData)
 
             RendererBridge.dataUpdated()
-
-            // KEEP AN EYE ON THIS: reloading the project may cause issues
-            // when the projectStore loses the reference to the current
-            // project instance
-            projectStore.reloadProject()
 
             console.log("Database data updated")
         }, 300)
@@ -74,7 +68,9 @@ export default class HandleProjectDatabase {
 
             await projectManager.connectToLatest()
         }
-
+        
+        projectStore.refreshProject()
+        
         if(callback) callback()
     }
 

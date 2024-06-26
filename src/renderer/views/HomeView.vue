@@ -71,8 +71,7 @@
     ]
 
     onMounted(async () => {
-        const licenseHandler = new LicenseHandler()
-        licenseHandler.checkLicense()
+        checkLicense()
 
         getProjects()
 
@@ -86,6 +85,15 @@
             console.log("Error happened in the renderer process")
         })
     })
+
+    const checkLicense = async () => {
+        try {
+            const licenseHandler = new LicenseHandler()
+            licenseHandler.checkLicense()
+        } catch (error) {
+            console.error("Error checking license", error)
+        }
+    }
 
     const getProjects = () => {
         projects.value = projectManager.get()
@@ -213,6 +221,9 @@
     const checkProjectInfo = async (projectInfo: ProjectInfo) => {
         if(!projectInfo.isLaravelProject) {
             Alert.error("This folder is not a Laravel project")
+
+            stopLoading()
+            
             return false
         }
 
@@ -581,7 +592,6 @@
                             <UiLoading 
                                 v-if="loadingProjectId === project.id"
                                 :size="15"
-                                :strokeWidth="2"
                             ></UiLoading>
                             <UiOptionsDropdown size="w-64" v-else>
                                 <UiDropdownItem @click="openConnectionSettings(project)">

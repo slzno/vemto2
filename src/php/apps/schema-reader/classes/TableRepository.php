@@ -306,9 +306,26 @@ class TableRepository {
 
     public function getTables()
     {
+        $this->tables = $this->treatTables($this->tables);
+
         return collect($this->tables)->map(function($table, $tableName) {
             $table['name'] = $tableName;
             return $table;
         });
+    }
+
+    public function treatTables(array $tables)
+    {
+        foreach ($tables as $tableName => $table) {
+            foreach ($table['columns'] as $columnName => $column) {
+                if (isset($column['allowed'])) {
+                    $tables[$tableName]['columns'][$columnName]['options'] = $column['allowed'];
+                } else {
+                    $tables[$tableName]['columns'][$columnName]['options'] = [];
+                }
+            }
+        }
+
+        return $tables;
     }
 }

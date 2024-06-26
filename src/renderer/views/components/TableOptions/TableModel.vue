@@ -1,5 +1,6 @@
 <script setup lang="ts">
-    import { PropType, Ref, toRef, ref, onMounted, defineEmits } from "vue"
+    import debounce from 'lodash/debounce'
+    import { PropType, Ref, toRef, ref, onMounted, onBeforeUnmount, defineEmits } from "vue"
     import Model from "@Common/models/Model"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import { TrashIcon, PlusCircleIcon } from "@heroicons/vue/24/outline"
@@ -17,8 +18,11 @@
     import ModelHooks from "./ModelApps/ModelHooks.vue"
     import RenderableModel from "@Renderer/codegen/sequential/services/model/RenderableModel"
     import UiNumber from "@Renderer/components/ui/UiNumber.vue"
+    import { useSchemaStore } from '@Renderer/stores/useSchemaStore'
 
     const onDevelopment = Main.API.onDevelopment() && !Main.API.isRecording()
+
+    const emit = defineEmits(['changed', 'removeModel'])
 
     const props = defineProps({
         model: {
@@ -28,23 +32,26 @@
     })
 
     const projectStore = useProjectStore(), 
+        schemaStore = useSchemaStore(),
         model = toRef(props, "model") as Ref<Model>,
-        emit = defineEmits(['removeModel']),
         modelPluralReference = ref(null),
         selectedTab = ref("data"),
         modelHooksContent = ref(""),
-        modelCasts = ref([])
+        modelCasts = ref([]),
+        uiTabs = ref(null)
     
     let models: Ref<Array<Model>> = ref([])
 
     const tabs = [
         { label: "Data", value: "data" },
         { label: "Relationships", value: "relationships" },
-        { label: "Code Hooks", value: "code" },
+        { label: "Code", value: "code" },
         { label: "Imports", value: "imports" },
         { label: "Settings", value: "settings" },
     ]
 
+    let relationshipsListenerId = null 
+        
     onMounted(async () => {
         const project = model.value.project
         
@@ -56,6 +63,15 @@
         modelHooksContent.value = await renderableModel.compile()
         
         loadModelCasts()
+
+        relationshipsListenerId = model.value.addListener('relationships:changed', debounce(async () => {
+            console.log('relationships changed from table options model')
+            schemaStore.askToReloadSchema()
+        }, 100))
+    })
+
+    onBeforeUnmount(() => {
+        model.value.removeListener(relationshipsListenerId)
     })
 
     const loadModelCasts = () => {
@@ -216,6 +232,7 @@
     >
         <div class="mb-2">
             <UiTabs 
+                ref="uiTabs"
                 :name="projectStore.project.getTabNameFor(`table${model.table.id}-model${model.id}`)"
                 :tabs="tabs" 
                 v-model="selectedTab" 
@@ -377,6 +394,7 @@
                 <TableModelRelationships
                     :model="model"
                     :models="models"
+                    @loading="uiTabs.setLoadingTab('relationships', $event)"
                 />
             </div>
     

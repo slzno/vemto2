@@ -26,6 +26,8 @@ export default class ProjectConnector {
             await this.doFirstSchemaSync()
             await this.generateBasicProjectData()
             await this.saveProject()
+
+            this.project.refresh()
         } catch (error) {
             throw error
         }
@@ -39,7 +41,7 @@ export default class ProjectConnector {
     async createNecessaryFiles() {
         if(!this.projectSettings.isFreshLaravelProject) {
             console.log("Skip creating files for non-fresh Laravel project")
-            return;
+            return
         }
 
         console.log("Creating files for fresh Laravel project")

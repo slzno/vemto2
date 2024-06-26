@@ -6,7 +6,7 @@
     import FilamentResourceManager from "./components/ProjectApps/FilamentResourceManager.vue"
     import { useRouter } from "vue-router"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
-    import { ref, computed } from "vue"
+    import { ref, Ref, computed, onMounted } from "vue"
     import PageManager from "./components/ProjectApps/PageManager.vue"
     import Crud, { CrudType } from "@Common/models/crud/Crud"
     import Page from "@Common/models/page/Page"
@@ -20,10 +20,21 @@
 
     const router = useRouter(),
         projectStore = useProjectStore(),
+        apps = ref([]) as Ref<(Crud | Page)[]>,
         search = ref("")
 
+    onMounted(() => {
+        loadApps()
+    })
+
+    const loadApps = () => {
+        setTimeout(() => {
+            apps.value = projectStore.project.getNonDetailApplications()
+        }, 100)
+    }
+
     const filteredApplications = computed(() => {
-        return projectStore.project.getApplications().filter((app) => {
+        return apps.value.filter((app) => {
             return app.getLabel().toLowerCase().includes(search.value.toLowerCase())
         })
     })
@@ -40,7 +51,11 @@
         const confirmed = await window.projectConfirm(`Are you sure you want to delete ${app.getLabel()}?`)
         if (!confirmed) return
 
+        apps.value = apps.value.filter((a) => a.id !== app.id)
+
         app.delete()
+
+        loadApps()
     }
 
     const selectedTab = ref("applications")

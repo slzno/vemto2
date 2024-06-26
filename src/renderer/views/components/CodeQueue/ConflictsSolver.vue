@@ -14,8 +14,8 @@
     import Main from '@Renderer/services/wrappers/Main'
     import UiConfirm from '@Renderer/components/ui/UiConfirm.vue'
     import UiWarning from '@Renderer/components/ui/UiWarning.vue'
-import LicenseHandler from '@Renderer/services/LicenseHandler'
-import Alert from '@Renderer/components/utils/Alert'
+    import LicenseHandler from '@Renderer/services/LicenseHandler'
+    import Alert from '@Renderer/components/utils/Alert'
 
     const showingModal = ref(false),
         showingResultModal = ref(false),
@@ -209,6 +209,8 @@ import Alert from '@Renderer/components/utils/Alert'
         if(!confirmed) return
 
         emit('ignored')
+
+        close()
     }
 </script>
 
