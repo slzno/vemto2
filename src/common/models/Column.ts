@@ -199,7 +199,9 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
     }
 
     implicitUniqueWasRemoved(): boolean {
-        return this.schemaState.unique && ! this.unique
+        const schemaStateUnique = this.schemaState && this.schemaState.unique
+
+        return schemaStateUnique && ! this.unique
     }
 
     isSpecialPrimaryKey(): boolean {
