@@ -10,16 +10,54 @@
 <% const relModelNameCamelCase = camelCase(relModelName) %>
 <% const modelNameCamelCase = camelCase(modelName) %>
 <% const modelNameSnakeCase = snakeCase(modelName) %>
-<% const modelPluralParamCase = paramCase(this.crud.model.plural.case) %>
+<% const modelPluralParamCase = paramCase(this.crud.model.plural) %>
 <####>
 
 use <$ this.crud.model.getClassString() $>;
+use <$ this.relationshipCrud.relatedModel.getClassString() $>;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-uses(RefreshDatabase::class, WithFaker::class, TestCase::class);
+uses(RefreshDatabase::class, WithFaker::class);
 
 beforeEach(function () {
     $this->withoutExceptionHandling();
+});
+
+test('it gets <$ modelNameSnakeCase $> <$ snakeCase(relModelPlural) $>', function() {
+    $<$ modelNameCamelCase $> = <$ modelName $>::factory()->create();
+    $<$ relModelNameCamelCase $> = <$ relModelName $>::factory()->create();
+
+    $<$ modelNameCamelCase $>-><$ this.relationship.name $>()->attach($<$ relModelNameCamelCase $>);
+
+    $response = $this->getJson(route('api.<$ modelPluralParamCase $>.<$ paramCase(relModelPlural) $>.index', $<$ modelNameCamelCase $>));
+
+    $response->assertOk()
+        ->assertSee($<$ relModelNameCamelCase $>-><$ this.relationship.relatedModel.table.getLabelColumnName() $>);
+});
+
+test('it can attach <$ snakeCase(relModelPlural) $> to <$ modelNameSnakeCase $>', function () {
+    $<$ modelNameCamelCase $> = <$ modelName $>::factory()->create();
+    $<$ relModelNameCamelCase $> = <$ relModelName $>::factory()->create();
+
+    $response = $this->postJson(route('api.<$ modelPluralParamCase $>.<$ paramCase(relModelPlural) $>.store', [$<$ modelNameCamelCase $>, $<$ relModelNameCamelCase $>]));
+
+    $response->assertNoContent();
+
+    $this->assertTrue(
+        $<$ modelNameCamelCase $>-><$ this.relationship.name $>->where('<$ this.relationship.relatedModel.table.name $>.<$ this.relationship.relatedModel.getPrimaryKeyName() $>', $<$ relModelNameCamelCase $>-><$ this.relationship.relatedModel.getPrimaryKeyName() $>)->exists()
+    );
+});
+
+test('it can detach <$ snakeCase(relModelPlural) $> from <$ modelNameSnakeCase $>', function() {
+    $<$ modelNameCamelCase $> = <$ modelName $>::factory()->create();
+    $<$ relModelNameCamelCase $> = <$ relModelName $>::factory()->create();
+
+    $response = $this->deleteJson(route('api.<$ modelPluralParamCase $>.<$ paramCase(relModelPlural) $>.store', [$<$ modelNameCamelCase $>, $<$ relModelNameCamelCase $>]));
+
+    $response->assertNoContent();
+
+    $this->assertFalse(
+        $<$ modelNameCamelCase $>-><$ this.relationship.name $>()->where('<$ this.relationship.relatedModel.table.name $>.<$ this.relationship.relatedModel.getPrimaryKeyName() $>', $<$ relModelNameCamelCase $>-><$ this.relationship.relatedModel.getPrimaryKeyName() $>)->exists()
+    );
 });

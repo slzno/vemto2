@@ -14,9 +14,8 @@ use <$ this.crud.model.getClassString() $>;
 use <$ this.relationshipCrud.model.getClassString() $>;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-uses(RefreshDatabase::class, WithFaker::class, TestCase::class);
+uses(RefreshDatabase::class, WithFaker::class);
 
 beforeEach(function () {
     $this->withoutExceptionHandling();
