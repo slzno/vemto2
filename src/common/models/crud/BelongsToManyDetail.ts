@@ -59,7 +59,7 @@ export default class BelongsToManyDetail extends RelaDB.Model {
 
         const input = detailCrud.inputs.find(input => input.name === relationship.relatedPivotKey.name)
 
-        if (input) {
+        if (!crud.isApi() && input) {
             input.filamentSettings.formData.canBeSearchable = true
             input.filamentSettings.formData.inputType = FilamentInputType.SELECT
 

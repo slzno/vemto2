@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Route;
         use App\Http\Controllers\Api\<$ relationship.model.plural $><$ relationship.relatedModel.name $>Controller;
     <up } up>
 
+    <up for(let relationship of crud.model.getBelongsToManyRelations()) { up>
+        use App\Http\Controllers\Api\<$ relationship.model.plural $><$ relationship.relatedModel.name $>Controller;
+    <up } up>
+
 <% } %>
 
 /*

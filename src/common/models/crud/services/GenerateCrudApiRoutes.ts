@@ -20,8 +20,8 @@ export default class GenerateCrudApiRoutes {
     }
 
     generateCrudRoutes() {
-        const crudModelName = camelCase(this.crud.model.name),
-            crudModelPlural = paramCase(this.crud.model.plural),
+        const crudModelName = camelCase(this.crud.settings.itemName),
+            crudModelPlural = paramCase(this.crud.settings.collectionName),
             completeRouteAction = (methodName: string) => `[${this.crud.model.getControllerName()}::class, '${methodName}']`
 
         this.createRoute(`${crudModelPlural}.index`, "get", this.getRoutePath(), this.crud.id, "Crud", completeRouteAction('index'))
@@ -32,9 +32,9 @@ export default class GenerateCrudApiRoutes {
     }
 
     generateHasManyRelationshipRoutes(detail: HasManyDetail) {
-        const detailCrudModelPlural = paramCase(detail.detailCrud.model.plural),
-            crudModelName = camelCase(detail.crud.model.name),
-            crudModelPlural = paramCase(this.crud.model.plural),
+        const detailCrudModelPlural = paramCase(detail.detailCrud.settings.collectionName),
+            crudModelName = camelCase(detail.crud.settings.itemName),
+            crudModelPlural = paramCase(this.crud.settings.collectionName),
             completeRouteAction = (methodName: string) => `[${detail.getApiControllerName()}::class, '${methodName}']`
 
         const indexStoreRoutePath = this.getRoutePath(`{${crudModelName}}`, detailCrudModelPlural)
@@ -44,18 +44,18 @@ export default class GenerateCrudApiRoutes {
     }
 
     generateBelongsToManyRelationshipRoutes(detail: BelongsToManyDetail) {
-        const detailCrudModelName = camelCase(detail.crud.model.name),
-            detailRelatedCrudModelPlural = paramCase(detail.detailCrud.model.plural),
-            detailRelatedCrudModelName = camelCase(detail.detailCrud.model.name),
-            crudModelPlural = paramCase(this.crud.model.plural),
+        const detailCrudModelName = camelCase(detail.crud.settings.itemName),
+            detailRelatedCrudModelPlural = camelCase(detail.relationship.name),
+            detailRelatedCrudModelName = paramCase(detail.detailCrud.settings.itemName),
+            crudModelPlural = paramCase(this.crud.settings.collectionName),
             completeRouteAction = (methodName: string) => `[${detail.getApiControllerName()}::class, '${methodName}']`
 
         const indexRoutePath = this.getRoutePath(`{${detailCrudModelName}}`, detailRelatedCrudModelPlural),
             storeDestroyRoutePath = this.getRoutePath(`{${detailCrudModelName}}`, detailRelatedCrudModelPlural, `{${detailRelatedCrudModelName}}`)
 
-        this.createRoute(`${crudModelPlural}.${detailRelatedCrudModelPlural}.index`, "get", indexRoutePath, detail.id, "BelonsToManyDetail", completeRouteAction('index'))
-        this.createRoute(`${crudModelPlural}.${detailRelatedCrudModelPlural}.store`, "post", storeDestroyRoutePath, detail.id, "BelonsToManyDetail", completeRouteAction('store'))
-        this.createRoute(`${crudModelPlural}.${detailRelatedCrudModelPlural}.destroy`, "delete", storeDestroyRoutePath, detail.id, "BelonsToManyDetail", completeRouteAction('destroy'))
+        this.createRoute(`${crudModelPlural}.${detailRelatedCrudModelPlural}.index`, "get", indexRoutePath, detail.id, "BelongsToManyDetail", completeRouteAction('index'))
+        this.createRoute(`${crudModelPlural}.${detailRelatedCrudModelPlural}.store`, "post", storeDestroyRoutePath, detail.id, "BelongsToManyDetail", completeRouteAction('store'))
+        this.createRoute(`${crudModelPlural}.${detailRelatedCrudModelPlural}.destroy`, "delete", storeDestroyRoutePath, detail.id, "BelongsToManyDetail", completeRouteAction('destroy'))
     }
 
     createRoute(name: string, method: string, path: string, routableId: string, routableType: String, customContent: string = "") {

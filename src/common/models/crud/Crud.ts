@@ -302,7 +302,7 @@ export default class Crud extends RelaDB.Model {
 
         const crudName = WordManipulator.runMultiple(
             ['singularize', 'pascalCase'],
-            this.table.name
+            table.name
         )
 
         const crud = new Crud()
@@ -355,7 +355,7 @@ export default class Crud extends RelaDB.Model {
 
         const crudName = WordManipulator.runMultiple(
             ['singularize', 'pascalCase'],
-            this.table.name
+            table.name
         )
 
         const crud = new Crud()
@@ -378,10 +378,6 @@ export default class Crud extends RelaDB.Model {
         if(crudIsForFilament) crud.calculateFilamentSettings()
 
         crud.save()
-
-        if(crudType == CrudType.API) {
-            crud.addRoutes()
-        }
 
         crud.addInputsFromTable(table, excludedColumns)
 
@@ -803,7 +799,7 @@ export default class Crud extends RelaDB.Model {
     }
 
     addBelongsToManyDetails() {
-        this.model.getBelongsToRelations().forEach((relationship) => {
+        this.model.getBelongsToManyRelations().forEach((relationship) => {
             BelongsToManyDetail.createFromRelation(this, relationship)
         })
 
