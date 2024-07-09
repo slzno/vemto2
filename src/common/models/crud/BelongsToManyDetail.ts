@@ -6,6 +6,8 @@ import { InputType } from './InputType'
 import { FilamentInputType } from './filament/FilamentInputTypesList'
 import Route from '../Route'
 import GenerateCrudApiRoutes from './services/GenerateCrudApiRoutes'
+import FilamentInputData from './filament/FilamentInputData'
+import FilamentInputSettings from './filament/FilamentInputSettings'
 
 export default class BelongsToManyDetail extends RelaDB.Model {
     id: string
@@ -60,11 +62,14 @@ export default class BelongsToManyDetail extends RelaDB.Model {
         const input = detailCrud.inputs.find(input => input.name === relationship.relatedPivotKey.name)
 
         if (!crud.isApi() && input) {
-            input.filamentSettings.formData.canBeSearchable = true
-            input.filamentSettings.formData.inputType = FilamentInputType.SELECT
-
             input.type = InputType.BELONGS_TO
             input.relationshipId = relationship.id
+
+            if(crud.isForFilament()) {
+                input.filamentSettings.formData.canBeSearchable = true
+                input.filamentSettings.formData.inputType = FilamentInputType.SELECT
+            }
+            
             input.save()
         }
 
