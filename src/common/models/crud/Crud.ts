@@ -147,7 +147,7 @@ export default class Crud extends RelaDB.Model {
     }
 
     static getBasic() {
-        return Crud.get().filter((crud: Crud) => crud.isBasic())
+        return Crud.get().filter((crud: Crud) => crud.isBasic() && crud.isValid())
     }
 
     static getFilamentResources() {
