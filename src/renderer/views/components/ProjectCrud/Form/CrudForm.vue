@@ -20,6 +20,7 @@
     import Relationship from '@Common/models/Relationship'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
     import { useRouter } from 'vue-router'
+import UiWarning from '@Renderer/components/ui/UiWarning.vue'
 
     const router = useRouter()
 
@@ -359,6 +360,7 @@
                 <div class="flex flex-col">
                     <i class="text-red-500 text-xs opacity-90">Has Many</i>
                 </div>
+                
                 <div class="flex justify-center">
                     <div>
                         <h1 class="font-thin text-nomal text-slate-400">Has Many {{ detail.detailCrud.getLabel() }}</h1>
@@ -367,6 +369,14 @@
                             <TableCellsIcon class="w-24 h-24 text-slate-700 stroke-[0.015rem]" />
                         </div>
                     </div>
+                </div>
+
+                <div v-if="detail.hasInvalidNameAndPlural()" class="p-2 max-w-lg">
+                    <UiWarning>
+                        This detail has the same Item name or Collection name of the parent Crud. Please, change this in the Detail Settings to avoid conflicts. 
+                        <br>
+                        This is a common issue when the parent Crud and the detail Crud are related to the same table/model (e.g. User has many Users)
+                    </UiWarning>
                 </div>
             </div>
 

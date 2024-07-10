@@ -130,7 +130,12 @@
                     @click="openApp(app)"
                 >
                     <div class="flex flex-col">
-                        <span class="text-lg">{{ app.getLabel() }}</span>
+                        <div class="text-lg flex items-center space-x-2">
+                            <div>{{ app.getLabel() }}</div>
+                            <div v-if="app.isInvalid()">
+                                <span class="flex items-center justify-center bg-red-450 px-2 rounded text-white text-sm">Errors</span>
+                            </div>
+                        </div>
                         <div class="text-slate-450 text-xs">{{ app.getAppSubType() }}</div>
                     </div>
 

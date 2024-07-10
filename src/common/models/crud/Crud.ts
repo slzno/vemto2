@@ -154,6 +154,21 @@ export default class Crud extends RelaDB.Model {
         return Crud.get().filter((crud: Crud) => crud.isForFilament() && !crud.isDetail())
     }
 
+    isInvalid(): boolean {
+        return ! this.isValid()
+    }
+
+    isValid(): boolean {
+        return !! (this.name && this.type)
+            && !this.hasInvalidHasManyDetails()
+    }
+
+    hasInvalidHasManyDetails(): boolean {
+        return this.hasManyDetails.filter((detail) => {
+            return detail.isInvalid()
+        }).length > 0
+    }
+
     isBasic() {
         return !this.isDetail() && !this.isForFilament()
     }

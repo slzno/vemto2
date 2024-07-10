@@ -56,4 +56,16 @@ export default class HasManyDetail extends RelaDB.Model {
 
         return `<livewire:${componentPath} :${paramCase(this.crud.name)}="$${camelCase(this.crud.name)}" />`
     }
+
+    isInvalid(): boolean {
+        return ! this.isValid()
+    }
+
+    isValid(): boolean {
+        return ! this.hasInvalidNameAndPlural()
+    }
+
+    hasInvalidNameAndPlural(): boolean {
+        return this.detailCrud.name === this.crud.name || this.detailCrud.plural === this.crud.plural
+    }
 }
