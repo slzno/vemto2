@@ -373,7 +373,7 @@ import UiWarning from '@Renderer/components/ui/UiWarning.vue'
 
                 <div v-if="detail.hasInvalidNameAndPlural()" class="p-2 max-w-lg">
                     <UiWarning>
-                        This detail has the same Item name or Collection name of the parent Crud. Please, change this in the Detail Settings to avoid conflicts. 
+                        This detail has the same Name or Plural of the parent Crud. Please, change this in the Detail Settings to avoid conflicts. 
                         <br>
                         This is a common issue when the parent Crud and the detail Crud are related to the same table/model (e.g. User has many Users)
                     </UiWarning>

@@ -133,7 +133,7 @@
                         <div class="text-lg flex items-center space-x-2">
                             <div>{{ app.getLabel() }}</div>
                             <div v-if="app.isInvalid()">
-                                <span class="flex items-center justify-center bg-red-450 px-2 rounded text-white text-sm">Errors</span>
+                                <span class="flex items-center justify-center border border-red-450 px-2 rounded text-red-450 text-sm">Has issues to fix</span>
                             </div>
                         </div>
                         <div class="text-slate-450 text-xs">{{ app.getAppSubType() }}</div>
