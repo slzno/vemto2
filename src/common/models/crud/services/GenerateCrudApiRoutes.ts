@@ -46,7 +46,7 @@ export default class GenerateCrudApiRoutes {
     generateBelongsToManyRelationshipRoutes(detail: BelongsToManyDetail) {
         const detailCrudModelName = camelCase(detail.crud.settings.itemName),
             detailRelatedCrudModelPlural = camelCase(detail.relationship.name),
-            detailRelatedCrudModelName = paramCase(detail.detailCrud.settings.itemName),
+            detailRelatedCrudModelName = paramCase(detail.relationship.relatedModel.name),
             crudModelPlural = paramCase(this.crud.settings.collectionName),
             completeRouteAction = (methodName: string) => `[${detail.getApiControllerName()}::class, '${methodName}']`
 

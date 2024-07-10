@@ -7,6 +7,8 @@
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
     import { PlusIcon } from '@heroicons/vue/24/outline'
 
+    const emit = defineEmits(['created'])
+    
     const showingModal = ref(false),
         selectedModelId = ref(null),
         selectedModel = ref(null)
@@ -39,6 +41,8 @@
             excludedColumns, 
             generateDetails
         )
+
+        emit('created')
 
         close()
     }

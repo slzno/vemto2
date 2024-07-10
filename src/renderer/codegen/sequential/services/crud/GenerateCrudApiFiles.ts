@@ -8,6 +8,8 @@ import RenderableApiTest from "./api/RenderableApiTest"
 import Relationship from "@Common/models/Relationship"
 import RenderableApiHasManyController from "./controllers/RenderableApiHasManyController"
 import RenderableApiHasManyTest from "./api/RenderableApiHasManyTest"
+import RenderableApiBelongsToManyController from "./controllers/RenderableApiBelongsToManyController"
+import RenderableApiBelongsToManyTest from "./api/RenderableApiBelongsToManyTest"
 
 export default class GenerateCrudApiFiles {
     async start() {
@@ -25,12 +27,20 @@ export default class GenerateCrudApiFiles {
             await new RenderableApiTest(crud).render()
 
             await crud.model.getHasManyRelations().forEach(async (relationship: Relationship) => {
-                await new RenderableApiResource(relationship.model).render()
-                await new RenderableApiCollection(relationship.model).render()
+                await new RenderableApiResource(relationship.relatedModel).render()
+                await new RenderableApiCollection(relationship.relatedModel).render()
 
                 await new RenderableApiHasManyController(crud, relationship).render()
                 
                 await new RenderableApiHasManyTest(crud, relationship).render()
+            })
+
+            await crud.model.getBelongsToManyRelations().forEach(async (relationship: Relationship) => {
+                await new RenderableApiResource(relationship.relatedModel).render()
+                await new RenderableApiCollection(relationship.relatedModel).render()
+
+                await new RenderableApiBelongsToManyController(crud, relationship).render()
+                await new RenderableApiBelongsToManyTest(crud, relationship).render()
             })
         }
     }

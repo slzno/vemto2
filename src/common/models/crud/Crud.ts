@@ -152,7 +152,7 @@ export default class Crud extends RelaDB.Model {
     }
 
     static getApis() {
-        return Crud.get().filter((crud: Crud) => crud.isApi())
+        return Crud.get().filter((crud: Crud) => crud.isApi() && !crud.isDetail())
     }
 
     static getFilamentResources() {

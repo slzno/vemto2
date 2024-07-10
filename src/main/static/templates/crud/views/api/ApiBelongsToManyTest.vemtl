@@ -14,7 +14,7 @@
 <####>
 
 use <$ this.crud.model.getClassString() $>;
-use <$ this.relationshipCrud.relatedModel.getClassString() $>;
+use <$ this.relationship.relatedModel.getClassString() $>;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -45,7 +45,7 @@ test('it can attach <$ snakeCase(relModelPlural) $> to <$ modelNameSnakeCase $>'
     $response->assertNoContent();
 
     $this->assertTrue(
-        $<$ modelNameCamelCase $>-><$ this.relationship.name $>->where('<$ this.relationship.relatedModel.table.name $>.<$ this.relationship.relatedModel.getPrimaryKeyName() $>', $<$ relModelNameCamelCase $>-><$ this.relationship.relatedModel.getPrimaryKeyName() $>)->exists()
+        $<$ modelNameCamelCase $>-><$ this.relationship.name $>()->where('<$ this.relationship.relatedModel.table.name $>.<$ this.relationship.relatedModel.getPrimaryKeyName() $>', $<$ relModelNameCamelCase $>-><$ this.relationship.relatedModel.getPrimaryKeyName() $>)->exists()
     );
 });
 

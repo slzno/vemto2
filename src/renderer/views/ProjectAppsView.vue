@@ -94,10 +94,10 @@
             </div>
 
             <div class="flex space-x-2">
-                <CrudManager />
-                <PageManager />
-                <FilamentResourceManager />
-                <CrudApiManager />
+                <CrudManager @created="loadApps()" />
+                <PageManager @created="loadApps()" />
+                <FilamentResourceManager @created="loadApps()" />
+                <CrudApiManager @created="loadApps()" />
                 <UiButton disabled>
                     <PlusIcon class="w-4 h-4 mr-1" />
                     Nova Resource

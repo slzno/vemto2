@@ -51,14 +51,14 @@ import UiTranslator from '@Renderer/components/ui/UiTranslator.vue'
         <div>
             <UiSelect v-model="crud.defaultSearchColumnId" label="Default search column" @change="crud.save()" >
                 <option :value="null" disabled>Select a column</option>
-                <option v-for="column in crud.model.table.columns" :value="column.id" :key="column.id">{{ column.name }}</option>
+                <option v-for="column in crud.table.columns" :value="column.id" :key="column.id">{{ column.name }}</option>
             </UiSelect>
         </div>
 
         <div>
             <UiSelect v-model="crud.defaultSortColumnId" label="Default sort column" @change="crud.save()" >
                 <option :value="null" disabled>Select a column</option>
-                <option v-for="column in crud.model.table.columns" :value="column.id" :key="column.id">{{ column.name }}</option>
+                <option v-for="column in crud.table.columns" :value="column.id" :key="column.id">{{ column.name }}</option>
             </UiSelect>
         </div>
 
