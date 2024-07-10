@@ -102,6 +102,9 @@ Vemto::execute('schema-reader-db', function () use ($APP_DIRECTORY) {
 
     DB::setDefaultConnection($defaultConnection);
 
+    // Fix telescope connection
+    Config::set('telescope.storage.database.connection', $defaultConnection);
+
     // create the migration repository
     $repository = $app->make('migration.repository');
     $repository->setSource($defaultConnection);
