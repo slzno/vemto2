@@ -13,17 +13,39 @@ export default class ProjectSettingsFileManager {
         return await Main.API.projectFileExists(PathUtil.join(this.path, ".vemto_settings"))
     }
 
-    async saveFromSettings(settings: ProjectSettings) {
+    async saveFromSettings(settings: ProjectSettings, isExample: boolean = false) {
         let fileContent = ""
+
+        const dbPassword = isExample ? "" : settings.schemaReaderDbPassword
 
         fileContent += `SCHEMA_READER_MODE=${settings.schemaReaderMode}\n`
         fileContent += `SCHEMA_READER_DB_DRIVER=${settings.schemaReaderDbDriver}\n`
         fileContent += `SCHEMA_READER_DB_HOST=${settings.schemaReaderDbHost}\n`
         fileContent += `SCHEMA_READER_DB_PORT=${settings.schemaReaderDbPort}\n`
         fileContent += `SCHEMA_READER_DB_USERNAME=${settings.schemaReaderDbUsername}\n`
-        fileContent += `SCHEMA_READER_DB_PASSWORD=${settings.schemaReaderDbPassword}\n`
+        fileContent += `SCHEMA_READER_DB_PASSWORD=${dbPassword}\n`
         fileContent += `SCHEMA_READER_DB_DATABASE=${settings.schemaReaderDbDatabase}\n`
 
-        await Main.API.writeFile(PathUtil.join(this.path, ".vemto_settings"), fileContent)
+        const fileName = isExample ? ".vemto_settings.example" : ".vemto_settings"
+
+        await Main.API.writeFile(PathUtil.join(this.path, fileName), fileContent)
+
+        if(isExample) return
+        
+        await this.saveFromSettings(settings, true)
+
+        await this.addToGitIgnoreIfNecessary()
+    }
+
+    async addToGitIgnoreIfNecessary() {
+        const gitIgnorePath = PathUtil.join(this.path, ".gitignore")
+
+        let gitIgnoreContent = await Main.API.readFile(gitIgnorePath)
+
+        if(gitIgnoreContent.includes(".vemto_settings")) return
+
+        gitIgnoreContent += "\n.vemto_settings\n"
+
+        await Main.API.writeFile(gitIgnorePath, gitIgnoreContent)
     }
 }

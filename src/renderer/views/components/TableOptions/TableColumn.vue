@@ -195,6 +195,7 @@
                 </div>
                 <div class="m-1 flex-1">
                     <UiText label="Default Value" v-model="column.default" @input="column.saveFromInterface()" />
+                    <UiCheckbox v-model="column.defaultIsRaw" label="Raw" @change="column.saveFromInterface()" />
                 </div>
             </div>
             <div class="flex gap-3" v-if="column.isFloatingPointNumber()">

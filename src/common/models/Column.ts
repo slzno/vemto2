@@ -26,6 +26,7 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
     nullable: boolean
     unsigned: boolean
     default: string
+    defaultIsRaw: boolean
     total: number
     places: number
     autoIncrement: boolean
@@ -485,6 +486,11 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
 
     getDefaultForTemplate(): string {
         let type = this.getType()
+
+        if(this.defaultIsRaw) return this.default
+
+        // Escape single quotes
+        this.default = this.default.replace(/'/g, "\\'")
 
         if(type.defaultValueTypeIsString) return `'${this.default}'`
 

@@ -192,9 +192,19 @@ export default class ProjectInfo {
 
     async readSettingsFile(): Promise<any> {
         try {
-            const settingsData = await Main.API.readFile(
+            let settingsData = await Main.API.readFile(
                 PathUtil.join(this.path, ".vemto_settings")
             )
+
+            if (!settingsData) {
+                settingsData = await Main.API.readFile(
+                    PathUtil.join(this.path, ".vemto_settings.example")
+                )
+            }
+
+            if (!settingsData) {
+                return new EnvParser()
+            }
 
             return new EnvParser(settingsData)
         } catch (e) {
