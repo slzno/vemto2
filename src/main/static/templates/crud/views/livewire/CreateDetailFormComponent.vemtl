@@ -6,8 +6,8 @@
 <% const camelCase = this.require('camelCase') %>
 <% const pascalCase = this.require('pascalCase') %>
 <% const paramCase = this.require('paramCase') %>
-<% const itemVarName = crud.settings.itemName %>
-<% const collectionVarName = crud.settings.collectionName %>
+<% const itemVarName = camelCase(crud.settings.itemName) %>
+<% const collectionVarName = camelCase(crud.settings.collectionName) %>
 
 namespace <$ crud.livewireFormsNamespace $>;
  

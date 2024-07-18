@@ -3,8 +3,8 @@
 <% const table = model.table %>
 <% const modelName = crud.model.name %>
 <% const camelCase = this.require("camelCase") %>
-<% const itemVarName = crud.settings.itemName %>
-<% const collectionVarName = crud.settings.collectionName %>
+<% const itemVarName = camelCase(crud.settings.itemName) %>
+<% const collectionVarName = camelCase(crud.settings.collectionName) %>
 
 <% const InputRenderer = this.require("InputRenderer") %>
 <% InputRenderer.setProject(crud.project) %>

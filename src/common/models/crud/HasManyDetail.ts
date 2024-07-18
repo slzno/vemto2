@@ -79,10 +79,10 @@ export default class HasManyDetail extends RelaDB.Model {
     }
 
     isValid(): boolean {
-        return ! this.hasInvalidNameAndPlural()
+        return ! this.hasInvalidItemOrCollectionName()
     }
 
-    hasInvalidNameAndPlural(): boolean {
-        return this.detailCrud.name === this.crud.name || this.detailCrud.plural === this.crud.plural
+    hasInvalidItemOrCollectionName(): boolean {
+        return this.detailCrud.settings.itemName === this.crud.settings.itemName || this.detailCrud.settings.collectionName === this.crud.settings.collectionName
     }
 }

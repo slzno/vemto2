@@ -6,9 +6,9 @@
 <% const camelCase = this.require('camelCase') %>
 <% const pascalCase = this.require('pascalCase') %>
 <% const paramCase = this.require('paramCase') %>
-<% const itemVarName = crud.settings.itemName %>
+<% const itemVarName = camelCase(crud.settings.itemName) %>
 <% const deletingItemVarName = `deleting${pascalCase(itemVarName)}` %>
-<% const collectionVarName = crud.settings.collectionName %>
+<% const collectionVarName = camelCase(crud.settings.collectionName) %>
 <% const viewsFolderName = `${crud.section.getFolderName()}.${paramCase(crud.plural)}` %>
 
 namespace <$ crud.livewireNamespace $>;

@@ -5,10 +5,10 @@
 <% const colspanSize = crud.getInputsForIndex().length + 1 %>
 <% const camelCase = this.require('camelCase') %>
 <% const pascalCase = this.require('pascalCase') %>
-<% const itemVarName = camelCase(crud.model.name) %>
+<% const itemVarName = camelCase(crud.settings.itemName) %>
 <% const deletingItemVarName = `deleting${pascalCase(itemVarName)}` %>
 <% const viewsFolderName = camelCase(crud.model.plural) %>
-<% const collectionVarName = camelCase(crud.model.plural) %>
+<% const collectionVarName = camelCase(crud.settings.collectionName) %>
 <# --- #>
 <div class="vtheme(crud.index.container)">
     <x-ui.breadcrumbs>
