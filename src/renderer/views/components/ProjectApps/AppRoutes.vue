@@ -192,7 +192,7 @@
         </div>
     </UiModal>
 
-    <div class="bg-slate-950 p-3 rounded-lg border border-slate-700 h-screen">
+    <div class="bg-slate-950 p-3 rounded-lg border border-slate-700 h-screen overflow-y-auto pb-48">
         <div
             class="w-2/3 mb-2 border border-slate-700 bg-slate-850 rounded-lg p-3 hover:bg-slate-800 flex flex-col gap-3"
             v-for="route in routes"

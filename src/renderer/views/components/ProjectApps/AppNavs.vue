@@ -156,7 +156,7 @@
     </UiModal>
 
     <div
-        class="bg-slate-950 p-3 rounded-lg border border-slate-700 h-screen"
+        class="bg-slate-950 p-3 rounded-lg border border-slate-700 h-screen overflow-y-auto pb-48"
         id="root"
         draggable="true"
         @dragstart="onDragStart"
