@@ -13,6 +13,7 @@ export default class HasManyDetail extends RelaDB.Model {
     detailCrudId: string
     relationship: Relationship
     relationshipId: string
+    routes: Route[]
 
     relationships() {
         return {

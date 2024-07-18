@@ -17,6 +17,7 @@ export default class BelongsToManyDetail extends RelaDB.Model {
     detailCrudId: string
     relationship: Relationship
     relationshipId: string
+    routes: Route[]
 
     relationships() {
         return {

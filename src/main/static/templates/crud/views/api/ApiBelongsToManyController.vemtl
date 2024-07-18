@@ -30,7 +30,7 @@ class <$ this.filenameWithoutExtension $> extends Controller
     {
         $search = $request->get('search', '');
 
-        $<$ camelCase(this.relationship.relatedModel.plural) $> = $<$ modelNameCamelCase $>-><$ this.relationship.name $>()->search($search)
+        $<$ camelCase(this.relationship.relatedModel.plural) $> = $this->getSearchQuery($search, $<$ modelNameCamelCase $>)
             ->latest()
             ->paginate();
 
@@ -51,5 +51,15 @@ class <$ this.filenameWithoutExtension $> extends Controller
         $<$ modelNameCamelCase $>-><$ this.relationship.name $>()->detach($<$ relatedModelNameCamelCase $>);
 
         return response()->noContent();
+    }
+
+    public function getSearchQuery(string $search, <$ modelNamePascalCase $> $<$ modelNameCamelCase $>)
+    {
+        <% if(this.relationshipCrud.hasDefaultSearchColumn()) { %>
+        return $<$ modelNameCamelCase $>-><$ this.relationship.name $>()
+            ->where('<$ this.relationshipCrud.defaultSearchColumn.name $>', 'like', "%{$search}%");
+        <% } else { %>
+        return $<$ modelNameCamelCase $>-><$ this.relationship.name $>();
+        <% } %>
     }
 }

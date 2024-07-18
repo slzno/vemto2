@@ -10,6 +10,9 @@ import FileSystem from "@Main/base/FileSystem"
 import Model from "@Common/models/Model"
 import SchemaSection from "@Common/models/SchemaSection"
 import AppSection from "@Common/models/AppSection"
+import Crud, { CrudType } from "@Common/models/crud/Crud"
+import Relationship from "@Common/models/Relationship"
+import { camelCase } from "change-case"
 
 export default new class TestHelper {
 
@@ -153,6 +156,22 @@ export default new class TestHelper {
         return column
     }
 
+    createCrud(data = {}) {
+        if(!data.model) {
+            data.model = this.createModel()
+        }
+
+        const type = data.hasOwnProperty('type') ? data.type : CrudType.DEFAULT,
+            excludedColumns = data.hasOwnProperty('excludedColumns') ? data.excludedColumns : [],
+            generateDetails = data.hasOwnProperty('generateDetails') ? data.generateDetails : false
+
+        const crud = Crud.createFromModel(data.model, type, excludedColumns, generateDetails)
+
+        crud.save()
+
+        return crud
+    }
+
     createPrimaryIndex(data = {}) {
         return this.createIndex({
             ...data,
@@ -203,6 +222,40 @@ export default new class TestHelper {
         Index.notSavingInternally()
 
         return index
+    }
+
+    createHasManyRelation(model, relatedModel) {
+        const relationship = new Relationship()
+
+        relationship.name = camelCase(relatedModel.plural)
+        relationship.type = 'HasMany'
+
+        relationship.modelId = model.id
+        relationship.relatedModelId = relatedModel.id
+
+        relationship.projectId = model.projectId
+        relationship.save()
+
+        return relationship
+    }
+
+    createBelongsToManyRelation(model, relatedModel) {
+        const relationship = new Relationship()
+        relationship.projectId = model.projectId
+
+        relationship.name = camelCase(relatedModel.plural)
+        relationship.type = 'BelongsToMany'
+
+        relationship.modelId = model.id
+        relationship.relatedModelId = relatedModel.id
+
+        const pivot = this.createTable({
+            name: `${camelCase(relatedModel.name)}_${camelCase(model.name)}`
+        })
+
+        relationship.pivotId = pivot.id
+
+        relationship.save()
     }
 
     compareCode(code1, code2) {

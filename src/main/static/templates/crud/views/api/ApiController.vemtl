@@ -34,7 +34,7 @@ class <$ controllerName $> extends Controller
     {
         $search = $request->get('search', '');
 
-        $<$ modelPluralCamelCase $> = <$ modelNamePascalCase $>::search($search)
+        $<$ modelPluralCamelCase $> = $this->getSearchQuery($search)
             ->latest(<% if(!this.crud.model.hasTimestampsColumns()) { %>'<$ this.crud.model.getPrimaryKeyName() $>'<% } %>)
             ->paginate();
 
@@ -145,5 +145,15 @@ class <$ controllerName $> extends Controller
         $<$ modelNameCamelCase $>->delete();
 
         return response()->noContent();
+    }
+
+    public function getSearchQuery(string $search)
+    {
+        <% if(this.crud.hasDefaultSearchColumn()) { %>
+        return <$ this.crud.model.name $>::query()
+            ->where('<$ this.crud.defaultSearchColumn.name $>', 'like', "%{$search}%");
+        <% } else { %>
+        return <$ this.crud.model.name $>::query();
+        <% } %>
     }
 }

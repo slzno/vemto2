@@ -16,6 +16,10 @@ export default class GenerateCrudApiRoutes {
     }
 
     getRoutePath(...paths: string[]) {
+        if(paths.length <= 0) {
+            return `${this.crud.getBaseRoutePath()}`
+        }
+        
         return `${this.crud.getBaseRoutePath()}/${paths.join("/")}`
     }
 
@@ -33,7 +37,7 @@ export default class GenerateCrudApiRoutes {
 
     generateHasManyRelationshipRoutes(detail: HasManyDetail) {
         const detailCrudModelPlural = paramCase(detail.detailCrud.settings.collectionName),
-            crudModelName = camelCase(detail.crud.settings.itemName),
+            crudModelName = paramCase(detail.crud.settings.itemName),
             crudModelPlural = paramCase(this.crud.settings.collectionName),
             completeRouteAction = (methodName: string) => `[${detail.getApiControllerName()}::class, '${methodName}']`
 
@@ -45,8 +49,8 @@ export default class GenerateCrudApiRoutes {
 
     generateBelongsToManyRelationshipRoutes(detail: BelongsToManyDetail) {
         const detailCrudModelName = camelCase(detail.crud.settings.itemName),
-            detailRelatedCrudModelPlural = camelCase(detail.relationship.name),
-            detailRelatedCrudModelName = paramCase(detail.relationship.relatedModel.name),
+            detailRelatedCrudModelPlural = paramCase(detail.relationship.name),
+            detailRelatedCrudModelName = camelCase(detail.relationship.relatedModel.name),
             crudModelPlural = paramCase(this.crud.settings.collectionName),
             completeRouteAction = (methodName: string) => `[${detail.getApiControllerName()}::class, '${methodName}']`
 
