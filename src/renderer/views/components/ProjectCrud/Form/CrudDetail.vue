@@ -6,6 +6,7 @@
     import BelongsToManyDetail from '@Common/models/crud/BelongsToManyDetail';
     import MorphManyDetail from '@Common/models/crud/MorphManyDetail';
     import MorphToManyDetail from '@Common/models/crud/MorphToManyDetail';
+    import UiWarning from '@Renderer/components/ui/UiWarning.vue';
     
     const router = useRouter()
 
@@ -53,6 +54,13 @@
                     <TableCellsIcon class="w-24 h-24 text-slate-700 stroke-[0.015rem]" />
                 </div>
             </div>
+        </div>
+        <div v-if="detail instanceof HasManyDetail && detail.hasInvalidNameAndPlural()" class="p-2 max-w-lg">
+            <UiWarning>
+                This detail has the same Name or Plural of the parent Crud. Please, change this in the Detail Settings to avoid conflicts. 
+                <br>
+                This is a common issue when the parent Crud and the detail Crud are related to the same table/model (e.g. User has many Users)
+            </UiWarning>
         </div>
     </div>
 </template>

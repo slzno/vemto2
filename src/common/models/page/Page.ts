@@ -272,5 +272,11 @@ export default class Page extends RelaDB.Model {
         })
     }
 
-    
+    isInvalid(): boolean {
+        return ! this.isValid()
+    }
+
+    isValid(): boolean {
+        return true
+    }
 }

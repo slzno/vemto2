@@ -1,5 +1,6 @@
 <script setup lang="ts">
     import { defineProps, defineEmits, computed } from "vue"
+import UiHint from "./UiHint.vue";
 
     const props = defineProps({
         modelValue: {
@@ -15,7 +16,16 @@
         smallText: {
             type: Boolean,
             default: false,
-        }
+        },
+
+        hint: {
+            type: String,
+        },
+
+        hintType: {
+            type: String,
+            default: "info",
+        },
     })
 
     const emit = defineEmits(["update:modelValue", "change"]),
@@ -45,6 +55,12 @@
                         'text-xs': smallText,
                         'text-sm': !smallText,
                     }" class="hover:text-slate-600 dark:text-slate-400 dark:group-hover:text-slate-300 select-none" v-if="label">{{ label }}</span>
+
+                    <div v-if="hint">
+                        <UiHint :type="hintType">
+                            <span v-html="hint"></span>
+                        </UiHint>
+                    </div>
                 </div>
             </div>
         </label>

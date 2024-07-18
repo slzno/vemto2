@@ -73,4 +73,16 @@ export default class HasManyDetail extends RelaDB.Model {
     getApiControllerName(): string {
         return `${this.relationship.model.plural}${this.relationship.relatedModel.name}Controller`
     }
+    
+    isInvalid(): boolean {
+        return ! this.isValid()
+    }
+
+    isValid(): boolean {
+        return ! this.hasInvalidNameAndPlural()
+    }
+
+    hasInvalidNameAndPlural(): boolean {
+        return this.detailCrud.name === this.crud.name || this.detailCrud.plural === this.crud.plural
+    }
 }
