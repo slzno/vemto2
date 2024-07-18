@@ -20,6 +20,7 @@
     import Relationship from '@Common/models/Relationship'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
     import { useRouter } from 'vue-router'
+    import CrudDetail from './CrudDetail.vue'
 
     const router = useRouter()
 
@@ -355,65 +356,21 @@
                 </div>
             </section>
 
-            <div class="border border-dotted border-slate-800 rounded-md p-2 bg-slate-900 hover:bg-slate-850 group cursor-pointer" v-for="detail in crud.hasManyDetails" :key="detail.id" @click="openCrud(detail.detailCrud)">
-                <div class="flex flex-col">
-                    <i class="text-red-500 text-xs opacity-90">Has Many</i>
-                </div>
-                <div class="flex justify-center">
-                    <div>
-                        <h1 class="font-thin text-nomal text-slate-400">Has Many {{ detail.detailCrud.getLabel() }}</h1>
-        
-                        <div class="flex flex-col items-center">
-                            <TableCellsIcon class="w-24 h-24 text-slate-700 stroke-[0.015rem]" />
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <template v-for="detail in crud.hasManyDetails" :key="detail.id">
+                <CrudDetail type="Has Many" :detail="detail" />
+            </template>
 
-            <div class="border border-dotted border-slate-800 rounded-md p-2 bg-slate-900 hover:bg-slate-850 group cursor-pointer" v-for="detail in crud.morphManyDetails" :key="detail.id" @click="openCrud(detail.detailCrud)">
-                <div class="flex flex-col">
-                    <i class="text-red-500 text-xs opacity-90">Morph Many</i>
-                </div>
-                <div class="flex justify-center">
-                    <div>
-                        <h1 class="font-thin text-nomal text-slate-400">Morph Many {{ detail.detailCrud.getLabel() }}</h1>
-        
-                        <div class="flex flex-col items-center">
-                            <TableCellsIcon class="w-24 h-24 text-slate-700 stroke-[0.015rem]" />
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <template v-for="detail in crud.morphManyDetails" :key="detail.id">
+                <CrudDetail type="Morph Many" :detail="detail" />
+            </template>
 
-            <div class="border border-dotted border-slate-800 rounded-md p-2 bg-slate-900 hover:bg-slate-850 group cursor-pointer" v-for="detail in crud.belongsToManyDetails" :key="detail.id" @click="openCrud(detail.detailCrud)">
-                <div class="flex flex-col">
-                    <i class="text-red-500 text-xs opacity-90">Belongs To Many</i>
-                </div>
-                <div class="flex justify-center">
-                    <div>
-                        <h1 class="font-thin text-nomal text-slate-400">Belongs To Many {{ detail.detailCrud.getLabel() }}</h1>
-        
-                        <div class="flex flex-col items-center">
-                            <TableCellsIcon class="w-24 h-24 text-slate-700 stroke-[0.015rem]" />
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <template v-for="detail in crud.belongsToManyDetails" :key="detail.id">
+                <CrudDetail type="Belongs To Many" :detail="detail" />
+            </template>
 
-            <div class="border border-dotted border-slate-800 rounded-md p-2 bg-slate-900 hover:bg-slate-850 group cursor-pointer" v-for="detail in crud.morphToManyDetails" :key="detail.id" @click="openCrud(detail.detailCrud)">
-                <div class="flex flex-col">
-                    <i class="text-red-500 text-xs opacity-90">Morph To Many</i>
-                </div>
-                <div class="flex justify-center">
-                    <div>
-                        <h1 class="font-thin text-nomal text-slate-400">Morph To Many {{ detail.detailCrud.getLabel() }}</h1>
-        
-                        <div class="flex flex-col items-center">
-                            <TableCellsIcon class="w-24 h-24 text-slate-700 stroke-[0.015rem]" />
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <template v-for="detail in crud.morphToManyDetails" :key="detail.id">
+                <CrudDetail type="Morph To Many" :detail="detail" />
+            </template>
         </div>
 
         <InputOptions
