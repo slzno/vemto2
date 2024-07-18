@@ -8,17 +8,26 @@
 <% const modelNameCamelCase = camelCase(modelName) %>
 <% let relModelName = this.relationship.relatedModel.name %>
 <% let relModelPluralCamelCase = camelCase(this.relationship.relatedModel.plural) %>
+<% const authModel = this.project.getAuthModel() %>
 <####>
 
+use <$ authModel.getClassString() $>;
 use <$ this.crud.model.getClassString() $>;
 use <$ this.relationshipCrud.model.getClassString() $>;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 
 uses(RefreshDatabase::class, WithFaker::class);
 
 beforeEach(function () {
     $this->withoutExceptionHandling();
+
+    <% if(authModel !== null) { %>
+        $user = <$ authModel.name $>::factory()->create(['email' => 'admin@admin.com']);
+
+        Sanctum::actingAs($user, [], 'web');
+    <% } %>
 });
 
 test('it gets <$ snakeCase(this.crud.model.name) $> <$ snakeCase(this.relationship.relatedModel.plural) $>', function() {

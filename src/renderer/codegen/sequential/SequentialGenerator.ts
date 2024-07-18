@@ -133,7 +133,7 @@ export default class SequentialGenerator {
         
         await new GenerateModelFiles().start()
         await new GenerateCrudFiles().start()
-        await new GenerateCrudApiFiles().start()
+        await new GenerateCrudApiFiles().start(this.project)
         await new GenerateFilamentResources().start()
         await new GeneratePageFiles().start()
         

@@ -10,10 +10,16 @@ import RenderableApiHasManyController from "./controllers/RenderableApiHasManyCo
 import RenderableApiHasManyTest from "./api/RenderableApiHasManyTest"
 import RenderableApiBelongsToManyController from "./controllers/RenderableApiBelongsToManyController"
 import RenderableApiBelongsToManyTest from "./api/RenderableApiBelongsToManyTest"
+import RenderableApiAuthController from "./controllers/RenderableApiAuthController"
+import Project from "@Common/models/Project"
 
 export default class GenerateCrudApiFiles {
-    async start() {
+    async start(project: Project) {
         const cruds = Crud.getApis()
+
+        if(!cruds.length) return
+        
+        await new RenderableApiAuthController(project.getAuthModel()).render()
 
         for (const crud of cruds) {
             await new RenderableApiStoreRequest(crud).render()
