@@ -128,7 +128,7 @@ export default class Input extends RelaDB.Model {
         return input
     }
 
-    static createFakeFromColumn(crud: Crud, column: Column, forceType?: InputType | null, ignoreColumnHidden: boolean = false) {
+    static fakeFromColumn(crud: Crud, column: Column, forceType?: InputType | null, ignoreColumnHidden: boolean = false) {
         const input = new Input()
 
         input.disableAutomaticRelations()

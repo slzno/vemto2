@@ -645,7 +645,7 @@ export default class Crud extends RelaDB.Model {
 
             if(model.columnIsHiddenForCrudCreation(column)) return
 
-            const input = Input.createFakeFromColumn(this, column)
+            const input = Input.fakeFromColumn(this, column)
             input.panel = panel
 
             this.inputs.push(input)
