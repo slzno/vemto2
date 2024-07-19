@@ -8,6 +8,7 @@ import Route from '../Route'
 import GenerateCrudApiRoutes from './services/GenerateCrudApiRoutes'
 import FilamentInputData from './filament/FilamentInputData'
 import FilamentInputSettings from './filament/FilamentInputSettings'
+import AppSection from '../AppSection'
 
 export default class BelongsToManyDetail extends RelaDB.Model {
     id: string
@@ -18,10 +19,13 @@ export default class BelongsToManyDetail extends RelaDB.Model {
     relationship: Relationship
     relationshipId: string
     routes: Route[]
+    section: AppSection
+    sectionId: string
 
     relationships() {
         return {
             routes: () => this.morphMany(Route, 'routable').cascadeDelete(),
+            section: () => this.belongsTo(AppSection, "sectionId"),
 
             crud: () => this.belongsTo(Crud),
             detailCrud: () => this.belongsTo(Crud, "detailCrudId"),
@@ -56,6 +60,7 @@ export default class BelongsToManyDetail extends RelaDB.Model {
         detailCrud.isBelongsToManyDetail = true
         detailCrud.save()
 
+        belongsToManyDetail.sectionId = crud.sectionId
         belongsToManyDetail.detailCrudId = detailCrud.id
 
         belongsToManyDetail.save()

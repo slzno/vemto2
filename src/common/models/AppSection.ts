@@ -56,6 +56,11 @@ export default class AppSection extends RelaDB.Model {
             || AppSection.findFirstSectionWhichRequiresAuth()
     }
 
+    static findDefaultApiPanelSection(): AppSection {
+        return AppSection.findSectionByName('API')
+            || AppSection.findFirstSectionWhichRequiresAuth()
+    }
+
     static findDefaultSiteSection(): AppSection {
         return AppSection.findSectionByName('Site')
             || AppSection.findFirstSectionWhichDoesNotRequireAuth()

@@ -4,6 +4,7 @@ import RelaDB from '@tiago_silva_pereira/reladb'
 import { camelCase, capitalCase, paramCase } from 'change-case'
 import Route from '../Route'
 import GenerateCrudApiRoutes from './services/GenerateCrudApiRoutes'
+import AppSection from '../AppSection'
 
 export default class HasManyDetail extends RelaDB.Model {
     id: string
@@ -14,10 +15,13 @@ export default class HasManyDetail extends RelaDB.Model {
     relationship: Relationship
     relationshipId: string
     routes: Route[]
+    section: AppSection
+    sectionId: string
 
     relationships() {
         return {
             routes: () => this.morphMany(Route, 'routable').cascadeDelete(),
+            section: () => this.belongsTo(AppSection, "sectionId"),
 
             crud: () => this.belongsTo(Crud),
             detailCrud: () => this.belongsTo(Crud, "detailCrudId"),
@@ -48,6 +52,7 @@ export default class HasManyDetail extends RelaDB.Model {
         detailCrud.isHasManyDetail = true
         detailCrud.save()
 
+        hasManyDetail.sectionId = crud.sectionId
         hasManyDetail.detailCrudId = detailCrud.id
 
         hasManyDetail.save()
