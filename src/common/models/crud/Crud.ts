@@ -303,10 +303,6 @@ export default class Crud extends RelaDB.Model {
 
         crud.addInputsFromModel(model, excludedColumns)
 
-        if(crudType == CrudType.API) {
-            crud.addRoutes()
-        }
-
         return crud
     }
 
