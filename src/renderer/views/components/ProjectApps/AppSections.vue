@@ -60,6 +60,8 @@
 
     const addDefaultSections = async () => {
         await new GenerateBasicSections(projectStore.project).handle()
+
+        loadSections()
     }
 
     const deleteSection = async (section: AppSection) => {
@@ -85,7 +87,7 @@
         </UiButton>
     </div>
 
-    <div class="bg-slate-950 p-3 rounded-lg border border-slate-700 h-screen">
+    <div class="bg-slate-950 p-3 rounded-lg border border-slate-700 h-screen  overflow-y-auto pb-48">
         <div
             class="mb-2 border border-slate-700 bg-slate-850 rounded-lg cursor-pointer hover:bg-slate-800 w-2/3 flex justify-between items-center"
             v-for="section in appSections"
