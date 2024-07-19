@@ -641,17 +641,29 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
     }
 
     getNotFillableColumns(): Column[] {
-        return this.table.columns.filter((column: Column) => (this.hasFillable && !this.fillable.includes(column.name)) || (this.hasGuarded && this.guarded.includes(column.name)))
+        return this.table.columns.filter((column: Column) => this.columnIsGuarded(column))
     }
 
     getFillableColumnsWithoutInputs(): Column[] {
-        return this.getFillableColumns().filter((column: Column) => column.inputs.length <= 0)
+        return this.getFillableColumns().filter((column: Column) => !column.hasInputs())
     }
 
     getFillableColumns(): Column[] {
-        return this.table.columns.filter(
-            (column: Column) => (this.hasFillable && this.fillable.includes(column.name)) || (this.hasGuarded && (this.guarded.length == 0 || !this.guarded.includes(column.name)))
-        )
+        return this.table.columns.filter((column: Column) => this.columnIsFillable(column))
+    }
+
+    columnIsFillable(column: Column): boolean {
+        return this.hasFillable && this.fillable.includes(column.name) 
+            || (this.hasGuarded && (this.guarded.length == 0 || !this.guarded.includes(column.name)))
+    }
+
+    columnIsGuarded(column: Column): boolean {
+        return this.hasGuarded && this.guarded.includes(column.name)
+            || (this.hasFillable && !this.fillable.includes(column.name))
+    }
+
+    columnIsHidden(column: Column): boolean {
+        return this.hidden.includes(column.name)
     }
 
     tableNameIsDifferentFromDefault(): boolean {

@@ -599,4 +599,8 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
     hasDuplicatedName(): boolean {
         return this.table.hasColumnExceptId(this.name, this.id)
     }
+
+    hasInputs(): boolean {
+        return this.inputs.length > 0
+    }
 }
