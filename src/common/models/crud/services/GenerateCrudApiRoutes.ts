@@ -23,16 +23,59 @@ export default class GenerateCrudApiRoutes {
         return `${this.crud.getBaseRoutePath()}/${paths.join("/")}`
     }
 
+    getRouteName(routePath: string) {
+        return `${this.crud.getBaseRouteName()}.${routePath}`
+    }
+
     generateCrudRoutes() {
         const crudModelName = camelCase(this.crud.settings.itemName),
             crudModelPlural = paramCase(this.crud.settings.collectionName),
             completeRouteAction = (methodName: string) => `[${this.crud.model.getControllerName()}::class, '${methodName}']`
 
-        this.createRoute(`${crudModelPlural}.index`, "get", this.getRoutePath(), this.crud.id, "Crud", completeRouteAction('index'))
-        this.createRoute(`${crudModelPlural}.store`, "post", this.getRoutePath(), this.crud.id, "Crud", completeRouteAction('store'))
-        this.createRoute(`${crudModelPlural}.show`, "get", this.getRoutePath(`{${crudModelName}}`), this.crud.id, "Crud", completeRouteAction('show'))
-        this.createRoute(`${crudModelPlural}.update`, "put", this.getRoutePath(`{${crudModelName}}`), this.crud.id, "Crud", completeRouteAction('update'))
-        this.createRoute(`${crudModelPlural}.destroy`, "delete", this.getRoutePath(`{${crudModelName}}`), this.crud.id, "Crud", completeRouteAction('destroy'))
+        this.createRoute(
+            `${crudModelPlural}.index`,
+            "get",
+            this.getRoutePath(),
+            "Crud",
+            this.crud.id,
+            completeRouteAction('index')
+        )
+
+        this.createRoute(
+            `${crudModelPlural}.store`,
+            "post",
+            this.getRoutePath(),
+            "Crud",
+            this.crud.id,
+            completeRouteAction('store')
+        )
+
+        this.createRoute(
+            `${crudModelPlural}.show`,
+            "get",
+            this.getRoutePath(`{${crudModelName}}`),
+            "Crud",
+            this.crud.id,
+            completeRouteAction('show')
+        )
+
+        this.createRoute(
+            `${crudModelPlural}.update`,
+            "put",
+            this.getRoutePath(`{${crudModelName}}`),
+            "Crud",
+            this.crud.id,
+            completeRouteAction('update')
+        )
+
+        this.createRoute(
+            `${crudModelPlural}.destroy`,
+            "delete",
+            this.getRoutePath(`{${crudModelName}}`),
+            "Crud",
+            this.crud.id,
+            completeRouteAction('destroy')
+        )
     }
 
     generateHasManyRelationshipRoutes(detail: HasManyDetail) {
@@ -43,8 +86,23 @@ export default class GenerateCrudApiRoutes {
 
         const indexStoreRoutePath = this.getRoutePath(`{${crudModelName}}`, detailCrudModelPlural)
 
-        this.createRoute(`${crudModelPlural}.${detailCrudModelPlural}.index`, "get", indexStoreRoutePath, detail.id, "HasManyDetail", completeRouteAction('index'))
-        this.createRoute(`${crudModelPlural}.${detailCrudModelPlural}.store`, "post", indexStoreRoutePath, detail.id, "HasManyDetail", completeRouteAction('store'))
+        this.createRoute(
+            `${detail.detailCrud.section.routePrefix}.${crudModelPlural}.${detailCrudModelPlural}.index`,
+            "get",
+            indexStoreRoutePath,
+            "HasManyDetail",
+            detail.id,
+            completeRouteAction('index')
+        )
+
+        this.createRoute(
+            `${detail.detailCrud.section.routePrefix}.${crudModelPlural}.${detailCrudModelPlural}.store`,
+            "post",
+            indexStoreRoutePath,
+            "HasManyDetail",
+            detail.id,
+            completeRouteAction('store')
+        )
     }
 
     generateBelongsToManyRelationshipRoutes(detail: BelongsToManyDetail) {
@@ -57,12 +115,35 @@ export default class GenerateCrudApiRoutes {
         const indexRoutePath = this.getRoutePath(`{${detailCrudModelName}}`, detailRelatedCrudModelPlural),
             storeDestroyRoutePath = this.getRoutePath(`{${detailCrudModelName}}`, detailRelatedCrudModelPlural, `{${detailRelatedCrudModelName}}`)
 
-        this.createRoute(`${crudModelPlural}.${detailRelatedCrudModelPlural}.index`, "get", indexRoutePath, detail.id, "BelongsToManyDetail", completeRouteAction('index'))
-        this.createRoute(`${crudModelPlural}.${detailRelatedCrudModelPlural}.store`, "post", storeDestroyRoutePath, detail.id, "BelongsToManyDetail", completeRouteAction('store'))
-        this.createRoute(`${crudModelPlural}.${detailRelatedCrudModelPlural}.destroy`, "delete", storeDestroyRoutePath, detail.id, "BelongsToManyDetail", completeRouteAction('destroy'))
+        this.createRoute(
+            `${detail.detailCrud.section.routePrefix}.${crudModelPlural}.${detailRelatedCrudModelPlural}.index`,
+            "get",
+            indexRoutePath,
+            "BelongsToManyDetail",
+            detail.id,
+            completeRouteAction('index')
+        )
+
+        this.createRoute(
+            `${detail.detailCrud.section.routePrefix}.${crudModelPlural}.${detailRelatedCrudModelPlural}.store`,
+            "post",
+            storeDestroyRoutePath,
+            "BelongsToManyDetail",
+            detail.id,
+            completeRouteAction('store')
+        )
+
+        this.createRoute(
+            `${detail.detailCrud.section.routePrefix}.${crudModelPlural}.${detailRelatedCrudModelPlural}.destroy`,
+            "delete",
+            storeDestroyRoutePath,
+            "BelongsToManyDetail",
+            detail.id,
+            completeRouteAction('destroy')
+        )
     }
 
-    createRoute(name: string, method: string, path: string, routableId: string, routableType: String, customContent: string = "") {
+    createRoute(name: string, method: string, path: string, routableType: String, routableId: string, customContent: string = "") {
         Route.create({
             name,
             method,

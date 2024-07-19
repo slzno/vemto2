@@ -208,9 +208,15 @@ export default class Crud extends RelaDB.Model {
             || model.table.getPrimaryKeyColumn()
             || defaultSearchColumn
 
-        const defaultSection = crudIsForFilament
-            ? AppSection.findDefaultFilamentPanelSection()
-            : AppSection.findDefaultDashboardSection()
+        let defaultSection = AppSection.findDefaultDashboardSection()
+        
+        if(crudIsForFilament) {
+            defaultSection = AppSection.findDefaultFilamentPanelSection()
+        }
+
+        if(crudType === CrudType.API) {
+            defaultSection = AppSection.findDefaultApiPanelSection()
+        }
 
         const crud = new Crud()
         crud.type = crudType
@@ -263,9 +269,15 @@ export default class Crud extends RelaDB.Model {
             || model.table.getPrimaryKeyColumn()
             || defaultSearchColumn
 
-        const defaultSection = crudIsForFilament
-            ? AppSection.findDefaultFilamentPanelSection()
-            : AppSection.findDefaultDashboardSection()
+        let defaultSection = AppSection.findDefaultDashboardSection()
+    
+        if(crudIsForFilament) {
+            defaultSection = AppSection.findDefaultFilamentPanelSection()
+        }
+
+        if(crudType === CrudType.API) {
+            defaultSection = AppSection.findDefaultApiPanelSection()
+        }
 
         const crud = new Crud()
         crud.type = crudType
@@ -311,9 +323,15 @@ export default class Crud extends RelaDB.Model {
             || table.getPrimaryKeyColumn()
             || defaultSearchColumn
 
-        const defaultSection = crudIsForFilament
-            ? AppSection.findDefaultFilamentPanelSection()
-            : AppSection.findDefaultDashboardSection()
+        let defaultSection = AppSection.findDefaultDashboardSection()
+    
+        if(crudIsForFilament) {
+            defaultSection = AppSection.findDefaultFilamentPanelSection()
+        }
+
+        if(crudType === CrudType.API) {
+            defaultSection = AppSection.findDefaultApiPanelSection()
+        }
 
         const crudName = WordManipulator.runMultiple(
             ['singularize', 'pascalCase'],
@@ -364,9 +382,15 @@ export default class Crud extends RelaDB.Model {
             || table.getPrimaryKeyColumn()
             || defaultSearchColumn
 
-        const defaultSection = crudIsForFilament
-            ? AppSection.findDefaultFilamentPanelSection()
-            : AppSection.findDefaultDashboardSection()
+        let defaultSection = AppSection.findDefaultDashboardSection()
+    
+        if(crudIsForFilament) {
+            defaultSection = AppSection.findDefaultFilamentPanelSection()
+        }
+
+        if(crudType === CrudType.API) {
+            defaultSection = AppSection.findDefaultApiPanelSection()
+        }
 
         const crudName = WordManipulator.runMultiple(
             ['singularize', 'pascalCase'],
@@ -413,9 +437,15 @@ export default class Crud extends RelaDB.Model {
             || model.table.getPrimaryKeyColumn()
             || defaultSearchColumn
 
-        const defaultSection = crudIsForFilament
-            ? AppSection.findDefaultAdminSection()
-            : AppSection.findDefaultDashboardSection()
+        let defaultSection = AppSection.findDefaultDashboardSection()
+    
+        if(crudIsForFilament) {
+            defaultSection = AppSection.findDefaultFilamentPanelSection()
+        }
+
+        if(crudType === CrudType.API) {
+            defaultSection = AppSection.findDefaultApiPanelSection()
+        }
 
         const crud = new Crud()
         crud.type = crudType
