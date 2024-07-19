@@ -202,8 +202,18 @@
             <div class="cursor-pointer w-full flex justify-between items-start">
                 <div>
                     <div class="mt-2 space-x-3 font-mono">
+                        <div title="Api Route" v-if="route.isApiRoute()" class="rounded px-2 py-1 bg-slate-700 inline-block text-sm">
+                            API
+                        </div>
                         <span
-                            class="px-2 py-0.5 bg-green-300 text-green-700 rounded"
+                            :class="{
+                                'bg-green-700 text-green-300': route.method == 'get',
+                                'bg-blue-700 text-blue-300': route.method == 'post',
+                                'bg-yellow-700 text-yellow-300': route.method == 'put',
+                                'bg-purple-700 text-purple-300': route.method == 'patch',
+                                'bg-red-700 text-red-300': route.method == 'delete',
+                            }"
+                            class="px-2 py-0.5 rounded"
                             >{{ route.method.toUpperCase() }}</span
                         >
                         <span>{{ route.path }}</span>
@@ -211,10 +221,7 @@
                 </div>
         
                 <div class="space-x-2">
-                    <div title="Api Route" v-if="route.isApiRoute()" class="rounded px-1 py-1 bg-slate-700 inline-block text-xs">
-                        API
-                    </div>
-                    <div class="rounded px-2 py-1 bg-slate-800 inline-block text-sm">
+                    <div class="rounded px-2 py-1 bg-slate-800 inline-block text-sm font-thin">
                         {{ route.getName() }}
                     </div>
                 </div>

@@ -19,6 +19,14 @@ export default class GenerateBasicSections {
         })
 
         AppSection.create({
+            name: "API",
+            routePrefix: "api",
+            routeBasePath: "api",
+            projectId: this.project.id,
+            requiresAuth: true,
+        })
+
+        AppSection.create({
             name: "Site",
             routePrefix: "",
             routeBasePath: "",
