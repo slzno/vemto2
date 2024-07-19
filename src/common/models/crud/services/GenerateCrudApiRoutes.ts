@@ -87,7 +87,7 @@ export default class GenerateCrudApiRoutes {
         const indexStoreRoutePath = this.getRoutePath(`{${crudModelName}}`, detailCrudModelPlural)
 
         this.createRoute(
-            `${detail.detailCrud.section.routePrefix}.${crudModelPlural}.${detailCrudModelPlural}.index`,
+            `${crudModelPlural}.${detailCrudModelPlural}.index`,
             "get",
             indexStoreRoutePath,
             "HasManyDetail",
@@ -96,7 +96,7 @@ export default class GenerateCrudApiRoutes {
         )
 
         this.createRoute(
-            `${detail.detailCrud.section.routePrefix}.${crudModelPlural}.${detailCrudModelPlural}.store`,
+            `${crudModelPlural}.${detailCrudModelPlural}.store`,
             "post",
             indexStoreRoutePath,
             "HasManyDetail",
@@ -116,7 +116,7 @@ export default class GenerateCrudApiRoutes {
             storeDestroyRoutePath = this.getRoutePath(`{${detailCrudModelName}}`, detailRelatedCrudModelPlural, `{${detailRelatedCrudModelName}}`)
 
         this.createRoute(
-            `${detail.detailCrud.section.routePrefix}.${crudModelPlural}.${detailRelatedCrudModelPlural}.index`,
+            `${crudModelPlural}.${detailRelatedCrudModelPlural}.index`,
             "get",
             indexRoutePath,
             "BelongsToManyDetail",
@@ -125,7 +125,7 @@ export default class GenerateCrudApiRoutes {
         )
 
         this.createRoute(
-            `${detail.detailCrud.section.routePrefix}.${crudModelPlural}.${detailRelatedCrudModelPlural}.store`,
+            `${crudModelPlural}.${detailRelatedCrudModelPlural}.store`,
             "post",
             storeDestroyRoutePath,
             "BelongsToManyDetail",
@@ -134,7 +134,7 @@ export default class GenerateCrudApiRoutes {
         )
 
         this.createRoute(
-            `${detail.detailCrud.section.routePrefix}.${crudModelPlural}.${detailRelatedCrudModelPlural}.destroy`,
+            `${crudModelPlural}.${detailRelatedCrudModelPlural}.destroy`,
             "delete",
             storeDestroyRoutePath,
             "BelongsToManyDetail",
