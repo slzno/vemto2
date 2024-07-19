@@ -8,6 +8,7 @@
     const columnClasses = computed(() => {
         return {
             'line-through opacity-50': column.value.isRemoved(),
+            'border-2 border-transparent': column.value.isValid(),
             'border-2 border-red-500 rounded': column.value.isInvalid()
         }
     })
