@@ -5,6 +5,7 @@
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import { PlusIcon } from "@heroicons/vue/24/outline"
+    import { Wunderbaum } from "wunderbaum"
     import Main from "@Renderer/services/wrappers/Main"
 
     const projectStore = useProjectStore(),
@@ -12,6 +13,42 @@
 
     onMounted(() => {
         loadTemplates()
+
+        const tree = new Wunderbaum({
+          element: document.getElementById("templates-tree") as HTMLDivElement,
+          source: [
+  {
+    title: "Books",
+    expanded: true,
+    children: [
+      {
+        title: "Art of War",
+        author: "Sun Tzu",
+      },
+      {
+        title: "The Hobbit",
+        author: "J.R.R. Tolkien",
+      },
+    ],
+  },
+  {
+    title: "Music",
+    children: [
+      {
+        title: "Nevermind",
+        author: "Nirvana",
+      },
+    ],
+  },
+],
+          init: (e) => {
+            e.tree.setFocus();
+          },
+          activate: (e) => {
+            // alert(`Thank you for activating ${e.node}.`);
+          },
+        });
+
     })
 
     const loadTemplates = async () => {
@@ -30,8 +67,9 @@
     </div>
 
     <div class="bg-slate-950 p-3 rounded-lg border border-slate-700 h-screen  overflow-y-auto pb-48">
-        <pre>
+        <!-- <pre>
             {{ templates }}
-        </pre>
+        </pre> -->
+        <div id="templates-tree"></div>
     </div>
 </template>

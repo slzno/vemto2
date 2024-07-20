@@ -115,6 +115,7 @@
         "vue-router": "^4.0.13",
         "vue3-shortkey": "^4.0.0",
         "vue3-tags-input": "^1.0.12",
-        "vuedraggable": "^4.1.0"
+        "vuedraggable": "^4.1.0",
+        "wunderbaum": "^0.10.1"
     }
 }
