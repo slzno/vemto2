@@ -38,6 +38,7 @@ export default interface ElectronApi {
     writeFile: (path: string, content: string) => Promise<void>,
     projectFileExists: (path: string) => Promise<boolean>,
     projectFolderExists: (path: string) => Promise<boolean>,
+    listTemplates: () => Promise<string[]>,
     readTemplateFile: (path: string) => Promise<string>,
     writeTemplateFile: (path: string, content: string) => Promise<void>,
     openFolder: (path: string) => Promise<void>,

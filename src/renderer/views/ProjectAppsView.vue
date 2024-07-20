@@ -17,6 +17,7 @@
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
     import { PlusIcon } from "@heroicons/vue/24/outline"
+import AppTemplates from "./components/ProjectApps/AppTemplates.vue"
 
     const router = useRouter(),
         projectStore = useProjectStore(),
@@ -65,8 +66,8 @@
         { label: "Sections", value: "sections" },
         { label: "Routes", value: "routes" },
         { label: "Navigation", value: "navigation" },
-        { label: "Themes", value: "themes" },
         { label: "Templates", value: "templates" },
+        { label: "Themes", value: "themes" },
         // { label: "Settings", value: "settings" },
     ]
 </script>
@@ -166,9 +167,7 @@
         </div>
 
         <div class="space-y-2 p-4" v-if="selectedTab === 'templates'">
-            <UiEmptyMessage>
-                <span>Under development... COMING SOON!</span>
-            </UiEmptyMessage>
+            <AppTemplates />
         </div>
 
         <div class="space-y-2 p-4" v-if="selectedTab === 'settings'">

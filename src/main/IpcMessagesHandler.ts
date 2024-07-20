@@ -110,6 +110,13 @@ export function HandleIpcMessages() {
         })
     })
 
+    ipcMain.handle("file:templates:list", (event) => {
+        return handleError(event, () => {
+            const templatesPath = path.join(app.getAppPath(), "static", "templates")
+            return FileSystem.readFolder(templatesPath, true)
+        })
+    })
+
     ipcMain.handle("file:template:read", (event, filePath) => {
         const project = Project.find(1)
         if(!project) return null

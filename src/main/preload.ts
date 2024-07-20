@@ -105,6 +105,9 @@ contextBridge.exposeInMainWorld("api", {
     projectFolderExists: (path: string) => {
         return ipcRenderer.invoke("folder:project:exists", path)
     },
+    listTemplates: () => {
+        return ipcRenderer.invoke("file:templates:list")
+    },
     readTemplateFile: (path: string) => {
         return ipcRenderer.invoke("file:template:read", path)
     },
