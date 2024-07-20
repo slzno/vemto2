@@ -9,38 +9,22 @@
     import Main from "@Renderer/services/wrappers/Main"
 
     const projectStore = useProjectStore(),
-        templates = ref([]) as Ref<string[]>
+        templates = ref([]) as Ref<string[]>,
+        files = ref([]) as Ref<any[]>
 
     onMounted(() => {
         loadTemplates()
 
-        const tree = new Wunderbaum({
+    })
+
+    const loadTemplates = async () => {
+        setTimeout(async () => {
+            templates.value = await Main.API.listTemplates()
+            files.value = generateStructure(templates.value)
+
+            const tree = new Wunderbaum({
           element: document.getElementById("templates-tree") as HTMLDivElement,
-          source: [
-  {
-    title: "Books",
-    expanded: true,
-    children: [
-      {
-        title: "Art of War",
-        author: "Sun Tzu",
-      },
-      {
-        title: "The Hobbit",
-        author: "J.R.R. Tolkien",
-      },
-    ],
-  },
-  {
-    title: "Music",
-    children: [
-      {
-        title: "Nevermind",
-        author: "Nirvana",
-      },
-    ],
-  },
-],
+          source: generateStructure(templates.value),
           init: (e) => {
             e.tree.setFocus();
           },
@@ -48,14 +32,36 @@
             // alert(`Thank you for activating ${e.node}.`);
           },
         });
-
-    })
-
-    const loadTemplates = async () => {
-        setTimeout(async () => {
-            templates.value = await Main.API.listTemplates()
         }, 100)
     }
+
+    const generateStructure = (filePaths) => {
+  const structure = [];
+
+  filePaths.forEach(filePath => {
+    const parts = filePath.split('/').filter(part => part);
+    let currentLevel = structure;
+
+    parts.forEach((part, index) => {
+      let existingPath = currentLevel.find(item => item.title === part);
+      if (!existingPath) {
+        existingPath = {
+          title: part,
+          expanded: true,
+          children: [],
+        };
+        if (index === parts.length - 1) {
+          existingPath.path = filePath;
+          delete existingPath.children;
+        }
+        currentLevel.push(existingPath);
+      }
+      currentLevel = existingPath.children || [];
+    });
+  });
+
+  return structure;
+}
 </script>
 
 <template>
@@ -67,9 +73,6 @@
     </div>
 
     <div class="bg-slate-950 p-3 rounded-lg border border-slate-700 h-screen  overflow-y-auto pb-48">
-        <!-- <pre>
-            {{ templates }}
-        </pre> -->
         <div id="templates-tree"></div>
     </div>
 </template>
