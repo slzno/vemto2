@@ -24,7 +24,7 @@ export default class RenderableApiCollection extends Renderable {
     }
 
     getTemplateFile(): string {
-        return "crud/views/api/ApiCollection.vemtl"
+        return "api/ApiCollection.vemtl"
     }
 
     getPath(): string {

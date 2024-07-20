@@ -25,7 +25,7 @@ export default class RenderableApiTest extends Renderable {
     }
 
     getTemplateFile(): string {
-        return "crud/views/api/ApiTest.vemtl"
+        return "api/ApiTest.vemtl"
     }
 
     getPath(): string {

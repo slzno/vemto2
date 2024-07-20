@@ -23,7 +23,7 @@ export default class RenderableApiAuthController extends Renderable {
     }
 
     getTemplateFile(): string {
-        return "crud/views/api/ApiAuthController.vemtl"
+        return "api/ApiAuthController.vemtl"
     }
 
     getPath(): string {

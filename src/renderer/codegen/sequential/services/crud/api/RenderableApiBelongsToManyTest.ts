@@ -27,7 +27,7 @@ export default class RenderableApiBelongsToManyTest extends Renderable {
     }
 
     getTemplateFile(): string {
-        return "crud/views/api/ApiBelongsToManyTest.vemtl"
+        return "api/ApiBelongsToManyTest.vemtl"
     }
 
     getPath(): string {

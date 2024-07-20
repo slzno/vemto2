@@ -30,7 +30,7 @@ export default class RenderableApiHasManyTest extends Renderable {
     }
 
     getTemplateFile(): string {
-        return "crud/views/api/ApiHasManyTest.vemtl"
+        return "api/ApiHasManyTest.vemtl"
     }
 
     getPath(): string {

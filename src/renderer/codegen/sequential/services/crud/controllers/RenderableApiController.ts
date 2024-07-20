@@ -23,7 +23,7 @@ export default class RenderableApiController extends Renderable {
     }
 
     getTemplateFile(): string {
-        return "crud/views/api/ApiController.vemtl"
+        return "api/ApiController.vemtl"
     }
 
     getPath(): string {

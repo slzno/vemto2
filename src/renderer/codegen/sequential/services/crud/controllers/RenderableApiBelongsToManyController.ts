@@ -30,7 +30,7 @@ export default class RenderableApiBelongsToManyController extends Renderable {
     }
 
     getTemplateFile(): string {
-        return "crud/views/api/ApiBelongsToManyController.vemtl"
+        return "api/ApiBelongsToManyController.vemtl"
     }
 
     getPath(): string {

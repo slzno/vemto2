@@ -25,7 +25,7 @@ export default class RenderableApiStoreRequest extends Renderable {
     }
 
     getTemplateFile(): string {
-        return "crud/views/api/ApiStoreRequest.vemtl"
+        return "api/ApiStoreRequest.vemtl"
     }
 
     getPath(): string {
