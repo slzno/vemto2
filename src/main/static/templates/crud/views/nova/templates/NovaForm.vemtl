@@ -1,0 +1,3 @@
+<% const inputSettings = input.novaSettings %>
+
+<$ pascalCase(inputSettings.inputType) $>::make('<% input.name %>'),

@@ -6,6 +6,7 @@
     import CrudCommonSettings from './components/CrudCommonSettings.vue'
     import CrudLivewireSettings from './components/CrudLivewireSettings.vue'
     import CrudFilamentSettings from './components/CrudFilamentSettings.vue'
+    import CrudNovaSettings from './components/CrudNovaSettings.vue'
 
     const props = defineProps({
             crud: {
@@ -28,6 +29,10 @@
 
         if(crud.value.isForLivewire()) {
             tabs.push({ label: "Livewire", value: "livewire" })
+        }
+
+        if(crud.value.isForNova()) {
+            tabs.push({ label: "Nova", value: "nova" })
         }
     })
 </script>
@@ -54,6 +59,10 @@
 
             <div class="w-1/2" v-if="selectedTab === 'filament'">
                 <CrudFilamentSettings :crud="crud" />
+            </div>
+
+            <div class="w-1/2" v-if="selectedTab === 'nova'">
+                <CrudNovaSettings :crud="crud" />
             </div>
         </div>
     </div>

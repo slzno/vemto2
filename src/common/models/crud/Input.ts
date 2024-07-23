@@ -13,6 +13,8 @@ import FilamentRuleNameConversions from "./filament/FilamentRuleNameConversions"
 import FilamentIndividualValidations from "./filament/FilamentIndividualValidations"
 import GenerateInputValidation, { ValidationRuleType } from "./services/GenerateInputValidation"
 import FilamentInputData from "./filament/FilamentInputData"
+import FillInputNovaData from "./fillers/FillInputNovaData"
+import NovaInputSettings from "./nova/NovaInputSettings"
 
 export enum InputValidationRuleType {
     TEXTUAL = "textual",
@@ -56,6 +58,7 @@ export default class Input extends RelaDB.Model {
     showOnIndex: boolean
 
     filamentSettings: FilamentInputSettings
+    novaSettings: NovaInputSettings
 
     relationships() {
         return {
@@ -123,6 +126,10 @@ export default class Input extends RelaDB.Model {
 
         if(crud.isForFilament()) {
             FillInputFilamentData.onInput(input)
+        }
+
+        if(crud.isForNova()) {
+            FillInputNovaData.onInput(input)
         }
 
         return input
