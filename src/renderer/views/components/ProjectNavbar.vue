@@ -11,12 +11,26 @@
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import { useNavigationStore } from "@Renderer/stores/useNavigationStore"
     import { useRouter } from "vue-router"
+    import { ref, onMounted, watch } from "vue"
 
     import ProjectManager from "@Renderer/services/project/ProjectManager"
+    import { useAppStore } from "@Renderer/stores/useAppStore"
 
     const router = useRouter(),
+        appStore = useAppStore(),
         projectStore = useProjectStore(),
-        navigationStore = useNavigationStore()
+        navigationStore = useNavigationStore(),
+        renderableFilesNeedAttention = ref(false)
+
+    onMounted(() => {
+        renderableFilesNeedAttention.value = projectStore.renderableFilesNeedAttention
+    })
+
+    watch(() => appStore.isGenerating, (isGenerating) => {
+        if (isGenerating) return
+
+        renderableFilesNeedAttention.value = projectStore.renderableFilesNeedAttention
+    })
 
     const goToHome = async () => {
         // Close the project manager to avoid the schema checker 
@@ -103,7 +117,7 @@
                 to="/project/code-queue"
             >
                 <div 
-                    v-show="projectStore.renderableFilesNeedAttention" 
+                    v-show="renderableFilesNeedAttention" 
                         class="absolute rounded-full w-3 h-3 bg-red-500 animate-pulse" 
                         style="left: 30px; bottom: 20px;"
                     ></div>
