@@ -3,11 +3,17 @@ import Main from "@Renderer/services/wrappers/Main"
 import { RenderableFileStatus, RenderableFileType } from "@Common/models/RenderableFile"
 import PhpFormatter from "@Renderer/codegen/formatters/PhpFormatter"
 import DataHelper from "@Common/models/services/DataHelper"
+import Renderable from "../foundation/Renderable"
 
 export default class GenerateTranslations {
     project: Project
 
     async start() {
+        // IMPORTANT: this service can only run in generate mode
+        if(Renderable.isCheckerMode()) {
+            return
+        }
+
         this.project = Project.find(1)
         await this.generateTranslationsFiles()
     }

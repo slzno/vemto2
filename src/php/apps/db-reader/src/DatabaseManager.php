@@ -73,6 +73,8 @@ class DatabaseManager {
     }
 
     public function dropDatabase($databaseName) {
+        \Vemto\Vemto::log("Dropping database $databaseName");
+
         $this->checkProjectDatabaseIsDifferent($databaseName);
         $this->checkDatabasePrefix($databaseName);
 

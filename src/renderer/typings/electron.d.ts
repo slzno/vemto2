@@ -36,6 +36,7 @@ export default interface ElectronApi {
     readProjectFile: (path: string) => Promise<string>,
     writeProjectFile: (path: string, content: string) => Promise<void>,
     writeFile: (path: string, content: string) => Promise<void>,
+    writeOnProjectVemtoLog: (content: string) => Promise<void>,
     projectFileExists: (path: string) => Promise<boolean>,
     projectFolderExists: (path: string) => Promise<boolean>,
     listTemplates: () => Promise<string[]>,

@@ -88,9 +88,14 @@
         console.log("Checking source changes")
 
         checkSourceChanges()
-    }, 500)
+
+        // TODO: corrigir para apenas gravar arquivos na geração de código após todas as autorizações
+        // TODO: separar os tempos das checagens em um local centralizado para ficar mais fácil de ajustar
+    }, 1500)
 
     const checkSourceChanges = async () => {
+        Main.API.writeOnProjectVemtoLog("Checking source changes")
+
         const schemaBuilder = new SchemaBuilder(projectStore.project)
 
         await schemaBuilder.checkSchemaChanges()
@@ -177,6 +182,7 @@
 
         if(!window.licenseIsActive() && currentTablesCount > 15) {
             window.showLicenseModal("This project has more than 15 tables (including Laravel default tables). Please activate your license to generate code.")
+            appStore.finishGeneratingCode()
             return
         }
 
@@ -184,6 +190,7 @@
             Alert.warning(
                 "There are schema changes that need to be applied before generating code"
             )
+            appStore.finishGeneratingCode()
             return
         }
 

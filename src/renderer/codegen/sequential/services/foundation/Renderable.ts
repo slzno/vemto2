@@ -44,6 +44,10 @@ export default abstract class Renderable {
         Renderable.mode = mode
     }
 
+    static isCheckerMode() {
+        return Renderable.mode === "checker"
+    }
+
     addComposerDependency(name: string) {
         const templatePath = this.getTemplateFile(), 
             dependency = Renderable.dependencies.find(dependency => dependency.name === name)
@@ -117,7 +121,7 @@ export default abstract class Renderable {
     async render() {
         console.log("Renderable mode", Renderable.mode)
 
-        if(Renderable.mode === "checker") {
+        if(Renderable.isCheckerMode()) {
             this.treatCheckerMode()
             return
         }
