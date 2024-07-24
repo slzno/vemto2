@@ -167,7 +167,10 @@ import AppTemplates from "./components/ProjectApps/AppTemplates.vue"
         </div>
 
         <div class="space-y-2 p-4" v-if="selectedTab === 'templates'">
-            <AppTemplates />
+            <!-- <AppTemplates /> -->
+            <UiEmptyMessage>
+                <span>Under development... COMING SOON!</span>
+            </UiEmptyMessage>
         </div>
 
         <div class="space-y-2 p-4" v-if="selectedTab === 'settings'">
