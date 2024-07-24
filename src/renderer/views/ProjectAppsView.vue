@@ -17,7 +17,7 @@
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
     import { PlusIcon } from "@heroicons/vue/24/outline"
-import AppTemplates from "./components/ProjectApps/AppTemplates.vue"
+    import AppTemplates from "./components/ProjectApps/AppTemplates.vue"
 
     const router = useRouter(),
         projectStore = useProjectStore(),

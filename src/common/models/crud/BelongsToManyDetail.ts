@@ -33,8 +33,8 @@ export default class BelongsToManyDetail extends RelaDB.Model {
         }
     }
 
-    deleting() {
-        this.detailCrud.delete()
+    static deleting(detail: BelongsToManyDetail) {
+        detail.detailCrud.delete()
     }
 
     static createFromRelation(crud: Crud, relationship: Relationship) {

@@ -29,8 +29,8 @@ export default class HasManyDetail extends RelaDB.Model {
         }
     }
 
-    deleting() {
-        this.detailCrud.delete()
+    static deleting(detail: HasManyDetail) {
+        detail.detailCrud.delete()
     }
 
     static createFromRelation(crud: Crud, relationship: Relationship) {

@@ -22,8 +22,8 @@ export default class MorphToManyDetail extends RelaDB.Model {
         }
     }
 
-    deleting() {
-        this.detailCrud.delete()
+    static deleting(detail: MorphToManyDetail) {
+        detail.detailCrud.delete()
     }
 
     static createFromRelation(crud: Crud, relationship: Relationship) {
