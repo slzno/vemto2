@@ -278,6 +278,10 @@ export default class Input extends RelaDB.Model {
         return this.type === InputType.NUMBER
     }
 
+    isSelect(): boolean {
+        return this.type === InputType.SELECT
+    }
+
     isUrl(): boolean {
         return this.type === InputType.URL
     }
@@ -412,6 +416,38 @@ export default class Input extends RelaDB.Model {
                 if(ruleName === 'unique' && rules === this.updateRules) {
                     rule += `->ignore($this->${crud.settings.itemName})`
                 }
+
+                return rule
+            }
+
+            return `"${rule}"`
+        })
+    }
+
+    getCreationRulesForNova() {
+        return this.getRulesForNovaMethod(this.creationRules)
+    }
+
+    getUpdateRulesForNova() {
+        return this.getRulesForNovaMethod(this.updateRules)
+    }
+
+    getRulesForNovaMethod(rules: InputValidationRule[]) {
+        let allRules: string[] = rules.map((rule) => rule.value)
+
+        const dynamicVariables = ['unique']
+
+        return allRules.map((rule: string) => {
+            const [ruleName, ruleArgs] = rule.split(':')
+
+            if(dynamicVariables.includes(ruleName)) {
+                let rule = `${ruleName}:${ruleArgs}`
+
+                if(ruleName === 'unique' && rules === this.updateRules) {
+                    rule += `,{{resourceId}}`
+                }
+
+                rule = `'${rule}'`
 
                 return rule
             }

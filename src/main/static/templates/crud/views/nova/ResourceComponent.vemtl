@@ -4,6 +4,7 @@
 
 namespace App\Nova;
 
+use Laravel\Nova\Http\Requests\NovaRequest;
 <% for (let input of this.crud.getInputsForForms()) { %>
     use Laravel\Nova\Fields\<$ pascalCase(input.novaSettings.inputType) $>;
 <% } %>

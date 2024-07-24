@@ -5,7 +5,7 @@ export default interface NovaInputSettings {
 
     default: string;
     readonly: boolean;
-    helpText: string;
+    helperText: string;
     fullWidth: boolean;
     filterable: boolean;
 
@@ -14,6 +14,7 @@ export default interface NovaInputSettings {
 
     // Avatar
     squared: boolean;
+    rounded: boolean;
 
     // Badge
     map: string[];
@@ -40,10 +41,11 @@ export default interface NovaInputSettings {
 
     // Currency
     currency: string;
+    locale: string;
+
     min: number;
     max: number;
     step: number;
-    locale: string;
 
     // File
     disk: string;
@@ -63,13 +65,10 @@ export default interface NovaInputSettings {
     // Markdown
     alwaysShow: boolean;
     preset: 'default' | 'commonmark' | 'zero';
-    withFiles: boolean;
+    withFiles: string;
 
     // MultiSelect
     displayUsingLabels: boolean;
-
-    // Password
-    onlyOnForms: boolean;
 
     // Select
     searchable: boolean;
