@@ -88,7 +88,7 @@
         console.log("Checking source changes")
 
         checkSourceChanges()
-    }, 500)
+    }, 1500)
 
     const checkSourceChanges = async () => {
         const schemaBuilder = new SchemaBuilder(projectStore.project)
@@ -148,6 +148,11 @@
 
         appStore.startGeneratingCode()
 
+        if(!generationCanBegin()) {
+            appStore.finishGeneratingCode()
+            return
+        }
+
         sequentialGenerator = new SequentialGenerator(projectStore.project)
 
         try {
@@ -173,17 +178,8 @@
     const generateCode = async () => {
         console.log('Will generate')
 
-        const currentTablesCount = projectStore.project.tables.length
-
-        if(!window.licenseIsActive() && currentTablesCount > 15) {
-            window.showLicenseModal("This project has more than 15 tables (including Laravel default tables). Please activate your license to generate code.")
-            return
-        }
-
-        if (projectStore.project.hasSchemaChanges()) {
-            Alert.warning(
-                "There are schema changes that need to be applied before generating code"
-            )
+        if(!generationCanBegin()) {
+            appStore.finishGeneratingCode()
             return
         }
 
@@ -206,6 +202,37 @@
             console.log('Will finish generating')
             appStore.finishGeneratingCode()
         }
+    }
+
+    const generationCanBegin = () : boolean => {
+        if(!checkLicenseAndTablesCount()) return false
+        if(!checkUnsavedSchemaChanges()) return false
+
+        return true
+    }
+
+    const checkLicenseAndTablesCount = () : boolean => {
+        if(!window.licenseIsActive() && projectStore.project.tables.length > 15) {
+            window.showLicenseModal(
+                "This project has more than 15 tables (including Laravel default tables). Please activate your license to generate code."
+            )
+
+            return false
+        }
+
+        return true
+    }
+
+    const checkUnsavedSchemaChanges = () : boolean => {
+        if (projectStore.project.hasSchemaChanges()) {
+            Alert.warning(
+                "There are schema changes that need to be applied before generating code"
+            )
+
+            return false
+        }
+
+        return true
     }
 
     const openURL = (url: string) => {
@@ -302,7 +329,7 @@
                             >
                                 <div
                                     v-if="appStore.isGenerating"
-                                    class="w-7 h-7 stroke-1"
+                                    class="flex items-center w-7 h-7 stroke-1"
                                 >
                                     <UiLoading />
                                 </div>

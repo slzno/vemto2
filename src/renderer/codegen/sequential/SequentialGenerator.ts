@@ -16,6 +16,7 @@ import RenderableFile from "@Common/models/RenderableFile"
 import GenerateLivewireLayout from "./services/crud/GenerateLivewireLayout"
 import GenerateCrudApiFiles from "./services/crud/GenerateCrudApiFiles"
 import GenerateNovaResources from "./services/crud/GenerateNovaResources"
+import AddRoutesToServiceProvider from "./services/routes/AddRoutesToServiceProvider"
 
 export default class SequentialGenerator {
     static startTime: number = 0
@@ -123,14 +124,24 @@ export default class SequentialGenerator {
         Renderable.setMode("generate")
     }
 
+    /**
+     * IMPORTANT: all services that write files using renderables can be directly called here.
+     * If a service writes a file directly using API.writeFile or similar, it should be called inside
+     * the generateNotRenderedFiles method. It is necessary to avoid writing files when running 
+     * in the checker mode.
+     */
     async runGeneratorsServices() {
+        // Generating not rendered files
+        await this.generateNotRenderedFiles()
+
+        // --------------------------------------------
+
+        // Generating rendered files
         await new GenerateUiComponentsFiles().start()
 
         await new GenerateMenu().start(this.project)
 
         await new GenerateRoutes().start(this.project)
-
-        await new GenerateTranslations().start()
         
         await new GenerateModelFiles().start()
         await new GenerateCrudFiles().start()
@@ -142,6 +153,25 @@ export default class SequentialGenerator {
         await new GenerateDatabaseSeeder().start()
 
         await new GenerateLivewireLayout().start()
+    }
+
+    /**
+     * IMPORTANT: this method should be used to generate files that are not rendered using renderables.
+     * It is necessary to avoid writing files when running in the checker mode. NEVER move the services from
+     * this method to the runGeneratorsServices method. It can cause the generation to write files when
+     * running in the checker mode, making Vemto react to changes that are not supposed to be written, as the
+     * checker mode should only check for missing dependencies and not write any files.
+     */
+    async generateNotRenderedFiles() {
+        if(Renderable.isCheckerMode()) {
+            console.log("Skipping not rendered files generation because it is running in checker mode")
+            return
+        }
+
+        console.log("Generating not rendered files")
+
+        await new GenerateTranslations().start()
+        await new AddRoutesToServiceProvider().start(this.project)
     }
 
     async processRemovableFiles() {

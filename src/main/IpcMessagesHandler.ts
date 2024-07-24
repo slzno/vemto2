@@ -90,6 +90,17 @@ export function HandleIpcMessages() {
         })
     })
 
+    ipcMain.handle("file:project:write-vemto-log", (event, content) => {
+        const project = Project.find(1)
+        if(!project) return null
+
+        return handleError(event, () => {
+            const logFilePath = path.join(project.getPath(), "vemto.log")
+
+            FileSystem.appendToFile(logFilePath, `${content}\n`)
+        })
+    })
+
     ipcMain.handle("file:project:exists", (event, filePath) => {
         const project = Project.find(1)
         if(!project) return null
@@ -107,6 +118,13 @@ export function HandleIpcMessages() {
 
         return handleError(event, () => {
             return FileSystem.folderExists(path.join(project.getPath(), folderPath))
+        })
+    })
+
+    ipcMain.handle("file:templates:list", (event) => {
+        return handleError(event, () => {
+            const templatesPath = path.join(app.getAppPath(), "static", "templates")
+            return FileSystem.readFolder(templatesPath, true)
         })
     })
 

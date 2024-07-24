@@ -99,11 +99,17 @@ contextBridge.exposeInMainWorld("api", {
     writeFile: (path: string, content: string) => {
         return ipcRenderer.invoke("file:write", path, content)
     },
+    writeOnProjectVemtoLog: (content: string) => {
+        return ipcRenderer.invoke("file:project:write-vemto-log", content)
+    },
     projectFileExists: (path: string) => {
         return ipcRenderer.invoke("file:project:exists", path)
     },
     projectFolderExists: (path: string) => {
         return ipcRenderer.invoke("folder:project:exists", path)
+    },
+    listTemplates: () => {
+        return ipcRenderer.invoke("file:templates:list")
     },
     readTemplateFile: (path: string) => {
         return ipcRenderer.invoke("file:template:read", path)

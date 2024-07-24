@@ -84,6 +84,11 @@ class FileSystem {
         return this.writeFile(filePath, JSON.stringify(data, null, 4))
     }
 
+    appendToFile(filePath: string, content: string): FileSystem {
+        fs.appendFileSync(filePath, content)
+        return this
+    }
+
     writeFile(destFilePath: string, content: string, log = true): FileSystem {
         if(log) console.log('Writing File: ' + destFilePath)
 

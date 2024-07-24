@@ -227,7 +227,7 @@ export default class Input extends RelaDB.Model {
     }
 
     isRelatedToModel(model: Model) {
-        return this.isForRelationship() && this.relationship.modelId === model.id
+        return this.isForRelationship() && this.relationship.relatedModelId === model.id
     }
 
     isBelongsTo(): boolean {
