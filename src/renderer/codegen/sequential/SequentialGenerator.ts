@@ -15,6 +15,7 @@ import PackageChecker from "./services/PackageChecker"
 import RenderableFile from "@Common/models/RenderableFile"
 import GenerateLivewireLayout from "./services/crud/GenerateLivewireLayout"
 import GenerateCrudApiFiles from "./services/crud/GenerateCrudApiFiles"
+import AddRoutesToServiceProvider from "./services/routes/AddRoutesToServiceProvider"
 
 export default class SequentialGenerator {
     static startTime: number = 0
@@ -129,14 +130,17 @@ export default class SequentialGenerator {
      * in the checker mode.
      */
     async runGeneratorsServices() {
+        // Generating not rendered files
         await this.generateNotRenderedFiles()
 
+        // --------------------------------------------
+
+        // Generating rendered files
         await new GenerateUiComponentsFiles().start()
 
         await new GenerateMenu().start(this.project)
 
         await new GenerateRoutes().start(this.project)
-        await new AddRoutesToServiceProvider().start(this.project)
         
         await new GenerateModelFiles().start()
         await new GenerateCrudFiles().start()
@@ -165,6 +169,7 @@ export default class SequentialGenerator {
         console.log("Generating not rendered files")
 
         await new GenerateTranslations().start()
+        await new AddRoutesToServiceProvider().start(this.project)
     }
 
     async processRemovableFiles() {
