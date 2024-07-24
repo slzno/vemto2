@@ -90,8 +90,6 @@ Vemto::execute('schema-reader-db', function () use ($APP_DIRECTORY) {
     $databaseName = $settings['SCHEMA_READER_DB_DATABASE'];
     $projectDatabaseName = $envSettings['DB_DATABASE'] ?? null;
 
-    Vemto::log('Database driver: ' . $databaseDriver);
-
     if($databaseDriver !== 'sqlite') {
         $dbManager = new DatabaseManager($databaseDriver);
         $dbManager->setProjectDatabaseName($projectDatabaseName);

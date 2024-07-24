@@ -32,8 +32,6 @@ export default class SchemaBuilder {
     static async checkForErrors(projectPath: string) {
         if (!projectPath) return
 
-        Main.API.writeOnProjectVemtoLog(`Checking for schema errors on path: ${projectPath}`)
-
         try {
             const schemaData = await Main.API.loadSchema(projectPath)
 
