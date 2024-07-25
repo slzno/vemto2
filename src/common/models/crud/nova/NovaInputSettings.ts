@@ -1,5 +1,34 @@
 import { NovaInputType } from "./NovaInputTypesList";
 
+export interface NovaKeyValueData {
+    value: string
+    label: string
+}
+
+export interface NovaBadgeIconData {
+    value: string
+    icon: string
+}
+
+export enum NovaInputCodeLanguage {
+    Dockerfile = 'dockerfile',
+    HtmlMixed = 'htmlmixed',
+    JavaScript = 'javascript',
+    Markdown = 'markdown',
+    Nginx = 'nginx',
+    Php = 'php',
+    Ruby = 'ruby',
+    Sass = 'sass',
+    Shell = 'shell',
+    Sql = 'sql',
+    Twig = 'twig',
+    Vim = 'vim',
+    Vue = 'vue',
+    Xml = 'xml',
+    YamlFrontmatter = 'yaml-frontmatter',
+    Yaml = 'yaml'
+}
+
 export default interface NovaInputSettings {
     inputType: NovaInputType;
 
@@ -17,27 +46,26 @@ export default interface NovaInputSettings {
     rounded: boolean;
 
     // Badge
-    map: string[];
-    types: string[];
-    addTypes: string[];
+    map: NovaKeyValueData[];
+    types: NovaKeyValueData[];
+    addTypes: NovaKeyValueData[];
     withIcons: boolean;
-    icons: string[];
+    icons: NovaBadgeIconData[];
     label: string;
-    labels: string[];
+    labels: NovaKeyValueData[];
 
     // Boolean
     trueValue: string;
     falseValue: string;
 
     // BooleanGroup
-    options: string[];
     hideFalseValues: boolean;
     hideTrueValues: boolean;
     noValueText: string;
 
     // Code
     isJson: boolean;
-    language: 'dockerfile' | 'htmlmixed' | 'javascript' | 'markdown' | 'nginx' | 'php' | 'ruby' | 'sass' | 'shell' | 'sql' | 'twig' | 'vim' | 'vue' | 'xml' | 'yaml-frontmatter' | 'yaml';
+    language: NovaInputCodeLanguage;
 
     // Currency
     currency: string;

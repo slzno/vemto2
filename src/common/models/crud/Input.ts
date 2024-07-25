@@ -12,7 +12,6 @@ import FilamentInputSettings from "./filament/FilamentInputSettings"
 import FilamentRuleNameConversions from "./filament/FilamentRuleNameConversions"
 import FilamentIndividualValidations from "./filament/FilamentIndividualValidations"
 import GenerateInputValidation, { ValidationRuleType } from "./services/GenerateInputValidation"
-import FilamentInputData from "./filament/FilamentInputData"
 import FillInputNovaData from "./fillers/FillInputNovaData"
 import NovaInputSettings from "./nova/NovaInputSettings"
 

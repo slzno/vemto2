@@ -26,6 +26,18 @@
         ->updateRules(<$ input.getUpdateRulesForNova() $>)
     <% } %>
     <# --- #>
+    <% if(input.novaSettings.helperText) { %>
+        ->help('<$ input.novaSettings.helperText $>')
+    <% } %>
+    <# --- #>
+    <% if(input.novaSettings.fullWidth) { %>
+        ->fullWidth()
+    <% } %>
+    <# --- #>
+    <% if(input.isCommon() && input.novaSettings.filterable) { %>
+        ->filterable()
+    <% } %>
+    <# --- #>
     <% if(input.defaultValue) { %>
         ->default('<$ input.defaultValue $>')
     <% } %>
@@ -36,8 +48,8 @@
     <# --- #>
     <% if(input.isSelect() && (novaInputTypeIs('select') || novaInputTypeIs('multi-select') || novaInputTypeIs('boolean-group'))) { %>
         ->options([
-            <% for(let input of input.novaSettings.options) { %>
-                '<$ input.value $>' => '<$ input.label $>',
+            <% for(let option of input.items) { %>
+                '<$ option.value $>' => '<$ option.label $>',
             <% } %>
         ])
     <% } %>
@@ -99,18 +111,6 @@
     <# --- #>
     <% if(input.isSelect() && input.novaSettings.searchable) { %>
         ->searchable()
-    <% } %>
-    <# --- #>
-    <% if(input.novaSettings.helperText) { %>
-        ->help('<$ input.novaSettings.helperText $>')
-    <% } %>
-    <# --- #>
-    <% if(input.novaSettings.fullWidth) { %>
-        ->fullWidth()
-    <% } %>
-    <# --- #>
-    <% if(input.isCommon() && input.novaSettings.filterable) { %>
-        ->filterable()
     <% } %>
     <# --- #>
     <% if(novaInputTypeIs('audio') && input.novaSettings.preload) { %>
