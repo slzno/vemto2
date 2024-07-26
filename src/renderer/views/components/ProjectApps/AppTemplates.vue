@@ -7,14 +7,17 @@
     import { PlusIcon } from "@heroicons/vue/24/outline"
     import { Wunderbaum } from "wunderbaum"
     import Main from "@Renderer/services/wrappers/Main"
+    import UiTextarea from "@Renderer/components/ui/UiTextarea.vue"
+    import BasicEditor from "@Renderer/components/editors/BasicEditor.vue"
 
     const projectStore = useProjectStore(),
         templates = ref([]) as Ref<string[]>,
-        files = ref([]) as Ref<any[]>
+        files = ref([]) as Ref<any[]>,
+        templateContent = ref(""),
+        renderedContent = ref("")
 
     onMounted(() => {
         loadTemplates()
-
     })
 
     const loadTemplates = async () => {
@@ -23,56 +26,79 @@
             files.value = generateStructure(templates.value)
 
             const tree = new Wunderbaum({
-          element: document.getElementById("templates-tree") as HTMLDivElement,
-          source: generateStructure(templates.value),
-          init: (e) => {
-            e.tree.setFocus();
-          },
-          activate: (e) => {
-            // alert(`Thank you for activating ${e.node}.`);
-          },
-        });
+                element: document.getElementById(
+                    "templates-tree"
+                ) as HTMLDivElement,
+                source: generateStructure(templates.value),
+                init: (e) => {
+                    e.tree.setFocus()
+                },
+                activate: (e) => {
+                    const path = e.node?.data?.path
+                    if(!path) return
+
+                    readTemplate(path)
+                },
+            })
         }, 100)
     }
 
+    const readTemplate = async (path: string) => {
+        templateContent.value = await Main.API.readTemplateFile(path)
+    }
+
     const generateStructure = (filePaths) => {
-  const structure = [];
+        const structure = []
 
-  filePaths.forEach(filePath => {
-    const parts = filePath.split('/').filter(part => part);
-    let currentLevel = structure;
+        filePaths.forEach((filePath) => {
+            const parts = filePath.split("/").filter((part) => part)
+            let currentLevel = structure
 
-    parts.forEach((part, index) => {
-      let existingPath = currentLevel.find(item => item.title === part);
-      if (!existingPath) {
-        existingPath = {
-          title: part,
-          expanded: true,
-          children: [],
-        };
-        if (index === parts.length - 1) {
-          existingPath.path = filePath;
-          delete existingPath.children;
-        }
-        currentLevel.push(existingPath);
-      }
-      currentLevel = existingPath.children || [];
-    });
-  });
+            parts.forEach((part, index) => {
+                let existingPath = currentLevel.find(
+                    (item) => item.title === part
+                )
+                if (!existingPath) {
+                    existingPath = {
+                        title: part,
+                        expanded: false,
+                        children: [],
+                    }
+                    if (index === parts.length - 1) {
+                        existingPath.path = filePath
+                        delete existingPath.children
+                    }
+                    currentLevel.push(existingPath)
+                }
+                currentLevel = existingPath.children || []
+            })
+        })
 
-  return structure;
-}
+        return structure
+    }
 </script>
 
 <template>
-    <div class="mb-3 flex space-x-2">
-        <!-- <UiButton>
+    <!-- <div class="mb-3 flex space-x-2">
+        <UiButton>
             <PlusIcon class="w-4 h-4 mr-1 text-red-500" />
             Add Section
-        </UiButton> -->
-    </div>
+        </UiButton>
+    </div> -->
 
-    <div class="bg-slate-950 p-3 rounded-lg border border-slate-700 h-screen  overflow-y-auto pb-48">
-        <div id="templates-tree"></div>
+    <div
+        class="h-screen overflow-y-auto pb-48 flex p-2"
+    >
+        <div class="w-1/5 h-full">
+            <div id="templates-tree"></div>
+        </div>
+
+        <div class="w-2/5 h-full">
+            <BasicEditor v-model="templateContent" />
+        </div>
+
+        <div class="w-2/5 h-full">
+            <BasicEditor v-model="renderedContent" />
+        </div>
     </div>
 </template>

@@ -166,11 +166,11 @@
             </div>
         </div>
 
-        <div class="space-y-2 p-4" v-if="selectedTab === 'templates'">
-            <!-- <AppTemplates /> -->
-            <UiEmptyMessage>
+        <div class="space-y-2" v-if="selectedTab === 'templates'">
+            <AppTemplates />
+            <!-- <UiEmptyMessage>
                 <span>Under development... COMING SOON!</span>
-            </UiEmptyMessage>
+            </UiEmptyMessage> -->
         </div>
 
         <div class="space-y-2 p-4" v-if="selectedTab === 'settings'">

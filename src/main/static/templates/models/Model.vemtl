@@ -1,6 +1,12 @@
+<# TEMPLATE SETTINGS #>
+<# MODEL(model:Model) #>
+<# MODEL(project:Project) #>
+<# RENDERABLE(model/RenderableModel) #>
+<####>
 <?php
-
+<# TEMPLATE IMPORTS #>
 <% const camelCase = this.require('camelCase') %>
+<####>
 
 namespace App\Models;
 

@@ -186,3 +186,24 @@
   background: rgba(0,0,0,0.61); /* Some darker color when you click it */
   -webkit-border-radius: 100px;
 }
+
+/* Wunderbaum */
+div.wunderbaum {
+  outline: none !important;
+  border: none !important;
+}
+
+:root,
+:host {
+  --wb-background-color: transparent !important;
+  --wb-node-text-color: @apply text-slate-200 !important;
+  --wb-bg-highlight-color: #1e293b !important;
+  --wb-active-color: #1e293b !important;
+  --wb-active-hover-color: #1e293b !important;
+  --wb-active-border-color: #ef4444 !important;
+  --wb-active-hover-border-color: #ef4444 !important;
+  --wb-active-color-grayscale: #1e293b !important;
+  --wb-active-border-color-grayscale: #ef4444 !important;
+  --wb-hover-color: #1e293b !important;
+  --wb-active-cell-color: #1e293b !important;
+}
