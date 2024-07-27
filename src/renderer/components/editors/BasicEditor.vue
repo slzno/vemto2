@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref, defineProps, onMounted, computed, defineEmits, watch } from "vue"
+    import { ref, defineProps, onMounted, computed, defineEmits, defineExpose } from "vue"
     import * as monaco from "monaco-editor"
     import editorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker"
     import jsonWorker from "monaco-editor/esm/vs/language/json/json.worker?worker"
@@ -32,11 +32,9 @@
         createEditor()
     })
 
-    watch(() => props.modelValue, () => {
-        console.log('modelValue changed')
-        localValue.value = props.modelValue
-        editor.setValue(localValue.value)
-    })
+    const setValue = (value: string) => {
+        editor.setValue(value)
+    }
 
     const createEditor = () => {
         self.MonacoEnvironment = {
@@ -84,6 +82,10 @@
             emit("change", localValue.value)
         })
     }
+
+    defineExpose({
+        setValue,
+    })
 </script>
 
 <template>
