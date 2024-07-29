@@ -6,7 +6,7 @@ import {
 } from "@Common/models/RenderableFile"
 import Crud from "@Common/models/crud/Crud"
 
-export default class ApiRoutes extends Renderable {
+export default class ApiRoutesRenderable extends Renderable {
     routes: Route[]
     cruds: Crud[]
 

@@ -126,7 +126,7 @@ import UiEmptyMessage from '@Renderer/components/ui/UiEmptyMessage.vue'
                 <span class="font-thin text-xl">
                     Edit {{ page.getLabel() }} Page
                 </span>
-                <small class="rounded text-red-400 text-xs font-normal bg-black px-2 py-1">Alpha Preview</small>
+                <small class="rounded text-red-400 text-xs font-normal bg-black px-2 py-1">Alpha</small>
             </div>
 
             <UiTabs :name="projectStore.project.getTabNameFor(`page${page.id}`)"
