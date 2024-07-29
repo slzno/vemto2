@@ -9,6 +9,7 @@ import GenerateCrudApiRoutes from './services/GenerateCrudApiRoutes'
 import FilamentInputData from './filament/FilamentInputData'
 import FilamentInputSettings from './filament/FilamentInputSettings'
 import AppSection from '../AppSection'
+import { NovaInputType } from './nova/NovaInputTypesList'
 
 export default class BelongsToManyDetail extends RelaDB.Model {
     id: string
@@ -46,7 +47,7 @@ export default class BelongsToManyDetail extends RelaDB.Model {
             relationship.foreignPivotKey,
         ]
 
-        if(crud.isForFilament()) {
+        if(crud.isForFilament() || crud.isForNova()) {
             excludedColumns.push(relationship.relatedPivotKey)
         }
 
@@ -55,6 +56,10 @@ export default class BelongsToManyDetail extends RelaDB.Model {
             crud.type,
             excludedColumns
         )
+
+        if(crud.isForNova()) {
+            detailCrud.novaSettings.displayInNavigation = false
+        }
 
         detailCrud.basePath = `${capitalCase(crud.name)}${capitalCase(detailCrud.plural)}Detail`
         detailCrud.isBelongsToManyDetail = true
@@ -74,6 +79,10 @@ export default class BelongsToManyDetail extends RelaDB.Model {
             if(crud.isForFilament()) {
                 input.filamentSettings.formData.canBeSearchable = true
                 input.filamentSettings.formData.inputType = FilamentInputType.SELECT
+            }
+
+            if(crud.isForNova()) {
+                input.novaSettings.inputType = NovaInputType.BELONGS_TO
             }
             
             input.save()

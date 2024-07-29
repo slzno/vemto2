@@ -37,6 +37,7 @@ export default interface NovaInputSettings {
     helperText: string;
     fullWidth: boolean;
     filterable: boolean;
+    sortable: boolean;
 
     // Audio
     preload: string;

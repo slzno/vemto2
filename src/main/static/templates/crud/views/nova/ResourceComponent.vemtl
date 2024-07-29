@@ -1,12 +1,40 @@
 <?php
 
 <% const pascalCase = this.require('pascalCase') %>
+<% const capitalCase = this.require('capitalCase') %>
 
 namespace App\Nova;
 
 use Laravel\Nova\Http\Requests\NovaRequest;
+<% if(this.crud.table.hasPrimaryKey()) { %>
+    use Laravel\Nova\Fields\ID;
+<% } %>
+<###>
 <% for (let input of this.crud.getInputsForForms()) { %>
     use Laravel\Nova\Fields\<$ pascalCase(input.novaSettings.inputType) $>;
+<% } %>
+<###>
+<% if(this.crud.hasHasManyDetails()) { %>
+    use Laravel\Nova\Fields\HasMany;
+<% } %>
+<###>
+<% if(this.crud.hasBelongsToManyDetails()) { %>
+    use Laravel\Nova\Fields\BelongsToMany;
+<% } %>
+<###>
+<% if(this.crud.hasMorphToManyDetails()) { %>
+    use Laravel\Nova\Fields\MorphToMany;
+<% } %>
+<###>
+<% if(this.crud.hasMorphManyDetails()) { %>
+    use Laravel\Nova\Fields\MorphMany;
+<% } %>
+<###>
+<% for(let detail of this.crud.getManyToManyDetails()) { %>
+    <# --- #>
+    <% for(let input of detail.detailCrud.getInputsForForms()) { %>
+        use Laravel\Nova\Fields\<$ pascalCase(input.novaSettings.inputType) $>;
+    <% } %>
 <% } %>
 
 class <$ this.filenameWithoutExtension $> extends Resource
@@ -14,16 +42,16 @@ class <$ this.filenameWithoutExtension $> extends Resource
     /**
      * The model the resource corresponds to.
      *
-     * @var class-string<\<$ this.crud.model.getClassString() $>>
+     * @var class-string<\<$ this.model.getClassString() $>>
      */
-    public static $model = \<$ this.crud.model.getClassString() $>::class;
+    public static $model = \<$ this.model.getClassString() $>::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
      * @var string
      */
-    public static $title = '<$ this.crud.model.table.getLabelColumnName() $>';
+    public static $title = '<$ this.model.table.getLabelColumnName() $>';
 
     <% if(!this.crud.novaSettings.displayInNavigation) { %>
         /**
@@ -121,7 +149,11 @@ class <$ this.filenameWithoutExtension $> extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'name', 'email',
+        <% if(this.crud.table.hasPrimaryKey()) { %>
+            '<$ this.crud.table.getPrimaryKeyName() $>',
+        <% } %>
+        <###>
+        '<$ this.model.table.getLabelColumnName() $>'
     ];
 
     /**
@@ -133,8 +165,49 @@ class <$ this.filenameWithoutExtension $> extends Resource
     public function fields(NovaRequest $request)
     {
         return [
-            <% for(let input of this.crud.getInputsForForms()) { %>
-                <import template="crud/views/nova/templates/NovaForm.vemtl">
+            <% if(!this.crud.isManyToManyDetail()) { %>
+                <###>
+                <% if(this.crud.table.hasPrimaryKey()) { %>
+                    ID::make()->sortable(),
+                <% } %>
+                <# --- #>
+                <% for(let input of this.crud.getInputsForForms()) { %>
+                    <import template="crud/views/nova/templates/NovaForm.vemtl">
+                <% } %>
+                
+                <% for(let hasManyDetail of this.crud.hasManyDetails) { %>
+                    HasMany::make(
+                        '<$ capitalCase(hasManyDetail.relationship.name) $>',
+                        '<$ hasManyDetail.relationship.name $>',
+                        <$ pascalCase(hasManyDetail.detailCrud.settings.itemName) $>::class
+                    ),
+                <% } %>
+
+                <% for(let morphManyDetail of this.crud.morphManyDetails) { %>
+                    MorphMany::make(
+                        '<$ capitalCase(morphManyDetail.relationship.name) $>',
+                        '<$ morphManyDetail.relationship.name $>',
+                        <$ pascalCase(morphManyDetail.detailCrud.settings.itemName) $>::class
+                    ),
+                <% } %>
+
+                <% for(let belongsToManyDetail of this.crud.belongsToManyDetails) { %>
+                    BelongsToMany::make(
+                        '<$ capitalCase(belongsToManyDetail.relationship.name) $>',
+                        '<$ belongsToManyDetail.relationship.name $>',
+                        <$ pascalCase(belongsToManyDetail.detailCrud.settings.itemName) $>::class
+                    )->fields(function () {
+                        return [
+                            <% for(let input of belongsToManyDetail.detailCrud.getInputsForForms()) { %>
+                                <import template="crud/views/nova/templates/NovaForm.vemtl">
+                            <% } %>
+                        ];
+                    }),
+                <% } %>
+
+                <% for(let morphToManyDetail of this.crud.morphToManyDetails) { %>
+                    MorphToMany::make('<$ morphToManyDetail.relationship.name $>'),
+                <% } %>
             <% } %>
         ];
     }

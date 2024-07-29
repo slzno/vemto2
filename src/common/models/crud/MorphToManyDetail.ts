@@ -42,6 +42,10 @@ export default class MorphToManyDetail extends RelaDB.Model {
             excludedColumns
         )
 
+        if(crud.isForNova()) {
+            detailCrud.novaSettings.displayInNavigation = false
+        }
+
         detailCrud.basePath = `${capitalCase(crud.name)}${capitalCase(detailCrud.plural)}Detail`
         detailCrud.isMorphToManyDetail = true
         detailCrud.save()

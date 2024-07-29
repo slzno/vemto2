@@ -11,8 +11,8 @@
     import UiNumber from '@Renderer/components/ui/UiNumber.vue'
     import UiSmallButton from '@Renderer/components/ui/UiSmallButton.vue'
     import { ArrowLongDownIcon, ArrowLongUpIcon, PlusCircleIcon, TrashIcon } from '@heroicons/vue/24/outline'
-import UiDropdownItem from '@Renderer/components/ui/UiDropdownItem.vue'
-import UiOptionsDropdown from '@Renderer/components/ui/UiOptionsDropdown.vue'
+    import UiDropdownItem from '@Renderer/components/ui/UiDropdownItem.vue'
+    import UiOptionsDropdown from '@Renderer/components/ui/UiOptionsDropdown.vue'
     
     const props = defineProps({
             input: Object as PropType<Input>
@@ -92,6 +92,72 @@ import UiOptionsDropdown from '@Renderer/components/ui/UiOptionsDropdown.vue'
                         <option :value="suggestion">{{ capitalCase(suggestion) }}</option>
                     </template>
                 </UiSelect>
+            </div>
+
+            <div>
+                <UiText v-model="input.novaSettings.helperText" label="Helper Text" @change="saveInput()" />
+            </div>
+
+            <div class="space-y-4" v-if="input.isFileOrImage()">
+                <div class="gap-4 grid grid-cols-2">
+                    <div>
+                        <UiText v-model="input.novaSettings.disk" label="Disk" @change="saveInput()" />
+                    </div>
+
+                    <div>
+                        <UiText v-model="input.novaSettings.storeOriginalName" label="Store Original Name" @change="saveInput()" />
+                    </div>
+
+                    <div>
+                        <UiText v-model="input.novaSettings.storeSize" label="Store Size" @change="saveInput()" />
+                    </div>
+
+                    <div>
+                        <UiText v-model="input.novaSettings.path" label="Path" @change="saveInput()" />
+                    </div>
+                </div>
+
+                <div class="gap-4 grid grid-cols-3">
+                    <div>
+                        <UiNumber v-model="input.novaSettings.maxWidth" label="Max Width" @change="saveInput()" />
+                    </div>
+
+                    <div>
+                        <UiNumber v-model="input.novaSettings.indexWidth" label="Index Width" @change="saveInput()" />
+                    </div>
+
+                    <div>
+                        <UiNumber v-model="input.novaSettings.detailWidth" label="Detail Width" @change="saveInput()" />
+                    </div>
+                </div>
+                
+                <div class="flex flex-col gap-2">
+                    <label class="text-xs text-slate-400">Accepted Types</label>
+
+                    <div class="flex-1 flex gap-2 items-center" v-for="(option, index) of input.novaSettings.acceptedTypes">
+                        <UiText v-model="input.novaSettings.acceptedTypes[index]" @input="saveInput()" />
+
+                        <UiOptionsDropdown>
+                            <UiDropdownItem @click="moveUpOption('acceptedTypes', index)">
+                                <ArrowLongUpIcon class="h-5 w-5 mr-1" /> Move Up
+                            </UiDropdownItem>
+                            <UiDropdownItem @click="moveDownOption('acceptedTypes', index)">
+                                <ArrowLongDownIcon class="h-5 w-5 mr-1" /> Move Down
+                            </UiDropdownItem>
+                            <UiDropdownItem @click="removeNovaData('acceptedTypes', index)">
+                                <TrashIcon class="h-5 w-5 mr-1 text-red-400" /> Delete
+                            </UiDropdownItem>
+                        </UiOptionsDropdown>
+                    </div>
+                    
+                    <div>
+                        <UiSmallButton @click="newNovaOption('acceptedTypes')">
+                            <span class="flex items-center">
+                                <PlusCircleIcon class="h-5 w-5 mr-1" /> Add Type
+                            </span>
+                        </UiSmallButton>
+                    </div>
+                </div>
             </div>
 
             <div v-if="novaInputTypeIs('audio')">
@@ -350,13 +416,13 @@ import UiOptionsDropdown from '@Renderer/components/ui/UiOptionsDropdown.vue'
                     </UiSmallButton>
                 </div>
             </div>
-
-            <div>
-                <UiText v-model="input.novaSettings.helperText" label="Helper Text" @change="saveInput()" />
-            </div>
             
             <div>
                 <UiCheckbox v-model="input.novaSettings.readonly" label="Readonly" @change="saveInput()" />
+            </div>
+
+            <div>
+                <UiCheckbox v-model="input.novaSettings.sortable" label="Sortable" @change="saveInput()" />
             </div>
 
             <div v-if="input.isTextarea()">
@@ -412,6 +478,20 @@ import UiOptionsDropdown from '@Renderer/components/ui/UiOptionsDropdown.vue'
                 </div>
                 <div>
                     <UiCheckbox v-model="input.novaSettings.hideTrueValues" label="Hide True Values" @change="saveInput()" />
+                </div>
+            </div>
+
+            <div class="space-y-4" v-if="input.isFileOrImage()">
+                <div v-if="novaInputTypeIs('file')">
+                    <UiCheckbox v-model="input.novaSettings.disableDownload" label="Disable Downloads" @change="saveInput()" />
+                </div>
+
+                <div>
+                    <UiCheckbox v-model="input.novaSettings.deletable" label="Deletable?" @change="saveInput()" />
+                </div>
+
+                <div>
+                    <UiCheckbox v-model="input.novaSettings.prunable" label="Prunable?" @change="saveInput()" />
                 </div>
             </div>
         </div>

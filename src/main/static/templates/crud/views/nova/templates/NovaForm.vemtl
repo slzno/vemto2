@@ -38,6 +38,10 @@
         ->filterable()
     <% } %>
     <# --- #>
+    <% if(input.isCommon() && input.novaSettings.sortable) { %>
+        ->sortable()
+    <% } %>
+    <# --- #>
     <% if(input.defaultValue) { %>
         ->default('<$ input.defaultValue $>')
     <% } %>

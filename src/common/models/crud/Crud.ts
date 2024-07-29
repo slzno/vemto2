@@ -586,6 +586,22 @@ export default class Crud extends RelaDB.Model {
         return this.inputs.filter((input) => input.isJson())
     }
 
+    hasHasManyDetails(): boolean {
+        return this.hasManyDetails.length > 0
+    }
+
+    hasBelongsToManyDetails(): boolean {
+        return this.belongsToManyDetails.length > 0
+    }
+
+    hasMorphToManyDetails(): boolean {
+        return this.morphToManyDetails.length > 0
+    }
+
+    hasMorphManyDetails(): boolean {
+        return this.morphManyDetails.length > 0
+    }
+
     getInputsForIndexExcept(excludedInputs: Input | Input[]): Input[] {
         let excludedInputIds = []
 
@@ -628,6 +644,10 @@ export default class Crud extends RelaDB.Model {
         }
 
         return this.getInputsForForms().filter((input) => !excludedInputIds.includes(input.id))
+    }
+
+    getManyToManyDetails(): (BelongsToManyDetail | MorphToManyDetail)[] {
+        return [...this.belongsToManyDetails, ...this.morphToManyDetails]
     }
 
     calculateSettings(name: string = null, plural: string = null) {
@@ -912,7 +932,7 @@ export default class Crud extends RelaDB.Model {
     
     calculateNovaSettings() {
         this.novaSettings = {
-            displayInNavigation: true,
+            displayInNavigation: !this.isDetail(),
             group: "Admin",
             tableStyle: "default",
             showColumnBorders: false,

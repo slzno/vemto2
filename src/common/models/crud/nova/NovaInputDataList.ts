@@ -1,7 +1,7 @@
 import Input from "../Input";
 import { InputType } from "../InputType";
 import NovaInputSettings from "./NovaInputSettings";
-import NovaInputTypesList, { NovaInputType } from "./NovaInputTypesList";
+import NovaInputTypesList from "./NovaInputTypesList";
 
 export default class NovaInputDataList {
     static getFromInput(input: Input): NovaInputSettings {
@@ -31,7 +31,7 @@ export default class NovaInputDataList {
                     ...data,
                     disk: null,
                     disableDownload: false,
-                    deletable: false,
+                    deletable: true,
                     prunable: false,
                     preload: null
                 }
@@ -40,14 +40,7 @@ export default class NovaInputDataList {
                 data = {
                     ...data,
                     alwaysShow: false,
-                    preset: null,
-                    withFiles: false
-                }
-                break;
-            case InputType.PASSWORD:
-                data = {
-                    ...data,
-                    onlyOnForms: false
+                    preset: null
                 }
                 break;
             case InputType.SELECT:

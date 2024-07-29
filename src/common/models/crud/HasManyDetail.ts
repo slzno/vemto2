@@ -48,6 +48,10 @@ export default class HasManyDetail extends RelaDB.Model {
             excludedColumns
         )
 
+        if(crud.isForNova()) {
+            detailCrud.novaSettings.displayInNavigation = false
+        }
+
         detailCrud.basePath = `${capitalCase(crud.name)}${capitalCase(detailCrud.plural)}Detail`
         detailCrud.isHasManyDetail = true
         detailCrud.save()
