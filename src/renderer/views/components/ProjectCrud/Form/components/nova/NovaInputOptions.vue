@@ -433,7 +433,7 @@
                 <UiCheckbox v-model="input.novaSettings.displayUsingLabels" label="Display using Labels" @change="saveInput()" />
             </div>
 
-            <div v-if="novaInputTypeIs('select')">
+            <div v-if="(input.isSelect() || input.isBelongsTo()) && !novaInputTypeIs('badge')">
                 <UiCheckbox v-model="input.novaSettings.searchable" label="Searchable?" @change="saveInput()" />
             </div>
 

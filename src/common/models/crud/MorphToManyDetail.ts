@@ -4,6 +4,7 @@ import RelaDB from '@tiago_silva_pereira/reladb'
 import { capitalCase } from 'change-case'
 import { InputType } from './InputType'
 import { FilamentInputType } from './filament/FilamentInputTypesList'
+import { NovaInputType } from './nova/NovaInputTypesList'
 
 export default class MorphToManyDetail extends RelaDB.Model {
     id: string
@@ -61,11 +62,19 @@ export default class MorphToManyDetail extends RelaDB.Model {
             input.delete()
         }
 
-        if (input) {
-            input.type = InputType.BELONGS_TO
-            input.relationshipId = relationship.id
-            input.save()
+        if(!input) {
+            return morphToManyDetail
         }
+
+        input.type = crud.isForNova() ? InputType.TEXT : InputType.BELONGS_TO
+        input.relationshipId = crud.isForNova() ? null : relationship.id
+        input.novaSettings.inputType = NovaInputType.TEXT
+        input.showOnCreation = false
+        input.showOnUpdate = false
+        input.showOnDetails = false
+        input.showOnIndex = true
+        
+        input.save()
         
         return morphToManyDetail
     }

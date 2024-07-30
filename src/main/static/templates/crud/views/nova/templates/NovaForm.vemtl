@@ -1,7 +1,9 @@
 <% const inputSettings = input.novaSettings %>
 <% const novaInputTypeIs = (type) => input.novaSettings.inputType === type %>
+<% const inputLabel = input.isBelongsTo() ? `'${capitalCase(input.relationship.name)}'` : this.helpers.toTranslatableFormat(input.label) %>
+<% const inputAttribute = input.isBelongsTo() ? input.relationship.name : input.name %>
 
-<$ pascalCase(inputSettings.inputType) $>::make(<$ this.helpers.toTranslatableFormat(input.label) $>, '<$ input.name $>')
+<$ pascalCase(inputSettings.inputType) $>::make(<$ inputLabel $>, '<$ inputAttribute $>')
     <% if(!input.showOnCreation) { %>
         ->hideWhenCreating()
     <% } %>
@@ -113,7 +115,7 @@
         ->displayUsingLabels()
     <% } %>
     <# --- #>
-    <% if(input.isSelect() && input.novaSettings.searchable) { %>
+    <% if((input.isSelect() || input.isBelongsTo()) && input.novaSettings.searchable) { %>
         ->searchable()
     <% } %>
     <# --- #>

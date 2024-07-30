@@ -206,7 +206,17 @@ class <$ this.filenameWithoutExtension $> extends Resource
                 <% } %>
 
                 <% for(let morphToManyDetail of this.crud.morphToManyDetails) { %>
-                    MorphToMany::make('<$ morphToManyDetail.relationship.name $>'),
+                    MorphToMany::make(
+                        '<$ capitalCase(morphToManyDetail.relationship.name) $>',
+                        '<$ morphToManyDetail.relationship.name $>',
+                        <$ pascalCase(morphToManyDetail.detailCrud.settings.itemName) $>::class
+                    )->fields(function () {
+                        return [
+                            <% for(let input of morphToManyDetail.detailCrud.getInputsForNovaDetailForms()) { %>
+                                <import template="crud/views/nova/templates/NovaForm.vemtl">
+                            <% } %>
+                        ];
+                    }),
                 <% } %>
             <% } %>
         ];
