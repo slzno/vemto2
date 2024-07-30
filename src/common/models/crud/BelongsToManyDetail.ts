@@ -47,7 +47,7 @@ export default class BelongsToManyDetail extends RelaDB.Model {
             relationship.foreignPivotKey,
         ]
 
-        if(crud.isForFilament() || crud.isForNova()) {
+        if(crud.isForFilament()) {
             excludedColumns.push(relationship.relatedPivotKey)
         }
 
@@ -82,7 +82,12 @@ export default class BelongsToManyDetail extends RelaDB.Model {
             }
 
             if(crud.isForNova()) {
-                input.novaSettings.inputType = NovaInputType.BELONGS_TO
+                input.type = InputType.TEXT
+                input.novaSettings.inputType = NovaInputType.TEXT
+                input.showOnCreation = false
+                input.showOnUpdate = false
+                input.showOnDetails = false
+                input.showOnIndex = true
             }
             
             input.save()

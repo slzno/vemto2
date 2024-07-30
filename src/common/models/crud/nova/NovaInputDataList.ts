@@ -25,6 +25,12 @@ export default class NovaInputDataList {
                     suggestions: []
                 }
                 break;
+            case InputType.NUMBER:
+                data = {
+                    ...data,
+                    textAlign: 'left'
+                }
+                break;
             case InputType.FILE:
             case InputType.IMAGE:
                 data = {

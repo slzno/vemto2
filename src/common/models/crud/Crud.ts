@@ -634,6 +634,10 @@ export default class Crud extends RelaDB.Model {
         return this.getOrderedInputs().filter((input) => input.showOnCreation || input.showOnUpdate)
     }
 
+    getInputsForNovaDetailForms(): Input[] {
+        return this.getOrderedInputs().filter((input) => input.showOnCreation || input.showOnUpdate || input.showOnIndex)
+    }
+
     getInputsForFormsExcept(excludedInputs: Input | Input[]): Input[] {
         let excludedInputIds = []
 

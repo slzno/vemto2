@@ -234,7 +234,7 @@
         <% } %>
     <% } %>
     <# --- #>
-    <% if(novaInputTypeIs('text')) { %>
+    <% if(novaInputTypeIs('text') || novaInputTypeIs('number')) { %>
         <###>
         <% if(input.novaSettings.suggestions?.length) { %>
             ->suggestions([

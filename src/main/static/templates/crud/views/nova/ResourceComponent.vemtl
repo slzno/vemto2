@@ -198,7 +198,7 @@ class <$ this.filenameWithoutExtension $> extends Resource
                         <$ pascalCase(belongsToManyDetail.detailCrud.settings.itemName) $>::class
                     )->fields(function () {
                         return [
-                            <% for(let input of belongsToManyDetail.detailCrud.getInputsForForms()) { %>
+                            <% for(let input of belongsToManyDetail.detailCrud.getInputsForNovaDetailForms()) { %>
                                 <import template="crud/views/nova/templates/NovaForm.vemtl">
                             <% } %>
                         ];

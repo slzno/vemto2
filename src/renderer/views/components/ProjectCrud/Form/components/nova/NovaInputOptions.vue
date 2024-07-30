@@ -231,15 +231,15 @@
                 </div>
             </div>
 
-            <div class="space-y-4" v-if="novaInputTypeIs('text')">
-                <div>
-                    <UiSelect v-model="input.novaSettings.textAlign" label="Text Align" @change="saveInput()">
-                        <option value="left">Left</option>
-                        <option value="center">Center</option>
-                        <option value="right">Right</option>
-                    </UiSelect>
-                </div>
+            <div v-if="novaInputTypeIs(['text', 'number'])">
+                <UiSelect v-model="input.novaSettings.textAlign" label="Text Align" @change="saveInput()">
+                    <option value="left">Left</option>
+                    <option value="center">Center</option>
+                    <option value="right">Right</option>
+                </UiSelect>
+            </div>
 
+            <div class="space-y-4" v-if="novaInputTypeIs('text')">
                 <div>
                     <UiNumber v-model="input.novaSettings.maxLength" label="Max Length" @change="saveInput()" />
                 </div>
