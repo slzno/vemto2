@@ -90,8 +90,8 @@ export default class GenerateCrudApiRoutes {
             `${crudModelPlural}.${detailCrudModelPlural}.index`,
             "get",
             indexStoreRoutePath,
-            "HasManyDetail",
-            detail.id,
+            "Crud",
+            detail.detailCrud.id,
             completeRouteAction('index')
         )
 
@@ -99,8 +99,8 @@ export default class GenerateCrudApiRoutes {
             `${crudModelPlural}.${detailCrudModelPlural}.store`,
             "post",
             indexStoreRoutePath,
-            "HasManyDetail",
-            detail.id,
+            "Crud",
+            detail.detailCrud.id,
             completeRouteAction('store')
         )
     }
@@ -119,8 +119,8 @@ export default class GenerateCrudApiRoutes {
             `${crudModelPlural}.${detailRelatedCrudModelPlural}.index`,
             "get",
             indexRoutePath,
-            "BelongsToManyDetail",
-            detail.id,
+            "Crud",
+            detail.detailCrud.id,
             completeRouteAction('index')
         )
 
@@ -128,8 +128,8 @@ export default class GenerateCrudApiRoutes {
             `${crudModelPlural}.${detailRelatedCrudModelPlural}.store`,
             "post",
             storeDestroyRoutePath,
-            "BelongsToManyDetail",
-            detail.id,
+            "Crud",
+            detail.detailCrud.id,
             completeRouteAction('store')
         )
 
@@ -137,8 +137,8 @@ export default class GenerateCrudApiRoutes {
             `${crudModelPlural}.${detailRelatedCrudModelPlural}.destroy`,
             "delete",
             storeDestroyRoutePath,
-            "BelongsToManyDetail",
-            detail.id,
+            "Crud",
+            detail.detailCrud.id,
             completeRouteAction('destroy')
         )
     }

@@ -66,7 +66,7 @@ export default class Route extends RelaDB.Model {
     }
 
     getName() {
-        if(this.routable.section && this.routable.section.routePrefix) {
+        if(this.routable && this.routable.section && this.routable.section.routePrefix) {
             return `${paramCase(this.routable.section.routePrefix)}.${this.name}`
         }
 
