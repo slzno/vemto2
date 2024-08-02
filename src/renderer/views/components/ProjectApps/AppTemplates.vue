@@ -10,11 +10,26 @@
     import UiTextarea from "@Renderer/components/ui/UiTextarea.vue"
     import BasicEditor from "@Renderer/components/editors/BasicEditor.vue"
 
+    type TemplateDataType = "MODEL" | "JSON" | "STRING" | "RENDERABLE"
+
+    interface TemplateDataItem {
+        name: string
+        type: TemplateDataType
+        value: any
+    }
+
+    interface TemplateData {
+        [key: string]: TemplateDataItem
+    }
+
     const projectStore = useProjectStore(),
         templates = ref([]) as Ref<string[]>,
         files = ref([]) as Ref<any[]>,
         templateContent = ref(""),
-        renderedContent = ref("")
+        templateEditor = ref(null),
+        templateData = ref({}) as Ref<TemplateData>,
+        renderedContent = ref(""),
+        renderedEditor = ref(null)
 
     onMounted(() => {
         loadTemplates()
@@ -45,6 +60,36 @@
 
     const readTemplate = async (path: string) => {
         templateContent.value = await Main.API.readTemplateFile(path)
+        templateEditor.value?.setValue(templateContent.value)
+        templateData.value = await readTemplateData(templateContent.value)
+
+        console.log(templateData.value)
+    }
+
+    const readTemplateData = async (content: string) => {
+        const data: TemplateData = {}
+
+        const regex = /<# DATA:(\w+) \[ (\w+) = (.+) \] #>/g
+        let match: RegExpExecArray | null
+
+        while ((match = regex.exec(content)) !== null) {
+            const type = match[1] as TemplateDataType
+            const name = match[2]
+
+            let value = match[3]
+
+            if(type === "JSON") {
+                value = JSON.parse(value)
+            }
+
+            data[name] = {
+                name,
+                type,
+                value,
+            }
+        }
+
+        return data
     }
 
     const generateStructure = (filePaths) => {
@@ -94,7 +139,7 @@
         </div>
 
         <div class="w-2/5 h-full">
-            <BasicEditor v-model="templateContent" />
+            <BasicEditor ref="templateEditor" v-model="templateContent" />
         </div>
 
         <div class="w-2/5 h-full">

@@ -1,9 +1,11 @@
-<# TEMPLATE SETTINGS #>
-<# MODEL(model:Model) #>
-<# MODEL(project:Project) #>
-<# RENDERABLE(model/RenderableModel) #>
-<####>
 <?php
+<# TEMPLATE SETTINGS #>
+<# DATA:JSON [ json = {} ] #>
+<# DATA:MODEL [ project = Project ] #>
+<# DATA:MODEL [ model = Model ] #>
+<# DATA:STRING [ text = "Hello World" ] #>
+<# DATA:RENDERABLE [ renderable = model/RenderableModel ] #>
+<####>
 <# TEMPLATE IMPORTS #>
 <% const camelCase = this.require('camelCase') %>
 <####>
