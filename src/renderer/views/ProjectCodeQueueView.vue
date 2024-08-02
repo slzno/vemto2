@@ -13,7 +13,7 @@
     import ConflictsSolver from "./components/CodeQueue/ConflictsSolver.vue"
     import Main from "@Renderer/services/wrappers/Main"
     import InternalFiles from "@Renderer/util/InternalFiles"
-import Alert from "@Renderer/components/utils/Alert"
+    import Alert from "@Renderer/components/utils/Alert"
 
     const projectStore = useProjectStore(),
         search = ref(""),
@@ -102,8 +102,8 @@ import Alert from "@Renderer/components/utils/Alert"
             label: "Removed",
             value: "removed",
             badge: () => allRemovedFiles.value.length,
-        }
-        // { label: "Settings", value: "settings" },
+        },
+        { label: "Settings", value: "settings" },
     ]
 
     const filteredFiles = computed(() => {
