@@ -490,7 +490,7 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         if(this.defaultIsRaw) return this.default
 
         // Escape single quotes
-        this.default = this.default.replace(/'/g, "\\'")
+        this.default = this.default ? this.default.replace(/'/g, "\\'") : ""
 
         if(type.defaultValueTypeIsString) return `'${this.default}'`
 
