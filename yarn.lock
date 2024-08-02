@@ -2357,10 +2357,10 @@
     pluralize "^8.0.0"
     uuid "^8.3.1"
 
-"@tiago_silva_pereira/vemto-template-engine@^4.0.2":
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/@tiago_silva_pereira/vemto-template-engine/-/vemto-template-engine-4.0.2.tgz#8c8a4e615c4321c611207a984e8780de44b9490e"
-  integrity sha512-wzoxgXyUOKijM/kV2z3MOpjx6DVte3R733lxTcmQbrwt1YUDIpzxJDgExHijWBKP+G6Ji/5UZJvcatIFnRt4Kg==
+"@tiago_silva_pereira/vemto-template-engine@^4.0.3":
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/@tiago_silva_pereira/vemto-template-engine/-/vemto-template-engine-4.0.3.tgz#465e77bd522ee2dbd7591c9d74934cc0ef5c2457"
+  integrity sha512-ZZiPUrV2v7qUY9FsQSfM5PIgF04OgiQfrAlbqaLOZdl/fAan8yIebNrT2bjGsHZWXhgooWi4o5EIpZZZuvwEiQ==
 
 "@tootallnate/once@2":
   version "2.0.0"

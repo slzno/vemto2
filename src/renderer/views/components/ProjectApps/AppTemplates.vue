@@ -9,6 +9,7 @@
     import Main from "@Renderer/services/wrappers/Main"
     import UiTextarea from "@Renderer/components/ui/UiTextarea.vue"
     import BasicEditor from "@Renderer/components/editors/BasicEditor.vue"
+    import TemplateEngine from "@tiago_silva_pereira/vemto-template-engine"
 
     type TemplateDataType = "MODEL" | "JSON" | "STRING" | "RENDERABLE"
 
@@ -67,29 +68,7 @@
     }
 
     const readTemplateData = async (content: string) => {
-        const data: TemplateData = {}
-
-        const regex = /<# DATA:(\w+) \[ (\w+) = (.+) \] #>/g
-        let match: RegExpExecArray | null
-
-        while ((match = regex.exec(content)) !== null) {
-            const type = match[1] as TemplateDataType
-            const name = match[2]
-
-            let value = match[3]
-
-            if(type === "JSON") {
-                value = JSON.parse(value)
-            }
-
-            data[name] = {
-                name,
-                type,
-                value,
-            }
-        }
-
-        return data
+        return (new TemplateEngine(content)).getDataDefinition()
     }
 
     const generateStructure = (filePaths) => {
