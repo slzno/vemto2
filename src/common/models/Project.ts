@@ -8,7 +8,6 @@ import { v4 as uuid } from "uuid"
 import Relationship from "./Relationship"
 import RelaDB from "@tiago_silva_pereira/reladb"
 import { compareVersions } from "compare-versions"
-
 import RenderableFile, {
     RenderableFileStatus,
     RenderableFileType,
@@ -34,6 +33,8 @@ interface ProjectCodeGenerationSettings {
     controllers: boolean,
     routes: boolean,
     views: boolean,
+    uiComponents: boolean,
+    livewireLayout: boolean,
     translationsOnViews: boolean,
     translationsFormat: TranslationsFormat,
 }
@@ -60,6 +61,8 @@ export enum ProjectUIStarterKit {
     JETSTREAM = "jetstream",
     BREEZE = "breeze",
     LARAVEL_UI = "laravel_ui",
+    EMPTY = "empty",
+    API = "api",
     OTHER = "other",
 }
 
@@ -161,7 +164,9 @@ export default class Project extends RelaDB.Model {
             requests: true,
             controllers: true,
             routes: true,
-            views: true,
+            views: !this.isApiStarterKit(),
+            uiComponents: !this.isApiStarterKit(),
+            livewireLayout: (this.isBreeze() || this.isJetstream()) && this.settings.usesLivewire,
             translationsOnViews: true,
             translationsFormat: TranslationsFormat.UNDERSCORE,
         }
@@ -869,6 +874,14 @@ export default class Project extends RelaDB.Model {
 
     isBreeze(): boolean {
         return this.settings.uiStarterKit === ProjectUIStarterKit.BREEZE
+    }
+
+    isEmptyStarterKit(): boolean {
+        return this.settings.uiStarterKit === ProjectUIStarterKit.EMPTY
+    }
+
+    isApiStarterKit(): boolean {
+        return this.settings.uiStarterKit === ProjectUIStarterKit.API
     }
 
     isFreshLaravelProject(): boolean {

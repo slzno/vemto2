@@ -3,12 +3,13 @@ import PathUtil from "@Common/util/PathUtil";
 import BreezeInstaller from "./installer/composer/BreezeInstaller";
 import FilamentInstaller from "./installer/composer/FilamentInstaller";
 import JetstreamInstaller from "./installer/composer/JetstreamInstaller";
+import ApiInstaller from "./installer/composer/ApiInstaller";
 
 export interface ProjectCreatorData {
     name: string;
     path: string;
     completePath: string;
-    starterKit: string; // Jetstream, Fortify, Breeze
+    starterKit: string;
     database: string;
 
     // Jetstream options
@@ -65,13 +66,18 @@ export default class ProjectCreator {
     }
 
     async installStarterKit() {
-        if(this.data.starterKit === "jetstream") {
-            await JetstreamInstaller.installFromProjectCreator(this.data, this.stateCallback)
+        const starterKitInstallers = {
+            "api": ApiInstaller,
+            "breeze": BreezeInstaller,
+            "fortify": FilamentInstaller,
+            "jetstream": JetstreamInstaller
         }
 
-        if(this.data.starterKit === "breeze") {
-            await BreezeInstaller.installFromProjectCreator(this.data, this.stateCallback)
-        }
+        const installer = starterKitInstallers[this.data.starterKit]
+
+        if(typeof installer === undefined) return
+
+        await installer.installFromProjectCreator(this.data, this.stateCallback)
     }
 
     async changeDatabase() {
