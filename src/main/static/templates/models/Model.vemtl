@@ -6,6 +6,8 @@
 <# DATA:STRING [ text = "Hello World" ] #>
 <# DATA:RENDERABLE [ renderable = model/RenderableModel ] #>
 <####>
+
+<####>
 <# TEMPLATE IMPORTS #>
 <% const camelCase = this.require('camelCase') %>
 <####>
