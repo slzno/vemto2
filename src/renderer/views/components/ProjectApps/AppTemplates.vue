@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
-    import { ref, Ref, onMounted } from "vue"
+    import { ref, Ref, onMounted, render } from "vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import { PlusIcon } from "@heroicons/vue/24/outline"
@@ -35,6 +35,7 @@ import UiSelect from "@Renderer/components/ui/UiSelect.vue"
         renderedEditor = ref(null)
 
     onMounted(() => {
+        readTemplate("models/Model.vemtl")
         loadTemplates()
     })
 
@@ -66,7 +67,7 @@ import UiSelect from "@Renderer/components/ui/UiSelect.vue"
         templateEditor.value?.setValue(templateContent.value)
         templateData.value = await readTemplateData(templateContent.value)
 
-        console.log(templateData.value)
+        renderTemplate()
     }
 
     const readTemplateData = async (content: string) => {
@@ -86,6 +87,63 @@ import UiSelect from "@Renderer/components/ui/UiSelect.vue"
         }
 
         return templateData
+    }
+
+    const renderTemplate = async () => {
+        const basePath = "../../../codegen/sequential/services",
+            renderableInfo = extractRenderableInfo(templateData.value.renderable.value),
+            renderableClass = await import(`${basePath}/${renderableInfo.className}.ts`)
+
+        if (!renderableClass) {
+            throw new Error(`Renderable ${templateData.value.renderable.value} not found`)
+        }
+
+        const renderableParams = renderableInfo.constructorParams.map((param) => {
+            const dataItem = templateData.value[param]
+
+            if (dataItem.type === "MODEL") {
+                return projectStore.findRowByModelIdentifier(dataItem.value, dataItem.selection)
+            }
+
+            return dataItem.value
+        })
+
+        const renderable = new renderableClass.default(...renderableParams)
+
+        renderable.setOverriddenData(
+            getDataForRenderable()
+        )
+
+        renderedContent.value = await renderable.compile(templateContent.value)
+
+        renderedEditor.value?.setValue(renderedContent.value)
+    }
+
+    const getDataForRenderable = () => {
+        const data = {}
+
+        for (const key in templateData.value) {
+            const dataItem = templateData.value[key]
+
+            if (dataItem.type === "MODEL") {
+                data[key] = projectStore.findRowByModelIdentifier(dataItem.value, dataItem.selection)
+            } else {
+                data[key] = dataItem.value
+            }
+        }
+
+        return data
+    }
+
+    const extractRenderableInfo = (content: string) => {
+        const parts = content.split("("),
+            className = parts[0],
+            constructorParams = parts[1].replace(")", "").split(",")
+
+        return {
+            className,
+            constructorParams,
+        }
     }
 
     const generateStructure = (filePaths) => {
@@ -173,7 +231,7 @@ import UiSelect from "@Renderer/components/ui/UiSelect.vue"
         </div>
 
         <div class="w-2/5 h-full">
-            <BasicEditor v-model="renderedContent" />
+            <BasicEditor ref="renderedEditor" v-model="renderedContent" />
         </div>
     </div>
 </template>

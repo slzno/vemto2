@@ -36,6 +36,10 @@
         editor.setValue(value)
     }
 
+    const refreshValue = () => {
+        editor.setValue(localValue.value)
+    }
+
     const createEditor = () => {
         self.MonacoEnvironment = {
             getWorker(_, label) {
@@ -85,6 +89,7 @@
 
     defineExpose({
         setValue,
+        refreshValue,
     })
 </script>
 

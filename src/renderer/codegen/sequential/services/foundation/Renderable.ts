@@ -17,6 +17,7 @@ export default abstract class Renderable {
     project: Project
     hooksEnabled: boolean = true
     logEnabled: boolean = false
+    overriddenData: any = {}
 
     static mode: "generate" | "checker" = "generate"
 
@@ -208,11 +209,18 @@ export default abstract class Renderable {
         return this.getFilename().replace(/\.[^/.]+$/, "")
     }
 
+    setOverriddenData(data: any) {
+        this.overriddenData = data
+
+        return this
+    }
+
     getFullData() {
-        const helpers = new TemplateHelpers(this.project)
+        const helpers = new TemplateHelpers(this.project),
+            data = this.overriddenData ? this.overriddenData : this.getData()
 
         return {
-            ...this.getData(),
+            ...data,
             project: this.project,
             helpers,
             filenameWithoutExtension: this.getFilenameWithoutExtension(),
@@ -245,14 +253,17 @@ export default abstract class Renderable {
         }
     }
 
-    async compile() {
+    async compile(templateContent?: string) {
         if(!this.project) {
             throw new Error(`Renderable for ${this.getTemplateFile()} doesn't has the project associated. Please set it with setProject() before calling render().`)
         }
 
         const templateFile = this.getTemplateFile(), 
-            templateCompiler = new TemplateCompiler(),
+            templateCompiler = new TemplateCompiler()
+
+        if(!templateContent) {
             templateContent = await Main.API.readTemplateFile(templateFile)
+        }
 
         templateCompiler
             .setContent(templateContent)
