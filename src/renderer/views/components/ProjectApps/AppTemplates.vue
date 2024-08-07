@@ -74,7 +74,12 @@ import UiSelect from "@Renderer/components/ui/UiSelect.vue"
     }
 
     const readTemplateData = async (content: string) => {
-        let templateData = (new TemplateEngine(content)).getDataDefinition()
+        // Mudar para o Template Compiler aqui, para obter os templates de import
+        let templateData = (new TemplateEngine(content, {
+            logger: null,
+            onBrowser: true,
+            disableImportsProcessing: true,
+        })).getDataDefinition()
 
         // delete 'project' key as it is read-only
         delete templateData.project
@@ -189,13 +194,17 @@ import UiSelect from "@Renderer/components/ui/UiSelect.vue"
     </div> -->
 
     <div
-        class="h-screen overflow-y-auto pb-96 flex p-2"
+        class="h-screen overflow-y-auto pb-56 flex p-2"
     >
         <div class="w-1/5 h-full">
             <div id="templates-tree"></div>
         </div>
 
         <div class="w-2/5 h-full">
+            <div class="px-2 py-1">
+                Template
+            </div>
+
             <BasicEditor ref="templateEditor" v-model="templateContent" />
 
             <!-- Data -->
@@ -234,6 +243,10 @@ import UiSelect from "@Renderer/components/ui/UiSelect.vue"
         </div>
 
         <div class="w-2/5 h-full">
+            <div class="px-2 py-1">
+                Rendered Code
+            </div>
+
             <BasicEditor ref="renderedEditor" v-model="renderedContent" />
         </div>
     </div>
