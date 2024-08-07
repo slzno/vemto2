@@ -18,6 +18,7 @@ import UiSelect from "@Renderer/components/ui/UiSelect.vue"
         name: string
         type: TemplateDataType
         value: any
+        selection: any
     }
 
     interface TemplateData {
@@ -69,7 +70,22 @@ import UiSelect from "@Renderer/components/ui/UiSelect.vue"
     }
 
     const readTemplateData = async (content: string) => {
-        return (new TemplateEngine(content)).getDataDefinition()
+        let templateData = (new TemplateEngine(content)).getDataDefinition()
+
+        // delete 'project' key as it is read-only
+        delete templateData.project
+
+        // select the first model for each model type
+        for (const key in templateData) {
+            if (templateData[key].type === "MODEL") {
+                const rows = projectStore.getAllRowsByModelIdentifier(templateData[key].value),
+                    firstRowId = rows[0] ? rows[0].id : null
+
+                templateData[key].selection = firstRowId
+            }
+        }
+
+        return templateData
     }
 
     const generateStructure = (filePaths) => {
@@ -140,7 +156,7 @@ import UiSelect from "@Renderer/components/ui/UiSelect.vue"
                             </div>
 
                             <div v-else>
-                                <UiSelect v-model="item.value">
+                                <UiSelect v-model="item.selection">
                                     <option v-for="modelRow in projectStore.getAllRowsByModelIdentifier(item.value)" :value="modelRow.id">
                                         {{ modelRow.name }}
                                     </option>
