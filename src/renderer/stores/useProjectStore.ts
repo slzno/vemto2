@@ -1,6 +1,7 @@
 import debounce from "lodash/debounce"
 import { defineStore } from "pinia"
 import Project from "@Common/models/Project"
+import RelaDB from "@tiago_silva_pereira/reladb"
 import { useSchemaStore } from "./useSchemaStore"
 
 export const useProjectStore = defineStore("project", {
@@ -67,5 +68,16 @@ export const useProjectStore = defineStore("project", {
             
             return state.project.hasSchemaChanges()
         },
+
+        getAllRowsByModelIdentifier(state) {
+            return (modelIdentifier: string) => {
+                const model: any = RelaDB.Resolver.db().getModel(modelIdentifier)
+
+                if(!model) return []
+
+                // call the static method to get all rows
+                return model.get()
+            }
+        }
     }
 })

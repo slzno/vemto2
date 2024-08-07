@@ -10,6 +10,7 @@
     import UiTextarea from "@Renderer/components/ui/UiTextarea.vue"
     import BasicEditor from "@Renderer/components/editors/BasicEditor.vue"
     import TemplateEngine from "@tiago_silva_pereira/vemto-template-engine"
+import UiSelect from "@Renderer/components/ui/UiSelect.vue"
 
     type TemplateDataType = "MODEL" | "JSON" | "STRING" | "RENDERABLE"
 
@@ -111,7 +112,7 @@
     </div> -->
 
     <div
-        class="h-screen overflow-y-auto pb-48 flex p-2"
+        class="h-screen overflow-y-auto pb-96 flex p-2"
     >
         <div class="w-1/5 h-full">
             <div id="templates-tree"></div>
@@ -119,6 +120,40 @@
 
         <div class="w-2/5 h-full">
             <BasicEditor ref="templateEditor" v-model="templateContent" />
+
+            <!-- Data -->
+            <div>
+                <div class="text-lg font-bold mt-4">Data</div>
+                <div class="mt-2">
+                    <div v-for="(item, key) in templateData" :key="key">
+                        <div class="flex items-center space-x-2">
+                            <UiText v-model="item.name" />
+                            <UiSelect v-model="item.type">
+                                <option value="MODEL">Model</option>
+                                <option value="JSON">JSON</option>
+                                <option value="STRING">String</option>
+                                <option value="RENDERABLE">Renderable</option>
+                            </UiSelect>
+
+                            <div v-if="item.type !== 'MODEL'">
+                                <UiText v-model="item.value" />
+                            </div>
+
+                            <div v-else>
+                                <UiSelect v-model="item.value">
+                                    <option v-for="modelRow in projectStore.getAllRowsByModelIdentifier(item.value)" :value="modelRow.id">
+                                        {{ modelRow.name }}
+                                    </option>
+                                </UiSelect>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <UiButton>
+                    <PlusIcon class="w-4 h-4 mr-1 text-red-500" />
+                    Add Data
+                </UiButton>
+            </div>
         </div>
 
         <div class="w-2/5 h-full">
