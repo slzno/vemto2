@@ -63,6 +63,9 @@ import UiSelect from "@Renderer/components/ui/UiSelect.vue"
     }
 
     const readTemplate = async (path: string) => {
+        renderedContent.value = ""
+        renderedEditor.value?.setValue("")
+
         templateContent.value = await Main.API.readTemplateFile(path)
         templateEditor.value?.setValue(templateContent.value)
         templateData.value = await readTemplateData(templateContent.value)
