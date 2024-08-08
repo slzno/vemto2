@@ -217,7 +217,8 @@ export default abstract class Renderable {
 
     getFullData() {
         const helpers = new TemplateHelpers(this.project),
-            data = this.overriddenData ? this.overriddenData : this.getData()
+            hasOverriddenData = Object.keys(this.overriddenData).length > 0,
+            data = hasOverriddenData ? this.overriddenData : this.getData()
 
         return {
             ...data,
