@@ -16,6 +16,11 @@ module.exports = {
                 '2500': '2500ms',
                 '3000': '3000ms',
             },
+            // add 1/24 and 23/24 to the spacing scale
+            spacing: {
+                '1/24': '4.166666666666667%',
+                '23/24': '95.83333333333333%',
+            },
         },
         colors: {
             transparent: 'transparent',

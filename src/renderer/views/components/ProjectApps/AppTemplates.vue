@@ -5,7 +5,7 @@
     import { ref, Ref, onMounted, watch } from "vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
-    import { PlusIcon } from "@heroicons/vue/24/outline"
+    import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon, PlusIcon } from "@heroicons/vue/24/outline"
     import { Wunderbaum } from "wunderbaum"
     import Main from "@Renderer/services/wrappers/Main"
     import UiTextarea from "@Renderer/components/ui/UiTextarea.vue"
@@ -14,7 +14,8 @@
     import UiSelect from "@Renderer/components/ui/UiSelect.vue"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import TemplateErrorViewer from "../Common/TemplateErrorViewer.vue"
-import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
+    import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
+    import UiSmallButton from "@Renderer/components/ui/UiSmallButton.vue"
 
     type TemplateDataType = "MODEL" | "JSON" | "STRING" | "RENDERABLE"
 
@@ -38,7 +39,8 @@ import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
         renderedContent = ref(""),
         renderedEditor = ref(null),
         hasRenderErrors = ref(false),
-        currentRenderError = ref(null)
+        currentRenderError = ref(null),
+        showingFilesTree = ref(true)
 
     const selectedTemplateTab = ref("template") as Ref<string>
 
@@ -65,6 +67,8 @@ import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
         loadTemplates()
 
         watch(templateContent, debounce(renderTemplate, 150))
+
+        showingFilesTree.value = window.localStorage.getItem("showingFilesTree") === "true"
     })
 
     const loadTemplates = async () => {
@@ -224,98 +228,116 @@ import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
 
         return structure
     }
+
+    const toggleShowingFilesTree = () => {
+        showingFilesTree.value = !showingFilesTree.value
+        window.localStorage.setItem("showingFilesTree", showingFilesTree.value ? "true" : "false")
+    }
 </script>
 
 <template>
-    <!-- <div class="mb-3 flex space-x-2">
-        <UiButton>
-            <PlusIcon class="w-4 h-4 mr-1 text-red-500" />
-            Add Section
-        </UiButton>
-    </div> -->
-
     <div
-        class="h-screen overflow-y-auto pb-20 flex p-2"
+        class="overflow-y-auto pb-20 flex p-2" style="height: calc(100vh - 20px);"
     >
-        <div class="w-1/5 h-full">
-            <div id="templates-tree"></div>
-        </div>
-
-        <div class="w-2/5 h-full">
-            <UiTabs 
-                :name="projectStore.project.getTabNameFor(`templates_code`)" 
-                :tabs="templateTabs" 
-                v-model="selectedTemplateTab" 
-            />
-
-            <div class="h-full" v-show="selectedTemplateTab === 'template'">
-                <BasicEditor ref="templateEditor" v-model="templateContent" />
+        <div 
+            class="h-full" 
+            :class="{ 'w-1/5': showingFilesTree, 'w-1/24': !showingFilesTree }"
+        >
+            <!-- Small button on left side to collapse the div -->
+            <div class="flex items-center justify-start p-2">
+                <div class="flex items-center space-x-2" title="Collapse/Expand Files Tree">
+                    <UiSmallButton @click="toggleShowingFilesTree()">
+                        <ChevronDoubleLeftIcon class="w-4 h-4" v-show="showingFilesTree" />
+                        <ChevronDoubleRightIcon class="w-4 h-4" v-show="!showingFilesTree" />
+                    </UiSmallButton>
+                </div>
             </div>
 
-            <!-- Template Data -->
-            <div class="p-2" v-show="selectedTemplateTab === 'data'">
-                <div class="mt-2">
-                    <div v-for="(item, key) in templateData" :key="key">
-                        <div class="flex items-center space-x-2 space-y-1">
-                            <div class="flex-1 w-1/3">
-                                <UiText v-model="item.name" />
-                            </div>
+             <div class="h-full" v-show="showingFilesTree">
+                 <div id="templates-tree"></div>
+             </div>
+        </div>
 
-                            <div class="flex-1 w-1/3">
-                                <div v-if="item.type !== 'MODEL'">
-                                    <UiText v-model="item.value" @input="renderTemplate" />
+        <div 
+            class="flex w-4/5 h-full"
+            :class="{ 'w-4/5': showingFilesTree, 'w-23/24': !showingFilesTree }"
+        >
+            <div class="w-1/2 h-full">
+                <UiTabs 
+                    :name="projectStore.project.getTabNameFor(`templates_code`)" 
+                    :tabs="templateTabs" 
+                    v-model="selectedTemplateTab" 
+                />
+    
+                <div class="h-full" v-show="selectedTemplateTab === 'template'">
+                    <BasicEditor ref="templateEditor" v-model="templateContent" />
+                </div>
+    
+                <!-- Template Data -->
+                <div class="p-2" v-show="selectedTemplateTab === 'data'">
+                    <div class="mt-2">
+                        <div v-for="(item, key) in templateData" :key="key">
+                            <div class="flex items-center space-x-2 space-y-1">
+                                <div class="flex-1 w-1/3">
+                                    <UiText v-model="item.name" />
                                 </div>
     
-                                <div v-else>
-                                    <UiSelect v-model="item.selection" @change="renderTemplate">    
-                                        <option v-for="modelRow in projectStore.getAllRowsByModelIdentifier(item.value)" :value="modelRow.id">
-                                            {{ modelRow.name || modelRow.title || modelRow.id }}
-                                        </option>
-                                    </UiSelect>
+                                <div class="flex-1 w-1/3">
+                                    <div v-if="item.type !== 'MODEL'">
+                                        <UiText v-model="item.value" @input="renderTemplate" />
+                                    </div>
+        
+                                    <div v-else>
+                                        <UiSelect v-model="item.selection" @change="renderTemplate">    
+                                            <option v-for="modelRow in projectStore.getAllRowsByModelIdentifier(item.value)" :value="modelRow.id">
+                                                {{ modelRow.name || modelRow.title || modelRow.id }}
+                                            </option>
+                                        </UiSelect>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="w-2/5 h-full">
-            <UiTabs 
-                :name="projectStore.project.getTabNameFor(`templates_rendered_code`)" 
-                :tabs="renderedTabs" 
-                v-model="selectedRenderedTab" 
-            />
-
-            <div class="h-full" v-show="selectedRenderedTab === 'rendered'">
-                <BasicEditor ref="renderedEditor" v-model="renderedContent" />
-            </div>
-
-            <div class="h-full" v-show="selectedRenderedTab === 'errors'">
-                <div v-if="hasRenderErrors" class="text-red-500 p-2">
-                    <div v-if="currentRenderError.hasTemplateError">
-                        <TemplateErrorViewer
-                            :errorMessage="currentRenderError.message"
-                            :errorLine="currentRenderError.templateErrorLine"
-                            :errorStack="currentRenderError.stack"
-                            :template="currentRenderError.templateName"
-                            :templateContent="currentRenderError.templateContent"
-                        ></TemplateErrorViewer>
-                    </div>
-                    
-                    <div v-else>
-                        <pre class="overflow-hidden whitespace-pre-wrap mb-2 text-red-450">{{ currentRenderError.message }}</pre>
-
-                        <div v-if="currentRenderError.stack" class="overflow-auto" style="max-height: calc(100vh - 350px);">
-                            <pre class="overflow-hidden whitespace-pre-wrap p-2 bg-slate-950 rounded-lg text-slate-200" style="max-width: 550px;">{{ currentRenderError.stack }}</pre>
+    
+            <div class="w-1/2 h-full">
+                <UiTabs 
+                    :name="projectStore.project.getTabNameFor(`templates_rendered_code`)" 
+                    :tabs="renderedTabs" 
+                    v-model="selectedRenderedTab" 
+                />
+    
+                <div class="h-full" v-show="selectedRenderedTab === 'rendered'">
+                    <BasicEditor ref="renderedEditor" v-model="renderedContent" />
+                </div>
+    
+                <div class="h-full" v-show="selectedRenderedTab === 'errors'">
+                    <div v-if="hasRenderErrors" class="text-red-500 p-2">
+                        <div v-if="currentRenderError.hasTemplateError">
+                            <TemplateErrorViewer
+                                :errorMessage="currentRenderError.message"
+                                :errorLine="currentRenderError.templateErrorLine"
+                                :errorStack="currentRenderError.stack"
+                                :template="currentRenderError.templateName"
+                                :templateContent="currentRenderError.templateContent"
+                            ></TemplateErrorViewer>
+                        </div>
+                        
+                        <div v-else>
+                            <pre class="overflow-hidden whitespace-pre-wrap mb-2 text-red-450">{{ currentRenderError.message }}</pre>
+    
+                            <div v-if="currentRenderError.stack" class="overflow-auto" style="max-height: calc(100vh - 350px);">
+                                <pre class="overflow-hidden whitespace-pre-wrap p-2 bg-slate-950 rounded-lg text-slate-200" style="max-width: 550px;">{{ currentRenderError.stack }}</pre>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="p-8" v-else>
-                    <UiEmptyMessage :local="true">
-                        No errors found
-                    </UiEmptyMessage>
+    
+                    <div class="p-8" v-else>
+                        <UiEmptyMessage :local="true">
+                            No errors found
+                        </UiEmptyMessage>
+                    </div>
                 </div>
             </div>
         </div>
