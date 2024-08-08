@@ -1,7 +1,8 @@
 <script setup lang="ts">
+    import { debounce } from "lodash"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
-    import { ref, Ref, onMounted, render } from "vue"
+    import { ref, Ref, onMounted, watch } from "vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import { PlusIcon } from "@heroicons/vue/24/outline"
@@ -10,7 +11,10 @@
     import UiTextarea from "@Renderer/components/ui/UiTextarea.vue"
     import BasicEditor from "@Renderer/components/editors/BasicEditor.vue"
     import TemplateEngine from "@tiago_silva_pereira/vemto-template-engine"
-import UiSelect from "@Renderer/components/ui/UiSelect.vue"
+    import UiSelect from "@Renderer/components/ui/UiSelect.vue"
+    import UiTabs from "@Renderer/components/ui/UiTabs.vue"
+    import TemplateErrorViewer from "../Common/TemplateErrorViewer.vue"
+import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
 
     type TemplateDataType = "MODEL" | "JSON" | "STRING" | "RENDERABLE"
 
@@ -32,11 +36,35 @@ import UiSelect from "@Renderer/components/ui/UiSelect.vue"
         templateEditor = ref(null),
         templateData = ref({}) as Ref<TemplateData>,
         renderedContent = ref(""),
-        renderedEditor = ref(null)
+        renderedEditor = ref(null),
+        hasRenderErrors = ref(false),
+        currentRenderError = ref(null)
+
+    const selectedTemplateTab = ref("template") as Ref<string>
+
+    const templateTabs = [
+        { label: "Template", value: "template" },
+        { label: "Data", value: "data" },
+    ]
+
+    const selectedRenderedTab = ref("rendered") as Ref<string>
+
+    const renderedTabs = [
+        { label: "Rendered Code", value: "rendered" },
+        { 
+            label: "Errors", 
+            value: "errors", 
+            badge: () => hasRenderErrors.value ? "1" : "0", 
+            emphasizeBadge: () => hasRenderErrors.value 
+        },
+    ]
 
     onMounted(() => {
         readTemplate("models/Model.vemtl")
+
         loadTemplates()
+
+        watch(templateContent, debounce(renderTemplate, 150))
     })
 
     const loadTemplates = async () => {
@@ -81,9 +109,6 @@ import UiSelect from "@Renderer/components/ui/UiSelect.vue"
             disableImportsProcessing: true,
         })).getDataDefinition()
 
-        // delete 'project' key as it is read-only
-        delete templateData.project
-
         // select the first model for each model type
         for (const key in templateData) {
             if (templateData[key].type === "MODEL") {
@@ -102,7 +127,10 @@ import UiSelect from "@Renderer/components/ui/UiSelect.vue"
             renderableInfo = extractRenderableInfo(templateData.value.renderable.value),
             renderableClass = await import(`${basePath}/${renderableInfo.className}.ts`)
 
+        hasRenderErrors.value = false
+
         if (!renderableClass) {
+            hasRenderErrors.value = true
             throw new Error(`Renderable ${templateData.value.renderable.value} not found`)
         }
 
@@ -122,9 +150,18 @@ import UiSelect from "@Renderer/components/ui/UiSelect.vue"
             getDataForRenderable()
         )
 
-        renderedContent.value = await renderable.compile(templateContent.value)
+        try {
+            renderedContent.value = await renderable.compile(templateContent.value)
+    
+            renderedEditor.value?.setValue(renderedContent.value)
 
-        renderedEditor.value?.setValue(renderedContent.value)
+            // selectedRenderedTab.value = "rendered"
+        } catch (error: any) {
+            // selectedRenderedTab.value = "errors"
+            hasRenderErrors.value = true
+            currentRenderError.value = error
+            console.error(error)
+        }
     }
 
     const getDataForRenderable = () => {
@@ -165,18 +202,22 @@ import UiSelect from "@Renderer/components/ui/UiSelect.vue"
                 let existingPath = currentLevel.find(
                     (item) => item.title === part
                 )
+
                 if (!existingPath) {
                     existingPath = {
                         title: part,
                         expanded: false,
                         children: [],
                     }
+
                     if (index === parts.length - 1) {
                         existingPath.path = filePath
                         delete existingPath.children
                     }
+
                     currentLevel.push(existingPath)
                 }
+
                 currentLevel = existingPath.children || []
             })
         })
@@ -194,60 +235,89 @@ import UiSelect from "@Renderer/components/ui/UiSelect.vue"
     </div> -->
 
     <div
-        class="h-screen overflow-y-auto pb-56 flex p-2"
+        class="h-screen overflow-y-auto pb-20 flex p-2"
     >
         <div class="w-1/5 h-full">
             <div id="templates-tree"></div>
         </div>
 
         <div class="w-2/5 h-full">
-            <div class="px-2 py-1">
-                Template
+            <UiTabs 
+                :name="projectStore.project.getTabNameFor(`templates_code`)" 
+                :tabs="templateTabs" 
+                v-model="selectedTemplateTab" 
+            />
+
+            <div class="h-full" v-show="selectedTemplateTab === 'template'">
+                <BasicEditor ref="templateEditor" v-model="templateContent" />
             </div>
 
-            <BasicEditor ref="templateEditor" v-model="templateContent" />
-
-            <!-- Data -->
-            <div>
-                <div class="text-lg font-bold mt-4">Data</div>
+            <!-- Template Data -->
+            <div class="p-2" v-show="selectedTemplateTab === 'data'">
                 <div class="mt-2">
                     <div v-for="(item, key) in templateData" :key="key">
-                        <div class="flex items-center space-x-2">
-                            <UiText v-model="item.name" />
-                            <UiSelect v-model="item.type">
-                                <option value="MODEL">Model</option>
-                                <option value="JSON">JSON</option>
-                                <option value="STRING">String</option>
-                                <option value="RENDERABLE">Renderable</option>
-                            </UiSelect>
-
-                            <div v-if="item.type !== 'MODEL'">
-                                <UiText v-model="item.value" />
+                        <div class="flex items-center space-x-2 space-y-1">
+                            <div class="flex-1 w-1/3">
+                                <UiText v-model="item.name" />
                             </div>
 
-                            <div v-else>
-                                <UiSelect v-model="item.selection">
-                                    <option v-for="modelRow in projectStore.getAllRowsByModelIdentifier(item.value)" :value="modelRow.id">
-                                        {{ modelRow.name }}
-                                    </option>
-                                </UiSelect>
+                            <div class="flex-1 w-1/3">
+                                <div v-if="item.type !== 'MODEL'">
+                                    <UiText v-model="item.value" @input="renderTemplate" />
+                                </div>
+    
+                                <div v-else>
+                                    <UiSelect v-model="item.selection" @change="renderTemplate">    
+                                        <option v-for="modelRow in projectStore.getAllRowsByModelIdentifier(item.value)" :value="modelRow.id">
+                                            {{ modelRow.name || modelRow.title || modelRow.id }}
+                                        </option>
+                                    </UiSelect>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <UiButton>
-                    <PlusIcon class="w-4 h-4 mr-1 text-red-500" />
-                    Add Data
-                </UiButton>
             </div>
         </div>
 
         <div class="w-2/5 h-full">
-            <div class="px-2 py-1">
-                Rendered Code
+            <UiTabs 
+                :name="projectStore.project.getTabNameFor(`templates_rendered_code`)" 
+                :tabs="renderedTabs" 
+                v-model="selectedRenderedTab" 
+            />
+
+            <div class="h-full" v-show="selectedRenderedTab === 'rendered'">
+                <BasicEditor ref="renderedEditor" v-model="renderedContent" />
             </div>
 
-            <BasicEditor ref="renderedEditor" v-model="renderedContent" />
+            <div class="h-full" v-show="selectedRenderedTab === 'errors'">
+                <div v-if="hasRenderErrors" class="text-red-500 p-2">
+                    <div v-if="currentRenderError.hasTemplateError">
+                        <TemplateErrorViewer
+                            :errorMessage="currentRenderError.message"
+                            :errorLine="currentRenderError.templateErrorLine"
+                            :errorStack="currentRenderError.stack"
+                            :template="currentRenderError.templateName"
+                            :templateContent="currentRenderError.templateContent"
+                        ></TemplateErrorViewer>
+                    </div>
+                    
+                    <div v-else>
+                        <pre class="overflow-hidden whitespace-pre-wrap mb-2 text-red-450">{{ currentRenderError.message }}</pre>
+
+                        <div v-if="currentRenderError.stack" class="overflow-auto" style="max-height: calc(100vh - 350px);">
+                            <pre class="overflow-hidden whitespace-pre-wrap p-2 bg-slate-950 rounded-lg text-slate-200" style="max-width: 550px;">{{ currentRenderError.stack }}</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-8" v-else>
+                    <UiEmptyMessage :local="true">
+                        No errors found
+                    </UiEmptyMessage>
+                </div>
+            </div>
         </div>
     </div>
 </template>

@@ -1,9 +1,7 @@
 <?php
 <# TEMPLATE SETTINGS #>
-<# DATA:JSON [ json = {} ] #>
 <# DATA:MODEL [ project = Project ] #>
 <# DATA:MODEL [ model = Model ] #>
-<# DATA:STRING [ text = "Hello World" ] #>
 <# DATA:RENDERABLE [ renderable = model/RenderableModel(model) ] #>
 <####>
 

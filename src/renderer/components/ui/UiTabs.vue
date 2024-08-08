@@ -21,7 +21,7 @@
                 label: string
                 value: string
                 badge?: string | Function
-                emphasize?: Boolean | Function
+                emphasizeBadge?: Boolean | Function
             }>,
             required: true,
         },
@@ -131,9 +131,9 @@
                 <!-- Tab badge -->
                 <div
                     class="flex items-center justify-center h-4 w-5 text-xs border border-slate-700 rounded"
-                    :class="typeof tab.emphasize === 'function' ?
-                        (tab.emphasize() ? 'border-red-500 text-red-500' : 'text-slate-500') :
-                        tab.emphasize ? 'border-red-500 text-red-500' : 'text-slate-500'"
+                    :class="typeof tab.emphasizeBadge === 'function' ?
+                        (tab.emphasizeBadge() ? 'bg-red-500 text-white border-red-500 animate-pulse' : 'text-slate-500') :
+                        tab.emphasizeBadge ? 'bg-red-500 text-white border-red-500 animate-pulse' : 'text-slate-500'"
                     v-if="typeof tab.badge !== 'undefined'"
                 >
                     {{ typeof tab.badge === "function" ? tab.badge() : tab.badge }}
