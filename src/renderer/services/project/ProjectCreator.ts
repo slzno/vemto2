@@ -75,7 +75,7 @@ export default class ProjectCreator {
 
         const installer = starterKitInstallers[this.data.starterKit]
 
-        if(typeof installer === undefined) return
+        if(!installer) return
 
         await installer.installFromProjectCreator(this.data, this.stateCallback)
     }

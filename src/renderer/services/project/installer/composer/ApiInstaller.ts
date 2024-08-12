@@ -1,19 +1,27 @@
 import Main from "@Renderer/services/wrappers/Main"
 import { ProjectCreatorData } from "../../ProjectCreator"
 import PathUtil from "@Common/util/PathUtil"
+import Project from "@Common/models/Project"
 
 export default class ApiInstaller {
     static async installFromProjectCreator(data: ProjectCreatorData, stateCallback: (state: string) => void = () => {}) {
         stateCallback("Installing Sanctum and setup API")
 
         await Main.API.executeArtisanOnPath(data.completePath, "install:api --no-interaction")
-        await this.addApiTraitToUserModel(data, stateCallback)
-    }
 
-    static async addApiTraitToUserModel(data: ProjectCreatorData, stateCallback: (state: string) => void = () => {}) {
         stateCallback("Adding API trait to User Model")
 
-        const userModelPath = PathUtil.join(data.completePath, "app/Models/User.php")
+        await this.addHasApiTokensTraitToUserModel(data.completePath)
+    }
+
+    static async installFromProjectGeneration(project: Project) {
+        await Main.API.executeArtisanOnProject("install:api --no-interaction")
+        
+        await this.addHasApiTokensTraitToUserModel(project.getPath())
+    }
+
+    static async addHasApiTokensTraitToUserModel(path: string) {
+        const userModelPath = PathUtil.join(path, "app/Models/User.php")
 
         await Main.API.readFile(userModelPath)
             .then(async (fileContent: string) => {
