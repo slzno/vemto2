@@ -12,7 +12,7 @@
     import ProjectCreator, { ProjectCreatorData } from "@Renderer/services/project/ProjectCreator"
     import PathUtil from "@Common/util/PathUtil"
     import UiSelect from "@Renderer/components/ui/UiSelect.vue"
-import UiLoading from "@Renderer/components/ui/UiLoading.vue"
+    import UiLoading from "@Renderer/components/ui/UiLoading.vue"
 
     const showingModal = ref(false)
     
@@ -39,6 +39,11 @@ import UiLoading from "@Renderer/components/ui/UiLoading.vue"
 
         showingModal.value = true
         errors.value = {}
+
+        const lastSelectedProjectPath = localStorage.getItem("lastSelectedProjectPath")
+        if(lastSelectedProjectPath) {
+            settings.value.path = lastSelectedProjectPath
+        }
     }
 
     const create = async () => {
@@ -136,6 +141,8 @@ import UiLoading from "@Renderer/components/ui/UiLoading.vue"
         }
 
         delete errors.value.path
+
+        localStorage.setItem("lastSelectedProjectPath", settings.value.path)
     }, 250)
 
     const resetSettings = () => {
