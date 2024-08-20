@@ -2,9 +2,11 @@ import { paramCase } from "change-case"
 import PathUtil from "@Common/util/PathUtil"
 import Main from "@Renderer/services/wrappers/Main"
 import RenderableUiComponent from "./RenderableUiComponent"
+import Project from "@Common/models/Project"
 
 export default class GenerateUiComponentsFiles {
-    async start() {
+    async start(project: Project) {
+        if(!project.codeGenerationSettings.uiComponents) return;
         
         const files = await Main.API.readInternalFolder("templates/blade/ui", true)
 

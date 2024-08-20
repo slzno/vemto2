@@ -136,7 +136,7 @@ export default class SequentialGenerator {
         // --------------------------------------------
 
         // Generating rendered files
-        await new GenerateUiComponentsFiles().start()
+        await new GenerateUiComponentsFiles().start(this.project)
 
         await new GenerateMenu().start(this.project)
 
@@ -150,7 +150,7 @@ export default class SequentialGenerator {
         
         await new GenerateDatabaseSeeder().start()
 
-        await new GenerateLivewireLayout().start()
+        await new GenerateLivewireLayout().start(this.project)
     }
 
     /**

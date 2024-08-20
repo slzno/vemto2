@@ -148,14 +148,14 @@ import UiLoading from "@Renderer/components/ui/UiLoading.vue"
     }
 
     const onStarterKitChanged = () => {
-        if(!["jetstream", "breeze"].includes(settings.value.starterKit)) {
+        if(!["jetstream", "breeze", "empty", "api"].includes(settings.value.starterKit)) {
             errors.value.starterKit = "Invalid starter kit"
             return
         }
 
         delete errors.value.starterKit
 
-        if(settings.value.starterKit === "breeze") {
+        if(settings.value.starterKit != "jetstream") {
             settings.value.usesJetstreamTeams = false
         }
     }
@@ -214,6 +214,8 @@ import UiLoading from "@Renderer/components/ui/UiLoading.vue"
                         <UiSelect v-model="settings.starterKit" label="UI Starter Kit" @change="onStarterKitChanged">
                             <option value="jetstream">Jetstream</option>
                             <option value="breeze">Breeze</option>
+                            <option value="empty">Empty</option>
+                            <option value="api">Api</option>
                         </UiSelect>
 
                         <template v-if="errors.starterKit !== undefined">
