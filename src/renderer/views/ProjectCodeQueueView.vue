@@ -398,6 +398,12 @@
                     @change="projectStore.project.save()"
                 />
 
+                <UiCheckbox
+                    v-model="projectStore.project.codeGenerationSettings.views"
+                    label="Generate Views"
+                    @change="projectStore.project.save()"
+                />
+
                 <!-- <UiCheckbox
                     v-model="projectStore.project.codeGenerationSettings.models"
                     label="Generate Models"
