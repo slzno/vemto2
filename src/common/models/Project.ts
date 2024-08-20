@@ -154,9 +154,31 @@ export default class Project extends RelaDB.Model {
     }
 
     startCodeGenerationSettings() {
+        this.fixCodeGenerationSettings()
+
         if (this.codeGenerationSettings) return
 
-        this.codeGenerationSettings = {
+        this.codeGenerationSettings = this.getDefaultCodeGenerationSettings()
+
+        this.save()
+    }
+
+    fixCodeGenerationSettings() {
+        if (!this.codeGenerationSettings) return
+
+        const defaultCodeGenerationSettings = this.getDefaultCodeGenerationSettings()
+
+        Object.keys(defaultCodeGenerationSettings).forEach((key) => {
+            if (typeof this.codeGenerationSettings[key] === "undefined") {
+                this.codeGenerationSettings[key] = defaultCodeGenerationSettings[key]
+            }
+        })
+
+        this.save()
+    }
+
+    getDefaultCodeGenerationSettings(): ProjectCodeGenerationSettings {
+        return {
             models: true,
             factories: true,
             seeders: true,
@@ -170,9 +192,8 @@ export default class Project extends RelaDB.Model {
             translationsOnViews: true,
             translationsFormat: TranslationsFormat.UNDERSCORE,
         }
-
-        this.save()
     }
+
 
     static findOrCreate(): Project {
         let project = Project.find(1)
