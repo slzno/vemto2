@@ -9,6 +9,7 @@ import GenerateCrudApiRoutes from './services/GenerateCrudApiRoutes'
 import FilamentInputData from './filament/FilamentInputData'
 import FilamentInputSettings from './filament/FilamentInputSettings'
 import AppSection from '../AppSection'
+import { NovaInputType } from './nova/NovaInputTypesList'
 
 export default class BelongsToManyDetail extends RelaDB.Model {
     id: string
@@ -54,6 +55,11 @@ export default class BelongsToManyDetail extends RelaDB.Model {
             excludedColumns
         )
 
+        if(crud.isForNova()) {
+            detailCrud.novaSettings.displayInNavigation = false
+            detailCrud.novaSettings.clickAction = 'ignore'
+        }
+
         detailCrud.basePath = `${capitalCase(crud.name)}${capitalCase(detailCrud.plural)}Detail`
         detailCrud.isBelongsToManyDetail = true
         detailCrud.save()
@@ -72,6 +78,15 @@ export default class BelongsToManyDetail extends RelaDB.Model {
             if(crud.isForFilament()) {
                 input.filamentSettings.formData.canBeSearchable = true
                 input.filamentSettings.formData.inputType = FilamentInputType.SELECT
+            }
+
+            if(crud.isForNova()) {
+                input.type = InputType.TEXT
+                input.novaSettings.inputType = NovaInputType.TEXT
+                input.showOnCreation = false
+                input.showOnUpdate = false
+                input.showOnDetails = false
+                input.showOnIndex = true
             }
             
             input.save()

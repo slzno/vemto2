@@ -21,7 +21,8 @@ export enum CrudType {
     API = "API",
     VUE = "Vue",
     LIVEWIRE = "Livewire",
-    FILAMENT = "Filament"
+    FILAMENT = "Filament",
+    NOVA = "Nova"
 }
 
 export enum CrudSubType {
@@ -51,6 +52,19 @@ export interface FilamentCrudSettings {
     navigationParentItem: string
     navigationGroup: string
     slug: string
+}
+
+export interface NovaCrudSettings {
+    displayInNavigation: boolean
+    group: string
+    tableStyle: "default" | "tight"
+    showColumnBorders: boolean
+    clickAction: "detail" | "edit" | "select" | "preview" | "ignore"
+    trafficCop: boolean
+    polling: boolean
+    pollingInterval: number
+    showPollingToggle: boolean
+    debounce: number
 }
 
 export default class Crud extends RelaDB.Model {
@@ -105,6 +119,7 @@ export default class Crud extends RelaDB.Model {
     livewireEditComponentName: string
 
     filamentSettings: FilamentCrudSettings
+    novaSettings: NovaCrudSettings
     
     relationships() {
         return {
@@ -159,6 +174,10 @@ export default class Crud extends RelaDB.Model {
         return Crud.get().filter((crud: Crud) => crud.isForFilament() && !crud.isDetail())
     }
 
+    static getNovaResources() {
+        return Crud.get().filter((crud: Crud) => crud.isForNova() && !crud.isDetail())
+    }
+
     isInvalid(): boolean {
         return ! this.isValid()
     }
@@ -175,7 +194,7 @@ export default class Crud extends RelaDB.Model {
     }
 
     isBasic() {
-        return !this.isDetail() && !this.isForFilament() && !this.isApi()
+        return !this.isDetail() && !this.isForFilament() && !this.isApi() && !this.isForNova()
     }
 
     isDetail() {
@@ -201,7 +220,8 @@ export default class Crud extends RelaDB.Model {
         generateDetails: boolean = false
     ) {
         const defaultSearchColumn = model.table.getLabelColumn(),
-            crudIsForFilament = crudType == CrudType.FILAMENT
+            crudIsForFilament = crudType == CrudType.FILAMENT,
+            crudIsForNova = crudType == CrudType.NOVA
 
         const defaultSortColumn = model.table.getUpdatedAtColumn() 
             || model.table.getCreatedAtColumn()
@@ -237,6 +257,7 @@ export default class Crud extends RelaDB.Model {
         crud.defaultSortDirection = "desc"
 
         if(crudIsForFilament) crud.calculateFilamentSettings()
+        if(crudIsForNova) crud.calculateNovaSettings()
 
         crud.save()
 
@@ -247,7 +268,7 @@ export default class Crud extends RelaDB.Model {
             crud.addBelongsToManyDetails()
         }
 
-        if(!crudIsForFilament) {
+        if(!crudIsForFilament && !crudIsForNova) {
             crud.addRoutes()
             
             if(crud.type != CrudType.API) crud.addNavs()
@@ -262,7 +283,8 @@ export default class Crud extends RelaDB.Model {
         excludedColumns: Column[] = []
     ) {
         const defaultSearchColumn = model.table.getLabelColumn(),
-            crudIsForFilament = crudType == CrudType.FILAMENT
+            crudIsForFilament = crudType == CrudType.FILAMENT,
+            crudIsForNova = crudType == CrudType.NOVA
 
         const defaultSortColumn = model.table.getUpdatedAtColumn() 
             || model.table.getCreatedAtColumn()
@@ -298,6 +320,7 @@ export default class Crud extends RelaDB.Model {
         crud.defaultSortDirection = "desc"
 
         if(crudIsForFilament) crud.calculateFilamentSettings()
+        if(crudIsForNova) crud.calculateNovaSettings()
 
         crud.save()
 
@@ -312,7 +335,8 @@ export default class Crud extends RelaDB.Model {
         excludedColumns: Column[] = []
     ) {
         const defaultSearchColumn = table.getLabelColumn(),
-            crudIsForFilament = crudType == CrudType.FILAMENT
+            crudIsForFilament = crudType == CrudType.FILAMENT,
+            crudIsForNova = crudType == CrudType.NOVA
 
         const defaultSortColumn = table.getUpdatedAtColumn() 
             || table.getCreatedAtColumn()
@@ -352,6 +376,7 @@ export default class Crud extends RelaDB.Model {
         crud.defaultSortDirection = "desc"
 
         if(crudIsForFilament) crud.calculateFilamentSettings()
+        if(crudIsForNova) crud.calculateNovaSettings()
 
         crud.save()
 
@@ -371,7 +396,8 @@ export default class Crud extends RelaDB.Model {
         excludedColumns: Column[] = []
     ) {
         const defaultSearchColumn = table.getLabelColumn(),
-            crudIsForFilament = crudType == CrudType.FILAMENT
+            crudIsForFilament = crudType == CrudType.FILAMENT,
+            crudIsForNova = crudType == CrudType.NOVA
 
         const defaultSortColumn = table.getUpdatedAtColumn() 
             || table.getCreatedAtColumn()
@@ -411,6 +437,7 @@ export default class Crud extends RelaDB.Model {
         crud.defaultSortDirection = "desc"
 
         if(crudIsForFilament) crud.calculateFilamentSettings()
+        if(crudIsForNova) crud.calculateNovaSettings()
 
         crud.save()
 
@@ -426,7 +453,8 @@ export default class Crud extends RelaDB.Model {
         excludedColumns: Column[] = []
     ) {
         const defaultSearchColumn = model.table.getLabelColumn(),
-            crudIsForFilament = crudType == CrudType.FILAMENT
+            crudIsForFilament = crudType == CrudType.FILAMENT,
+            crudIsForNova = crudType == CrudType.NOVA
 
         const defaultSortColumn = model.table.getUpdatedAtColumn() 
             || model.table.getCreatedAtColumn()
@@ -462,6 +490,7 @@ export default class Crud extends RelaDB.Model {
         crud.defaultSortDirection = "desc"
 
         if(crudIsForFilament) crud.calculateFilamentSettings()
+        if(crudIsForNova) crud.calculateNovaSettings()
 
         crud.addFakeInputsFromModel(model, excludedColumns)
 
@@ -491,6 +520,7 @@ export default class Crud extends RelaDB.Model {
 
     getAppType(): string {
         if(this.type === CrudType.FILAMENT) return "FILAMENT"
+        if(this.type === CrudType.NOVA) return "NOVA"
         if(this.type === CrudType.API) return "API Resource"
 
         return "CRUD"
@@ -556,6 +586,22 @@ export default class Crud extends RelaDB.Model {
         return this.inputs.filter((input) => input.isJson())
     }
 
+    hasHasManyDetails(): boolean {
+        return this.hasManyDetails.length > 0
+    }
+
+    hasBelongsToManyDetails(): boolean {
+        return this.belongsToManyDetails.length > 0
+    }
+
+    hasMorphToManyDetails(): boolean {
+        return this.morphToManyDetails.length > 0
+    }
+
+    hasMorphManyDetails(): boolean {
+        return this.morphManyDetails.length > 0
+    }
+
     getInputsForIndexExcept(excludedInputs: Input | Input[]): Input[] {
         let excludedInputIds = []
 
@@ -588,6 +634,10 @@ export default class Crud extends RelaDB.Model {
         return this.getOrderedInputs().filter((input) => input.showOnCreation || input.showOnUpdate)
     }
 
+    getInputsForNovaDetailForms(): Input[] {
+        return this.getOrderedInputs().filter((input) => input.showOnCreation || input.showOnUpdate || input.showOnIndex)
+    }
+
     getInputsForFormsExcept(excludedInputs: Input | Input[]): Input[] {
         let excludedInputIds = []
 
@@ -598,6 +648,10 @@ export default class Crud extends RelaDB.Model {
         }
 
         return this.getInputsForForms().filter((input) => !excludedInputIds.includes(input.id))
+    }
+
+    getManyToManyDetails(): (BelongsToManyDetail | MorphToManyDetail)[] {
+        return [...this.belongsToManyDetails, ...this.morphToManyDetails]
     }
 
     calculateSettings(name: string = null, plural: string = null) {
@@ -879,9 +933,28 @@ export default class Crud extends RelaDB.Model {
             slug: null
         } as FilamentCrudSettings
     }
+    
+    calculateNovaSettings() {
+        this.novaSettings = {
+            displayInNavigation: !this.isDetail(),
+            group: "Admin",
+            tableStyle: "default",
+            showColumnBorders: false,
+            clickAction: "detail",
+            trafficCop: true,
+            polling: false,
+            pollingInterval: 0,
+            showPollingToggle: false,
+            debounce: 0
+        } as NovaCrudSettings
+    }
 
     isForFilament(): boolean {
         return this.type === CrudType.FILAMENT
+    }
+
+    isForNova(): boolean {
+        return this.type === CrudType.NOVA
     }
 
     isForLivewire(): boolean {

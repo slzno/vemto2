@@ -4,6 +4,7 @@
     import CrudManager from "./components/ProjectApps/CrudManager.vue"
     import CrudApiManager from "./components/ProjectApps/CrudApiManager.vue"
     import FilamentResourceManager from "./components/ProjectApps/FilamentResourceManager.vue"
+    import NovaResourceManager from "./components/ProjectApps/NovaResourceManager.vue"
     import { useRouter } from "vue-router"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import { ref, Ref, computed, onMounted } from "vue"
@@ -97,12 +98,9 @@
             <div class="flex space-x-2">
                 <CrudManager @created="loadApps()" />
                 <PageManager @created="loadApps()" />
-                <FilamentResourceManager @created="loadApps()" />
                 <CrudApiManager @created="loadApps()" />
-                <UiButton disabled>
-                    <PlusIcon class="w-4 h-4 mr-1" />
-                    Nova Resource
-                </UiButton>
+                <FilamentResourceManager @created="loadApps()" />
+                <NovaResourceManager @created="loadApps()" />
                 <UiButton disabled>
                     <PlusIcon class="w-4 h-4 mr-1" />
                     Report
