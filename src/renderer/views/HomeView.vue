@@ -27,7 +27,6 @@
     import UiHint from "@Renderer/components/ui/UiHint.vue"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import ProjectSettingsFileManager from "@Renderer/services/project/ProjectSettingsFileManager"
-    
 
     const projectManager = new ProjectManager(),
         search = ref(""),

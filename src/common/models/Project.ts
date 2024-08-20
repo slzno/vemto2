@@ -186,8 +186,8 @@ export default class Project extends RelaDB.Model {
             requests: true,
             controllers: true,
             routes: true,
-            views: !this.isApiStarterKit(),
-            uiComponents: !this.isApiStarterKit(),
+            views: this.starterKitNeedsViewsAndUiComponents(),
+            uiComponents: this.starterKitNeedsViewsAndUiComponents(),
             livewireLayout: (this.isBreeze() || this.isJetstream()) && this.settings.usesLivewire,
             translationsOnViews: true,
             translationsFormat: TranslationsFormat.UNDERSCORE,
@@ -903,6 +903,18 @@ export default class Project extends RelaDB.Model {
 
     isApiStarterKit(): boolean {
         return this.settings.uiStarterKit === ProjectUIStarterKit.API
+    }
+
+    isOtherStarterKit(): boolean {
+        return this.settings.uiStarterKit === ProjectUIStarterKit.OTHER
+    }
+
+    starterKitDoesNotNeedViewsAndUiComponents(): boolean {
+        return !this.starterKitNeedsViewsAndUiComponents()
+    }
+
+    starterKitNeedsViewsAndUiComponents(): boolean {
+        return !this.isEmptyStarterKit() && !this.isApiStarterKit() && !this.isOtherStarterKit()
     }
 
     isFreshLaravelProject(): boolean {
