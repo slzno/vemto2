@@ -17,7 +17,16 @@ import Alert from '@Renderer/components/utils/Alert'
 
     const projectStore = useProjectStore()
 
-    const show = () => {
+    const show = async () => {
+        const projectInfo = new ProjectInfo(projectStore.project.getPath())
+
+        await projectInfo.read()
+
+        if(!projectInfo.getComposerPackageVersion("laravel/nova")) {
+            Alert.warning("Laravel Nova is not installed in this project. Please install it to be able to create Nova resources.")
+            return
+        }
+
         showingModal.value = true
     }
 
@@ -34,15 +43,6 @@ import Alert from '@Renderer/components/utils/Alert'
     watch(selectedModelId, modelChanged)
 
     const save = async () => {
-        const projectInfo = new ProjectInfo(projectStore.project.getPath())
-
-        await projectInfo.read()
-
-        if(!projectInfo.getComposerPackageVersion("laravel/nova")) {
-            Alert.warning("Nova is not installed in this project. Please install it first.")
-            return
-        }
-
         Crud.createFromModel(
             selectedModel.value,
             CrudType.NOVA
