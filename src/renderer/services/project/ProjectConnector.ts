@@ -2,6 +2,7 @@ import Main from "../wrappers/Main"
 import SchemaBuilder from "../schema/SchemaBuilder"
 import Project, { ProjectSettings, ProjectUIStarterKit } from "@Common/models/Project"
 import GenerateBasicProjectData from "@Renderer/services/project/GenerateBasicProjectData"
+import RenderableBootstrapApp from "@Renderer/codegen/sequential/services/routes/RenderableBootstrapApp"
 
 export default class ProjectConnector {
 
@@ -22,9 +23,9 @@ export default class ProjectConnector {
             this.setProjectSettingsDefaults(settings)
     
             await this.createVemtoFolder()
-            await this.createNecessaryFiles()
             await this.doFirstSchemaSync()
             await this.generateBasicProjectData()
+            await this.createNecessaryFiles()
             await this.saveProject()
 
             this.project.refresh()
@@ -46,9 +47,10 @@ export default class ProjectConnector {
 
         console.log("Creating files for fresh Laravel project")
 
-        // TODO: change this to render the files instead of copying
-        // const bootstrapPath = "file-templates/starter-kits/default/bootstrap"
-        // await Main.API.copyInternalFolderToProject(bootstrapPath, "/")
+        // Render the bootstrap/app.php file (ignoring conflicts)
+        const renderable = new RenderableBootstrapApp()
+        const rendered = await renderable.render(true)
+        console.log("Rendered bootstrap/app.php", rendered)
 
         if(this.isBreezeLivewire()) {
             console.log("Creating files for Breeze project")

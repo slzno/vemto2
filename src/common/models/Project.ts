@@ -524,7 +524,8 @@ export default class Project extends RelaDB.Model {
         name: string,
         template: string,
         type: RenderableFileType = RenderableFileType.PHP,
-        status: RenderableFileStatus = RenderableFileStatus.PREPARING
+        status: RenderableFileStatus = RenderableFileStatus.PREPARING,
+        ignoreConflicts: boolean = false
     ) : RenderableFile {
         let renderableFile: RenderableFile = null
 
@@ -554,6 +555,7 @@ export default class Project extends RelaDB.Model {
         renderableFile.projectId = this.id
         renderableFile.type = type
         renderableFile.status = status
+        renderableFile.ignoreConflicts = ignoreConflicts
 
         renderableFile.save()
 

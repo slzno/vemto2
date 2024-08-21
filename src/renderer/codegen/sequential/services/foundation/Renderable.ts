@@ -118,7 +118,7 @@ export default abstract class Renderable {
         return this
     }
 
-    async render() {
+    async render(ignoreConflicts: boolean = false) {
         console.log("Renderable mode", Renderable.mode)
 
         if(Renderable.isCheckerMode()) {
@@ -137,7 +137,7 @@ export default abstract class Renderable {
             console.log(`Rendering ${this.getTemplateFile()} as ${this.getFullFilePath()}...`)
         }
 
-        const file = this.registerFile()
+        const file = this.registerFile(ignoreConflicts)
 
         if(file.wasIgnored()) {
             if(this.logEnabled) {
@@ -185,12 +185,14 @@ export default abstract class Renderable {
         )
     }
 
-    registerFile(): RenderableFile {
+    registerFile(ignoreConflicts: boolean = false): RenderableFile {
         return this.project.registerRenderableFile(
             this.getPath(), 
             this.getFilename(),
             this.getTemplateFile(), 
-            this.getType()
+            this.getType(),
+            RenderableFileStatus.PREPARING,
+            ignoreConflicts
         )
     }
 
