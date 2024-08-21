@@ -11,6 +11,7 @@
     import { CodeBracketIcon, DocumentMinusIcon, MinusCircleIcon } from "@heroicons/vue/24/outline"
     import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
     import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
+    import SimpleErrorViewer from "../Common/SimpleErrorViewer.vue"
 
     const emit = defineEmits(["showConflictsSolver"])
 
@@ -135,11 +136,16 @@
                 />
             </div>
 
-            <pre
-                v-text="file.error"
-                class="overflow-hidden whitespace-pre-wrap text-red-400 bg-slate-100 dark:bg-slate-950 rounded-lg p-4"
-                v-else
-            ></pre>
+            <div v-else>
+                <SimpleErrorViewer
+                    :errorMessage="file.error"
+                    :errorStack="file.errorStack"
+                />
+                <!-- <pre
+                    v-text="file.error"
+                    class="overflow-hidden whitespace-pre-wrap text-red-400 bg-slate-100 dark:bg-slate-950 rounded-lg p-4"
+                ></pre> -->
+            </div>
         </div>
     </div>
 </template>

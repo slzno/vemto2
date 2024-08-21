@@ -163,6 +163,8 @@ export default abstract class Renderable {
             
             if(this.afterRender) this.afterRender(compiledTemplate)
         } catch (error: any) {
+            console.error(error)
+
             file.setError(error.message, error.stack)
 
             if(error.hasTemplateError) {
@@ -253,7 +255,7 @@ export default abstract class Renderable {
         const templateFile = this.getTemplateFile(), 
             templateCompiler = new TemplateCompiler(),
             templateContent = await Main.API.readTemplateFile(templateFile)
-
+            
         templateCompiler
             .setContent(templateContent)
             .setData(this.getFullData())
