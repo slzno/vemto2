@@ -52,7 +52,9 @@ export default class GenerateBasicSchemaSections {
         const laravelSection = this.project.getSchemaSectionByName("Laravel")
 
         this.project.tables.forEach(table => {
-            if(table.isLaravelDefaultTable() && !table.belongsToASection()) {
+            const tableGoesToLaravelSection = table.isLaravelDefaultTable() || table.isNovaTable()
+
+            if(tableGoesToLaravelSection && !table.belongsToASection()) {
                 table.sectionId = laravelSection.id
                 table.save()
             }

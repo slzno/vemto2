@@ -725,6 +725,15 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         this.save()
     }
 
+    isNovaTable(): boolean {
+        return [
+            "nova_notifications",
+            "nova_field_attachments",
+            "nova_pending_field_attachments",
+            "action_events",
+        ].includes(this.name)
+    }
+
     isLaravelDefaultTable(): boolean {
         return [
             "password_reset_tokens", 
@@ -735,7 +744,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
             "cache_locks",
             "jobs",
             "job_batches",
-            "failed_jobs", 
+            "failed_jobs",
         ].includes(this.name)
     }
 
