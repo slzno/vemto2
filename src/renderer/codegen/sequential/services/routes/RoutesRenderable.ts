@@ -8,10 +8,10 @@ import {
 export default class RoutesRenderable extends Renderable {
     routes: Route[]
 
-    constructor(routes: Route[]) {
+    constructor() {
         super()
 
-        this.routes = routes
+        this.routes = Route.getWebRoutes()
     }
 
     canRender(): boolean {

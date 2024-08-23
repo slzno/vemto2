@@ -10,11 +10,11 @@ export default class ApiRoutesRenderable extends Renderable {
     routes: Route[]
     cruds: Crud[]
 
-    constructor(routes: Route[], cruds: Crud[]) {
+    constructor() {
         super()
 
-        this.routes = routes
-        this.cruds = cruds
+        this.routes = Route.getApiRoutes()
+        this.cruds = Crud.getApis()
     }
 
     canRender(): boolean {

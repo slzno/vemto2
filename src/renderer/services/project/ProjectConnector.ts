@@ -3,6 +3,8 @@ import SchemaBuilder from "../schema/SchemaBuilder"
 import Project, { ProjectSettings, ProjectUIStarterKit } from "@Common/models/Project"
 import GenerateBasicProjectData from "@Renderer/services/project/GenerateBasicProjectData"
 import RenderableBootstrapApp from "@Renderer/codegen/sequential/services/routes/RenderableBootstrapApp"
+import RoutesRenderable from "@Renderer/codegen/sequential/services/routes/RoutesRenderable"
+import ApiRoutesRenderable from "@Renderer/codegen/sequential/services/routes/ApiRoutesRenderable"
 
 export default class ProjectConnector {
 
@@ -48,9 +50,14 @@ export default class ProjectConnector {
         console.log("Creating files for fresh Laravel project")
 
         // Render the bootstrap/app.php file (ignoring conflicts)
-        const renderable = new RenderableBootstrapApp()
-        const rendered = await renderable.render(true)
-        console.log("Rendered bootstrap/app.php", rendered)
+        const renderableBootstrapApp = new RenderableBootstrapApp()
+        await renderableBootstrapApp.render(true)
+
+        const renderableRoutes = new RoutesRenderable()
+        await renderableRoutes.render(true)
+
+        const renderableApiRoutes = new ApiRoutesRenderable()
+        await renderableApiRoutes.render(true)
 
         if(this.isBreezeLivewire()) {
             console.log("Creating files for Breeze project")
