@@ -266,6 +266,12 @@
                 @close="appStore.finishGeneratingCode()"
             />
 
+            <LicenseModal 
+                ref="licenseModal"
+                show-warning
+                :warningMessage="licenseModalWarningMessage"
+            />
+
             <ApiDependencyModal ref="apiDependencyModal" />
 
             <UiConfirm ref="confirmDialog" :title="confirmDialogTitle">
