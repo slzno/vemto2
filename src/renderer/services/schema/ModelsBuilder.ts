@@ -108,6 +108,11 @@ export default class ModelsBuilder {
     }
 
     readRelationships(modelData: any, model: Model) {
+        if(!model.table) {
+            console.log('Model ' + model.class + ' does not have a table')
+            return
+        }
+
         const relationshipsNames = model.getRelationshipsNames(),
             relationshipsKeyedByName = model.getAllRelationshipsKeyedByName()
 

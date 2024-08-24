@@ -27,7 +27,6 @@
     import UiHint from "@Renderer/components/ui/UiHint.vue"
     import UiTabs from "@Renderer/components/ui/UiTabs.vue"
     import ProjectSettingsFileManager from "@Renderer/services/project/ProjectSettingsFileManager"
-    
 
     const projectManager = new ProjectManager(),
         search = ref(""),
@@ -54,7 +53,7 @@
             usesReact: false,
             usesSvelte: false,
             isFreshLaravelProject: false,
-            schemaReaderMode: "migration",
+            schemaReaderMode: "db",
             schemaReaderDbDriver: "mysql",
             schemaReaderDbHost: "127.0.0.1",
             schemaReaderDbPort: "3306",
@@ -460,8 +459,8 @@
 
                         <div class="w-2/3 space-y-2">
                             <UiSelect v-model="connectingFolderSettings.schemaReaderMode" label="Mode">
-                                <option value="migration">Migration - Read from migrations files</option>
                                 <option value="db">Database - Read from a database</option>
+                                <option value="migration">Migration - Read from migrations files</option>
                             </UiSelect>
                             
                             <div 

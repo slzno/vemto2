@@ -15,6 +15,7 @@ import PackageChecker from "./services/PackageChecker"
 import RenderableFile from "@Common/models/RenderableFile"
 import GenerateLivewireLayout from "./services/crud/GenerateLivewireLayout"
 import GenerateCrudApiFiles from "./services/crud/GenerateCrudApiFiles"
+import GenerateNovaResources from "./services/crud/GenerateNovaResources"
 import AddRoutesToServiceProvider from "./services/routes/AddRoutesToServiceProvider"
 
 export default class SequentialGenerator {
@@ -136,7 +137,7 @@ export default class SequentialGenerator {
         // --------------------------------------------
 
         // Generating rendered files
-        await new GenerateUiComponentsFiles().start()
+        await new GenerateUiComponentsFiles().start(this.project)
 
         await new GenerateMenu().start(this.project)
 
@@ -146,11 +147,12 @@ export default class SequentialGenerator {
         await new GenerateCrudFiles().start()
         await new GenerateCrudApiFiles().start(this.project)
         await new GenerateFilamentResources().start()
+        await new GenerateNovaResources().start()
         await new GeneratePageFiles().start()
         
         await new GenerateDatabaseSeeder().start()
 
-        await new GenerateLivewireLayout().start()
+        await new GenerateLivewireLayout().start(this.project)
     }
 
     /**

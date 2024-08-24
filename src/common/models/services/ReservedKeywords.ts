@@ -2,6 +2,8 @@ import { default as pluralizer } from 'pluralize'
 
 export default class ReservedKeywords {
     isReserved(word: string): boolean {
+        if(!word) return false
+
         word = word.toLowerCase()
 
         return this.getAll().includes(word)

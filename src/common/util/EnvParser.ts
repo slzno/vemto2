@@ -106,6 +106,9 @@ export default class EnvParser {
             } else {
                 let [key, value] = line.split('=')
 
+                if (!key) return
+                if (!value) value = "" // if no value is provided, set it to empty string
+
                 // remove any line breaks from the value
                 value = value.replace(/\r?\n|\r/g, "")
 

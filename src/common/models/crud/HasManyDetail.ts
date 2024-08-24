@@ -14,13 +14,11 @@ export default class HasManyDetail extends RelaDB.Model {
     detailCrudId: string
     relationship: Relationship
     relationshipId: string
-    routes: Route[]
     section: AppSection
     sectionId: string
 
     relationships() {
         return {
-            routes: () => this.morphMany(Route, 'routable').cascadeDelete(),
             section: () => this.belongsTo(AppSection, "sectionId"),
 
             crud: () => this.belongsTo(Crud),
@@ -47,6 +45,10 @@ export default class HasManyDetail extends RelaDB.Model {
             crud.type,
             excludedColumns
         )
+
+        if(crud.isForNova()) {
+            detailCrud.novaSettings.displayInNavigation = false
+        }
 
         detailCrud.basePath = `${capitalCase(crud.name)}${capitalCase(detailCrud.plural)}Detail`
         detailCrud.isHasManyDetail = true

@@ -8,7 +8,6 @@ import { v4 as uuid } from "uuid"
 import Relationship from "./Relationship"
 import RelaDB from "@tiago_silva_pereira/reladb"
 import { compareVersions } from "compare-versions"
-
 import RenderableFile, {
     RenderableFileStatus,
     RenderableFileType,
@@ -34,6 +33,8 @@ interface ProjectCodeGenerationSettings {
     controllers: boolean,
     routes: boolean,
     views: boolean,
+    uiComponents: boolean,
+    livewireLayout: boolean,
     translationsOnViews: boolean,
     translationsFormat: TranslationsFormat,
 }
@@ -60,6 +61,8 @@ export enum ProjectUIStarterKit {
     JETSTREAM = "jetstream",
     BREEZE = "breeze",
     LARAVEL_UI = "laravel_ui",
+    EMPTY = "empty",
+    API = "api",
     OTHER = "other",
 }
 
@@ -151,9 +154,31 @@ export default class Project extends RelaDB.Model {
     }
 
     startCodeGenerationSettings() {
+        this.fixCodeGenerationSettings()
+
         if (this.codeGenerationSettings) return
 
-        this.codeGenerationSettings = {
+        this.codeGenerationSettings = this.getDefaultCodeGenerationSettings()
+
+        this.save()
+    }
+
+    fixCodeGenerationSettings() {
+        if (!this.codeGenerationSettings) return
+
+        const defaultCodeGenerationSettings = this.getDefaultCodeGenerationSettings()
+
+        Object.keys(defaultCodeGenerationSettings).forEach((key) => {
+            if (typeof this.codeGenerationSettings[key] === "undefined") {
+                this.codeGenerationSettings[key] = defaultCodeGenerationSettings[key]
+            }
+        })
+
+        this.save()
+    }
+
+    getDefaultCodeGenerationSettings(): ProjectCodeGenerationSettings {
+        return {
             models: true,
             factories: true,
             seeders: true,
@@ -161,13 +186,14 @@ export default class Project extends RelaDB.Model {
             requests: true,
             controllers: true,
             routes: true,
-            views: true,
+            views: this.starterKitNeedsViewsAndUiComponents(),
+            uiComponents: this.starterKitNeedsViewsAndUiComponents(),
+            livewireLayout: (this.isBreeze() || this.isJetstream()) && this.settings.usesLivewire,
             translationsOnViews: true,
             translationsFormat: TranslationsFormat.UNDERSCORE,
         }
-
-        this.save()
     }
+
 
     static findOrCreate(): Project {
         let project = Project.find(1)
@@ -498,7 +524,8 @@ export default class Project extends RelaDB.Model {
         name: string,
         template: string,
         type: RenderableFileType = RenderableFileType.PHP,
-        status: RenderableFileStatus = RenderableFileStatus.PREPARING
+        status: RenderableFileStatus = RenderableFileStatus.PREPARING,
+        ignoreConflicts: boolean = false
     ) : RenderableFile {
         let renderableFile: RenderableFile = null
 
@@ -528,6 +555,7 @@ export default class Project extends RelaDB.Model {
         renderableFile.projectId = this.id
         renderableFile.type = type
         renderableFile.status = status
+        renderableFile.ignoreConflicts = ignoreConflicts
 
         renderableFile.save()
 
@@ -869,6 +897,26 @@ export default class Project extends RelaDB.Model {
 
     isBreeze(): boolean {
         return this.settings.uiStarterKit === ProjectUIStarterKit.BREEZE
+    }
+
+    isEmptyStarterKit(): boolean {
+        return this.settings.uiStarterKit === ProjectUIStarterKit.EMPTY
+    }
+
+    isApiStarterKit(): boolean {
+        return this.settings.uiStarterKit === ProjectUIStarterKit.API
+    }
+
+    isOtherStarterKit(): boolean {
+        return this.settings.uiStarterKit === ProjectUIStarterKit.OTHER
+    }
+
+    starterKitDoesNotNeedViewsAndUiComponents(): boolean {
+        return !this.starterKitNeedsViewsAndUiComponents()
+    }
+
+    starterKitNeedsViewsAndUiComponents(): boolean {
+        return !this.isEmptyStarterKit() && !this.isApiStarterKit() && !this.isOtherStarterKit()
     }
 
     isFreshLaravelProject(): boolean {

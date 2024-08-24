@@ -24,6 +24,7 @@
     import UiInfo from "@Renderer/components/ui/UiInfo.vue"
     import LicenseModal from "./components/System/LicenseModal.vue"
     import DependenciesModal from "./components/Common/DependenciesModal.vue"
+    import ApiDependencyModal from "./components/Common/ApiDependencyModal.vue"
     import LicenseHandler from "@Renderer/services/LicenseHandler"
 
     const canShow = ref(false),
@@ -32,6 +33,7 @@
         appStore = useAppStore(),
         errorsDialog = ref(null),
         confirmDialog = ref(null),
+        apiDependencyModal = ref(null),
         aiConfirmDialog = ref(null),
         licenseModal = ref(null),
         dependenciesModal = ref(null),
@@ -166,7 +168,9 @@
                 dependenciesModal.value?.show(sequentialGenerator.packageChecker)
                 return
             }
-            
+
+            await apiDependencyModal.value.check(sequentialGenerator)
+
             await generateCode()
         } catch (error) {
             appStore.finishGeneratingCode()
@@ -262,11 +266,13 @@
                 @close="appStore.finishGeneratingCode()"
             />
 
-            <LicenseModal
-                ref="licenseModal" 
+            <LicenseModal 
+                ref="licenseModal"
                 show-warning
-                :warning-message="licenseModalWarningMessage"
+                :warningMessage="licenseModalWarningMessage"
             />
+
+            <ApiDependencyModal ref="apiDependencyModal" />
 
             <UiConfirm ref="confirmDialog" :title="confirmDialogTitle">
                 <div v-html="confirmDialogMessage"></div>

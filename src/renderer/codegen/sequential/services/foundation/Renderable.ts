@@ -119,7 +119,7 @@ export default abstract class Renderable {
         return this
     }
 
-    async render() {
+    async render(ignoreConflicts: boolean = false) {
         console.log("Renderable mode", Renderable.mode)
 
         if(Renderable.isCheckerMode()) {
@@ -138,7 +138,7 @@ export default abstract class Renderable {
             console.log(`Rendering ${this.getTemplateFile()} as ${this.getFullFilePath()}...`)
         }
 
-        const file = this.registerFile()
+        const file = this.registerFile(ignoreConflicts)
 
         if(file.wasIgnored()) {
             if(this.logEnabled) {
@@ -164,6 +164,8 @@ export default abstract class Renderable {
             
             if(this.afterRender) this.afterRender(compiledTemplate)
         } catch (error: any) {
+            console.error(error)
+
             file.setError(error.message, error.stack)
 
             if(error.hasTemplateError) {
@@ -184,12 +186,14 @@ export default abstract class Renderable {
         )
     }
 
-    registerFile(): RenderableFile {
+    registerFile(ignoreConflicts: boolean = false): RenderableFile {
         return this.project.registerRenderableFile(
             this.getPath(), 
             this.getFilename(),
             this.getTemplateFile(), 
-            this.getType()
+            this.getType(),
+            RenderableFileStatus.PREPARING,
+            ignoreConflicts
         )
     }
 
@@ -265,7 +269,7 @@ export default abstract class Renderable {
         if(!templateContent) {
             templateContent = await Main.API.readTemplateFile(templateFile)
         }
-
+            
         templateCompiler
             .setContent(templateContent)
             .setData(this.getFullData())

@@ -98,7 +98,7 @@ export function HandleRenderableFileQueue(mainWindow: BrowserWindow) {
             const conflictManager = new ConflictManager(project, relativeFilePath)
             conflictManager.setFileContent(file.content)
 
-            if(conflictManager.hasConflict()) {
+            if(conflictManager.hasConflict() && !file.ignoreConflicts) {
                 const conflictsFileName = conflictManager.writeConflictFile()
 
                 setFileStatus(file, RenderableFileStatus.CONFLICT, {

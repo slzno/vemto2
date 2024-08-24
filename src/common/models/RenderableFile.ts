@@ -54,6 +54,7 @@ export default class RenderableFile extends RelaDB.Model {
     conflictFileName: string
     content: string
     notRemovable: boolean
+    ignoreConflicts: boolean
 
     relationships() {
         return {

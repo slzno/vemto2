@@ -125,6 +125,8 @@ export default class ProjectInfo {
             sliceLength: number = 0,
             composerVersion = this.composerData.require[packageName] || this.composerData["require-dev"][packageName]
 
+        if(composerVersion === "*") return "*"
+
         try {
             packageVersion = getVersionMatches(composerVersion)
             sliceLength = packageVersion[1] !== undefined ? 2 : 1

@@ -1,17 +1,19 @@
-import Route from "@Common/models/Route"
+import Crud from "@Common/models/crud/Crud"
 import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
 import {
     RenderableFileFormatter,
     RenderableFileType,
 } from "@Common/models/RenderableFile"
+import Namespace from "@Renderer/codegen/util/Namespace"
+import { pascalCase } from "pascal-case"
 
-export default class RoutesRenderable extends Renderable {
-    routes: Route[]
+export default class RenderableNovaResource extends Renderable {
+    crud: Crud
 
-    constructor() {
+    constructor(crud: Crud) {
         super()
 
-        this.routes = Route.getWebRoutes()
+        this.crud = crud
     }
 
     canRender(): boolean {
@@ -23,24 +25,29 @@ export default class RoutesRenderable extends Renderable {
     }
 
     getTemplateFile(): string {
-        return "routes/Routes.vemtl"
+        return "crud/views/nova/ResourceComponent.vemtl"
     }
 
     getPath(): string {
-        return `routes`
+        return Namespace.from(`App\\Nova`).toPath()
     }
 
     getFilename(): string {
-        return "app.php"
+        return `${pascalCase(this.crud.settings.itemName)}.php`
     }
 
     getFormatter(): RenderableFileFormatter {
         return RenderableFileFormatter.PHP
     }
 
+    hooks() {
+        return this.crud.getHooks('novaResource')
+    }
+    
     getData() {
         return {
-            routes: this.routes,
+            crud: this.crud,
+            model: this.crud.model,
         }
     }
 }

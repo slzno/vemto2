@@ -12,7 +12,8 @@ import FilamentInputSettings from "./filament/FilamentInputSettings"
 import FilamentRuleNameConversions from "./filament/FilamentRuleNameConversions"
 import FilamentIndividualValidations from "./filament/FilamentIndividualValidations"
 import GenerateInputValidation, { ValidationRuleType } from "./services/GenerateInputValidation"
-import FilamentInputData from "./filament/FilamentInputData"
+import FillInputNovaData from "./fillers/FillInputNovaData"
+import NovaInputSettings from "./nova/NovaInputSettings"
 
 export enum InputValidationRuleType {
     TEXTUAL = "textual",
@@ -56,6 +57,7 @@ export default class Input extends RelaDB.Model {
     showOnIndex: boolean
 
     filamentSettings: FilamentInputSettings
+    novaSettings: NovaInputSettings
 
     relationships() {
         return {
@@ -123,6 +125,10 @@ export default class Input extends RelaDB.Model {
 
         if(crud.isForFilament()) {
             FillInputFilamentData.onInput(input)
+        }
+
+        if(crud.isForNova()) {
+            FillInputNovaData.onInput(input)
         }
 
         return input
@@ -274,6 +280,10 @@ export default class Input extends RelaDB.Model {
         return this.type === InputType.NUMBER
     }
 
+    isSelect(): boolean {
+        return this.type === InputType.SELECT
+    }
+
     isUrl(): boolean {
         return this.type === InputType.URL
     }
@@ -408,6 +418,38 @@ export default class Input extends RelaDB.Model {
                 if(ruleName === 'unique' && rules === this.updateRules) {
                     rule += `->ignore($this->${crud.settings.itemName})`
                 }
+
+                return rule
+            }
+
+            return `"${rule}"`
+        })
+    }
+
+    getCreationRulesForNova() {
+        return this.getRulesForNovaMethod(this.creationRules)
+    }
+
+    getUpdateRulesForNova() {
+        return this.getRulesForNovaMethod(this.updateRules)
+    }
+
+    getRulesForNovaMethod(rules: InputValidationRule[]) {
+        let allRules: string[] = rules.map((rule) => rule.value)
+
+        const dynamicVariables = ['unique']
+
+        return allRules.map((rule: string) => {
+            const [ruleName, ruleArgs] = rule.split(':')
+
+            if(dynamicVariables.includes(ruleName)) {
+                let rule = `${ruleName}:${ruleArgs}`
+
+                if(ruleName === 'unique' && rules === this.updateRules) {
+                    rule += `,{{resourceId}}`
+                }
+
+                rule = `'${rule}'`
 
                 return rule
             }

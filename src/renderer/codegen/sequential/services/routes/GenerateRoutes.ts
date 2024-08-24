@@ -9,8 +9,8 @@ import { RenderableFileType } from "@Common/models/RenderableFile"
 
 export default class GenerateRoutes {
     async start(project: Project) {
-        await new RoutesRenderable(Route.getWebRoutes()).render()
-        await new ApiRoutesRenderable(Route.getApiRoutes(), Crud.getApis()).render()
+        await new RoutesRenderable().render()
+        await new ApiRoutesRenderable().render()
 
         if(project.laravelVersionLessThan('11.0')) {
             await this.addRoutesToRouteServiceProvider()

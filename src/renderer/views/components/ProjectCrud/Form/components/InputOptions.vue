@@ -6,6 +6,7 @@
     import UiTabs from '@Renderer/components/ui/UiTabs.vue'
     import InputCommonOptions from "./InputCommonOptions.vue"
     import FilamentInputOptions from "./filament/FilamentInputOptions.vue"
+    import NovaInputOptions from "./nova/NovaInputOptions.vue"
 
     const props = defineProps({
             show: Boolean,
@@ -20,14 +21,18 @@
     watch(input, (value) => {
         if(!value) return
 
-        if(!value.crud.isForFilament()) {
+        if(!value.crud.isForFilament() && !value.crud.isForNova()) {
             tabs.splice(1, 1)
             return
         }
 
-        if(tabs[1] && tabs[1].value == "filament") return
+        if(!tabs.find(tab => tab.value == "filament") && value.crud.isForFilament()) {
+            tabs.push({ label: "Filament", value: "filament" })
+        }
 
-        tabs.push({ label: "Filament", value: "filament" })
+        if(!tabs.find(tab => tab.value == "nova") && value.crud.isForNova()) {
+            tabs.push({ label: "Nova", value: "nova" })
+        }
     })
 
     const tabs = [
@@ -79,6 +84,10 @@
 
                     <div class="overflow-y-auto" v-if="selectedTab == 'filament'">
                         <FilamentInputOptions :input="input" />
+                    </div>
+
+                    <div class="overflow-y-auto" v-if="selectedTab == 'nova'">
+                        <NovaInputOptions :input="input" />
                     </div>
                 </div>
             </div>

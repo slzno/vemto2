@@ -12,7 +12,7 @@
     import ProjectCreator, { ProjectCreatorData } from "@Renderer/services/project/ProjectCreator"
     import PathUtil from "@Common/util/PathUtil"
     import UiSelect from "@Renderer/components/ui/UiSelect.vue"
-import UiLoading from "@Renderer/components/ui/UiLoading.vue"
+    import UiLoading from "@Renderer/components/ui/UiLoading.vue"
 
     const showingModal = ref(false)
     
@@ -39,6 +39,11 @@ import UiLoading from "@Renderer/components/ui/UiLoading.vue"
 
         showingModal.value = true
         errors.value = {}
+
+        const lastSelectedProjectPath = localStorage.getItem("lastSelectedProjectPath")
+        if(lastSelectedProjectPath) {
+            settings.value.path = lastSelectedProjectPath
+        }
     }
 
     const create = async () => {
@@ -136,6 +141,8 @@ import UiLoading from "@Renderer/components/ui/UiLoading.vue"
         }
 
         delete errors.value.path
+
+        localStorage.setItem("lastSelectedProjectPath", settings.value.path)
     }, 250)
 
     const resetSettings = () => {
@@ -148,14 +155,14 @@ import UiLoading from "@Renderer/components/ui/UiLoading.vue"
     }
 
     const onStarterKitChanged = () => {
-        if(!["jetstream", "breeze"].includes(settings.value.starterKit)) {
+        if(!["jetstream", "breeze", "empty", "api"].includes(settings.value.starterKit)) {
             errors.value.starterKit = "Invalid starter kit"
             return
         }
 
         delete errors.value.starterKit
 
-        if(settings.value.starterKit === "breeze") {
+        if(settings.value.starterKit != "jetstream") {
             settings.value.usesJetstreamTeams = false
         }
     }
@@ -214,6 +221,8 @@ import UiLoading from "@Renderer/components/ui/UiLoading.vue"
                         <UiSelect v-model="settings.starterKit" label="UI Starter Kit" @change="onStarterKitChanged">
                             <option value="jetstream">Jetstream</option>
                             <option value="breeze">Breeze</option>
+                            <option value="api">API</option>
+                            <option value="empty">Empty</option>
                         </UiSelect>
 
                         <template v-if="errors.starterKit !== undefined">

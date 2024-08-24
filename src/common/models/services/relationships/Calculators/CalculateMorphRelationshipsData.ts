@@ -77,6 +77,7 @@ class CalculateMorphRelationshipsData extends CalculateRelationshipService {
             pivot = new Table({
                 projectId: this.relationship.projectId,
                 name: pivotName,
+                sectionId: this.relationship.model?.table?.sectionId
             })
             
             pivot.save()

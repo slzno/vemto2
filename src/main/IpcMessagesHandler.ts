@@ -12,6 +12,7 @@ import PHPMerger from "./services/PHPMerger"
 import CommandExecutor from "./base/CommandExecutor"
 import {openNewGitHubIssue, debugInfo} from "electron-util"
 import ReadPhpInfo from "./services/ReadPhpInfo"
+import TemplateReader from "./services/TemplateReader"
 
 export function HandleIpcMessages() {
     ipcMain.handle("get:app:version", (event) => {
@@ -129,18 +130,10 @@ export function HandleIpcMessages() {
     })
 
     ipcMain.handle("file:template:read", (event, filePath) => {
-        const project = Project.find(1)
-        if(!project) return null
+        const templateReader = new TemplateReader(filePath)
 
         return handleError(event, () => {
-            const completePath = path.join(project.getPath(), ".vemto", "templates", filePath)
-
-            if(FileSystem.fileExists(completePath)) {
-                return FileSystem.readFile(completePath)
-            }
-
-            // If the file does not exist in the project, we try to read it from the static folder
-            return FileSystem.readFileIfExists(path.join(app.getAppPath(), "static", "templates", filePath))
+            return templateReader.read()
         })
     })
 

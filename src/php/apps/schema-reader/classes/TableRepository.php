@@ -55,18 +55,18 @@ class TableRepository {
     {
         $columns = $this->tables[$tableName]['columns'] ?? [];
         $latestColumn = end($this->tables[$tableName]['columns']) ?? null;
-        $latestColumnOrder = $latestColumn && isset($latestColumn['order']) ? $latestColumn['order'] : null;
+        $latestColumnOrder = $latestColumn && isset($latestColumn['order']) ? $latestColumn['order'] : count($columns);
         
-        $column['order'] = $latestColumnOrder ? $latestColumnOrder + 1 : 0;
+        $column['order'] = $latestColumn ? $latestColumnOrder + 1 : 0;
         $column['creationOrder'] = ++$this->tableColumnsCreationIncrement[$tableName];
         
         $after = isset($column['after']) ? $column['after'] : null;
 
         if (!empty($after)) {
             $previousColumn = $columns[$after] ?? null;
-            $previousColumnOrder = $previousColumn && isset($previousColumn['order']) ? $previousColumn['order'] : null;
+            $previousColumnOrder = $previousColumn && isset($previousColumn['order']) ? $previousColumn['order'] : 0;
 
-            $newColumnOrder = $previousColumnOrder ? $previousColumnOrder + 1 : $column['order'];
+            $newColumnOrder = $previousColumn ? $previousColumnOrder + 1 : $column['order'];
 
             $columns = array_map(function($column) use ($newColumnOrder) {
                 if(!isset($column['order'])) {

@@ -385,13 +385,31 @@
                 </div>
             </div>
     
-            <div class="p-4" v-show="selectedTab === 'settings'">
+            <div class="p-4 flex flex-col space-y-2" v-show="selectedTab === 'settings'">
                 <UiCheckbox
+                    v-model="projectStore.project.codeGenerationSettings.uiComponents"
+                    label="Generate UI Components"
+                    @change="projectStore.project.save()"
+                />
+
+                <UiCheckbox
+                    v-model="projectStore.project.codeGenerationSettings.livewireLayout"
+                    label="Generate Livewire Layout"
+                    @change="projectStore.project.save()"
+                />
+
+                <UiCheckbox
+                    v-model="projectStore.project.codeGenerationSettings.views"
+                    label="Generate Views"
+                    @change="projectStore.project.save()"
+                />
+
+                <!-- <UiCheckbox
                     v-model="projectStore.project.codeGenerationSettings.models"
                     label="Generate Models"
                     @change="projectStore.project.save()"
                 />
-    
+                
                 <UiCheckbox
                     v-model="projectStore.project.codeGenerationSettings.factories"
                     label="Generate Factories"
@@ -414,7 +432,7 @@
                     v-model="projectStore.project.codeGenerationSettings.routes"
                     label="Generate Routes"
                     @change="projectStore.project.save()"
-                />
+                /> -->
             </div>
         </div>
 
