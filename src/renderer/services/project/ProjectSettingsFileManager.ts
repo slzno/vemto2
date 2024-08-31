@@ -42,6 +42,10 @@ export default class ProjectSettingsFileManager {
 
         let gitIgnoreContent = await Main.API.readFile(gitIgnorePath)
 
+        if(!gitIgnoreContent) {
+            throw new Error("No .gitignore file found in the project")
+        }
+
         if(gitIgnoreContent.includes(".vemto_settings")) return
 
         gitIgnoreContent += "\n.vemto_settings\n"
