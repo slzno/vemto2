@@ -3,7 +3,7 @@ import { app } from "electron"
 import Project from "@Common/models/Project"
 import FileSystem from "@Main/base/FileSystem"
 
-export default class TemplateReader {
+export default class TemplateManager {
     templatePath: string
 
     constructor(templatePath: string) {
@@ -18,8 +18,9 @@ export default class TemplateReader {
             return this.readDefaultTemplate()
         }
 
-        const completePath = path.join(project.getPath(), ".vemto", "templates", this.templatePath)
+        const completePath = path.join(project.getPath(), ".vemto", "templates", "base", this.templatePath)
 
+        // If the published file exists in the project, we read it
         if(FileSystem.fileExists(completePath)) {
             return FileSystem.readFile(completePath)
         }
@@ -29,5 +30,16 @@ export default class TemplateReader {
 
     readDefaultTemplate(): string {
         return FileSystem.readFileIfExists(path.join(app.getAppPath(), "static", "templates", this.templatePath))
+    }
+
+    static publishAll() {
+        const project = Project.find(1)
+
+        if(!project) return
+
+        const templatePath = path.join(app.getAppPath(), "static", "templates")
+        const projectTemplatePath = path.join(project.getPath(), ".vemto", "templates", "base")
+
+        FileSystem.copyFolderIfNotExists(templatePath, projectTemplatePath)
     }
 }

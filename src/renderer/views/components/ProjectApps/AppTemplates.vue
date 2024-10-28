@@ -129,6 +129,7 @@
     const renderTemplate = async () => {
         const basePath = "../../../codegen/sequential/services",
             renderableInfo = extractRenderableInfo(templateData.value.renderable.value),
+            /* @vite-ignore */
             renderableClass = await import(`${basePath}/${renderableInfo.className}.ts`)
 
         hasRenderErrors.value = false

@@ -12,7 +12,7 @@ import PHPMerger from "./services/PHPMerger"
 import CommandExecutor from "./base/CommandExecutor"
 import {openNewGitHubIssue, debugInfo} from "electron-util"
 import ReadPhpInfo from "./services/ReadPhpInfo"
-import TemplateReader from "./services/TemplateReader"
+import TemplateManager from "./services/TemplateManager"
 
 export function HandleIpcMessages() {
     ipcMain.handle("get:app:version", (event) => {
@@ -130,10 +130,16 @@ export function HandleIpcMessages() {
     })
 
     ipcMain.handle("file:template:read", (event, filePath) => {
-        const templateReader = new TemplateReader(filePath)
+        const templateManager = new TemplateManager(filePath)
 
         return handleError(event, () => {
-            return templateReader.read()
+            return templateManager.read()
+        })
+    })
+
+    ipcMain.handle("file:templates:publish", (event) => {
+        return handleErrorThrowingException(event, () => {
+            return TemplateManager.publishAll()
         })
     })
 

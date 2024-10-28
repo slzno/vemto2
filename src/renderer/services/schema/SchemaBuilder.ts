@@ -198,7 +198,7 @@ export default class SchemaBuilder {
         return this
     }
 
-    static scheckSchemaChangesForProject(project: Project) {
+    static checkSchemaChangesForProject(project: Project) {
         return (new SchemaBuilder(project)).checkSchemaChanges()
     }
 

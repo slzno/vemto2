@@ -42,6 +42,7 @@ export default interface ElectronApi {
     listTemplates: () => Promise<string[]>,
     readTemplateFile: (path: string) => Promise<string>,
     writeTemplateFile: (path: string, content: string) => Promise<void>,
+    publishTemplates: () => Promise<void>,
     openFolder: (path: string) => Promise<void>,
     openTerminal: (path: string) => Promise<void>,
     openProjectFile: (path: string) => Promise<void>,

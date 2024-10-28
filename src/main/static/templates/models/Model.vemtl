@@ -1,5 +1,5 @@
 <?php
-<# TEMPLATE SETTINGS #>
+<# VERSION 1.0.0 #>
 <# DATA:MODEL [ project = Project ] #>
 <# DATA:MODEL [ model = Model ] #>
 <# DATA:RENDERABLE [ renderable = model/RenderableModel(model) ] #>

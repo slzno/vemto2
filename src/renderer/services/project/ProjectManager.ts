@@ -71,6 +71,8 @@ export default class ProjectManager {
         
         await this.connectProject(project)
 
+        await this.publishAssets()
+
         ProjectManager.free()
 
         this.setLatestProjectPath(projectItem.path)
@@ -89,7 +91,7 @@ export default class ProjectManager {
             schemaReaderMode,
         })
 
-        await SchemaBuilder.scheckSchemaChangesForProject(project)
+        await SchemaBuilder.checkSchemaChangesForProject(project)
 
         return projectItem
     }
@@ -100,6 +102,10 @@ export default class ProjectManager {
         await projectConnector.connect(
             this.projectSettings
         )
+    }
+
+    async publishAssets() {
+        await Main.API.publishTemplates()
     }
 
     setSettings(settings: ProjectSettings) {

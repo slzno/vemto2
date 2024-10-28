@@ -92,7 +92,7 @@ class FileSystem {
     writeFile(destFilePath: string, content: string, log = true): FileSystem {
         if(log) console.log('Writing File: ' + destFilePath)
 
-        this.makeDirectoryFromFileIfNotExists(destFilePath)
+        this.makeFolderFromPathIfNotExists(destFilePath)
 
         fs.writeFileSync(destFilePath, content)
 
@@ -101,18 +101,18 @@ class FileSystem {
         return this
     }
 
-    makeDirectoryFromFileIfNotExists(filePath: string): boolean {
-        let directoryName = path.dirname(filePath)
+    makeFolderFromPathIfNotExists(fullPath: string): boolean {
+        let folderName = path.dirname(fullPath)
         
-        if (fs.existsSync(directoryName)) {
+        if (fs.existsSync(folderName)) {
             return false
         }
 
-        this.makeDirectoryFromFileIfNotExists(directoryName)
+        this.makeFolderFromPathIfNotExists(folderName)
 
-        fs.mkdirSync(directoryName)
+        fs.mkdirSync(folderName)
         
-        this.fixPermissions(directoryName)
+        this.fixPermissions(folderName)
 
         return true
     }
@@ -120,8 +120,12 @@ class FileSystem {
     /**
      * Makes a folder based on a folder template (copy the folder)
      */
-    copyFolderIfNotExists(templateFolder: string, destinationFolder: string) {
+    copyFolderIfNotExists(templateFolder: string, destinationFolder: string, createDestinationIfNotExists = true): void {
         if(this.folderDoesNotExist(destinationFolder)) {
+            if(createDestinationIfNotExists) {
+                this.makeFolderFromPathIfNotExists(destinationFolder)
+            }
+
             this.copyFolder(templateFolder, destinationFolder)
         }
     }
