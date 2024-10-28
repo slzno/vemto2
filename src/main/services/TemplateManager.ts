@@ -18,11 +18,17 @@ export default class TemplateManager {
             return this.readDefaultTemplate()
         }
 
-        const completePath = path.join(project.getPath(), ".vemto", "templates", "base", this.templatePath)
+        const basePath = path.join(project.getPath(), ".vemto", "templates", "base", this.templatePath),
+            customPath = path.join(project.getPath(), ".vemto", "templates", "custom", this.templatePath)
+
+        // If the custom file exists in the project, we read it
+        if(FileSystem.fileExists(customPath)) {
+            return FileSystem.readFile(customPath)
+        }
 
         // If the published file exists in the project, we read it
-        if(FileSystem.fileExists(completePath)) {
-            return FileSystem.readFile(completePath)
+        if(FileSystem.fileExists(basePath)) {
+            return FileSystem.readFile(basePath)
         }
 
         return this.readDefaultTemplate()
