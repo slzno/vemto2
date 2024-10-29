@@ -10,6 +10,45 @@ export default class TemplateManager {
         this.templatePath = templatePath
     }
 
+    getStatus(): string {
+        const project = Project.find(1)
+
+        if(!project) return "default"
+
+        const basePath = path.join(project.getPath(), ".vemto", "templates", "base", this.templatePath),
+            customPath = path.join(project.getPath(), ".vemto", "templates", "custom", this.templatePath)
+
+        if(FileSystem.fileExists(customPath)) {
+            return "custom"
+        }
+
+        if(FileSystem.fileExists(basePath)) {
+            return "published"
+        }
+
+        return "default"
+    }
+
+    saveCustom(content: string) {
+        const project = Project.find(1)
+
+        if(!project) return
+
+        const customPath = path.join(project.getPath(), ".vemto", "templates", "custom", this.templatePath)
+
+        return FileSystem.writeFile(customPath, content)
+    }
+
+    dropCustom() {
+        const project = Project.find(1)
+
+        if(!project) return
+
+        const customPath = path.join(project.getPath(), ".vemto", "templates", "custom", this.templatePath)
+
+        return FileSystem.deleteFile(customPath)
+    }
+
     read(): string {
         const project = Project.find(1)
 

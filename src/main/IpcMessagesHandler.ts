@@ -137,6 +137,30 @@ export function HandleIpcMessages() {
         })
     })
 
+    ipcMain.handle("file:template:status", (event, filePath) => {
+        const templateManager = new TemplateManager(filePath)
+
+        return handleError(event, () => {
+            return templateManager.getStatus()
+        })
+    })
+
+    ipcMain.handle("file:template:save-custom", (event, filePath, content) => {
+        const templateManager = new TemplateManager(filePath)
+
+        return handleError(event, () => {
+            return templateManager.saveCustom(content)
+        })
+    })
+
+    ipcMain.handle("file:template:drop-custom", (event, filePath) => {
+        const templateManager = new TemplateManager(filePath)
+
+        return handleError(event, () => {
+            return templateManager.dropCustom()
+        })
+    })
+
     ipcMain.handle("file:templates:publish", (event) => {
         return handleErrorThrowingException(event, () => {
             return TemplateManager.publishAll()

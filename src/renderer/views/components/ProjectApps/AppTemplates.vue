@@ -33,6 +33,8 @@
     const projectStore = useProjectStore(),
         templates = ref([]) as Ref<string[]>,
         files = ref([]) as Ref<any[]>,
+        selectedTemplate = ref(""),
+        templateStatus = ref(""),
         templateContent = ref(""),
         templateEditor = ref(null),
         templateData = ref({}) as Ref<TemplateData>,
@@ -94,15 +96,47 @@
         }, 100)
     }
 
+    const reloadSelectedTemplate = async () => {
+        await readTemplate(selectedTemplate.value)
+    }
+
     const readTemplate = async (path: string) => {
+        selectedTemplate.value = path
+
         renderedContent.value = ""
         renderedEditor.value?.setValue("")
 
+        templateStatus.value = await Main.API.getTemplateStatus(path)
         templateContent.value = await Main.API.readTemplateFile(path)
         templateEditor.value?.setValue(templateContent.value)
         templateData.value = await readTemplateData(templateContent.value)
 
         renderTemplate()
+    }
+
+    const editCustomTemplate = async () => {
+        await saveTemplate()
+    }
+
+    const revertToDefaultTemplate = async () => {
+        await Main.API.dropCustomTemplate(selectedTemplate.value)
+
+        templateStatus.value = await Main.API.getTemplateStatus(
+            selectedTemplate.value
+        )
+
+        reloadSelectedTemplate()
+    }
+
+    const saveTemplate = async () => {
+        await Main.API.saveCustomTemplate(
+            selectedTemplate.value,
+            templateContent.value
+        )
+
+        templateStatus.value = await Main.API.getTemplateStatus(
+            selectedTemplate.value
+        )
     }
 
     const readTemplateData = async (content: string) => {
@@ -271,6 +305,10 @@
                 />
     
                 <div class="h-full" v-show="selectedTemplateTab === 'template'">
+                    {{ templateStatus }}
+                    <UiSmallButton @click="editCustomTemplate">Edit Template</UiSmallButton>
+                    <UiSmallButton @click="revertToDefaultTemplate">Revert Template</UiSmallButton>
+                    
                     <BasicEditor ref="templateEditor" v-model="templateContent" />
                 </div>
     

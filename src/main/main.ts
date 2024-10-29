@@ -43,7 +43,7 @@ async function createWindow() {
 
         if (process.env.VEMTO_HIDE_MENU) await mainWindow.setMenu(null)
 
-        await mainWindow.webContents.openDevTools()
+        // await mainWindow.webContents.openDevTools()
     } else {
         mainWindow.setMenu(null)
         mainWindow.loadFile(join(app.getAppPath(), "renderer", "index.html"))

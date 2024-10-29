@@ -114,6 +114,15 @@ contextBridge.exposeInMainWorld("api", {
     readTemplateFile: (path: string) => {
         return ipcRenderer.invoke("file:template:read", path)
     },
+    getTemplateStatus: (path: string) => {
+        return ipcRenderer.invoke("file:template:status", path)
+    },
+    saveCustomTemplate: (path: string, content: string) => {
+        return ipcRenderer.invoke("file:template:save-custom", path, content)
+    },
+    dropCustomTemplate: (path: string) => {
+        return ipcRenderer.invoke("file:template:drop-custom", path)
+    },
     publishTemplates: () => {
         return ipcRenderer.invoke("file:templates:publish")
     },
