@@ -2,7 +2,7 @@
     import { debounce } from "lodash"
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
-    import { ref, Ref, onMounted, watch } from "vue"
+    import { ref, Ref, onMounted, watch, computed } from "vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
     import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon, PlusIcon } from "@heroicons/vue/24/outline"
@@ -36,6 +36,7 @@
         selectedTemplate = ref(""),
         templateStatus = ref(""),
         templateContent = ref(""),
+        templateOriginalContent = ref(""),
         templateEditor = ref(null),
         templateData = ref({}) as Ref<TemplateData>,
         renderedContent = ref(""),
@@ -73,6 +74,10 @@
         showingFilesTree.value = window.localStorage.getItem("showingFilesTree") === "true"
     })
 
+    const hasChanges = computed(() => {
+        return templateContent.value !== templateOriginalContent.value
+    })
+
     const loadTemplates = async () => {
         setTimeout(async () => {
             templates.value = await Main.API.listTemplates()
@@ -108,14 +113,11 @@
 
         templateStatus.value = await Main.API.getTemplateStatus(path)
         templateContent.value = await Main.API.readTemplateFile(path)
+        templateOriginalContent.value = await Main.API.readOriginalTemplateFile(path)
         templateEditor.value?.setValue(templateContent.value)
         templateData.value = await readTemplateData(templateContent.value)
 
         renderTemplate()
-    }
-
-    const editCustomTemplate = async () => {
-        await saveTemplate()
     }
 
     const revertToDefaultTemplate = async () => {
@@ -305,9 +307,15 @@
                 />
     
                 <div class="h-full" v-show="selectedTemplateTab === 'template'">
-                    {{ templateStatus }}
-                    <UiSmallButton @click="editCustomTemplate">Edit Template</UiSmallButton>
-                    <UiSmallButton @click="revertToDefaultTemplate">Revert Template</UiSmallButton>
+                    {{ templateStatus }} - {{ selectedTemplate }}
+
+                    <div>
+                        <UiSmallButton @click="saveTemplate">Save Template</UiSmallButton>
+                        <UiSmallButton 
+                            @click="revertToDefaultTemplate"
+                            :disabled="templateStatus !== 'custom'"
+                        >Revert Template</UiSmallButton>
+                    </div>
                     
                     <BasicEditor ref="templateEditor" v-model="templateContent" />
                 </div>

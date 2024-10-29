@@ -114,6 +114,9 @@ contextBridge.exposeInMainWorld("api", {
     readTemplateFile: (path: string) => {
         return ipcRenderer.invoke("file:template:read", path)
     },
+    readOriginalTemplateFile: (path: string) => {
+        return ipcRenderer.invoke("file:template:read-original", path)
+    },
     getTemplateStatus: (path: string) => {
         return ipcRenderer.invoke("file:template:status", path)
     },

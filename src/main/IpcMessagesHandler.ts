@@ -137,6 +137,14 @@ export function HandleIpcMessages() {
         })
     })
 
+    ipcMain.handle("file:template:read-original", (event, filePath) => {
+        const templateManager = new TemplateManager(filePath)
+
+        return handleError(event, () => {
+            return templateManager.readOriginal()
+        })
+    })
+
     ipcMain.handle("file:template:status", (event, filePath) => {
         const templateManager = new TemplateManager(filePath)
 

@@ -73,6 +73,23 @@ export default class TemplateManager {
         return this.readDefaultTemplate()
     }
 
+    readOriginal(): string {
+        const project = Project.find(1)
+
+        if(!project) {
+            // If there is no project, we read the default template
+            return this.readDefaultTemplate()
+        }
+        
+        const basePath = path.join(project.getPath(), ".vemto", "templates", "base", this.templatePath)
+
+        if(FileSystem.fileExists(basePath)) {
+            return FileSystem.readFile(basePath)
+        }
+
+        return this.readDefaultTemplate()
+    }
+
     readDefaultTemplate(): string {
         return FileSystem.readFileIfExists(path.join(app.getAppPath(), "static", "templates", this.templatePath))
     }

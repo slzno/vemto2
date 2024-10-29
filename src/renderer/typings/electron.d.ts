@@ -41,6 +41,7 @@ export default interface ElectronApi {
     projectFolderExists: (path: string) => Promise<boolean>,
     listTemplates: () => Promise<string[]>,
     readTemplateFile: (path: string) => Promise<string>,
+    readOriginalTemplateFile: (path: string) => Promise<string>,
     writeTemplateFile: (path: string, content: string) => Promise<void>,
     getTemplateStatus: (path: string) => Promise<string>,
     saveCustomTemplate: (path: string, content: string) => Promise<void>,
