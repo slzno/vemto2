@@ -71,8 +71,7 @@ import { pascalCase } from "change-case"
         loadTemplates()
 
         watch(templateContent, () => {
-            debounce(renderTemplate, 150)()
-            debounce(saveTemplate, 500)()
+            templateContentChanged()
         })
 
         showingFilesTree.value = window.localStorage.getItem("showingFilesTree") === "true"
@@ -103,6 +102,13 @@ import { pascalCase } from "change-case"
                 },
             })
         }, 100)
+    }
+
+    const templateContentChanged = async () => {
+        await updateTemplateData()
+
+        debounce(renderTemplate, 150)()
+        debounce(saveTemplate, 500)()
     }
 
     const reloadSelectedTemplate = async () => {
@@ -151,6 +157,22 @@ import { pascalCase } from "change-case"
         )
     }
 
+    const updateTemplateData = async () => {
+        const newTemplateData = await readTemplateData(templateContent.value)
+
+        for (const key in newTemplateData) {
+            if (!templateData.value[key]) {
+                templateData.value[key] = newTemplateData[key]
+            }
+        }
+
+        for (const key in templateData.value) {
+            if (!newTemplateData[key]) {
+                delete templateData.value[key]
+            }
+        }
+    }
+
     const readTemplateData = async (content: string) => {
         // Mudar para o Template Compiler aqui, para obter os templates de import
         let templateData = (new TemplateEngine(content, {
@@ -173,6 +195,8 @@ import { pascalCase } from "change-case"
     }
 
     const renderTemplate = async () => {
+        console.log("Rendering template", templateData.value)
+
         const basePath = "../../../codegen/sequential/services",
             renderableInfo = extractRenderableInfo(templateData.value.renderable.value),
             /* @vite-ignore */
