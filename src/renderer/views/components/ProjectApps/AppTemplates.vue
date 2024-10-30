@@ -5,7 +5,7 @@
     import { ref, Ref, onMounted, watch, computed } from "vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
-    import { ArrowUturnLeftIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon, PlusIcon } from "@heroicons/vue/24/outline"
+    import { ArrowPathIcon, ArrowUturnLeftIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon, PlusIcon } from "@heroicons/vue/24/outline"
     import { Wunderbaum } from "wunderbaum"
     import Main from "@Renderer/services/wrappers/Main"
     import UiTextarea from "@Renderer/components/ui/UiTextarea.vue"
@@ -130,6 +130,10 @@ import { pascalCase } from "change-case"
         renderTemplate()
     }
 
+    const reloadTemplateData = async () => {
+        templateData.value = await readTemplateData(templateContent.value)
+    }
+
     const revertToDefaultTemplate = async () => {
         const confirmed = await window.projectConfirm("Are you sure you want to revert to the default template?")
 
@@ -161,7 +165,7 @@ import { pascalCase } from "change-case"
         const newTemplateData = await readTemplateData(templateContent.value)
 
         for (const key in newTemplateData) {
-            if (!templateData.value[key]) {
+            if (!templateData.value[key] || templateData.value[key].type !== newTemplateData[key].type) {
                 templateData.value[key] = newTemplateData[key]
             }
         }
@@ -362,8 +366,14 @@ import { pascalCase } from "change-case"
                 </div>
     
                 <!-- Template Data -->
-                <div class="p-2" v-show="selectedTemplateTab === 'data'">
-                    <div class="mt-2">
+                <div class="p-1.5" v-show="selectedTemplateTab === 'data'">
+                    <div>
+                        <div class="flex w-full justify-end">
+                            <UiSmallButton @click="reloadTemplateData">
+                                <ArrowPathIcon class="w-4 h-4" />
+                                <span class="ml-1">Reload Data from Code</span>
+                            </UiSmallButton>
+                        </div>
                         <div v-for="(item, key) in templateData" :key="key">
                             <div class="flex items-center space-x-2 space-y-1">
                                 <div class="flex-1 w-1/3">
