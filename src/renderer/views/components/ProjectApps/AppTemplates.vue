@@ -5,7 +5,7 @@
     import { ref, Ref, onMounted, watch, computed } from "vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
-    import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon, PlusIcon } from "@heroicons/vue/24/outline"
+    import { ArrowUturnLeftIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon, PlusIcon } from "@heroicons/vue/24/outline"
     import { Wunderbaum } from "wunderbaum"
     import Main from "@Renderer/services/wrappers/Main"
     import UiTextarea from "@Renderer/components/ui/UiTextarea.vue"
@@ -16,6 +16,7 @@
     import TemplateErrorViewer from "../Common/TemplateErrorViewer.vue"
     import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
     import UiSmallButton from "@Renderer/components/ui/UiSmallButton.vue"
+import { pascalCase } from "change-case"
 
     type TemplateDataType = "MODEL" | "JSON" | "STRING" | "RENDERABLE"
 
@@ -69,7 +70,10 @@
 
         loadTemplates()
 
-        watch(templateContent, debounce(renderTemplate, 150))
+        watch(templateContent, () => {
+            debounce(renderTemplate, 150)()
+            debounce(saveTemplate, 500)()
+        })
 
         showingFilesTree.value = window.localStorage.getItem("showingFilesTree") === "true"
     })
@@ -121,6 +125,10 @@
     }
 
     const revertToDefaultTemplate = async () => {
+        const confirmed = await window.projectConfirm("Are you sure you want to revert to the default template?")
+
+        if(!confirmed) return
+
         await Main.API.dropCustomTemplate(selectedTemplate.value)
 
         templateStatus.value = await Main.API.getTemplateStatus(
@@ -131,6 +139,8 @@
     }
 
     const saveTemplate = async () => {
+        if(!hasChanges.value) return
+
         await Main.API.saveCustomTemplate(
             selectedTemplate.value,
             templateContent.value
@@ -274,7 +284,7 @@
 
 <template>
     <div
-        class="overflow-y-auto pb-20 flex p-2" style="height: calc(100vh - 20px);"
+        class="overflow-y-auto pb-20 flex p-2" style="height: calc(100vh - 40px);"
     >
         <div 
             class="h-full" 
@@ -307,14 +317,21 @@
                 />
     
                 <div class="h-full" v-show="selectedTemplateTab === 'template'">
-                    {{ templateStatus }} - {{ selectedTemplate }}
-
-                    <div>
-                        <UiSmallButton @click="saveTemplate">Save Template</UiSmallButton>
-                        <UiSmallButton 
-                            @click="revertToDefaultTemplate"
-                            :disabled="templateStatus !== 'custom'"
-                        >Revert Template</UiSmallButton>
+                    <div class="w-full flex justify-between p-1.5 h-9.5 bg-slate-950">
+                        <div class="font-thin flex items-center gap-1">
+                            <span>{{ selectedTemplate }}</span>
+                            <span class="text-slate-400">({{ pascalCase(templateStatus) }})</span>
+                        </div>
+    
+                        <div>
+                            <UiSmallButton 
+                                @click="revertToDefaultTemplate"
+                                :disabled="templateStatus !== 'custom'"
+                            >
+                                <ArrowUturnLeftIcon class="w-4 h-4" />
+                                <span class="ml-1">Undo Changes</span>
+                            </UiSmallButton>
+                        </div>
                     </div>
                     
                     <BasicEditor ref="templateEditor" v-model="templateContent" />
@@ -356,6 +373,9 @@
                 />
     
                 <div class="h-full" v-show="selectedRenderedTab === 'rendered'">
+                    <div class="w-full flex justify-between p-1.5 h-9.5 bg-slate-950">
+                        <span>&nbsp;</span>
+                    </div>
                     <BasicEditor ref="renderedEditor" v-model="renderedContent" />
                 </div>
     
