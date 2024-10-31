@@ -123,8 +123,14 @@ for (let tsFile of tsFiles) {
         templateDataSection += `<# DATA:RENDERABLE [ renderable = ${relativePath}(${constructorArgNames}) ] #>\n`;
         templateDataSection += '<####>\n\n';
 
-        // Prepend the TEMPLATE DATA section to the template content
-        templateContent = templateDataSection + templateContent;
+        // if the template has <?php, append the TEMPLATE DATA section after it
+        const phpTagIndex = templateContent.indexOf('<?php');
+        if (phpTagIndex !== -1) {
+            templateContent = templateContent.slice(0, phpTagIndex) + templateDataSection + templateContent.slice(phpTagIndex);
+        } else {
+            // Prepend the TEMPLATE DATA section to the template content
+            templateContent = templateDataSection + templateContent;
+        }
 
         // Overwrite the template file
         fs.writeFileSync(templateFile, templateContent);
