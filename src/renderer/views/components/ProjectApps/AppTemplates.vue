@@ -16,7 +16,7 @@
     import TemplateErrorViewer from "../Common/TemplateErrorViewer.vue"
     import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
     import UiSmallButton from "@Renderer/components/ui/UiSmallButton.vue"
-import { pascalCase } from "change-case"
+    import { pascalCase } from "change-case"
 
     type TemplateDataType = "MODEL" | "JSON" | "STRING" | "RENDERABLE"
 
@@ -357,7 +357,7 @@ import { pascalCase } from "change-case"
                                 :disabled="templateStatus !== 'custom'"
                             >
                                 <ArrowUturnLeftIcon class="w-4 h-4" />
-                                <span class="ml-1">Undo Changes</span>
+                                <span class="ml-1">Discard Changes</span>
                             </UiSmallButton>
                         </div>
                     </div>
