@@ -14,6 +14,10 @@
             type: String,
             required: true,
         },
+        language: {
+            type: String,
+            default: 'php',
+        },
     })
 
     const editorElement = ref(null),
@@ -70,9 +74,67 @@
 
         monaco.editor.defineTheme("vemto-dark", theme)
 
+        if (props.language === 'vemtl') {
+            monaco.languages.register({ id: 'vemtl' })
+            monaco.languages.setLanguageConfiguration('vemtl', {
+                autoClosingPairs: [
+                    { open: '<%', close: '%>' },
+                    { open: '<$', close: '$>' },
+                    { open: '<#', close: '#>' },
+                    { open: '<up', close: 'up>' },
+                    { open: '{', close: '}' },
+                    { open: '[', close: ']' },
+                    { open: '(', close: ')' },
+                    { open: '"', close: '"' },
+                    { open: "'", close: "'" },
+                ],
+            })
+            monaco.languages.setMonarchTokensProvider('vemtl', {
+                defaultToken: '',
+                tokenPostfix: '.html',
+                ignoreCase: false,
+                brackets: [
+                    { open: '{', close: '}', token: 'delimiter.curly' },
+                    { open: '[', close: ']', token: 'delimiter.square' },
+                    { open: '(', close: ')', token: 'delimiter.parenthesis' },
+                ],
+                tokenizer: {
+                    root: [
+                        [/<#/, 'comment', '@comment'],
+                        [/<\*/, 'comment', '@mode'],
+                        [/<\$/, 'variable', '@variable'],
+                        [/<%/, 'string', '@string'],
+                        [/<up/, 'string', '@string'],
+                        [/<import/, 'string', '@import'],
+                    ],
+                    comment: [
+                        [/#>/, 'comment', '@pop'],
+                        [/./, 'comment.content'],
+                    ],
+                    mode: [
+                        [/\*>/, 'comment', '@pop'],
+                        [/./, 'comment.content'],
+                    ],
+                    variable: [
+                        [/\$>/, 'variable', '@pop'],
+                        [/./, 'variable.content'],
+                    ],
+                    string: [
+                        [/%>/, 'string', '@pop'],
+                        [/up>/, 'string', '@pop'],
+                        [/./, 'string.content'],
+                    ],
+                    import: [
+                        [/>/, 'string', '@pop'],
+                        [/./, 'string.content'],
+                    ],
+                },
+            })
+        }
+
         editor = monaco.editor.create(editorElement.value, {
             value: localValue.value,
-            language: "php",
+            language: props.language,
             automaticLayout: true,
             minimap: {
                 enabled: false,

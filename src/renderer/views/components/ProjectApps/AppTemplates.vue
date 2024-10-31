@@ -362,7 +362,7 @@
                         </div>
                     </div>
                     
-                    <BasicEditor ref="templateEditor" v-model="templateContent" />
+                    <BasicEditor ref="templateEditor" v-model="templateContent" language="vemtl" />
                 </div>
     
                 <!-- Template Data -->
