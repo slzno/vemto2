@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const pluralize = require('pluralize');
 
 // Directory containing the services
 const servicesDir = path.join(__dirname, 'src', 'renderer', 'codegen', 'sequential', 'services');
@@ -54,14 +55,16 @@ for (let tsFile of tsFiles) {
         }
 
         // Parse getData() method to get data model attributes
-        const getDataRegex = /getData\s*\(\s*\)\s*\{\s*return\s*{([\s\S]*?)}\s*;\s*\}/;
+        const getDataRegex = /(?<=(getData\(\)\s*\{\s*return\s*))\{([^\}]+)(\})/;
         const getDataMatch = content.match(getDataRegex);
+
         let dataModelAttributes = [];
 
         if (getDataMatch) {
-            const dataContent = getDataMatch[1];
+            const dataContent = getDataMatch[0];
             const dataKeysRegex = /(\w+)\s*:/g;
             let keyMatch;
+
             while ((keyMatch = dataKeysRegex.exec(dataContent)) !== null) {
                 dataModelAttributes.push(keyMatch[1]);
             }
@@ -91,17 +94,26 @@ for (let tsFile of tsFiles) {
             // Try to find in class properties
             const propertyRegex = new RegExp(`\\b${attr}\\s*:\\s*(\\w+)`, 'g');
             const propertyMatch = propertyRegex.exec(content);
-            if (propertyMatch) {
+
+            if (propertyMatch && propertyMatch[1] && propertyMatch[1] !== 'this') {
                 type = propertyMatch[1];
             } else {
                 const param = constructorParams.find(p => p.name === attr);
+                console.log(param);
                 if (param) {
+
                     type = param.type;
                 } else {
-                    type = 'Any';
+                    type = 'any';
                 }
             }
-            templateDataSection += `<# DATA:MODEL [ ${attr} = ${type} ] #>\n`;
+
+            if(pluralize.isPlural(attr)){
+                templateDataSection += `<# DATA:MODEL [ ${attr} = ${type}[] ] #>\n`;
+            } else {
+                templateDataSection += `<# DATA:MODEL [ ${attr} = ${type} ] #>\n`;
+            }
+
         }
 
         // Create DATA:RENDERABLE line
