@@ -1,5 +1,13 @@
 <?php
 
+<####>
+<# TEMPLATE DATA #>
+<# DATA:MODEL [ project = Project ] #>
+<# DATA:MODEL [ crud = Crud ] #>
+<# DATA:RENDERABLE [ renderable = crud/views/filament/RenderableFilamentResource(crud) ] #>
+<####>
+
+
 <% const pascalCase = this.require('pascalCase') %>
 <% const tableIsSoftDeletes = this.crud.table.hasSoftDeletes() %>
 <% const navigationIcon = this.crud.filamentSettings.navigationIcon ?? 'heroicon-o-rectangle-stack' %>

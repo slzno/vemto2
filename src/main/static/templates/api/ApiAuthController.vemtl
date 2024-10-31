@@ -1,4 +1,13 @@
 <?php
+
+<####>
+<# TEMPLATE DATA #>
+<# DATA:MODEL [ project = Project ] #>
+<# DATA:MODEL [ model = Model ] #>
+<# DATA:MODEL [ project = any ] #>
+<# DATA:RENDERABLE [ renderable = crud/controllers/RenderableApiAuthController(model) ] #>
+<####>
+
 <# TEMPLATE VARIABLES #>
 <% const snakeCase = this.require('snakeCase') %>
 <% const camelCase = this.require('camelCase') %>

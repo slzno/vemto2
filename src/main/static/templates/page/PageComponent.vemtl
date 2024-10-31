@@ -1,5 +1,13 @@
 <?php
 
+<####>
+<# TEMPLATE DATA #>
+<# DATA:MODEL [ project = Project ] #>
+<# DATA:MODEL [ page = Page ] #>
+<# DATA:RENDERABLE [ renderable = page/RenderablePageComponent(page) ] #>
+<####>
+
+
 <% const camelCase = this.require('camelCase') %>
 <% const paramCase = this.require('paramCase') %>
 <% const modelCollections = this.page.getModelCollections() %>

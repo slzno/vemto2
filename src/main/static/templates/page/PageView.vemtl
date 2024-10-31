@@ -1,3 +1,9 @@
+<####>
+<# TEMPLATE DATA #>
+<# DATA:MODEL [ project = Project ] #>
+<# DATA:MODEL [ page = Page ] #>
+<# DATA:RENDERABLE [ renderable = page/RenderablePageView(page) ] #>
+<####>
 <# Template Variables #>
 <% const ComponentRenderer = this.require("ComponentRenderer") %>
 <# - #>

@@ -1,4 +1,12 @@
 <?php
+
+<####>
+<# TEMPLATE DATA #>
+<# DATA:MODEL [ project = Project ] #>
+<# DATA:MODEL [ model = Model ] #>
+<# DATA:RENDERABLE [ renderable = model/RenderableSeeder(model) ] #>
+<####>
+
 <# TEMPLATE VARIABLES #>
 <% const model = this.model %>
 <% const modelName = this.model.name %>

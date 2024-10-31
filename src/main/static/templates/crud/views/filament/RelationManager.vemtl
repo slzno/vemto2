@@ -1,4 +1,12 @@
 <?php
+
+<####>
+<# TEMPLATE DATA #>
+<# DATA:MODEL [ project = Project ] #>
+<# DATA:MODEL [ detail = BelongsToManyDetail ] #>
+<# DATA:RENDERABLE [ renderable = crud/views/filament/RenderableFilamentBelongsToManyRelationManager(detail) ] #>
+<####>
+
 <% const pascalCase = this.require('pascalCase') %>
 <% const parentResourceName = pascalCase(`${this.detail.crud.name}Resource`) %>
 <% const tableIsSoftDeletes = this.detail.detailCrud.table.hasSoftDeletes() %>

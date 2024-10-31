@@ -1,3 +1,9 @@
+<####>
+<# TEMPLATE DATA #>
+<# DATA:MODEL [ project = Project ] #>
+<# DATA:MODEL [ hasManyDetail = HasManyDetail ] #>
+<# DATA:RENDERABLE [ renderable = crud/views/livewire/RenderableLivewireHasManyDetailView(hasManyDetail) ] #>
+<####>
 <# Requires e main variables #>
 <% const camelCase = this.require('camelCase') %>
 <% const pascalCase = this.require('pascalCase') %>

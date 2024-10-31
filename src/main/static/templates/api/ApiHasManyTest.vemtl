@@ -1,4 +1,15 @@
 <?php
+
+<####>
+<# TEMPLATE DATA #>
+<# DATA:MODEL [ project = Project ] #>
+<# DATA:MODEL [ crud = Crud ] #>
+<# DATA:MODEL [ relationship = Relationship ] #>
+<# DATA:MODEL [ relationshipCrud = Crud ] #>
+<# DATA:MODEL [ project = any ] #>
+<# DATA:RENDERABLE [ renderable = crud/api/RenderableApiHasManyTest(crud, relationship) ] #>
+<####>
+
 <# TEMPLATE VARIABLES #>
 <% const snakeCase = this.require('snakeCase') %>
 <% const camelCase = this.require('camelCase') %>

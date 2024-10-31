@@ -1,4 +1,13 @@
 <?php
+
+<####>
+<# TEMPLATE DATA #>
+<# DATA:MODEL [ project = Project ] #>
+<# DATA:MODEL [ crud = Crud ] #>
+<# DATA:MODEL [ project = any ] #>
+<# DATA:RENDERABLE [ renderable = crud/controllers/RenderableApiController(crud) ] #>
+<####>
+
 <# TEMPLATE VARIABLES #>
 <% const pascalCase = this.require('pascalCase') %>
 <% const camelCase = this.require('camelCase') %>

@@ -1,5 +1,13 @@
 <?php
 
+<####>
+<# TEMPLATE DATA #>
+<# DATA:MODEL [ project = Project ] #>
+<# DATA:MODEL [ crud = Crud ] #>
+<# DATA:RENDERABLE [ renderable = crud/views/filament/RenderableFilamentEditComponent(crud) ] #>
+<####>
+
+
 <% const pascalCase = this.require('pascalCase') %>
 <% const parentResourceName = pascalCase(`${this.crud.name}Resource`) %>
 

@@ -1,5 +1,13 @@
 <?php
 
+<####>
+<# TEMPLATE DATA #>
+<# DATA:MODEL [ project = Project ] #>
+<# DATA:MODEL [ routes = Route[] ] #>
+<# DATA:RENDERABLE [ renderable = routes/Routes(routes) ] #>
+<####>
+
+
 <% const paramCase = this.require('paramCase') %>
 
 use Illuminate\Support\Facades\Route;

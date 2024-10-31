@@ -1,3 +1,9 @@
+<####>
+<# TEMPLATE DATA #>
+<# DATA:MODEL [ project = Project ] #>
+<# DATA:MODEL [ crud = Crud ] #>
+<# DATA:RENDERABLE [ renderable = crud/views/livewire/RenderableLivewireEditView(crud) ] #>
+<####>
 <% const crud = this.crud %>
 <% const model = crud.model %>
 <% const table = model.table %>

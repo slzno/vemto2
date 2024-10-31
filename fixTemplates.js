@@ -121,7 +121,7 @@ for (let tsFile of tsFiles) {
         const constructorArgNames = constructorParams.map(p => p.name).join(', ');
 
         templateDataSection += `<# DATA:RENDERABLE [ renderable = ${relativePath}(${constructorArgNames}) ] #>\n`;
-        templateDataSection += '<####>\n\n';
+        templateDataSection += '<####>\n';
 
         // if the template has <?php, append the TEMPLATE DATA section after it
         const phpTagIndex = templateContent.indexOf('<?php');

@@ -1,5 +1,14 @@
 <?php
 
+<####>
+<# TEMPLATE DATA #>
+<# DATA:MODEL [ project = Project ] #>
+<# DATA:MODEL [ crud = Crud ] #>
+<# DATA:MODEL [ project = any ] #>
+<# DATA:RENDERABLE [ renderable = crud/api/RenderableApiStoreRequest(crud) ] #>
+<####>
+
+
 namespace App\Http\Requests;
 
 <% if(this.crud.model.table.hasUniqueColumns()) { %>
