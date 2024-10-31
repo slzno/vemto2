@@ -126,7 +126,7 @@ for (let tsFile of tsFiles) {
         // if the template has <?php, append the TEMPLATE DATA section after it
         const phpTagIndex = templateContent.indexOf('<?php');
         if (phpTagIndex !== -1) {
-            templateContent = templateContent.slice(0, phpTagIndex) + templateDataSection + templateContent.slice(phpTagIndex);
+            templateContent = templateContent.replace('<?php', '<?php\n\n' + templateDataSection);
         } else {
             // Prepend the TEMPLATE DATA section to the template content
             templateContent = templateDataSection + templateContent;
