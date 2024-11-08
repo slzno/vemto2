@@ -70,21 +70,32 @@ export const useProjectStore = defineStore("project", {
         },
 
         getAllRowsByModelIdentifier(state) {
-            return (modelIdentifier: string) => {
+            return (modelIdentifier: string, addDefault: boolean = true) => {
                 const model: any = RelaDB.Resolver.db().getModel(modelIdentifier)
 
                 if(!model) return []
 
                 // call the static method to get all rows
-                return model.get()
+                let rows = model.get()
+
+                if(addDefault) {
+                    const defaultRow = new model()
+                    rows = [...rows, defaultRow]
+                }
+
+                return rows
             }
         },
 
         findRowByModelIdentifier(state) {
-            return (modelIdentifier: string, rowId: string) => {
+            return (modelIdentifier: string, rowId: string, addDefault: boolean = true) => {
                 const model: any = RelaDB.Resolver.db().getModel(modelIdentifier)
 
                 if(!model) return null
+
+                if(!rowId && addDefault) {
+                    return new model()
+                }
 
                 // call the static method to get all rows
                 return model.findOrFail(rowId)

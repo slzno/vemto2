@@ -17,6 +17,8 @@
     import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
     import UiSmallButton from "@Renderer/components/ui/UiSmallButton.vue"
     import { pascalCase } from "change-case"
+import UiPre from "@Renderer/components/ui/UiPre.vue"
+import UiWarning from "@Renderer/components/ui/UiWarning.vue"
 
     type TemplateDataType = "MODEL" | "JSON" | "STRING" | "RENDERABLE"
 
@@ -261,6 +263,19 @@
         return data
     }
 
+    // check if there is a model data item which "id" is undefined or null
+    const hasUnknownModelData = () => {
+        for (const key in templateData.value) {
+            const dataItem = templateData.value[key]
+
+            if (dataItem.type === "MODEL" && !dataItem.selection) {
+                return true
+            }
+        }
+
+        return false
+    }
+
     const extractRenderableInfo = (content: string) => {
         const parts = content.split("("),
             className = parts[0],
@@ -389,8 +404,8 @@
         
                                     <div v-else>
                                         <UiSelect v-model="item.selection" @change="renderTemplate">    
-                                            <option v-for="modelRow in projectStore.getAllRowsByModelIdentifier(item.value)" :value="modelRow.id">
-                                                {{ modelRow.name || modelRow.title || modelRow.id }}
+                                            <option v-for="modelRow in projectStore.getAllRowsByModelIdentifier(item.value, true)" :value="modelRow.id">
+                                                {{ modelRow.name || modelRow.title || modelRow.id || '!Missing Data!' }}
                                             </option>
                                         </UiSelect>
                                     </div>
@@ -416,6 +431,14 @@
                 </div>
     
                 <div class="h-full" v-show="selectedRenderedTab === 'errors'">
+                    <div v-if="hasUnknownModelData()">
+                        <div class="p-8">
+                            <UiWarning>
+                                Some model data is missing. Please add the missing data to the project before trying to render the template.
+                            </UiWarning>
+                        </div>
+                    </div>
+
                     <div v-if="hasRenderErrors" class="text-red-500 p-2">
                         <div v-if="currentRenderError.hasTemplateError">
                             <TemplateErrorViewer
@@ -428,10 +451,10 @@
                         </div>
                         
                         <div v-else>
-                            <pre class="overflow-hidden whitespace-pre-wrap mb-2 text-red-450">{{ currentRenderError.message }}</pre>
+                            <UiPre class="overflow-hidden mb-2 text-red-450">{{ currentRenderError.message }}</UiPre>
     
-                            <div v-if="currentRenderError.stack" class="overflow-auto" style="max-height: calc(100vh - 350px);">
-                                <pre class="overflow-hidden whitespace-pre-wrap p-2 bg-slate-950 rounded-lg text-slate-200" style="max-width: 550px;">{{ currentRenderError.stack }}</pre>
+                            <div v-if="currentRenderError.stack" class="overflow-auto" style="max-height: calc(100vh - 350px); max-width: 540px;">
+                                <UiPre class="p-4 bg-slate-950 rounded-lg text-slate-200">{{ currentRenderError.stack }}</UiPre>
                             </div>
                         </div>
                     </div>
