@@ -71,6 +71,8 @@ export const useProjectStore = defineStore("project", {
 
         getAllRowsByModelIdentifier(state) {
             return (modelIdentifier: string, addDefault: boolean = true) => {
+                console.log("Getting all rows", modelIdentifier)
+
                 const model: any = RelaDB.Resolver.db().getModel(modelIdentifier)
 
                 if(!model) return []
@@ -89,6 +91,8 @@ export const useProjectStore = defineStore("project", {
 
         findRowByModelIdentifier(state) {
             return (modelIdentifier: string, rowId: string, addDefault: boolean = true) => {
+                console.log("Finding row", modelIdentifier, rowId)
+
                 const model: any = RelaDB.Resolver.db().getModel(modelIdentifier)
 
                 if(!model) return null

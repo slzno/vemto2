@@ -11,6 +11,7 @@ export enum RenderableFileType {
     SCSS = 'scss',
     JSON = 'json',
     ENV = 'env',
+    TXT = 'txt',
 }
 
 export enum RenderableFileFormatter {

@@ -17,9 +17,10 @@
     import UiEmptyMessage from "@Renderer/components/ui/UiEmptyMessage.vue"
     import UiSmallButton from "@Renderer/components/ui/UiSmallButton.vue"
     import { pascalCase } from "change-case"
-import UiPre from "@Renderer/components/ui/UiPre.vue"
-import UiWarning from "@Renderer/components/ui/UiWarning.vue"
-import CodeComparer from "@Common/services/CodeComparer"
+    import UiPre from "@Renderer/components/ui/UiPre.vue"
+    import UiWarning from "@Renderer/components/ui/UiWarning.vue"
+    import CodeComparer from "@Common/services/CodeComparer"
+import CustomRenderable from "@Renderer/codegen/sequential/services/custom/CustomRenderable"
 
     type TemplateDataType = "MODEL" | "JSON" | "STRING" | "RENDERABLE"
 
@@ -50,7 +51,8 @@ import CodeComparer from "@Common/services/CodeComparer"
         showingFilesTree = ref(true)
 
     const selectedTemplateTab = ref("template") as Ref<string>
-
+    
+    const templateTabsRef = ref(null)
     const templateTabs = [
         { label: "Template", value: "template" },
         { label: "Data", value: "data" },
@@ -58,6 +60,7 @@ import CodeComparer from "@Common/services/CodeComparer"
 
     const selectedRenderedTab = ref("rendered") as Ref<string>
 
+    const renderedTabsRef = ref(null)
     const renderedTabs = [
         { label: "Rendered Code", value: "rendered" },
         { 
@@ -69,6 +72,9 @@ import CodeComparer from "@Common/services/CodeComparer"
     ]
 
     onMounted(() => {
+        templateTabsRef.value.setTab("template")
+        renderedTabsRef.value.setTab("rendered")
+        
         readTemplate("models/Model.vemtl")
 
         loadTemplates()
@@ -221,31 +227,11 @@ import CodeComparer from "@Common/services/CodeComparer"
     const renderTemplate = async () => {
         console.log("Rendering template", templateData.value)
         
-        const renderableContent = templateData.value.renderable ? templateData.value.renderable.value : ""
+        const renderableInfo = extractRenderableInfo(),
+            renderableClass = await setupRenderableClass(renderableInfo),
+            renderableParams = await setupRenderableParams(renderableInfo)
 
-        const basePath = "../../../codegen/sequential/services",
-            renderableInfo = extractRenderableInfo(renderableContent),
-            /* @vite-ignore */
-            renderableClass = await import(`${basePath}/${renderableInfo.className}.ts`)
-
-        hasRenderErrors.value = false
-
-        if (!renderableClass) {
-            hasRenderErrors.value = true
-            throw new Error(`Renderable ${templateData.value.renderable.value} not found`)
-        }
-
-        const renderableParams = renderableInfo.constructorParams.map((param) => {
-            const dataItem = templateData.value[param]
-
-            if (dataItem.type === "MODEL") {
-                return projectStore.findRowByModelIdentifier(dataItem.value, dataItem.selection)
-            }
-
-            return dataItem.value
-        })
-
-        const renderable = new renderableClass.default(...renderableParams)
+        const renderable = new renderableClass(...renderableParams)
 
         renderable.setOverriddenData(
             getDataForRenderable()
@@ -265,14 +251,69 @@ import CodeComparer from "@Common/services/CodeComparer"
         }
     }
 
+    const setupRenderableClass = async (renderableInfo: any) => {
+        if(renderableInfo.className === "CustomRenderable") {
+            return CustomRenderable
+        }
+
+        const basePath = "../../../codegen/sequential/services",
+            /* @vite-ignore */
+            renderableClass = await import(`${basePath}/${renderableInfo.className}.ts`)
+
+        hasRenderErrors.value = false
+
+        if (!renderableClass) {
+            hasRenderErrors.value = true
+            throw new Error(`Renderable ${templateData.value.renderable.value} not found`)
+        }
+
+        return renderableClass.default
+    }
+
+    const setupRenderableParams = async (renderableInfo: any) => {
+        const renderableParams = renderableInfo.constructorParams.map((param) => {
+            const dataItem = templateData.value[param]
+
+            if (!dataItem) {
+                throw new Error(`Constructor param "${param}" not found in the template data`)
+            }
+
+            if (dataItem.type === "MODEL") {
+                let modelIdentifier = dataItem.value
+
+                if(Array.isArray(dataItem.selection)) {
+                    modelIdentifier = modelIdentifier.replace("[]", "")
+
+                    return dataItem.selection.filter((id) => id)
+                        .map((id) => projectStore.findRowByModelIdentifier(modelIdentifier, id))
+                }
+
+                return projectStore.findRowByModelIdentifier(modelIdentifier, dataItem.selection)
+            }
+
+            return dataItem.value
+        })
+
+        return renderableParams
+    }
+
     const getDataForRenderable = () => {
         const data = {}
 
         for (const key in templateData.value) {
             const dataItem = templateData.value[key]
+            
+            let modelIdentifier = dataItem.value
 
             if (dataItem.type === "MODEL") {
-                data[key] = projectStore.findRowByModelIdentifier(dataItem.value, dataItem.selection)
+                if(Array.isArray(dataItem.selection)) {
+                    modelIdentifier = modelIdentifier.replace("[]", "")
+
+                    data[key] = dataItem.selection.filter((id) => id)
+                        .map((id) => projectStore.findRowByModelIdentifier(modelIdentifier, id))
+                } else {
+                    data[key] = projectStore.findRowByModelIdentifier(modelIdentifier, dataItem.selection)
+                }
             } else {
                 data[key] = dataItem.value
             }
@@ -294,10 +335,15 @@ import CodeComparer from "@Common/services/CodeComparer"
         return false
     }
 
-    const extractRenderableInfo = (content: string) => {
-        const parts = content.split("("),
-            className = parts[0],
-            constructorParams = parts[1].replace(")", "").split(",")
+    const extractRenderableInfo = () => {
+        const renderableContent = templateData.value.renderable ? templateData.value.renderable.value : ""
+
+        const parts = renderableContent.split("("),
+            className = parts[0]
+        
+        let constructorParams = parts[1].replace(")", "").split(",")
+
+        constructorParams = constructorParams.map((param) => param.trim()).filter((param) => param)
 
         return {
             className,
@@ -374,6 +420,7 @@ import CodeComparer from "@Common/services/CodeComparer"
         >
             <div class="w-1/2 h-full">
                 <UiTabs 
+                    ref="templateTabsRef"
                     :name="projectStore.project.getTabNameFor(`templates_code`)" 
                     :tabs="templateTabs" 
                     v-model="selectedTemplateTab" 
@@ -429,6 +476,13 @@ import CodeComparer from "@Common/services/CodeComparer"
                                     </div>
         
                                     <div v-else>
+                                        <template v-if="Array.isArray(item.selection)">
+                                            <span>
+                                                Collection of {{ item.value }}
+                                            </span>
+                                        </template>
+
+                                        <template v-else>
                                         <UiSelect 
                                             v-model="item.selection" 
                                             @change="renderTemplate"
@@ -439,6 +493,7 @@ import CodeComparer from "@Common/services/CodeComparer"
                                                 {{ modelRow.name || modelRow.title || modelRow.id || '! Missing Data: ' + item.value }}
                                             </option>
                                         </UiSelect>
+                                        </template>
                                     </div>
                                 </div>
                             </div>
@@ -449,6 +504,7 @@ import CodeComparer from "@Common/services/CodeComparer"
     
             <div class="w-1/2 h-full">
                 <UiTabs 
+                    ref="renderedTabsRef"
                     :name="projectStore.project.getTabNameFor(`templates_rendered_code`)" 
                     :tabs="renderedTabs" 
                     v-model="selectedRenderedTab" 

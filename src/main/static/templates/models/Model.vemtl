@@ -7,7 +7,6 @@
 <# DATA:RENDERABLE [ renderable = model/RenderableModel(model) ] #>
 <####>
 
-
 <####>
 <# TEMPLATE IMPORTS #>
 <% const camelCase = this.require('camelCase') %>

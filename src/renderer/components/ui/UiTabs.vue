@@ -105,6 +105,7 @@
     }
 
     defineExpose({
+        setTab,
         setLoadingTab,
         clearLoadingTab,
     })
