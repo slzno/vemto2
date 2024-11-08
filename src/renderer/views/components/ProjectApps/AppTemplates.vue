@@ -199,10 +199,19 @@ import CodeComparer from "@Common/services/CodeComparer"
         // select the first model for each model type
         for (const key in templateData) {
             if (templateData[key].type === "MODEL") {
-                const rows = projectStore.getAllRowsByModelIdentifier(templateData[key].value),
-                    firstRowId = rows[0] ? rows[0].id : null
+                let modelIdentifier = templateData[key].value,
+                    mode = "single"
 
-                templateData[key].selection = firstRowId
+                if(modelIdentifier.includes("[]")) {
+                    mode = "multiple"
+                    modelIdentifier = modelIdentifier.replace("[]", "")
+                }
+
+                const rows = projectStore.getAllRowsByModelIdentifier(modelIdentifier),
+                    firstRowId = rows[0] ? rows[0].id : null,
+                    allRows = rows.map((row) => row.id)
+
+                templateData[key].selection = mode === "single" ? firstRowId : allRows
             }
         }
 
@@ -378,20 +387,20 @@ import CodeComparer from "@Common/services/CodeComparer"
                         </div>
     
                         <div class="flex space-x-1">
-                            <UiSmallButton 
+                            <!-- <UiSmallButton 
                                 @click="saveTemplate"
                                 :disabled="!hasChanges"
                             >
                                 <ArrowUturnLeftIcon class="w-4 h-4" />
                                 <span class="ml-1">Save</span>
-                            </UiSmallButton>
+                            </UiSmallButton> -->
 
                             <UiSmallButton 
                                 @click="revertToDefaultTemplate"
                                 :disabled="templateStatus !== 'custom'"
                             >
                                 <ArrowUturnLeftIcon class="w-4 h-4" />
-                                <span class="ml-1">Discard</span>
+                                <span class="ml-1">Revert Changes</span>
                             </UiSmallButton>
                         </div>
                     </div>
@@ -410,7 +419,7 @@ import CodeComparer from "@Common/services/CodeComparer"
                         </div>
                         <div v-for="(item, key) in templateData" :key="key">
                             <div class="flex items-center space-x-2 space-y-1">
-                                <div class="flex-1 w-1/3">
+                                <div class="flex-1 w-1/3" :title="item.type">
                                     <UiText v-model="item.name" />
                                 </div>
     
@@ -427,7 +436,7 @@ import CodeComparer from "@Common/services/CodeComparer"
                                             <option
                                                 v-for="modelRow in projectStore.getAllRowsByModelIdentifier(item.value, true)" :value="modelRow.id"
                                             >
-                                                {{ modelRow.name || modelRow.title || modelRow.id || '! Missing Data on Project !' }}
+                                                {{ modelRow.name || modelRow.title || modelRow.id || '! Missing Data: ' + item.value }}
                                             </option>
                                         </UiSelect>
                                     </div>
