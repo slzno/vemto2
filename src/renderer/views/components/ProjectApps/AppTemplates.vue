@@ -19,6 +19,7 @@
     import { pascalCase } from "change-case"
 import UiPre from "@Renderer/components/ui/UiPre.vue"
 import UiWarning from "@Renderer/components/ui/UiWarning.vue"
+import CodeComparer from "@Common/services/CodeComparer"
 
     type TemplateDataType = "MODEL" | "JSON" | "STRING" | "RENDERABLE"
 
@@ -72,7 +73,7 @@ import UiWarning from "@Renderer/components/ui/UiWarning.vue"
 
         loadTemplates()
 
-        watch(templateContent, () => {
+        watch(templateContent, (content) => {
             templateContentChanged()
         })
 
@@ -80,7 +81,12 @@ import UiWarning from "@Renderer/components/ui/UiWarning.vue"
     })
 
     const hasChanges = computed(() => {
-        return templateContent.value !== templateOriginalContent.value
+        if(!templateOriginalContent.value) return false
+
+        return CodeComparer.codeIsDifferent(
+            templateContent.value,
+            templateOriginalContent.value
+        )
     })
 
     const loadTemplates = async () => {
@@ -110,6 +116,9 @@ import UiWarning from "@Renderer/components/ui/UiWarning.vue"
         await updateTemplateData()
 
         debounce(renderTemplate, 150)()
+
+        console.log("has changes", hasChanges.value)
+
         debounce(saveTemplate, 500)()
     }
 
@@ -368,13 +377,21 @@ import UiWarning from "@Renderer/components/ui/UiWarning.vue"
                             <span class="text-slate-400">({{ pascalCase(templateStatus) }})</span>
                         </div>
     
-                        <div>
+                        <div class="flex space-x-1">
+                            <UiSmallButton 
+                                @click="saveTemplate"
+                                :disabled="!hasChanges"
+                            >
+                                <ArrowUturnLeftIcon class="w-4 h-4" />
+                                <span class="ml-1">Save</span>
+                            </UiSmallButton>
+
                             <UiSmallButton 
                                 @click="revertToDefaultTemplate"
                                 :disabled="templateStatus !== 'custom'"
                             >
                                 <ArrowUturnLeftIcon class="w-4 h-4" />
-                                <span class="ml-1">Discard Changes</span>
+                                <span class="ml-1">Discard</span>
                             </UiSmallButton>
                         </div>
                     </div>
