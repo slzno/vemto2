@@ -1,3 +1,10 @@
+<####>
+<# TEMPLATE DATA #>
+<# DATA:MODEL [ project = Project ] #>
+<# DATA:MODEL [ table = Table ] #>
+<# DATA:RENDERABLE [ renderable = CustomRenderable() ] #>
+<####>
+
 <# New columns #>
 <% for (let column of this.table.getNewColumns()) { %>
     <import template="MigrationColumn.vemtl" enableColumnAfterUsage="true">

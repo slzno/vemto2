@@ -1,3 +1,10 @@
+<####>
+<# TEMPLATE DATA #>
+<# DATA:MODEL [ project = Project ] #>
+<# DATA:MODEL [ table = Table ] #>
+<# DATA:RENDERABLE [ renderable = CustomRenderable() ] #>
+<####>
+
 <# This tempalte is used to revert changes on an updater migration (down method) #>
 <# New columns #>
 <% for (let column of this.table.getNewColumns()) { %>

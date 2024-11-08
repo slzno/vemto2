@@ -94,6 +94,19 @@ export default class TemplateManager {
         return FileSystem.readFileIfExists(path.join(app.getAppPath(), "static", "templates", this.templatePath))
     }
 
+    upgradeBaseTemplate() {
+        const project = Project.find(1)
+
+        if(!project) return
+
+        const basePath = path.join(project.getPath(), ".vemto", "templates", "base", this.templatePath),
+            defaultPath = path.join(app.getAppPath(), "static", "templates", this.templatePath)
+
+        if(FileSystem.fileExists(defaultPath)) {
+            FileSystem.copyFile(defaultPath, basePath)
+        }
+    }
+
     static publishAll() {
         const project = Project.find(1)
 

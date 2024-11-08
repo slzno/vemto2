@@ -1,4 +1,12 @@
 <?php
+
+<####>
+<# TEMPLATE DATA #>
+<# DATA:MODEL [ project = Project ] #>
+<# DATA:MODEL [ table = Table ] #>
+<# DATA:RENDERABLE [ renderable = CustomRenderable() ] #>
+<####>
+
 <# TEMPLATE VARIABLES #>
 <# const pascalCase = TemplateRequire('pascalCase') #>
 <####>

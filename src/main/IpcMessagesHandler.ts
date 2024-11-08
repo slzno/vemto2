@@ -175,6 +175,14 @@ export function HandleIpcMessages() {
         })
     })
 
+    ipcMain.handle("file:template:upgrade:base", (event, filePath) => {
+        const templateManager = new TemplateManager(filePath)
+
+        return handleError(event, () => {
+            return templateManager.upgradeBaseTemplate()
+        })
+    })
+
     ipcMain.handle("folder:open", (event, folderPath) => {
         return handleError(event, () => {
             // if on Windows, replace / with \ to open the folder in the file explorer

@@ -165,6 +165,16 @@ import CustomRenderable from "@Renderer/codegen/sequential/services/custom/Custo
         reloadSelectedTemplate()
     }
 
+    const upgradeTemplate = async () => {
+        const confirmed = await window.projectConfirm("Are you sure you want to upgrade this template?")
+
+        if(!confirmed) return
+
+        await Main.API.upgradeBaseTemplate(selectedTemplate.value)
+
+        reloadSelectedTemplate()
+    }
+
     const saveTemplate = async () => {
         if(!hasChanges.value) return
 
@@ -447,7 +457,14 @@ import CustomRenderable from "@Renderer/codegen/sequential/services/custom/Custo
                                 :disabled="templateStatus !== 'custom'"
                             >
                                 <ArrowUturnLeftIcon class="w-4 h-4" />
-                                <span class="ml-1">Revert Changes</span>
+                                <span class="ml-1">Revert</span>
+                            </UiSmallButton>
+
+                            <UiSmallButton 
+                                @click="upgradeTemplate"
+                            >
+                                <ArrowUturnLeftIcon class="w-4 h-4" />
+                                <span class="ml-1">Upgrade</span>
                             </UiSmallButton>
                         </div>
                     </div>

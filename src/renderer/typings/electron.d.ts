@@ -46,6 +46,7 @@ export default interface ElectronApi {
     getTemplateStatus: (path: string) => Promise<string>,
     saveCustomTemplate: (path: string, content: string) => Promise<void>,
     dropCustomTemplate: (path: string) => Promise<void>,
+    upgradeBaseTemplate: (path: string) => Promise<void>,
     publishTemplates: () => Promise<void>,
     openFolder: (path: string) => Promise<void>,
     openTerminal: (path: string) => Promise<void>,
