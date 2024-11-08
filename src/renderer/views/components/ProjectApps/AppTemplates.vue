@@ -466,6 +466,13 @@ import CustomRenderable from "@Renderer/codegen/sequential/services/custom/Custo
                                 <ArrowUturnLeftIcon class="w-4 h-4" />
                                 <span class="ml-1">Upgrade</span>
                             </UiSmallButton>
+
+                            <UiSmallButton 
+                                @click="upgradeTemplate"
+                            >
+                                <ArrowUturnLeftIcon class="w-4 h-4" />
+                                <span class="ml-1">Compare</span>
+                            </UiSmallButton>
                         </div>
                     </div>
                     
