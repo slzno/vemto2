@@ -200,9 +200,11 @@
 
     const renderTemplate = async () => {
         console.log("Rendering template", templateData.value)
+        
+        const renderableContent = templateData.value.renderable ? templateData.value.renderable.value : ""
 
         const basePath = "../../../codegen/sequential/services",
-            renderableInfo = extractRenderableInfo(templateData.value.renderable.value),
+            renderableInfo = extractRenderableInfo(renderableContent),
             /* @vite-ignore */
             renderableClass = await import(`${basePath}/${renderableInfo.className}.ts`)
 
