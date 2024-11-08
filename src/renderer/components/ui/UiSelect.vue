@@ -20,6 +20,11 @@ import { defineProps, defineEmits, computed } from "vue"
             type: Boolean,
             default: false,
         },
+
+        selectStyle: {
+            type: String,
+            default: ""
+        },
     })
 
     const emit = defineEmits(["update:modelValue", "change"]),
@@ -37,10 +42,11 @@ import { defineProps, defineEmits, computed } from "vue"
 
 <template>
     <div class="flex gap-1 flex-1" :class="{ 'flex-col': !inlineLabel, 'items-center': inlineLabel }">
-        <label v-if="label" class="text-xs text-slate-500 dark:text-slate-400">{{ label }}</label>
+        <label v-if="label" class="text-xs">{{ label }}</label>
         <select
             :disabled="disabled"
             class="w-full border border-slate-300 dark:border-slate-650 focus:border-red-500 dark:focus:border-red-500 bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg focus:ring-transparent"
+            :style="selectStyle"
             v-model="localValue"
         >
             <slot></slot>

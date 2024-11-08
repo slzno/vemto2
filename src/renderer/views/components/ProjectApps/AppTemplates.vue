@@ -403,9 +403,14 @@ import UiWarning from "@Renderer/components/ui/UiWarning.vue"
                                     </div>
         
                                     <div v-else>
-                                        <UiSelect v-model="item.selection" @change="renderTemplate">    
-                                            <option v-for="modelRow in projectStore.getAllRowsByModelIdentifier(item.value, true)" :value="modelRow.id">
-                                                {{ modelRow.name || modelRow.title || modelRow.id || '!Missing Data!' }}
+                                        <UiSelect 
+                                            v-model="item.selection" 
+                                            @change="renderTemplate"
+                                        >    
+                                            <option
+                                                v-for="modelRow in projectStore.getAllRowsByModelIdentifier(item.value, true)" :value="modelRow.id"
+                                            >
+                                                {{ modelRow.name || modelRow.title || modelRow.id || '! Missing Data on Project !' }}
                                             </option>
                                         </UiSelect>
                                     </div>
