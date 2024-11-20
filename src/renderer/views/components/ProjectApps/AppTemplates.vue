@@ -20,7 +20,7 @@
     import UiPre from "@Renderer/components/ui/UiPre.vue"
     import UiWarning from "@Renderer/components/ui/UiWarning.vue"
     import CodeComparer from "@Common/services/CodeComparer"
-import CustomRenderable from "@Renderer/codegen/sequential/services/custom/CustomRenderable"
+    import CustomRenderable from "@Renderer/codegen/sequential/services/custom/CustomRenderable"
 
     type TemplateDataType = "MODEL" | "JSON" | "STRING" | "RENDERABLE"
 
@@ -248,7 +248,9 @@ import CustomRenderable from "@Renderer/codegen/sequential/services/custom/Custo
         )
 
         try {
-            renderedContent.value = await renderable.compile(templateContent.value)
+            const templateContentWithExposed = addExposedVariables(templateContent.value)
+
+            renderedContent.value = await renderable.compile(templateContentWithExposed)
     
             renderedEditor.value?.setValue(renderedContent.value)
 
@@ -330,6 +332,28 @@ import CustomRenderable from "@Renderer/codegen/sequential/services/custom/Custo
         }
 
         return data
+    }
+
+    // read the data item exposed_variables, get all items separated by comma
+    // and add them to the template code like this:
+    // <% const var = this.var %>
+    // <% const var2 = this.var2 %> and so on
+    const addExposedVariables = (templateContent: string) => {
+        const exposedVariables = templateData.value.exposed_variables?.value
+
+        if (!exposedVariables) {
+            return templateContent
+        }
+
+        const variables = exposedVariables.split(",").map((variable) => variable.trim())
+
+        let newContent = templateContent
+
+        variables.forEach((variable) => {
+            newContent = `<% const ${variable} = this.${variable} %>\n${newContent}`
+        })
+
+        return newContent
     }
 
     // check if there is a model data item which "id" is undefined or null
