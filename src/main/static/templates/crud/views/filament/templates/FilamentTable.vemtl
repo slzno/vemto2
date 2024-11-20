@@ -1,7 +1,9 @@
 <% const inputColumnData = input.filamentSettings.columnData %>
 <% const columnName = !input.isBelongsTo() ? input.name : `${input.relationship.name}.${input.relationship.relatedModel.table.getLabelColumnName()}` %>
+<% const inputLabel = input.isBelongsTo() ? `'${capitalCase(input.relationship.name)}'` : this.helpers.toTranslatableFormat(input.label) %>
 <###>
 <$ pascalCase(inputColumnData.columnType) $>::make('<$ columnName $>')
+    ->label(<$ inputLabel $>)
     <% if(input.isImage() && input.filamentSettings.formData.disk) { %>
         ->disk('<$ input.filamentSettings.formData.disk $>')
     <% } %>

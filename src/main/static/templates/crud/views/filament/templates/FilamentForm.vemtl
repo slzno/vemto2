@@ -1,8 +1,10 @@
 <% const inputFormData = input.filamentSettings.formData %>
 <% const [inlineRules, individualRules] = input.getRulesForFilamentTemplate() %>
 <% const inputTypeIs = (type) => inputFormData.inputType === type %>
+<% const inputLabel = input.isBelongsTo() ? `'${capitalCase(input.relationship.name)}'` : this.helpers.toTranslatableFormat(input.label) %>
 
 <$ pascalCase(inputFormData.inputType) $>::make('<$ input.name $>')
+    ->label(<$ inputLabel $>)
     <###>
     <% if(inlineRules.length) { %>
         ->rules([<$ inlineRules.join(', ') $>])
