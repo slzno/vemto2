@@ -1,3 +1,11 @@
+<####>
+<# TEMPLATE DATA #>
+<# DATA:MODEL [ project = Project ] #>
+<# DATA:MODEL [ index = Index ] #>
+<# DATA:EXPOSE_LOCAL [ exposed_variables = index ] #>
+<# DATA:RENDERABLE [ renderable = CustomRenderable() ] #>
+<####>
+
 <% if (index.isCommon()) { %>
     $table->dropIndex('<$ index.name $>');
 <% } %>

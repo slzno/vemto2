@@ -1,3 +1,11 @@
+<####>
+<# TEMPLATE DATA #>
+<# DATA:MODEL [ project = Project ] #>
+<# DATA:MODEL [ column = Column ] #>
+<# DATA:EXPOSE_LOCAL [ exposed_variables = column ] #>
+<# DATA:RENDERABLE [ renderable = CustomRenderable() ] #>
+<####>
+
 $table-><$ column.type $>('<$ column.name $>'
 <up if (column.length) { up>
 , <$ column.length $>
