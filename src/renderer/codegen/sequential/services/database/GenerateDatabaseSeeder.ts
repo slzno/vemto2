@@ -1,7 +1,7 @@
-import RenderableDatabaseSeeder from "./RenderableDatabaseSeeder"
+import DatabaseSeederRenderable from "./DatabaseSeederRenderable"
 
 export default class GenerateDatabaseSeeder {
     async start() {
-        await new RenderableDatabaseSeeder().render()
+        await new DatabaseSeederRenderable().render()
     }
 }
