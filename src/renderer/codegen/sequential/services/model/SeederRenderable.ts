@@ -2,7 +2,7 @@ import Model from "@Common/models/Model"
 import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
 import { RenderableFileFormatter, RenderableFileType } from "@Common/models/RenderableFile"
 
-export default class RenderableModel extends Renderable {
+export default class SeederRenderable extends Renderable {
     model: Model
 
     constructor(model: Model) {
@@ -20,15 +20,15 @@ export default class RenderableModel extends Renderable {
     }
 
     getTemplateFile(): string {
-        return "models/Model.vemtl"
+        return "database/Seeder.vemtl"
     }
 
     getPath(): string {
-        return "app/Models"
+        return "database/seeders"
     }
 
     getFilename(): string {
-        return `${this.model.name}.php`
+        return `${this.model.name}Seeder.php`
     }
 
     getFormatter(): RenderableFileFormatter {
@@ -36,7 +36,7 @@ export default class RenderableModel extends Renderable {
     }
 
     hooks() {
-        return this.model.getHooks('model')
+        return this.model.getHooks('seeder')
     }
 
     getData() {

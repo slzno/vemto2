@@ -15,7 +15,7 @@
     import UiConfirm from "@Renderer/components/ui/UiConfirm.vue"
     import SchemaBuilder from "@Renderer/services/schema/SchemaBuilder"
     import UiLoading from "@Renderer/components/ui/UiLoading.vue"
-    import RenderableModel from "@Renderer/codegen/sequential/services/model/RenderableModel"
+    import ModelRenderable from "@Renderer/codegen/sequential/services/model/ModelRenderable"
     import Main from "@Renderer/services/wrappers/Main"
     import ConflictsSolver from "../CodeQueue/ConflictsSolver.vue"
     import Alert from "@Renderer/components/utils/Alert"
@@ -175,7 +175,7 @@
 
         for (const change of allChanges) {
             const model = change.model,
-                renderable = new RenderableModel(model)
+                renderable = new ModelRenderable(model)
 
             modelsSettings[model.id] = {
                 instance: model,
@@ -355,10 +355,10 @@
     const loadModelContent = async (model: any) => {
         const modelSettings = modelsSettings[model.id]
 
-        const renderableModel = new RenderableModel(model),
+        const renderableModel = new ModelRenderable(model),
             modelPath = renderableModel.getFullFilePath(), 
             currentModelContent = model.isNew() ? "" : await Main.API.readProjectFile(modelPath),
-            newModelContent = await new RenderableModel(model).compileWithErrorThreatment()
+            newModelContent = await new ModelRenderable(model).compileWithErrorThreatment()
 
         modelSettings.newModelContent = newModelContent
         modelSettings.acceptedModelContent = newModelContent

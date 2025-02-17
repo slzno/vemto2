@@ -2,7 +2,7 @@ import Model from "@Common/models/Model"
 import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
 import { RenderableFileFormatter, RenderableFileType } from "@Common/models/RenderableFile"
 
-export default class RenderablePolicy extends Renderable {
+export default class FactoryRenderable extends Renderable {
     model: Model
 
     constructor(model: Model) {
@@ -20,23 +20,23 @@ export default class RenderablePolicy extends Renderable {
     }
 
     getTemplateFile(): string {
-        return "models/Policy.vemtl"
+        return "database/Factory.vemtl"
     }
 
     getPath(): string {
-        return "app/Policies"
+        return "database/factories"
     }
 
     getFilename(): string {
-        return `${this.model.name}Policy.php`
+        return `${this.model.name}Factory.php`
+    }
+
+    hooks() {
+        return this.model.getHooks('factory')
     }
 
     getFormatter(): RenderableFileFormatter {
         return RenderableFileFormatter.PHP
-    }
-
-    hooks() {
-        return this.model.getHooks('policy')
     }
 
     getData() {

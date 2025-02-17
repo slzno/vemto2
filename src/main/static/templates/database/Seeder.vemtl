@@ -4,7 +4,7 @@
 <# TEMPLATE DATA #>
 <# DATA:MODEL [ project = Project ] #>
 <# DATA:MODEL [ model = Model ] #>
-<# DATA:RENDERABLE [ renderable = model/RenderableSeeder(model) ] #>
+<# DATA:RENDERABLE [ renderable = model/SeederRenderable(model) ] #>
 <####>
 
 <# TEMPLATE VARIABLES #>

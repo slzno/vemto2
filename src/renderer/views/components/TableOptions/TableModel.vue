@@ -16,7 +16,7 @@
     import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import ModelHooks from "./ModelApps/ModelHooks.vue"
-    import RenderableModel from "@Renderer/codegen/sequential/services/model/RenderableModel"
+    import ModelRenderable from "@Renderer/codegen/sequential/services/model/ModelRenderable"
     import UiNumber from "@Renderer/components/ui/UiNumber.vue"
     import { useSchemaStore } from '@Renderer/stores/useSchemaStore'
 
@@ -57,7 +57,7 @@
         
         models.value = project.models
 
-        const renderableModel = new RenderableModel(model.value)
+        const renderableModel = new ModelRenderable(model.value)
         renderableModel.disableHooks()
 
         modelHooksContent.value = await renderableModel.compile()
