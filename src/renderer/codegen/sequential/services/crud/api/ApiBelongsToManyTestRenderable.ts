@@ -1,4 +1,4 @@
-import Model from "@Common/models/Model"
+import Relationship from "@Common/models/Relationship"
 import {
     RenderableFileFormatter,
     RenderableFileType,
@@ -7,13 +7,15 @@ import Crud from "@Common/models/crud/Crud"
 import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
 import { pascalCase } from "change-case"
 
-export default class RenderableApiStoreRequest extends Renderable {
+export default class ApiBelongsToManyTestRenderable extends Renderable {
     crud: Crud
+    relationship: Relationship
     
-    constructor(crud: Crud) {
+    constructor(crud: Crud, relationship: Relationship) {
         super()
 
         this.crud = crud
+        this.relationship = relationship
     }
 
     canRender(): boolean {
@@ -25,15 +27,15 @@ export default class RenderableApiStoreRequest extends Renderable {
     }
 
     getTemplateFile(): string {
-        return "api/ApiStoreRequest.vemtl"
+        return "api/ApiBelongsToManyTest.vemtl"
     }
 
     getPath(): string {
-        return `app/Http/Requests`
+        return `tests/Feature/Api`
     }
 
     getFilename(): string {
-        return `${pascalCase(this.crud.model.name)}StoreRequest.php`
+        return `${pascalCase(this.crud.model.name)}${pascalCase(this.relationship.relatedModel.plural)}Test.php`
     }
 
     getFormatter(): RenderableFileFormatter {
@@ -43,6 +45,7 @@ export default class RenderableApiStoreRequest extends Renderable {
     getData() {
         return {
             crud: this.crud,
+            relationship: this.relationship,
             project: this.project,
         }
     }

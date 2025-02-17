@@ -7,7 +7,7 @@ import Crud from "@Common/models/crud/Crud"
 import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
 import { pascalCase, capitalCase } from "change-case"
 
-export default class RenderableApiHasManyTest extends Renderable {
+export default class ApiHasManyTestRenderable extends Renderable {
     crud: Crud
     relationship: Relationship
     relationshipCrud: Crud

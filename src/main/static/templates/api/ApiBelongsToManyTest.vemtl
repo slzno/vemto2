@@ -6,7 +6,7 @@
 <# DATA:MODEL [ crud = Crud ] #>
 <# DATA:MODEL [ relationship = Relationship ] #>
 <# DATA:MODEL [ project = any ] #>
-<# DATA:RENDERABLE [ renderable = crud/api/RenderableApiBelongsToManyTest(crud, relationship) ] #>
+<# DATA:RENDERABLE [ renderable = crud/api/ApiBelongsToManyTestRenderable(crud, relationship) ] #>
 <####>
 
 <# TEMPLATE VARIABLES #>

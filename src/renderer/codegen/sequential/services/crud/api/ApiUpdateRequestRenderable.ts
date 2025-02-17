@@ -7,7 +7,7 @@ import Crud from "@Common/models/crud/Crud"
 import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
 import { pascalCase } from "change-case"
 
-export default class RenderableApiTest extends Renderable {
+export default class ApiUpdateRequestRenderable extends Renderable {
     crud: Crud
     
     constructor(crud: Crud) {
@@ -25,15 +25,15 @@ export default class RenderableApiTest extends Renderable {
     }
 
     getTemplateFile(): string {
-        return "api/ApiTest.vemtl"
+        return "api/ApiUpdateRequest.vemtl"
     }
 
     getPath(): string {
-        return `tests/Feature/Api`
+        return `app/Http/Requests`
     }
 
     getFilename(): string {
-        return `${pascalCase(this.crud.model.name)}Test.php`
+        return `${pascalCase(this.crud.model.name)}UpdateRequest.php`
     }
 
     getFormatter(): RenderableFileFormatter {

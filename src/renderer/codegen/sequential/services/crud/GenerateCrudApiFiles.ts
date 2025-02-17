@@ -1,15 +1,15 @@
 import Crud from "@Common/models/crud/Crud"
 import RenderableApiController from "./controllers/RenderableApiController"
-import RenderableApiResource from "./api/RenderableApiResource"
-import RenderableApiCollection from "./api/RenderableApiCollection"
-import RenderableApiStoreRequest from "./api/RenderableApiStoreRequest"
-import RenderableApiUpdateRequest from "./api/RenderableApiUpdateRequest"
-import RenderableApiTest from "./api/RenderableApiTest"
+import ApiResourceRenderable from "./api/ApiResourceRenderable"
+import ApiCollectionRenderable from "./api/ApiCollectionRenderable"
+import ApiStoreRequestRenderable from "./api/ApiStoreRequestRenderable"
+import ApiUpdateRequestRenderable from "./api/ApiUpdateRequestRenderable"
+import ApiTestRenderable from "./api/ApiTestRenderable"
 import Relationship from "@Common/models/Relationship"
 import RenderableApiHasManyController from "./controllers/RenderableApiHasManyController"
-import RenderableApiHasManyTest from "./api/RenderableApiHasManyTest"
+import ApiHasManyTestRenderable from "./api/ApiHasManyTestRenderable"
 import RenderableApiBelongsToManyController from "./controllers/RenderableApiBelongsToManyController"
-import RenderableApiBelongsToManyTest from "./api/RenderableApiBelongsToManyTest"
+import ApiBelongsToManyTestRenderable from "./api/ApiBelongsToManyTestRenderable"
 import RenderableApiAuthController from "./controllers/RenderableApiAuthController"
 import Project from "@Common/models/Project"
 
@@ -22,31 +22,31 @@ export default class GenerateCrudApiFiles {
         await new RenderableApiAuthController(project.getAuthModel()).render()
 
         for (const crud of cruds) {
-            await new RenderableApiStoreRequest(crud).render()
-            await new RenderableApiUpdateRequest(crud).render()
+            await new ApiStoreRequestRenderable(crud).render()
+            await new ApiUpdateRequestRenderable(crud).render()
 
-            await new RenderableApiCollection(crud.model).render()
-            await new RenderableApiResource(crud.model).render()
+            await new ApiCollectionRenderable(crud.model).render()
+            await new ApiResourceRenderable(crud.model).render()
             
             await new RenderableApiController(crud).render()
 
-            await new RenderableApiTest(crud).render()
+            await new ApiTestRenderable(crud).render()
 
             await crud.model.getHasManyRelations().forEach(async (relationship: Relationship) => {
-                await new RenderableApiResource(relationship.relatedModel).render()
-                await new RenderableApiCollection(relationship.relatedModel).render()
+                await new ApiResourceRenderable(relationship.relatedModel).render()
+                await new ApiCollectionRenderable(relationship.relatedModel).render()
 
                 await new RenderableApiHasManyController(crud, relationship).render()
                 
-                await new RenderableApiHasManyTest(crud, relationship).render()
+                await new ApiHasManyTestRenderable(crud, relationship).render()
             })
 
             await crud.model.getBelongsToManyRelations().forEach(async (relationship: Relationship) => {
-                await new RenderableApiResource(relationship.relatedModel).render()
-                await new RenderableApiCollection(relationship.relatedModel).render()
+                await new ApiResourceRenderable(relationship.relatedModel).render()
+                await new ApiCollectionRenderable(relationship.relatedModel).render()
 
                 await new RenderableApiBelongsToManyController(crud, relationship).render()
-                await new RenderableApiBelongsToManyTest(crud, relationship).render()
+                await new ApiBelongsToManyTestRenderable(crud, relationship).render()
             })
         }
     }
