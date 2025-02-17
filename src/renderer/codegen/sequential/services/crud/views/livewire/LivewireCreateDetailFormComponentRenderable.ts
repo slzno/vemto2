@@ -1,3 +1,4 @@
+import * as changeCase from "change-case"
 import Crud from "@Common/models/crud/Crud"
 import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
 import {
@@ -5,14 +6,15 @@ import {
     RenderableFileType,
 } from "@Common/models/RenderableFile"
 import Namespace from "@Renderer/codegen/util/Namespace"
+import HasManyDetail from "@Common/models/crud/HasManyDetail"
 
-export default class RenderableLivewireEditComponent extends Renderable {
-    crud: Crud
+export default class LivewireCreateDetailFormComponentRenderable extends Renderable {
+    detail: HasManyDetail
 
-    constructor(crud: Crud) {
+    constructor(detail: HasManyDetail) {
         super()
 
-        this.crud = crud
+        this.detail = detail
     }
 
     canRender(): boolean {
@@ -24,15 +26,15 @@ export default class RenderableLivewireEditComponent extends Renderable {
     }
 
     getTemplateFile(): string {
-        return "crud/views/livewire/EditComponent.vemtl"
+        return "crud/views/livewire/CreateDetailFormComponent.vemtl"
     }
 
     getPath(): string {
-        return Namespace.from(this.crud.livewireNamespace).toPath()
+        return Namespace.from(this.detail.detailCrud.livewireFormsNamespace).toPath()
     }
 
     getFilename(): string {
-        return `${this.crud.livewireEditComponentName}.php`
+        return 'CreateDetailForm.php'
     }
 
     getFormatter(): RenderableFileFormatter {
@@ -40,12 +42,13 @@ export default class RenderableLivewireEditComponent extends Renderable {
     }
 
     hooks() {
-        return this.crud.getHooks('editComponent')
+        return this.detail.detailCrud.getHooks('createDetailFormComponent')
     }
 
     getData() {
         return {
-            crud: this.crud,
+            detail: this.detail,
+            crud: this.detail.detailCrud,
         }
     }
 

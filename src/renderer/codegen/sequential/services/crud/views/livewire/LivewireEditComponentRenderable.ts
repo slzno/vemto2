@@ -1,4 +1,3 @@
-import * as changeCase from "change-case"
 import Crud from "@Common/models/crud/Crud"
 import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
 import {
@@ -7,7 +6,7 @@ import {
 } from "@Common/models/RenderableFile"
 import Namespace from "@Renderer/codegen/util/Namespace"
 
-export default class RenderableLivewireCreateComponent extends Renderable {
+export default class LivewireEditComponentRenderable extends Renderable {
     crud: Crud
 
     constructor(crud: Crud) {
@@ -25,7 +24,7 @@ export default class RenderableLivewireCreateComponent extends Renderable {
     }
 
     getTemplateFile(): string {
-        return "crud/views/livewire/CreateComponent.vemtl"
+        return "crud/views/livewire/EditComponent.vemtl"
     }
 
     getPath(): string {
@@ -33,7 +32,7 @@ export default class RenderableLivewireCreateComponent extends Renderable {
     }
 
     getFilename(): string {
-        return `${this.crud.livewireCreateComponentName}.php`
+        return `${this.crud.livewireEditComponentName}.php`
     }
 
     getFormatter(): RenderableFileFormatter {
@@ -41,9 +40,9 @@ export default class RenderableLivewireCreateComponent extends Renderable {
     }
 
     hooks() {
-        return this.crud.getHooks('filamentCreateComponent')
+        return this.crud.getHooks('editComponent')
     }
-    
+
     getData() {
         return {
             crud: this.crud,

@@ -6,7 +6,7 @@ import {
 } from "@Common/models/RenderableFile"
 import { pascalCase, paramCase } from "change-case"
 
-export default class RenderableLivewireHasManyDetailView extends Renderable {
+export default class LivewireHasManyDetailViewRenderable extends Renderable {
     hasManyDetail: HasManyDetail
 
     constructor(hasManyDetail: HasManyDetail) {

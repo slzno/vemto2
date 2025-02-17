@@ -6,7 +6,7 @@ import {
     RenderableFileType,
 } from "@Common/models/RenderableFile"
 
-export default class RenderableLivewireCreateView extends Renderable {
+export default class LivewireCreateViewRenderable extends Renderable {
     crud: Crud
 
     constructor(crud: Crud) {

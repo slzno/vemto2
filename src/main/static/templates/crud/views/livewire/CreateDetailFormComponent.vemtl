@@ -5,7 +5,7 @@
 <# DATA:MODEL [ project = Project ] #>
 <# DATA:MODEL [ detail = HasManyDetail ] #>
 <# DATA:MODEL [ crud = any ] #>
-<# DATA:RENDERABLE [ renderable = crud/views/livewire/RenderableLivewireCreateDetailFormComponent(detail) ] #>
+<# DATA:RENDERABLE [ renderable = crud/views/livewire/LivewireCreateDetailFormComponentRenderable(detail) ] #>
 <####>
 
 
