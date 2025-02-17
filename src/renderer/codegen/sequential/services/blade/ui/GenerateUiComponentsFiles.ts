@@ -1,7 +1,7 @@
 import { paramCase } from "change-case"
 import PathUtil from "@Common/util/PathUtil"
 import Main from "@Renderer/services/wrappers/Main"
-import RenderableUiComponent from "./RenderableUiComponent"
+import UiComponentRenderable from "./UiComponentRenderable"
 import Project from "@Common/models/Project"
 
 export default class GenerateUiComponentsFiles {
@@ -16,7 +16,7 @@ export default class GenerateUiComponentsFiles {
                 fileNameWithoutExtension = templateName.split(".").slice(0, -1).join("."),
                 filePath = PathUtil.join(PathUtil.getOnlyFilePath(file), `${paramCase(fileNameWithoutExtension)}.blade.php`)
 
-            await new RenderableUiComponent(filePath, templatePath).render()
+            await new UiComponentRenderable(filePath, templatePath).render()
         }
         
     }
