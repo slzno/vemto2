@@ -2,7 +2,7 @@ import Model from "@Common/models/Model"
 import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
 import { RenderableFileFormatter, RenderableFileType } from "@Common/models/RenderableFile"
 
-export default class RenderableDatabaseSeeder extends Renderable {
+export default class DatabaseSeederRenderable extends Renderable {
 
     constructor() {
         super()
