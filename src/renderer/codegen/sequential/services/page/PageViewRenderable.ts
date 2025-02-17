@@ -6,7 +6,7 @@ import {
     RenderableFileType,
 } from "@Common/models/RenderableFile"
 
-export default class RenderablePageView extends Renderable {
+export default class PageViewRenderable extends Renderable {
     page: Page
 
     constructor(page: Page) {
