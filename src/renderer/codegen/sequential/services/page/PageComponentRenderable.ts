@@ -7,7 +7,7 @@ import {
 } from "@Common/models/RenderableFile"
 import Namespace from "@Renderer/codegen/util/Namespace"
 
-export default class RenderablePageComponent extends Renderable {
+export default class PageComponentRenderable extends Renderable {
     page: Page
 
     constructor(page: Page) {
