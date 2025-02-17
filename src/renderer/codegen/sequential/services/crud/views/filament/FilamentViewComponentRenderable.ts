@@ -7,7 +7,7 @@ import {
 import Namespace from "@Renderer/codegen/util/Namespace"
 import { pascalCase } from "pascal-case"
 
-export default class RenderableFilamentEditComponent extends Renderable {
+export default class FilamentViewComponentRenderable extends Renderable {
     crud: Crud
 
     constructor(crud: Crud) {
@@ -25,7 +25,7 @@ export default class RenderableFilamentEditComponent extends Renderable {
     }
 
     getTemplateFile(): string {
-        return "crud/views/filament/EditComponent.vemtl"
+        return "crud/views/filament/ViewComponent.vemtl"
     }
 
     getPath(): string {
@@ -33,7 +33,7 @@ export default class RenderableFilamentEditComponent extends Renderable {
     }
 
     getFilename(): string {
-        return `Edit${pascalCase(this.crud.name)}.php`
+        return `View${pascalCase(this.crud.name)}.php`
     }
 
     getFormatter(): RenderableFileFormatter {
@@ -41,7 +41,7 @@ export default class RenderableFilamentEditComponent extends Renderable {
     }
 
     hooks() {
-        return this.crud.getHooks('filamentEditComponent')
+        return this.crud.getHooks('filamentViewComponent')
     }
     
     getData() {
