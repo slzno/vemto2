@@ -30,7 +30,7 @@ class <$ this.table.getCreationMigrationClassName() $> extends Migration
     {
         Schema::rename('<$ this.table.schemaState.name $>', '<$ this.table.name $>');
         <% if(this.table.hasDirtyResources()) { %>
-        <import template="UpdaterSchema.vemtl">
+        <import template="migrations/UpdaterSchema.vemtl">
         <% } %>
     }
 
@@ -42,8 +42,9 @@ class <$ this.table.getCreationMigrationClassName() $> extends Migration
     public function down()
     {
         <% if(this.table.hasDirtyResources()) { %>
-        <import template="UpdaterSchemaDown.vemtl">
+        <import template="migrations/UpdaterSchemaDown.vemtl">
         <% } %>
         Schema::rename('<$ this.table.name $>', '<$ this.table.schemaState.name $>');
     }
-}<% if (this.project.laravelVersionGreaterThanOrEqualTo('9')) { %>;<% } %>
+}<% if (this.project.laravelVersionGreaterThanOrEqualTo('9')) { %>;
+<% } %>

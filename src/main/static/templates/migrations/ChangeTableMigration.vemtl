@@ -47,3 +47,5 @@ class ChangeTablesMigration extends Migration
         <% } %>
     }
 }<% if (this.project.laravelVersionGreaterThanOrEqualTo('9')) { %>;<% } %>
+
+<import template="migrations/CreationSchema.vemtl">

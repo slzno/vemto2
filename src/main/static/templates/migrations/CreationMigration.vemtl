@@ -20,7 +20,7 @@ class <$ this.table.getCreationMigrationClassName() $> extends Migration
      */
     public function up()
     {
-        <import template="CreationSchema.vemtl">
+        <import template="migrations/CreationSchema.vemtl">
     }
 
     /**

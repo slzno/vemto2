@@ -30,6 +30,6 @@ class <$ this.table.getCreationMigrationClassName() $> extends Migration
      */
     public function down()
     {
-        <import template="CreationSchema.vemtl">
+        <import template="migrations/CreationSchema.vemtl">
     }
 }<% if (this.project.laravelVersionGreaterThanOrEqualTo('9')) { %>;<% } %>

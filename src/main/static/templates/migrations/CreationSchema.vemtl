@@ -4,12 +4,12 @@ Schema::create('<$ this.table.name $>', function (Blueprint $table) {
         <% if (column.isDefaultLaravelPrimaryKey()) { %>
             $table->id();
         <% } else { %>
-        <import template="MigrationColumn.vemtl">
+        <import template="migrations/MigrationColumn.vemtl">
         <% } %>
     <% } %>
     
     <# Indexes #>
     <% for (let index of this.table.getIndexes()) { %>
-        <import template="MigrationIndex.vemtl">
+        <import template="migrations/MigrationIndex.vemtl">
     <% } %>
 });
