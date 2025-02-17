@@ -31,6 +31,8 @@ export default class CustomRenderable extends Renderable {
         return RenderableFileFormatter.NONE
     }
 
+    
+
     getData() {
         return {}
     }
