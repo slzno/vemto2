@@ -1,7 +1,7 @@
 import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
 import { RenderableFileFormatter, RenderableFileType } from "@Common/models/RenderableFile"
 
-export default class RenderableBreezeNavigation extends Renderable {
+export default class BreezeNavigationRenderable extends Renderable {
     canRender(): boolean {
         return true
     }
