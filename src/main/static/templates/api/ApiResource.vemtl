@@ -5,7 +5,7 @@
 <# DATA:MODEL [ project = Project ] #>
 <# DATA:MODEL [ model = Model ] #>
 <# DATA:MODEL [ project = any ] #>
-<# DATA:RENDERABLE [ renderable = crud/api/RenderableApiResource(model) ] #>
+<# DATA:RENDERABLE [ renderable = crud/api/ApiResourceRenderable(model) ] #>
 <####>
 
 

@@ -3,16 +3,17 @@ import {
     RenderableFileFormatter,
     RenderableFileType,
 } from "@Common/models/RenderableFile"
+import Crud from "@Common/models/crud/Crud"
 import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
 import { pascalCase } from "change-case"
 
-export default class RenderableApiCollection extends Renderable {
-    model: Model
+export default class ApiTestRenderable extends Renderable {
+    crud: Crud
     
-    constructor(model: Model) {
+    constructor(crud: Crud) {
         super()
 
-        this.model = model
+        this.crud = crud
     }
 
     canRender(): boolean {
@@ -24,15 +25,15 @@ export default class RenderableApiCollection extends Renderable {
     }
 
     getTemplateFile(): string {
-        return "api/ApiCollection.vemtl"
+        return "api/ApiTest.vemtl"
     }
 
     getPath(): string {
-        return `app/Http/Resources`
+        return `tests/Feature/Api`
     }
 
     getFilename(): string {
-        return `${pascalCase(this.model.name)}Collection.php`
+        return `${pascalCase(this.crud.model.name)}Test.php`
     }
 
     getFormatter(): RenderableFileFormatter {
@@ -41,7 +42,7 @@ export default class RenderableApiCollection extends Renderable {
 
     getData() {
         return {
-            model: this.model,
+            crud: this.crud,
             project: this.project,
         }
     }

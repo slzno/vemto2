@@ -3,17 +3,16 @@ import {
     RenderableFileFormatter,
     RenderableFileType,
 } from "@Common/models/RenderableFile"
-import Crud from "@Common/models/crud/Crud"
 import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
 import { pascalCase } from "change-case"
 
-export default class RenderableApiUpdateRequest extends Renderable {
-    crud: Crud
+export default class ApiCollectionRenderable extends Renderable {
+    model: Model
     
-    constructor(crud: Crud) {
+    constructor(model: Model) {
         super()
 
-        this.crud = crud
+        this.model = model
     }
 
     canRender(): boolean {
@@ -25,15 +24,15 @@ export default class RenderableApiUpdateRequest extends Renderable {
     }
 
     getTemplateFile(): string {
-        return "api/ApiUpdateRequest.vemtl"
+        return "api/ApiCollection.vemtl"
     }
 
     getPath(): string {
-        return `app/Http/Requests`
+        return `app/Http/Resources`
     }
 
     getFilename(): string {
-        return `${pascalCase(this.crud.model.name)}UpdateRequest.php`
+        return `${pascalCase(this.model.name)}Collection.php`
     }
 
     getFormatter(): RenderableFileFormatter {
@@ -42,7 +41,7 @@ export default class RenderableApiUpdateRequest extends Renderable {
 
     getData() {
         return {
-            crud: this.crud,
+            model: this.model,
             project: this.project,
         }
     }

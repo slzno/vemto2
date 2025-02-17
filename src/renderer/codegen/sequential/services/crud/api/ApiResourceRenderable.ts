@@ -6,7 +6,7 @@ import {
 import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
 import { pascalCase } from "change-case"
 
-export default class RenderableApiResource extends Renderable {
+export default class ApiResourceRenderable extends Renderable {
     model: Model
     
     constructor(model: Model) {
