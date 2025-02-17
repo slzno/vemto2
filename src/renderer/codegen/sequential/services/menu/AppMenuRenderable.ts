@@ -1,7 +1,7 @@
 import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
 import { RenderableFileFormatter, RenderableFileType } from "@Common/models/RenderableFile"
 
-export default class RenderableAppResponsiveMenu extends Renderable {
+export default class AppMenuRenderable extends Renderable {
     canRender(): boolean {
         return true
     }
@@ -11,7 +11,7 @@ export default class RenderableAppResponsiveMenu extends Renderable {
     }
 
     getTemplateFile(): string {
-        return "menu/AppResponsiveMenu.vemtl"
+        return "menu/AppMenu.vemtl"
     }
 
     getPath(): string {
@@ -19,7 +19,7 @@ export default class RenderableAppResponsiveMenu extends Renderable {
     }
 
     getFilename(): string {
-        return `app-responsive-menu.blade.php`
+        return `app-menu.blade.php`
     }
 
     getFormatter(): RenderableFileFormatter {

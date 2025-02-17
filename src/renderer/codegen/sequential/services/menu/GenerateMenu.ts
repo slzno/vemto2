@@ -1,7 +1,7 @@
 import Project from "@Common/models/Project"
-import RenderableAppMenu from "./RenderableAppMenu"
-import RenderableBreezeNavigation from "./RenderableBreezeNavigation"
-import RenderableAppResponsiveMenu from "./RenderableAppResponsiveMenu"
+import AppMenuRenderable from "./AppMenuRenderable"
+import BreezeNavigationRenderable from "./BreezeNavigationRenderable"
+import AppResponsiveMenuRenderable from "./AppResponsiveMenuRenderable"
 
 export default class GenerateMenu {
     async start(project: Project) {
@@ -15,11 +15,11 @@ export default class GenerateMenu {
     }
 
     async generateJetstreamMenu() {
-        await new RenderableAppMenu().render()
-        await new RenderableAppResponsiveMenu().render()
+        await new AppMenuRenderable().render()
+        await new AppResponsiveMenuRenderable().render()
     }
 
     async generateBreezeMenu() {
-        await new RenderableBreezeNavigation().render()
+        await new BreezeNavigationRenderable().render()
     }
 }
