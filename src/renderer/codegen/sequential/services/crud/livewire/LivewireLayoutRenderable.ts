@@ -4,7 +4,7 @@ import {
 } from "@Common/models/RenderableFile"
 import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
 
-export default class RenderableLivewireLayout extends Renderable {
+export default class LivewireLayoutRenderable extends Renderable {
 
     constructor() {
         super()
