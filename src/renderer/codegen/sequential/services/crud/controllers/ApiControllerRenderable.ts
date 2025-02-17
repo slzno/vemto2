@@ -5,7 +5,7 @@ import {
 import Crud from "@Common/models/crud/Crud"
 import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
 
-export default class RenderableApiController extends Renderable {
+export default class ApiControllerRenderable extends Renderable {
     crud: Crud
     
     constructor(crud: Crud) {

@@ -1,16 +1,16 @@
 import Crud from "@Common/models/crud/Crud"
-import RenderableApiController from "./controllers/RenderableApiController"
+import ApiControllerRenderable from "./controllers/ApiControllerRenderable"
 import ApiResourceRenderable from "./api/ApiResourceRenderable"
 import ApiCollectionRenderable from "./api/ApiCollectionRenderable"
 import ApiStoreRequestRenderable from "./api/ApiStoreRequestRenderable"
 import ApiUpdateRequestRenderable from "./api/ApiUpdateRequestRenderable"
 import ApiTestRenderable from "./api/ApiTestRenderable"
 import Relationship from "@Common/models/Relationship"
-import RenderableApiHasManyController from "./controllers/RenderableApiHasManyController"
+import ApiHasManyControllerRenderable from "./controllers/ApiHasManyControllerRenderable"
 import ApiHasManyTestRenderable from "./api/ApiHasManyTestRenderable"
-import RenderableApiBelongsToManyController from "./controllers/RenderableApiBelongsToManyController"
+import ApiBelongsToManyControllerRenderable from "./controllers/ApiBelongsToManyControllerRenderable"
 import ApiBelongsToManyTestRenderable from "./api/ApiBelongsToManyTestRenderable"
-import RenderableApiAuthController from "./controllers/RenderableApiAuthController"
+import ApiAuthControllerRenderable from "./controllers/ApiAuthControllerRenderable"
 import Project from "@Common/models/Project"
 
 export default class GenerateCrudApiFiles {
@@ -19,7 +19,7 @@ export default class GenerateCrudApiFiles {
 
         if(!cruds.length) return
         
-        await new RenderableApiAuthController(project.getAuthModel()).render()
+        await new ApiAuthControllerRenderable(project.getAuthModel()).render()
 
         for (const crud of cruds) {
             await new ApiStoreRequestRenderable(crud).render()
@@ -28,7 +28,7 @@ export default class GenerateCrudApiFiles {
             await new ApiCollectionRenderable(crud.model).render()
             await new ApiResourceRenderable(crud.model).render()
             
-            await new RenderableApiController(crud).render()
+            await new ApiControllerRenderable(crud).render()
 
             await new ApiTestRenderable(crud).render()
 
@@ -36,7 +36,7 @@ export default class GenerateCrudApiFiles {
                 await new ApiResourceRenderable(relationship.relatedModel).render()
                 await new ApiCollectionRenderable(relationship.relatedModel).render()
 
-                await new RenderableApiHasManyController(crud, relationship).render()
+                await new ApiHasManyControllerRenderable(crud, relationship).render()
                 
                 await new ApiHasManyTestRenderable(crud, relationship).render()
             })
@@ -45,7 +45,7 @@ export default class GenerateCrudApiFiles {
                 await new ApiResourceRenderable(relationship.relatedModel).render()
                 await new ApiCollectionRenderable(relationship.relatedModel).render()
 
-                await new RenderableApiBelongsToManyController(crud, relationship).render()
+                await new ApiBelongsToManyControllerRenderable(crud, relationship).render()
                 await new ApiBelongsToManyTestRenderable(crud, relationship).render()
             })
         }
