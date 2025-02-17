@@ -5,7 +5,7 @@
 <# DATA:MODEL [ project = Project ] #>
 <# DATA:MODEL [ crud = any ] #>
 <# DATA:MODEL [ model = any ] #>
-<# DATA:RENDERABLE [ renderable = crud/views/nova/RenderableNovaManyToManyResource(detail) ] #>
+<# DATA:RENDERABLE [ renderable = crud/views/nova/NovaManyToManyResourceRenderable(detail) ] #>
 <####>
 
 

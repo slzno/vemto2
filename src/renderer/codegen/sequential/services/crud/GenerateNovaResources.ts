@@ -1,28 +1,28 @@
 import Crud from "@Common/models/crud/Crud"
-import RenderableNovaResource from "./views/nova/RenderableNovaResource"
-import RenderableNovaManyToManyResource from "./views/nova/RenderableNovaManyToManyResource"
+import NovaResourceRenderable from "./views/nova/NovaResourceRenderable"
+import NovaManyToManyResourceRenderable from "./views/nova/NovaManyToManyResourceRenderable"
 
 export default class GenerateNovaResources {
     async start() {
         const cruds = Crud.getNovaResources()
 
         for (const crud of cruds) {
-            await new RenderableNovaResource(crud).render()
+            await new NovaResourceRenderable(crud).render()
 
             for(const hasManyDetail of crud.hasManyDetails) {
-                await new RenderableNovaResource(hasManyDetail.detailCrud).render()
+                await new NovaResourceRenderable(hasManyDetail.detailCrud).render()
             }
 
             for(const morphManyDetail of crud.morphManyDetails) {
-                await new RenderableNovaResource(morphManyDetail.detailCrud).render()
+                await new NovaResourceRenderable(morphManyDetail.detailCrud).render()
             }
 
             for(const belongsToManyDetail of crud.belongsToManyDetails) {
-                await new RenderableNovaManyToManyResource(belongsToManyDetail).render()
+                await new NovaManyToManyResourceRenderable(belongsToManyDetail).render()
             }
 
             for(const morphToManyDetail of crud.morphToManyDetails) {
-                await new RenderableNovaManyToManyResource(morphToManyDetail).render()
+                await new NovaManyToManyResourceRenderable(morphToManyDetail).render()
             }
         }
     }
