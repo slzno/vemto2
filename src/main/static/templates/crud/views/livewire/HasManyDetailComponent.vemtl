@@ -4,7 +4,7 @@
 <# TEMPLATE DATA #>
 <# DATA:MODEL [ project = Project ] #>
 <# DATA:MODEL [ hasManyDetail = HasManyDetail ] #>
-<# DATA:RENDERABLE [ renderable = crud/views/livewire/RenderableLivewireHasManyDetailComponent(hasManyDetail) ] #>
+<# DATA:RENDERABLE [ renderable = crud/views/livewire/LivewireHasManyDetailComponentRenderable(hasManyDetail) ] #>
 <####>
 
 <# Requires e main variables #>

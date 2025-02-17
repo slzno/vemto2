@@ -5,9 +5,8 @@ import {
     RenderableFileFormatter,
     RenderableFileType,
 } from "@Common/models/RenderableFile"
-import Namespace from "@Renderer/codegen/util/Namespace"
 
-export default class RenderableLivewireIndexComponent extends Renderable {
+export default class LivewireIndexViewRenderable extends Renderable {
     crud: Crud
 
     constructor(crud: Crud) {
@@ -21,27 +20,26 @@ export default class RenderableLivewireIndexComponent extends Renderable {
     }
 
     getType(): RenderableFileType {
-        return RenderableFileType.PHP
+        return RenderableFileType.BLADE
     }
 
     getTemplateFile(): string {
-        return "crud/views/livewire/IndexComponent.vemtl"
+        return "crud/views/livewire/IndexView.vemtl"
     }
 
     getPath(): string {
-        return Namespace.from(this.crud.livewireNamespace).toPath()
+        const viewsFolder = this.crud.section.getFolderName(), 
+            folder = changeCase.paramCase(this.crud.plural)
+
+        return `resources/views/livewire/${viewsFolder}/${folder}`
     }
 
     getFilename(): string {
-        return `${this.crud.livewireIndexComponentName}.php`
+        return "index.blade.php"
     }
 
     getFormatter(): RenderableFileFormatter {
-        return RenderableFileFormatter.PHP
-    }
-
-    hooks() {
-        return this.crud.getHooks('indexComponent')
+        return RenderableFileFormatter.BLADE
     }
 
     getData() {

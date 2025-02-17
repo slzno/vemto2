@@ -5,8 +5,9 @@ import {
     RenderableFileFormatter,
     RenderableFileType,
 } from "@Common/models/RenderableFile"
+import Namespace from "@Renderer/codegen/util/Namespace"
 
-export default class RenderableLivewireEditView extends Renderable {
+export default class LivewireCreateFormComponentRenderable extends Renderable {
     crud: Crud
 
     constructor(crud: Crud) {
@@ -20,26 +21,27 @@ export default class RenderableLivewireEditView extends Renderable {
     }
 
     getType(): RenderableFileType {
-        return RenderableFileType.BLADE
+        return RenderableFileType.PHP
     }
 
     getTemplateFile(): string {
-        return "crud/views/livewire/EditView.vemtl"
+        return "crud/views/livewire/CreateFormComponent.vemtl"
     }
 
     getPath(): string {
-        const viewsFolder = this.crud.section.getFolderName(), 
-            folder = changeCase.paramCase(this.crud.plural)
-
-        return `resources/views/livewire/${viewsFolder}/${folder}`
+        return Namespace.from(this.crud.livewireFormsNamespace).toPath()
     }
 
     getFilename(): string {
-        return "edit.blade.php"
+        return 'CreateForm.php'
     }
 
     getFormatter(): RenderableFileFormatter {
-        return RenderableFileFormatter.BLADE
+        return RenderableFileFormatter.PHP
+    }
+
+    hooks() {
+        return this.crud.getHooks('createFormComponent')
     }
 
     getData() {

@@ -7,7 +7,7 @@ import {
 } from "@Common/models/RenderableFile"
 import Namespace from "@Renderer/codegen/util/Namespace"
 
-export default class RenderableLivewireUpdateFormComponent extends Renderable {
+export default class LivewireUpdateFormComponentRenderable extends Renderable {
     crud: Crud
 
     constructor(crud: Crud) {

@@ -4,9 +4,9 @@
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import HookEditor from "@Renderer/components/editors/HookEditor.vue"
     import { ref, defineProps, onMounted, PropType, toRef, Ref } from "vue"
-    import RenderableLivewireEditComponent from "@Renderer/codegen/sequential/services/crud/views/livewire/RenderableLivewireEditComponent"
-    import RenderableLivewireIndexComponent from "@Renderer/codegen/sequential/services/crud/views/livewire/RenderableLivewireIndexComponent"
-    import RenderableLivewireCreateComponent from "@Renderer/codegen/sequential/services/crud/views/livewire/RenderableLivewireCreateComponent"
+    import LivewireEditComponentRenderable from "@Renderer/codegen/sequential/services/crud/views/livewire/LivewireEditComponentRenderable"
+    import LivewireIndexComponentRenderable from "@Renderer/codegen/sequential/services/crud/views/livewire/LivewireIndexComponentRenderable"
+    import LivewireCreateComponentRenderable from "@Renderer/codegen/sequential/services/crud/views/livewire/LivewireCreateComponentRenderable"
 
     const props = defineProps({
             crud: {
@@ -28,15 +28,15 @@
     ]
 
     onMounted(async () => {
-        createComponentContent.value = await new RenderableLivewireCreateComponent(
+        createComponentContent.value = await new LivewireCreateComponentRenderable(
             crud.value
         ).disableHooks().compile()
 
-        editComponentContent.value = await new RenderableLivewireEditComponent(
+        editComponentContent.value = await new LivewireEditComponentRenderable(
             crud.value
         ).disableHooks().compile()
 
-        indexComponentContent.value = await new RenderableLivewireIndexComponent(
+        indexComponentContent.value = await new LivewireIndexComponentRenderable(
             crud.value
         ).disableHooks().compile()
     })

@@ -6,15 +6,14 @@ import {
     RenderableFileType,
 } from "@Common/models/RenderableFile"
 import Namespace from "@Renderer/codegen/util/Namespace"
-import HasManyDetail from "@Common/models/crud/HasManyDetail"
 
-export default class RenderableLivewireCreateDetailFormComponent extends Renderable {
-    detail: HasManyDetail
+export default class LivewireCreateComponentRenderable extends Renderable {
+    crud: Crud
 
-    constructor(detail: HasManyDetail) {
+    constructor(crud: Crud) {
         super()
 
-        this.detail = detail
+        this.crud = crud
     }
 
     canRender(): boolean {
@@ -26,15 +25,15 @@ export default class RenderableLivewireCreateDetailFormComponent extends Rendera
     }
 
     getTemplateFile(): string {
-        return "crud/views/livewire/CreateDetailFormComponent.vemtl"
+        return "crud/views/livewire/CreateComponent.vemtl"
     }
 
     getPath(): string {
-        return Namespace.from(this.detail.detailCrud.livewireFormsNamespace).toPath()
+        return Namespace.from(this.crud.livewireNamespace).toPath()
     }
 
     getFilename(): string {
-        return 'CreateDetailForm.php'
+        return `${this.crud.livewireCreateComponentName}.php`
     }
 
     getFormatter(): RenderableFileFormatter {
@@ -42,13 +41,12 @@ export default class RenderableLivewireCreateDetailFormComponent extends Rendera
     }
 
     hooks() {
-        return this.detail.detailCrud.getHooks('createDetailFormComponent')
+        return this.crud.getHooks('filamentCreateComponent')
     }
-
+    
     getData() {
         return {
-            detail: this.detail,
-            crud: this.detail.detailCrud,
+            crud: this.crud,
         }
     }
 

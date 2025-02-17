@@ -7,7 +7,7 @@ import {
 import Namespace from "@Renderer/codegen/util/Namespace"
 import { pascalCase } from "change-case"
 
-export default class RenderableLivewireHasManyDetailComponent extends Renderable {
+export default class LivewireHasManyDetailComponentRenderable extends Renderable {
     hasManyDetail: HasManyDetail
 
     constructor(hasManyDetail: HasManyDetail) {
