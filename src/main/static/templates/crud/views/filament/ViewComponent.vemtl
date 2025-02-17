@@ -4,7 +4,7 @@
 <# TEMPLATE DATA #>
 <# DATA:MODEL [ project = Project ] #>
 <# DATA:MODEL [ crud = Crud ] #>
-<# DATA:RENDERABLE [ renderable = crud/views/filament/RenderableFilamentViewComponent(crud) ] #>
+<# DATA:RENDERABLE [ renderable = crud/views/filament/FilamentViewComponentRenderable(crud) ] #>
 <####>
 
 

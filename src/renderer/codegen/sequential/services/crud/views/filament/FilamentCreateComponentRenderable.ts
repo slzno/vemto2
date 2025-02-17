@@ -7,7 +7,7 @@ import {
 import Namespace from "@Renderer/codegen/util/Namespace"
 import { pascalCase } from "pascal-case"
 
-export default class RenderableFilamentResource extends Renderable {
+export default class FilamentCreateComponentRenderable extends Renderable {
     crud: Crud
 
     constructor(crud: Crud) {
@@ -25,15 +25,15 @@ export default class RenderableFilamentResource extends Renderable {
     }
 
     getTemplateFile(): string {
-        return "crud/views/filament/ResourceComponent.vemtl"
+        return "crud/views/filament/CreateComponent.vemtl"
     }
 
     getPath(): string {
-        return Namespace.from(`App\\Filament\\Resources\\${this.crud.section.getFileBasePath()}`).toPath()
+        return Namespace.from(`App\\Filament\\Resources\\${this.crud.section.getFileBasePath()}\\${pascalCase(this.crud.name)}Resource\\Pages`).toPath()
     }
 
     getFilename(): string {
-        return `${this.crud.name}Resource.php`
+        return `Create${pascalCase(this.crud.name)}.php`
     }
 
     getFormatter(): RenderableFileFormatter {
@@ -41,7 +41,7 @@ export default class RenderableFilamentResource extends Renderable {
     }
 
     hooks() {
-        return this.crud.getHooks('filamentResource')
+        return this.crud.getHooks('filamentCreateComponent')
     }
     
     getData() {

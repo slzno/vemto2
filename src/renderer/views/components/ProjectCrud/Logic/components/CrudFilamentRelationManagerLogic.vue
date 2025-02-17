@@ -4,7 +4,7 @@
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import HookEditor from "@Renderer/components/editors/HookEditor.vue"
     import { ref, defineProps, onMounted, PropType, toRef, Ref } from "vue"
-    import RenderableFilamentCommonRelationManager from "@Renderer/codegen/sequential/services/crud/views/filament/RenderableFilamentCommonRelationManager"
+    import FilamentCommonRelationManagerRenderable from "@Renderer/codegen/sequential/services/crud/views/filament/FilamentCommonRelationManagerRenderable"
 
     const props = defineProps({
             crud: {
@@ -46,7 +46,7 @@
 
         if(!firstCrudDetail) return
 
-        relationManagerComponentContent.value = await new RenderableFilamentCommonRelationManager(
+        relationManagerComponentContent.value = await new FilamentCommonRelationManagerRenderable(
             firstCrudDetail
         ).disableHooks().compile()
     })

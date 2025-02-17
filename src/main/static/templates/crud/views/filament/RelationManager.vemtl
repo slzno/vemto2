@@ -4,7 +4,7 @@
 <# TEMPLATE DATA #>
 <# DATA:MODEL [ project = Project ] #>
 <# DATA:MODEL [ detail = BelongsToManyDetail ] #>
-<# DATA:RENDERABLE [ renderable = crud/views/filament/RenderableFilamentBelongsToManyRelationManager(detail) ] #>
+<# DATA:RENDERABLE [ renderable = crud/views/filament/FilamentBelongsToManyRelationManagerRenderable(detail) ] #>
 <####>
 
 <% const pascalCase = this.require('pascalCase') %>

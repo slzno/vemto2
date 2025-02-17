@@ -1,19 +1,19 @@
+import Crud from "@Common/models/crud/Crud"
 import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
 import {
     RenderableFileFormatter,
     RenderableFileType,
 } from "@Common/models/RenderableFile"
 import Namespace from "@Renderer/codegen/util/Namespace"
-import MorphToManyDetail from "../../../../../../../common/models/crud/MorphToManyDetail"
 import { pascalCase } from "pascal-case"
 
-export default class RenderableFilamentMorphToManyRelationManager extends Renderable {
-    detail: MorphToManyDetail
+export default class FilamentEditComponentRenderable extends Renderable {
+    crud: Crud
 
-    constructor(detail: MorphToManyDetail) {
+    constructor(crud: Crud) {
         super()
 
-        this.detail = detail
+        this.crud = crud
     }
 
     canRender(): boolean {
@@ -25,17 +25,15 @@ export default class RenderableFilamentMorphToManyRelationManager extends Render
     }
 
     getTemplateFile(): string {
-        return "crud/views/filament/RelationManager.vemtl"
+        return "crud/views/filament/EditComponent.vemtl"
     }
 
     getPath(): string {
-        const crud = this.detail.crud
-
-        return Namespace.from(`App\\Filament\\Resources\\${crud.section.getFileBasePath()}\\${pascalCase(crud.name)}Resource\\RelationManagers`).toPath()
+        return Namespace.from(`App\\Filament\\Resources\\${this.crud.section.getFileBasePath()}\\${pascalCase(this.crud.name)}Resource\\Pages`).toPath()
     }
 
     getFilename(): string {
-        return `${pascalCase(this.detail.relationship.relatedModel.plural)}RelationManager.php`
+        return `Edit${pascalCase(this.crud.name)}.php`
     }
 
     getFormatter(): RenderableFileFormatter {
@@ -43,12 +41,12 @@ export default class RenderableFilamentMorphToManyRelationManager extends Render
     }
 
     hooks() {
-        return this.detail.crud.getHooks('filamentRelationManager')
+        return this.crud.getHooks('filamentEditComponent')
     }
     
     getData() {
         return {
-            detail: this.detail
+            crud: this.crud,
         }
     }
 

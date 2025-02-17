@@ -1,17 +1,16 @@
-import Crud from "@Common/models/crud/Crud"
 import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
 import {
     RenderableFileFormatter,
     RenderableFileType,
 } from "@Common/models/RenderableFile"
 import Namespace from "@Renderer/codegen/util/Namespace"
-import BelongsToManyDetail from "../../../../../../../common/models/crud/BelongsToManyDetail"
+import MorphToManyDetail from "../../../../../../../common/models/crud/MorphToManyDetail"
 import { pascalCase } from "pascal-case"
 
-export default class RenderableFilamentBelongsToManyRelationManager extends Renderable {
-    detail: BelongsToManyDetail
+export default class FilamentMorphToManyRelationManagerRenderable extends Renderable {
+    detail: MorphToManyDetail
 
-    constructor(detail: BelongsToManyDetail) {
+    constructor(detail: MorphToManyDetail) {
         super()
 
         this.detail = detail

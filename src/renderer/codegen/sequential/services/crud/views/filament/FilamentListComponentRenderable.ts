@@ -5,17 +5,15 @@ import {
     RenderableFileType,
 } from "@Common/models/RenderableFile"
 import Namespace from "@Renderer/codegen/util/Namespace"
-import HasManyDetail from "@Common/models/crud/HasManyDetail"
-import MorphManyDetail from "@Common/models/crud/MorphManyDetail"
 import { pascalCase } from "pascal-case"
 
-export default class RenderableFilamentCommonRelationManager extends Renderable {
-    detail: HasManyDetail | MorphManyDetail
+export default class FilamentListComponentRenderable extends Renderable {
+    crud: Crud
 
-    constructor(detail: HasManyDetail | MorphManyDetail) {
+    constructor(crud: Crud) {
         super()
 
-        this.detail = detail
+        this.crud = crud
     }
 
     canRender(): boolean {
@@ -27,17 +25,15 @@ export default class RenderableFilamentCommonRelationManager extends Renderable 
     }
 
     getTemplateFile(): string {
-        return "crud/views/filament/RelationManager.vemtl"
+        return "crud/views/filament/ListComponent.vemtl"
     }
 
     getPath(): string {
-        const crud = this.detail.crud
-
-        return Namespace.from(`App\\Filament\\Resources\\${crud.section.getFileBasePath()}\\${pascalCase(crud.name)}Resource\\RelationManagers`).toPath()
+        return Namespace.from(`App\\Filament\\Resources\\${this.crud.section.getFileBasePath()}\\${pascalCase(this.crud.name)}Resource\\Pages`).toPath()
     }
 
     getFilename(): string {
-        return `${pascalCase(this.detail.relationship.relatedModel.plural)}RelationManager.php`
+        return `List${pascalCase(this.crud.plural)}.php`
     }
 
     getFormatter(): RenderableFileFormatter {
@@ -45,12 +41,12 @@ export default class RenderableFilamentCommonRelationManager extends Renderable 
     }
 
     hooks() {
-        return this.detail.crud.getHooks('filamentRelationManager')
+        return this.crud.getHooks('filamentListComponent')
     }
     
     getData() {
         return {
-            detail: this.detail
+            crud: this.crud,
         }
     }
 

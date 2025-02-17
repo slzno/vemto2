@@ -4,12 +4,12 @@
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import HookEditor from "@Renderer/components/editors/HookEditor.vue"
     import { ref, defineProps, onMounted, PropType, toRef, Ref } from "vue"
-    import RenderableFilamentResource from "@Renderer/codegen/sequential/services/crud/views/filament/RenderableFilamentResource"
-    import RenderableFilamentCreateComponent from "@Renderer/codegen/sequential/services/crud/views/filament/RenderableFilamentCreateComponent"
-    import RenderableFilamentEditComponent from "@Renderer/codegen/sequential/services/crud/views/filament/RenderableFilamentEditComponent"
-    import RenderableFilamentListComponent from "@Renderer/codegen/sequential/services/crud/views/filament/RenderableFilamentListComponent"
-    import RenderableFilamentViewComponent from "@Renderer/codegen/sequential/services/crud/views/filament/RenderableFilamentViewComponent"
-    import RenderableFilamentCommonRelationManager from "@Renderer/codegen/sequential/services/crud/views/filament/RenderableFilamentCommonRelationManager"
+    import FilamentResourceRenderable from "@Renderer/codegen/sequential/services/crud/views/filament/FilamentResourceRenderable"
+    import FilamentCreateComponentRenderable from "@Renderer/codegen/sequential/services/crud/views/filament/FilamentCreateComponentRenderable"
+    import FilamentEditComponentRenderable from "@Renderer/codegen/sequential/services/crud/views/filament/FilamentEditComponentRenderable"
+    import FilamentListComponentRenderable from "@Renderer/codegen/sequential/services/crud/views/filament/FilamentListComponentRenderable"
+    import FilamentViewComponentRenderable from "@Renderer/codegen/sequential/services/crud/views/filament/FilamentViewComponentRenderable"
+    import FilamentCommonRelationManagerRenderable from "@Renderer/codegen/sequential/services/crud/views/filament/FilamentCommonRelationManagerRenderable"
     import HasManyDetail from "@Common/models/crud/HasManyDetail"
 
     const props = defineProps({
@@ -37,23 +37,23 @@
     ]
 
     onMounted(async () => {
-        resourceComponentContent.value = await new RenderableFilamentResource(
+        resourceComponentContent.value = await new FilamentResourceRenderable(
             crud.value
         ).disableHooks().compile()
 
-        createComponentContent.value = await new RenderableFilamentCreateComponent(
+        createComponentContent.value = await new FilamentCreateComponentRenderable(
             crud.value
         ).disableHooks().compile()
 
-        editComponentContent.value = await new RenderableFilamentEditComponent(
+        editComponentContent.value = await new FilamentEditComponentRenderable(
             crud.value
         ).disableHooks().compile()
 
-        listComponentContent.value = await new RenderableFilamentListComponent(
+        listComponentContent.value = await new FilamentListComponentRenderable(
             crud.value
         ).disableHooks().compile()
 
-        viewComponentContent.value = await new RenderableFilamentViewComponent(
+        viewComponentContent.value = await new FilamentViewComponentRenderable(
             crud.value
         ).disableHooks().compile()
     })

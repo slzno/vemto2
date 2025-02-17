@@ -1,12 +1,13 @@
-import * as changeCase from "change-case"
 import Crud from "@Common/models/crud/Crud"
 import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
 import {
     RenderableFileFormatter,
     RenderableFileType,
 } from "@Common/models/RenderableFile"
+import Namespace from "@Renderer/codegen/util/Namespace"
+import { pascalCase } from "pascal-case"
 
-export default class RenderableIndexPage extends Renderable {
+export default class FilamentResourceRenderable extends Renderable {
     crud: Crud
 
     constructor(crud: Crud) {
@@ -20,30 +21,36 @@ export default class RenderableIndexPage extends Renderable {
     }
 
     getType(): RenderableFileType {
-        return RenderableFileType.HTML
+        return RenderableFileType.PHP
     }
 
     getTemplateFile(): string {
-        return "crud/views/default/IndexPage.vemtl"
+        return "crud/views/filament/ResourceComponent.vemtl"
     }
 
     getPath(): string {
-        const folder = changeCase.paramCase(this.crud.name)
-
-        return `resources/views/${folder}`
+        return Namespace.from(`App\\Filament\\Resources\\${this.crud.section.getFileBasePath()}`).toPath()
     }
 
     getFilename(): string {
-        return "index.blade.php"
+        return `${this.crud.name}Resource.php`
     }
 
     getFormatter(): RenderableFileFormatter {
-        return RenderableFileFormatter.HTML
+        return RenderableFileFormatter.PHP
     }
 
+    hooks() {
+        return this.crud.getHooks('filamentResource')
+    }
+    
     getData() {
         return {
             crud: this.crud,
         }
+    }
+
+    addDependencies() {
+        this.addComposerDependency("filament/filament")
     }
 }
