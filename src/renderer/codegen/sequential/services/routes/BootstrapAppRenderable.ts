@@ -1,7 +1,7 @@
 import { RenderableFileFormatter, RenderableFileType } from "@Common/models/RenderableFile"
 import Renderable from "../foundation/Renderable"
 
-export default class RenderableBootstrapApp extends Renderable {
+export default class BootstrapAppRenderable extends Renderable {
     canRender(): boolean {
         return true
     }

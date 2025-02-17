@@ -1,7 +1,7 @@
-import RenderableBootstrapApp from "./RenderableBootstrapApp";
+import BootstrapAppRenderable from "./BootstrapAppRenderable";
 
 export default class GenerateBootstrapApp {
     async start() {
-        await new RenderableBootstrapApp().render()
+        await new BootstrapAppRenderable().render()
     }
 }

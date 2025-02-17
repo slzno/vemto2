@@ -4,7 +4,7 @@
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiTextarea from "@Renderer/components/ui/UiTextarea.vue"
     import GenerateDefaultVthemeKeys from "@Renderer/services/project/GenerateDefaultVthemeKeys"
-    import RenderablePreview from "@Renderer/codegen/sequential/services/theme/RenderablePreview"
+    import PreviewRenderable from "@Renderer/codegen/sequential/services/theme/PreviewRenderable"
     import Main from "@Renderer/services/wrappers/Main"
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import { onMounted, reactive, ref } from "vue"
@@ -64,7 +64,7 @@
     }
 
     const preview = async () => {
-        const preview = new RenderablePreview()
+        const preview = new PreviewRenderable()
         
         compiledPreview.value = await preview.compile()
 
