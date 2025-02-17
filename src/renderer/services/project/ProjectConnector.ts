@@ -2,7 +2,7 @@ import Main from "../wrappers/Main"
 import SchemaBuilder from "../schema/SchemaBuilder"
 import Project, { ProjectSettings, ProjectUIStarterKit } from "@Common/models/Project"
 import GenerateBasicProjectData from "@Renderer/services/project/GenerateBasicProjectData"
-import RenderableBootstrapApp from "@Renderer/codegen/sequential/services/routes/RenderableBootstrapApp"
+import BootstrapAppRenderable from "@Renderer/codegen/sequential/services/routes/BootstrapAppRenderable"
 import RoutesRenderable from "@Renderer/codegen/sequential/services/routes/RoutesRenderable"
 import ApiRoutesRenderable from "@Renderer/codegen/sequential/services/routes/ApiRoutesRenderable"
 
@@ -50,7 +50,7 @@ export default class ProjectConnector {
         console.log("Creating files for fresh Laravel project")
 
         // Render the bootstrap/app.php file (ignoring conflicts)
-        const renderableBootstrapApp = new RenderableBootstrapApp()
+        const renderableBootstrapApp = new BootstrapAppRenderable()
         await renderableBootstrapApp.render(true)
 
         const renderableRoutes = new RoutesRenderable()

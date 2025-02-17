@@ -1,7 +1,7 @@
 <####>
 <# TEMPLATE DATA #>
 <# DATA:MODEL [ project = Project ] #>
-<# DATA:RENDERABLE [ renderable = theme/RenderablePreview() ] #>
+<# DATA:RENDERABLE [ renderable = theme/PreviewRenderable() ] #>
 <####>
 <% const cdnLink = this.project.getVthemeCdn() %>
 <% if (cdnLink && cdnLink.includes('tailwind')) { %>

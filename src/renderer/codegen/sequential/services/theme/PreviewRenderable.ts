@@ -4,7 +4,7 @@ import {
     RenderableFileType,
 } from "@Common/models/RenderableFile"
 
-export default class RenderablePreview extends Renderable {
+export default class PreviewRenderable extends Renderable {
     canRender(): boolean {
         return true
     }
