@@ -422,6 +422,23 @@
             })
         })
 
+        // Sort folders before files
+        const sortStructure = (items) => {
+            items.sort((a, b) => {
+                if (a.children && !b.children) return -1
+                if (!a.children && b.children) return 1
+                return a.title.localeCompare(b.title)
+            })
+
+            items.forEach((item) => {
+                if (item.children) {
+                    sortStructure(item.children)
+                }
+            })
+        }
+
+        sortStructure(structure)
+
         return structure
     }
 
