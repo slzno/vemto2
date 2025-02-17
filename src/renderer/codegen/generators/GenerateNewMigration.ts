@@ -101,7 +101,7 @@ export default class GenerateNewMigration {
 
     async generateCreationMigration() {
         const templateCompiler = new TemplateCompiler(), 
-            templateContent = await Main.API.readTemplateFile("CreationMigration.vemtl")
+            templateContent = await Main.API.readTemplateFile("migrations/CreationMigration.vemtl")
 
         templateCompiler
             .setContent(templateContent)
@@ -116,7 +116,7 @@ export default class GenerateNewMigration {
 
     async generateRenameMigration() {
         const templateCompiler = new TemplateCompiler(), 
-            templateContent = await Main.API.readTemplateFile("RenameMigration.vemtl")
+            templateContent = await Main.API.readTemplateFile("migrations/RenameMigration.vemtl")
 
         templateCompiler
             .setContent(templateContent)
@@ -131,7 +131,7 @@ export default class GenerateNewMigration {
 
     async generateDropMigration() {
         const templateCompiler = new TemplateCompiler(), 
-            templateContent = await Main.API.readTemplateFile("DropMigration.vemtl")
+            templateContent = await Main.API.readTemplateFile("migrations/DropMigration.vemtl")
 
         templateCompiler
             .setContent(templateContent)
@@ -146,7 +146,7 @@ export default class GenerateNewMigration {
 
     async generateUpdaterMigration() {
         const templateCompiler = new TemplateCompiler(),
-            templateContent = await Main.API.readTemplateFile("UpdaterMigration.vemtl")
+            templateContent = await Main.API.readTemplateFile("migrations/UpdaterMigration.vemtl")
 
         templateCompiler
             .setContent(templateContent)

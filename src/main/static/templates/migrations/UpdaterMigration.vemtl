@@ -28,7 +28,7 @@ class Update<$ this.table.name $>Table extends Migration
      */
     public function up()
     {
-        <import template="UpdaterSchema.vemtl">
+        <import template="migrations/UpdaterSchema.vemtl">
     }
 
     /**
@@ -38,6 +38,6 @@ class Update<$ this.table.name $>Table extends Migration
      */
     public function down()
     {
-        <import template="UpdaterSchemaDown.vemtl">
+        <import template="migrations/UpdaterSchemaDown.vemtl">
     }
 }<% if (this.project.laravelVersionGreaterThanOrEqualTo('9')) { %>;<% } %>

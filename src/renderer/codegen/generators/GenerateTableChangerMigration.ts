@@ -46,7 +46,7 @@ export default new class GenerateTableChangerMigration {
 
     async getContent() {
         const templateCompiler = new TemplateCompiler(),
-            templateContent = await Main.API.readTemplateFile("TableChangerMigration.vemtl")
+            templateContent = await Main.API.readTemplateFile("migrations/TableChangerMigration.vemtl")
 
         templateCompiler
             .setContent(templateContent)

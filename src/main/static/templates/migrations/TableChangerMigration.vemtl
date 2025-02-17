@@ -47,7 +47,7 @@ class ChangeTablesMigration extends Migration
             Schema::rename('<$ this.table.name $>', '<$ this.table.getOldName() $>');
         <% } %>
         <% if (this.table.isRemoved()) { %>
-            <import template="CreationSchema.vemtl">
+            <import template="migrations/CreationSchema.vemtl">
         <% } %>
     }
 }<% if (this.project.laravelVersionGreaterThanOrEqualTo('9')) { %>;<% } %>

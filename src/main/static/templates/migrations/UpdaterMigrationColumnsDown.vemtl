@@ -16,19 +16,19 @@
 <% for (let newColumn of this.table.getNotRenamedChangedColumns()) { %>
     <# Gets old column data from new column #>
     <% let column = newColumn.old() %>
-    <import template="MigrationColumn.vemtl" addChangeMethod="true">
+    <import template="migrations/MigrationColumn.vemtl" addChangeMethod="true">
 <% } %>
 <#  #>
 <#  #>
 <# New indexes #>
 <% for (let index of this.table.getNewIndexes()) { %>
-    <import template="MigrationDropIndex.vemtl">
+    <import template="migrations/MigrationDropIndex.vemtl">
 <% } %>
 <#  #>
 <#  #>
 <# Removed indexes #>
 <% for (let index of this.table.getRemovedIndexes()) { %>
-    <import template="MigrationIndex.vemtl">
+    <import template="migrations/MigrationIndex.vemtl">
 <% } %>
 <#  #>
 <#  #>
@@ -37,8 +37,8 @@
     <# Gets old index data from new index #>
     <% let index = newIndex.old() %>
     <# It drops and recreates the index #>
-    <import template="MigrationDropIndex.vemtl">
-    <import template="MigrationIndex.vemtl">
+    <import template="migrations/MigrationDropIndex.vemtl">
+    <import template="migrations/MigrationIndex.vemtl">
 <% } %>
 <#  #>
 <#  #>
@@ -56,5 +56,5 @@
 <#  #>
 <# Removed columns #>
 <% for (let column of this.table.getRemovedColumns()) { %>
-    <import template="MigrationColumn.vemtl" enableColumnAfterUsage="true">
+    <import template="migrations/MigrationColumn.vemtl" enableColumnAfterUsage="true">
 <% } %>

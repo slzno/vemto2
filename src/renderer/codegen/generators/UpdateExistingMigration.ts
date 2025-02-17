@@ -64,7 +64,7 @@ export default class UpdateExistingMigration {
         const creationMigration = this.table.getCreationMigration(),
             templateCompiler = new TemplateCompiler(),
             creationMigrationContent = await Main.API.readProjectFile(creationMigration.relativePath),
-            creationSchemaTemplate = await Main.API.readTemplateFile('CreationSchema.vemtl')
+            creationSchemaTemplate = await Main.API.readTemplateFile('migrations/CreationSchema.vemtl')
 
         templateCompiler
             .setContent(creationSchemaTemplate)
@@ -86,8 +86,8 @@ export default class UpdateExistingMigration {
         const latestMigration = this.table.getLatestUpdaterMigration(),
             templateCompiler = new TemplateCompiler(),
             latestMigrationContent = await Main.API.readProjectFile(latestMigration.relativePath),
-            upColumnsTemplate = await Main.API.readTemplateFile('UpdaterMigrationColumns.vemtl'),
-            downColumnsTemplate = await Main.API.readTemplateFile('UpdaterMigrationColumnsDown.vemtl')
+            upColumnsTemplate = await Main.API.readTemplateFile('migrations/UpdaterMigrationColumns.vemtl'),
+            downColumnsTemplate = await Main.API.readTemplateFile('migrations/UpdaterMigrationColumnsDown.vemtl')
 
         templateCompiler
             .setContent(upColumnsTemplate)
