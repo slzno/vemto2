@@ -5,7 +5,7 @@ import {
 import Model from "@Common/models/Model"
 import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
 
-export default class RenderableApiAuthController extends Renderable {
+export default class ApiAuthControllerRenderable extends Renderable {
     model: Model
     
     constructor(model: Model) {

@@ -5,7 +5,7 @@
 <# DATA:MODEL [ project = Project ] #>
 <# DATA:MODEL [ crud = Crud ] #>
 <# DATA:MODEL [ project = any ] #>
-<# DATA:RENDERABLE [ renderable = crud/controllers/RenderableApiController(crud) ] #>
+<# DATA:RENDERABLE [ renderable = crud/controllers/ApiControllerRenderable(crud) ] #>
 <####>
 
 <# TEMPLATE VARIABLES #>
