@@ -7,33 +7,33 @@
 
 <# New columns #>
 <% for (let column of this.table.getNewColumns()) { %>
-    <import template="MigrationColumn.vemtl" enableColumnAfterUsage="true">
+    <import template="migrations/MigrationColumn.vemtl" enableColumnAfterUsage="true">
 <% } %>
 <#  #>
 <#  #>
 <# Changed columns #>
 <% for (let column of this.table.getNotRenamedChangedColumns()) { %>
-    <import template="MigrationColumn.vemtl" addChangeMethod="true">
+    <import template="migrations/MigrationColumn.vemtl" addChangeMethod="true">
 <% } %>
 <#  #>
 <#  #>
 <# New indexes #>
 <% for (let index of this.table.getNewIndexes()) { %>
-    <import template="MigrationIndex.vemtl">
+    <import template="migrations/MigrationIndex.vemtl">
 <% } %>
 <#  #>
 <#  #>
 <# Removed indexes #>
 <% for (let index of this.table.getRemovedIndexes()) { %>
-    <import template="MigrationDropIndex.vemtl">
+    <import template="migrations/MigrationDropIndex.vemtl">
 <% } %>
 <#  #>
 <#  #>
 <# Changed indexes #>
 <% for (let index of this.table.getChangedIndexes()) { %>
     <# It drops and recreates the index #>
-    <import template="MigrationDropIndex.vemtl">
-    <import template="MigrationIndex.vemtl">
+    <import template="migrations/MigrationDropIndex.vemtl">
+    <import template="migrations/MigrationIndex.vemtl">
 <% } %>
 <#  #>
 <#  #>
