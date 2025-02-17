@@ -40,6 +40,8 @@ export default abstract class Renderable {
     protected hooks?(): any
     protected beforeRender?(): void
     protected afterRender?(renderedContent: string): void
+    protected beforeCompile?(templateContent: string): string
+    protected afterCompile?(compiledTemplate: string): string
 
     static setMode(mode: "generate" | "checker") {
         Renderable.mode = mode
@@ -269,6 +271,10 @@ export default abstract class Renderable {
         if(!templateContent) {
             templateContent = await Main.API.readTemplateFile(templateFile)
         }
+
+        if(this.beforeCompile) {
+            templateContent = this.beforeCompile(templateContent)
+        }
             
         templateCompiler
             .setContent(templateContent)
@@ -281,7 +287,13 @@ export default abstract class Renderable {
 
         const compiledTemplate = await templateCompiler.compileWithImports()
 
-        return this.formatCompiledTemplate(compiledTemplate)
+        const formattedContent = await this.formatCompiledTemplate(compiledTemplate)
+
+        if(this.afterCompile) {
+            return this.afterCompile(formattedContent)
+        }
+
+        return formattedContent
     }
 
     async formatCompiledTemplate(compiledTemplate: string) {

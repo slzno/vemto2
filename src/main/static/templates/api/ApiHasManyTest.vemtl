@@ -6,7 +6,6 @@
 <# DATA:MODEL [ crud = Crud ] #>
 <# DATA:MODEL [ relationship = Relationship ] #>
 <# DATA:MODEL [ relationshipCrud = Crud ] #>
-<# DATA:MODEL [ project = any ] #>
 <# DATA:RENDERABLE [ renderable = crud/api/ApiHasManyTestRenderable(crud, relationship) ] #>
 <####>
 
