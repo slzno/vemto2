@@ -4,10 +4,10 @@
     import UiButton from "@Renderer/components/ui/UiButton.vue"
     import { defineProps, ref, PropType, toRef } from "vue"
     import HookEditor from "@Renderer/components/editors/HookEditor.vue"
-    import RenderableModel from "@Renderer/codegen/sequential/services/model/RenderableModel"
-    import RenderableSeeder from "@Renderer/codegen/sequential/services/model/RenderableSeeder"
-    import RenderableFactory from "@Renderer/codegen/sequential/services/model/RenderableFactory"
-    import RenderablePolicy from "@Renderer/codegen/sequential/services/model/RenderablePolicy"
+    import ModelRenderable from "@Renderer/codegen/sequential/services/model/ModelRenderable"
+    import SeederRenderable from "@Renderer/codegen/sequential/services/model/SeederRenderable"
+    import FactoryRenderable from "@Renderer/codegen/sequential/services/model/FactoryRenderable"
+    import PolicyRenderable from "@Renderer/codegen/sequential/services/model/PolicyRenderable"
     
     const props = defineProps({
             model: {
@@ -37,10 +37,10 @@
         try {
             
             const renderableClasses = {
-                'model': RenderableModel,
-                'factory': RenderableFactory,
-                'seeder': RenderableSeeder,
-                'policy': RenderablePolicy
+                'model': ModelRenderable,
+                'factory': FactoryRenderable,
+                'seeder': SeederRenderable,
+                'policy': PolicyRenderable
             }
     
             if(! renderableClasses[activeHookName.value]) return
