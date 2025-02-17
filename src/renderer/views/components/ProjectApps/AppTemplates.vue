@@ -236,6 +236,8 @@
 
     const renderTemplate = async () => {
         console.log("Rendering template", templateData.value)
+
+        if(!selectedTemplate.value.endsWith(".vemtl")) return
         
         const renderableInfo = extractRenderableInfo(),
             renderableClass = await setupRenderableClass(renderableInfo),
@@ -389,6 +391,10 @@
         const structure = []
 
         filePaths.forEach((filePath) => {
+            if (filePath.endsWith(".md")) {
+                return
+            }
+
             const parts = filePath.split("/").filter((part) => part)
             let currentLevel = structure
 
