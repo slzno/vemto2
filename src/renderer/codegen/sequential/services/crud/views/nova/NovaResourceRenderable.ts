@@ -6,16 +6,14 @@ import {
 } from "@Common/models/RenderableFile"
 import Namespace from "@Renderer/codegen/util/Namespace"
 import { pascalCase } from "pascal-case"
-import BelongsToManyDetail from "@Common/models/crud/BelongsToManyDetail"
-import MorphToManyDetail from "@Common/models/crud/MorphToManyDetail"
 
-export default class RenderableNovaManyToManyResource extends Renderable {
-    detail: BelongsToManyDetail | MorphToManyDetail
+export default class NovaResourceRenderable extends Renderable {
+    crud: Crud
 
-    constructor(detail: BelongsToManyDetail | MorphToManyDetail) {
+    constructor(crud: Crud) {
         super()
 
-        this.detail = detail
+        this.crud = crud
     }
 
     canRender(): boolean {
@@ -35,7 +33,7 @@ export default class RenderableNovaManyToManyResource extends Renderable {
     }
 
     getFilename(): string {
-        return `${pascalCase(this.detail.detailCrud.settings.itemName)}.php`
+        return `${pascalCase(this.crud.settings.itemName)}.php`
     }
 
     getFormatter(): RenderableFileFormatter {
@@ -43,13 +41,13 @@ export default class RenderableNovaManyToManyResource extends Renderable {
     }
 
     hooks() {
-        return this.detail.detailCrud.getHooks('novaResource')
+        return this.crud.getHooks('novaResource')
     }
     
     getData() {
         return {
-            crud: this.detail.detailCrud,
-            model: this.detail.relationship.relatedModel,
+            crud: this.crud,
+            model: this.crud.model,
         }
     }
 }
