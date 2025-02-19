@@ -3,9 +3,9 @@
 <####>
 <# TEMPLATE DATA #>
 <# DATA:MODEL [ project = Project ] #>
-<# DATA:MODEL [ crud = any ] #>
-<# DATA:MODEL [ model = any ] #>
-<# DATA:RENDERABLE [ renderable = crud/views/nova/NovaManyToManyResourceRenderable(detail) ] #>
+<# DATA:MODEL [ crud = Crud ] #>
+<# DATA:MODEL [ model = Model ] #>
+<# DATA:RENDERABLE [ renderable = crud/views/nova/NovaResourceRenderable(crud) ] #>
 <####>
 
 
