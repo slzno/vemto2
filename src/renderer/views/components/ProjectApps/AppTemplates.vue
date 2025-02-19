@@ -473,7 +473,7 @@
     >
         <div
             id="files-tree" 
-            class="flex-none h-full overflow-clip" 
+            class="flex-none h-full overflow-hidden" 
             :class="{ 'w-1/5': showingFilesTree, 'w-1/24': !showingFilesTree }"
         >
             <!-- Small button on left side to collapse the div -->
@@ -493,7 +493,7 @@
 
         <div 
             id="editors-container"
-            class="flex flex-1 w-4/5 h-full"
+            class="flex flex-none h-full overflow-hidden"
             :class="{ 'w-4/5': showingFilesTree, 'w-23/24': !showingFilesTree }"
         >
             <div class="w-1/2 h-full">
