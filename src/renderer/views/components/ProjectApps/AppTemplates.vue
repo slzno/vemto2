@@ -5,7 +5,7 @@
     import { ref, Ref, onMounted, watch, computed } from "vue"
     import UiText from "@Renderer/components/ui/UiText.vue"
     import UiCheckbox from "@Renderer/components/ui/UiCheckbox.vue"
-    import { ArrowPathIcon, ArrowUturnLeftIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon, PlusIcon } from "@heroicons/vue/24/outline"
+    import { ArrowDownCircleIcon, ArrowPathIcon, ArrowUturnLeftIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon, PlusIcon } from "@heroicons/vue/24/outline"
     import { Wunderbaum } from "wunderbaum"
     import Main from "@Renderer/services/wrappers/Main"
     import UiTextarea from "@Renderer/components/ui/UiTextarea.vue"
@@ -281,7 +281,6 @@
             hasRenderErrors.value = true
             currentRenderError.value = error
             console.error(error)
-            console.error("AQUI - Error rendering template", error)
         }
     }
 
@@ -470,7 +469,7 @@
 
 <template>
     <div
-        class="overflow-y-auto pb-20 flex p-2" style="height: calc(100vh - 40px);"
+        class="overflow-y-auto flex p-2" style="height: calc(100vh - 40px);"
     >
         <div
             id="files-tree" 
@@ -531,23 +530,15 @@
                                 title="Revert to default template"
                             >
                                 <ArrowUturnLeftIcon class="w-4 h-4" />
-                                <!-- <span class="ml-1">Revert</span> -->
+                                <span class="ml-1 text-xs">Revert</span>
                             </UiSmallButton>
 
                             <UiSmallButton 
                                 @click="upgradeTemplate"
-                                title="Upgrade template"
+                                title="Upgrade template to the latest version"
                             >
-                                <ArrowUturnLeftIcon class="w-4 h-4" />
-                                <!-- <span class="ml-1">Upgrade</span> -->
-                            </UiSmallButton>
-
-                            <UiSmallButton 
-                                @click="upgradeTemplate"
-                                title="Compare template changes"
-                            >
-                                <ArrowUturnLeftIcon class="w-4 h-4" />
-                                <!-- <span class="ml-1">Compare</span> -->
+                                <ArrowDownCircleIcon class="w-4 h-4" />
+                                <span class="ml-1 text-xs">Upgrade</span>
                             </UiSmallButton>
                         </div>
                     </div>
