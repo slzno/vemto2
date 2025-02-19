@@ -138,6 +138,8 @@
 
         renderedContent.value = ""
         renderedEditor.value?.setValue("")
+        hasRenderErrors.value = false
+        currentRenderError.value = null
         
         try {
             templateStatus.value = await Main.API.getTemplateStatus(path)
@@ -257,8 +259,17 @@
         console.log("Rendering template", templateData.value)
 
         if(!selectedTemplate.value.endsWith(".vemtl")) return
+
+        hasRenderErrors.value = false
+        currentRenderError.value = null
         
         try {
+            if(!templateContent.value.includes("DATA:RENDERABLE")) {
+                hasRenderErrors.value = true
+                currentRenderError.value = new Error("Please add the <# TEMPLATE DATA #> section to the template before rendering it.")
+                return
+            }
+
             const renderableInfo = extractRenderableInfo(),
                 renderableClass = await setupRenderableClass(renderableInfo),
                 renderableParams = await setupRenderableParams(renderableInfo)
@@ -527,7 +538,7 @@
                             <UiSmallButton 
                                 @click="revertToDefaultTemplate"
                                 :disabled="templateStatus !== 'custom'"
-                                title="Revert to default template"
+                                title="Revert to the published template"
                             >
                                 <ArrowUturnLeftIcon class="w-4 h-4" />
                                 <span class="ml-1 text-xs">Revert</span>
@@ -535,10 +546,10 @@
 
                             <UiSmallButton 
                                 @click="upgradeTemplate"
-                                title="Upgrade template to the latest version"
+                                title="Compare template to the latest version"
                             >
                                 <ArrowDownCircleIcon class="w-4 h-4" />
-                                <span class="ml-1 text-xs">Upgrade</span>
+                                <span class="ml-1 text-xs">Compare</span>
                             </UiSmallButton>
                         </div>
                     </div>
@@ -612,7 +623,7 @@
                     <div v-if="hasUnknownModelData()">
                         <div class="p-8">
                             <UiWarning>
-                                Some model data is missing. Please add the missing data to the project before trying to render the template.
+                                Some model data is missing. Please add the missing data to the project before trying to preview or edit the template.
                             </UiWarning>
                         </div>
                     </div>
@@ -628,11 +639,12 @@
                             ></TemplateErrorViewer>
                         </div>
                         
-                        <div style="max-height: calc(100vh - 350px); max-width: calc(100% - 25px);" v-else>
-                            <UiPre class="overflow-hidden mb-2 text-red-450">{{ currentRenderError.message }}</UiPre>
-    
+                        <div style="max-height: calc(100vh - 350px);" v-else>
+                            
                             <div v-if="currentRenderError.stack" class="overflow-auto p-4 bg-slate-950 rounded-lg text-slate-200">
-                                <UiPre>{{ currentRenderError.stack }}</UiPre>
+                                <UiPre class="overflow-hidden mb-2 text-red-450">{{ currentRenderError.message }}</UiPre>
+
+                                <UiPre class="overflow-hidden whitespace-pre-wrap break-words">{{ currentRenderError.stack }}</UiPre>
                             </div>
                         </div>
                     </div>

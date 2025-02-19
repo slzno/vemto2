@@ -1,3 +1,8 @@
+<####>
+<# TEMPLATE DATA #>
+<# DATA:RENDERABLE [ renderable = CustomRenderable() ] #>
+<####>
+
 @props(['id' => null, 'maxWidth' => null])
 
 <x-ui.modal :id="$id" :maxWidth="$maxWidth" {{ $attributes }}>
