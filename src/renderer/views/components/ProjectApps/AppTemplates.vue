@@ -275,7 +275,7 @@
     
             renderedEditor.value?.setValue(renderedContent.value)
 
-            // selectedRenderedTab.value = "rendered"
+            selectedRenderedTab.value = "rendered"
         } catch (error: any) {
             // selectedRenderedTab.value = "errors"
             hasRenderErrors.value = true
@@ -637,10 +637,10 @@
                             ></TemplateErrorViewer>
                         </div>
                         
-                        <div v-else>
+                        <div style="max-height: calc(100vh - 350px); max-width: calc(100% - 25px);" v-else>
                             <UiPre class="overflow-hidden mb-2 text-red-450">{{ currentRenderError.message }}</UiPre>
     
-                            <div v-if="currentRenderError.stack" class="overflow-auto p-4 bg-slate-950 rounded-lg text-slate-200 text-xs" style="max-height: calc(100vh - 350px); max-width: calc(100% - 25px);">
+                            <div v-if="currentRenderError.stack" class="overflow-auto p-4 bg-slate-950 rounded-lg text-slate-200">
                                 <UiPre>{{ currentRenderError.stack }}</UiPre>
                             </div>
                         </div>
