@@ -104,6 +104,7 @@
                 element: document.getElementById(
                     "templates-tree"
                 ) as HTMLDivElement,
+                autoCollapse: true,
                 source: generateStructure(templates.value),
                 init: (e) => {
                     e.tree.setFocus()
@@ -473,8 +474,8 @@
     >
         <div
             id="files-tree" 
-            class="flex-none h-full overflow-hidden" 
-            :class="{ 'w-1/5': showingFilesTree, 'w-1/24': !showingFilesTree }"
+            class="flex-none h-full" 
+            :class="{ 'w-[332px]': showingFilesTree, 'w-1/24': !showingFilesTree }"
         >
             <!-- Small button on left side to collapse the div -->
             <div class="flex items-center justify-start p-2">
@@ -494,9 +495,9 @@
         <div 
             id="editors-container"
             class="flex flex-none h-full overflow-hidden"
-            :class="{ 'w-4/5': showingFilesTree, 'w-23/24': !showingFilesTree }"
+            :class="{ 'w-[calc(100%-332px)]': showingFilesTree, 'w-23/24': !showingFilesTree }"
         >
-            <div class="w-1/2 h-full">
+            <div class="w-1/2 flex-none h-full">
                 <UiTabs 
                     ref="templateTabsRef"
                     :name="projectStore.project.getTabNameFor(`templates_code`)" 
@@ -506,12 +507,16 @@
     
                 <div class="h-full" v-show="selectedTemplateTab === 'template'">
                     <div class="w-full flex justify-between p-1.5 h-9.5 bg-slate-950">
-                        <div class="font-thin flex items-center gap-1">
-                            <span>{{ selectedTemplate }}</span>
-                            <span class="text-slate-400">({{ pascalCase(templateStatus) }})</span>
+                        <div class="w-2/3 flex-none font-thin flex items-center gap-1 truncate text-sm" :title="selectedTemplate">
+                            <span>
+                                {{ selectedTemplate }}
+                            </span>
+                            <span :class="templateStatus === 'custom' ? 'text-red-500' : 'text-green-500'">
+                                ({{ pascalCase(templateStatus) }})
+                            </span>
                         </div>
     
-                        <div class="flex space-x-1">
+                        <div class="w-1/3 flex-none flex space-x-1 justify-end">
                             <!-- <UiSmallButton 
                                 @click="saveTemplate"
                                 :disabled="!hasChanges"
@@ -523,23 +528,26 @@
                             <UiSmallButton 
                                 @click="revertToDefaultTemplate"
                                 :disabled="templateStatus !== 'custom'"
+                                title="Revert to default template"
                             >
                                 <ArrowUturnLeftIcon class="w-4 h-4" />
-                                <span class="ml-1">Revert</span>
+                                <!-- <span class="ml-1">Revert</span> -->
                             </UiSmallButton>
 
                             <UiSmallButton 
                                 @click="upgradeTemplate"
+                                title="Upgrade template"
                             >
                                 <ArrowUturnLeftIcon class="w-4 h-4" />
-                                <span class="ml-1">Upgrade</span>
+                                <!-- <span class="ml-1">Upgrade</span> -->
                             </UiSmallButton>
 
                             <UiSmallButton 
                                 @click="upgradeTemplate"
+                                title="Compare template changes"
                             >
                                 <ArrowUturnLeftIcon class="w-4 h-4" />
-                                <span class="ml-1">Compare</span>
+                                <!-- <span class="ml-1">Compare</span> -->
                             </UiSmallButton>
                         </div>
                     </div>
@@ -594,7 +602,7 @@
                 </div>
             </div>
     
-            <div class="w-1/2 h-full">
+            <div class="w-1/2 flex-none h-full">
                 <UiTabs 
                     ref="renderedTabsRef"
                     :name="projectStore.project.getTabNameFor(`templates_rendered_code`)" 
