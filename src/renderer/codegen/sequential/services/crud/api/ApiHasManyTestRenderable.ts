@@ -47,9 +47,9 @@ export default class ApiHasManyTestRenderable extends Renderable {
 
     resolveRelationshipCrud() {
         const cruds = this.relationship.relatedModel.cruds,
-            existentCrud = cruds.length ? cruds[0] : null
+            existingCrud = cruds.length ? cruds[0] : null
 
-        this.relationshipCrud = existentCrud || Crud.createFakeFromModel(this.relationship.relatedModel, {
+        this.relationshipCrud = existingCrud || Crud.createFakeFromModel(this.relationship.relatedModel, {
             name: capitalCase(this.relationship.name)
         })
     }
