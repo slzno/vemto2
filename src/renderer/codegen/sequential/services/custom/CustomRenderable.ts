@@ -32,17 +32,33 @@ export default class CustomRenderable extends Renderable {
     }
 
     protected beforeCompile(templateContent: string): string {
-        templateContent = `
-            <% const snakeCase = this.require('snakeCase') %>
-            <% const camelCase = this.require('camelCase') %>
-            <% const paramCase = this.require('paramCase') %>
-            <% const pascalCase = this.require('pascalCase') %>
-            
-        ` + templateContent
+        let templateInports = ``
 
-        console.log("Before compile", templateContent)
+        if(!templateContent.includes("const snakeCase =")) {
+            templateInports += `const snakeCase = this.require('snakeCase')\n`
+        }
 
-        return templateContent
+        if(!templateContent.includes("const camelCase =")) {
+            templateInports += `const camelCase = this.require('camelCase')\n`
+        }
+
+        if(!templateContent.includes("const paramCase =")) {
+            templateInports += `const paramCase = this.require('paramCase')\n`
+        }
+
+        if(!templateContent.includes("const pascalCase =")) {
+            templateInports += `const pascalCase = this.require('pascalCase')\n`
+        }
+
+        if(!templateContent.includes("const ComponentRenderer =")) {
+            templateInports += `const ComponentRenderer = this.require('ComponentRenderer')\n`
+        }
+
+        if(!templateContent.includes("const InputRenderer =")) {
+            templateInports += `const InputRenderer = this.require('InputRenderer')\n`
+        }
+
+        return `${templateInports}\n${templateContent}`
     }
 
     protected afterCompile(compiledTemplate: string): string {
