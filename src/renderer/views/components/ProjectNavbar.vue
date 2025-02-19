@@ -53,7 +53,7 @@
 </script>
 
 <template>
-    <nav class="w-20 h-full flex flex-col items-center justify-between bg-white dark:bg-slate-900 border-r border-slate-300 dark:border-slate-800">
+    <nav class="w-20 h-full flex flex-none flex-col items-center justify-between bg-white dark:bg-slate-900 border-r border-slate-300 dark:border-slate-800">
         <div>
             <button
                 title="Home"
