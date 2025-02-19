@@ -31,7 +31,23 @@ export default class CustomRenderable extends Renderable {
         return RenderableFileFormatter.NONE
     }
 
-    
+    protected beforeCompile(templateContent: string): string {
+        templateContent = `
+            <% const snakeCase = this.require('snakeCase') %>
+            <% const camelCase = this.require('camelCase') %>
+            <% const paramCase = this.require('paramCase') %>
+            <% const pascalCase = this.require('pascalCase') %>
+            
+        ` + templateContent
+
+        console.log("Before compile", templateContent)
+
+        return templateContent
+    }
+
+    protected afterCompile(compiledTemplate: string): string {
+        return compiledTemplate.trim()
+    }
 
     getData() {
         return {}
