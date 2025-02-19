@@ -469,7 +469,7 @@
 
 <template>
     <div
-        class="overflow-y-auto flex p-2" style="height: calc(100vh - 40px);"
+        class="overflow-hidden flex p-2" style="height: calc(100vh - 40px);"
     >
         <div
             id="files-tree" 
@@ -486,7 +486,7 @@
                 </div>
             </div>
 
-             <div class="h-full" v-show="showingFilesTree">
+             <div class="h-full" style="height: calc(100% - 38px);" v-show="showingFilesTree">
                  <div id="templates-tree"></div>
              </div>
         </div>
