@@ -10815,10 +10815,10 @@ write-file-atomic@^4.0.1:
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.5.9.tgz#54fa7db29f4c7cec68b1ddd3a89de099942bb591"
   integrity sha512-F+P9Jil7UiSKSkppIiD94dN07AwvFixvLIj1Og1Rl9GGMuNipJnV9JzjD6XuqmAeiswGvUmNLjr5cFuXwNS77Q==
 
-wunderbaum@^0.10.1:
-  version "0.10.1"
-  resolved "https://registry.yarnpkg.com/wunderbaum/-/wunderbaum-0.10.1.tgz#53ef533914c92bb33cc3dd2012255b9d2aab25c0"
-  integrity sha512-Nx6qvr3AiezCrZb02mUJMINvjwv+vnhRVqlB7pIJbQJCvgR8I6NuKXsyeBRUK4wMOt8eK/U55faslvKx8VL5+w==
+wunderbaum@^0.12.0:
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/wunderbaum/-/wunderbaum-0.12.0.tgz#9c1581f24dc877318af0a0ced23e3a9a584ffd33"
+  integrity sha512-PG295Df2t+Hqp8+HM5NyXnxmr42pDocIArOPqwrormLF5k6xHA3t/smM8vPAwZC0p1iN3u1szID6d/zDe37GZQ==
 
 xdg-basedir@^4.0.0:
   version "4.0.0"
