@@ -1,3 +1,8 @@
+<####>
+<# TEMPLATE DATA #>
+<# DATA:RENDERABLE [ renderable = CustomRenderable() ] #>
+<####>
+
 @props(['disabled' => false])
 
 <x-ui.input 
