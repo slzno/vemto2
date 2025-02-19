@@ -1,3 +1,11 @@
+<####>
+<# TEMPLATE DATA #>
+<# DATA:MODEL [ project = Project ] #>
+<# DATA:MODEL [ input = Input ] #>
+<# DATA:EXPOSE_LOCAL [ exposed_variables = input ] #>
+<# DATA:RENDERABLE [ renderable = CustomRenderable() ] #>
+<####>
+
 <% const inputSettings = input.novaSettings %>
 <% const novaInputTypeIs = (type) => input.novaSettings.inputType === type %>
 <% const inputLabel = input.isBelongsTo() ? `'${capitalCase(input.relationship.name)}'` : this.helpers.toTranslatableFormat(input.label) %>

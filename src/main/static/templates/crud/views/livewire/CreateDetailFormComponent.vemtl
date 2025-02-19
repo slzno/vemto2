@@ -4,7 +4,7 @@
 <# TEMPLATE DATA #>
 <# DATA:MODEL [ project = Project ] #>
 <# DATA:MODEL [ detail = HasManyDetail ] #>
-<# DATA:MODEL [ crud = any ] #>
+<# DATA:MODEL [ crud = Crud ] #>
 <# DATA:RENDERABLE [ renderable = crud/views/livewire/LivewireCreateDetailFormComponentRenderable(detail) ] #>
 <####>
 
