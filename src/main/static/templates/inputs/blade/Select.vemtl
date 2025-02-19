@@ -1,7 +1,9 @@
-<# TemplateData #>
-<# input:Input #>
-<# /TemplateData #>
-
+<####>
+<# TEMPLATE DATA #>
+<# DATA:MODEL [ project = Project ] #>
+<# DATA:MODEL [ input = Input ] #>
+<# DATA:RENDERABLE [ renderable = CustomRenderable() ] #>
+<####>
 <% const input = this.input %>
 <% const crud = input.crud %>
 <% const camelCase = this.require("camelCase") %>
