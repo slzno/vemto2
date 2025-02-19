@@ -253,11 +253,11 @@
 </script>
 
 <template>
-    <div class="h-full flex">
+    <div class="h-full flex" style="max-width: 100vw;">
         <ProjectNavbar />
 
         <!-- Content -->
-        <div v-if="canShow" class="flex-1">
+        <div v-if="canShow" class="flex-1" style="max-width: calc(100vw - 5rem);">
             <RouterView />
 
             <DependenciesModal
