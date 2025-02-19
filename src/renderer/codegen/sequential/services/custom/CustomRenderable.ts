@@ -35,27 +35,27 @@ export default class CustomRenderable extends Renderable {
         let templateInports = ``
 
         if(!templateContent.includes("const snakeCase =")) {
-            templateInports += `const snakeCase = this.require('snakeCase')\n`
+            templateInports += `<% const snakeCase = this.require('snakeCase') %>\n`
         }
 
         if(!templateContent.includes("const camelCase =")) {
-            templateInports += `const camelCase = this.require('camelCase')\n`
+            templateInports += `<% const camelCase = this.require('camelCase') %>\n`
         }
 
         if(!templateContent.includes("const paramCase =")) {
-            templateInports += `const paramCase = this.require('paramCase')\n`
+            templateInports += `<% const paramCase = this.require('paramCase') %>\n`
         }
 
         if(!templateContent.includes("const pascalCase =")) {
-            templateInports += `const pascalCase = this.require('pascalCase')\n`
+            templateInports += `<% const pascalCase = this.require('pascalCase') %>\n`
         }
 
         if(!templateContent.includes("const ComponentRenderer =")) {
-            templateInports += `const ComponentRenderer = this.require('ComponentRenderer')\n`
+            templateInports += `<% const ComponentRenderer = this.require('ComponentRenderer') %>\n`
         }
 
         if(!templateContent.includes("const InputRenderer =")) {
-            templateInports += `const InputRenderer = this.require('InputRenderer')\n`
+            templateInports += `<% const InputRenderer = this.require('InputRenderer') %>\n`
         }
 
         return `${templateInports}\n${templateContent}`
