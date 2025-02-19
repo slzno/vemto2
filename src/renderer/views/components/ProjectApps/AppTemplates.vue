@@ -137,14 +137,20 @@
 
         renderedContent.value = ""
         renderedEditor.value?.setValue("")
+        
+        try {
+            templateStatus.value = await Main.API.getTemplateStatus(path)
+            templateContent.value = await Main.API.readTemplateFile(path)
+            templateOriginalContent.value = await Main.API.readOriginalTemplateFile(path)
+            templateEditor.value?.setValue(templateContent.value)
+            templateData.value = await readTemplateData(templateContent.value)
 
-        templateStatus.value = await Main.API.getTemplateStatus(path)
-        templateContent.value = await Main.API.readTemplateFile(path)
-        templateOriginalContent.value = await Main.API.readOriginalTemplateFile(path)
-        templateEditor.value?.setValue(templateContent.value)
-        templateData.value = await readTemplateData(templateContent.value)
-
-        renderTemplate()
+            renderTemplate()
+        } catch (error: any) {
+            hasRenderErrors.value = true
+            currentRenderError.value = error
+            console.error(error)
+        }
     }
 
     const reloadTemplateData = async () => {
@@ -189,49 +195,61 @@
     }
 
     const updateTemplateData = async () => {
-        const newTemplateData = await readTemplateData(templateContent.value)
-
-        for (const key in newTemplateData) {
-            if (!templateData.value[key] || templateData.value[key].type !== newTemplateData[key].type) {
-                templateData.value[key] = newTemplateData[key]
+        try {
+            const newTemplateData = await readTemplateData(templateContent.value)
+    
+            for (const key in newTemplateData) {
+                if (!templateData.value[key] || templateData.value[key].type !== newTemplateData[key].type) {
+                    templateData.value[key] = newTemplateData[key]
+                }
             }
-        }
-
-        for (const key in templateData.value) {
-            if (!newTemplateData[key]) {
-                delete templateData.value[key]
+    
+            for (const key in templateData.value) {
+                if (!newTemplateData[key]) {
+                    delete templateData.value[key]
+                }
             }
+        } catch (error: any) {
+            hasRenderErrors.value = true
+            currentRenderError.value = error
+            console.error(error)
         }
     }
 
     const readTemplateData = async (content: string) => {
-        // Mudar para o Template Compiler aqui, para obter os templates de import
-        let templateData = (new TemplateEngine(content, {
-            logger: null,
-            onBrowser: true,
-            disableImportsProcessing: true,
-        })).getDataDefinition()
-
-        // select the first model for each model type
-        for (const key in templateData) {
-            if (templateData[key].type === "MODEL") {
-                let modelIdentifier = templateData[key].value,
-                    mode = "single"
-
-                if(modelIdentifier.includes("[]")) {
-                    mode = "multiple"
-                    modelIdentifier = modelIdentifier.replace("[]", "")
+        try {
+            // Mudar para o Template Compiler aqui, para obter os templates de import
+            let templateData = (new TemplateEngine(content, {
+                logger: null,
+                onBrowser: true,
+                disableImportsProcessing: true,
+            })).getDataDefinition()
+    
+            // select the first model for each model type
+            for (const key in templateData) {
+                if (templateData[key].type === "MODEL") {
+                    let modelIdentifier = templateData[key].value,
+                        mode = "single"
+    
+                    if(modelIdentifier.includes("[]")) {
+                        mode = "multiple"
+                        modelIdentifier = modelIdentifier.replace("[]", "")
+                    }
+    
+                    const rows = projectStore.getAllRowsByModelIdentifier(modelIdentifier),
+                        firstRowId = rows[0] ? rows[0].id : null,
+                        allRows = rows.map((row) => row.id)
+    
+                    templateData[key].selection = mode === "single" ? firstRowId : allRows
                 }
-
-                const rows = projectStore.getAllRowsByModelIdentifier(modelIdentifier),
-                    firstRowId = rows[0] ? rows[0].id : null,
-                    allRows = rows.map((row) => row.id)
-
-                templateData[key].selection = mode === "single" ? firstRowId : allRows
             }
+    
+            return templateData
+        } catch (error: any) {
+            hasRenderErrors.value = true
+            currentRenderError.value = error
+            console.error(error)
         }
-
-        return templateData
     }
 
     const renderTemplate = async () => {
@@ -239,17 +257,17 @@
 
         if(!selectedTemplate.value.endsWith(".vemtl")) return
         
-        const renderableInfo = extractRenderableInfo(),
-            renderableClass = await setupRenderableClass(renderableInfo),
-            renderableParams = await setupRenderableParams(renderableInfo)
-
-        const renderable = new renderableClass(...renderableParams)
-
-        renderable.setOverriddenData(
-            getDataForRenderable()
-        )
-
         try {
+            const renderableInfo = extractRenderableInfo(),
+                renderableClass = await setupRenderableClass(renderableInfo),
+                renderableParams = await setupRenderableParams(renderableInfo)
+    
+            const renderable = new renderableClass(...renderableParams)
+    
+            renderable.setOverriddenData(
+                getDataForRenderable()
+            )
+
             const templateContentWithExposed = addExposedVariables(templateContent.value)
 
             renderedContent.value = await renderable.compile(templateContentWithExposed)
@@ -262,6 +280,7 @@
             hasRenderErrors.value = true
             currentRenderError.value = error
             console.error(error)
+            console.error("AQUI - Error rendering template", error)
         }
     }
 
@@ -452,8 +471,9 @@
     <div
         class="overflow-y-auto pb-20 flex p-2" style="height: calc(100vh - 40px);"
     >
-        <div 
-            class="h-full" 
+        <div
+            id="files-tree" 
+            class="flex-none h-full overflow-clip" 
             :class="{ 'w-1/5': showingFilesTree, 'w-1/24': !showingFilesTree }"
         >
             <!-- Small button on left side to collapse the div -->
@@ -472,7 +492,8 @@
         </div>
 
         <div 
-            class="flex w-4/5 h-full"
+            id="editors-container"
+            class="flex flex-1 w-4/5 h-full"
             :class="{ 'w-4/5': showingFilesTree, 'w-23/24': !showingFilesTree }"
         >
             <div class="w-1/2 h-full">
@@ -611,8 +632,8 @@
                         <div v-else>
                             <UiPre class="overflow-hidden mb-2 text-red-450">{{ currentRenderError.message }}</UiPre>
     
-                            <div v-if="currentRenderError.stack" class="overflow-auto" style="max-height: calc(100vh - 350px); max-width: 540px;">
-                                <UiPre class="p-4 bg-slate-950 rounded-lg text-slate-200">{{ currentRenderError.stack }}</UiPre>
+                            <div v-if="currentRenderError.stack" class="overflow-auto p-4 bg-slate-950 rounded-lg text-slate-200 text-xs" style="max-height: calc(100vh - 350px); max-width: calc(100% - 25px);">
+                                <UiPre>{{ currentRenderError.stack }}</UiPre>
                             </div>
                         </div>
                     </div>
