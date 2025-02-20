@@ -135,8 +135,11 @@ contextBridge.exposeInMainWorld("api", {
     writeTemplateFile: (path: string, content: string) => {
         return ipcRenderer.invoke("file:template:write", path, content)
     },
-    upgradeBaseTemplate: (path: string) => {
-        return ipcRenderer.invoke("file:template:upgrade:base", path)
+    upgradePublishedTemplate: (path: string) => {
+        return ipcRenderer.invoke("file:template:upgrade:published", path)
+    },
+    upgradeCustomTemplate: (path: string) => {
+        return ipcRenderer.invoke("file:template:upgrade:custom", path)
     },
     openFolder: (path: string) => {
         return ipcRenderer.invoke("folder:open", path)

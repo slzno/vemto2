@@ -181,9 +181,26 @@
         })
     }
 
+    const upgradeCustomTemplate = async () => {
+        const customContent = templateContent.value
+        const defaultContent = await Main.API.readDefaultTemplateFile(selectedTemplate.value)
+    
+        codeChangesCompareRef.value.show({
+            title: "Upgrade Custom Template",
+            firstCode: customContent,
+            firstCodeTitle: "Custom Template",
+            secondCode: defaultContent,
+            secondCodeTitle: "Upgraded Template",
+            onConfirm: async () => {
+                await Main.API.upgradeCustomTemplate(selectedTemplate.value)
+                reloadSelectedTemplate()
+            }
+        })
+    }
+
     const upgradePublishedTemplate = async () => {
         const publishedContent = await Main.API.readPublishedTemplateFile(selectedTemplate.value)
-        const defaultContent = ""
+        const defaultContent = await Main.API.readDefaultTemplateFile(selectedTemplate.value)
     
         codeChangesCompareRef.value.show({
             title: "Upgrade Published Template",
@@ -192,7 +209,7 @@
             secondCode: defaultContent,
             secondCodeTitle: "Upgraded Template",
             onConfirm: async () => {
-                await Main.API.upgradeBaseTemplate(selectedTemplate.value)
+                await Main.API.upgradePublishedTemplate(selectedTemplate.value)
                 reloadSelectedTemplate()
             }
         })
@@ -559,11 +576,20 @@
                             </UiSmallButton>
 
                             <UiSmallButton 
+                                @click="upgradeCustomTemplate"
+                                :disabled="templateStatus !== 'custom'"
+                                title="Upgrade the custom template to the latest version"
+                            >
+                                <ArrowDownCircleIcon class="w-4 h-4" />
+                                <span class="ml-1 text-xs">Upgrade</span>
+                            </UiSmallButton>
+
+                            <UiSmallButton 
                                 @click="upgradePublishedTemplate"
                                 title="Upgrade the published template to the latest version"
                             >
                                 <ArrowDownCircleIcon class="w-4 h-4" />
-                                <span class="ml-1 text-xs">Upgrade</span>
+                                <span class="ml-1 text-xs">Upgrade Published</span>
                             </UiSmallButton>
                         </div>
                     </div>
