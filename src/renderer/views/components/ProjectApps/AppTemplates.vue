@@ -22,6 +22,10 @@
     import CodeComparer from "@Common/services/CodeComparer"
     import CustomRenderable from "@Renderer/codegen/sequential/services/custom/CustomRenderable"
     import CodeChangesCompare from "../Common/CodeChangesCompare.vue"
+    import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
+    import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
+import UiDropdownSeparator from "@Renderer/components/ui/UiDropdownSeparator.vue"
+import PathUtil from "@Common/util/PathUtil"
     
     type TemplateDataType = "MODEL" | "JSON" | "STRING" | "RENDERABLE"
 
@@ -49,7 +53,8 @@
         renderedEditor = ref(null),
         hasRenderErrors = ref(false),
         currentRenderError = ref(null),
-        showingFilesTree = ref(true)
+        showingFilesTree = ref(true),
+        isUpgradable = ref(false)
 
     const selectedTemplateTab = ref("template") as Ref<string>
     
@@ -127,8 +132,6 @@
 
         debounce(renderTemplate, 150)()
 
-        console.log("has changes", hasChanges.value)
-
         debounce(saveTemplate, 500)()
     }
 
@@ -150,6 +153,8 @@
             templateOriginalContent.value = await Main.API.readPublishedTemplateFile(path)
             templateEditor.value?.setValue(templateContent.value)
             templateData.value = await readTemplateData(templateContent.value)
+            
+            isUpgradable.value = await checkIfTemplateIsUpgradable()
 
             renderTemplate()
         } catch (error: any) {
@@ -157,6 +162,16 @@
             currentRenderError.value = error
             console.error(error)
         }
+    }
+
+    const checkIfTemplateIsUpgradable = async () => {
+        const publishedContent = await Main.API.readPublishedTemplateFile(selectedTemplate.value),
+            defaultContent = await Main.API.readDefaultTemplateFile(selectedTemplate.value)
+
+        return CodeComparer.codeIsDifferent(
+            publishedContent,
+            defaultContent
+        )
     }
 
     const reloadTemplateData = async () => {
@@ -213,6 +228,16 @@
                 reloadSelectedTemplate()
             }
         })
+    }
+
+    const openCustomTemplate = async () => {
+        const path = PathUtil.join(".vemto", "templates", "custom", selectedTemplate.value)
+        Main.API.openProjectFile(path)
+    }
+
+    const openPublishedTemplate = async () => {
+        const path = PathUtil.join(".vemto", "templates", "published", selectedTemplate.value)
+        Main.API.openProjectFile(path)
     }
 
     const saveTemplate = async () => {
@@ -547,50 +572,43 @@
                 />
     
                 <div class="h-full" v-show="selectedTemplateTab === 'template'">
-                    <div class="w-full flex justify-between p-1.5 h-9.5 bg-slate-950">
-                        <div class="w-2/3 flex-none font-thin flex items-center gap-1 truncate text-sm" :title="selectedTemplate">
-                            <span>
-                                {{ selectedTemplate }}
-                            </span>
+                    <div class="w-full flex py-2 px-4 bg-slate-950">
+                        <div class="flex-1 font-thin flex items-center gap-1 truncate text-sm" :title="selectedTemplate">
                             <span :class="templateStatus === 'custom' ? 'text-red-500' : 'text-green-500'">
-                                ({{ pascalCase(templateStatus) }})
+                                {{ pascalCase(templateStatus) }}
+                            </span>
+                            <span>
+                                - {{ selectedTemplate }}
+                            </span>
+                            <span v-if="isUpgradable" class="text-yellow-500">
+                                (Upgradable)
                             </span>
                         </div>
     
-                        <div class="w-1/3 flex-none flex space-x-1 justify-end">
-                            <!-- <UiSmallButton 
-                                @click="saveTemplate"
-                                :disabled="!hasChanges"
-                            >
-                                <ArrowUturnLeftIcon class="w-4 h-4" />
-                                <span class="ml-1">Save</span>
-                            </UiSmallButton> -->
+                        <div class="flex-none flex space-x-1 justify-end">
+                            <UiOptionsDropdown size="w-96">
+                                <UiDropdownItem :disabled="templateStatus !== 'custom'" @click="revertToPublishedTemplate">
+                                    <ArrowUturnLeftIcon class="h-5 w-5 mr-2 text-red-400" /> Compare & Revert to Published Template
+                                </UiDropdownItem>
 
-                            <UiSmallButton 
-                                @click="revertToPublishedTemplate"
-                                :disabled="templateStatus !== 'custom'"
-                                title="Revert to the published template"
-                            >
-                                <ArrowUturnLeftIcon class="w-4 h-4" />
-                                <span class="ml-1 text-xs">Revert</span>
-                            </UiSmallButton>
+                                <UiDropdownItem :disabled="templateStatus !== 'custom'" @click="upgradeCustomTemplate">
+                                    <ArrowDownCircleIcon class="h-5 w-5 mr-2 text-green-400" /> Compare & Upgrade Custom Template
+                                </UiDropdownItem>
 
-                            <UiSmallButton 
-                                @click="upgradeCustomTemplate"
-                                :disabled="templateStatus !== 'custom'"
-                                title="Upgrade the custom template to the latest version"
-                            >
-                                <ArrowDownCircleIcon class="w-4 h-4" />
-                                <span class="ml-1 text-xs">Upgrade</span>
-                            </UiSmallButton>
+                                <UiDropdownItem @click="upgradePublishedTemplate">
+                                    <ArrowDownCircleIcon class="h-5 w-5 mr-2 text-green-400" /> Compare & Upgrade Published Template
+                                </UiDropdownItem>
 
-                            <UiSmallButton 
-                                @click="upgradePublishedTemplate"
-                                title="Upgrade the published template to the latest version"
-                            >
-                                <ArrowDownCircleIcon class="w-4 h-4" />
-                                <span class="ml-1 text-xs">Upgrade Published</span>
-                            </UiSmallButton>
+                                <UiDropdownSeparator />
+
+                                <UiDropdownItem :disabled="templateStatus !== 'custom'" @click="openCustomTemplate">
+                                    <ArrowDownCircleIcon class="h-5 w-5 mr-2 text-green-400" /> Open Custom Template
+                                </UiDropdownItem>
+
+                                <UiDropdownItem @click="openPublishedTemplate">
+                                    <ArrowDownCircleIcon class="h-5 w-5 mr-2 text-green-400" /> Open Published Template
+                                </UiDropdownItem>
+                            </UiOptionsDropdown>
                         </div>
                     </div>
                     
