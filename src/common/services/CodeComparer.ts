@@ -8,6 +8,8 @@ export default class CodeComparer {
     }
 
     static removeSpacesAndTabs(code: string) {
+        code = code || ""
+        
         return code.replace(/\s/g, "")
     }
 }
