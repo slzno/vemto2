@@ -54,7 +54,7 @@ export default class TemplateManager {
 
         if(!project) {
             // If there is no project, we read the default template
-            return this.readDefaultTemplate()
+            return this.readDefault()
         }
 
         const basePath = path.join(project.getPath(), ".vemto", "templates", "base", this.templatePath),
@@ -70,15 +70,15 @@ export default class TemplateManager {
             return FileSystem.readFile(basePath)
         }
 
-        return this.readDefaultTemplate()
+        return this.readDefault()
     }
 
-    readOriginal(): string {
+    readPublished(): string {
         const project = Project.find(1)
 
         if(!project) {
             // If there is no project, we read the default template
-            return this.readDefaultTemplate()
+            return this.readDefault()
         }
         
         const basePath = path.join(project.getPath(), ".vemto", "templates", "base", this.templatePath)
@@ -87,10 +87,10 @@ export default class TemplateManager {
             return FileSystem.readFile(basePath)
         }
 
-        return this.readDefaultTemplate()
+        return this.readDefault()
     }
 
-    readDefaultTemplate(): string {
+    readDefault(): string {
         return FileSystem.readFileIfExists(path.join(app.getAppPath(), "static", "templates", this.templatePath))
     }
 

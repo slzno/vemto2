@@ -137,11 +137,19 @@ export function HandleIpcMessages() {
         })
     })
 
-    ipcMain.handle("file:template:read-original", (event, filePath) => {
+    ipcMain.handle("file:template:read-published", (event, filePath) => {
         const templateManager = new TemplateManager(filePath)
 
         return handleError(event, () => {
-            return templateManager.readOriginal()
+            return templateManager.readPublished()
+        })
+    })
+
+    ipcMain.handle("file:template:read-default", (event, filePath) => {
+        const templateManager = new TemplateManager(filePath)
+
+        return handleError(event, () => {
+            return templateManager.readDefault()
         })
     })
 
