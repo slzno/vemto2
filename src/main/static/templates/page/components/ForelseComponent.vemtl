@@ -4,7 +4,7 @@
 <# DATA:JSON [ component = {"settings": {}} ] #>
 <# DATA:RENDERABLE [ renderable = CustomRenderable() ] #>
 <####>
-
+ 
 <# Template Variables #>
 <% const ComponentRenderer = this.require("ComponentRenderer") %>
 <# - #>

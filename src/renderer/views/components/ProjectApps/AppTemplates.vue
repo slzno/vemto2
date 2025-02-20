@@ -21,7 +21,8 @@
     import UiWarning from "@Renderer/components/ui/UiWarning.vue"
     import CodeComparer from "@Common/services/CodeComparer"
     import CustomRenderable from "@Renderer/codegen/sequential/services/custom/CustomRenderable"
-
+    import CodeChangesCompare from "../Common/CodeChangesCompare.vue"
+    
     type TemplateDataType = "MODEL" | "JSON" | "STRING" | "RENDERABLE"
 
     interface TemplateDataItem {
@@ -70,6 +71,8 @@
             emphasizeBadge: () => hasRenderErrors.value 
         },
     ]
+
+    const codeChangesCompareRef = ref(null)
 
     onMounted(() => {
         templateTabsRef.value.setTab("template")
@@ -160,28 +163,37 @@
         templateData.value = await readTemplateData(templateContent.value)
     }
 
-    const revertToDefaultTemplate = async () => {
-        const confirmed = await window.projectConfirm("Are you sure you want to revert to the default template?")
-
-        if(!confirmed) return
-
-        await Main.API.dropCustomTemplate(selectedTemplate.value)
-
-        templateStatus.value = await Main.API.getTemplateStatus(
-            selectedTemplate.value
-        )
-
-        reloadSelectedTemplate()
+    const revertToPublishedTemplate = async () => {
+        const originalContent = await Main.API.readOriginalTemplateFile(selectedTemplate.value)
+        const customContent = templateContent.value
+    
+        codeChangesCompareRef.value.show({
+            title: "Revert to Published Template",
+            firstCode: customContent,
+            firstCodeTitle: "Current Template",
+            secondCode: originalContent,
+            secondCodeTitle: "New Template",
+            onConfirm: async () => {
+                await Main.API.dropCustomTemplate(selectedTemplate.value)
+                templateStatus.value = await Main.API.getTemplateStatus(selectedTemplate.value)
+                reloadSelectedTemplate()
+            }
+        })
     }
 
-    const upgradeTemplate = async () => {
-        const confirmed = await window.projectConfirm("Are you sure you want to upgrade this template?")
-
-        if(!confirmed) return
-
-        await Main.API.upgradeBaseTemplate(selectedTemplate.value)
-
-        reloadSelectedTemplate()
+    const upgradePublishedTemplate = async () => {
+        const originalContent = await Main.API.readOriginalTemplateFile(selectedTemplate.value)
+        const customContent = templateContent.value
+    
+        codeChangesCompareRef.value.show({
+            title: "Upgrade Published Template",
+            originalContent,
+            customContent,
+            onConfirm: async () => {
+                await Main.API.upgradeBaseTemplate(selectedTemplate.value)
+                reloadSelectedTemplate()
+            }
+        })
     }
 
     const saveTemplate = async () => {
@@ -536,7 +548,7 @@
                             </UiSmallButton> -->
 
                             <UiSmallButton 
-                                @click="revertToDefaultTemplate"
+                                @click="revertToPublishedTemplate"
                                 :disabled="templateStatus !== 'custom'"
                                 title="Revert to the published template"
                             >
@@ -545,11 +557,11 @@
                             </UiSmallButton>
 
                             <UiSmallButton 
-                                @click="upgradeTemplate"
-                                title="Compare template to the latest version"
+                                @click="upgradePublishedTemplate"
+                                title="Upgrade the published template to the latest version"
                             >
                                 <ArrowDownCircleIcon class="w-4 h-4" />
-                                <span class="ml-1 text-xs">Compare</span>
+                                <span class="ml-1 text-xs">Upgrade</span>
                             </UiSmallButton>
                         </div>
                     </div>
@@ -658,4 +670,5 @@
             </div>
         </div>
     </div>
+    <CodeChangesCompare ref="codeChangesCompareRef" />
 </template>
