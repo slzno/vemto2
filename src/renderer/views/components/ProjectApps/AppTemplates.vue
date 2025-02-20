@@ -147,7 +147,7 @@
         try {
             templateStatus.value = await Main.API.getTemplateStatus(path)
             templateContent.value = await Main.API.readTemplateFile(path)
-            templateOriginalContent.value = await Main.API.readOriginalTemplateFile(path)
+            templateOriginalContent.value = await Main.API.readPublishedTemplateFile(path)
             templateEditor.value?.setValue(templateContent.value)
             templateData.value = await readTemplateData(templateContent.value)
 
@@ -164,7 +164,7 @@
     }
 
     const revertToPublishedTemplate = async () => {
-        const originalContent = await Main.API.readOriginalTemplateFile(selectedTemplate.value)
+        const originalContent = await Main.API.readPublishedTemplateFile(selectedTemplate.value)
         const customContent = templateContent.value
     
         codeChangesCompareRef.value.show({
@@ -182,13 +182,15 @@
     }
 
     const upgradePublishedTemplate = async () => {
-        const originalContent = await Main.API.readOriginalTemplateFile(selectedTemplate.value)
-        const customContent = templateContent.value
+        const publishedContent = await Main.API.readPublishedTemplateFile(selectedTemplate.value)
+        const defaultContent = ""
     
         codeChangesCompareRef.value.show({
             title: "Upgrade Published Template",
-            originalContent,
-            customContent,
+            firstCode: publishedContent,
+            firstCodeTitle: "Published Template",
+            secondCode: defaultContent,
+            secondCodeTitle: "Upgraded Template",
             onConfirm: async () => {
                 await Main.API.upgradeBaseTemplate(selectedTemplate.value)
                 reloadSelectedTemplate()
