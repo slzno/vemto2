@@ -15,14 +15,14 @@ export default class TemplateManager {
 
         if(!project) return "default"
 
-        const basePath = path.join(project.getPath(), ".vemto", "templates", "base", this.templatePath),
+        const publishedPath = path.join(project.getPath(), ".vemto", "templates", "published", this.templatePath),
             customPath = path.join(project.getPath(), ".vemto", "templates", "custom", this.templatePath)
 
         if(FileSystem.fileExists(customPath)) {
             return "custom"
         }
 
-        if(FileSystem.fileExists(basePath)) {
+        if(FileSystem.fileExists(publishedPath)) {
             return "published"
         }
 
@@ -57,7 +57,7 @@ export default class TemplateManager {
             return this.readDefault()
         }
 
-        const basePath = path.join(project.getPath(), ".vemto", "templates", "base", this.templatePath),
+        const publishedPath = path.join(project.getPath(), ".vemto", "templates", "published", this.templatePath),
             customPath = path.join(project.getPath(), ".vemto", "templates", "custom", this.templatePath)
 
         // If the custom file exists in the project, we read it
@@ -66,8 +66,8 @@ export default class TemplateManager {
         }
 
         // If the published file exists in the project, we read it
-        if(FileSystem.fileExists(basePath)) {
-            return FileSystem.readFile(basePath)
+        if(FileSystem.fileExists(publishedPath)) {
+            return FileSystem.readFile(publishedPath)
         }
 
         return this.readDefault()
@@ -81,10 +81,10 @@ export default class TemplateManager {
             return this.readDefault()
         }
         
-        const basePath = path.join(project.getPath(), ".vemto", "templates", "base", this.templatePath)
+        const publishedPath = path.join(project.getPath(), ".vemto", "templates", "published", this.templatePath)
 
-        if(FileSystem.fileExists(basePath)) {
-            return FileSystem.readFile(basePath)
+        if(FileSystem.fileExists(publishedPath)) {
+            return FileSystem.readFile(publishedPath)
         }
 
         return this.readDefault()
@@ -94,16 +94,29 @@ export default class TemplateManager {
         return FileSystem.readFileIfExists(path.join(app.getAppPath(), "static", "templates", this.templatePath))
     }
 
-    upgradeBaseTemplate() {
+    upgradePublishedTemplate() {
         const project = Project.find(1)
 
         if(!project) return
 
-        const basePath = path.join(project.getPath(), ".vemto", "templates", "base", this.templatePath),
+        const publishedPath = path.join(project.getPath(), ".vemto", "templates", "published", this.templatePath),
             defaultPath = path.join(app.getAppPath(), "static", "templates", this.templatePath)
 
         if(FileSystem.fileExists(defaultPath)) {
-            FileSystem.copyFile(defaultPath, basePath)
+            FileSystem.copyFile(defaultPath, publishedPath)
+        }
+    }
+
+    upgradeCustomTemplate() {
+        const project = Project.find(1)
+
+        if(!project) return
+
+        const customPath = path.join(project.getPath(), ".vemto", "templates", "custom", this.templatePath),
+            defaultPath = path.join(app.getAppPath(), "static", "templates", this.templatePath)
+
+        if(FileSystem.fileExists(defaultPath)) {
+            FileSystem.copyFile(defaultPath, customPath)
         }
     }
 
@@ -113,7 +126,7 @@ export default class TemplateManager {
         if(!project) return
 
         const templatePath = path.join(app.getAppPath(), "static", "templates")
-        const projectTemplatePath = path.join(project.getPath(), ".vemto", "templates", "base")
+        const projectTemplatePath = path.join(project.getPath(), ".vemto", "templates", "published")
 
         FileSystem.copyFolderIfNotExists(templatePath, projectTemplatePath)
     }

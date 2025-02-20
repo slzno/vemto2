@@ -183,11 +183,19 @@ export function HandleIpcMessages() {
         })
     })
 
-    ipcMain.handle("file:template:upgrade:base", (event, filePath) => {
+    ipcMain.handle("file:template:upgrade:published", (event, filePath) => {
         const templateManager = new TemplateManager(filePath)
 
         return handleError(event, () => {
-            return templateManager.upgradeBaseTemplate()
+            return templateManager.upgradePublishedTemplate()
+        })
+    })
+
+    ipcMain.handle("file:template:upgrade:custom", (event, filePath) => {
+        const templateManager = new TemplateManager(filePath)
+
+        return handleError(event, () => {
+            return templateManager.upgradeCustomTemplate()
         })
     })
 
