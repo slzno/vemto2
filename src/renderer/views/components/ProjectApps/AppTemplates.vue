@@ -558,21 +558,20 @@ import PathUtil from "@Common/util/PathUtil"
             :class="{ 'w-[332px]': showingFilesTree, 'w-1/24': !showingFilesTree }"
         >
             <!-- Small button on left side to collapse the div -->
-            <div class="flex items-center justify-start p-2">
+            <div class="flex flex-col justify-between p-2 space-y-2">
                 <div class="flex items-center space-x-2" title="Collapse/Expand Files Tree">
                     <UiSmallButton @click="toggleShowingFilesTree()">
                         <ChevronDoubleLeftIcon class="w-4 h-4" v-show="showingFilesTree" />
                         <ChevronDoubleRightIcon class="w-4 h-4" v-show="!showingFilesTree" />
                     </UiSmallButton>
                 </div>
+
+                <div class="w-3/4" v-show="showingFilesTree">
+                    <UiText id="filterQuery" v-model="queryInput" placeholder="Search templates..." />
+                </div>
             </div>
 
-            <!-- Search input for filtering templates -->
-            <div class="p-2">
-                <UiText id="filterQuery" v-model="queryInput" placeholder="Search templates..." />
-            </div>
-
-             <div class="h-full" style="height: calc(100% - 38px);" v-show="showingFilesTree">
+             <div class="h-full" style="height: calc(50%);" v-show="showingFilesTree">
                  <div id="templates-tree"></div>
              </div>
         </div>
