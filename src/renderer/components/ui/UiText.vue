@@ -39,6 +39,11 @@
             type: String,
             default: "info",
         },
+
+        clearable: {
+            type: Boolean,
+            default: false,
+        },
     })
 
     const emit = defineEmits(["update:modelValue", "input", "blur", "focus"]),
@@ -51,7 +56,11 @@
                 emit('update:modelValue', value)
                 emit('input', value)
             },
-        })
+    })
+
+    const clear = () => {
+        localValue.value = ""
+    }
 </script>
 
 <template>
@@ -64,18 +73,25 @@
             </template>
         </UiLabel>
         
-        <input
+        <div 
+            class="relative w-full"
             :class="{ 'flex-1': inlineLabel }"
-            class="border border-slate-300 dark:border-slate-650 focus:border-red-500 dark:focus:border-red-500 dark:focus:text-slate-200 dark:text-slate-300 focus:ring-transparent bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed placeholder-slate-400 dark:placeholder-slate-500 placeholder:font-thin"
-            type="text"
-            :id="id"
-            :placeholder="placeholder"
-            v-model="localValue"
-            @blur="$emit('blur', localValue)"
-            @focus="$emit('focus', localValue)"
-            spellcheck="false"
-            autocomplete="false"
-            :disabled="disabled"
-        />
+        >
+            <input
+                class="border border-slate-300 dark:border-slate-650 focus:border-red-500 dark:focus:border-red-500 dark:focus:text-slate-200 dark:text-slate-300 focus:ring-transparent bg-slate-100 dark:bg-slate-950 px-2 py-1 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed placeholder-slate-400 dark:placeholder-slate-500 placeholder:font-thin w-full"
+                type="text"
+                :id="id"
+                :placeholder="placeholder"
+                v-model="localValue"
+                @blur="$emit('blur', localValue)"
+                @focus="$emit('focus', localValue)"
+                spellcheck="false"
+                autocomplete="false"
+                :disabled="disabled"
+            />
+            <button v-if="clearable && localValue" @click="clear" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700">
+                &times;
+            </button>
+        </div>
     </div>
 </template>

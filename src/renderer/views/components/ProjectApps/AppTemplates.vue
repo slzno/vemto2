@@ -79,6 +79,8 @@ import PathUtil from "@Common/util/PathUtil"
 
     const codeChangesCompareRef = ref(null)
 
+    const queryInput = ref("")
+
     onMounted(() => {
         templateTabsRef.value.setTab("template")
         renderedTabsRef.value.setTab("rendered")
@@ -114,6 +116,18 @@ import PathUtil from "@Common/util/PathUtil"
                 ) as HTMLDivElement,
                 autoCollapse: true,
                 source: generateStructure(templates.value),
+                filter: {
+                    connectInput: "input#filterQuery",
+                    autoApply: true,
+                    autoExpand: true, // Auto-expand to show filtered items
+                    matchBranch: false,
+                    fuzzy: false,
+                    hideExpanders: false,
+                    highlight: true,
+                    leavesOnly: false,
+                    mode: "hide",
+                    noData: true,
+                },
                 init: (e) => {
                     e.tree.setFocus()
                 },
@@ -551,6 +565,11 @@ import PathUtil from "@Common/util/PathUtil"
                         <ChevronDoubleRightIcon class="w-4 h-4" v-show="!showingFilesTree" />
                     </UiSmallButton>
                 </div>
+            </div>
+
+            <!-- Search input for filtering templates -->
+            <div class="p-2">
+                <UiText id="filterQuery" v-model="queryInput" placeholder="Search templates..." />
             </div>
 
              <div class="h-full" style="height: calc(100% - 38px);" v-show="showingFilesTree">
