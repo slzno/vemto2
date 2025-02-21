@@ -571,7 +571,7 @@ import PathUtil from "@Common/util/PathUtil"
                 </div>
             </div>
 
-             <div class="h-full" style="height: calc(50%);" v-show="showingFilesTree">
+             <div class="h-full" style="height: calc(70%);" v-show="showingFilesTree">
                  <div id="templates-tree"></div>
              </div>
         </div>
