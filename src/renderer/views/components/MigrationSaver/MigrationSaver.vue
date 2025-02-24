@@ -218,8 +218,6 @@
         selectedTableMode.value = mode
 
         selectedModel.value = null
-
-        await loadMigrationContent(table.name)
     }
 
     const selectModel = async (model: Model, mode: "created"|"updated"|"removed") => {
@@ -228,8 +226,6 @@
         selectedModelMode.value = mode
 
         selectedTable.value = null
-
-        await loadModelContent(model)
     }
 
     const saveSchemaChanges = async () => {
@@ -373,8 +369,8 @@
     }
 
     const modelConflictSolved = async (content) => {
-        selectedModelSettings.value.acceptedModelContent = content
         selectedModelSettings.value.hasConflicts = false
+        selectedModelSettings.value.acceptedModelContent = content
     }
 
     const undoTableChanges = async (table: Table) => {
