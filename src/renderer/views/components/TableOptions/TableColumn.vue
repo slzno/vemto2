@@ -30,7 +30,8 @@
     const column = toRef(props, "column") as Ref<Column>,
         showingOptions = ref(false),
         columnTypes = ColumnTypeList.getEnabled(projectStore.project),
-        confirmDeleteDialog = ref(null)
+        confirmDeleteDialog = ref(null),
+        canBeFocused = ref(true)
 
     const onNameUpdated = debounce(() => {
         column.value.setDefaultSettingsByName()
@@ -53,9 +54,7 @@
         column.value.name = ''
         column.value.saveFromInterface()
 
-        nextTick(() => {
-            document.getElementById(`table-column-${column.value.id}`)?.focus()
-        })
+        focusAtColumn(column.value.id)
     }
 
     const treatReservedKeyword = () => {
@@ -64,9 +63,21 @@
         column.value.name = ''
         column.value.saveFromInterface()
 
+        focusAtColumn(column.value.id)
+    }
+
+    const focusAtColumn = (columnId: string) => {
+        if(!canBeFocused.value) return
+
+        canBeFocused.value = false
+
         nextTick(() => {
-            document.getElementById(`table-column-${column.value.id}`)?.focus()
+            document.getElementById(`table-column-${columnId}`)?.focus()
         })
+
+        setTimeout(() => {
+            canBeFocused.value = true
+        }, 1000)
     }
 
     const onUniqueChanged = () => {
