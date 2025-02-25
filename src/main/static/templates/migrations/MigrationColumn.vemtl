@@ -39,7 +39,7 @@ $table-><$ column.type $>('<$ column.name $>'
 ->autoIncrement()
 <up } up>
 <# --- #>
-<up if (column.isUnique()) { up>
+<up if (column.isImplicitlyUnique()) { up>
 ->unique()
 <up } up>
 <up if (column.hasImplicitIndex()) { up>
