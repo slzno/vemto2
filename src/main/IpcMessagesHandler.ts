@@ -506,6 +506,12 @@ export function HandleIpcMessages() {
         // Add app version from package.json
         debugInfoData += `\nApp version: ${app.getVersion()}`
 
+        const project = Project.find(1)
+        
+        if(project) {
+            debugInfoData += `\nBlueprint mode: ${project.isBlueprintModeEnabled() ? "enabled" : "disabled"}`
+        }
+
         openNewGitHubIssue({
             user: 'TiagoSilvaPereira',
             repo: 'vemto2-issues',

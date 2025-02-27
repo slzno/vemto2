@@ -244,9 +244,12 @@
             
             savingSchemaChanges.value = true
 
-            await SchemaBuilder.checkForErrors(
-                projectStore.project.getPath()
-            )
+            // Check for errors before saving if sync mode is enabled (blueprint mode disabled)
+            if(projectStore.project.isSyncModeEnabled()) {
+                await SchemaBuilder.checkForErrors(
+                    projectStore.project.getPath()
+                )
+            }
 
             await saveMigrations()
             await saveModels()

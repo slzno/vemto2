@@ -53,6 +53,7 @@
             usesReact: false,
             usesSvelte: false,
             isFreshLaravelProject: false,
+            blueprintModeEnabled: true,
             schemaReaderMode: "db",
             schemaReaderDbDriver: "mysql",
             schemaReaderDbHost: "127.0.0.1",
@@ -256,11 +257,16 @@
         connectingFolderSettings.value.usesSvelte = projectInfo.hasSvelte
         connectingFolderSettings.value.laravelVersion = projectInfo.laravelVersion
         connectingFolderSettings.value.isFreshLaravelProject = isNewProject
+        connectingFolderSettings.value.blueprintModeEnabled = isNewProject
 
         if(isNewProject) {
+            connectingFolderSettings.value.blueprintModeEnabled = true
             connectingFolderSettings.value.schemaReaderMode = "migration"
         } else {
-            const schemaReaderMode = projectInfo.settingsData.getKey("SCHEMA_READER_MODE") || "migration"
+            const schemaReaderMode = projectInfo.settingsData.getKey("SCHEMA_READER_MODE") || "migration",
+                blueprintModeEnabled = projectInfo.settingsData.getKey("BLUEPRINT_MODE_ENABLED") || false
+
+            connectingFolderSettings.value.blueprintModeEnabled = blueprintModeEnabled
             connectingFolderSettings.value.schemaReaderMode = schemaReaderMode
         }
         
@@ -402,7 +408,7 @@
     <!-- Connect folder modal -->
     <UiModal
         width="1000px"
-        height="700px"
+        height="750px"
         title="Connect Folder"
         :show="showingConnectingFolderModal"
         :processing="processingConnectFolder"
@@ -433,6 +439,20 @@
                         <br>
                         <br>
                         <b>It is not recommended</b> to mark a project as fresh if it is a previous existing project, as it may overwrite some files.
+                    </UiHint>
+                </div>
+
+                <div class="flex">
+                    <UiCheckbox v-model="connectingFolderSettings.blueprintModeEnabled" label="Blueprint Mode"></UiCheckbox>
+
+                    <UiHint type="warning">
+                        When the Blueprint Mode is enabled, Vemto will not automatically sync the schema with the application's source code after generating code, acting more like the old Vemto 1 (you use Vemto to design your schema and generate the source code, but you need to use the <b class="text-orange-500 font-bold">Sync Schema</b> option in the Schema Designer to update the schema, or you can update it manually).
+                        <br>
+                        <br>
+                        When the Blueprint Mode is disabled, Vemto will automatically sync the schema with the application's source code, so you don't have to worry about updating the schema manually. However, this can cause some issues if you have a complex application or third-party packages that modify the schema.
+                        <br>
+                        <br>
+                        <b class="text-orange-500 font-bold">Only disable the Blueprint Mode if you have good Laravel/PHP knowledge and you know what you are doing.</b>
                     </UiHint>
                 </div>
 

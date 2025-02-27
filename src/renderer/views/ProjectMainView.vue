@@ -326,6 +326,10 @@
                     >
                         <div :title="projectStore.project.getPath()" class="flex items-center justify-center text-sm text-slate-450 font-light capitalize px-2">
                             {{ projectStore.project.getPath()?.split(/\/|\\/).pop() }}
+
+                        </div>
+                        <div class="flex items-center justify-center text-sm text-slate-450 font-light capitalize px-2" title="Project Mode - If Blueprint, Vemto does not automatically synchronize the schema after generating code">
+                            MODE: {{ projectStore.project.settings.blueprintModeEnabled ? "Blueprint" : "Sync" }}
                         </div>
                         <div>
                             <button

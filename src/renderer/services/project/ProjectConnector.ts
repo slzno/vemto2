@@ -17,12 +17,13 @@ export default class ProjectConnector {
 
     async connect(settings: ProjectSettings) {
         try {
+            this.setProjectSettingsDefaults(settings)
+            
             if(this.project.connectionFinished) {
-                return
+                return await this.project.save()
             }
     
             this.projectSettings = settings
-            this.setProjectSettingsDefaults(settings)
     
             await this.createVemtoFolder()
             await this.doFirstSchemaSync()
