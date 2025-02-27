@@ -7,9 +7,13 @@
 
 <template>
     <div>
-        <div class="mb-2" v-if="errorsStore.hasErrorWithText('schema-reader-mg')">
+        <div class="mb-2 space-y-2" v-if="errorsStore.hasErrorWithText('schema-reader-mg')">
             <UiTip>
                 it seems like there are errors in the schema reader. Maybe you want to use Database Schema Reader mode.
+            </UiTip>
+
+            <UiTip>
+                try to enable the Blueprint mode to ignore errors when generating code or saving the schema.
             </UiTip>
         </div>
 

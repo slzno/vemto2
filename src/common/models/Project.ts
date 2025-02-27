@@ -76,6 +76,7 @@ export interface ProjectSettings {
     usesSvelte: boolean
     isFreshLaravelProject: boolean,
     laravelVersion: string
+    blueprintModeEnabled: boolean
     schemaReaderMode: string
     schemaReaderDbDriver: string
     schemaReaderDbHost: string
@@ -925,6 +926,14 @@ export default class Project extends RelaDB.Model {
 
     getRenderableFileByTemplatePath(path: string) {
         return this.renderableFiles.find(file => file.template === path)
+    }
+
+    isSyncModeEnabled(): boolean {
+        return !this.isBlueprintModeEnabled()
+    }
+
+    isBlueprintModeEnabled(): boolean {
+        return !! this.settings?.blueprintModeEnabled
     }
 
 }

@@ -66,6 +66,11 @@ export default class ColumnsDefaultDataList {
                 faker: "fake()->lastName()",
             },
 
+            nickname: {
+                type: "string",
+                faker: "fake()->userName()",
+            },
+
             status: {
                 type: "string",
                 faker: "fake()->word()",

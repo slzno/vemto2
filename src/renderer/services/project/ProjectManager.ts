@@ -45,7 +45,7 @@ export default class ProjectManager {
 
     async connectFromPath(path: string) {
         try {
-            await SchemaBuilder.checkForErrors(path)
+            // await SchemaBuilder.checkForErrors(path)
 
             let projectItem = this.findByPath(path)
     

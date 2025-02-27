@@ -18,6 +18,7 @@ export default class ProjectSettingsFileManager {
 
         const dbPassword = isExample ? "" : settings.schemaReaderDbPassword
 
+        fileContent += `BLUEPRINT_MODE_ENABLED=${settings.blueprintModeEnabled}\n`
         fileContent += `SCHEMA_READER_MODE=${settings.schemaReaderMode}\n`
         fileContent += `SCHEMA_READER_DB_DRIVER=${settings.schemaReaderDbDriver}\n`
         fileContent += `SCHEMA_READER_DB_HOST=${settings.schemaReaderDbHost}\n`
