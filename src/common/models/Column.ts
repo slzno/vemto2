@@ -491,7 +491,9 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
 
         if(type.defaultValueTypeIsString) {
             // escape single quotes
-            this.default = this.default ? this.default.replace(/'/g, "\\'") : ''
+            if(this.default && typeof this.default === 'string') {
+                this.default = this.default.replace(/'/g, "\\'")
+            }
 
             return `'${this.default}'`
         }
