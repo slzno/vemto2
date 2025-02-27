@@ -92,7 +92,9 @@
         checkSourceChanges()
     }, 1500)
 
-    const checkSourceChanges = async () => {
+    const checkSourceChanges = async (force: boolean = false) => {
+        if(projectStore.project.isBlueprintModeEnabled() && !force) return
+
         const schemaBuilder = new SchemaBuilder(projectStore.project)
 
         await schemaBuilder.checkSchemaChanges()

@@ -22,6 +22,7 @@
     import InternalFiles from "@Renderer/util/InternalFiles"
     import MigrationOrganizer from "@Common/services/tables/MigrationOrganizer"
     import { useSchemaStore } from '@Renderer/stores/useSchemaStore'
+import BlueprintSchemaUpdater from '@Renderer/services/schema/BlueprintSchemaUpdater'
 
     const emit = defineEmits(["schemaSaved"])
 
@@ -310,6 +311,18 @@
     }
 
     const readSchema = async () => {
+
+        // If blueprint mode is enabled, just update the schema with the new changes,
+        // without rebuilding the tables and models from the application's source code.
+        if(projectStore.project.isBlueprintModeEnabled()) {
+            console.log("Updating schema with blueprint mode")
+            
+            const blueprintSchemaUpdater = new BlueprintSchemaUpdater(projectStore.project)
+            await blueprintSchemaUpdater.update()
+
+            return
+        }
+
         projectStore.project.ignoreNextSchemaSourceChanges()
 
         const schemaBuilder = new SchemaBuilder(projectStore.project)

@@ -7,6 +7,8 @@ export default abstract class AbstractSchemaModel extends RelaDB.Model {
     removed: boolean
     static isSavingInternally = false
 
+    abstract buildSchemaState(): any
+
     static beforeUpdate(newData: any, currentData: any): any {
         if(!AbstractSchemaModel.isSavingInternally) {
             const modelClass = (this as any),
@@ -108,4 +110,24 @@ export default abstract class AbstractSchemaModel extends RelaDB.Model {
         AbstractSchemaModel.notSavingInternally()
     }
 
+    applyChangesDirectlyToSchemaState(): void {
+        const keys = Object.keys(this.buildSchemaState()),
+            modelClass = this.constructor as any,    
+            nonTouchableProperties = modelClass.nonTouchableProperties().concat(['schemaState'])
+
+        if(!this.schemaState) {
+            this.schemaState = {}
+        }
+
+        console.log('keys', keys)
+        console.log('nonTouchableProperties', nonTouchableProperties)
+
+        keys.forEach((key: string) => {
+            if(nonTouchableProperties.includes(key)) return
+            console.log(key, this[key])
+            this.schemaState[key] = this[key]
+        })
+
+        this.saveInternally()
+    }
 }
