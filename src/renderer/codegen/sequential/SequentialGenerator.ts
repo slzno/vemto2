@@ -17,6 +17,7 @@ import GenerateLivewireLayout from "./services/crud/GenerateLivewireLayout"
 import GenerateCrudApiFiles from "./services/crud/GenerateCrudApiFiles"
 import GenerateNovaResources from "./services/crud/GenerateNovaResources"
 import AddRoutesToServiceProvider from "./services/routes/AddRoutesToServiceProvider"
+import BlueprintSchemaUpdater from "@Renderer/services/schema/BlueprintSchemaUpdater"
 
 export default class SequentialGenerator {
     static startTime: number = 0
@@ -190,6 +191,15 @@ export default class SequentialGenerator {
     }
 
     async readSchema() {
+        // If blueprint mode is enabled, just update the models with the new changes,
+        // without rebuilding the them from the application's source code.
+        if(this.project.isBlueprintModeEnabled()) {
+            const blueprintSchemaUpdater = new BlueprintSchemaUpdater(this.project)
+            await blueprintSchemaUpdater.updateModels()
+            
+            return
+        }
+
         this.project.ignoreNextSchemaSourceChanges()
 
         const schemaBuilder = new SchemaBuilder(this.project)
