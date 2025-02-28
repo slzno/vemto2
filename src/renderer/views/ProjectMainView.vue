@@ -331,7 +331,7 @@
 
                         </div>
                         <div class="flex items-center justify-center text-sm text-slate-450 font-light capitalize px-2" title="Project Mode - If Blueprint, Vemto does not automatically synchronize the schema after generating code">
-                            MODE: {{ projectStore.project.settings.blueprintModeEnabled ? "Blueprint" : "Sync" }}
+                            {{ projectStore.project.settings.blueprintModeEnabled ? "Blueprint Mode" : "Sync Mode" }}
                         </div>
                         <div>
                             <button
