@@ -119,12 +119,8 @@ export default abstract class AbstractSchemaModel extends RelaDB.Model {
             this.schemaState = {}
         }
 
-        console.log('keys', keys)
-        console.log('nonTouchableProperties', nonTouchableProperties)
-
         keys.forEach((key: string) => {
             if(nonTouchableProperties.includes(key)) return
-            console.log(key, this[key])
             this.schemaState[key] = this[key]
         })
 
