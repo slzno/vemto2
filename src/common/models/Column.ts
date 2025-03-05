@@ -319,7 +319,7 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         this.places = data.places
         this.options = data.options
 
-        if(!this.defaultIsRaw) { // TODO
+        if(!this.defaultIsRaw) {
             this.default = data.default
         }
 
