@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, nextTick } from 'vue'
 import { ExclamationCircleIcon } from '@heroicons/vue/24/outline'
 
 const showing = ref(false);
@@ -18,13 +18,13 @@ const props = defineProps({
     },
 });
 
-const adjustHintPosition = () => {
+const adjustHintPosition = async () => {
     const hintElement = hintRef.value
     const triggerElement = triggerRef.value
 
-    if (hintElement && triggerElement) {
+    if (hintElement && triggerElement) {    
         const triggerRect = triggerElement.getBoundingClientRect()
-        
+
         // Calculate position to align the hint with the trigger element
         const topPosition = triggerRect.top + window.scrollY + triggerRect.height
         const leftPosition = triggerRect.left + window.scrollX
@@ -39,8 +39,25 @@ const adjustHintPosition = () => {
             // If it does, position it above the trigger element instead
             hintElement.style.top = `${triggerRect.top + window.scrollY - hintElement.offsetHeight}px`
         }
+
+        if(leftPosition + getRealWidth() > (window.innerWidth + window.scrollX)) {
+            hintElement.style.left = `${triggerRect.left + window.scrollX - getRealWidth()}px`
+        }
     }
 };
+
+const getRealWidth = (): number => {
+    const width = props.width.replace(/em|rem|px/g, "")
+    let realWidth = parseInt(width)
+
+    if(Number.isNaN(realWidth)) return 0
+
+    if(props.width.includes('rem') || props.width.includes('em')) {
+        return realWidth * 16
+    }
+
+    return realWidth
+}
 
 watch(showing, (newValue) => {
     if (newValue) {

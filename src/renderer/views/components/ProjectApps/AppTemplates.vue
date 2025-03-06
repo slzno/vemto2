@@ -372,7 +372,7 @@ import PathUtil from "@Common/util/PathUtil"
 
         const basePath = "../../../codegen/sequential/services",
             /* @vite-ignore */
-            renderableClass = await import(`${basePath}/${renderableInfo.className}.ts`)
+            renderableClass = await import(/* @vite-ignore */`${basePath}/${renderableInfo.className}.ts`)
 
         hasRenderErrors.value = false
 
