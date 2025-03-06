@@ -97,7 +97,7 @@
 
             <div class="flex space-x-2">
                 <CrudManager @created="loadApps()" />
-                <PageManager @created="loadApps()" />
+                <!-- <PageManager @created="loadApps()" /> -->
                 <CrudApiManager @created="loadApps()" />
                 <FilamentResourceManager @created="loadApps()" />
                 <NovaResourceManager @created="loadApps()" />
