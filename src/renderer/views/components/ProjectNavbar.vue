@@ -92,6 +92,7 @@
             </RouterLink>
 
             <RouterLink
+                v-if="false"
                 title="Soon..."
                 @click="setActiveTab('bot')"
                 :class="{
