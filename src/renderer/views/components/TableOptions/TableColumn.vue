@@ -210,7 +210,7 @@
                     <div class="flex">
                         <UiCheckbox v-model="column.defaultIsRaw" label="Raw" @change="column.saveFromInterface()" />
                         <UiHint type="warning">
-                            When the default is marked as raw, Vemto will not sync the default value when reading the Schema (it is necessary to do it manually, because Vemto cannot read the migrations to get the raw default value). So, if you are using raw defaults, it is better to update then inside Vemto, instead of the migration file.
+                            When the default is marked as raw, Vemto will not sync the default value when reading the Schema (it is necessary to do it manually, because Vemto cannot read the migrations to get the raw default value). So, if you are using raw defaults, it is better to update them inside Vemto, instead of the migration file.
                         </UiHint>
                     </div>
                 </div>
