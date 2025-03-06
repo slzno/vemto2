@@ -261,10 +261,10 @@
 
         if(isNewProject) {
             connectingFolderSettings.value.blueprintModeEnabled = true
-            connectingFolderSettings.value.schemaReaderMode = "migration"
+            connectingFolderSettings.value.schemaReaderMode = "db"
         } else {
-            const schemaReaderMode = projectInfo.settingsData.getKey("SCHEMA_READER_MODE") || "migration",
-                blueprintModeEnabled = projectInfo.settingsData.getKey("BLUEPRINT_MODE_ENABLED") || false
+            const schemaReaderMode = projectInfo.settingsData.getKey("SCHEMA_READER_MODE") || "db",
+                blueprintModeEnabled = projectInfo.settingsData.getKey("BLUEPRINT_MODE_ENABLED") || true
 
             connectingFolderSettings.value.blueprintModeEnabled = blueprintModeEnabled
             connectingFolderSettings.value.schemaReaderMode = schemaReaderMode
@@ -452,7 +452,7 @@
                         When the Blueprint Mode is disabled, Vemto will automatically sync the schema with the application's source code, so you don't have to worry about updating the schema manually. However, this can cause some issues if you have a complex application or third-party packages that modify the schema.
                         <br>
                         <br>
-                        <b class="text-orange-500 font-bold">Only disable the Blueprint Mode if you have good Laravel/PHP knowledge and you know what you are doing.</b>
+                        <b class="text-orange-500 font-bold">Only disable the Blueprint Mode if you have good Laravel/PHP knowledge and you know how to solve issues that may impact migrations running (for example, you may have a package installed on you app that may be preventing the migrations from running).</b>
                     </UiHint>
                 </div>
 
@@ -480,7 +480,7 @@
                         <div class="w-2/3 space-y-2">
                             <UiSelect v-model="connectingFolderSettings.schemaReaderMode" label="Mode">
                                 <option value="db">Database - Read from a database</option>
-                                <option value="migration">Migration - Read from migrations files</option>
+                                <option value="migration">Migration - Read from migrations files (Deprecated)</option>
                             </UiSelect>
                             
                             <div 

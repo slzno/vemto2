@@ -45,7 +45,11 @@ export default class ProjectManager {
 
     async connectFromPath(path: string) {
         try {
-            // await SchemaBuilder.checkForErrors(path)
+            const isConnectingToNonVemtoProject = await this.isConnectingToNonVemtoProject(path)
+            
+            if(isConnectingToNonVemtoProject) {
+                await SchemaBuilder.checkForErrors(path)
+            }
 
             let projectItem = this.findByPath(path)
     
@@ -58,6 +62,18 @@ export default class ProjectManager {
             console.log("Error ocurred")
             throw error
         }
+    }
+
+    async isConnectingToNonVemtoProject(projectPath: string) {
+        return !await this.projectHasVemtoFolder(projectPath)
+    }
+
+    async projectHasVemtoFolder(projectPath: string) {
+        const path = PathUtil.join(projectPath, ".vemto")
+
+        console.log("Checking for .vemto folder at", path)
+
+        return await Main.API.folderExists(path)
     }
 
     async open(id: string) {
