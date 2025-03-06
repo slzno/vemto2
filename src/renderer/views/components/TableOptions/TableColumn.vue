@@ -15,6 +15,7 @@
     import UiDropdownItem from '@Renderer/components/ui/UiDropdownItem.vue'
     import { useProjectStore } from "@Renderer/stores/useProjectStore"
     import debounce from "@Common/tools/debounce"
+    import UiHint from "@Renderer/components/ui/UiHint.vue"
 
     const onDevelopment = Main.API.onDevelopment() && !Main.API.isRecording(),
         projectStore = useProjectStore()
@@ -30,7 +31,8 @@
     const column = toRef(props, "column") as Ref<Column>,
         showingOptions = ref(false),
         columnTypes = ColumnTypeList.getEnabled(projectStore.project),
-        confirmDeleteDialog = ref(null)
+        confirmDeleteDialog = ref(null),
+        canBeFocused = ref(true)
 
     const onNameUpdated = debounce(() => {
         column.value.setDefaultSettingsByName()
@@ -53,9 +55,7 @@
         column.value.name = ''
         column.value.saveFromInterface()
 
-        nextTick(() => {
-            document.getElementById(`table-column-${column.value.id}`)?.focus()
-        })
+        focusAtColumn(column.value.id)
     }
 
     const treatReservedKeyword = () => {
@@ -64,9 +64,21 @@
         column.value.name = ''
         column.value.saveFromInterface()
 
+        focusAtColumn(column.value.id)
+    }
+
+    const focusAtColumn = (columnId: string) => {
+        if(!canBeFocused.value) return
+
+        canBeFocused.value = false
+
         nextTick(() => {
-            document.getElementById(`table-column-${column.value.id}`)?.focus()
+            document.getElementById(`table-column-${columnId}`)?.focus()
         })
+
+        setTimeout(() => {
+            canBeFocused.value = true
+        }, 1000)
     }
 
     const onUniqueChanged = () => {
@@ -193,9 +205,14 @@
                 <div class="m-1 flex-1">
                     <UiNumber label="Length" v-model="column.length" @input="column.saveFromInterface()" />
                 </div>
-                <div class="m-1 flex-1">
+                <div class="m-1 flex-1 mt-1">
                     <UiText label="Default Value" v-model="column.default" @input="column.saveFromInterface()" />
-                    <UiCheckbox v-model="column.defaultIsRaw" label="Raw" @change="column.saveFromInterface()" />
+                    <div class="flex">
+                        <UiCheckbox v-model="column.defaultIsRaw" label="Raw" @change="column.saveFromInterface()" />
+                        <UiHint type="warning">
+                            When the default is marked as raw, Vemto will automatically ignore your updates and you will have to do them manually. 
+                        </UiHint>
+                    </div>
                 </div>
             </div>
             <div class="flex gap-3" v-if="column.isFloatingPointNumber()">

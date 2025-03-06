@@ -315,10 +315,13 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         this.index = data.index
         this.unique = data.unique
         this.autoIncrement = data.autoIncrement
-        this.default = data.default
         this.total = data.total
         this.places = data.places
         this.options = data.options
+
+        if(!this.defaultIsRaw) {
+            this.default = data.default
+        }
 
         this.fillSchemaState()
 
@@ -491,7 +494,9 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
 
         if(type.defaultValueTypeIsString) {
             // escape single quotes
-            this.default = this.default ? this.default.replace(/'/g, "\\'") : ''
+            if(this.default && typeof this.default === 'string') {
+                this.default = this.default.replace(/'/g, "\\'")
+            }
 
             return `'${this.default}'`
         }
@@ -599,7 +604,7 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
     }
 
     hasDuplicatedName(): boolean {
-        return this.table.hasColumnExceptId(this.name, this.id)
+        return this.name.length > 0 && this.table.hasColumnExceptId(this.name, this.id)
     }
 
     hasInputs(): boolean {

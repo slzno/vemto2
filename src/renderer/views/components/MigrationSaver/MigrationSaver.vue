@@ -219,8 +219,6 @@ import BlueprintSchemaUpdater from '@Renderer/services/schema/BlueprintSchemaUpd
         selectedTableMode.value = mode
 
         selectedModel.value = null
-
-        await loadMigrationContent(table.name)
     }
 
     const selectModel = async (model: Model, mode: "created"|"updated"|"removed") => {
@@ -229,8 +227,6 @@ import BlueprintSchemaUpdater from '@Renderer/services/schema/BlueprintSchemaUpd
         selectedModelMode.value = mode
 
         selectedTable.value = null
-
-        await loadModelContent(model)
     }
 
     const saveSchemaChanges = async () => {
@@ -389,8 +385,8 @@ import BlueprintSchemaUpdater from '@Renderer/services/schema/BlueprintSchemaUpd
     }
 
     const modelConflictSolved = async (content) => {
-        selectedModelSettings.value.acceptedModelContent = content
         selectedModelSettings.value.hasConflicts = false
+        selectedModelSettings.value.acceptedModelContent = content
     }
 
     const undoTableChanges = async (table: Table) => {
