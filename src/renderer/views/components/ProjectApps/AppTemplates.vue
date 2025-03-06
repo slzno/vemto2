@@ -550,11 +550,11 @@ import PathUtil from "@Common/util/PathUtil"
 
 <template>
     <div
-        class="overflow-hidden flex p-2" style="height: calc(100vh - 40px);"
+        class="overflow-hidden flex" style="height: calc(100vh - 40px);"
     >
         <div
             id="files-tree" 
-            class="flex-none h-full" 
+            class="flex-none h-full border-r border-slate-700" 
             :class="{ 'w-[332px]': showingFilesTree, 'w-1/24': !showingFilesTree }"
         >
             <!-- Small button on left side to collapse the div -->
@@ -578,7 +578,7 @@ import PathUtil from "@Common/util/PathUtil"
 
         <div 
             id="editors-container"
-            class="flex flex-none h-full overflow-hidden"
+            class="flex flex-none h-full overflow-hidden pt-2"
             :class="{ 'w-[calc(100%-332px)]': showingFilesTree, 'w-23/24': !showingFilesTree }"
         >
             <div class="w-1/2 flex-none h-full">
