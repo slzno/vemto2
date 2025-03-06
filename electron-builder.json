@@ -19,7 +19,7 @@
     },
     "win": {
         "target": "nsis",
-        "certificateSubjectName": "Tiago Silva Pereira Rodrigues"
+        "certificateSubjectName": "KING OF CODE"
     },
     "linux": {
         "target": ["AppImage"]
