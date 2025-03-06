@@ -19,14 +19,11 @@ const props = defineProps({
 });
 
 const adjustHintPosition = async () => {
-    await nextTick()
-
     const hintElement = hintRef.value
     const triggerElement = triggerRef.value
 
     if (hintElement && triggerElement) {    
-        const triggerRect = triggerElement.getBoundingClientRect(),
-            hintRect = hintElement.getBoundingClientRect()
+        const triggerRect = triggerElement.getBoundingClientRect()
 
         // Calculate position to align the hint with the trigger element
         const topPosition = triggerRect.top + window.scrollY + triggerRect.height
@@ -43,13 +40,24 @@ const adjustHintPosition = async () => {
             hintElement.style.top = `${triggerRect.top + window.scrollY - hintElement.offsetHeight}px`
         }
 
-        // Check if the hint goes beyond the right side of the viewport
-        if ((leftPosition + hintElement.offsetWidth + hintRect.width) > (window.innerWidth + window.scrollX)) {
-            // If it does, position it to the left of the trigger element instead
-            hintElement.style.left = `${triggerRect.right + window.scrollX - hintElement.offsetWidth}px`
+        if(leftPosition + getRealWidth() > (window.innerWidth + window.scrollX)) {
+            hintElement.style.left = `${triggerRect.left + window.scrollX - getRealWidth()}px`
         }
     }
 };
+
+const getRealWidth = (): number => {
+    const width = props.width.replace(/em|rem|px/g, "")
+    let realWidth = parseInt(width)
+
+    if(Number.isNaN(realWidth)) return 0
+
+    if(props.width.includes('rem') || props.width.includes('em')) {
+        return realWidth * 16
+    }
+
+    return realWidth
+}
 
 watch(showing, (newValue) => {
     if (newValue) {
