@@ -135,6 +135,19 @@
         emit('removeColumn')
     }
 
+    const onColumnTypeChanged = (values: { lastValue: string, newValue: string }) => {
+        if (values.lastValue && values.lastValue.length) return;
+
+        let defaultColumnFaker = column.value.getDefaultFaker(),
+            defaultColumnUniqueFaker = column.value.getDefaultUniqueFaker()
+
+        column.value.faker = column.value.unique
+            ? defaultColumnUniqueFaker
+            : defaultColumnFaker
+
+        column.value.saveFromInterface()
+    }
+
     const log = (column: Column) => {
         console.log(JSON.parse(JSON.stringify(column)))
     }
@@ -167,7 +180,7 @@
                 </div>
 
                 <div class="flex flex-col w-36">
-                    <UiDropdownSelect v-model="column.type" placeholder="Select type" :options="getColumnTypes()" @change="column.saveFromInterface()" />
+                    <UiDropdownSelect v-model="column.type" placeholder="Select type" :options="getColumnTypes()" @change="onColumnTypeChanged" />
                 </div>
 
                 <div class="flex items-center justify-between">
