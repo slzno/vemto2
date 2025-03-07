@@ -64,7 +64,6 @@ export default class GenerateTranslations {
     async writePHPFile(filePath: string, fileContents: any) {
         let fileContentsString = JSON.stringify(fileContents, null, 4)
             .replace(/"([^"]+)":/g, "'$1' =>")
-            .replace(/"/g, "'")
 
         // replace json { } with php [ ]
         fileContentsString = fileContentsString.replace(/{/g, '[').replace(/}/g, ']')
