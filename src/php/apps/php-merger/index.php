@@ -26,7 +26,7 @@ Vemto::execute('php-merger', function () use ($argv) {
         $resultFileContent = file_get_contents($newFilePath);
         $resultFilePath = Vemto::writeProcessedFile($resultFileContent);
 
-        Vemto::respondWith([
+        Vemto::respondWithFile([
             'status' => 'success',
             'file' => $resultFilePath,
             'conflictsFile' => null,
@@ -109,7 +109,7 @@ Vemto::execute('php-merger', function () use ($argv) {
 
     $resultFilePath = Vemto::writeProcessedFile($resultFileContent);
 
-    Vemto::respondWith([
+    Vemto::respondWithFile([
         'status' => $hasConflicts ? 'conflict' : 'success',
         'file' => $resultFilePath,
         'conflictsFile' => $hasConflicts ? $conflictsFilePath : null,

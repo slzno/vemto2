@@ -109,7 +109,7 @@ Vemto::execute('schema-reader-mg', function () use ($APP_DIRECTORY) {
     $modelRepository = new ModelRepository($APP_DIRECTORY);
     $models = $modelRepository->getFormatted();
 
-    Vemto::respondWith([
+    Vemto::respondWithFile([
         'mode' => 'migration',
         'tables' => $tables,
         'models' => $models,
