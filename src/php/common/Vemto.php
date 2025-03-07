@@ -3,6 +3,7 @@
 namespace Vemto;
 
 use Exception;
+use Illuminate\Support\Facades\File;
 
 class Vemto
 {
@@ -18,7 +19,7 @@ class Vemto
         $latestResponseFilePath = $responseFolder . '/latest.json';
 
         if (!file_exists($responseFolder)) {
-            mkdir($responseFolder);
+            File::makeDirectory($responseFolder, 0755, true);
         }
 
         $responseFileContent = json_encode($data, JSON_PRETTY_PRINT);
@@ -110,7 +111,7 @@ class Vemto
     public static function writeConflictsFile($conflicts)
     {
         $conflictsFileFolder = getcwd() . '/.vemto/conflicts';
-        $conflictsFileName = Illuminate\Support\Str::random(32) . '.json';
+        $conflictsFileName = \Illuminate\Support\Str::random(32) . '.json';
         $conflictsFilePath = $conflictsFileFolder . '/' . $conflictsFileName;
 
         if (!file_exists($conflictsFileFolder)) {
