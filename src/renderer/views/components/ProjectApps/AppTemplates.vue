@@ -24,8 +24,9 @@
     import CodeChangesCompare from "../Common/CodeChangesCompare.vue"
     import UiOptionsDropdown from "@Renderer/components/ui/UiOptionsDropdown.vue"
     import UiDropdownItem from "@Renderer/components/ui/UiDropdownItem.vue"
-import UiDropdownSeparator from "@Renderer/components/ui/UiDropdownSeparator.vue"
-import PathUtil from "@Common/util/PathUtil"
+    import UiDropdownSeparator from "@Renderer/components/ui/UiDropdownSeparator.vue"
+    import PathUtil from "@Common/util/PathUtil"
+    import ListRenderables from "@Renderer/codegen/sequential/ListRenderables"
     
     type TemplateDataType = "MODEL" | "JSON" | "STRING" | "RENDERABLE"
 
@@ -370,18 +371,17 @@ import PathUtil from "@Common/util/PathUtil"
             return CustomRenderable
         }
 
-        const basePath = "../../../codegen/sequential/services",
-            /* @vite-ignore */
-            renderableClass = await import(/* @vite-ignore */`${basePath}/${renderableInfo.className}.ts`)
+        // Replace dynamic import with static import from ListRenderables
+        const renderableClass = ListRenderables.getRenderable(renderableInfo.className)
 
         hasRenderErrors.value = false
 
         if (!renderableClass) {
             hasRenderErrors.value = true
-            throw new Error(`Renderable ${templateData.value.renderable.value} not found`)
+            throw new Error(`Renderable ${renderableInfo.className} not found`)
         }
 
-        return renderableClass.default
+        return renderableClass
     }
 
     const setupRenderableParams = async (renderableInfo: any) => {

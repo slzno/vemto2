@@ -29,7 +29,8 @@
         "test:features": "npm run test -- --selectProjects test-features --",
         "test:templates": "npm run test -- --selectProjects test-templates --",
         "test:unit": "npm run test -- --selectProjects test-unit --",
-        "fix:templates": "node fixTemplates.js"
+        "fix:templates": "node fixTemplates.js",
+        "list:renderables": "node listRenderables.js"
     },
     "homepage": "https://vemto.app",
     "repository": {
