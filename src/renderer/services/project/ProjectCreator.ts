@@ -56,7 +56,7 @@ export default class ProjectCreator {
     async createProject() {
         this.stateCallback("Creating project, please wait! This may take a while")
 
-        await Main.API.executeComposerOnPath(this.data.path, `create-project laravel/laravel:^11.0 ${this.data.name}`)
+        await Main.API.executeComposerOnPath(this.data.path, `create-project --prefer-dist laravel/laravel ${this.data.name}`)
     }
 
     async generateStorageLink() {
