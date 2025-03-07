@@ -2,6 +2,7 @@ import os from "os"
 import path from "path"
 import { exec, ExecException } from "child_process"
 import Storage from "@Main/services/Storage"
+import FileSystem from "./FileSystem"
 
 export default class CommandExecutor {
 
@@ -166,7 +167,23 @@ export default class CommandExecutor {
         const matches = data.match(/VEMTO_JSON_RESPONSE_START\((.*)\)VEMTO_JSON_RESPONSE_END/)
         
         if (matches && matches[1]) {
-            return JSON.parse(matches[1])
+            const response = JSON.parse(matches[1])
+
+            if(response.IS_FILE_RESPONSE) {
+                console.log('Reading response from file', response.path)
+
+                if(!FileSystem.fileExists(response.path)) {
+                    throw new Error(`Response File ${response.path} does not exist`)
+                }
+
+                const content = FileSystem.readFile(response.path)
+                FileSystem.deleteFile(response.path)
+
+                return JSON.parse(content)
+            }
+
+
+            return response
         }
 
         return {}

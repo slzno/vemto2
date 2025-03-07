@@ -135,7 +135,7 @@ Vemto::execute('schema-reader-db', function () use ($APP_DIRECTORY) {
     $modelRepository = new ModelRepository($APP_DIRECTORY);
     $models = $modelRepository->getFormatted();
     
-    Vemto::respondWith([
+    Vemto::respondWithFile([
         'mode' => 'db',
         'tables' => $tables,
         'models' => $models,

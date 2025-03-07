@@ -10,6 +10,30 @@ class Vemto
     const SUCCESS = 0;
     const FAILURE = 1;
 
+    public static function respondWithFile($data)
+    {
+        $responseFolder = getcwd() . '/.vemto/responses';
+        $responseFileName = \Illuminate\Support\Str::random(32) . '.json';
+        $responseFilePath = $responseFolder . '/' . $responseFileName;
+        $latestResponseFilePath = $responseFolder . '/latest.json';
+
+        if (!file_exists($responseFolder)) {
+            mkdir($responseFolder);
+        }
+
+        $responseFileContent = json_encode($data, JSON_PRETTY_PRINT);
+
+        file_put_contents($responseFilePath, $responseFileContent);
+        file_put_contents($latestResponseFilePath, $responseFileContent);
+
+        Vemto::respondWith([
+            'IS_FILE_RESPONSE' => true,
+            'relativePath' => str_replace(getcwd(), '', $responseFilePath),
+            'path' => $responseFilePath,
+            'name' => $responseFileName,
+        ]);
+    }
+
     public static function respondWith($data)
     {
         echo self::jsonResponse($data);
@@ -67,7 +91,7 @@ class Vemto
     public static function writeProcessedFile($fileContent)
     {
         $processedFilesFolder = getcwd() . '/.vemto/processed-files';
-        $processedFileName = Illuminate\Support\Str::random(32) . '.php';
+        $processedFileName = \Illuminate\Support\Str::random(32) . '.php';
         $processedFilePath = $processedFilesFolder . '/' . $processedFileName;
 
         if (!file_exists($processedFilesFolder)) {
