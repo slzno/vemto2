@@ -144,12 +144,14 @@
     }
 
     const select = (option: Options): void => {
+        const lastValue = props.modelValue
+
         selected.value = option
         close()
 
         emit('update:modelValue', selected.value.key)
         emit('input', selected.value.key)
-        emit('change')
+        emit('change', { lastValue, newValue: option })
     }
 
     const focusFiredOnce = (): void => {
