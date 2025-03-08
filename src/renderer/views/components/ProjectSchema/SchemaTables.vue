@@ -56,6 +56,13 @@
             schemaStore.selectedSchemaSection.clearScrollCenteringRequest()
         }
     })
+    
+    watch(() => schemaStore.needsToAnimateTablesPositions, (needsToAnimate) => {
+        if(needsToAnimate) {
+            animateTablesToNewPositions()
+            schemaStore.tablesAnimationCompleted()
+        }
+    })
 
     let tablesCreatedListenerId = null,
         tablesDeletedListenerId = null
@@ -113,6 +120,79 @@
                 emit('tablesLoaded')
             })
         }, 100)
+    }
+
+    /**
+     * Animate tables to their new positions
+     */
+    const animateTablesToNewPositions = async () => {
+        const tables = schemaStore.selectedSchemaSection.tables
+
+        if (tables.length === 0) return
+        
+        // hide all connections
+        schemaStore.askToHideSchemaConnections()
+        
+        const tablesContainer = document.getElementById("tablesContainer")
+        if (!tablesContainer) return
+        
+        // Calculate distance of each table from center
+        const tablesWithDistance = tables.map(table => {
+            const posX = table.positionX || 0
+            const posY = table.positionY || 0
+            
+            const distance = Math.sqrt(
+                Math.pow(posX, 2) + 
+                Math.pow(posY, 2)
+            )
+            
+            return { table, distance }
+        })
+        
+        // Sort by distance (closest to center first)
+        tablesWithDistance.sort((a, b) => a.distance - b.distance)
+        
+        // Animate each table to its position with a delay
+        tablesWithDistance.forEach((item, index) => {
+            const tableElement = document.getElementById(`table_${item.table.id}`)
+            if (!tableElement) return
+            
+            // Get current position from the DOM
+            const currentLeft = parseInt(tableElement.style.left || '0')
+            const currentTop = parseInt(tableElement.style.top || '0')
+            
+            // New position from table data
+            const newLeft = item.table.positionX || 0
+            const newTop = item.table.positionY || 0
+            
+            // Reset any previous transition and animation
+            tableElement.style.transition = 'none'
+            
+            // Only animate if positions changed
+            if (currentLeft !== newLeft || currentTop !== newTop) {
+                setTimeout(() => {
+                    // Apply transition
+                    tableElement.style.transition = 'left 0.5s, top 0.5s'
+                    tableElement.style.left = `${newLeft}px`
+                    tableElement.style.top = `${newTop}px`
+                    
+                    // Add a subtle pulse animation class
+                    tableElement.classList.add('animate__animated', 'animate__pulse')
+                    
+                    // Remove animation classes after animation completes
+                    setTimeout(() => {
+                        tableElement.classList.remove('animate__animated', 'animate__pulse')
+                    }, 600)
+                }, index * 100) // Stagger the animations
+            }
+        })
+        
+        // After all animations complete, ensure the connections are redrawn
+        const totalAnimationTime = (tablesWithDistance.length * 100) + 600
+        
+        setTimeout(() => {
+            schemaStore.askToReloadSchemaConnections()
+        }, totalAnimationTime)
     }
 
     /**

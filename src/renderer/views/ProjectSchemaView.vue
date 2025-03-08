@@ -46,6 +46,17 @@
         drawConnectionsOnNextTick()
         schemaStore.schemaConnectionsAlreadyReloaded()
     })
+
+    watch(() => schemaStore.needsToHideSchemaConnections, () => {
+        console.log('needs to hide schema connections')
+        
+        if(jsPlumbInstance) {
+            nextTick(() => {
+                jsPlumbInstance.deleteEveryConnection()
+                schemaStore.schemaConnectionsAlreadyHidden()
+            })
+        }
+    })
     
     watch(() => schemaStore.selectedSchemaSection, () => {
 

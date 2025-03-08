@@ -12,6 +12,8 @@ export const useSchemaStore = defineStore("schema", {
         needsToReloadEveryTable: false,
         needsToReloadTables: [] as string[],
         needsToReloadSchemaConnections: false,
+        needsToAnimateTablesPositions: false,
+        needsToHideSchemaConnections: false,
     }),
 
     actions: {
@@ -43,6 +45,16 @@ export const useSchemaStore = defineStore("schema", {
             this.needsToReloadSchema = true
         },
 
+        askToAnimateTablesPositions() {
+            this.needsToAnimateTablesPositions = true
+        },
+
+        tablesAnimationCompleted() {
+            this.needsToAnimateTablesPositions = false
+
+            this.askToReloadSchemaConnections()
+        },
+
         schemaAlreadyReloaded() {
             this.needsToReloadSchema = false
 
@@ -67,6 +79,14 @@ export const useSchemaStore = defineStore("schema", {
 
         schemaConnectionsAlreadyReloaded() {
             this.needsToReloadSchemaConnections = false
+        },
+
+        askToHideSchemaConnections() {
+            this.needsToHideSchemaConnections = true
+        },
+
+        schemaConnectionsAlreadyHidden() {
+            this.needsToHideSchemaConnections = false
         },
 
         reloadSelectedTable() {
@@ -144,9 +164,7 @@ export const useSchemaStore = defineStore("schema", {
             
             projectStore.project.organizeTablesByRelations(schemaSectionToOrganize)
 
-            this.askToReloadSchema()
-
-            setTimeout(() => this.askToReloadSchemaConnections(), 100)
+            this.askToAnimateTablesPositions()
         },
 
         organizeTablesHorizontally(schemaSection: SchemaSection | null = null): void {
@@ -158,9 +176,7 @@ export const useSchemaStore = defineStore("schema", {
             
             projectStore.project.organizeTablesHorizontally(schemaSectionToOrganize)
 
-            this.askToReloadSchema()
-
-            setTimeout(() => this.askToReloadSchemaConnections(), 100)
+            this.askToAnimateTablesPositions()
         },
     },
 
