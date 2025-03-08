@@ -13,19 +13,30 @@ class Vemto
 
     public static function respondWithFile($data)
     {
-        $responseFolder = getcwd() . '/.vemto/responses';
+        $vemtoFolder = getcwd() . '/.vemto';
         $responseFileName = \Illuminate\Support\Str::random(32) . '.json';
-        $responseFilePath = $responseFolder . '/' . $responseFileName;
-        $latestResponseFilePath = $responseFolder . '/latest.json';
-
-        if (!file_exists($responseFolder)) {
-            File::makeDirectory($responseFolder, 0755, true);
-        }
-
         $responseFileContent = json_encode($data, JSON_PRETTY_PRINT);
+        
+        // Check if .vemto folder exists
+        if (file_exists($vemtoFolder)) {
+            $responseFolder = $vemtoFolder . '/responses';
+            $responseFilePath = $responseFolder . '/' . $responseFileName;
+            $latestResponseFilePath = $responseFolder . '/latest.json';
 
-        file_put_contents($responseFilePath, $responseFileContent);
-        file_put_contents($latestResponseFilePath, $responseFileContent);
+            if (!file_exists($responseFolder)) {
+                File::makeDirectory($responseFolder, 0755, true);
+            }
+
+
+            file_put_contents($responseFilePath, $responseFileContent);
+            file_put_contents($latestResponseFilePath, $responseFileContent);
+        } else {
+            // If .vemto folder doesn't exist, use temporary directory
+            $tempDir = sys_get_temp_dir();
+            $responseFilePath = $tempDir . '/' . $responseFileName;
+            
+            file_put_contents($responseFilePath, $responseFileContent);
+        }
 
         Vemto::respondWith([
             'IS_FILE_RESPONSE' => true,
