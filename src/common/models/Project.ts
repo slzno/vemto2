@@ -940,4 +940,21 @@ export default class Project extends RelaDB.Model {
         return this.settings?.laravelVersion
     }
 
+    organizeTablesHorizontally(schemaSection: SchemaSection) {
+        const tables = this.getTablesBySection(schemaSection)
+
+        if (!tables || tables.length === 0) return
+
+        const horizontalSpacing = 400
+
+        const totalWidth = (tables.length - 1) * horizontalSpacing
+        const startX = -totalWidth / 2
+
+        tables.forEach((table, index) => {
+            table.positionX = startX + (index * horizontalSpacing)
+            table.positionY = 0
+            table.save()
+        })
+    }
+
 }
