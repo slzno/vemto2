@@ -135,6 +135,20 @@ export const useSchemaStore = defineStore("schema", {
             return `selectedSchemaSection_${projectStore.project.id}`
         },
 
+        organizeTables(schemaSection: SchemaSection | null = null): void {
+            const projectStore = useProjectStore()
+
+            const schemaSectionToOrganize = schemaSection || this.selectedSchemaSection
+            
+            if (!schemaSectionToOrganize || !projectStore.project) return
+            
+            projectStore.project.organizeTablesByRelations(schemaSectionToOrganize)
+
+            this.askToReloadSchema()
+
+            setTimeout(() => this.askToReloadSchemaConnections(), 100)
+        },
+
         organizeTablesHorizontally(schemaSection: SchemaSection | null = null): void {
             const projectStore = useProjectStore()
 
