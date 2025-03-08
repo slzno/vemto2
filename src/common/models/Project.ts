@@ -957,6 +957,10 @@ export default class Project extends RelaDB.Model {
         })
     }
 
+    organizeTablesOfAllSectionsByRelations() {
+        this.schemaSections.forEach(section => this.organizeTablesByRelations(section))
+    }
+
     organizeTablesByRelations(schemaSection: SchemaSection) {
         const tables = this.getTablesBySection(schemaSection)
         
