@@ -2,7 +2,7 @@
     import { ref, onMounted, nextTick, defineEmits, computed } from 'vue'
     import Table from "@Common/models/Table"
     import SchemaSection from "@Common/models/SchemaSection"
-    import { ArrowDownTrayIcon, ArrowPathIcon, ChatBubbleLeftEllipsisIcon, MagnifyingGlassMinusIcon, MagnifyingGlassPlusIcon, PhotoIcon, PlusCircleIcon, PlusIcon, ViewfinderCircleIcon, XMarkIcon } from "@heroicons/vue/24/outline"
+    import { ArrowDownTrayIcon, ArrowPathIcon, ChatBubbleLeftEllipsisIcon, MagnifyingGlassMinusIcon, MagnifyingGlassPlusIcon, PhotoIcon, PlusCircleIcon, PlusIcon, RectangleGroupIcon, ViewfinderCircleIcon, XMarkIcon } from "@heroicons/vue/24/outline"
     import UiModal from '@Renderer/components/ui/UiModal.vue'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
     import UiText from '@Renderer/components/ui/UiText.vue'
@@ -331,6 +331,10 @@ import ReservedKeywords from '@Common/models/services/ReservedKeywords'
     const repaintSchema = () => {
         schemaStore.askToReloadSchema()
     }
+
+    const organizeTablesHorizontally = () => {
+        schemaStore.organizeTablesHorizontally()
+    }
 </script>
 
 <template>
@@ -463,7 +467,7 @@ import ReservedKeywords from '@Common/models/services/ReservedKeywords'
                 </button>
 
                 <div class="flex items-center text-slate-300 text-base">
-                    <UiOptionsDropdown icon-size="w-6 h-6" size="w-56" right-side>
+                    <UiOptionsDropdown icon-size="w-6 h-6" size="w-72" right-side>
                         <UiDropdownItem @click="checkForChanges()">
                             <ArrowPathIcon class="w-5 h-5 mr-3 text-red-450" />
                             Check for Changes
@@ -482,6 +486,11 @@ import ReservedKeywords from '@Common/models/services/ReservedKeywords'
                         <UiDropdownItem @click="repaintSchema()">
                             <ArrowPathIcon class="w-5 h-5 mr-3 text-red-450" />
                             Repaint Schema
+                        </UiDropdownItem>
+
+                        <UiDropdownItem @click="organizeTablesHorizontally()">
+                            <RectangleGroupIcon class="w-5 h-5 mr-3 text-red-450" />
+                            Organize Tables Horizontally
                         </UiDropdownItem>
                     </UiOptionsDropdown>
                 </div>
