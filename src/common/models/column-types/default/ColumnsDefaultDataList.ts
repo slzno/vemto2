@@ -445,6 +445,16 @@ export default class ColumnsDefaultDataList {
                 faker: "fake()->date()",
             },
 
+            due_date: {
+                type: "date",
+                faker: "fake()->date()",
+            },
+
+            deadline: {
+                type: "date",
+                faker: "fake()->date()",
+            },
+
             birth: {
                 type: "date",
                 faker: "fake()->date()",
@@ -671,11 +681,6 @@ export default class ColumnsDefaultDataList {
                 faker: '"{fake()->latitude()},{fake()->longitude()}"',
             },
 
-            position: {
-                type: "geometry",
-                faker: '"{fake()->latitude()},{fake()->longitude()}"',
-            },
-
             positions: {
                 type: "geometryCollection",
                 faker: '"{fake()->latitude()},{fake()->longitude()}"',
@@ -765,6 +770,476 @@ export default class ColumnsDefaultDataList {
                 type: "string",
                 nullable: true,
                 avoidInputGenerationByDefault: true, 
+            },
+
+            // Additional personal information fields
+            middle_name: {
+                type: "string",
+                faker: "fake()->firstName()",
+            },
+            
+            full_name: {
+                type: "string",
+                faker: "fake()->name()",
+            },
+            
+            username: {
+                type: "string",
+                faker: "fake()->userName()",
+            },
+            
+            user_name: {
+                type: "string",
+                faker: "fake()->userName()",
+            },
+            
+            age: {
+                type: "integer",
+                faker: "fake()->numberBetween(18, 90)",
+            },
+            
+            birthplace: {
+                type: "string",
+                faker: "fake()->city()",
+            },
+            
+            birth_place: {
+                type: "string",
+                faker: "fake()->city()",
+            },
+            
+            // Contact information
+            contact: {
+                type: "string",
+                faker: "fake()->phoneNumber()",
+            },
+            
+            telephone: {
+                type: "string",
+                faker: "fake()->phoneNumber()",
+            },
+            
+            fax: {
+                type: "string",
+                faker: "fake()->phoneNumber()",
+            },
+            
+            website: {
+                type: "string",
+                faker: "fake()->url()",
+                inputType: "url",
+            },
+            
+            website_url: {
+                type: "string",
+                faker: "fake()->url()",
+                inputType: "url",
+            },
+            
+            // Social media fields
+            twitter: {
+                type: "string",
+                faker: "fake()->userName()",
+            },
+            
+            twitter_handle: {
+                type: "string",
+                faker: "fake()->userName()",
+            },
+            
+            instagram: {
+                type: "string",
+                faker: "fake()->userName()",
+            },
+            
+            instagram_handle: {
+                type: "string",
+                faker: "fake()->userName()",
+            },
+            
+            facebook: {
+                type: "string",
+                faker: "fake()->url()",
+            },
+            
+            linkedin: {
+                type: "string",
+                faker: "fake()->url()",
+            },
+            
+            youtube: {
+                type: "string",
+                faker: "fake()->url()",
+            },
+            
+            social_media: {
+                type: "json",
+                faker: "[]",
+            },
+            
+            // Address additional fields
+            address_line1: {
+                type: "string",
+                faker: "fake()->streetAddress()",
+            },
+            
+            address_line2: {
+                type: "string",
+                faker: "fake()->secondaryAddress()",
+                nullable: true,
+            },
+            
+            address_line_1: {
+                type: "string",
+                faker: "fake()->streetAddress()",
+            },
+            
+            address_line_2: {
+                type: "string",
+                faker: "fake()->secondaryAddress()",
+                nullable: true,
+            },
+            
+            zip: {
+                type: "string",
+                faker: "fake()->postcode()",
+            },
+            
+            zip_code: {
+                type: "string",
+                faker: "fake()->postcode()",
+            },
+            
+            postal_code: {
+                type: "string",
+                faker: "fake()->postcode()",
+            },
+            
+            county: {
+                type: "string",
+                faker: "fake()->city()",
+            },
+            
+            province: {
+                type: "string",
+                faker: "fake()->state()",
+            },
+            
+            // Business fields
+            company: {
+                type: "string",
+                faker: "fake()->company()",
+            },
+            
+            company_name: {
+                type: "string",
+                faker: "fake()->company()",
+            },
+            
+            department: {
+                type: "string",
+                faker: "fake()->word()",
+            },
+            
+            job: {
+                type: "string",
+                faker: "fake()->jobTitle()",
+            },
+            
+            job_title: {
+                type: "string",
+                faker: "fake()->jobTitle()",
+            },
+            
+            position: {
+                type: "string",
+                faker: "fake()->jobTitle()",
+            },
+            
+            occupation: {
+                type: "string",
+                faker: "fake()->jobTitle()",
+            },
+            
+            role: {
+                type: "string",
+                faker: "fake()->word()",
+            },
+            
+            // Financial fields
+            tax_id: {
+                type: "string",
+                faker: "fake()->numerify('#########')",
+            },
+            
+            vat: {
+                type: "string",
+                faker: "fake()->numerify('##########')",
+            },
+            
+            vat_number: {
+                type: "string",
+                faker: "fake()->numerify('##########')",
+            },
+            
+            account_number: {
+                type: "string",
+                faker: "fake()->bankAccountNumber()",
+            },
+            
+            iban: {
+                type: "string",
+                faker: "fake()->iban()",
+            },
+            
+            bic: {
+                type: "string",
+                faker: "fake()->swiftBicNumber()",
+            },
+            
+            amount: {
+                type: "decimal",
+                faker: "fake()->randomFloat(2, 0, 9999)",
+            },
+            
+            balance: {
+                type: "decimal",
+                faker: "fake()->randomFloat(2, 0, 9999)",
+            },
+            
+            tax: {
+                type: "decimal",
+                faker: "fake()->randomFloat(2, 0, 100)",
+            },
+            
+            tax_rate: {
+                type: "decimal",
+                faker: "fake()->randomFloat(2, 0, 30)",
+            },
+            
+            // Time-related fields
+            start_date: {
+                type: "date",
+                faker: "fake()->date()",
+            },
+            
+            start_time: {
+                type: "time",
+                faker: "fake()->time()",
+            },
+            
+            end_date: {
+                type: "date",
+                faker: "fake()->date()",
+            },
+            
+            end_time: {
+                type: "time",
+                faker: "fake()->time()",
+            },
+            
+            duration: {
+                type: "integer",
+                faker: "fake()->numberBetween(1, 60)",
+            },
+            
+            frequency: {
+                type: "string",
+                faker: "\\Arr::random(['daily', 'weekly', 'monthly', 'yearly'])",
+                inputType: "select",
+                inputOptions: ['daily', 'weekly', 'monthly', 'yearly'],
+            },
+            
+            // Product/inventory fields
+            sku: {
+                type: "string",
+                faker: "fake()->unique()->ean8()",
+            },
+            
+            barcode: {
+                type: "string",
+                faker: "fake()->ean13()",
+            },
+            
+            isbn: {
+                type: "string",
+                faker: "fake()->isbn13()",
+            },
+            
+            stock: {
+                type: "integer",
+                faker: "fake()->numberBetween(0, 1000)",
+            },
+            
+            inventory: {
+                type: "integer",
+                faker: "fake()->numberBetween(0, 1000)",
+            },
+            
+            code: {
+                type: "string",
+                faker: "fake()->unique()->regexify('[A-Z]{3}[0-9]{3}')",
+            },
+            
+            product_code: {
+                type: "string",
+                faker: "fake()->unique()->regexify('[A-Z]{3}[0-9]{3}')",
+            },
+            
+            // Content fields
+            subject: {
+                type: "string",
+                faker: "fake()->sentence(6)",
+            },
+            
+            summary: {
+                type: "text",
+                faker: "fake()->paragraph(2)",
+            },
+            
+            excerpt: {
+                type: "text",
+                faker: "fake()->paragraph(1)",
+            },
+            
+            note: {
+                type: "text",
+                faker: "fake()->text()",
+            },
+            
+            notes: {
+                type: "text",
+                faker: "fake()->text()",
+            },
+            
+            keywords: {
+                type: "text",
+                faker: "fake()->words(5, true)",
+            },
+            
+            tags: {
+                type: "json",
+                faker: "[]",
+            },
+            
+            // Status and management fields
+            published: {
+                type: "boolean",
+                faker: "fake()->boolean()",
+            },
+            
+            is_active: {
+                type: "boolean",
+                faker: "fake()->boolean()",
+            },
+            
+            enabled: {
+                type: "boolean",
+                faker: "fake()->boolean()",
+            },
+            
+            is_enabled: {
+                type: "boolean",
+                faker: "fake()->boolean()",
+            },
+            
+            is_default: {
+                type: "boolean",
+                faker: "fake()->boolean()",
+            },
+            
+            priority: {
+                type: "integer",
+                faker: "fake()->numberBetween(1, 10)",
+            },
+            
+            order: {
+                type: "integer",
+                faker: "fake()->numberBetween(1, 100)",
+            },
+            
+            sort_order: {
+                type: "integer",
+                faker: "fake()->numberBetween(1, 100)",
+            },
+            
+            position_order: {
+                type: "integer",
+                faker: "fake()->numberBetween(1, 100)",
+            },
+            
+            approved: {
+                type: "boolean",
+                faker: "fake()->boolean()",
+            },
+            
+            approved_at: {
+                type: "timestamp",
+                faker: "fake()->dateTime()",
+                nullable: true
+            },
+            
+            published_at: {
+                type: "timestamp",
+                faker: "fake()->dateTime()",
+                nullable: true
+            },
+            
+            completed_at: {
+                type: "timestamp",
+                faker: "fake()->dateTime()",
+                nullable: true
+            },
+            
+            expires_at: {
+                type: "timestamp",
+                faker: "fake()->dateTime()",
+                nullable: true
+            },
+            
+            last_login_at: {
+                type: "timestamp",
+                faker: "fake()->dateTime()",
+                nullable: true
+            },
+            
+            logged_in_at: {
+                type: "timestamp",
+                faker: "fake()->dateTime()",
+                nullable: true
+            },
+            
+            // Miscellaneous
+            language: {
+                type: "string",
+                length: 8,
+                faker: "fake()->languageCode()",
+            },
+            
+            language_code: {
+                type: "string",
+                length: 8,
+                faker: "fake()->languageCode()",
+            },
+            
+            rating: {
+                type: "decimal",
+                faker: "fake()->randomFloat(1, 1, 5)",
+            },
+            
+            score: {
+                type: "decimal",
+                faker: "fake()->randomFloat(1, 0, 100)",
+            },
+            
+            percentage: {
+                type: "decimal",
+                faker: "fake()->randomFloat(2, 0, 100)",
+            },
+            
+            timezone: {
+                type: "string",
+                faker: "fake()->timezone()",
             },
         }
     }
