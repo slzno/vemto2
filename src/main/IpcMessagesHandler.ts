@@ -509,6 +509,9 @@ export function HandleIpcMessages() {
         const project = Project.find(1)
         
         if(project) {
+            // add project laravel versuib
+            debugInfoData += `\nLaravel version: ${project.getLaravelVersion()}`
+            debugInfoData += `\nFresh project? ${project.isFreshLaravelProject()}`
             debugInfoData += `\nBlueprint mode: ${project.isBlueprintModeEnabled() ? "enabled" : "disabled"}`
         }
 

@@ -936,4 +936,8 @@ export default class Project extends RelaDB.Model {
         return !! this.settings?.blueprintModeEnabled
     }
 
+    getLaravelVersion(): string {
+        return this.settings?.laravelVersion
+    }
+
 }
