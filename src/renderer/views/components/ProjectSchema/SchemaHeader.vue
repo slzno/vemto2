@@ -332,6 +332,10 @@ import ReservedKeywords from '@Common/models/services/ReservedKeywords'
         schemaStore.askToReloadSchema()
     }
 
+    const organizeTables = () => {
+        schemaStore.organizeTables()
+    }
+
     const organizeTablesHorizontally = () => {
         schemaStore.organizeTablesHorizontally()
     }
@@ -488,9 +492,14 @@ import ReservedKeywords from '@Common/models/services/ReservedKeywords'
                             Repaint Schema
                         </UiDropdownItem>
 
+                        <UiDropdownItem @click="organizeTables()">
+                            <RectangleGroupIcon class="w-5 h-5 mr-3 text-red-450" />
+                            Organize Tables
+                        </UiDropdownItem>
+
                         <UiDropdownItem @click="organizeTablesHorizontally()">
                             <RectangleGroupIcon class="w-5 h-5 mr-3 text-red-450" />
-                            Organize Tables Horizontally
+                            Organize Tables Horiz.
                         </UiDropdownItem>
                     </UiOptionsDropdown>
                 </div>

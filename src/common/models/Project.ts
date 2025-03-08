@@ -957,4 +957,86 @@ export default class Project extends RelaDB.Model {
         })
     }
 
+    organizeTablesByRelations(schemaSection: SchemaSection) {
+        const tables = this.getTablesBySection(schemaSection)
+        
+        if (!tables || tables.length === 0) return
+        
+        // Count relations for each table
+        const tableRelations = {}
+        
+        // Initialize counts
+        tables.forEach(table => {
+            tableRelations[table.id] = 0
+        })
+        
+        // Count relations by analyzing both foreign keys and relationships
+        tables.forEach(table => {
+            // Count foreign indexes (when this table has foreign keys to other tables)
+            table.getForeignIndexes().forEach(() => {
+                tableRelations[table.id]++
+            })
+            
+            // Count relationships defined in models linked to this table
+            table.getRelationships().forEach(() => {
+                tableRelations[table.id]++
+            })
+            
+            // Count tables that have foreign keys to this table
+            const childrenTables = table.getChildrenTables()
+            childrenTables.forEach(() => {
+                tableRelations[table.id]++
+            })
+        })
+        
+        // Sort tables by relation count (highest to lowest)
+        const sortedTables = [...tables].sort((a, b) => 
+            tableRelations[b.id] - tableRelations[a.id]
+        )
+        
+        // Constants for positioning
+        const SPACING_H = 700
+        const SPACING_V = 700
+        
+        // Place center table (most relations)
+        const centerTable = sortedTables[0]
+        if (centerTable) {
+            centerTable.positionX = 0
+            centerTable.positionY = 0
+            centerTable.save()
+        }
+        
+        // Calculate positions for remaining tables in layers
+        let currentLayer = 1
+        let tablesPlaced = 1  // Center table already placed
+        
+        while (tablesPlaced < sortedTables.length) {
+            // Each layer has 8 * currentLayer positions
+            const positionsInLayer = 8 * currentLayer
+            
+            // Calculate positions in this layer
+            for (let i = 0; i < positionsInLayer && tablesPlaced < sortedTables.length; i++) {
+                const table = sortedTables[tablesPlaced]
+                
+                // Calculate angle in radians (divide circle into equal parts)
+                const angle = (i / positionsInLayer) * 2 * Math.PI
+                
+                // Calculate coordinates based on layer and angle
+                // Each layer is SPACING_H/V further from center
+                const x = Math.round(Math.sin(angle) * SPACING_H * currentLayer)
+                const y = Math.round(Math.cos(angle) * SPACING_V * currentLayer)
+                
+                // Position the table
+                table.positionX = x
+                table.positionY = y
+                table.save()
+                
+                tablesPlaced++
+            }
+            
+            // Move to next layer
+            currentLayer++
+        }
+    }
+
 }
