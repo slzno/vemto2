@@ -21,6 +21,7 @@ export default class GenerateBasicSchemaSections {
                 name: "App",
                 scrollX: 0,
                 scrollY: 0,
+                zoom: this.project.currentZoom || 100,
                 projectId: this.project.id,
             })
         }
@@ -30,6 +31,7 @@ export default class GenerateBasicSchemaSections {
                 name: "Laravel",
                 scrollX: 0,
                 scrollY: 0,
+                zoom: this.project.currentZoom || 100,
                 projectId: this.project.id,
             })
         }
@@ -39,10 +41,11 @@ export default class GenerateBasicSchemaSections {
                 name: "Jetstream",
                 scrollX: 0,
                 scrollY: 0,
+                zoom: this.project.currentZoom || 100,
                 projectId: this.project.id,
             })
         }
-        
+                
         this.moveLaravelTablesToLaravelSection()
         this.moveJetsreamTablesToJetstreamSection()
         this.moveRemainingTablesToAppSection()

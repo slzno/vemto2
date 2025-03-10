@@ -14,7 +14,8 @@
         tables = ref([]) as Ref<Table[]>,
         loading = ref(true),
         showLoading = ref(false),
-        canLoadTables = ref(false)
+        canLoadTables = ref(false),
+        currentZoom = ref(1)
 
     const emit = defineEmits(["tablesLoaded"])
 
@@ -44,6 +45,8 @@
     })
 
     watch(() => schemaStore.selectedSchemaSection, () => {
+        currentZoom.value = schemaStore.selectedSchemaSection.getZoomAsScale()
+        
         centerScrollIfNecessary()
         setCanvasScroll()
         loadTables()
@@ -376,7 +379,7 @@
             style="width: 50000px; height: 50000px;"
         >
             <div id="tablesReference" 
-                :style="`transform: scale(${projectStore.project.getZoomAsScale()})`"
+                :style="`transform: scale(${currentZoom})`"
                 style="width: 1px; height: 1px;" 
                 class="relative bg-transparent"
             >
