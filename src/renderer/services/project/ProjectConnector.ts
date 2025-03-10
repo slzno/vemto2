@@ -32,6 +32,7 @@ export default class ProjectConnector {
             await this.generateBasicProjectData()
             await this.createNecessaryFiles()
             await this.saveProject()
+            await this.organizeTables()
 
             this.project.refresh()
         } catch (error) {
@@ -113,6 +114,10 @@ export default class ProjectConnector {
         this.project.canIgnoreNextSchemaSourceChanges = true
 
         return await this.project.save()
+    }
+
+    async organizeTables() {
+        this.project.organizeTablesOfAllSectionsByRelations()
     }
 
 }
