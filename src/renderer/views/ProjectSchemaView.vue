@@ -58,11 +58,20 @@
         }
     })
     
+    // Update the watcher to use schema section zoom
+    watch(() => schemaStore.selectedSchemaSection?.zoom, () => changeSchemaZoom())
+    
     watch(() => schemaStore.selectedSchemaSection, () => {
 
         if(jsPlumbInstance) {
             jsPlumbInstance.reset()
         }
+        
+        // Apply the correct zoom when schema section changes
+        nextTick(() => {
+            console.log('SCHEMA section changed')
+            changeSchemaZoom()
+        })
 
     })
 
@@ -93,17 +102,17 @@
             const posY = scrollTop + mouseY - containerCenterY
             
             // Get current zoom before changing it
-            const currentZoom = projectStore.project.getZoomAsScale()
+            const currentZoom = schemaStore.selectedSchemaSection.getZoomAsScale()
             
-            // Apply zoom using the project's methods
+            // Apply zoom using the schema section's methods
             if (delta > 0) {
-                projectStore.project.zoomIn()
+                schemaStore.selectedSchemaSection.zoomIn()
             } else {
-                projectStore.project.zoomOut()
+                schemaStore.selectedSchemaSection.zoomOut()
             }
             
             // Get new zoom after the change
-            const newZoom = projectStore.project.getZoomAsScale()
+            const newZoom = schemaStore.selectedSchemaSection.getZoomAsScale()
             
             // Wait for the zoom to be applied in the DOM
             nextTick(() => {
@@ -271,7 +280,9 @@
         if (!jsPlumbInstance) return
         if (projectStore.projectIsEmpty) return
 
-        const zoom = projectStore.project.getZoomAsScale()
+        const zoom = schemaStore.selectedSchemaSection.getZoomAsScale()
+
+        console.log('changing schema zoom', zoom)
         
         // Apply zoom to jsPlumb instance
         jsPlumbInstance.setZoom(zoom)

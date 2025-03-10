@@ -283,11 +283,11 @@ import ReservedKeywords from '@Common/models/services/ReservedKeywords'
     }
 
     const zoomIn = async () => {
-        projectStore.project.zoomIn()
+        schemaStore.selectedSchemaSection.zoomIn()
     }
 
     const zoomOut = async () => {
-        projectStore.project.zoomOut()
+        schemaStore.selectedSchemaSection.zoomOut()
     }
 
     const newSchema = async () => {
@@ -517,7 +517,7 @@ import ReservedKeywords from '@Common/models/services/ReservedKeywords'
                     />
                 </button>
                 <div class="text-xs text-slate-500 w-5 text-center select-none">
-                    {{ projectStore.project.currentZoom || 100 }}
+                    {{ schemaStore.selectedSchemaSection.zoom || 100 }}
                 </div>
                 <button
                     class="p-2 cursor-pointer text-slate-500 dark:text-slate-350 hover:text-red-500 dark:hover:text-red-500 border border-transparent focus:border-red-500 dark:focus:border-red-500 outline-none rounded"
