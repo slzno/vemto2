@@ -437,7 +437,7 @@
                 </div>
 
                 <div class="flex">
-                    <UiCheckbox v-model="connectingFolderSettings.isFreshLaravelProject" label="It is a fresh Laravel 11 project"></UiCheckbox>
+                    <UiCheckbox v-model="connectingFolderSettings.isFreshLaravelProject" label="It is a fresh Laravel project"></UiCheckbox>
 
                     <UiHint type="warning">
                         When a project is marked as fresh, Vemto will automatically generate some specific files after connecting it. 
