@@ -585,7 +585,7 @@ import ReservedKeywords from '@Common/models/services/ReservedKeywords'
                         }"
                         class="px-5 cursor-pointer hover:text-red-600 dark:hover:text-red-500 select-none"
                     >
-                        {{ section.name }}
+                        {{ section.name }} ({{ section.getTablesQuantity() }})
                     </div>
 
                     <div @click.prevent.stop="removeSection(section)" class="absolute right-0 invisible group-hover:visible px-1">

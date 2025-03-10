@@ -70,4 +70,8 @@ export default class SchemaSection extends RelaDB.Model {
         this.scrollCenteringRequested = false
         this.save()
     }
+
+    getTablesQuantity(): number {
+        return this.tables.length
+    }
 }
