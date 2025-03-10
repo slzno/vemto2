@@ -44,9 +44,11 @@
         loadTables()
     })
 
-    watch(() => schemaStore.selectedSchemaSection, () => {
+    watch(() => schemaStore.selectedSchemaSection?.zoom, () => {
         currentZoom.value = schemaStore.selectedSchemaSection.getZoomAsScale()
-        
+    })
+
+    watch(() => schemaStore.selectedSchemaSection, () => {
         centerScrollIfNecessary()
         setCanvasScroll()
         loadTables()
@@ -202,6 +204,8 @@
      * Center the scroll on the given table
      */
     const centerOnTable = (table) => {
+        schemaStore.selectedSchemaSection.saveZoom(100)
+        
         const tableElement = document.getElementById(`table_${table.id}`)
 
         if(!tableElement) return

@@ -94,6 +94,10 @@ export const useSchemaStore = defineStore("schema", {
         },
 
         selectTable(table: Table): void {
+            if(this.selectedSchemaSection) {
+                this.selectedSchemaSection.refresh()
+            }
+
             this.deselectTable()
 
             this.selectedTable = table
