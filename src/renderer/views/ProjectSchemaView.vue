@@ -281,12 +281,10 @@
         if (projectStore.projectIsEmpty) return
 
         const zoom = schemaStore.selectedSchemaSection.getZoomAsScale()
-
-        console.log('changing schema zoom', zoom)
         
         // Apply zoom to jsPlumb instance
         jsPlumbInstance.setZoom(zoom)
-        
+
         // Update the transform on the tablesReference element
         const tablesReference = document.getElementById('tablesReference')
         if (tablesReference) {
