@@ -72,8 +72,55 @@
             e.stopPropagation()
 
             const delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)))
-
-            delta > 0 ? projectStore.project.zoomIn() : projectStore.project.zoomOut()
+            
+            const tablesCanvas = document.getElementById('tablesCanvas')
+            
+            // Get mouse position relative to the canvas
+            const rect = tablesCanvas.getBoundingClientRect()
+            const mouseX = e.clientX - rect.left
+            const mouseY = e.clientY - rect.top
+            
+            // Get current scroll position
+            const scrollLeft = tablesCanvas.scrollLeft
+            const scrollTop = tablesCanvas.scrollTop
+            
+            // Calculate mouse position relative to tablesContainer center (where tablesReference is positioned)
+            const containerCenterX = 25000 // Center of tablesContainer
+            const containerCenterY = 25000 // Center of tablesContainer
+            
+            // Position in the virtual space (accounting for current scroll)
+            const posX = scrollLeft + mouseX - containerCenterX
+            const posY = scrollTop + mouseY - containerCenterY
+            
+            // Get current zoom before changing it
+            const currentZoom = projectStore.project.getZoomAsScale()
+            
+            // Apply zoom using the project's methods
+            if (delta > 0) {
+                projectStore.project.zoomIn()
+            } else {
+                projectStore.project.zoomOut()
+            }
+            
+            // Get new zoom after the change
+            const newZoom = projectStore.project.getZoomAsScale()
+            
+            // Wait for the zoom to be applied in the DOM
+            nextTick(() => {
+                // Calculate how the position changes with the new zoom
+                const scaleFactor = newZoom / currentZoom
+                
+                // Calculate new scroll position to keep the point under cursor
+                const newScrollLeft = containerCenterX + (posX * scaleFactor) - mouseX
+                const newScrollTop = containerCenterY + (posY * scaleFactor) - mouseY
+                
+                // Apply new scroll
+                tablesCanvas.scrollLeft = newScrollLeft
+                tablesCanvas.scrollTop = newScrollTop
+                
+                // Save scroll position in the schema section
+                schemaStore.selectedSchemaSection.saveScroll(newScrollLeft, newScrollTop)
+            })
         }, { passive: false })
     }
 
@@ -224,9 +271,16 @@
         if (!jsPlumbInstance) return
         if (projectStore.projectIsEmpty) return
 
-        jsPlumbInstance.setZoom(
-            projectStore.project.getZoomAsScale()
-        )
+        const zoom = projectStore.project.getZoomAsScale()
+        
+        // Apply zoom to jsPlumb instance
+        jsPlumbInstance.setZoom(zoom)
+        
+        // Update the transform on the tablesReference element
+        const tablesReference = document.getElementById('tablesReference')
+        if (tablesReference) {
+            tablesReference.style.transform = `scale(${zoom})`
+        }
     }
 
     const reloadTables = () => {
