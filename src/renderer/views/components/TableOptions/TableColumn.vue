@@ -136,14 +136,12 @@
     }
 
     const onColumnTypeChanged = (values: { lastValue: string, newValue: string }) => {
-        if (values.lastValue && values.lastValue.length) return;
+        if (!values.lastValue?.length) {
+            let defaultColumnFaker = column.value.getDefaultFaker(),
+                defaultColumnUniqueFaker = column.value.getDefaultUniqueFaker()
 
-        let defaultColumnFaker = column.value.getDefaultFaker(),
-            defaultColumnUniqueFaker = column.value.getDefaultUniqueFaker()
-
-        column.value.faker = column.value.unique
-            ? defaultColumnUniqueFaker
-            : defaultColumnFaker
+            column.value.faker = column.value.unique ? defaultColumnUniqueFaker : defaultColumnFaker
+        }
 
         column.value.saveFromInterface()
     }
