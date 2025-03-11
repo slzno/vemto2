@@ -4,7 +4,7 @@
     "description": "A small tool for read Laravel schema from migrations.",
     "require": {
         "php": "^8.2",
-        "laravel/framework": "^11.0",
+        "laravel/framework": "^12.0",
         "kitloong/laravel-migrations-generator": "^7.1.2"
     },
     "require-dev": {
