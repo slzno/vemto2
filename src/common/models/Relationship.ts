@@ -174,11 +174,13 @@ export default class Relationship extends AbstractSchemaModel implements SchemaM
     }
 
     isValid(): boolean {
+        const calculatorService = this.getCalculatorService()
+        
         return !! this.model 
             && !! this.relatedModel 
             && this.model.isValid() 
             && this.relatedModel.isValid()
-            && this.getCalculatorService().hasValidRequiredData()
+            && (calculatorService ? calculatorService.hasValidRequiredData() : false)
     }
 
     maybeInverseOf(relationship: Relationship) {
