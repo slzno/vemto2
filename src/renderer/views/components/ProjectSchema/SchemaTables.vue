@@ -76,6 +76,7 @@
         canLoadTables.value = true
 
         centerScrollIfNecessary()
+        setCorrectZoom()
 
         const tablesCanvas = document.getElementById("tablesCanvas")
 
@@ -301,6 +302,12 @@
 
         tablesCanvas.scrollLeft = schemaStore.selectedSchemaSection.scrollX
         tablesCanvas.scrollTop = schemaStore.selectedSchemaSection.scrollY
+    }
+
+    const setCorrectZoom = () => {
+        if(!schemaStore.selectedSchemaSection) return
+
+        currentZoom.value = schemaStore.selectedSchemaSection.getZoomAsScale()
     }
 
     const onScroll = (e: Event) => {
