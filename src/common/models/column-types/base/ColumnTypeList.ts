@@ -51,6 +51,7 @@ import UnsignedTinyInteger from "../UnsignedTinyInteger"
 import Uuid from "../Uuid"
 import Year from "../Year"
 import Geography from "../Geography"
+import Ulid from "../Ulid"
 
 export default class ColumnTypeList {
 
@@ -125,6 +126,7 @@ export default class ColumnTypeList {
             // unsignedSmallInteger: UnsignedSmallInteger,
             // unsignedTinyInteger: UnsignedTinyInteger,
             uuid: Uuid,
+            ulid: Ulid,
             year: Year
         }
     }
