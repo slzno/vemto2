@@ -35,6 +35,7 @@
 
             nextTick(() => {
                 zoomWithMouseWheel()
+                changeSchemaZoom()
             })
         }, 1)
     })
@@ -69,7 +70,6 @@
         
         // Apply the correct zoom when schema section changes
         nextTick(() => {
-            console.log('SCHEMA section changed')
             changeSchemaZoom()
         })
 
