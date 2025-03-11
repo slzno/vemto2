@@ -50,6 +50,7 @@ export default class FilamentIndividualValidations {
             'startsWith',
             'string',
             'uuid',
+            'ulid',
             'url',
             'rule',
             'rules',

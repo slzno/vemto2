@@ -696,6 +696,11 @@ export default class ColumnsDefaultDataList {
                 faker: "fake()->uuid()",
             },
 
+            ulid: {
+                type: "ulid",
+                faker: "Str::ulid()",
+            },
+
             active: {
                 type: "boolean",
                 faker: "fake()->boolean()",

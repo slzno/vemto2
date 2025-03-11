@@ -97,6 +97,7 @@
     }
 
     const getColumnTypes = () => {
+        console.log(columnTypes)
         return columnTypes.map((columnType: any) => {
             return {
                 key: columnType.identifier,
@@ -136,6 +137,11 @@
     }
 
     const onColumnTypeChanged = (values: { lastValue: string, newValue: string }) => {
+        if(['uuid', 'ulid'].includes(values.newValue) || ['uuid', 'ulid'].includes(values.lastValue)) {
+            column.value.isUuid = values.newValue === 'uuid'
+            column.value.isUlid = values.newValue === 'ulid'
+        }
+        
         if (values.lastValue && values.lastValue.length) return;
 
         let defaultColumnFaker = column.value.getDefaultFaker(),
@@ -212,6 +218,14 @@
                 </div>
                 <div class="m-1">
                     <UiCheckbox v-model="column.autoIncrement" label="Auto Increment" @change="column.saveFromInterface()" />
+                </div>
+            </div>
+            <div class="flex gap-3">
+                <div class="m-1">
+                    <UiCheckbox v-model="column.isUuid" label="IsUuid" @change="column.saveFromInterface()" />
+                </div>
+                <div class="m-1">
+                    <UiCheckbox v-model="column.isUlid" label="IsUlid" @change="column.saveFromInterface()" />
                 </div>
             </div>
             <div class="flex gap-3">

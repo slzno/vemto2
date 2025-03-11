@@ -36,6 +36,9 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
     referencedIndexes: Index[]
     columnIndexes: Index[]
 
+    isUlid: boolean
+    isUuid: boolean
+
     relationshipsByForeignKey: Relationship[]
     relationshipsByOwnerKey: Relationship[]
     relationshipsByParentKey: Relationship[]
@@ -206,7 +209,7 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
     }
 
     isSpecialPrimaryKey(): boolean {
-        return this.type === 'uuid'
+        return this.type === 'uuid' || this.type === 'ulid'
     }
 
     isDefaultLaravelTimestamp(): boolean {
@@ -321,6 +324,14 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
 
         if(!this.defaultIsRaw) {
             this.default = data.default
+        }
+
+        if(this.isUlid) {
+            this.type = 'ulid'
+        }
+
+        if(this.isUuid) {
+            this.type = 'uuid'
         }
 
         this.fillSchemaState()
@@ -556,6 +567,9 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         if(defaultColumnData.length) this.length = defaultColumnData.length
         if(defaultColumnData.nullable) this.nullable = defaultColumnData.nullable
         if(defaultColumnData.faker) this.faker = defaultColumnData.faker
+        
+        this.isUlid = this.type === 'ulid'
+        this.isUuid = this.type === 'uuid'
 
         this.generateDefaultOptions()
     }
