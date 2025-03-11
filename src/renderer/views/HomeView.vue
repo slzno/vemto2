@@ -469,16 +469,11 @@
                     <div class="flex space-x-8">
                         <div class="w-1/3">
                             <div class="text-slate-400 font-serif">
-                                The Migration mode is recommended for simple projects and prototypes. 
-                                <br>
-                                <br>
-                                If your project has a complex schema, or the migrations files have complex logic, it is recommended to use the Database mode. 
-                                <br>
-                                <br>
-                                The database mode is also mandatory if your migrations are squashed.
-                                <br>
-                                <br>
-                                If you have doubts, prefer the Database mode.
+                                The <span class="text-red-450">migration mode is deprecated</span> and will be removed in future versions (it is also not compatible with Laravel 12+ projects). 
+                                <br><br>
+                                Use the Database mode instead.
+                                <br><br>
+                                The database set here is not your project's database. Vemto will create a new database to migrate and read the schema. The database name must start with the <span class="text-red-450">vemto_</span> prefix.
                             </div>
                         </div>
 

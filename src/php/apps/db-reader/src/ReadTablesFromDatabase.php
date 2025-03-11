@@ -112,6 +112,16 @@ class ReadTablesFromDatabase
 
     protected function readTables(Collection $tables): void
     {
+        // connection data without sensitive information
+        // $connection = DB::getDefaultConnection();
+        // $settings = \Illuminate\Support\Facades\Config::get('database.connections');
+        // $connectionSettings = $settings[$connection];
+        // $connectionSettings['password'] = '********';
+
+        // \Vemto\Vemto::log('Reading tables...');
+        // \Vemto\Vemto::dump($connectionSettings);
+        // \Vemto\Vemto::dump($tables);
+
         $tables->each(function (string $table): void {
             $tableSchema = $this->schema->getTable($table);
 
