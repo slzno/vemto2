@@ -27,7 +27,7 @@
             "defaultTesterProject": "laravel9-basic"
         },
         "php-merger": {
-            "outputName": "VMTTL3",
+            "outputName": "VMTTL4",
             "enabled": false,
             "commonFiles": [
                 "Vemto.php",
