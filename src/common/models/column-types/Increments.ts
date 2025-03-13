@@ -7,4 +7,5 @@ export default class Increments extends ColumnType {
     static isPrimaryKey: boolean = true
     static foreignType: string = 'unsignedInteger'
     static inputType: string = 'number'
+    static isIncrementable: boolean = true
 }

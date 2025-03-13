@@ -6,4 +6,5 @@ export default class SmallInteger extends ColumnType {
     static faker: string = 'fake()->numberBetween(0, 32767)'
     static defaultValueTypeIsString: boolean = false
     static inputType: string = 'number'
+    static isIncrementable: boolean = true
 }

@@ -110,6 +110,8 @@
             return scrollToSelectedItem()
         }
 
+        if(!selected[0]) return
+
         dropdownList.value.scrollTop = selected[0].offsetTop - (selected[0].clientHeight + 60)
     }
 
@@ -117,6 +119,8 @@
         const selected = selectedOption.value
 
         if(!selected || !showing.value) return
+
+        if(!selected[0]) return
 
         dropdownList.value.scrollTop = selected[0].offsetTop - (selected[0].clientHeight + 60)
     }
@@ -151,7 +155,7 @@
 
         emit('update:modelValue', selected.value.key)
         emit('input', selected.value.key)
-        emit('change', { lastValue, newValue: option })
+        emit('change', { lastValue, newValue: option.key })
     }
 
     const focusFiredOnce = (): void => {

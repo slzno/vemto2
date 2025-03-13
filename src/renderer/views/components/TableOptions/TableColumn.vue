@@ -97,7 +97,6 @@
     }
 
     const getColumnTypes = () => {
-        console.log(columnTypes)
         return columnTypes.map((columnType: any) => {
             return {
                 key: columnType.identifier,
@@ -136,24 +135,6 @@
         emit('removeColumn')
     }
 
-    const onColumnTypeChanged = (values: { lastValue: string, newValue: string }) => {
-        if(['uuid', 'ulid'].includes(values.newValue) || ['uuid', 'ulid'].includes(values.lastValue)) {
-            column.value.isUuid = values.newValue === 'uuid'
-            column.value.isUlid = values.newValue === 'ulid'
-        }
-        
-        if (values.lastValue && values.lastValue.length) return;
-
-        let defaultColumnFaker = column.value.getDefaultFaker(),
-            defaultColumnUniqueFaker = column.value.getDefaultUniqueFaker()
-
-        column.value.faker = column.value.unique
-            ? defaultColumnUniqueFaker
-            : defaultColumnFaker
-
-        column.value.saveFromInterface()
-    }
-
     const log = (column: Column) => {
         console.log(JSON.parse(JSON.stringify(column)))
     }
@@ -186,7 +167,7 @@
                 </div>
 
                 <div class="flex flex-col w-36">
-                    <UiDropdownSelect v-model="column.type" placeholder="Select type" :options="getColumnTypes()" @change="onColumnTypeChanged" />
+                    <UiDropdownSelect v-model="column.type" placeholder="Select type" :options="getColumnTypes()" @change="event => column.onTypeChanged(event)" />
                 </div>
 
                 <div class="flex items-center justify-between">
@@ -222,10 +203,10 @@
             </div>
             <div class="flex gap-3">
                 <div class="m-1">
-                    <UiCheckbox v-model="column.isUuid" label="IsUuid" @change="column.saveFromInterface()" />
+                    <UiCheckbox v-model="column.isRawUuid" label="IsUuid" @change="column.saveFromInterface()" />
                 </div>
                 <div class="m-1">
-                    <UiCheckbox v-model="column.isUlid" label="IsUlid" @change="column.saveFromInterface()" />
+                    <UiCheckbox v-model="column.isRawUlid" label="IsUlid" @change="column.saveFromInterface()" />
                 </div>
             </div>
             <div class="flex gap-3">

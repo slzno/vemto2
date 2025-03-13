@@ -7,4 +7,5 @@ export default class Id extends ColumnType {
     static foreignType: string = 'unsignedBigInteger'
     static defaultValueTypeIsString: boolean = false
     static inputType: string = 'number'
+    static isIncrementable: boolean = true
 }

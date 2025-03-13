@@ -771,4 +771,28 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
             column.save()
         })
     }
+
+    onSpecialColumnChanged(): void {
+        const hasUuid = this.columns.some(column => column && column.isUuid());
+        const hasUlid = this.columns.some(column => column && column.isUlid());
+    
+        const traits = [
+            { trait: 'Illuminate\\Database\\Eloquent\\Concerns\\HasUuids', hasType: hasUuid },
+            { trait: 'Illuminate\\Database\\Eloquent\\Concerns\\HasUlids', hasType: hasUlid }
+        ];
+    
+        this.models.forEach(model => {
+            traits.forEach(({ trait, hasType }) => {
+                const includesTrait = model.traits.includes(trait);
+    
+                if (hasType && !includesTrait) {
+                    model.traits.push(trait);
+                } else if (!hasType && includesTrait) {
+                    model.traits = model.traits.filter(i => i !== trait);
+                }
+            });
+    
+            model.saveFromInterface();
+        });
+    }
 }

@@ -21,6 +21,7 @@
 <% const colspanSize = detailCrud.inputs.length + 1 %>
 <% const collectionVarName = 'detail' + pascalCase(detailCrud.settings.collectionName) %>
 <% const viewsFolderName = `${detailCrud.section.getFolderName()}.${paramCase(detailCrud.plural)}` %>
+<% const detailCrudModelPrimaryKeyArgument = detailCrudModel.getPrimaryKeyColumn().isSpecialPrimaryKey() ? `'{{ $${itemVarName}->${detailCrudModel.getPrimaryKeyName()} }}'` : `{{ $${itemVarName}->${detailCrudModel.getPrimaryKeyName()} }}` %>
 <# Setup #>
 <% InputRenderer.setProject(detailCrud.project) %>
 <# --- #>
@@ -103,10 +104,10 @@
                     <% } %>
                     <x-ui.table.action-column>
                         @can('update', $<$ itemVarName $>)
-                        <x-ui.action wire:click="edit<$ pascalCase(itemVarName) $>({{ $<$ itemVarName $>->id }})">Edit</x-ui.action>
+                        <x-ui.action wire:click="edit<$ pascalCase(itemVarName) $>(<$ detailCrudModelPrimaryKeyArgument $>)">Edit</x-ui.action>
                         @endcan
                         @can('delete', $<$ itemVarName $>)
-                        <x-ui.action.danger wire:click="confirm<$ pascalCase(itemVarName) $>Deletion({{ $<$ itemVarName $>->id }})">Delete</x-ui.action.danger>
+                        <x-ui.action.danger wire:click="confirm<$ pascalCase(itemVarName) $>Deletion(<$ detailCrudModelPrimaryKeyArgument $>)">Delete</x-ui.action.danger>
                         @endcan
                     </x-ui.table.action-column>
                 </x-ui.table.row>
