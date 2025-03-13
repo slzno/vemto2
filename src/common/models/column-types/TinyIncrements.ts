@@ -7,4 +7,5 @@ export default class TinyIncrements extends ColumnType {
     static foreignType: string = 'unsignedTinyInteger'
     static defaultValueTypeIsString: boolean = false
     static inputType: string = 'number'
+    static isIncrementable: boolean = true
 }

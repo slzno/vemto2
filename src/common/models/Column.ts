@@ -36,8 +36,8 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
     referencedIndexes: Index[]
     columnIndexes: Index[]
 
-    isUlid: boolean
-    isUuid: boolean
+    isRawUlid: boolean
+    isRawUuid: boolean
 
     relationshipsByForeignKey: Relationship[]
     relationshipsByOwnerKey: Relationship[]
@@ -209,7 +209,7 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
     }
 
     isSpecialPrimaryKey(): boolean {
-        return this.type === 'uuid' || this.type === 'ulid'
+        return this.isUuid() || this.isUlid()
     }
 
     isDefaultLaravelTimestamp(): boolean {
@@ -226,6 +226,14 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
 
     isCreatedAt(): boolean {
         return this.name === 'created_at'
+    }
+
+    isUuid(): boolean {
+        return this.isRawUuid
+    }
+
+    isUlid(): boolean {
+        return this.isRawUlid
     }
 
     isDeletedAt(): boolean {
@@ -326,11 +334,11 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
             this.default = data.default
         }
 
-        if(this.isUlid) {
+        if(this.isRawUlid) {
             this.type = 'ulid'
         }
 
-        if(this.isUuid) {
+        if(this.isRawUuid) {
             this.type = 'uuid'
         }
 
@@ -558,6 +566,7 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
     }
 
     setDefaultSettingsByName() {
+        const lastValue = this.type
         const defaultColumnData = this.getDefaultSettingsByName()
 
         if(!defaultColumnData || this.type) return
@@ -567,10 +576,8 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         if(defaultColumnData.length) this.length = defaultColumnData.length
         if(defaultColumnData.nullable) this.nullable = defaultColumnData.nullable
         if(defaultColumnData.faker) this.faker = defaultColumnData.faker
-        
-        this.isUlid = this.type === 'ulid'
-        this.isUuid = this.type === 'uuid'
 
+        this.onTypeChanged({ lastValue, newValue: this.type })
         this.generateDefaultOptions()
     }
 
@@ -623,5 +630,27 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
 
     hasInputs(): boolean {
         return this.inputs.length > 0
+    }
+
+    onTypeChanged({ lastValue, newValue }): void {
+        const isSpecialType = ['uuid', 'ulid'].includes(newValue) || ['uuid', 'ulid'].includes(lastValue)
+
+        if(isSpecialType) {
+            this.isRawUuid = newValue === 'uuid'
+            this.isRawUlid = newValue === 'ulid'
+        }
+        
+        if (!lastValue?.length) {
+            let defaultColumnFaker = this.getDefaultFaker(),
+                defaultColumnUniqueFaker = this.getDefaultUniqueFaker()
+
+            this.faker = this.unique
+                ? defaultColumnUniqueFaker
+                : defaultColumnFaker
+        }
+
+        this.saveFromInterface()
+
+        if(isSpecialType) this.table.onSpecialColumnChanged()
     }
 }

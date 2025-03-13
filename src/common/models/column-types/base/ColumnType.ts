@@ -9,6 +9,7 @@ export default class ColumnType {
     static isPrimaryKey: boolean = false
     static defaultValueTypeIsString: boolean = true
     static inputType: string = 'text'
+    static isIncrementable: boolean = false
     
     static enabled(project?: Project): boolean {
         return !! project.id
