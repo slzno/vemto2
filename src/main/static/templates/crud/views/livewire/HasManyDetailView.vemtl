@@ -21,7 +21,9 @@
 <% const colspanSize = detailCrud.inputs.length + 1 %>
 <% const collectionVarName = 'detail' + pascalCase(detailCrud.settings.collectionName) %>
 <% const viewsFolderName = `${detailCrud.section.getFolderName()}.${paramCase(detailCrud.plural)}` %>
-<% const detailCrudModelPrimaryKeyArgument = detailCrudModel.getPrimaryKeyColumn().isSpecialPrimaryKey() ? `'{{ $${itemVarName}->${detailCrudModel.getPrimaryKeyName()} }}'` : `{{ $${itemVarName}->${detailCrudModel.getPrimaryKeyName()} }}` %>
+<% const modelPrimaryKeyIsSpecial = detailCrudModel.getPrimaryKeyColumn().isSpecialPrimaryKey() %>
+<% const detailCrudModelPrimaryKeyArgument = modelPrimaryKeyIsSpecial ? `'{{ $${itemVarName}->${detailCrudModel.getPrimaryKeyName()} }}'` : `{{ $${itemVarName}->${detailCrudModel.getPrimaryKeyName()} }}` %>
+<% const deletingItemVarName = modelPrimaryKeyIsSpecial ? `'{{ $deleting${pascalCase(itemVarName)} }}'` : `{{ $deleting${pascalCase(itemVarName)} }}` %>
 <# Setup #>
 <% InputRenderer.setProject(detailCrud.project) %>
 <# --- #>
@@ -73,7 +75,7 @@
                 {{ __('Cancel') }}
             </x-ui.button>
     
-            <x-ui.button.danger class="ml-3" wire:click="delete<$ pascalCase(itemVarName) $>({{ $deleting<$ pascalCase(itemVarName) $> }})" wire:loading.attr="disabled">
+            <x-ui.button.danger class="ml-3" wire:click="delete<$ pascalCase(itemVarName) $>(<$ deletingItemVarName $>)" wire:loading.attr="disabled">
                 {{ __('Delete') }}
             </x-ui.button.danger>
         </x-slot>

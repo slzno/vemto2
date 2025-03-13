@@ -81,7 +81,7 @@ implements
     protected $primaryKey = '<$ this.model.getPrimaryKeyName() $>';
     <% } %>
 
-    <% if(this.model.isPrimaryKeyNotAutoIncrement()) { %>
+    <% if(!this.model.isPrimaryKeyAutoIncrement()) { %>
     /**
      * Indicates if the model's ID is auto-incrementing.
      *

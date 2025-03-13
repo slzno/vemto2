@@ -12,10 +12,11 @@
 <% const camelCase = this.require('camelCase') %>
 <% const pascalCase = this.require('pascalCase') %>
 <% const itemVarName = camelCase(crud.settings.itemName) %>
-<% const deletingItemVarName = `deleting${pascalCase(itemVarName)}` %>
 <% const viewsFolderName = camelCase(model.plural) %>
 <% const collectionVarName = camelCase(crud.settings.collectionName) %>
-<% const crudModelPrimaryKeyArgument = model.getPrimaryKeyColumn().isSpecialPrimaryKey() ? `'{{ $${itemVarName}->${model.getPrimaryKeyName()} }}'` : `{{ $${itemVarName}->${model.getPrimaryKeyName()} }}` %>
+<% const modelPrimaryKeyIsSpecial = model.getPrimaryKeyColumn().isSpecialPrimaryKey() %>
+<% const crudModelPrimaryKeyArgument = modelPrimaryKeyIsSpecial ? `'{{ $${itemVarName}->${model.getPrimaryKeyName()} }}'` : `{{ $${itemVarName}->${model.getPrimaryKeyName()} }}` %>
+<% const deletingItemVarName = modelPrimaryKeyIsSpecial ? `'{{ $deleting${pascalCase(itemVarName)} }}'` : `{{ $deleting${pascalCase(itemVarName)} }}` %>
 <# --- #>
 <div class="vtheme(crud.index.container)">
     <x-ui.breadcrumbs>
@@ -49,7 +50,7 @@
                 {{ __('Cancel') }}
             </x-ui.button>
     
-            <x-ui.button.danger class="ml-3" wire:click="delete({{ $<$ deletingItemVarName $> }})" wire:loading.attr="disabled">
+            <x-ui.button.danger class="ml-3" wire:click="delete(<$ deletingItemVarName $>)" wire:loading.attr="disabled">
                 {{ __('Delete') }}
             </x-ui.button.danger>
         </x-slot>
@@ -83,7 +84,7 @@
                         <x-ui.action wire:navigate href="{{ route('<$ crud.getRouteNameByTag('edit') $>', $<$ itemVarName $>) }}">Edit</x-ui.action>
                         @endcan
                         @can('delete', $<$ itemVarName $>)
-                        <x-ui.action.danger wire:click="confirmDeletion(crudModelPrimaryKeyArgument)">Delete</x-ui.action.danger>
+                        <x-ui.action.danger wire:click="confirmDeletion(<$ crudModelPrimaryKeyArgument $>)">Delete</x-ui.action.danger>
                         @endcan
                     </x-ui.table.action-column>
                 </x-ui.table.row>

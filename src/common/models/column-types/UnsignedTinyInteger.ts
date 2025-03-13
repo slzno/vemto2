@@ -6,5 +6,4 @@ export default class UnsignedTinyInteger extends ColumnType {
     static faker: string = 'fake()->numberBetween(0, 127)'
     static defaultValueTypeIsString: boolean = false
     static inputType: string = 'number'
-    static isIncrementable: boolean = true
 }
