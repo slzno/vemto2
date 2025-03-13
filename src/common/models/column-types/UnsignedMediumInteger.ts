@@ -6,5 +6,4 @@ export default class UnsignedMediumInteger extends ColumnType {
     static faker: string = 'fake()->numberBetween(0, 8388607)'
     static defaultValueTypeIsString: boolean = false
     static inputType: string = 'number'
-    static isIncrementable: boolean = true
 }

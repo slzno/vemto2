@@ -6,5 +6,4 @@ export default class BigInteger extends ColumnType {
     static faker: string = 'fake()->randomNumber()'
     static defaultValueTypeIsString: boolean = false
     static inputType: string = 'number'
-    static isIncrementable: boolean = true
 }

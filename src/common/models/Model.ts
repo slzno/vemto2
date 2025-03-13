@@ -626,17 +626,10 @@ export default class Model extends AbstractSchemaModel implements SchemaModel {
         return this.getPrimaryKeyName() != 'id'
     }
 
-    isPrimaryKeyNotAutoIncrement(): boolean {
+    isPrimaryKeyAutoIncrement(): boolean {
         const primaryKeyColumn = this.getPrimaryKeyColumn()
 
-        if (!primaryKeyColumn) return false
-        if (!primaryKeyColumn.isAutoIncrement()) return true
-
-        const type = primaryKeyColumn.getType()
-
-        if(!type) return false
-
-        return !type.inputType.isIncrementable
+        return primaryKeyColumn && primaryKeyColumn.isAutoIncrement()
     }
 
     getPrimaryKeyName(): string {
