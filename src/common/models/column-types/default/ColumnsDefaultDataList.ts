@@ -1127,6 +1127,11 @@ export default class ColumnsDefaultDataList {
                 type: "boolean",
                 faker: "fake()->boolean()",
             },
+
+            is_published: {
+                type: "boolean",
+                faker: "fake()->boolean()",
+            },
             
             is_active: {
                 type: "boolean",
