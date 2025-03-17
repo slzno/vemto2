@@ -14,36 +14,32 @@ export default class BlueprintSchemaUpdater {
 
     updateTables() {
         this.project.tables.forEach(table => {
-            if (table.isDirty()) {
-                table.applyChangesDirectlyToSchemaState()
-            }
+            table.applyChangesDirectlyToSchemaState()
 
             table.columns.forEach(column => {
-                if (column.isDirty()) {
-                    console.log("Applying changes to column: ", column)
-                    column.applyChangesDirectlyToSchemaState()
-                }
+                column.applyChangesDirectlyToSchemaState()
+                column.deleteIfRemoved()
             })
             
             table.indexes.forEach(index => {
-                if (index.isDirty()) {
-                    index.applyChangesDirectlyToSchemaState()
-                }
+                index.applyChangesDirectlyToSchemaState()
+                index.deleteIfRemoved()
             })
+
+            table.deleteIfRemoved()
         })
     }
 
     updateModels() {
         this.project.models.forEach(model => {
-            if (model.isDirty()) {
-                model.applyChangesDirectlyToSchemaState()
-            }
+            model.applyChangesDirectlyToSchemaState()
             
             model.ownRelationships.forEach(relationship => {
-                if (relationship.isDirty()) {
-                    relationship.applyChangesDirectlyToSchemaState()
-                }
+                relationship.applyChangesDirectlyToSchemaState()
+                relationship.deleteIfRemoved()
             })
+
+            model.deleteIfRemoved()
         })
     }
 }
