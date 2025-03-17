@@ -126,4 +126,10 @@ export default abstract class AbstractSchemaModel extends RelaDB.Model {
 
         this.saveInternally()
     }
+
+    deleteIfRemoved(): void {
+        if(!this.isRemoved()) return
+
+        this.delete()
+    }
 }
