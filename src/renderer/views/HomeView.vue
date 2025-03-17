@@ -454,7 +454,7 @@
                         When the Blueprint Mode is enabled, Vemto will not automatically sync the schema with the application's source code after generating code, acting more like the old Vemto 1 (you use Vemto to design your schema and generate the source code, but you need to use the <b class="text-orange-500 font-bold">Sync Schema</b> option in the Schema Designer to update the schema, or you can update it manually).
                         <br>
                         <br>
-                        When the Blueprint Mode is disabled, Vemto will automatically sync the schema with the application's source code, so you don't have to worry about updating the schema manually. However, this can cause some issues if you have a complex application or third-party packages that modify the schema.
+                        When the Blueprint Mode is disabled (Sync mode is enabled), Vemto will automatically sync the schema with the application's source code, so you don't have to worry about updating the schema manually.
                         <br>
                         <br>
                         <b class="text-orange-500 font-bold">Only disable the Blueprint Mode if you have good Laravel/PHP knowledge and you know how to solve issues that may impact migrations running (for example, you may have a package installed on you app that may be preventing the migrations from running).</b>

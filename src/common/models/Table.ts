@@ -11,6 +11,16 @@ import CreateDefaultTableColumns from './services/tables/CreateDefaultTableColum
 import CreateDefaultTableModel from './services/tables/CreateDefaultTableModel'
 import SchemaSection from './SchemaSection'
 
+interface TableMigration {
+    createdTables: string[]
+    changedTables: string[]
+    datePrefix: string
+    fullPrefix: string
+    migration: string // the full migration path
+    migrationName: string
+    relativePath: string // the path relative to the project root
+}
+
 export default class Table extends AbstractSchemaModel implements SchemaModel {
     id: string
     name: string
@@ -21,7 +31,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     removed: boolean
     projectId: string
     columns: Column[]
-    migrations: any[]
+    migrations: TableMigration[]
     positionX: number
     positionY: number
     labelColumn: Column
@@ -583,6 +593,8 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     needsCreationMigration(): boolean {
+        if(this.project.isBlueprintModeEnabled()) return this.isNew()
+
         return !this.hasCreationMigration() && !this.isRemoved()
     }
 
@@ -596,6 +608,22 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         const tableName = this.getFirstTableName()
         
         return this.migrations.find((migration) => migration.createdTables.includes(tableName))
+    }
+
+    registerCreationMigration(name: string): void {
+        if(!this.hasMigrations()) this.migrations = []
+
+        const tableName = this.getFirstTableName()
+
+        this.migrations.push({
+            createdTables: [tableName],
+            changedTables: [],
+            datePrefix: '',
+            fullPrefix: '',
+            migration: '',
+            migrationName: name,
+            relativePath: ''
+        })
     }
 
     probablyNeedsToUpdateLatestMigration(): boolean {
