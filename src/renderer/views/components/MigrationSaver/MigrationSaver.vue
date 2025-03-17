@@ -22,7 +22,7 @@
     import InternalFiles from "@Renderer/util/InternalFiles"
     import MigrationOrganizer from "@Common/services/tables/MigrationOrganizer"
     import { useSchemaStore } from '@Renderer/stores/useSchemaStore'
-import BlueprintSchemaUpdater from '@Renderer/services/schema/BlueprintSchemaUpdater'
+    import BlueprintSchemaUpdater from '@Renderer/services/schema/BlueprintSchemaUpdater'
 
     const emit = defineEmits(["schemaSaved"])
 
