@@ -260,19 +260,16 @@
         connectingFolderSettings.value.blueprintModeEnabled = isNewProject
 
         if(isNewProject) {
-            connectingFolderSettings.value.blueprintModeEnabled = true
+            connectingFolderSettings.value.blueprintModeEnabled = false
             connectingFolderSettings.value.schemaReaderMode = "db"
         } else {
             console.log("Reading settings from project settings file")
 
             const schemaReaderMode = projectInfo.settingsData.getKey("SCHEMA_READER_MODE", "db"),
-                blueprintModeEnabled = projectInfo.settingsData.getKey("BLUEPRINT_MODE_ENABLED", true)
+                blueprintModeEnabled = projectInfo.settingsData.getKey("BLUEPRINT_MODE_ENABLED", false)
 
             connectingFolderSettings.value.blueprintModeEnabled = blueprintModeEnabled
             connectingFolderSettings.value.schemaReaderMode = schemaReaderMode
-
-            console.log("schemaReaderMode", schemaReaderMode)
-            console.log("blueprintModeEnabled", projectInfo.settingsData.getKey("BLUEPRINT_MODE_ENABLED"), blueprintModeEnabled)
         }
         
         const dbDriver = projectInfo.settingsData.getKey("SCHEMA_READER_DB_DRIVER") || projectInfo.envData.getKey("DB_CONNECTION") || "mysql"
