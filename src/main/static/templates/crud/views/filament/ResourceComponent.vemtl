@@ -7,7 +7,7 @@
 <# DATA:RENDERABLE [ renderable = crud/views/filament/FilamentResourceRenderable(crud) ] #>
 <####>
 
-
+<% const capitalCase = this.require('capitalCase') %>
 <% const pascalCase = this.require('pascalCase') %>
 <% const tableIsSoftDeletes = this.crud.table.hasSoftDeletes() %>
 <% const navigationIcon = this.crud.filamentSettings.navigationIcon ?? 'heroicon-o-rectangle-stack' %>
