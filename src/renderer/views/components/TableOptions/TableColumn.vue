@@ -203,10 +203,10 @@
             </div>
             <div class="flex gap-3">
                 <div class="m-1">
-                    <UiCheckbox v-model="column.isRawUuid" label="IsUuid" @change="column.saveFromInterface()" />
+                    <UiCheckbox v-model="column.isUuid" label="IsUuid" @change="column.saveFromInterface()" />
                 </div>
                 <div class="m-1">
-                    <UiCheckbox v-model="column.isRawUlid" label="IsUlid" @change="column.saveFromInterface()" />
+                    <UiCheckbox v-model="column.isUlid" label="IsUlid" @change="column.saveFromInterface()" />
                 </div>
             </div>
             <div class="flex gap-3">
