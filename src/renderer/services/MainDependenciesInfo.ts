@@ -16,8 +16,8 @@ export default class MainDependenciesInfo {
             
             console.log(phpInfo)
 
-            this.phpVersion = phpInfo.version
-            this.phpExtensions = phpInfo.extensions
+            this.phpVersion = phpInfo.version || "1.0.0"
+            this.phpExtensions = phpInfo.extensions || []
         } catch (error) {
             this.phpIsInstalled = false
             this.composerIsInstalled = false
@@ -31,7 +31,12 @@ export default class MainDependenciesInfo {
             return false
         }
 
-        return compareVersions(this.phpVersion, "8.2") >= 0
+        try {
+            return compareVersions(this.phpVersion, "8.2") >= 0
+        } catch (error) {
+            console.error(error)
+            return false
+        }
     }
 
     isComposerInstalled() {
