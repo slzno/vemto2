@@ -610,4 +610,8 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
     hasInputs(): boolean {
         return this.inputs.length > 0
     }
+
+    hasLengthDisabled(): boolean {
+        return typeof this.type === 'string' && this.type.toLowerCase().includes('integer')
+    }
 }
