@@ -36,8 +36,8 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
     referencedIndexes: Index[]
     columnIndexes: Index[]
 
-    isRawUlid: boolean
-    isRawUuid: boolean
+    isUlid: boolean
+    isUuid: boolean
 
     relationshipsByForeignKey: Relationship[]
     relationshipsByOwnerKey: Relationship[]
@@ -209,7 +209,7 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
     }
 
     isSpecialPrimaryKey(): boolean {
-        return this.isUuid() || this.isUlid()
+        return this.isOfTypeUuid() || this.isOfTypeUlid()
     }
 
     isDefaultLaravelTimestamp(): boolean {
@@ -228,12 +228,12 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         return this.name === 'created_at'
     }
 
-    isUuid(): boolean {
-        return this.isRawUuid
+    isOfTypeUuid(): boolean {
+        return this.isUuid
     }
 
-    isUlid(): boolean {
-        return this.isRawUlid
+    isOfTypeUlid(): boolean {
+        return this.isUlid
     }
 
     isDeletedAt(): boolean {
@@ -334,11 +334,11 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
             this.default = data.default
         }
 
-        if(this.isRawUlid) {
+        if(this.isUlid) {
             this.type = 'ulid'
         }
 
-        if(this.isRawUuid) {
+        if(this.isUuid) {
             this.type = 'uuid'
         }
 
@@ -636,8 +636,13 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         const isSpecialType = ['uuid', 'ulid'].includes(newValue) || ['uuid', 'ulid'].includes(lastValue)
 
         if(isSpecialType) {
-            this.isRawUuid = newValue === 'uuid'
-            this.isRawUlid = newValue === 'ulid'
+            this.isUuid = newValue === 'uuid'
+            this.isUlid = newValue === 'ulid'
+
+            if(this.isUlid || this.isUlid) {
+                this.unsigned = false;
+                this.autoIncrement = false;
+            }
         }
         
         if (!lastValue?.length) {

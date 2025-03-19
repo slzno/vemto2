@@ -68,7 +68,7 @@ class DatabaseManager {
 
             $this->pdo->exec($createDatabaseSQL);
         } catch (PDOException $e) {
-            throw new Exception("Could not create database `$databaseName`: " . $e->getMessage());
+            $this->dropTables($databaseName);
         }
     }
 
@@ -89,6 +89,7 @@ class DatabaseManager {
     }
 
     public function dropTables($databaseName) {
+        $this->checkProjectDatabaseIsDifferent($databaseName);
         $this->checkDatabasePrefix($databaseName);
 
         $this->pdo->exec("USE `$databaseName`;");
@@ -105,10 +106,19 @@ class DatabaseManager {
             case 'sqlsrv':
                 $tables = $this->pdo->query("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'")->fetchAll(PDO::FETCH_COLUMN);
                 break;
+            case 'sqlite':
+                $tables = $this->pdo->query("SELECT name FROM sqlite_master WHERE type='table'")->fetchAll(PDO::FETCH_COLUMN);
+                break;
+            default:
+                throw new Exception("Unsupported database type: $this->dbType");
         }
 
-        foreach ($tables as $tableName) {
-            $this->pdo->exec("DROP TABLE IF EXISTS `$tableName`;");
+        try {
+            foreach ($tables as $tableName) {
+                $this->pdo->exec("DROP TABLE IF EXISTS `$tableName`;");
+            }
+        } catch (PDOException $e) {
+            throw new Exception("Could not drop tables in database `$databaseName`: " . $e->getMessage());
         }
     }
 
