@@ -41,16 +41,15 @@ class DatabaseManager {
         $user = $config['username'];
         $password = $config['password'];
 
-        $dsn = "{$this->dbType}:host={$config['host']};port={$port};";
+        $dsn = match($this->dbType) {
+            'sqlsrv' => "{$this->dbType}:Server={$config['host']},{$port};Database={$config['database']}",
+            default => "{$this->dbType}:host={$config['host']};port={$port};"
+        };
 
         try {
             $this->pdo = new PDO($dsn, $user, $password, [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
             ]);
-            
-            if ($this->dbType == 'sqlsrv') { // For SQL Server, select the database after connection
-                $this->pdo->exec("USE {$config['database']}");
-            }
         } catch (PDOException $e) {
             throw new Exception("DB connection failed: " . $e->getMessage());
         }
