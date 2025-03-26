@@ -773,8 +773,8 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     onSpecialColumnChanged(): void {
-        const hasUuid = this.columns.some(column => column && column.isOfTypeUuid());
-        const hasUlid = this.columns.some(column => column && column.isOfTypeUlid());
+        const hasUuid = this.columns.some(column => column && column.isOfTypeUuid() && column.isPrimaryKey());
+        const hasUlid = this.columns.some(column => column && column.isOfTypeUlid() && column.isPrimaryKey());
     
         const traits = [
             { trait: 'Illuminate\\Database\\Eloquent\\Concerns\\HasUuids', hasType: hasUuid },

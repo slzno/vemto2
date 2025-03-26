@@ -346,13 +346,20 @@ export default class Index extends AbstractSchemaModel implements SchemaModel {
 
     updateColumns(columnsNames: string[]) {
         const uniqueColumnNames = uniq(columnsNames.concat(this.columns))
+        let hasSpecialColumnChanges = false
 
         uniqueColumnNames.forEach((columnName: string) => {
             const column = this.table.getColumnByName(columnName)
 
             if(!column) return
 
-            if(columnsNames.includes(columnName)) {
+            const isAttaching = columnsNames.includes(columnName)
+
+            if(this.type === IndexType.PRIMARY && (column.isUuid || column.isUlid)) {
+                hasSpecialColumnChanges = true
+            }
+
+            if(isAttaching) {
                 this.relation('indexColumns').attachUnique(column)
                 return
             }
@@ -366,5 +373,9 @@ export default class Index extends AbstractSchemaModel implements SchemaModel {
         this.name = this.calculateDefaultName()
 
         this.save()
+
+        if(hasSpecialColumnChanges) {
+            this.table.onSpecialColumnChanged()
+        }
     }
 }
