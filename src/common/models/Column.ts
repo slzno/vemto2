@@ -655,7 +655,5 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
         }
 
         this.saveFromInterface()
-
-        if(isSpecialType) this.table.onSpecialColumnChanged()
     }
 }
