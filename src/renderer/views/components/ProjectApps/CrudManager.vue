@@ -6,6 +6,7 @@
     import UiSelect from '@Renderer/components/ui/UiSelect.vue'
     import { useProjectStore } from '@Renderer/stores/useProjectStore'
     import { PlusIcon } from '@heroicons/vue/24/outline'
+import Alert from '@Renderer/components/utils/Alert'
 
     const emit = defineEmits(['created'])
 
@@ -31,9 +32,19 @@
 
     watch(selectedModelId, modelChanged)
 
-    const save = () => {
+    const validateAndSave = () => {
+        if(!selectedModel.value) {
+            Alert.warning("Please select a model.")
+            return
+        }
+
         const excludedColumns = [],
             generateDetails = true
+
+        if(selectedModel.value.name.toLowerCase() === 'form') {
+            Alert.error("'Form' is a reserved name for Livewire! Please choose another model.")
+            return
+        }
 
         Crud.createFromModel(
             selectedModel.value,
@@ -75,7 +86,7 @@
 
             <template #footer>
                 <div class="flex justify-end p-2">
-                    <UiButton @click=" save()">Create</UiButton>
+                    <UiButton @click=" validateAndSave()">Create</UiButton>
                 </div>
             </template>
         </UiModal>
