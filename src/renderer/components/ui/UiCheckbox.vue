@@ -26,6 +26,11 @@ import UiHint from "./UiHint.vue";
             type: String,
             default: "info",
         },
+
+        disabled: {
+            type: Boolean,
+            default: false,
+        }
     })
 
     const emit = defineEmits(["update:modelValue", "change"]),
@@ -50,6 +55,7 @@ import UiHint from "./UiHint.vue";
                         type="checkbox"
                         class="rounded bg-slate-200 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-red-450 shadow-sm focus:border-red-500 dark:focus:border-red-500 focus:ring focus:ring-offset-0 focus:ring-opacity-20 focus:ring-slate-300"
                         v-model="localValue"
+                        :disabled="disabled"
                     />
                     <span :class="{
                         'text-xs': smallText,
