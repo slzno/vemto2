@@ -639,9 +639,9 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
             this.isUuid = newValue === 'uuid'
             this.isUlid = newValue === 'ulid'
 
-            if(this.isUlid || this.isUlid) {
-                this.unsigned = false;
-                this.autoIncrement = false;
+            if(this.isUuid || this.isUlid) {
+                this.unsigned = false
+                this.autoIncrement = false
             }
         }
         

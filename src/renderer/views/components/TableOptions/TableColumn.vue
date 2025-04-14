@@ -135,6 +135,17 @@
         emit('removeColumn')
     }
 
+    const onColumnTypeChanged = (values: { lastValue: string, newValue: string }) => {
+        if (!values.lastValue?.length) {
+            let defaultColumnFaker = column.value.getDefaultFaker(),
+                defaultColumnUniqueFaker = column.value.getDefaultUniqueFaker()
+
+            column.value.faker = column.value.unique ? defaultColumnUniqueFaker : defaultColumnFaker
+        }
+
+        column.value.saveFromInterface()
+    }
+
     const log = (column: Column) => {
         console.log(JSON.parse(JSON.stringify(column)))
     }

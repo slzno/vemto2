@@ -3,7 +3,10 @@
     import UiText from '@Renderer/components/ui/UiText.vue'
     import { defineProps, toRef } from 'vue'
     import UiSelect from '@Renderer/components/ui/UiSelect.vue'
-import Table from '@Common/models/Table'
+    import Table from '@Common/models/Table'
+    import Main from '@Renderer/services/wrappers/Main'
+
+    const onDevelopment = Main.API.onDevelopment() && !Main.API.isRecording()
 
     const props = defineProps(['table']),
         table = toRef(props, 'table')
@@ -31,9 +34,9 @@ import Table from '@Common/models/Table'
                 </UiSelect>
             </div>
             
-            <div>
-                <!-- <UiButton @click="table.logDataComparison()">Log data comparison</UiButton>
-                <UiButton @click="logTable(table)">Log table data</UiButton> -->
+            <div v-if="onDevelopment">
+                <UiButton @click="table.logDataComparison()">Log data comparison</UiButton>
+                <UiButton @click="logTable(table)">Log table data</UiButton>
             </div>
         </section>
     </div>

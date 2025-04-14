@@ -151,6 +151,10 @@ export default class ProjectInfo {
             return ""
         }
 
+        if(!this.packageData.devDependencies) {
+            return this.packageData.dependencies[packageName] || ""
+        }
+
         return this.packageData.devDependencies[packageName]
             || (!!this.packageData.dependencies && this.packageData.dependencies[packageName])
             || ""
