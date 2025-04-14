@@ -656,4 +656,8 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
 
         this.saveFromInterface()
     }
+    
+    hasLengthDisabled(): boolean {
+        return typeof this.type === 'string' && this.type.toLowerCase().includes('integer')
+    }
 }
