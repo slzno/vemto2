@@ -107,7 +107,9 @@ export default class ProjectManager {
             schemaReaderMode,
         })
 
-        await SchemaBuilder.checkSchemaChangesForProject(project)
+        if(project.isSyncModeEnabled()) {
+            await SchemaBuilder.checkSchemaChangesForProject(project)
+        }
 
         return projectItem
     }

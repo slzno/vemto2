@@ -1,15 +1,26 @@
-import Index from './Index'
-import Model from './Model'
-import Column from './Column'
-import Project from './Project'
-import DataComparator from './services/DataComparator'
-import DataComparisonLogger from './services/DataComparisonLogger'
-import Relationship from './Relationship'
-import WordManipulator from '@Common/util/WordManipulator'
-import AbstractSchemaModel from './composition/AbstractSchemaModel'
-import CreateDefaultTableColumns from './services/tables/CreateDefaultTableColumns'
-import CreateDefaultTableModel from './services/tables/CreateDefaultTableModel'
-import SchemaSection from './SchemaSection'
+import Index from "./Index"
+import Model from "./Model"
+import Column from "./Column"
+import Project from "./Project"
+import DataComparator from "./services/DataComparator"
+import DataComparisonLogger from "./services/DataComparisonLogger"
+import Relationship from "./Relationship"
+import WordManipulator from "@Common/util/WordManipulator"
+import AbstractSchemaModel from "./composition/AbstractSchemaModel"
+import CreateDefaultTableColumns from "./services/tables/CreateDefaultTableColumns"
+import CreateDefaultTableModel from "./services/tables/CreateDefaultTableModel"
+import SchemaSection from "./SchemaSection"
+
+interface TableMigration {
+    createdTables: string[]
+    changedTables: string[]
+    renamedTables: string[]
+    datePrefix: string
+    fullPrefix: string
+    migration: string // the full migration path
+    migrationName: string
+    relativePath: string // the path relative to the project root
+}
 
 export default class Table extends AbstractSchemaModel implements SchemaModel {
     id: string
@@ -21,7 +32,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     removed: boolean
     projectId: string
     columns: Column[]
-    migrations: any[]
+    migrations: TableMigration[]
     positionX: number
     positionY: number
     labelColumn: Column
@@ -37,8 +48,10 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
             models: () => this.hasMany(Model).cascadeDelete(),
             indexes: () => this.hasMany(Index).cascadeDelete(),
             labelColumn: () => this.belongsTo(Column, "labelColumnId"),
-            columns: () => this.hasMany(Column).cascadeDelete().orderBy('order'),
-            pivotRelationships: () => this.hasMany(Relationship, 'pivotId').cascadeDelete(),
+            columns: () =>
+                this.hasMany(Column).cascadeDelete().orderBy("order"),
+            pivotRelationships: () =>
+                this.hasMany(Relationship, "pivotId").cascadeDelete(),
             section: () => this.belongsTo(SchemaSection, "sectionId"),
         }
     }
@@ -62,37 +75,39 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     static addSectionToTableDataIfNecessary(data: any): any {
         const defaultSchemaSection = Project.defaultSchemaSection()
 
-        if(!data.sectionId && defaultSchemaSection) {
-            data.sectionId = defaultSchemaSection ? defaultSchemaSection.id : null
+        if (!data.sectionId && defaultSchemaSection) {
+            data.sectionId = defaultSchemaSection
+                ? defaultSchemaSection.id
+                : null
         }
 
         return data
     }
 
     isValid(): boolean {
-        return !! this.name
+        return !!this.name
     }
 
     saveFromInterface(addModel: boolean = false) {
         let creating = false
 
-        if(!this.isSaved()) creating = true
+        if (!this.isSaved()) creating = true
 
         this.createdFromInterface = creating
 
         this.save()
 
-        if(creating) CreateDefaultTableColumns.setTable(this).create()
-        if(addModel) CreateDefaultTableModel.setTable(this).create()
+        if (creating) CreateDefaultTableColumns.setTable(this).create()
+        if (addModel) CreateDefaultTableModel.setTable(this).create()
 
         return this
     }
 
     remove() {
-        if(this.isNew()) {
+        if (this.isNew()) {
             return this.delete()
         }
-        
+
         this.removed = true
 
         this.pivotRelationships.forEach((relationship) => relationship.remove())
@@ -107,19 +122,21 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     hasSchemaChanges(comparisonData: any): boolean {
-        if(!this.schemaState) return true
-        
+        if (!this.schemaState) return true
+
         return this.hasDataChanges(comparisonData)
     }
 
     hasDataChanges(data: any): boolean {
         const dataComparisonMap = this.dataComparisonMap(data)
 
-        return Object.keys(dataComparisonMap).some(key => dataComparisonMap[key])
+        return Object.keys(dataComparisonMap).some(
+            (key) => dataComparisonMap[key]
+        )
     }
 
     applyChanges(data: any) {
-        if(!this.hasSchemaChanges(data)) return false
+        if (!this.hasSchemaChanges(data)) return false
 
         this.name = data.name
         this.migrations = data.migrations
@@ -145,7 +162,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     /**
-     * The next two methods (buildSchemaState and dataComparisonMap) are extremely 
+     * The next two methods (buildSchemaState and dataComparisonMap) are extremely
      * important to keep the state of the schema,
      * and both need to reflect the same data structure to avoid false positives when
      * comparing the data between the schema state and the current state.
@@ -160,9 +177,18 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
 
     dataComparisonMap(comparisonData: any) {
         return {
-            name: DataComparator.stringsAreDifferent(this.schemaState.name, comparisonData.name),
-            oldNames: DataComparator.arraysAreDifferent(this.schemaState.oldNames, comparisonData.oldNames),
-            migrations: DataComparator.arraysAreDifferent(this.schemaState.migrations, comparisonData.migrations),
+            name: DataComparator.stringsAreDifferent(
+                this.schemaState.name,
+                comparisonData.name
+            ),
+            oldNames: DataComparator.arraysAreDifferent(
+                this.schemaState.oldNames,
+                comparisonData.oldNames
+            ),
+            migrations: DataComparator.arraysAreDifferent(
+                this.schemaState.migrations,
+                comparisonData.migrations
+            ),
         }
     }
 
@@ -176,13 +202,15 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
      * @returns {string[]}
      */
     static nonTouchableProperties(): string[] {
-        return ['migrations']
+        return ["migrations"]
     }
 
     isDirty(): boolean {
         const hasDirtyResources = this.hasDirtyResources()
 
-        return !this.isRemoved() && (this.hasLocalChanges() || hasDirtyResources)
+        return (
+            !this.isRemoved() && (this.hasLocalChanges() || hasDirtyResources)
+        )
     }
 
     hasDirtyResources(): boolean {
@@ -198,29 +226,37 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     hasLocalChanges(): boolean {
-        if(!this.schemaState) return false
+        if (!this.schemaState) return false
 
         return this.hasDataChanges(this)
     }
 
     getFirstTableName(): string {
-        if(!this.oldNames || !this.oldNames.length) return this.getCanonicalName()
+        if (!this.oldNames || !this.oldNames.length)
+            return this.getCanonicalName()
 
         return this.oldNames[0]
     }
 
     logDataComparison(): void {
-        console.log('Showing changes for table ' + this.name)
+        console.log("Showing changes for table " + this.name)
 
         DataComparisonLogger.setInstance(this).log()
     }
 
     hasColumn(columnName: string): boolean {
-        return this.getColumns().find((column) => column.name === columnName) !== undefined
+        return (
+            this.getColumns().find((column) => column.name === columnName) !==
+            undefined
+        )
     }
 
     hasColumnExceptId(columnName: string, columnId: string): boolean {
-        return this.getColumns().find((column) => column.name === columnName && column.id != columnId) !== undefined
+        return (
+            this.getColumns().find(
+                (column) => column.name === columnName && column.id != columnId
+            ) !== undefined
+        )
     }
 
     hasPrimaryKey(): boolean {
@@ -232,7 +268,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     getPrimaryKeyName(): string {
-        if(!this.hasPrimaryKey()) return ''
+        if (!this.hasPrimaryKey()) return ""
 
         return this.getPrimaryKeyColumn().name
     }
@@ -252,7 +288,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     findColumnByName(columnName: string): Column {
         return this.getColumns().find((column) => column.name === columnName)
     }
-    
+
     findColumnById(id: string): Column {
         return this.getColumns().find((column) => column.id === id)
     }
@@ -270,7 +306,9 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     getChangedColumns(): Column[] {
-        return this.getValidColumns().filter((column) => column.hasLocalChanges())
+        return this.getValidColumns().filter((column) =>
+            column.hasLocalChanges()
+        )
     }
 
     getNotRenamedChangedColumns(): Column[] {
@@ -280,7 +318,9 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     getColumnsWithRemovedUnique(): Column[] {
-        return this.getValidColumns().filter((column) => column.implicitUniqueWasRemoved())
+        return this.getValidColumns().filter((column) =>
+            column.implicitUniqueWasRemoved()
+        )
     }
 
     getColumnsNames(): string[] {
@@ -302,7 +342,10 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     hasIndex(indexName: string): boolean {
-        return this.getIndexes().find((index) => index.name === indexName) !== undefined
+        return (
+            this.getIndexes().find((index) => index.name === indexName) !==
+            undefined
+        )
     }
 
     doesNotHaveIndex(indexName: string): boolean {
@@ -353,17 +396,22 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     hasPrimaryIndexForColumn(column: Column): boolean {
-        return this.getIndexes().find((index: Index) => index.isPrimary() && index.hasColumn(column.name)) !== undefined
+        return (
+            this.getIndexes().find(
+                (index: Index) =>
+                    index.isPrimary() && index.hasColumn(column.name)
+            ) !== undefined
+        )
     }
 
     getColumns(): Column[] {
-        if(!this.columns) return []
+        if (!this.columns) return []
 
         return this.columns.filter((column) => !column.isRemoved())
     }
 
     hasUniqueColumns(): boolean {
-        return !! this.getUniqueColumns().length
+        return !!this.getUniqueColumns().length
     }
 
     getUniqueColumns(): Column[] {
@@ -371,11 +419,13 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     getValidColumns(): Column[] {
-        return this.getColumns().filter((column) => !! column.type?.length && !! column.name?.length)
+        return this.getColumns().filter(
+            (column) => !!column.type?.length && !!column.name?.length
+        )
     }
 
     getAllOrderedColumns(): Column[] {
-        if(!this.columns) return []
+        if (!this.columns) return []
         return this.columns.sort((a, b) => a.order - b.order)
     }
 
@@ -386,7 +436,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     getFirstColumn(): Column {
         const columns = this.getOrderedColumns()
 
-        if(!columns.length) return null
+        if (!columns.length) return null
 
         return columns[0]
     }
@@ -394,7 +444,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     getLastColumn(): Column {
         const columns = this.getOrderedColumns()
 
-        if(!columns.length) return null
+        if (!columns.length) return null
 
         return columns[columns.length - 1]
     }
@@ -404,13 +454,15 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     getLastDefaultDateColumn(): Column {
-        return this.getOrderedColumns().reverse().find((column) => column.isDefaultDate())
+        return this.getOrderedColumns()
+            .reverse()
+            .find((column) => column.isDefaultDate())
     }
 
     getIndexes(): Index[] {
         return this.indexes.filter((index) => !index.isRemoved())
     }
-    
+
     hasNewRelatedTables(): boolean {
         return this.getRelatedTables().some((table) => table.isNew())
     }
@@ -420,19 +472,19 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     hasRelatedTables(): boolean {
-        return !! this.getRelatedTables().length
+        return !!this.getRelatedTables().length
     }
 
     cannotBeChildrenOf(table: Table): boolean {
-        return ! this.canBeChildrenOf(table)
+        return !this.canBeChildrenOf(table)
     }
 
     canBeChildrenOf(table: Table): boolean {
-        if(!table) return false
+        if (!table) return false
 
-        if(!table.isNew()) return true
+        if (!table.isNew()) return true
 
-        if(this.isParentOf(table)) return false
+        if (this.isParentOf(table)) return false
 
         return true
     }
@@ -447,9 +499,9 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         this.getForeignIndexes().forEach((index) => {
             const foreignTable = index.getForeignTable()
 
-            if(!foreignTable) return
+            if (!foreignTable) return
 
-            if(foreignTable.id === table.id) {
+            if (foreignTable.id === table.id) {
                 isChildren = true
             }
         })
@@ -458,7 +510,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     hasChildrenTables(): boolean {
-        return !! this.getChildrenTables().length
+        return !!this.getChildrenTables().length
     }
 
     getChildrenTables(): Table[] {
@@ -466,7 +518,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     hasParentTables(): boolean {
-        return !! this.getParentTables().length
+        return !!this.getParentTables().length
     }
 
     getParentTables(): Table[] {
@@ -474,12 +526,15 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     getRelatedTables(): Table[] {
-        return this.getRelatedTablesRelations().map((relation) => relation.table)
+        return this.getRelatedTablesRelations().map(
+            (relation) => relation.table
+        )
     }
 
     getRelatedTablesRelationsOnSection(section: SchemaSection): any[] {
-        return this.getRelatedTablesRelations()
-            .filter((relation) => relation.table.sectionId === section.id)
+        return this.getRelatedTablesRelations().filter(
+            (relation) => relation.table.sectionId === section.id
+        )
     }
 
     getRelatedTablesRelations(): any[] {
@@ -489,37 +544,36 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         this.getForeignIndexes().forEach((index) => {
             const foreignTable = index.getForeignTable()
 
-            if(!foreignTable) return
+            if (!foreignTable) return
 
-            if(foreignTable && !relatedTablesIds.includes(foreignTable.id)) {
-                
+            if (foreignTable && !relatedTablesIds.includes(foreignTable.id)) {
                 relatedTables[foreignTable.id] = {
                     table: foreignTable,
-                    type: 'foreign',
+                    type: "foreign",
                 }
 
                 relatedTablesIds.push(foreignTable.id)
             }
         })
-        
+
         this.getRelationships().forEach((relationship: Relationship) => {
             let relatedTable = relationship.relatedModel?.table
 
-            if(relationship.pivot) {
+            if (relationship.pivot) {
                 relatedTable = relationship.pivot
             }
 
-            if(relatedTable) {
-                if(relatedTablesIds.includes(relatedTable.id)) {
+            if (relatedTable) {
+                if (relatedTablesIds.includes(relatedTable.id)) {
                     const existingTable = relatedTables[relatedTable.id]
 
-                    if(existingTable) {
-                        existingTable.type = 'both'
+                    if (existingTable) {
+                        existingTable.type = "both"
                     }
                 } else {
                     relatedTables[relatedTable.id] = {
                         table: relatedTable,
-                        type: 'relationship',
+                        type: "relationship",
                     }
 
                     relatedTablesIds.push(relatedTable.id)
@@ -531,7 +585,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     getModels(): Model[] {
-        if(!this.models) return []
+        if (!this.models) return []
         return this.models.filter((model: Model) => !model.isRemoved())
     }
 
@@ -539,35 +593,37 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         let relationships: Relationship[] = []
 
         this.getModels().forEach((model: Model) => {
-            relationships = relationships
-                .concat(model.getValidOwnRelationships())
+            relationships = relationships.concat(
+                model.getValidOwnRelationships()
+            )
         })
 
         return relationships
     }
 
     hasTimestamps(): boolean {
-        return this.hasColumn('created_at') 
-            && this.hasColumn('updated_at')
+        return this.hasColumn("created_at") && this.hasColumn("updated_at")
     }
 
     hasSoftDeletes(): boolean {
-        return this.hasColumn('deleted_at')
+        return this.hasColumn("deleted_at")
     }
 
     hasMigrations(): boolean {
-        return (!! this.migrations) && this.migrations.length > 0
+        return !!this.migrations && this.migrations.length > 0
     }
 
     latestMigrationCreatedTable(): boolean {
         const latestMigration = this.getLatestMigration(),
             tableName = this.getCanonicalName()
 
-        return !! (latestMigration && latestMigration.createdTables.includes(tableName))
+        return !!(
+            latestMigration && latestMigration.createdTables.includes(tableName)
+        )
     }
 
     getLatestMigration(): any {
-        if(!this.hasMigrations()) return null
+        if (!this.hasMigrations()) return null
 
         return this.migrations[this.migrations.length - 1] || null
     }
@@ -575,43 +631,68 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     getLatestUpdaterMigration(): any {
         const latestMigration = this.getLatestMigration()
 
-        if(!latestMigration) return null
+        if (!latestMigration) return null
 
-        if(latestMigration.createdTables.includes(this.name)) return null
+        if (latestMigration.createdTables.includes(this.name)) return null
 
         return latestMigration
     }
 
     needsCreationMigration(): boolean {
+        if (this.project.isBlueprintModeEnabled()) return this.isNew()
+
         return !this.hasCreationMigration() && !this.isRemoved()
     }
 
     hasCreationMigration(): boolean {
-        return !! this.getCreationMigration()
+        return !!this.getCreationMigration()
     }
 
     getCreationMigration(): any {
-        if(!this.hasMigrations()) return null
+        if (!this.hasMigrations()) return null
 
         const tableName = this.getFirstTableName()
-        
-        return this.migrations.find((migration) => migration.createdTables.includes(tableName))
+
+        return this.migrations.find((migration) =>
+            migration.createdTables.includes(tableName)
+        )
+    }
+
+    registerCreationMigration(name: string): void {
+        if (!this.hasMigrations()) this.migrations = []
+
+        const tableName = this.getFirstTableName()
+
+        this.migrations.push({
+            createdTables: [tableName],
+            changedTables: [],
+            renamedTables: [],
+            datePrefix: "",
+            fullPrefix: "",
+            migration: "",
+            migrationName: name,
+            relativePath: "",
+        })
     }
 
     probablyNeedsToUpdateLatestMigration(): boolean {
-        return this.canUpdateLatestMigration() 
-            && this.latestMigrationCreatedTable()
-            && this.wasRenamed()
+        return (
+            this.canUpdateLatestMigration() &&
+            this.latestMigrationCreatedTable() &&
+            this.wasRenamed()
+        )
     }
 
     canUpdateLatestMigration(): boolean {
-        return this.hasMigrations() 
-            && !this.isRemoved() 
-            && !this.hasNewRelatedTables()
+        return (
+            this.hasMigrations() &&
+            !this.isRemoved() &&
+            !this.hasNewRelatedTables()
+        )
     }
 
     wasCreatedFromInterface(): boolean {
-        return !! this.createdFromInterface
+        return !!this.createdFromInterface
     }
 
     canCreateNewMigration(): boolean {
@@ -619,32 +700,34 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     getColumnByName(columnName: string): Column {
-        return this.columns.find(column => column.name == columnName)
+        return this.columns.find((column) => column.name == columnName)
     }
 
     addForeign(name: string, relatedModel: Model): Index {
         const column = this.getOrCreateForeignColumn(name, relatedModel)
 
-        if(column.isForeign()) return
+        if (column.isForeign()) return
 
-        const foreignName = `${WordManipulator.snakeCase(this.name)}_${WordManipulator.snakeCase(column.name)}_foreign`.toLowerCase(),
+        const foreignName = `${WordManipulator.snakeCase(
+                this.name
+            )}_${WordManipulator.snakeCase(column.name)}_foreign`.toLowerCase(),
             primaryKeyColumn = relatedModel.getPrimaryKeyColumn(),
             foreign = new Index({
                 tableId: this.id,
                 name: foreignName,
                 columns: [column.name],
-                type: 'foreign',
+                type: "foreign",
                 on: relatedModel.table.name,
                 onTableId: relatedModel.table.id,
                 references: primaryKeyColumn?.name,
                 referencesColumnId: primaryKeyColumn?.id,
-                onUpdate: 'cascade',
-                onDelete: 'cascade'
+                onUpdate: "cascade",
+                onDelete: "cascade",
             })
-        
+
         foreign.save()
-        foreign.relation('indexColumns').attachUnique(column)
-        
+        foreign.relation("indexColumns").attachUnique(column)
+
         return foreign
     }
 
@@ -652,9 +735,12 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         let column = this.getColumnByName(name),
             primaryKey = relatedModel.getPrimaryKeyColumn()
 
-        if(!primaryKey) throw new Error('Related model has no primary key when trying to create foreign')
+        if (!primaryKey)
+            throw new Error(
+                "Related model has no primary key when trying to create foreign"
+            )
 
-        if(!column) {
+        if (!column) {
             column = new Column({
                 tableId: this.id,
                 name: name,
@@ -666,7 +752,7 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
         // TODO: save column order
 
         // If is related with the same model, the field needs to be nullable
-        if(this.id === relatedModel.id) {
+        if (this.id === relatedModel.id) {
             column.nullable = true
         }
 
@@ -676,18 +762,20 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     getLabelColumnName(): string {
-        return this.getLabelColumn().name || 'id'
+        return this.getLabelColumn().name || "id"
     }
 
     getLabelColumn(): Column {
-        if(this.labelColumn) return this.labelColumn
+        if (this.labelColumn) return this.labelColumn
 
-        let nameField = this.columns.find(column => column.name == 'name' || column.name == 'title'),
-            firstStringField = this.columns.find(column => column.isTextual())
+        let nameField = this.columns.find(
+                (column) => column.name == "name" || column.name == "title"
+            ),
+            firstStringField = this.columns.find((column) => column.isTextual())
 
-        if(nameField) return nameField
+        if (nameField) return nameField
 
-        if(firstStringField) return firstStringField
+        if (firstStringField) return firstStringField
 
         return this.getPrimaryKeyColumn()
     }
@@ -699,15 +787,15 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     undoAllColumnsChanges() {
-        this.columns.forEach(column => column.undoChanges())
+        this.columns.forEach((column) => column.undoChanges())
     }
 
     undoAllIndexesChanges() {
-        this.indexes.forEach(index => index.undoChanges())
+        this.indexes.forEach((index) => index.undoChanges())
     }
 
     belongsToASection(): boolean {
-        return !! this.sectionId
+        return !!this.sectionId
     }
 
     moveToSection(section: SchemaSection) {
@@ -736,9 +824,9 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
 
     isLaravelDefaultTable(): boolean {
         return [
-            "password_reset_tokens", 
+            "password_reset_tokens",
             "personal_access_tokens",
-            "sessions", 
+            "sessions",
             "migrations",
             "cache",
             "cache_locks",
@@ -749,18 +837,14 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     isJetstreamDefaultTable(): boolean {
-        return [
-            "teams", 
-            "team_user", 
-            "team_invitations"
-        ].includes(this.name)
+        return ["teams", "team_user", "team_invitations"].includes(this.name)
     }
 
     getColumnsOrders(): any[] {
         return this.getOrderedColumns().map((column) => {
             return {
                 name: column.name,
-                order: column.order
+                order: column.order,
             }
         })
     }
@@ -773,26 +857,36 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
     }
 
     onSpecialColumnChanged(): void {
-        const hasUuid = this.columns.some(column => column && column.isOfTypeUuid() && column.isPrimaryKey());
-        const hasUlid = this.columns.some(column => column && column.isOfTypeUlid() && column.isPrimaryKey());
-    
+        const hasUuid = this.columns.some(
+            (column) => column && column.isOfTypeUuid() && column.isPrimaryKey()
+        )
+        const hasUlid = this.columns.some(
+            (column) => column && column.isOfTypeUlid() && column.isPrimaryKey()
+        )
+
         const traits = [
-            { trait: 'Illuminate\\Database\\Eloquent\\Concerns\\HasUuids', hasType: hasUuid },
-            { trait: 'Illuminate\\Database\\Eloquent\\Concerns\\HasUlids', hasType: hasUlid }
-        ];
-    
-        this.models.forEach(model => {
+            {
+                trait: "Illuminate\\Database\\Eloquent\\Concerns\\HasUuids",
+                hasType: hasUuid,
+            },
+            {
+                trait: "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids",
+                hasType: hasUlid,
+            },
+        ]
+
+        this.models.forEach((model) => {
             traits.forEach(({ trait, hasType }) => {
-                const includesTrait = model.traits.includes(trait);
-    
+                const includesTrait = model.traits.includes(trait)
+
                 if (hasType && !includesTrait) {
-                    model.traits.push(trait);
+                    model.traits.push(trait)
                 } else if (!hasType && includesTrait) {
-                    model.traits = model.traits.filter(i => i !== trait);
+                    model.traits = model.traits.filter((i) => i !== trait)
                 }
-            });
-    
-            model.saveFromInterface();
-        });
+            })
+
+            model.saveFromInterface()
+        })
     }
 }

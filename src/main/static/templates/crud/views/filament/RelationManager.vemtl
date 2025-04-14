@@ -9,7 +9,7 @@
 
 <% const pascalCase = this.require('pascalCase') %>
 <% const parentResourceName = pascalCase(`${this.detail.crud.name}Resource`) %>
-<% const tableIsSoftDeletes = this.detail.detailCrud.table.hasSoftDeletes() %>
+<% const tableHasSoftDeletes = this.detail.detailCrud.table.hasSoftDeletes() %>
 <% const isManyToManyDetail = this.detail.detailCrud.isManyToManyDetail() %>
 <% const firstRelatedModelCrud = this.detail.relationship.relatedModel.getFirstCrud() %>
 <% const relationCrudInputs = (isManyToManyDetail && firstRelatedModelCrud) ? new Set([...firstRelatedModelCrud.getInputsForForms(), ...this.detail.detailCrud.getInputsForForms()]) : this.detail.detailCrud.getInputsForForms() %>
@@ -23,7 +23,7 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Forms\Components\Grid;
 use Illuminate\Database\Eloquent\Builder;
-<% if(tableIsSoftDeletes) { %>
+<% if(tableHasSoftDeletes) { %>
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 <% } %>
 use Filament\Resources\RelationManagers\RelationManager;
@@ -71,7 +71,7 @@ class <$ this.filenameWithoutExtension $> extends RelationManager
             ])
             ->filters([
                 // hook:TABLE_FILTERS
-                <% if(tableIsSoftDeletes) { %>
+                <% if(tableHasSoftDeletes) { %>
                     Tables\Filters\TrashedFilter::make(),
                 <% } %>
             ])
@@ -96,7 +96,7 @@ class <$ this.filenameWithoutExtension $> extends RelationManager
                 // hook:TABLE_ACTIONS
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
-                <% if(tableIsSoftDeletes) { %>
+                <% if(tableHasSoftDeletes) { %>
                     Tables\Actions\ForceDeleteAction::make(),
                     Tables\Actions\RestoreAction::make(),
                 <% } %>
@@ -109,7 +109,7 @@ class <$ this.filenameWithoutExtension $> extends RelationManager
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                     // hook:TABLE_BULK_ACTIONS
-                    <% if(tableIsSoftDeletes) { %>
+                    <% if(tableHasSoftDeletes) { %>
                         Tables\Actions\RestoreBulkAction::make(),
                         Tables\Actions\ForceDeleteBulkAction::make(),
                     <% } %>
@@ -119,7 +119,7 @@ class <$ this.filenameWithoutExtension $> extends RelationManager
                     <% } %>
                 ]),
             ])
-            <% if(tableIsSoftDeletes) { %>
+            <% if(tableHasSoftDeletes) { %>
             ->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]))
