@@ -308,9 +308,15 @@
                 </template>
                 
                 <div class="flex flex-col gap-2" v-if="relationship.isManyToMany() || relationship.isManyToManyMorph()">
-                    <UiCheckbox v-model="relationship.withPivotColumns" label="With Pivot Columns" @input="$emit('save')" />
+                    <UiCheckbox
+                        v-model="relationship.withPivotColumns"
+                        label="With Pivot Columns"
+                        :disabled="!relationship.pivot"
+                        :hint="!relationship.pivot ? 'The relationship needs to be saved before selecting the pivot columns.' : ''"
+                        hint-type="warning"
+                    />
 
-                    <div v-if="relationship.withPivotColumns">
+                    <div v-if="relationship.withPivotColumns && relationship.pivot">
                         <UiMultiSelect
                             inputLabel="Included Pivot Columns"
                             :default-value="getSelectDataForLayout(relationship.includedPivotColumns)"
