@@ -222,7 +222,7 @@
             </div>
             <div class="flex gap-3">
                 <div class="m-1 flex-1">
-                    <UiNumber label="Length" v-model="column.length" @input="column.saveFromInterface()" />
+                    <UiNumber label="Length" v-model="column.length" disable-label="Integer columns do not support the length option" :disabled="column.hasLengthDisabled()" @input="column.saveFromInterface()" />
                 </div>
                 <div class="m-1 flex-1 mt-1">
                     <UiText label="Default Value" v-model="column.default" @input="column.saveFromInterface()" />
