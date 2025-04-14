@@ -14,6 +14,7 @@ import SchemaSection from './SchemaSection'
 interface TableMigration {
     createdTables: string[]
     changedTables: string[]
+    renamedTables: string[]
     datePrefix: string
     fullPrefix: string
     migration: string // the full migration path
