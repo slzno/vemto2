@@ -1,6 +1,6 @@
-import Table from './Table'
-import Project from './Project'
-import RelaDB from '@tiago_silva_pereira/reladb'
+import Table from "./Table"
+import Project from "./Project"
+import RelaDB from "@tiago_silva_pereira/reladb"
 
 export default class SchemaSection extends RelaDB.Model {
     id: string
@@ -20,10 +20,26 @@ export default class SchemaSection extends RelaDB.Model {
         }
     }
 
+    static creating(data: any) {
+        if (data.scrollX === undefined || data.scrollX === null) {
+            data.scrollX = 0
+        }
+
+        if (data.scrollY === undefined || data.scrollY === null) {
+            data.scrollY = 0
+        }
+
+        if (data.zoom === undefined || data.zoom === null) {
+            data.zoom = 100
+        }
+
+        return data
+    }
+
     static deleting(section: SchemaSection) {
         const defaultSection = section.project.getDefaultSchemaSection()
 
-        section.tables.forEach(table => {
+        section.tables.forEach((table) => {
             table.moveToSection(defaultSection)
         })
     }
@@ -33,18 +49,18 @@ export default class SchemaSection extends RelaDB.Model {
     }
 
     canBeRemoved() {
-        if(this.project.schemaSections.length <= 1) return false
+        if (this.project.schemaSections.length <= 1) return false
 
         return !this.isDefault()
     }
 
     hasScroll(): boolean {
-        return !! this.scrollX && !! this.scrollY
+        return !!this.scrollX && !!this.scrollY
     }
 
     centerScroll(canvasWidth, canvasHeight, baseSize: number = 50000) {
-        this.scrollX = (baseSize / 2) - (canvasWidth / 2)
-        this.scrollY = (baseSize / 2) - (canvasHeight / 2)
+        this.scrollX = baseSize / 2 - canvasWidth / 2
+        this.scrollY = baseSize / 2 - canvasHeight / 2
         this.save()
     }
 
@@ -55,7 +71,7 @@ export default class SchemaSection extends RelaDB.Model {
     }
 
     checkAndDelete() {
-        if(this.isDefault()) {
+        if (this.isDefault()) {
             throw new Error("Cannot delete default schema section")
         }
 
@@ -77,48 +93,53 @@ export default class SchemaSection extends RelaDB.Model {
     }
 
     // New methods for handling zoom
-    
+
     /**
      * Get the zoom level for this section
      * Falls back to project zoom if not set
      */
     getZoom(): number {
         if (this.zoom === undefined || this.zoom === null) {
-            return this.project ? this.project.currentZoom : 100;
+            if(this.project && this.project.currentZoom !== undefined) {
+                return this.project.currentZoom
+            }
+
+            return 100 // Default zoom level
         }
-        return this.zoom;
+        
+        return this.zoom
     }
 
     /**
      * Get zoom as scale (decimal value)
      */
     getZoomAsScale(): number {
-        return this.getZoom() / 100;
+        return this.getZoom() / 100
     }
 
     /**
      * Save zoom level for this section
      */
     saveZoom(zoomLevel: number): void {
-        this.zoom = zoomLevel;
-        this.save();
+        this.zoom = zoomLevel
+        this.save()
     }
 
     /**
      * Increase zoom level
      */
     zoomIn(): void {
-        const currentZoom = this.getZoom();
-        if (currentZoom >= 200) return;
-        this.saveZoom(currentZoom + 10);
+        const currentZoom = this.getZoom()
+        if (currentZoom >= 200) return
+        this.saveZoom(currentZoom + 10)
     }
 
     /**
      * Decrease zoom level
      */
     zoomOut(): void {
-        const currentZoom = this.getZoom();
-        if (currentZoom <= 10) return;
-        this.saveZoom(currentZoom - 10);
+        const currentZoom = this.getZoom()
+        if (currentZoom <= 10) return
+        this.saveZoom(currentZoom - 10)
     }
 }

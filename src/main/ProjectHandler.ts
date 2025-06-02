@@ -15,6 +15,7 @@ export default class ProjectHandler {
 
     static handle() {
         ipcMain.handle("prepare:project", async (event, projectPath) => {
+            console.log('Preparing project at path:', projectPath)
             return handleError(event, async () => {
                 console.log('Preparing project...')
     
