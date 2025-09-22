@@ -23,15 +23,27 @@ return new class extends Migration {
     public function down()
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->bigInteger('id')->autoIncrement();
-            $table->string('name', 255);
+            $table->id();
+
+            $table->string('name', 255)->index();
+
             $table->string('last_name', 255);
-            $table->string('avatar_renamed', 255)->nullable();
+
+            $table
+                ->string('avatar_renamed', 255)
+                ->default('avatar')
+                ->nullable();
+
             $table->string('email', 255)->unique();
+
             $table->timestamp('email_verified_at')->nullable();
+
             $table->string('password', 255);
+
             $table->string('remember_token', 100)->nullable();
+
             $table->timestamp('created_at')->nullable();
+
             $table->timestamp('updated_at')->nullable();
 
             $table->index('name');

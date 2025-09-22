@@ -1,6 +1,7 @@
 import Project from "@Common/models/Project"
 import RelaDB from "@tiago_silva_pereira/reladb"
 import ModelRegistry from "@Common/ModelRegistry"
+import TestHelper from "./TestHelper"
 
 export default class MockDatabase {
 
@@ -17,9 +18,14 @@ export default class MockDatabase {
             RelaDB.Resolver.db().driver.storeBaseData()
         )
 
-        const project = new Project
-        project.name = "Test Project"
-        project.save()
+        let project = Project.find(1)
+        
+        if(project) {
+            console.log('Deleting existing project')
+            project.delete()
+        }
+
+        TestHelper.createProject()
 
         return database
     }

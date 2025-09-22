@@ -53,6 +53,11 @@ export default new class TestHelper {
     createProject() {
         const project = new Project
         project.name = "Test Project"
+
+        project.settings = {
+            laravelVersion: "12.x",
+        }
+        
         project.save()
 
         this.addProjectBasicData(project)
