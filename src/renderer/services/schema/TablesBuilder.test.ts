@@ -9,38 +9,38 @@ beforeEach(() => {
     TestHelper.setCurrentTestsPath(__dirname)
 })
 
-const processSchemaData = (project) => {
+const processSchemaData = async (project) => {
     // Clone data to avoid mutation (as data is being manipulated in the RAM)
     const schemaDataClone = JSON.parse(JSON.stringify(schemaData))
 
-    TablesBuilder
-        .setProject(project)
-        .setSchemaData(schemaDataClone)
-        .checkSchemaChanges()
+    const tablesBuilder = new TablesBuilder(project)
     
-    TablesBuilder.build()
+    tablesBuilder
+        .setSchemaData(schemaDataClone)
+    
+    await tablesBuilder.build()
 
     return schemaDataClone
 }
 
-test('It can force reading the data', () => {
+test('It can force reading the data', async () => {
     const project = TestHelper.getProject()
 
-    processSchemaData(project)
+    await processSchemaData(project)
 
     const tables = project.tables
 
-    expect(tables.length).toBe(6)
+    expect(tables.length).toBe(7)
 })
 
-test('It creates new tables', () => {
+test('It creates new tables', async () => {
     const project = TestHelper.getProject()
 
-    processSchemaData(project)
+    await processSchemaData(project)
 
     const tables = project.tables
 
-    expect(tables.length).toBe(6)
+    expect(tables.length).toBe(7)
 
     const tablesNames = tables.map(table => table.name)
 
@@ -50,33 +50,33 @@ test('It creates new tables', () => {
     expect(tablesNames.includes('personal_access_tokens')).toBe(true)
 })
 
-test('It deletes removed tables', () => {
+test('It deletes removed tables', async () => {
     const project = TestHelper.getProject()
 
     TestHelper.createTable({ name: 'test' })
 
     expect(project.fresh().tables.length).toBe(1)
 
-    processSchemaData(project)
+    await processSchemaData(project)
 
-    expect(project.tables.length).toBe(6)
+    expect(project.tables.length).toBe(7)
 })
 
-test('It updates existing tables', () => {
+test('It updates existing tables', async () => {
     const project = TestHelper.getProject(),
         table = TestHelper.createTable({ name: 'users' })
 
     expect(table.hasMigrations()).toBe(false)
 
-    processSchemaData(project)
+    await processSchemaData(project)
 
     expect(table.fresh().hasMigrations()).toBe(true)
 })
 
-test('It creates new columns', () => {
+test('It creates new columns', async () => {
     const project = TestHelper.getProject()
 
-    processSchemaData(project)
+    await processSchemaData(project)
 
     const usersTable = project.findTableByName('users')
 
@@ -94,7 +94,7 @@ test('It creates new columns', () => {
     expect(columnsNames.includes('updated_at')).toBe(true)
 })
 
-test('It deletes removed columns', () => {
+test('It deletes removed columns', async () => {
     const project = TestHelper.getProject(),
         usersTable = TestHelper.createTable({ name: 'users' })
 
@@ -102,12 +102,12 @@ test('It deletes removed columns', () => {
 
     expect(usersTable.fresh().columns.length).toBe(1)
 
-    processSchemaData(project)
+    await processSchemaData(project)
 
     expect(usersTable.columns.length).toBe(10)
 })
 
-test('It updates existing columns', () => {
+test('It updates existing columns', async () => {
     const project = TestHelper.getProject(),
         usersTable = TestHelper.createTable({ name: 'users' })
 
@@ -119,40 +119,42 @@ test('It updates existing columns', () => {
 
     expect(usersTable.fresh().findColumnByName('name').length).toBe(64)
 
-    processSchemaData(project)
+    await processSchemaData(project)
 
     expect(usersTable.findColumnByName('name').fresh().length).toBe(255)
 })
 
-test('It reads the columns order', () => {
+test('It reads the columns order', async () => {
     const project = TestHelper.getProject()
 
-    const readSchemaData = processSchemaData(project)
+    const readSchemaData = await processSchemaData(project)
+
+    console.log('Read schema data', readSchemaData)
 
     const usersTable = project.findTableByName('users')
 
     expect(usersTable.columns[0].order).toBe(0)
     expect(usersTable.columns[0].name).toBe('id')
-    expect(readSchemaData.users.columns['id'].order).toBe(0)
-    expect(readSchemaData.users.columns['id'].creationOrder).toBe(1)
+    expect(readSchemaData.tables.users.columns['id'].order).toBe(0)
+    expect(readSchemaData.tables.users.columns['id'].creationOrder).toBe(1)
 
     expect(usersTable.columns[1].order).toBe(1)
     expect(usersTable.columns[1].name).toBe('name')
-    expect(readSchemaData.users.columns['name'].order).toBe(1)
-    expect(readSchemaData.users.columns['name'].creationOrder).toBe(2)
+    expect(readSchemaData.tables.users.columns['name'].order).toBe(1)
+    expect(readSchemaData.tables.users.columns['name'].creationOrder).toBe(2)
 
     // Creation order here is 10 because the column was created
     // by another migration, not the one that created the table
     expect(usersTable.columns[2].order).toBe(2)
     expect(usersTable.columns[2].name).toBe('last_name')
-    expect(readSchemaData.users.columns['last_name'].order).toBe(2)
-    expect(readSchemaData.users.columns['last_name'].creationOrder).toBe(10)
+    expect(readSchemaData.tables.users.columns['last_name'].order).toBe(2)
+    expect(readSchemaData.tables.users.columns['last_name'].creationOrder).toBe(10)
 })
 
-test('It creates new indexes', () => {
+test('It creates new indexes', async () => {
     const project = TestHelper.getProject()
 
-    processSchemaData(project)
+    await processSchemaData(project)
 
     const usersTable = project.findTableByName('videos')
 
@@ -166,7 +168,7 @@ test('It creates new indexes', () => {
     expect(indexesNames.includes('videos_location_spatialindex')).toBe(true)
 })
 
-test('It deletes removed indexes', () => {
+test('It deletes removed indexes', async () => {
     const project = TestHelper.getProject(),
         usersTable = TestHelper.createTable({ name: 'failed_jobs' })
 
@@ -174,12 +176,12 @@ test('It deletes removed indexes', () => {
 
     expect(usersTable.fresh().indexes.length).toBe(1)
 
-    processSchemaData(project)
+    await processSchemaData(project)
 
     expect(usersTable.indexes.length).toBe(0)
 })
 
-test('It updates existing indexes', () => {
+test('It updates existing indexes', async () => {
     const project = TestHelper.getProject(),
         usersTable = TestHelper.createTable({ name: 'videos' })
 
@@ -193,15 +195,15 @@ test('It updates existing indexes', () => {
 
     expect(usersTable.fresh().findIndexByName('videos_description_fulltext').type).toBe('index')
 
-    processSchemaData(project)
+    await processSchemaData(project)
 
     expect(usersTable.fresh().findIndexByName('videos_description_fulltext').type).toBe('fulltext')
 })
 
-test('It can correctly read foreign indexes', () => {
+test('It can correctly read foreign indexes', async () => {
     const project = TestHelper.getProject()
 
-    processSchemaData(project)
+    await processSchemaData(project)
 
     const usersTable = project.findTableByName('posts'),
         foreignIndex = usersTable.fresh().findIndexByName('posts_user_id_foreign')

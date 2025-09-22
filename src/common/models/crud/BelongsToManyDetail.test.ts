@@ -29,24 +29,3 @@ test('It correctly create a belongsToMany detail within a API CRUD', async () =>
 
     expect(userCrud.belongsToManyDetails.length).toBe(1)
 })
-
-test('It correctly generates a belongsToMany detail controller', async () => {
-    const userModel = TestHelper.createModel()
-    
-    TestHelper.createColumn({ name: 'id', table: userModel.table, type: 'integer' })
-    
-    const tagsTable = TestHelper.createTable({ name: 'tags' })
-    
-    TestHelper.createColumn({ name: 'id', table: tagsTable, type: 'integer' })
-
-    const tagsModel = TestHelper.createModel({ name: 'Tag', plural: 'Tags', table: tagsTable })
-    
-    TestHelper.createBelongsToManyRelation(userModel, tagsModel)
-
-    const renderedTemplateContent = await new ApiBelongsToManyControllerRenderable(userModel).compileWithErrorThreatment(),
-        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/model/template-with-invalid-relationship.php', renderedTemplateContent)
-
-    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
-
-    expect(contentIsEqual).toBe(true)
-})

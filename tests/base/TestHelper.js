@@ -276,6 +276,8 @@ export default new class TestHelper {
         relationship.pivotId = pivot.id
 
         relationship.save()
+
+        return relationship
     }
 
     compareCode(code1, code2) {
