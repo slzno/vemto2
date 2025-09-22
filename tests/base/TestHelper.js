@@ -13,6 +13,7 @@ import AppSection from "@Common/models/AppSection"
 import Crud, { CrudType } from "@Common/models/crud/Crud"
 import Relationship from "@Common/models/Relationship"
 import { camelCase } from "change-case"
+import path from "path"
 
 export default new class TestHelper {
 
@@ -289,10 +290,19 @@ export default new class TestHelper {
         return this.readOrCreateFile(templatePath, contentForCreation)
     }
 
-    readOrCreateFile(filePath, contentForCreation) {
+    readOrCreateOutputFile(filePath, contentForCreation, forceCreate = false) {   
+        const path = path.join(__dirname, 'tests/output', filePath)
+        return this.readOrCreateFile(path, contentForCreation, forceCreate)
+    }
+
+    readOrCreateFile(filePath, contentForCreation, forceCreate = false) {
         TestHelper.latestFilePath = filePath
 
-        if(!FileSystem.fileExists(filePath)) {
+        if(process.env.FORCE_CREATE_OUTPUT_FILES) {
+            forceCreate = true
+        }
+
+        if(!FileSystem.fileExists(filePath) || forceCreate) {
             console.log('\x1b[33m%s\x1b[0m', `CREATING FILE: ${filePath}`)
 
             FileSystem.writeFile(filePath, contentForCreation, false)
