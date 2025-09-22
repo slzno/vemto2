@@ -41,8 +41,6 @@ test('It can get the migration name', async () => {
 test('It can generate a migration to rename a table', async () => {
     const project = TestHelper.getProject()
 
-    console.log('Project settings', project.settings)
-
     await processSchemaData(project)
 
     const table = project.findTableByName('users')

@@ -129,8 +129,6 @@ test('It reads the columns order', async () => {
 
     const readSchemaData = await processSchemaData(project)
 
-    console.log('Read schema data', readSchemaData)
-
     const usersTable = project.findTableByName('users')
 
     expect(usersTable.columns[0].order).toBe(0)
