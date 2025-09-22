@@ -1,5 +1,5 @@
 import path from 'path'
-import Index from '@Common/models/Index'
+import Index, { IndexType } from '@Common/models/Index'
 import Column from '@Common/models/Column'
 import TestHelper from '@Tests/base/TestHelper'
 import MockDatabase from '@Tests/base/MockDatabase'
@@ -143,7 +143,7 @@ test('It can change a creation migration when an index was added', async () => {
     index.name = 'new_index'
     index.tableId = table.id
     index.columns = ['token']
-    index.type = 'index'
+    index.type = IndexType.INDEX
     index.saveFromInterface()
 
     const tableUpdater = new UpdateExistingMigration(table)
@@ -168,7 +168,7 @@ test('It can change a creation migration when a multiple columns index was added
     index.name = 'new_index'
     index.tableId = table.id
     index.columns = ['token', 'email']
-    index.type = 'index'
+    index.type = IndexType.INDEX
     index.saveFromInterface()
 
     const tableUpdater = new UpdateExistingMigration(table)
@@ -193,7 +193,7 @@ test('It can change a creation migration when a foreign index was added', async 
     index.name = 'new_index'
     index.tableId = table.id
     index.columns = ['user_id']
-    index.type = 'foreign'
+    index.type = IndexType.FOREIGN
     index.references = 'users'
     index.on = 'id'
     index.saveFromInterface()
@@ -220,7 +220,7 @@ test('It can change a creation migration when a foreign index with cascades was 
     index.name = 'new_index'
     index.tableId = table.id
     index.columns = ['user_id']
-    index.type = 'foreign'
+    index.type = IndexType.FOREIGN
     index.references = 'users'
     index.on = 'id'
     index.onDelete = 'cascade'
@@ -249,7 +249,7 @@ test('It can change a creation migration when a primary index was added', async 
     index.name = 'new_index'
     index.tableId = table.id
     index.columns = ['token']
-    index.type = 'primary'
+    index.type = IndexType.PRIMARY
     index.saveFromInterface()
 
     const tableUpdater = new UpdateExistingMigration(table)
@@ -274,7 +274,7 @@ test('It can change a creation migration when an unique index was added', async 
     index.name = 'new_index'
     index.tableId = table.id
     index.columns = ['token']
-    index.type = 'unique'
+    index.type = IndexType.UNIQUE
     index.saveFromInterface()
 
     const tableUpdater = new UpdateExistingMigration(table)
@@ -299,7 +299,7 @@ test('It can change a creation migration when a fulltext index was added', async
     index.name = 'new_index'
     index.tableId = table.id
     index.columns = ['token']
-    index.type = 'fulltext'
+    index.type = IndexType.FULLTEXT
     index.saveFromInterface()
 
     const tableUpdater = new UpdateExistingMigration(table)
@@ -324,7 +324,7 @@ test('It can change a creation migration when a spatial index was added', async 
     index.name = 'new_index'
     index.tableId = table.id
     index.columns = ['token']
-    index.type = 'spatialIndex'
+    index.type = IndexType.SPATIAL
     index.saveFromInterface()
 
     const tableUpdater = new UpdateExistingMigration(table)
@@ -440,7 +440,7 @@ test('It can change an updater migration when an index was added', async () => {
     index.name = 'new_index'
     index.tableId = table.id
     index.columns = ['token']
-    index.type = 'index'
+    index.type = IndexType.INDEX
     index.saveFromInterface()
 
     const tableUpdater = new UpdateExistingMigration(table)
@@ -465,7 +465,7 @@ test('It can change an updater migration when a multiple columns index was added
     index.name = 'new_index'
     index.tableId = table.id
     index.columns = ['token', 'email']
-    index.type = 'index'
+    index.type = IndexType.INDEX
     index.saveFromInterface()
 
     const tableUpdater = new UpdateExistingMigration(table)
@@ -490,7 +490,7 @@ test('It can change an updater migration when a foreign index was added', async 
     index.name = 'new_index'
     index.tableId = table.id
     index.columns = ['token']
-    index.type = 'foreign'
+    index.type = IndexType.FOREIGN
     index.saveFromInterface()
 
     const tableUpdater = new UpdateExistingMigration(table)
@@ -515,7 +515,7 @@ test('It can change an updater migration when a foreign index with cascades was 
     index.name = 'new_index'
     index.tableId = table.id
     index.columns = ['token']
-    index.type = 'foreign'
+    index.type = IndexType.FOREIGN
     index.onDelete = 'cascade'
     index.onUpdate = 'cascade'
     index.saveFromInterface()
@@ -569,7 +569,7 @@ test('It can change an updater migration when a primary index was added', async 
     index.name = 'new_index'
     index.tableId = table.id
     index.columns = ['token']
-    index.type = 'primary'
+    index.type = IndexType.PRIMARY
     index.saveFromInterface()
 
     const tableUpdater = new UpdateExistingMigration(table)
@@ -594,7 +594,7 @@ test('It can change an updater migration when a unique index was added', async (
     index.name = 'new_index'
     index.tableId = table.id
     index.columns = ['token']
-    index.type = 'unique'
+    index.type = IndexType.UNIQUE
     index.saveFromInterface()
 
     const tableUpdater = new UpdateExistingMigration(table)
@@ -619,7 +619,7 @@ test('It can change an updater migration when a spatial index was added', async 
     index.name = 'new_index'
     index.tableId = table.id
     index.columns = ['token']
-    index.type = 'spatialIndex'
+    index.type = IndexType.SPATIAL
     index.saveFromInterface()
 
     const tableUpdater = new UpdateExistingMigration(table)
@@ -644,7 +644,7 @@ test('It can change an updater migration when a fulltext index was added', async
     index.name = 'new_index'
     index.tableId = table.id
     index.columns = ['token']
-    index.type = 'fulltext'
+    index.type = IndexType.FULLTEXT
     index.saveFromInterface()
 
     const tableUpdater = new UpdateExistingMigration(table)

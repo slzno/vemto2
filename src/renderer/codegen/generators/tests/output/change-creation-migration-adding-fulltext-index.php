@@ -18,6 +18,8 @@ return new class extends Migration {
             $table->string('token', 255);
 
             $table->timestamp('created_at')->nullable();
+
+            $table->fullText('token');
         });
     }
 

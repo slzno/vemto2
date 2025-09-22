@@ -60,6 +60,8 @@ return new class extends Migration {
                 ->timestamp('updated_at')
                 ->nullable()
                 ->change();
+
+            $table->fullText('token');
         });
     }
 
@@ -118,6 +120,8 @@ return new class extends Migration {
                 ->timestamp('updated_at')
                 ->nullable()
                 ->change();
+
+            $table->dropFullText('new_index');
         });
     }
 };

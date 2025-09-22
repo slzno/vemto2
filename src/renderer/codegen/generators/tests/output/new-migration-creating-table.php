@@ -14,16 +14,21 @@ return new class extends Migration {
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->unsignedBigInteger('id')->autoIncrement();
+
             $table->string('title');
+
             $table->string('content');
+
             $table->string('token');
+
             $table->string('user_id');
 
             $table->index('token');
+
             $table
                 ->foreign('user_id')
-                ->references('users')
-                ->on('id');
+                ->references('')
+                ->on('');
         });
     }
 
