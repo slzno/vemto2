@@ -109,6 +109,25 @@ test('It can save schema state separately', () => {
     expect(index.fresh().schemaState.type).toBe(IndexType.INDEX)
 })
 
+test('It does not apply changes when unnecessary', () => {
+    const index = TestHelper.createIndexWithSchemaState()
+
+    Index.savingInternally()
+
+    const indexData = index.export()
+    indexData.type = IndexType.PRIMARY
+
+    let changesWereApplied = index.fresh().applyChanges(indexData)
+
+    expect(changesWereApplied).toBe(true)
+
+    changesWereApplied = index.fresh().applyChanges(indexData)
+
+    expect(changesWereApplied).toBe(false)
+
+    Index.notSavingInternally()
+})
+
 test('An index was not considered renamed when schema state is empty', () => {
     const index = TestHelper.createIndex()
 

@@ -443,6 +443,7 @@ test('It can check if a column is an FK', () => {
         name: 'posts_user_id_foreign',
         references: 'id',
         on: 'users',
+        columns: ['user_id'],
         table: postsTable,
     })
 
