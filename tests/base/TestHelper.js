@@ -92,6 +92,9 @@ export default new class TestHelper {
         table.name = data.name || "users"
         table.projectId = project.id
 
+        table.oldNames = data.oldNames || []
+        table.migrations = data.migrations || []
+
         table.save()
 
         return table
@@ -141,6 +144,7 @@ export default new class TestHelper {
         column.nullable = data.nullable || false
         column.unsigned = data.unsigned || false
         column.tableId = data.table.id
+        column.options = data.options || []
         column.save()
 
         return column
@@ -148,6 +152,7 @@ export default new class TestHelper {
 
     createColumnWithSchemaState(data = {}) {
         Column.savingInternally()
+
         const column = this.createColumn(data)
 
         column.saveSchemaState()

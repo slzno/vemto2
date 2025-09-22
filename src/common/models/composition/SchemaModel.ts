@@ -3,6 +3,7 @@ interface SchemaModel {
 
     hasSchemaChanges(comparisonData: any): boolean
     hasDataChanges(comparisonData: any): boolean
+    getDataComparison(): any
     dataComparisonMap(comparisonData: any): any
     hasLocalChanges(): boolean
     applyChanges(data: any): boolean
