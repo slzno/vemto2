@@ -6,6 +6,7 @@ import schemaData from '@Renderer/services/schema/tests/input/schema-reader-L9.j
 
 beforeEach(() => {
     MockDatabase.start()
+    TestHelper.setCurrentTestsPath(__dirname)
 })
 
 const processSchemaData = (project) => {

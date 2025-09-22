@@ -5,6 +5,7 @@ import { test, expect, beforeEach } from '@jest/globals'
 
 beforeEach(() => {
     MockDatabase.start()
+    TestHelper.setCurrentTestsPath(__dirname)
 })
 
 test('The Index model identifier is correct', () => {

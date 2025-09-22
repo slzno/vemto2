@@ -18,7 +18,9 @@ export default new class Main {
                     throw new Error('Tests path not found')
                 }
 
-                return fs.readFileSync(path.join(testsPath, 'tests/input', filePath), 'utf8')
+                const fullPath = path.join(testsPath, 'tests/input', filePath)
+
+                return fs.readFileSync(fullPath, 'utf8')
             },
 
             writeProjectFile: (filePath: string, content: string) => {

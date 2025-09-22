@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration {
     /**
@@ -14,7 +14,52 @@ return new class extends Migration {
     {
         Schema::table('users', function (Blueprint $table) {
             $table->renameColumn('avatar', 'avatar_renamed');
-            $table->fullText('token');
+
+            $table
+                ->bigInteger('id')
+                ->unsigned()
+                ->autoIncrement()
+                ->change();
+
+            $table
+                ->string('name', 255)
+                ->index()
+                ->change();
+
+            $table->string('last_name', 255)->change();
+
+            $table
+                ->string('avatar_renamed', 255)
+                ->default('avatar')
+                ->nullable()
+                ->change();
+
+            $table
+                ->string('email', 255)
+                ->unique()
+                ->change();
+
+            $table
+                ->timestamp('email_verified_at')
+                ->nullable()
+                ->change();
+
+            $table->string('password', 255)->change();
+
+            $table
+                ->string('remember_token', 100)
+                ->nullable()
+                ->change();
+
+            $table
+                ->timestamp('created_at')
+                ->nullable()
+                ->change();
+
+            $table
+                ->timestamp('updated_at')
+                ->nullable()
+                ->change();
         });
     }
 
@@ -27,7 +72,52 @@ return new class extends Migration {
     {
         Schema::table('users', function (Blueprint $table) {
             $table->renameColumn('avatar_renamed', 'avatar');
-            $table->dropFullText('new_index');
+
+            $table
+                ->bigInteger('id')
+                ->unsigned()
+                ->autoIncrement()
+                ->change();
+
+            $table
+                ->string('name', 255)
+                ->index()
+                ->change();
+
+            $table->string('last_name', 255)->change();
+
+            $table
+                ->string('avatar_renamed', 255)
+                ->default('avatar')
+                ->nullable()
+                ->change();
+
+            $table
+                ->string('email', 255)
+                ->unique()
+                ->change();
+
+            $table
+                ->timestamp('email_verified_at')
+                ->nullable()
+                ->change();
+
+            $table->string('password', 255)->change();
+
+            $table
+                ->string('remember_token', 100)
+                ->nullable()
+                ->change();
+
+            $table
+                ->timestamp('created_at')
+                ->nullable()
+                ->change();
+
+            $table
+                ->timestamp('updated_at')
+                ->nullable()
+                ->change();
         });
     }
 };

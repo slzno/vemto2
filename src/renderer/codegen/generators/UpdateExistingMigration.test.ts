@@ -16,7 +16,7 @@ beforeEach(() => {
     TestHelper.setCurrentTestsPath(__dirname)
 })
 
-const processSchemaData = async (project, mockMigrationsPaths = true) => {
+const processSchemaData = async (project) => {
     // Clone data to avoid mutation (as data is being manipulated in the RAM)
     const schemaDataClone = JSON.parse(JSON.stringify(schemaData))
 
@@ -31,7 +31,7 @@ const processSchemaData = async (project, mockMigrationsPaths = true) => {
 test('It can get the migration name', async () => {
     const project = TestHelper.getProject()
 
-    await processSchemaData(project, false)
+    await processSchemaData(project)
 
     const table = project.findTableByName('users')
 

@@ -9,6 +9,7 @@ jest.mock('@Renderer/services/wrappers/Main')
 
 beforeEach(() => {
     MockDatabase.start()
+    TestHelper.setCurrentTestsPath(__dirname)
 })
 
 test('It correctly create a belongsToMany detail within a API CRUD', async () => {

@@ -8,6 +8,7 @@ jest.mock('@Renderer/services/wrappers/Main')
 
 beforeEach(() => {
     MockDatabase.start()
+    TestHelper.setCurrentTestsPath(__dirname)
 })
 
 test('It correctly fills a crud name and plural when a model has a composed name', async () => {

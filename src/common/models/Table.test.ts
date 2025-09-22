@@ -6,6 +6,7 @@ import Column from './Column'
 
 beforeEach(() => {
     MockDatabase.start()
+    TestHelper.setCurrentTestsPath(__dirname)
 })
 
 test('It can save a new table', () => {

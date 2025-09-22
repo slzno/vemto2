@@ -311,8 +311,6 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
     hasDataChanges(comparisonData: any): boolean {
         const dataComparisonMap = this.dataComparisonMap(comparisonData)
 
-        console.log(dataComparisonMap, comparisonData, this.schemaState)
-
         return Object.keys(dataComparisonMap).some(key => dataComparisonMap[key])
     }
 

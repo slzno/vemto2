@@ -26,12 +26,12 @@ export default new class TestHelper {
         TestHelper.currentTestsPath = testsPath
     }
 
-    setCurrentTestName(name) {
-        TestHelper.currentTestName = name
-    }
-
     getCurrentTestsPath() {
         return TestHelper.currentTestsPath
+    }
+
+    setCurrentTestName(name) {
+        TestHelper.currentTestName = name
     }
 
     setCurrentTestFile(file) {
@@ -299,8 +299,10 @@ export default new class TestHelper {
         return this.readOrCreateFile(templatePath, contentForCreation)
     }
 
-    readOrCreateOutputFile(filePath, contentForCreation, forceCreate = false) {   
-        const fullPath = path.join(__dirname, 'tests/output', filePath)
+    readOrCreateOutputFile(filePath, contentForCreation, forceCreate = false) {
+        const currentTestsPath = this.getCurrentTestsPath() || __dirname
+
+        const fullPath = path.join(currentTestsPath, 'tests/output', filePath)
         return this.readOrCreateFile(fullPath, contentForCreation, forceCreate)
     }
 

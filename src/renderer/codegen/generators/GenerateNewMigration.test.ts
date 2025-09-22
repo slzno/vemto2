@@ -12,6 +12,7 @@ jest.useFakeTimers()
 
 beforeEach(() => {
     MockDatabase.start()
+    TestHelper.setCurrentTestsPath(__dirname)
 })
 
 test('It can get the migration name', () => {
