@@ -465,7 +465,7 @@ test('It can check if a column is a special PK', () => {
     const column = TestHelper.createColumnWithSchemaState()
 
     column.name = 'special_primary_key'
-    column.type = 'uuid'
+    column.isUuid = true
     column.save()
 
     expect(column.isSpecialPrimaryKey()).toBe(true)
