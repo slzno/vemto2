@@ -18,13 +18,6 @@ export default class MockDatabase {
             RelaDB.Resolver.db().driver.storeBaseData()
         )
 
-        let project = Project.find(1)
-        
-        if(project) {
-            console.log('Deleting existing project')
-            project.delete()
-        }
-
         TestHelper.createProject()
 
         return database
