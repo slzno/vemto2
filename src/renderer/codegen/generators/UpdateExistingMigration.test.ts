@@ -7,6 +7,7 @@ import { test, expect, beforeEach, jest } from '@jest/globals'
 import UpdateExistingMigration from './UpdateExistingMigration'
 import TablesBuilder from '@Renderer/services/schema/TablesBuilder'
 import schemaData from '@Renderer/services/schema/tests/input/schema-reader-L9.json'
+import Table from '@Common/models/Table'
 
 jest.mock('@Renderer/services/wrappers/Main')
 
@@ -14,16 +15,16 @@ beforeEach(() => {
     MockDatabase.start()
 })
 
-const processSchemaData = (project, mockMigrationsPaths = true) => {
+const processSchemaData = async (project, mockMigrationsPaths = true) => {
     // Clone data to avoid mutation (as data is being manipulated in the RAM)
     const schemaDataClone = JSON.parse(JSON.stringify(schemaData))
 
-    TablesBuilder
-        .setProject(project)
+    const tablesBuilder = new TablesBuilder(project)
+
+    tablesBuilder
         .setSchemaData(schemaDataClone)
-        .checkSchemaChanges()
-    
-    TablesBuilder.build()
+
+    await tablesBuilder.build()
 
     // Mock paths to get migrations files from the tests directory
     // instead of the real project migrations directory
@@ -37,22 +38,22 @@ const processSchemaData = (project, mockMigrationsPaths = true) => {
     }
 }
 
-test('It can get the migration name', () => {
+test('It can get the migration name', async () => {
     const project = TestHelper.getProject()
 
-    processSchemaData(project, false)
+    await processSchemaData(project, false)
 
     const table = project.findTableByName('users')
 
-    UpdateExistingMigration.setTable(table)
+    const tableUpdater = new UpdateExistingMigration(table)
 
-    expect(UpdateExistingMigration.getName()).toBe('/database/migrations/2019_12_14_000002_change_users_table.php')
+    expect(tableUpdater.getName()).toBe('/database/migrations/2019_12_14_000002_change_users_table.php')
 })
 
 test('It can add the migration to the generation queue and remove the table from changed tables', async () => {
     const project = TestHelper.getProject()
 
-    processSchemaData(project)
+    await processSchemaData(project)
 
     const table = project.findTableByName('users')
     table.markAsChanged()

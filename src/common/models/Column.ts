@@ -358,10 +358,7 @@ export default class Column extends AbstractSchemaModel implements SchemaModel {
     }
 
     fillSchemaState() {
-        console.log('Current', JSON.parse(JSON.stringify(this)))
         this.schemaState = this.buildSchemaState()
-
-        console.log('New', JSON.parse(JSON.stringify(this)))
     }
 
     /**
