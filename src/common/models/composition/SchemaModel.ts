@@ -17,4 +17,5 @@ interface SchemaModel {
     isRemoved(): boolean
     undoChanges(): void    
     logDataComparison(): void
+    export(): any
 }

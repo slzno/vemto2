@@ -138,4 +138,8 @@ export default abstract class AbstractSchemaModel extends RelaDB.Model {
     }
 
     abstract dataComparisonMap(comparisonData: any): any
+
+    export(): any {
+        return JSON.parse(JSON.stringify(this))
+    }
 }
