@@ -290,8 +290,8 @@ export default new class TestHelper {
     }
 
     readOrCreateOutputFile(filePath, contentForCreation, forceCreate = false) {   
-        const path = path.join(__dirname, 'tests/output', filePath)
-        return this.readOrCreateFile(path, contentForCreation, forceCreate)
+        const fullPath = path.join(__dirname, 'tests/output', filePath)
+        return this.readOrCreateFile(fullPath, contentForCreation, forceCreate)
     }
 
     readOrCreateFile(filePath, contentForCreation, forceCreate = false) {
