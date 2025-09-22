@@ -63,7 +63,7 @@ test('It can render the template with an empty model name', async () => {
     expect(userModel.isInvalid()).toBe(true)
 
     const renderedTemplateContent = await new ModelRenderable(userModel).compileWithErrorThreatment(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/model/template-with-empty-name.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/model/template-with-empty-name.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -92,7 +92,7 @@ test('It can render the template with a model with invalid relationships', async
     expect(relationship.isInvalid()).toBe(true)
 
     const renderedTemplateContent = await new ModelRenderable(userModel).compileWithErrorThreatment(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/model/template-with-invalid-relationship.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/model/template-with-invalid-relationship.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -116,7 +116,7 @@ test('It can render the template with a model with invalid relationship data', a
     expect(relationship.isInvalid()).toBe(true)
 
     const renderedTemplateContent = await new ModelRenderable(userModel).compileWithErrorThreatment(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/model/template-with-invalid-relationship.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/model/template-with-invalid-relationship.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -140,7 +140,7 @@ test('It can render the template with an invalid relationship', async () => {
     expect(relationship.isInvalid()).toBe(true)
 
     const renderedTemplateContent = await new ModelRenderable(userModel).compileWithErrorThreatment(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/model/template-with-invalid-relationship.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/model/template-with-invalid-relationship.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 

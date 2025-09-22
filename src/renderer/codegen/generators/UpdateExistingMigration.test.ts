@@ -81,7 +81,7 @@ test('It can change a creation migration when a column was renamed', async () =>
     UpdateExistingMigration.setTable(table)
 
     const renderedTemplateContent = await UpdateExistingMigration.changeCreationMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-creation-migration-renaming-column.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/change-creation-migration-renaming-column.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -104,7 +104,7 @@ test('It can change a creation migration when a column was changed', async () =>
     UpdateExistingMigration.setTable(table)
 
     const renderedTemplateContent = await UpdateExistingMigration.changeCreationMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-creation-migration-changing-column.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/change-creation-migration-changing-column.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -129,7 +129,7 @@ test('It can change a creation migration when a column was added', async () => {
     UpdateExistingMigration.setTable(table)
 
     const renderedTemplateContent = await UpdateExistingMigration.changeCreationMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-creation-migration-adding-column.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/change-creation-migration-adding-column.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -150,7 +150,7 @@ test('It can change a creation migration when a column was removed', async () =>
     UpdateExistingMigration.setTable(table)
 
     const renderedTemplateContent = await UpdateExistingMigration.changeCreationMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-creation-migration-removing-column.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/change-creation-migration-removing-column.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -175,7 +175,7 @@ test('It can change a creation migration when an index was added', async () => {
     UpdateExistingMigration.setTable(table)
 
     const renderedTemplateContent = await UpdateExistingMigration.changeCreationMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-creation-migration-adding-index.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/change-creation-migration-adding-index.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -200,7 +200,7 @@ test('It can change a creation migration when a multiple columns index was added
     UpdateExistingMigration.setTable(table)
 
     const renderedTemplateContent = await UpdateExistingMigration.changeCreationMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-creation-migration-adding-multiple-columns-index.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/change-creation-migration-adding-multiple-columns-index.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -227,7 +227,7 @@ test('It can change a creation migration when a foreign index was added', async 
     UpdateExistingMigration.setTable(table)
 
     const renderedTemplateContent = await UpdateExistingMigration.changeCreationMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-creation-migration-adding-foreign-index.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/change-creation-migration-adding-foreign-index.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -256,7 +256,7 @@ test('It can change a creation migration when a foreign index with cascades was 
     UpdateExistingMigration.setTable(table)
 
     const renderedTemplateContent = await UpdateExistingMigration.changeCreationMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-creation-migration-adding-foreign-index-with-cascades.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/change-creation-migration-adding-foreign-index-with-cascades.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -281,7 +281,7 @@ test('It can change a creation migration when a primary index was added', async 
     UpdateExistingMigration.setTable(table)
 
     const renderedTemplateContent = await UpdateExistingMigration.changeCreationMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-creation-migration-adding-primary-index.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/change-creation-migration-adding-primary-index.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -306,7 +306,7 @@ test('It can change a creation migration when an unique index was added', async 
     UpdateExistingMigration.setTable(table)
 
     const renderedTemplateContent = await UpdateExistingMigration.changeCreationMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-creation-migration-adding-unique-index.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/change-creation-migration-adding-unique-index.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -331,7 +331,7 @@ test('It can change a creation migration when a fulltext index was added', async
     UpdateExistingMigration.setTable(table)
 
     const renderedTemplateContent = await UpdateExistingMigration.changeCreationMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-creation-migration-adding-fulltext-index.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/change-creation-migration-adding-fulltext-index.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -356,7 +356,7 @@ test('It can change a creation migration when a spatial index was added', async 
     UpdateExistingMigration.setTable(table)
 
     const renderedTemplateContent = await UpdateExistingMigration.changeCreationMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-creation-migration-adding-spatial-index.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/change-creation-migration-adding-spatial-index.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -378,7 +378,7 @@ test('It can change an updater migration when a column was renamed', async () =>
     UpdateExistingMigration.setTable(table)
 
     const renderedTemplateContent = await UpdateExistingMigration.changeUpdaterMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-updater-migration-renaming-column.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/change-updater-migration-renaming-column.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -401,7 +401,7 @@ test('It can change an updater migration when a column was changed', async () =>
     UpdateExistingMigration.setTable(table)
 
     const renderedTemplateContent = await UpdateExistingMigration.changeUpdaterMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-updater-migration-changing-column.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/change-updater-migration-changing-column.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -426,7 +426,7 @@ test('It can change an updater migration when a column was added', async () => {
     UpdateExistingMigration.setTable(table)
 
     const renderedTemplateContent = await UpdateExistingMigration.changeUpdaterMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-updater-migration-adding-column.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/change-updater-migration-adding-column.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -447,7 +447,7 @@ test('It can change an updater migration when a column was removed', async () =>
     UpdateExistingMigration.setTable(table)
 
     const renderedTemplateContent = await UpdateExistingMigration.changeUpdaterMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-updater-migration-removing-column.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/change-updater-migration-removing-column.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -472,7 +472,7 @@ test('It can change an updater migration when an index was added', async () => {
     UpdateExistingMigration.setTable(table)
 
     const renderedTemplateContent = await UpdateExistingMigration.changeUpdaterMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-updater-migration-adding-index.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/change-updater-migration-adding-index.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -497,7 +497,7 @@ test('It can change an updater migration when a multiple columns index was added
     UpdateExistingMigration.setTable(table)
 
     const renderedTemplateContent = await UpdateExistingMigration.changeUpdaterMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-updater-migration-adding-multiple-columns-index.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/change-updater-migration-adding-multiple-columns-index.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -522,7 +522,7 @@ test('It can change an updater migration when a foreign index was added', async 
     UpdateExistingMigration.setTable(table)
 
     const renderedTemplateContent = await UpdateExistingMigration.changeUpdaterMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-updater-migration-adding-foreign-index.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/change-updater-migration-adding-foreign-index.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -549,7 +549,7 @@ test('It can change an updater migration when a foreign index with cascades was 
     UpdateExistingMigration.setTable(table)
 
     const renderedTemplateContent = await UpdateExistingMigration.changeUpdaterMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-updater-migration-adding-foreign-index-with-cascades.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/change-updater-migration-adding-foreign-index-with-cascades.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -576,7 +576,7 @@ test('It can change an updater migration when a foreign index was removed', asyn
     UpdateExistingMigration.setTable(table)
 
     const renderedTemplateContent = await UpdateExistingMigration.changeUpdaterMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-updater-migration-removing-foreign-index.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/change-updater-migration-removing-foreign-index.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -601,7 +601,7 @@ test('It can change an updater migration when a primary index was added', async 
     UpdateExistingMigration.setTable(table)
 
     const renderedTemplateContent = await UpdateExistingMigration.changeUpdaterMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-updater-migration-adding-primary-index.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/change-updater-migration-adding-primary-index.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -626,7 +626,7 @@ test('It can change an updater migration when a unique index was added', async (
     UpdateExistingMigration.setTable(table)
 
     const renderedTemplateContent = await UpdateExistingMigration.changeUpdaterMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-updater-migration-adding-unique-index.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/change-updater-migration-adding-unique-index.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -651,7 +651,7 @@ test('It can change an updater migration when a spatial index was added', async 
     UpdateExistingMigration.setTable(table)
 
     const renderedTemplateContent = await UpdateExistingMigration.changeUpdaterMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-updater-migration-adding-spatial-index.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/change-updater-migration-adding-spatial-index.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -676,7 +676,7 @@ test('It can change an updater migration when a fulltext index was added', async
     UpdateExistingMigration.setTable(table)
 
     const renderedTemplateContent = await UpdateExistingMigration.changeUpdaterMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/change-updater-migration-adding-fulltext-index.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/change-updater-migration-adding-fulltext-index.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 

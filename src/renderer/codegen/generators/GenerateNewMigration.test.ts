@@ -48,7 +48,7 @@ test('It can generate a migration to rename a table column', async () => {
     GenerateNewMigration.setTable(table)
 
     const renderedTemplateContent = await GenerateNewMigration.generateUpdaterMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/new-migration-renaming-column.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/new-migration-renaming-column.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -64,7 +64,7 @@ test('It can generate a migration to add a new column', async () => {
     GenerateNewMigration.setTable(table)
 
     const renderedTemplateContent = await GenerateNewMigration.generateUpdaterMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/new-migration-adding-column.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/new-migration-adding-column.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -81,7 +81,7 @@ test('It can generate a migration to change an existing column', async () => {
     GenerateNewMigration.setTable(table)
 
     const renderedTemplateContent = await GenerateNewMigration.generateUpdaterMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/new-migration-changing-column.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/new-migration-changing-column.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -97,7 +97,7 @@ test('It can generate a migration to remove a column', async () => {
     GenerateNewMigration.setTable(table)
 
     const renderedTemplateContent = await GenerateNewMigration.generateUpdaterMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/new-migration-removing-column.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/new-migration-removing-column.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -117,7 +117,7 @@ test('It can generate a migration to add an index', async () => {
     GenerateNewMigration.setTable(table)
 
     const renderedTemplateContent = await GenerateNewMigration.generateUpdaterMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/new-migration-adding-index.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/new-migration-adding-index.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -137,7 +137,7 @@ test('It can generate a migration to add a multiple columns index', async () => 
     GenerateNewMigration.setTable(table)
 
     const renderedTemplateContent = await GenerateNewMigration.generateUpdaterMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/new-migration-adding-multiple-columns-index.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/new-migration-adding-multiple-columns-index.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -159,7 +159,7 @@ test('It can generate a migration to add a foreign index', async () => {
     GenerateNewMigration.setTable(table)
 
     const renderedTemplateContent = await GenerateNewMigration.generateUpdaterMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/new-migration-adding-foreign-index.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/new-migration-adding-foreign-index.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -175,7 +175,7 @@ test('It can generate a migration to remove an index', async () => {
     GenerateNewMigration.setTable(table)
 
     const renderedTemplateContent = await GenerateNewMigration.generateUpdaterMigration(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/new-migration-removing-index.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/new-migration-removing-index.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -198,7 +198,7 @@ test('It can generate a migration to create a new table', async () => {
     GenerateNewMigration.setTable(table)
 
     const renderedTemplateContent = await GenerateNewMigration.getContent(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/new-migration-creating-table.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/new-migration-creating-table.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 

@@ -43,7 +43,7 @@ test('It correctly generates a belongsToMany detail controller', async () => {
     TestHelper.createBelongsToManyRelation(userModel, tagsModel)
 
     const renderedTemplateContent = await new ApiBelongsToManyControllerRenderable(userModel).compileWithErrorThreatment(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/model/template-with-invalid-relationship.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/model/template-with-invalid-relationship.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 

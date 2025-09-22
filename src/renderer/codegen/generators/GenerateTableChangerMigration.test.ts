@@ -76,7 +76,7 @@ test('It can generate a migration to rename a table', async () => {
     GenerateTableChangerMigration.setTable(table)
 
     const renderedTemplateContent = await GenerateTableChangerMigration.getContent(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/new-migration-renaming-table.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/new-migration-renaming-table.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
@@ -94,7 +94,7 @@ test('It can generate a migration to drop a table', async () => {
     GenerateTableChangerMigration.setTable(table)
 
     const renderedTemplateContent = await GenerateTableChangerMigration.getContent(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/new-migration-dropping-table.php'), renderedTemplateContent)
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/new-migration-dropping-table.php', renderedTemplateContent)
 
     const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
 
