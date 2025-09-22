@@ -1,4 +1,4 @@
-import Index from './Index'
+import Index, { IndexType } from './Index'
 import TestHelper from '@Tests/base/TestHelper'
 import MockDatabase from '@Tests/base/MockDatabase'
 import { test, expect, beforeEach } from '@jest/globals'
@@ -12,7 +12,7 @@ test('The Index model identifier is correct', () => {
 })
 
 test('It can save a new index', () => {
-    const index = new Index()
+    const index = TestHelper.createIndex()
     
     index.name = 'test_index'
     index.save()
@@ -21,7 +21,7 @@ test('It can save a new index', () => {
 })
 
 test('An index has changes when schema state is empty', () => {
-    const index = new Index()
+    const index = TestHelper.createIndex()
     
     index.name = 'test_index'
     index.save()
@@ -57,43 +57,56 @@ test('It can check if an index does not have changes', () => {
 test('It can apply index changes', () => {
     const index = TestHelper.createIndex()
 
-    index.applyChanges({ type: 'unique' })
+    const indexData = index.export()
+    indexData.type = IndexType.UNIQUE
+
+    Index.savingInternally()
+
+    index.applyChanges(indexData)
+
+    Index.notSavingInternally()
 
     expect(index.type).toBe('unique')
     expect(index.schemaState.type).toBe('unique')
+})
+
+test('It can not apply index changes when not saving internally', () => {
+    const index = TestHelper.createIndex()
+
+    expect(() => {
+        index.applyChanges({ type: 'unique' })
+    }).toThrow()
 })
 
 test('It can save schema state separately', () => {
     const index = TestHelper.createIndex()
 
-    index.applyChanges({ type: 'unique' })
+    const indexData = index.export()
+    indexData.type = IndexType.UNIQUE
 
-    expect(index.type).toBe('unique')
-    expect(index.schemaState.type).toBe('unique')
+    Index.savingInternally()
 
-    index.type = 'index'
+    index.applyChanges(indexData)
+
+    Index.notSavingInternally()
+
+    expect(index.type).toBe(IndexType.UNIQUE)
+    expect(index.schemaState.type).toBe(IndexType.UNIQUE)
+
+    index.type = IndexType.INDEX
     index.save()
 
-    expect(index.fresh().type).toBe('index')
-    expect(index.fresh().schemaState.type).toBe('unique')
+    expect(index.fresh().type).toBe(IndexType.INDEX)
+    expect(index.fresh().schemaState.type).toBe(IndexType.UNIQUE)
+
+    Index.savingInternally()
 
     index.saveSchemaState()
 
-    expect(index.fresh().type).toBe('index')
-    expect(index.fresh().schemaState.type).toBe('index')
-})
+    Index.notSavingInternally()
 
-test('It does not apply changes when unnecessary', () => {
-    const index = TestHelper.createIndex()
-
-    let changesWereApplied = index.applyChanges({ name: 'renamed' })
-
-    expect(changesWereApplied).toBe(true)
-
-    // The changes were already applied, so they should not be applied again
-    changesWereApplied = index.applyChanges({ name: 'renamed' })
-
-    expect(changesWereApplied).toBe(false)
+    expect(index.fresh().type).toBe(IndexType.INDEX)
+    expect(index.fresh().schemaState.type).toBe(IndexType.INDEX)
 })
 
 test('An index was not considered renamed when schema state is empty', () => {
@@ -110,7 +123,14 @@ test('An index was not considered renamed when schema state is empty', () => {
 test('It can check if an index was renamed from interface', () => {
     const index = TestHelper.createIndex()
 
-    index.applyChanges({ name: 'renamed' })
+    Index.savingInternally()
+
+    const indexData = index.export()
+    indexData.name = 'renamed'
+
+    index.applyChanges(indexData)
+
+    Index.notSavingInternally()
 
     expect(index.wasRenamed()).toBe(false)
 
@@ -143,7 +163,7 @@ test('It can get the old index name after rename', () => {
 test('An index was not considered changed when schema state is empty', () => {
     const index = TestHelper.createIndex()
 
-    index.type = 'unique'
+    index.type = IndexType.UNIQUE
     index.save()
 
     const hasLocalChanges = index.hasLocalChanges()
@@ -156,7 +176,7 @@ test('It can check if an index was changed after changing the type attr', () => 
 
     expect(index.hasLocalChanges()).toBe(false)
 
-    index.type = 'unique'
+    index.type = IndexType.UNIQUE
     index.save()
 
     expect(index.hasLocalChanges()).toBe(true)
@@ -226,7 +246,7 @@ test('It can check if an index type is a common index', () => {
 test('It can check if an index is a primary', () => {
     const index = TestHelper.createIndexWithSchemaState()
 
-    index.type = 'primary'
+    index.type = IndexType.PRIMARY
     index.save()
 
     expect(index.isPrimary()).toBe(true)
@@ -235,7 +255,7 @@ test('It can check if an index is a primary', () => {
 test('It can check if an index is an FK', () => {
     const index = TestHelper.createIndexWithSchemaState()
 
-    index.type = 'foreign'
+    index.type = IndexType.FOREIGN
     index.save()
 
     expect(index.isForeign()).toBe(true)
@@ -244,7 +264,7 @@ test('It can check if an index is an FK', () => {
 test('It can check if an index is unique', () => {
     const index = TestHelper.createIndexWithSchemaState()
 
-    index.type = 'unique'
+    index.type = IndexType.UNIQUE
     index.save()
 
     expect(index.isUnique()).toBe(true)
@@ -253,7 +273,7 @@ test('It can check if an index is unique', () => {
 test('It can check if an index is fulltext', () => {
     const index = TestHelper.createIndexWithSchemaState()
 
-    index.type = 'fulltext'
+    index.type = IndexType.FULLTEXT
     index.save()
 
     expect(index.isFullText()).toBe(true)
@@ -262,7 +282,7 @@ test('It can check if an index is fulltext', () => {
 test('It can check if an index is spatial', () => {
     const index = TestHelper.createIndexWithSchemaState()
 
-    index.type = 'spatialIndex'
+    index.type = IndexType.SPATIAL
     index.save()
 
     expect(index.isSpatial()).toBe(true)
