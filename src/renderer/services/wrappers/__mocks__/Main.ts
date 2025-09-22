@@ -1,3 +1,4 @@
+import TestHelper from '@Tests/base/TestHelper'
 import fs from 'fs'
 import path from 'path'
 
@@ -11,7 +12,17 @@ export default new class Main {
             },
 
             readProjectFile: (filePath: string) => {
-                return fs.readFileSync(filePath, 'utf8')
+                const testsPath = TestHelper.getCurrentTestsPath()
+
+                if (!testsPath) {
+                    throw new Error('Tests path not found')
+                }
+
+                return fs.readFileSync(path.join(testsPath, 'tests/input', filePath), 'utf8')
+            },
+
+            writeProjectFile: (filePath: string, content: string) => {
+                return true
             },
 
             addFileToGenerationQueue: (name: string, content: string) => {

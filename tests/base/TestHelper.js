@@ -16,12 +16,22 @@ import { camelCase } from "change-case"
 
 export default new class TestHelper {
 
+    static currentTestsPath = null
+
     static latestFilePath = null
     static currentTestName = null
     static currentTestFile = null
 
+    setCurrentTestsPath(testsPath) {
+        TestHelper.currentTestsPath = testsPath
+    }
+
     setCurrentTestName(name) {
         TestHelper.currentTestName = name
+    }
+
+    getCurrentTestsPath() {
+        return TestHelper.currentTestsPath
     }
 
     setCurrentTestFile(file) {

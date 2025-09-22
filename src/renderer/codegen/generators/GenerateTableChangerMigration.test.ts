@@ -10,6 +10,7 @@ jest.mock('@Renderer/services/wrappers/Main')
 
 beforeEach(() => {
     MockDatabase.start()
+    TestHelper.setCurrentTestsPath(__dirname)
 })
 
 const processSchemaData = (project, mockMigrationsPaths = true) => {
@@ -22,17 +23,6 @@ const processSchemaData = (project, mockMigrationsPaths = true) => {
         .checkSchemaChanges()
         
     TablesBuilder.build()
-
-    // Mock paths to get migrations files from the tests directory
-    // instead of the real project migrations directory
-    if (mockMigrationsPaths) {
-        project.tables.forEach(table => {
-            table.migrations.forEach(migration => {
-                migration.relativePath = path.join(__dirname, 'tests/input', migration.relativePath)
-                table.save()
-            })
-        })
-    }
 }
 
 test('It can get the migration name', () => {
