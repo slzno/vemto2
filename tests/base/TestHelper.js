@@ -13,7 +13,6 @@ import AppSection from "@Common/models/AppSection"
 import Crud, { CrudType } from "@Common/models/crud/Crud"
 import Relationship from "@Common/models/Relationship"
 import { camelCase } from "change-case"
-import path from "path"
 
 export default new class TestHelper {
 
