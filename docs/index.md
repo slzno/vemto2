@@ -2,16 +2,28 @@
 
 Vemto is a code generation software aimed at the Laravel framework. In this document, we will specify some of the principles of its architecture, aiming to facilitate development.
 
+This documentations is being adapted from the original/internal Vemto's development documentation, but with adaptations to the new OSS reality.
+
+By Tiago Rodrigues
+
 # Development Tips and Rules
 
 - We always keep the code clean and as simple as possible. We follow the philosophy **KISS (Keep It Simple, Stupid)** - Therefore, we always look for simple solutions, especially as we are a small company. Simple is not always the easiest to implement, but it is often the easiest to understand and maintain.
-- We use TDD in RelaDB and Vemto Template Engine. As for Vemto in question, we also write tests, but as it is a highly experimental software (after all, we do not have other software with the same resources to use as a reference), we were first concerned with defining the correct architecture, and then implementing the tests for that architecture.
-- We ask whenever necessary. The ideal at King of Code is to always exchange information. This makes development evolve quickly and makes it possible for even a small company like ours to build complex products like the ones we have
+- We ask whenever necessary. The ideal is to always exchange information.
+- We write tests whenever possible.
 - We use double quotes “” for strings in Vemto, instead of single quotes, by convention and to keep everything standardized. In case of concatenation, we use `${var} ${var2}`
 - Whenever we compare two code files, we use the service common/services/CodeComparer.ts - this avoids having problems with “virtually” identical code files, but which are considered different because they were saved in different operating systems (usually due to problems with line breaks or BOM characters, etc.)
 - Whenever data needs to be compared within a SchemaModel to check for updates in the Laravel application code, we use the service **DataComparator** to avoid problems with false positives. Elsewhere, we use standard language comparison tools
-- We always start a new branch from the branch develop for the development of a feature or a fix. We follow the git-flow development standard
-- We have a plugin for VSCode that allows you to view the syntax of .vemtl files: https://github.com/TiagoSilvaPereira/vemto-template-engine-syntax-vscode
+- We always start a new branch from the branch develop for the development of a feature or a fix. We follow the **git-flow** development standard
+- We have a plugin for VSCode that allows you to view the syntax of .vemtl files: https://github.com/VemtoOrg/vemto-template-engine-syntax-vscode
+
+# About Using TypeScript
+
+When I started developing Vemto 2, I didn't have much knowledge of TypeScript, and I just wanted an alternative to JSDoc for code completion.
+
+Because of this, despite using TypeScript, there's still room for improvement; many things still lack specific types, etc.
+
+I believe that if I were to start over today, I would do several things differently. But this is what we have at the moment.
 
 # Code Structure
 
@@ -381,3 +393,36 @@ A RenderableFile has several possible states (some defined by Vemto, others by u
 - SKIPPED - File generation was skipped for some specific reason, but may occur in the next generation if the problem is resolved
 
 # Testing templates
+
+Vemto provides several tools that allow you to easily test code generation.
+
+There are two important methods in the TestHelper class that help with these tests:
+
+- **TestHelper.readOrCreateOutputFile** - This method is responsible for saving (the first time) and retrieving a file on subsequent reads. This allows you to save the results of a template's rendering for comparison the next time the test is run.
+
+- **TestHelper.filesRelevantContentIsEqual** - Allows you to check if the relevant content of two files is the same. If it's different, a window will open in the browser showing the differences (which makes debugging template rendering issues much easier).
+
+![img](/docs/img/template-test-browser.png)
+
+If you're absolutely certain that the templates are correct, you can use the **yarn test:replace-outputs** command to overwrite the results of the template tests and make them pass.
+
+Here you can see ann example of a test using them:
+
+```ts
+test('It can generate a migration to rename a table column', async () => {
+    const table = TestHelper.createTable({ name: 'posts' }),
+        column = TestHelper.createColumnWithSchemaState({ name: 'name', table })
+
+    column.name = 'title'
+    column.saveFromInterface()
+
+    const migrationGenerator = new GenerateNewMigration(table)
+
+    const renderedTemplateContent = await migrationGenerator.generateUpdaterMigration(),
+        renderedTemplateFile = TestHelper.readOrCreateOutputFile('/new-migration-renaming-column.php', renderedTemplateContent)
+
+    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
+
+    expect(contentIsEqual).toBe(true)
+})
+```
