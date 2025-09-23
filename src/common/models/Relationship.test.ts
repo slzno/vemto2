@@ -1,6 +1,7 @@
 import Relationship from './Relationship'
 import TestHelper from '@Tests/base/TestHelper'
 import MockDatabase from '@Tests/base/MockDatabase'
+import CalculateManyToManyRelationshipsData from './services/relationships/Calculators/CalculateManyToManyRelationshipsData'
 import { test, expect, beforeEach } from '@jest/globals'
 
 beforeEach(() => {
@@ -82,11 +83,25 @@ test('It can check if a relationship is invalid', () => {
     const model = TestHelper.createModel({ name: 'User' })
     const relatedModel = TestHelper.createModel({ name: 'Post' })
 
+    // Add primary keys to the tables
+    TestHelper.createColumn({ name: 'id', table: model.table, autoIncrement: true })
+    TestHelper.createColumn({ name: 'id', table: relatedModel.table, autoIncrement: true })
+
+    // Add foreign key to the model table for BelongsTo relationship
+    TestHelper.createColumn({ name: 'post_id', table: model.table, type: 'integer', nullable: true })
+
     relationship.model = model
     relationship.relatedModel = relatedModel
     relationship.type = 'BelongsTo'
     relationship.modelId = model.id
     relationship.relatedModelId = relatedModel.id
+    relationship.projectId = model.projectId
+    relationship.foreignKeyName = 'post_id'
+
+    // Process the relationship to set up keys properly
+    const calculator = relationship.getCalculatorService()
+    calculator.calculateDefaultData()
+    calculator.process()
 
     expect(relationship.isInvalid()).toBe(false)
 })
@@ -578,10 +593,45 @@ test('It can get related columns', () => {
 })
 
 test('It can get pivot table columns', () => {
+    // Create models with tables and primary keys
+    const usersTable = TestHelper.createTable({ name: 'users' })
+    const userModel = TestHelper.createModel({ name: 'User', table: usersTable })
+
+    const postsTable = TestHelper.createTable({ name: 'posts' })
+    const postModel = TestHelper.createModel({ name: 'Post', table: postsTable })
+
+    // Add primary keys to tables
+    TestHelper.createColumn({ name: 'id', table: usersTable, autoIncrement: true })
+    TestHelper.createColumn({ name: 'id', table: postsTable, autoIncrement: true })
+
     const relationship = new Relationship()
+    relationship.name = 'posts'
+    relationship.type = 'BelongsToMany'
+    relationship.modelId = userModel.id
+    relationship.relatedModelId = postModel.id
+    relationship.projectId = userModel.projectId
 
-    const columns = relationship.getPivotTableColumns()
+    // Use the calculator service to set up the pivot table and keys
+    const calculator = CalculateManyToManyRelationshipsData.setRelationship(relationship)
+    calculator.calculateDefaultData()
+    calculator.process()
 
-    expect(Array.isArray(columns)).toBe(true)
-    expect(columns.length).toBe(0)
+    // Add an extra column to the pivot table
+    const pivotTable = relationship.pivot
+    TestHelper.createColumn({ name: 'created_at', table: pivotTable })
+
+    // Now test that we can get pivot table columns
+    const pivotColumns = relationship.getPivotTableColumns()
+
+    expect(Array.isArray(pivotColumns)).toBe(true)
+    expect(pivotColumns.length).toBe(1) // Should only include the created_at column
+
+    // Should exclude the foreign key columns
+    const hasUserId = pivotColumns.some(col => col.name === 'user_id')
+    const hasPostId = pivotColumns.some(col => col.name === 'post_id')
+    const hasCreatedAt = pivotColumns.some(col => col.name === 'created_at')
+
+    expect(hasUserId).toBe(false)
+    expect(hasPostId).toBe(false)
+    expect(hasCreatedAt).toBe(true)
 })
