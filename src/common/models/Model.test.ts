@@ -4,6 +4,11 @@ import { test, expect, beforeEach, jest } from '@jest/globals'
 import Relationship from './Relationship'
 import path from "path"
 import ModelRenderable from '@Renderer/codegen/sequential/services/model/ModelRenderable'
+import FillableModelColumn from './FillableModelColumn'
+import GuardedModelColumn from './GuardedModelColumn'
+import HiddenModelColumn from './HiddenModelColumn'
+import DatesModelColumn from './DatesModelColumn'
+import CastsModelColumn from './CastsModelColumn'
 
 jest.mock('@Renderer/services/wrappers/Main')
 
@@ -256,4 +261,96 @@ test('It returns class string', async () => {
     userModel.save()
 
     expect(userModel.getClassString()).toBe('App\\Models\\User')
+})
+
+test('It fills fillable columns when calculating internal data', async () => {
+    const userModel = TestHelper.createModel()
+    const nameColumn = TestHelper.createColumn({ table: userModel.table, name: 'name' })
+    const emailColumn = TestHelper.createColumn({ table: userModel.table, name: 'email' })
+
+    userModel.fillable = ['name']
+    userModel.hasFillable = true
+    userModel.tableName = userModel.table.name // Ensure tableName is set
+    userModel.save()
+
+    userModel.calculateInternalData()
+
+    // Check if pivot record was created
+    const pivots = FillableModelColumn.get().filter(p => p.modelId === userModel.id && p.columnId === nameColumn.id)
+    expect(pivots).toHaveLength(1)
+    expect(pivots[0].columnId).toBe(nameColumn.id)
+    expect(pivots[0].modelId).toBe(userModel.id)
+})
+
+test('It fills guarded columns when calculating internal data', async () => {
+    const userModel = TestHelper.createModel()
+    const nameColumn = TestHelper.createColumn({ table: userModel.table, name: 'name' })
+    const emailColumn = TestHelper.createColumn({ table: userModel.table, name: 'email' })
+
+    userModel.guarded = ['email']
+    userModel.hasGuarded = true
+    userModel.tableName = userModel.table.name
+    userModel.save()
+
+    userModel.calculateInternalData()
+
+    // Check if pivot record was created
+    const pivots = GuardedModelColumn.get().filter(p => p.modelId === userModel.id && p.columnId === emailColumn.id)
+    expect(pivots).toHaveLength(1)
+    expect(pivots[0].columnId).toBe(emailColumn.id)
+    expect(pivots[0].modelId).toBe(userModel.id)
+})
+
+test('It fills hidden columns when calculating internal data', async () => {
+    const userModel = TestHelper.createModel()
+    const nameColumn = TestHelper.createColumn({ table: userModel.table, name: 'name' })
+    const passwordColumn = TestHelper.createColumn({ table: userModel.table, name: 'password' })
+
+    userModel.hidden = ['password']
+    userModel.tableName = userModel.table.name
+    userModel.save()
+
+    userModel.calculateInternalData()
+
+    // Check if pivot record was created
+    const pivots = HiddenModelColumn.get().filter(p => p.modelId === userModel.id && p.columnId === passwordColumn.id)
+    expect(pivots).toHaveLength(1)
+    expect(pivots[0].columnId).toBe(passwordColumn.id)
+    expect(pivots[0].modelId).toBe(userModel.id)
+})
+
+test('It fills dates columns when calculating internal data', async () => {
+    const userModel = TestHelper.createModel()
+    const createdAtColumn = TestHelper.createColumn({ table: userModel.table, name: 'created_at' })
+    const updatedAtColumn = TestHelper.createColumn({ table: userModel.table, name: 'updated_at' })
+
+    userModel.dates = ['created_at']
+    userModel.tableName = userModel.table.name
+    userModel.save()
+
+    userModel.calculateInternalData()
+
+    // Check if pivot record was created
+    const pivots = DatesModelColumn.get().filter(p => p.modelId === userModel.id && p.columnId === createdAtColumn.id)
+    expect(pivots).toHaveLength(1)
+    expect(pivots[0].columnId).toBe(createdAtColumn.id)
+    expect(pivots[0].modelId).toBe(userModel.id)
+})
+
+test('It fills casts columns when calculating internal data', async () => {
+    const userModel = TestHelper.createModel()
+    const isActiveColumn = TestHelper.createColumn({ table: userModel.table, name: 'is_active' })
+
+    userModel.casts = { 'is_active': 'boolean' }
+    userModel.tableName = userModel.table.name
+    userModel.save()
+
+    userModel.calculateInternalData()
+
+    // Check if pivot record was created with correct type
+    const pivots = CastsModelColumn.get().filter(p => p.modelId === userModel.id && p.columnId === isActiveColumn.id)
+    expect(pivots).toHaveLength(1)
+    expect(pivots[0].columnId).toBe(isActiveColumn.id)
+    expect(pivots[0].modelId).toBe(userModel.id)
+    expect(pivots[0].type).toBe('boolean')
 })
