@@ -1,33 +1,32 @@
-Vemto - Architectural Documentation
+# Vemto - Architectural Documentation
 
 Vemto is a code generation software aimed at the Laravel framework. In this document, we will specify some of the principles of its architecture, aiming to facilitate development.
 
-Development Tips and Rules
+# Development Tips and Rules
 
-We always keep the code clean and as simple as possible. We follow the philosophy KISS (Keep It Simple, Stupid) - Therefore, we always look for simple solutions, especially as we are a small company. Simple is not always the easiest to implement, but it is often the easiest to understand and maintain.
-We use TDD in RelaDB and Vemto Template Engine. As for Vemto in question, we also write tests, but as it is a highly experimental software (after all, we do not have other software with the same resources to use as a reference), we were first concerned with defining the correct architecture, and then implementing the tests for that architecture. Whenever possible, however, it is preferable to have tests before the feature is integrated into the main branch.
-We ask whenever necessary. The ideal at King of Code is to always exchange information. This makes development evolve quickly and makes it possible for even a small company like ours to build complex products like the ones we have
-We use double quotes “” for strings in Vemto, instead of single quotes, by convention and to keep everything standardized. In case of concatenation, we use `${var} ${var2}`
-Whenever we compare two code files, we use the service common/services/CodeComparer.ts - this avoids having problems with “virtually” identical code files, but which are considered different because they were saved in different operating systems (usually due to problems with line breaks or BOM characters, etc.)
-Whenever data needs to be compared within a SchemaModel to check for updates in the Laravel application code, we use the service DataComparator to avoid problems with false positives. Elsewhere, we use standard language comparison tools
-We always start a new branch from the branch develop for the development of a feature or a fix. We follow the git-flow development standard
-We have a plugin for VSCode that allows you to view the syntax of .vemtl files: https://github.com/TiagoSilvaPereira/vemto-template-engine-syntax-vscode
+- We always keep the code clean and as simple as possible. We follow the philosophy **KISS (Keep It Simple, Stupid)** - Therefore, we always look for simple solutions, especially as we are a small company. Simple is not always the easiest to implement, but it is often the easiest to understand and maintain.
+- We use TDD in RelaDB and Vemto Template Engine. As for Vemto in question, we also write tests, but as it is a highly experimental software (after all, we do not have other software with the same resources to use as a reference), we were first concerned with defining the correct architecture, and then implementing the tests for that architecture.
+- We ask whenever necessary. The ideal at King of Code is to always exchange information. This makes development evolve quickly and makes it possible for even a small company like ours to build complex products like the ones we have
+- We use double quotes “” for strings in Vemto, instead of single quotes, by convention and to keep everything standardized. In case of concatenation, we use `${var} ${var2}`
+- Whenever we compare two code files, we use the service common/services/CodeComparer.ts - this avoids having problems with “virtually” identical code files, but which are considered different because they were saved in different operating systems (usually due to problems with line breaks or BOM characters, etc.)
+- Whenever data needs to be compared within a SchemaModel to check for updates in the Laravel application code, we use the service **DataComparator** to avoid problems with false positives. Elsewhere, we use standard language comparison tools
+- We always start a new branch from the branch develop for the development of a feature or a fix. We follow the git-flow development standard
+- We have a plugin for VSCode that allows you to view the syntax of .vemtl files: https://github.com/TiagoSilvaPereira/vemto-template-engine-syntax-vscode
 
-Code Structure
-
-
+# Code Structure
 
 Vemto is divided into 4 main code structures:
 
-main - where all the code that runs in the main Electron process is located (basically, the code that runs in the background). Communication with this area of ​​the application is done via preload.ts (which generally maps to commands in IpcMessagesHandler.ts). In the renderer (FrontEnd of the application), the preload methods are accessible from the electron.d.ts file through the ElectronApi interface). They are used via the Main.API ​​singleton in the renderer. Main is compiled as ES5 due to the version of Electron used (20.x), which does not yet support ES6 in this part of the application. Main contains the application's lowest-level logic, such as reading and writing files, executing commands, etc.
-common - here is all the code common to the renderer and main (mainly the application Models, which use the RelaDB database and its ORM, a proprietary database created specifically for Vemto
-renderer - the front end of the application. However, the renderer not only has the VueJS visualization layer, but also most of the code generation logic. Basically, all logic that is not very close to the Operating System (for example, writing files or accessing the database) is in the renderer, and is built using the logic made available in main through preload. In other words, in Vemto, main is lean and only takes care of very specific, low-level logic. High-level logic is always in the renderer (or in some cases, in common when it needs to be shared)
-php - this area contains all the PHP apps that are run by Vemto through the Terminal. For example, when Vemto needs to read the data structure of a Laravel application, it runs the PHP db-reader app (or the older schema-reader). This app returns data in a JSON format (which is encapsulated within a string VEMTO_RESPONSE_START()VEMTO_RESPONSE_END to avoid problems with unwanted characters generated by the Operating System terminal. We can create specific apps for various tasks such as reading migrations, reading the database, reading the .env, reading the logs, and so on. When compiled, apps usually have a name like VMTTL1, VMTTL2, etc. (configured in the file). php/compiler.json). This is to avoid reverse engineering attempts by curious people (just a way to shorten it). But basically, the VMTTL1 file is the db-reader.phar renamed after it is compiled with the PHP Box library. A PHP app may or may not contain composer packages, and can also use the Laravel application's own composer packages if necessary.
+- **main** - where all the code that runs in the main Electron process is located (basically, the code that runs in the background). Communication with this area of ​​the application is done via preload.ts (which generally maps to commands in IpcMessagesHandler.ts). In the renderer (FrontEnd of the application), the preload methods are accessible from the electron.d.ts file through the ElectronApi interface). They are used via the Main.API ​​singleton in the renderer. Main is compiled as ES5 due to the version of Electron used (20.x), which does not yet support ES6 in this part of the application. Main contains the application's lowest-level logic, such as reading and writing files, executing commands, etc.
+- **common** - here is all the code common to the renderer and main (mainly the application Models, which use the RelaDB database and its ORM, a proprietary database created specifically for Vemto
+- **renderer** - the front end of the application. However, the renderer not only has the VueJS visualization layer, but also **most of the code generation logic**. Basically, all logic that is not very close to the Operating System (for example, writing files or accessing the database) is in the renderer, and is built using the logic made available in main through preload. In other words, in Vemto, main is lean and only takes care of very specific, low-level logic. High-level logic is always in the renderer (or in some cases, in common when it needs to be shared)
+- **php** - this area contains all the PHP apps that are run by Vemto through the Terminal. For example, when Vemto needs to read the data structure of a Laravel application, it runs the PHP **db-reader app** (or the older/deprecated schema-reader). This app returns data in a JSON format (which is encapsulated within a string **VEMTO_RESPONSE_START( )VEMTO_RESPONSE_END** to avoid problems with unwanted characters generated by the Operating System terminal (most recent Vemto versions write the response to a file instead of using stdout). We can create specific apps for various tasks such as reading migrations, reading the database, reading the .env, reading the logs, and so on. When compiled, apps usually have a name like VMTTL1, VMTTL2, etc. (configured in the file). php/compiler.json). This was to avoid reverse engineering attempts by curious people when Vemto was a commercial project (just a way to shorten it). But basically, the VMTTL1 file is the db-reader.phar renamed after it is compiled with the PHP Box library. A PHP app may or may not contain composer packages, and can also use the Laravel application's own composer packages if necessary.
 
-IMPORTANT: generally, everything that is done in main is asynchronous. So most of Vemto's code for reading/writing data, and also for code generation is asynchronous. Consequently, we use async/await a lot in the renderer logic. That said, whenever models are read or saved, it is done synchronously.
+**IMPORTANT:** generally, everything that is done in main is asynchronous. So most of Vemto's code for reading/writing data, and also for code generation is asynchronous. Consequently, we use async/await a lot in the renderer logic. That said, whenever models are read or saved, it is done synchronously.
 
 Therefore, the following is considered when working with models:
 
+```ts
 // Await in these cases is unnecessary, as 
 // the models work synchronously
 await table.save()
@@ -38,45 +37,43 @@ await Model.find(1)
 table.save()
 table.delete()
 Model.find(1)
+```
 
+# Project Folder (.vemto)
 
-
-
-
-
-
-Project Folder (.vemto)
-
-
-
-When Vemto connects to a Laravel application, a .vemto folder is generated (created based on the main/static/vemto-folder-base folder. 
+When Vemto connects to a Laravel application, a .vemto folder is generated (created based on *the main/static/vemto-folder-base* folder). 
 
 This folder contains all the files necessary for the Vemto project, from the database file (data.json), to the generated code (necessary for comparisons and conflict resolutions) and also the templates (both the templates that were copied to the /templates/base folder after creating the project and the templates in the /templates/custom folder that was changed by the user).
 
 If the .vemto folder already exists in a project, Vemto will simply connect it to the project without generating it. If the .vemto folder is deleted, the Vemto project will be lost, and a new connection to the Laravel application will be made from scratch, reading the data from the database again.
 
-
-Model Structure
+# Model Structure
 Models are the basis of Vemto's logic. They are very similar to Laravel models, and even the RelaDB ORM is very similar to the Eloquent ORM:
 
 
+It is important to point out that data from a Vemto project is always saved in a Relational way, much like a common SQL database. For example, when you open a project, you are opening record 1 in the projects table. 
 
-It is important to point out that data from a Vemto project is always saved in a Relational way, much like a common SQL database. For example, when you open a project, you are opening record 1 in the projects table. When we read the schema or create a new table, we are saving it to the tables table in our database (data.json in the .vemto folder). For each table, we have models that represent them. So the Table model represents tables, the Index model represents indexes, etc. Tables have relationships between them, which are specified in the relationships() method of a model:
+When we read the schema or create a new table, we are saving it to the tables table in our database (data.json in the .vemto folder). 
+
+For each table, we have models that represent them. So the Table model represents tables, the Index model represents indexes, etc. Tables have relationships between them, which are specified in the relationships() method of a model:
 
 
-Some models are very special and important. These are the Schema-related models (that is, the models that represent everything you see in Vemto's Schema editor:
+Some models are very special and important. These are the Schema-related models (that is, the models that represent everything you see in Vemto's Schema editor):
 
 
+> You can easily identify these models as they extend the abstract class AbstractSchemaModel and implement the SchemaModel interface. These models are:
 
-You can easily identify these models as they extend the abstract class AbstractSchemaModel and implement the SchemaModel interface. These models are:
-
+```
 Table
 Column
 Index
 Model
 Relationship
+```
 
-SchemaModel models are very important in Vemto as they are responsible for accurately representing the “Schema State” of the Laravel application. In other words, if a Laravel application has the “users” table with the “name” column, Vemto needs to have a table record called “users”, with a column called “name”. These records are represented by their respective models.
+SchemaModel models are very important in Vemto as they are responsible for accurately representing the “Schema State” of the Laravel application. 
+
+In other words, if a Laravel application has the “users” table with the “name” column, Vemto needs to have a table record called “users”, with a column called “name”. These records are represented by their respective models.
 
 
 But as we can make modifications in Vemto, a model of type SchemaModel always needs to save both the Laravel application data version and the current version modified by Vemto (this allows us to know when Vemto contains changes that need to be saved in code, for example, generating migrations or models).
@@ -85,11 +82,12 @@ Therefore, every model of the SchemaModel type has a schemaState: any property t
 
 For example, suppose we have a table in the application called “users”. Therefore, if in Vemto we do:
 
+```ts
 const table = Table.find(1)
 console.log(table.name) // Will return "users"
 console.log(table.schemaState.name) // Will return "users"
 console.log(table.isDirty()) // Will return "false", there are no modifications
-
+```
 
 
 However, if we change the table name in Vemto:
