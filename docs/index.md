@@ -27,7 +27,7 @@ I believe that if I were to start over today, I would do several things differen
 
 # The Vemto's architecture
 
-Vemto's architecture revolves around a comprehensive execution cycle that handles the entire process from connecting to a Laravel application, reading its schema, managing data through RelaDB models, and generating code with user confirmation and conflict resolution. This cycle ensures that Vemto accurately represents and modifies the Laravel application's structure while providing a seamless code generation experience.
+Vemto's architecture revolves around a comprehensive execution cycle that handles the entire process from connecting to a Laravel application, reading its schema, managing data through RelaDB models, and generating code with user confirmation and conflict resolution.
 
 ## Execution Cycle Overview
 
@@ -38,38 +38,38 @@ flowchart TD
     A[User connects to Laravel project] --> B[Create .vemto folder if needed]
     B --> C[Run db-reader PHP app to read schema]
     C --> D[Parse JSON response from db-reader]
-    D --> E[Save data to RelaDB models<br/>(Tables, Columns, Indexes, etc.)]
+    D --> E[Save data to RelaDB models\n(Tables, Columns, Indexes, etc.)]
     E --> F[Schema synchronized in Vemto UI]
     
-    F --> G{User makes schema changes<br/>in Vemto?}
-    G -->|Yes| H[Modify RelaDB models<br/>(e.g., add table, change column)]
-    H --> I[Models marked as dirty<br/>(isDirty() = true)]
-    I --> J[User initiates code generation<br/>for migrations/models]
+    F --> G{User makes schema changes\nin Vemto?}
+    G -->|Yes| H[Modify RelaDB models\n(e.g., add table, change column)]
+    H --> I[Models marked as dirty\n(isDirty() = true)]
+    I --> J[User initiates code generation\nfor migrations/models]
     
-    G -->|No| K[User initiates general code generation<br/>(F5 or Generate Code)]
+    G -->|No| K[User initiates general code generation\n(F5 or Generate Code)]
     
-    J --> L[Generate migrations and models<br/>using MigrationEditor, GenerateNewMigration, etc.]
-    L --> M[Present migrations/models for user review<br/>and confirmation]
+    J --> L[Generate migrations and models\nusing MigrationEditor, GenerateNewMigration, etc.]
+    L --> M[Present migrations/models for user review\nand confirmation]
     M --> N{User confirms?}
     N -->|Yes| O[Write migrations and models to disk]
     N -->|No| P[Cancel or modify changes]
     
     K --> Q[SequentialGenerator processes all renderables]
-    Q --> R[Create Renderable objects<br/>(e.g., RenderableFactory, RenderableController)]
-    R --> S[Render templates using .vemtl files<br/>and Vemto Template Engine]
-    S --> T[Generate RenderableFile objects<br/>with rendered content]
+    Q --> R[Create Renderable objects\n(e.g., RenderableFactory, RenderableController)]
+    R --> S[Render templates using .vemtl files\nand Vemto Template Engine]
+    S --> T[Generate RenderableFile objects\nwith rendered content]
     T --> U[Add to Code Queue]
     
-    O --> V[Check for conflicts<br/>(file modified by user?)]
+    O --> V[Check for conflicts\n(file modified by user?)]
     U --> V
     V --> W{Conflicts detected?}
-    W -->|Yes| X[Present conflict resolution options<br/>(AI or manual merge)]
+    W -->|Yes| X[Present conflict resolution options\n(AI or manual merge)]
     X --> Y{Resolved?}
     Y -->|Yes| Z[Write files to disk]
     Y -->|No| AA[Skip or ignore file]
     
     W -->|No| Z
-    Z --> BB[Update schema state if needed<br/>(after code generation)]
+    Z --> BB[Update schema state if needed\n(after code generation)]
     BB --> CC[Execution cycle complete]
     
     P --> F
