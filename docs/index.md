@@ -25,6 +25,96 @@ Because of this, despite using TypeScript, there's still room for improvement; m
 
 I believe that if I were to start over today, I would do several things differently. But this is what we have at the moment.
 
+# The Vemto's architecture
+
+Vemto's architecture revolves around a comprehensive execution cycle that handles the entire process from connecting to a Laravel application, reading its schema, managing data through RelaDB models, and generating code with user confirmation and conflict resolution. This cycle ensures that Vemto accurately represents and modifies the Laravel application's structure while providing a seamless code generation experience.
+
+## Execution Cycle Overview
+
+The following flowchart illustrates the main execution cycle of Vemto:
+
+```mermaid
+flowchart TD
+    A[User connects to Laravel project] --> B[Create .vemto folder if needed]
+    B --> C[Run db-reader PHP app to read schema]
+    C --> D[Parse JSON response from db-reader]
+    D --> E[Save data to RelaDB models<br/>(Tables, Columns, Indexes, etc.)]
+    E --> F[Schema synchronized in Vemto UI]
+    
+    F --> G{User makes schema changes<br/>in Vemto?}
+    G -->|Yes| H[Modify RelaDB models<br/>(e.g., add table, change column)]
+    H --> I[Models marked as dirty<br/>(isDirty() = true)]
+    I --> J[User initiates code generation<br/>for migrations/models]
+    
+    G -->|No| K[User initiates general code generation<br/>(F5 or Generate Code)]
+    
+    J --> L[Generate migrations and models<br/>using MigrationEditor, GenerateNewMigration, etc.]
+    L --> M[Present migrations/models for user review<br/>and confirmation]
+    M --> N{User confirms?}
+    N -->|Yes| O[Write migrations and models to disk]
+    N -->|No| P[Cancel or modify changes]
+    
+    K --> Q[SequentialGenerator processes all renderables]
+    Q --> R[Create Renderable objects<br/>(e.g., RenderableFactory, RenderableController)]
+    R --> S[Render templates using .vemtl files<br/>and Vemto Template Engine]
+    S --> T[Generate RenderableFile objects<br/>with rendered content]
+    T --> U[Add to Code Queue]
+    
+    O --> V[Check for conflicts<br/>(file modified by user?)]
+    U --> V
+    V --> W{Conflicts detected?}
+    W -->|Yes| X[Present conflict resolution options<br/>(AI or manual merge)]
+    X --> Y{Resolved?}
+    Y -->|Yes| Z[Write files to disk]
+    Y -->|No| AA[Skip or ignore file]
+    
+    W -->|No| Z
+    Z --> BB[Update schema state if needed<br/>(after code generation)]
+    BB --> CC[Execution cycle complete]
+    
+    P --> F
+    AA --> CC
+```
+
+### Detailed Explanation of the Execution Cycle
+
+1. **Project Connection and Initial Schema Reading**:
+   - When a user connects Vemto to a Laravel project, the system first checks for an existing `.vemto` folder. If it doesn't exist, one is created based on the `main/static/vemto-folder-base` template.
+   - Vemto then executes the `db-reader` PHP application (compiled as VMTTL1) to read the Laravel application's database schema. This app runs migrations directly on a temporary database to extract the current schema structure.
+   - The `db-reader` returns a JSON response encapsulated in `VEMTO_RESPONSE_START(...)VEMTO_RESPONSE_END` markers to avoid terminal output issues.
+   - Services like `SchemaBuilder.ts`, `TablesBuilder.ts`, and `ModelsBuilder.ts` parse this JSON and populate the RelaDB models (Table, Column, Index, Model, Relationship) with the schema data.
+
+2. **Data Persistence with RelaDB**:
+   - All schema information is stored in the `.vemto/data.json` file using RelaDB, a proprietary ORM similar to Eloquent.
+   - SchemaModel instances (Table, Column, etc.) maintain both current Vemto state and `schemaState` (the original Laravel application state) to track changes.
+   - Models are saved synchronously, allowing Vemto to detect "dirty" states when modifications are made.
+
+3. **Schema Modifications and Change Detection**:
+   - Users can modify the schema through Vemto's UI (e.g., rename tables, add columns).
+   - When changes occur, the `isDirty()` method returns `true`, indicating that migrations need to be generated.
+   - The `DataComparator` service ensures accurate change detection by comparing model states.
+
+4. **Code Generation for Migrations and Models**:
+   - For schema changes, Vemto uses services like `MigrationEditor.ts`, `GenerateNewMigration.ts`, `GenerateTableChangerMigration.ts`, and `UpdateExistingMigration.ts`.
+   - Generated migrations and models are presented to the user for review and confirmation before being written to disk.
+   - This manual review prevents automatic overwriting and ensures migrations are generated in a natural, developer-friendly manner.
+
+5. **General Code Generation Process**:
+   - For other code generation (controllers, views, factories, etc.), the `SequentialGenerator.ts` orchestrates the process.
+   - Renderable classes (e.g., `RenderableFactory`) define how each file type should be generated, specifying template files, data, and output paths.
+   - Templates (`.vemtl` files) are processed by the Vemto Template Engine, which supports JavaScript logic for dynamic code generation.
+
+6. **Code Queue and Conflict Resolution**:
+   - Rendered content becomes `RenderableFile` objects added to the Code Queue, visible in Vemto's UI.
+   - Before writing files, Vemto checks for conflicts using `CodeComparer.ts` to detect user modifications.
+   - Conflicts can be resolved manually or with AI assistance. Files have various states (IDLE, CONFLICT, IGNORED, etc.) to manage the generation process.
+
+7. **Post-Generation Synchronization**:
+   - After code generation, the schema may be re-synchronized to reflect any changes made during the process.
+   - This ensures Vemto's internal state remains accurate and up-to-date.
+
+This execution cycle provides a robust, user-controlled environment for Laravel code generation, balancing automation with manual oversight to prevent unintended changes and maintain code quality.
+
 # Code Structure
 
 ![img](/docs/img/01.png)
