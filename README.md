@@ -18,6 +18,7 @@ By [Tiago Rodrigues](https://x.com/Tiago_Ferat)
 - contact@vemto.app
 - [Discord Server](https://discord.gg/CWnbWtJ)
 - https://x.com/VemtoApp
+- https://vemto.app
 
 # How to install
 
