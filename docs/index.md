@@ -46,8 +46,7 @@ Tables, Columns, Indexes, etc.]
 in Vemto?}
     G -->|Yes| H[Modify RelaDB models
 e.g. add table, change column]
-    H --> I[Models marked as dirty
-isDirty() = true]
+    H --> I[Models marked as dirty]
     I --> J[User initiates code generation
 for migrations/models]
     
