@@ -280,6 +280,35 @@ export default new class TestHelper {
         return relationship
     }
 
+    createRelationshipWithSchemaState() {
+        const relationship = new Relationship()
+        relationship.name = 'belongs_to_user'
+        relationship.type = 'BelongsTo'
+        relationship.relatedTableName = 'users'
+        relationship.relatedModelName = 'User'
+        relationship.parentTableName = 'posts'
+        relationship.parentModelName = 'Post'
+        relationship.foreignKeyName = 'user_id'
+        relationship.localKeyName = 'id'
+        relationship.ownerKeyName = 'id'
+        relationship.relatedKeyName = 'id'
+        relationship.morphType = null
+        relationship.foreignPivotKeyName = null
+        relationship.relatedPivotKeyName = null
+        relationship.pivotTableName = null
+        relationship.firstKeyName = null
+        relationship.secondKeyName = null
+        relationship.withPivotColumns = false
+        relationship.includedPivotColumns = []
+        relationship.save()
+        
+        Relationship.savingInternally()
+        relationship.saveSchemaState()
+        Relationship.notSavingInternally()
+        
+        return relationship
+    }
+
     compareCode(code1, code2) {
         return this.removeSpacesAndTabs(code1) === this.removeSpacesAndTabs(code2)
     }

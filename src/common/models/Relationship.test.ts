@@ -9,35 +9,6 @@ beforeEach(() => {
     TestHelper.setCurrentTestsPath(__dirname)
 })
 
-function createRelationshipWithSchemaState() {
-    const relationship = new Relationship()
-    relationship.name = 'belongs_to_user'
-    relationship.type = 'BelongsTo'
-    relationship.relatedTableName = 'users'
-    relationship.relatedModelName = 'User'
-    relationship.parentTableName = 'posts'
-    relationship.parentModelName = 'Post'
-    relationship.foreignKeyName = 'user_id'
-    relationship.localKeyName = 'id'
-    relationship.ownerKeyName = 'id'
-    relationship.relatedKeyName = 'id'
-    relationship.morphType = null
-    relationship.foreignPivotKeyName = null
-    relationship.relatedPivotKeyName = null
-    relationship.pivotTableName = null
-    relationship.firstKeyName = null
-    relationship.secondKeyName = null
-    relationship.withPivotColumns = false
-    relationship.includedPivotColumns = []
-    relationship.save()
-    
-    Relationship.savingInternally()
-    relationship.saveSchemaState()
-    Relationship.notSavingInternally()
-    
-    return relationship
-}
-
 test('It can save a new relationship', () => {
     const relationship = new Relationship()
 
@@ -143,7 +114,7 @@ test('It can remove and undo remove a relationship', () => {
 })
 
 test('It can check if a relationship has changes', () => {
-    const relationship = createRelationshipWithSchemaState()
+    const relationship = TestHelper.createRelationshipWithSchemaState()
 
     const hasSchemaChanges = relationship.hasSchemaChanges({
         name: 'test_relationship',
@@ -153,7 +124,7 @@ test('It can check if a relationship has changes', () => {
 })
 
 test('It can check if a relationship does not have changes', () => {
-    const relationship = createRelationshipWithSchemaState()
+    const relationship = TestHelper.createRelationshipWithSchemaState()
 
     const hasSchemaChanges = relationship.hasSchemaChanges({
         name: 'belongs_to_user',
@@ -180,7 +151,7 @@ test('It can check if a relationship does not have changes', () => {
 })
 
 test('It can apply relationship changes', () => {
-    const relationship = createRelationshipWithSchemaState()
+    const relationship = TestHelper.createRelationshipWithSchemaState()
 
     Relationship.savingInternally()
     relationship.applyChanges({ name: 'test_relationship_2' })
@@ -191,7 +162,7 @@ test('It can apply relationship changes', () => {
 })
 
 test('It can save schema state separately', () => {
-    const relationship = createRelationshipWithSchemaState()
+    const relationship = TestHelper.createRelationshipWithSchemaState()
 
     Relationship.savingInternally()
 
@@ -215,7 +186,7 @@ test('It can save schema state separately', () => {
 })
 
 test('It does not apply changes when unnecessary', () => {
-    const relationship = createRelationshipWithSchemaState()
+    const relationship = TestHelper.createRelationshipWithSchemaState()
 
     Relationship.savingInternally()
 
@@ -473,7 +444,7 @@ test('It can check if relationship is morph', () => {
 })
 
 test('It can check if relationship is dirty', () => {
-    const relationship = createRelationshipWithSchemaState()
+    const relationship = TestHelper.createRelationshipWithSchemaState()
 
     expect(relationship.isDirty()).toBe(false)
 
@@ -483,7 +454,7 @@ test('It can check if relationship is dirty', () => {
 })
 
 test('It can check if relationship has local changes', () => {
-    const relationship = createRelationshipWithSchemaState()
+    const relationship = TestHelper.createRelationshipWithSchemaState()
 
     expect(relationship.hasLocalChanges()).toBe(false)
 
