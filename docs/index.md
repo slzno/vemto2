@@ -39,20 +39,20 @@ flowchart TD
     B --> C[Run db-reader PHP app to read schema]
     C --> D[Parse JSON response from db-reader]
     D --> E[Save data to RelaDB models
-(Tables, Columns, Indexes, etc.)]
+Tables, Columns, Indexes, etc.]
     E --> F[Schema synchronized in Vemto UI]
     
     F --> G{User makes schema changes
 in Vemto?}
     G -->|Yes| H[Modify RelaDB models
-(e.g., add table, change column)]
+e.g. add table, change column]
     H --> I[Models marked as dirty
-(isDirty() = true)]
+isDirty() = true]
     I --> J[User initiates code generation
 for migrations/models]
     
     G -->|No| K[User initiates general code generation
-(F5 or Generate Code)]
+F5 or Generate Code]
     
     J --> L[Generate migrations and models
 using MigrationEditor, GenerateNewMigration, etc.]
@@ -64,7 +64,7 @@ and confirmation]
     
     K --> Q[SequentialGenerator processes all renderables]
     Q --> R[Create Renderable objects
-(e.g., RenderableFactory, RenderableController)]
+e.g. RenderableFactory, RenderableController]
     R --> S[Render templates using .vemtl files
 and Vemto Template Engine]
     S --> T[Generate RenderableFile objects
@@ -72,18 +72,18 @@ with rendered content]
     T --> U[Add to Code Queue]
     
     O --> V[Check for conflicts
-(file modified by user?)]
+file modified by user?]
     U --> V
     V --> W{Conflicts detected?}
     W -->|Yes| X[Present conflict resolution options
-(AI or manual merge)]
+AI or manual merge]
     X --> Y{Resolved?}
     Y -->|Yes| Z[Write files to disk]
     Y -->|No| AA[Skip or ignore file]
     
     W -->|No| Z
     Z --> BB[Update schema state if needed
-(after code generation)]
+after code generation]
     BB --> CC[Execution cycle complete]
     
     P --> F
