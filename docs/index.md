@@ -48,6 +48,7 @@ This folder contains all the files necessary for the Vemto project, from the dat
 If the .vemto folder already exists in a project, Vemto will simply connect it to the project without generating it. If the .vemto folder is deleted, the Vemto project will be lost, and a new connection to the Laravel application will be made from scratch, reading the data from the database again.
 
 # Model Structure
+
 Models are the basis of Vemto's logic. They are very similar to Laravel models, and even the RelaDB ORM is very similar to the Eloquent ORM:
 
 
@@ -84,76 +85,88 @@ For example, suppose we have a table in the application called “users”. Ther
 
 ```ts
 const table = Table.find(1)
+
 console.log(table.name) // Will return "users"
+
 console.log(table.schemaState.name) // Will return "users"
+
 console.log(table.isDirty()) // Will return "false", there are no modifications
 ```
 
-
 However, if we change the table name in Vemto:
 
+```ts
 table.name = "users_renamed"
 table.save() // Need to call save() to persist in the database
+
 console.log(table.name) // Will return "users_renamed"
+
 console.log(table.schemaState.name) // Will return "users"
+
 console.log(table.isDirty()) // Will return "true", there are modifications
+```
 
+In other words, now Vemto knows that there are changes to the table, and therefore the **table.isDirty()** method returns “true”, and Vemto will know that it needs to show the option to save the migrations.
 
-In other words, now Vemto knows that there are changes to the table, and therefore the table.isDirty() method returns “true”, and Vemto will know that it needs to show the option to save the migrations.
+> **IMPORTANT:** It is important to note that **NEVER**, under any circumstances, we manipulate the property schemaState of a SchemaModel. Only schema reading services (**SchemaBuilder.ts, TablesBuilder.ts and ModelsBuilder.ts**) can do this, as *schemaState* must always reflect the state of the application code. This also means that **we never call the method applyChanges() from a SchemaModel outside of these services**; Because the applyChanges() method of a SchemaModel always modifies the schemaState, as seen in the image below:
 
-It is important to note that NEVER, under any circumstances, we manipulate the property schemaState of a SchemaModel. Only schema reading services (SchemaBuilder.ts, TablesBuilder.ts e ModelsBuilder.ts) can do this, as schemaState must always reflect the state of the application code. This also means that we never call the method applyChanges() from a SchemaModel outside of these services;
-
-
-
-Because the applyChanges() method of a SchemaModel always modifies the schemaState, as seen in the image below:
-
-
-
-For these types of models, the buildSchemaState() and dataComparisonMap() methods are extremely important, and care must be taken when modifying these methods, as they are responsible for checking whether there are changes between the application's Schema and the current Vemto Schema.
-
+For these types of models, the **buildSchemaState() and dataComparisonMap() methods are extremely important**, and care must be taken when modifying these methods, as they are responsible for checking whether there are changes between the application's Schema and the current Vemto Schema.
 
 In general, it is not necessary to modify these methods, as Vemto has been able to read almost perfectly the data necessary to assemble the Schema for months (so we will very rarely change these parts of SchemaModel models).
 
-Too Many Models
+## Other Models
 
-That said, the other models are generally not synchronized with the application code, existing only in Vemto and serving only for data representation and subsequent code generation. For example, the Crud and Input models are used to represent an application of type Crud:
+That said, the other models are generally not synchronized with the application code, existing only in Vemto and serving only for data representation and subsequent code generation. For example, the **Crud** and **Input** models are used to represent an application of type Crud:
 
 
 
-When generating the code, the data returned by these models will be used. However, if there are manual changes to the CRUD code, Vemto will not update them internally (since it is not well-defined data like Schema, and therefore the complexity of such a task is much greater). Vemto will only check if there is a possibility to resolve code conflicts using AI or manually after the generation task.
-Schema reading
+When generating the code, the data from these models will be used. However, if there are manual changes to the CRUD code, Vemto will not update them internally (since it is not well-defined data like Schema, and therefore the complexity of such a task is much greater). 
+
+> Vemto will only check if there is a possibility to resolve code conflicts using AI or manually after the generation task.
+
+# Schema reading
+
 Vemto generally reads Schema data at the following times:
 
-The first time the application is connected (ProjectConnector.ts -> doFirstSchemaSync())
-Whenever a migration or model is saved from the Schema Editor (in this case, the schemaState of all models is overwritten with the reading information)
-Whenever any type of code is generated by Vemto (by clicking on the “Generate Code” or typing F5) - In this case, only the models are synchronized (it is possible that the code generation process modifies some sections of the models, and therefore they need to be synchronized after generation)
-Whenever there are manual changes in the code (in this case, Vemto just reads the data, but if there are changes, it will show an alert message, and will not overwrite the data without user permission)
-Whenever the user explicitly uses the options “Synchronize Schema” or “Check for Changes” on the Schema editor
+- The first time the application is connected (*ProjectConnector.ts -> doFirstSchemaSync()*)
+- Whenever a migration or model is saved from the *Schema Editor* (in this case, the schemaState of all models is overwritten with the reading information)
+- Whenever any type of code is generated by Vemto (by clicking on the “Generate Code” or typing F5) - In this case, only the models are synchronized (it is possible that the code generation process modifies some sections of the models, and therefore they need to be synchronized after generation)
+- Whenever there are manual changes in the code (in this case, Vemto just reads the data, but if there are changes, it will show an alert message, and will not overwrite the data without user permission)
+- Whenever the user explicitly uses the options “Synchronize Schema” or “Check for Changes” on the Schema editor
 
-Schema reading and synchronization are done by services SchemaBuilder.ts, TablesBuilder.ts e ModelsBuilder.ts. These services are critical components of Vemto and are currently in need of testing. We will rarely need to work on them, but if necessary, it would be interesting for tests to be implemented to validate the changes made.
+> Schema reading and synchronization are done by services **SchemaBuilder.ts, TablesBuilder.ts and ModelsBuilder.ts**. 
+
+**IMPORTANT** - These services are critical components of Vemto. We will rarely need to work on them, but if necessary, **always be sure to write a test to ensure everything is ok**.
 
 There are two ways for Vemto to read the application schema:
 
-Migrations Reader - Through the PHP schema-reader app, Vemto reads the migrations in the application folder, executes them using a Fake method (which does not generate a database), and generates a database structure in RAM, which is then translated to a JSON file. This mode is the oldest, was created only as a prototype, and does not have a good code structure. Despite this, it works for small Laravel apps and is very fast, which is why it has been maintained in Vemto (At the moment, in November 2024, there are plans to improve its code and add tests). IMPORTANT: This reading mode does not support SQL commands in migrations (only standard Laravel Schema Builder commands).
-Database Reader - Executed by the PHP db-reader app, this mode was created later so that Vemto can read any type of migration. Instead of trying to interpret the migrations, the app simply runs them directly in the DBMS, creating an empty database, which is then used to read the Schema structure. Although it works much better than Migrations Reader and supports almost any database scenario, this option is slightly slower (in the case of MySQL, MySQL 8 is recommended, which runs much faster in these cases). 
-Code Generation
- Vemto generally generates code in two moments:
+- **Migrations Reader (deprecated)** - Through the PHP schema-reader app, Vemto reads the migrations in the application folder, executes them using a Fake method (which does not generate a database), and generates a database structure in RAM, which is then translated to a JSON file. This mode is the oldest, was created only as a prototype, and does not have a good code structure. Despite this, it works for small Laravel apps and is very fast, which is why it has been maintained in Vemto. **IMPORTANT:** This reading mode does not support SQL commands in migrations (only standard Laravel Schema Builder commands).
+- **Database Reader** - Executed by the PHP **db-reader** app, this mode was created later so that Vemto can read any type of migration. Instead of trying to interpret the migrations, the app simply runs them directly in the DBMS, creating an empty database, which is then used to read the Schema structure. Although it works much better than Migrations Reader and supports almost any database scenario, this option is slightly slower (in the case of MySQL, MySQL 8 is recommended, which runs much faster in these cases). 
+   
+# Code Generation
+Vemto generally generates code in two moments:
 
-When there are changes to the Schema, the user is taken to a screen where they can review the models and migrations and, once everything is confirmed, the code is saved by Vemto.
-Or when the user clicks on “Generate Code” or key F5 - in this case, Vemto generates all the code available to be generated (except migrations and models, which require manual review). Generally, views, controllers, factories, seeders, livewire components, etc. are generated here. Everything will depend on how the project is configured and what data is available.
+- When there are changes to the Schema, the user is taken to a screen where they can review the models and migrations and, once everything is confirmed, the code is saved by Vemto.
+- Or when the user clicks on “Generate Code” or key F5 - in this case, Vemto generates all the code available to be generated (except migrations and models, which require manual review). Generally, views, controllers, factories, seeders, livewire components, etc. are generated here. Everything will depend on how the project is configured and what data is available.
 
-IMPORTANT: Vemto 2, unlike the previous version, requires explicit authorization from the user to generate migrations. This occurs because, if you choose to generate migrations every time you generate the code, you will have to overwrite the existing migrations or use some practice that means that the migrations are not generated in the most natural way possible (as if they had been written by the developer himself). Furthermore, if migrations are generated with problems, this will cause Schema reading failures. Therefore, we chose to manually review migrations and models in Vemto 2.
+**IMPORTANT:** Vemto 2, unlike the previous version, requires explicit authorization from the user to generate migrations. This occurs because, if you choose to generate migrations every time you generate the code, you will have to overwrite the existing migrations or use some practice that means that the migrations are not generated in the most natural way possible (as if they had been written by the developer himself). 
+
+Furthermore, if migrations are generated with problems, this will cause Schema reading failures. Therefore, we chose to manually review migrations and models in Vemto 2.
 
 In the case of step one (generation of migrations and models), the services responsible are generally:
 
+```ts
 MigrationEditor.ts
 GenerateNewMigration.ts
 GenerateTableChangerMigration.ts
 UpdateExistingMigration.ts
+```
 
-In step 2, the main service is the SequentialGenerator, a service responsible for calling all other services that generate some type of code in the sequence. Generally, for each code file that will be generated, we first create a Renderable. A Renderable is a special class that defines how and with what data a template will be rendered (we call it rendering when we transform a template into code). A simple example is the renderable that renders a Factory:
+In step 2, the main service is the **SequentialGenerator.ts**, a service responsible for calling all other services that generate some type of code in the sequence. Generally, for each code file that will be generated, we first create a **Renderable**. A Renderable is a special class that defines how and with what data a template will be rendered (we call it rendering when we transform a template into code). 
 
+A simple example is the renderable that renders a Factory:
 
+```ts
 export default class RenderableFactory extends Renderable {
     model: Model
     
@@ -197,19 +210,21 @@ export default class RenderableFactory extends Renderable {
         }
     }
 }
+```
 
 The two most important methods of a Renderable are:
-getTemplateFile() - Defines which template file should be used to render the code
-getData() - Defines which data will be sent to the template
+- **getTemplateFile()** - Defines which template file should be used to render the code
+- **getData()** - Defines which data will be sent to the template
 
-A template is a .vemtl format file, compiled by the Vemto Template Engine (documentation here). 
+A template is a **.vemtl** format file, compiled by the [Vemto Template Engine](https://github.com/VemtoOrg/vemto-template-engine) ([more info here](https://vemto.app/docs/1.x/vet)). 
 
-Vemto will first check whether the template was customized by the user (folder .vemto/templates/custom). Otherwise, it will look for the template in (.vemto/templates/base). If it doesn't find it, it will use the internal template inside (main/static/templates). The .vemto/templates/base folder is created whenever it does not exist in the project. It is used so that, if the template is modified in future versions of Vemto, the project continues to work with the version of the template from the time it was created. Furthermore, it is possible to compare if there are differences and alert the user to update the template to the latest version.
+Vemto will first check whether the template was customized by the user (folder *.vemto/templates/custom*). Otherwise, it will look for the template in (*.vemto/templates/base*). If it doesn't find it, it will use the internal template inside (*main/static/templates*). 
+
+> The *.vemto/templates/base* folder is created whenever it does not exist in the project. It is used so that, if the template is modified in future versions of Vemto, the project continues to work with the version of the template from the time it was created. Furthermore, it is possible to compare if there are differences and alert the user to update the template to the latest version.
 
 Basically, it is a type of file that allows the use of JavaScript logic within special tags to control the code generation flow. Following the Renderable Factory example above, we have the following template (only a part as it is an extensive file):
 
-
-
+```js
 <?php
 
 <####>
@@ -262,61 +277,76 @@ class <$ this.filenameWithoutExtension $> extends Factory
                 '<$ column.name $>' => <$ column.getFakerForTemplate() $>,
                 <% } %>
             <% } %>
+```
 
 
+As we can see, right at the beginning of the file we have a section **<# TEMPLATE DATA #>**; *.vemtl* templates support data tags using the *DATA:TYPE [ name = value ]* syntax. 
 
-As we can see, right at the beginning of the file we have a section <# TEMPLATE DATA #>. .vemtl templates support data tags using the DATA:TYPE [ name = value ] syntax. In the case of Vemto, we use this data only to know what type of information should be available when editing templates in the Templates Editor. The data in this section is not used in rendering the template, as they are injected directly into the template via the Template Engine's setData() method. 
+In the case of Vemto, we use this data only to know what type of information should be available when editing templates in the Templates Editor. The data in this section is not used in rendering the template, as they are injected directly into the template via the *Template Engine's setData()* method. 
 
-Also, note that the first item is of type Project. This occurs because internally, Vemto always passes the variable project for the template being rendered. In other words, even if we have not specified it in Renderable, all templates receive it implicitly.
+Also, note that the first item is of type Project. This occurs because internally, Vemto always passes the variable project for the template being rendered. 
 
+In other words, even if we have not specified it in Renderable, all templates receive it implicitly.
+
+```js
 <####>
 <# TEMPLATE DATA #>
 <# DATA:MODEL [ project = Project ] #>
 <# DATA:MODEL [ model = Model ] #>
 <# DATA:RENDERABLE [ renderable = model/RenderableFactory(model) ] #>
 <####>
+```
 
+However, all Vemto templates must have the TEMPLATE DATA section so that the data in the Template Editor is set correctly. 
 
+Unlike when the template is being rendered by Vemto, in the Template Editor the data needs to be configured manually (otherwise it would not be possible to render it). 
 
-
-
-However, all Vemto templates must have the TEMPLATE DATA section so that the data in the Template Editor is set correctly. Unlike when the template is being rendered by Vemto, in the Template Editor the data needs to be configured manually (otherwise it would not be possible to render it). Therefore, this section is important to guide Vemto on which data to select by default, and to generate the screen where this data can be changed.
-
-
+Therefore, this section is important to guide Vemto on which data to select by default, and to generate the screen where this data can be changed.
 
 There are two very important types of data that can appear in the TEMPLATE DATA section settings:
 
+```js
 <# DATA:EXPOSE_LOCAL [ exposed_variables = index ] #>
 <# DATA:RENDERABLE [ renderable = CustomRenderable() ] #>
-
+```
 
 We will explain each of them here:
 
-DATA:EXPOSE_LOCAL - this section is for templates that are imported by other templates. Generally, when importing a template into Vemto, the variables existing within the context in which it was imported are passed directly to that template. For example:
+**DATA:EXPOSE_LOCAL** - this section is for templates that are imported by other templates. Generally, when importing a template into Vemto, the variables existing within the context in which it was imported are passed directly to that template. For example:
 
+```js
 <# Indexes #>
 <% for (let index of this.table.getIndexes()) { %>
     <import template="MigrationIndex.vemtl">
 <% } %>
+```
 
+In this case, the variable index created in for loop will be available within the template MigrationIndex.vemtl when it is rendered, and it works perfectly. However, for our Template editor, there is no way to know this when we open the MigrationIndex.vemtl template, as it is being opened directly, and not opened within another template. 
 
-In this case, the variable index created in for loop will be available within the template MigrationIndex.vemtl when it is rendered, and it works perfectly. However, for our Template editor, there is no way to know this when we open the MigrationIndex.vemtl template, as it is being opened directly, and not opened within another template. In this case, we need to inform which data is available for this template directly as variables, outside the this context. Therefore, we use the EXPOSE_LOCAL to inform you that we want to expose this.index as const index. This way, the Templates Editor can render the MigrationIndex.vemtl even outside the import context.
+In this case, we need to inform which data is available for this template directly as variables, outside the this context. Therefore, we use **EXPOSE_LOCAL** to inform it that we want to expose *this.index* as *const index*. This way, the Templates Editor can render the MigrationIndex.vemtl even outside the import context.
 
-DATA:RENDERABLE - Here you can inform which Renderable class will be used to render the file. If it is a template used only for importing into other templates (such as MigrationIndex.vemtl), i.e. a template rendered directly by Vemto, without the need for a Renderable class (like templates/inputs/blade/BelongsTo.vemtl), we inform the option CustomRenderable() so that the template editor can render it. If it is a template that has a Renderable class, we inform this correctly. For example, for the template Factory.vemtl, temos or renderable model/RenderableFactory(model)
+**DATA:RENDERABLE** - Here you can inform which Renderable class will be used to render the file. 
+
+If it is a template used only for importing into other templates (such as MigrationIndex.vemtl), i.e. a template rendered directly by Vemto, without the need for a Renderable class (like templates/inputs/blade/BelongsTo.vemtl), we inform the option CustomRenderable() so that the template editor can render it. 
+
+If it is a template that has a Renderable class, we inform this correctly. For example, for the template *Factory.vemtl*, we have the renderable *model/RenderableFactory(model)*
 
 
 
 All data passed to the template through Renderable's getData() method is available in the context this of the template. Therefore, for the following data:
 
+```ts
 getData() {
-        return {
-            model: this.model,
-        }
- }
+    return {
+        model: this.model,
+    }
+}
+ ```
 
 
 We can use it as follows in the template:
 
+```php
 <# Uses of this.model that was injected by the template engine #>
 <% const model = this.model %>
 <% const something = this.model.something() %>
@@ -324,35 +354,30 @@ We can use it as follows in the template:
 <####>
 <# Remembering that this.project is always available #>
 <% if(this.project.something()) { %>
+```
 
 Therefore, a Renderable object is responsible for reading the template file, initializing the template engine, passing the data and rendering the code.
 
-When we call the renderable.render() method of a Renderable, if we are not in Vemto's dependency checking mode (a mode in which renderables are called, but to check for missing composer or nodejs dependencies in the Laravel project), the template is rendered, and a RenderableFile is recorded (a RenderableFile is content that has been rendered and now needs to be written to disk). The RenderableFile list can be seen in Vemto's Code Queue:
+> When we call the *renderable.render()* method of a Renderable, if we are not in Vemto's dependency checking mode (a mode in which renderables are called, but to check for missing composer or nodejs dependencies in the Laravel project), the template is rendered, and a RenderableFile is recorded (a RenderableFile is content that has been rendered and now needs to be written to disk). The RenderableFile list can be seen in Vemto's Code Queue:
 
 
-Before writing a RenderableFile, Vemto will check for conflicts (e.g. if the file has been modified by the user) and, if any, will be given the option to resolve these conflicts (using AI or manually). We also have an AI-free conflict resolution algorithm, but it needs adjustments and is therefore not working at the moment.
+Before writing a RenderableFile, Vemto will check for conflicts (e.g. if the file has been modified by the user) and, if any, will be given the option to resolve these conflicts (using AI or manually). 
+
+We also have an AI-free conflict resolution algorithm, but it needs adjustments and is therefore not working at the moment.
 
 A RenderableFile has several possible states (some defined by Vemto, others by user action), which define what will happen to the file the next time code generation starts:
 
-IDLE - File waiting to render (write)
-PREPARING - Preparing to render
-PENDING - Pending rendering
-RENDERING - Being rendered
-RENDERED - Recording finished
-ERROR - An error occurred in rendering (usually details are shown on the Code Queue screen)
-CONFLICT - A code conflict has occurred, options are given to resolve the conflict
-ASK_TO_REMOVE - Need to ask if the file can be deleted from the disk
-CAN_REMOVE - The file can be deleted from the disk
-REMOVED - The file has been deleted from the disk (the Renderable File will be deleted in the next code generation)
-IGNORED - The generation of this file was ignored (by Vemto or the user). Vemto will no longer attempt to write this file to disk until the IGNORED state is explicitly modified
-SKIPPED - File generation was skipped for some specific reason, but may occur in the next generation if the problem is resolved
+- IDLE - File waiting to render (write)
+- PREPARING - Preparing to render
+- PENDING - Pending rendering
+- RENDERING - Being rendered
+- RENDERED - Rendering finished
+- ERROR - An error occurred in rendering (usually details are shown on the Code Queue screen)
+- CONFLICT - A code conflict has occurred, options are given to resolve the conflict
+- ASK_TO_REMOVE - Need to ask if the file can be deleted from the disk
+- CAN_REMOVE - The file can be deleted from the disk
+- REMOVED - The file has been deleted from the disk (the Renderable File will be deleted in the next code generation)
+- IGNORED - The generation of this file was ignored (by Vemto or the user). Vemto will no longer attempt to write this file to disk until the IGNORED state is explicitly modified
+- SKIPPED - File generation was skipped for some specific reason, but may occur in the next generation if the problem is resolved
 
-Tests
-
-Testing templates
-
-Testing the Schema Builder
-
-Testing models
-
-Testing services
+# Testing templates
