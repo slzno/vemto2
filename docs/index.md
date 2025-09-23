@@ -6,6 +6,23 @@ This documentations is being adapted from the original/internal Vemto's developm
 
 By Tiago Rodrigues
 
+## Table of Contents
+
+- [Vemto - Architectural Documentation](#vemto---architectural-documentation)
+  - [Table of Contents](#table-of-contents)
+- [Development Tips and Rules](#development-tips-and-rules)
+- [About Using TypeScript](#about-using-typescript)
+- [The Vemto's architecture](#the-vemtos-architecture)
+  - [Execution Cycle Overview](#execution-cycle-overview)
+    - [Detailed Explanation of the Execution Cycle](#detailed-explanation-of-the-execution-cycle)
+- [Code Structure](#code-structure)
+- [.vemto folder](#vemto-folder)
+- [Model Structure](#model-structure)
+  - [Other Models](#other-models)
+- [Schema reading](#schema-reading)
+- [Code Generation](#code-generation)
+- [Testing templates](#testing-templates)
+
 # Development Tips and Rules
 
 - We always keep the code clean and as simple as possible. We follow the philosophy **KISS (Keep It Simple, Stupid)** - Therefore, we always look for simple solutions, especially as we are a small company. Simple is not always the easiest to implement, but it is often the easiest to understand and maintain.
