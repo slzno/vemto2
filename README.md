@@ -11,10 +11,13 @@ I also managed to finish writing much of the [internal development documentation
 
 I hope you enjoy it, and if you have any questions, please email me at contact@vemto.app.
 
+By [Tiago Rodrigues](https://x.com/Tiago_Ferat)
+
 # Contact
 
-contact@vemto.app
-[Discord Server](https://discord.gg/CWnbWtJ)
+- contact@vemto.app
+- [Discord Server](https://discord.gg/CWnbWtJ)
+- https://x.com/VemtoApp
 
 # How to install
 
