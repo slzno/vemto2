@@ -27,6 +27,8 @@ I believe that if I were to start over today, I would do several things differen
 
 # Code Structure
 
+![img](/docs/img/01.png)
+
 Vemto is divided into 4 main code structures:
 
 - **main** - where all the code that runs in the main Electron process is located (basically, the code that runs in the background). Communication with this area of ​​the application is done via preload.ts (which generally maps to commands in IpcMessagesHandler.ts). In the renderer (FrontEnd of the application), the preload methods are accessible from the electron.d.ts file through the ElectronApi interface). They are used via the Main.API ​​singleton in the renderer. Main is compiled as ES5 due to the version of Electron used (20.x), which does not yet support ES6 in this part of the application. Main contains the application's lowest-level logic, such as reading and writing files, executing commands, etc.
@@ -51,7 +53,9 @@ table.delete()
 Model.find(1)
 ```
 
-# Project Folder (.vemto)
+# .vemto folder
+
+![img](/docs/img/02.png)
 
 When Vemto connects to a Laravel application, a .vemto folder is generated (created based on *the main/static/vemto-folder-base* folder). 
 
@@ -63,6 +67,7 @@ If the .vemto folder already exists in a project, Vemto will simply connect it t
 
 Models are the basis of Vemto's logic. They are very similar to Laravel models, and even the RelaDB ORM is very similar to the Eloquent ORM:
 
+![img](/docs/img/03.png)
 
 It is important to point out that data from a Vemto project is always saved in a Relational way, much like a common SQL database. For example, when you open a project, you are opening record 1 in the projects table. 
 
@@ -70,9 +75,11 @@ When we read the schema or create a new table, we are saving it to the tables ta
 
 For each table, we have models that represent them. So the Table model represents tables, the Index model represents indexes, etc. Tables have relationships between them, which are specified in the relationships() method of a model:
 
+![img](/docs/img/04.png)
 
 Some models are very special and important. These are the Schema-related models (that is, the models that represent everything you see in Vemto's Schema editor):
 
+![img](/docs/img/05.png)
 
 > You can easily identify these models as they extend the abstract class AbstractSchemaModel and implement the SchemaModel interface. These models are:
 
@@ -88,6 +95,7 @@ SchemaModel models are very important in Vemto as they are responsible for accur
 
 In other words, if a Laravel application has the “users” table with the “name” column, Vemto needs to have a table record called “users”, with a column called “name”. These records are represented by their respective models.
 
+![img](/docs/img/06.png)
 
 But as we can make modifications in Vemto, a model of type SchemaModel always needs to save both the Laravel application data version and the current version modified by Vemto (this allows us to know when Vemto contains changes that need to be saved in code, for example, generating migrations or models).
 
@@ -120,17 +128,25 @@ console.log(table.isDirty()) // Will return "true", there are modifications
 
 In other words, now Vemto knows that there are changes to the table, and therefore the **table.isDirty()** method returns “true”, and Vemto will know that it needs to show the option to save the migrations.
 
-> **IMPORTANT:** It is important to note that **NEVER**, under any circumstances, we manipulate the property schemaState of a SchemaModel. Only schema reading services (**SchemaBuilder.ts, TablesBuilder.ts and ModelsBuilder.ts**) can do this, as *schemaState* must always reflect the state of the application code. This also means that **we never call the method applyChanges() from a SchemaModel outside of these services**; Because the applyChanges() method of a SchemaModel always modifies the schemaState, as seen in the image below:
+> **IMPORTANT:** It is important to note that **NEVER**, under any circumstances, we manipulate the property schemaState of a SchemaModel. Only schema reading services (**SchemaBuilder.ts, TablesBuilder.ts and ModelsBuilder.ts**) can do this, as *schemaState* must always reflect the state of the application code. This also means that **we never call the method applyChanges() from a SchemaModel outside of these services**; For security reasons, Vemto only allows the State schema to be modified if a model's **savingInternally** mode is enabled, as seen below:
 
-For these types of models, the **buildSchemaState() and dataComparisonMap() methods are extremely important**, and care must be taken when modifying these methods, as they are responsible for checking whether there are changes between the application's Schema and the current Vemto Schema.
+![img](/docs/img/07.png)
 
-In general, it is not necessary to modify these methods, as Vemto has been able to read almost perfectly the data necessary to assemble the Schema for months (so we will very rarely change these parts of SchemaModel models).
+> Because the applyChanges() method of a SchemaModel always modifies the schemaState, as seen in the image below:
+
+![img](/docs/img/08.png)
+
+**IMPORTANT**: For these types of models, the **buildSchemaState() and dataComparisonMap() methods are extremely important**, and care must be taken when modifying these methods, as they are responsible for checking whether there are changes between the application's Schema and the current Vemto Schema.
+
+![img](/docs/img/09.png)
+
+**In general, it is not necessary to modify these methods**, as Vemto has been able to read almost perfectly the data necessary to assemble the Schema for years (so we will very rarely change these parts of SchemaModel models).
 
 ## Other Models
 
 That said, the other models are generally not synchronized with the application code, existing only in Vemto and serving only for data representation and subsequent code generation. For example, the **Crud** and **Input** models are used to represent an application of type Crud:
 
-
+![img](/docs/img/10.png)
 
 When generating the code, the data from these models will be used. However, if there are manual changes to the CRUD code, Vemto will not update them internally (since it is not well-defined data like Schema, and therefore the complexity of such a task is much greater). 
 
@@ -315,6 +331,8 @@ Unlike when the template is being rendered by Vemto, in the Template Editor the 
 
 Therefore, this section is important to guide Vemto on which data to select by default, and to generate the screen where this data can be changed.
 
+![img](/docs/img/11.png)
+
 There are two very important types of data that can appear in the TEMPLATE DATA section settings:
 
 ```js
@@ -372,6 +390,7 @@ Therefore, a Renderable object is responsible for reading the template file, ini
 
 > When we call the *renderable.render()* method of a Renderable, if we are not in Vemto's dependency checking mode (a mode in which renderables are called, but to check for missing composer or nodejs dependencies in the Laravel project), the template is rendered, and a RenderableFile is recorded (a RenderableFile is content that has been rendered and now needs to be written to disk). The RenderableFile list can be seen in Vemto's Code Queue:
 
+![img](/docs/img/12.png)
 
 Before writing a RenderableFile, Vemto will check for conflicts (e.g. if the file has been modified by the user) and, if any, will be given the option to resolve these conflicts (using AI or manually). 
 
@@ -404,7 +423,7 @@ There are two important methods in the TestHelper class that help with these tes
 
 ![img](/docs/img/template-test-browser.png)
 
-If you're absolutely certain that the templates are correct, you can use the **yarn test:replace-outputs** command to overwrite the results of the template tests and make them pass.
+> If you're absolutely certain that the templates are correct, you can use the **yarn test:replace-outputs** command to overwrite the results of the template tests and make them pass.
 
 Here you can see ann example of a test using them:
 
