@@ -1,4 +1,9 @@
 # Welcome to Vemto ༄
+
+[Vemto](https://vemto.app) is a desktop application focused on generating [Laravel](https://laravel.com) code, with several important features such as: editing and synchronizing the data schema (tables and models), generating migrations, models, factories, seeders, CRUD, API, and much more. 
+
+It also features an intelligent Schema editor that automatically creates tables and columns for relationships and detects the correct type of table columns.
+
 [![Vemto showcase](https://vemto.app//images/hero.png)](https://www.youtube.com/watch?v=9Ajie_-zcNI)
 
 [**▶️ WATCH - Vemto showcase video on Youtube**](https://www.youtube.com/watch?v=9Ajie_-zcNI)

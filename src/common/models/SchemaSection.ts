@@ -93,7 +93,6 @@ export default class SchemaSection extends RelaDB.Model {
     }
 
     // New methods for handling zoom
-
     /**
      * Get the zoom level for this section
      * Falls back to project zoom if not set
