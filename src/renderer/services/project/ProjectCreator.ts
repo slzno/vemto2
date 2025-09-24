@@ -4,6 +4,7 @@ import BreezeInstaller from "./installer/composer/BreezeInstaller";
 import FilamentInstaller from "./installer/composer/FilamentInstaller";
 import JetstreamInstaller from "./installer/composer/JetstreamInstaller";
 import ApiInstaller from "./installer/composer/ApiInstaller";
+import ReactInstaller from "@Renderer/services/project/installer/composer/ReactInstaller"
 
 export interface ProjectCreatorData {
     name: string;
@@ -55,8 +56,16 @@ export default class ProjectCreator {
 
     async createProject() {
         this.stateCallback("Creating project, please wait! This may take a while")
-
-        await Main.API.executeComposerOnPath(this.data.path, `create-project --prefer-dist laravel/laravel ${this.data.name}`)
+        if (this.data.starterKit === "react") {
+            this.stateCallback("Installing React Starter Kit")
+            await Main.API.executeComposerOnPath(this.data.path, `create-project laravel/react-starter-kit ${this.data.name} --stability=dev`)
+        }
+        else {
+            await Main.API.executeComposerOnPath(
+                this.data.path,
+                `create-project --prefer-dist laravel/laravel ${this.data.name}`
+            )
+        }
     }
 
     async generateStorageLink() {
@@ -67,6 +76,7 @@ export default class ProjectCreator {
 
     async installStarterKit() {
         const starterKitInstallers = {
+            "react": ReactInstaller,
             "api": ApiInstaller,
             "breeze": BreezeInstaller,
             "fortify": FilamentInstaller,
