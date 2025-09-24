@@ -1,10 +1,10 @@
 <?php
 
 class MigrationRepository {
-    protected $migrations = [];
+    protected array $migrations = [];
     protected string $currentMigration = '';
 
-    public function newMigration($migration)
+    public function newMigration(string $migration): void
     {
         $this->currentMigration = $migration;
 
@@ -19,49 +19,58 @@ class MigrationRepository {
             'droppedColumns' => [],
             'renamedColumns' => [],
             'commands' => [],
-
-            // TODO: FIX IT - melhor criar um campo createdTables<Array> e marcar todas as tabelas criadas
             'createdTables' => [],
             'renamedTables' => [],
             'droppedTables' => [],
         ];
     }
 
-    public function addCreatedTableName(string $tableName)
+    protected function ensureCurrentMigration(): void
     {
+        if (!isset($this->migrations[$this->currentMigration])) {
+            throw new \RuntimeException("No current migration set.");
+        }
+    }
+
+    public function addCreatedTableName(string $tableName): void
+    {
+        $this->ensureCurrentMigration();
         if (!in_array($tableName, $this->migrations[$this->currentMigration]['createdTables'])) {
             $this->migrations[$this->currentMigration]['createdTables'][] = $tableName;
         }
     }
 
-    public function addColumn($column)
+    public function addColumn(array $column): void
     {
+        $this->ensureCurrentMigration();
         $this->migrations[$this->currentMigration]['addedColumns'][] = $column;
     }
 
-    public function changeColumn($column)
+    public function changeColumn(array $column): void
     {
+        $this->ensureCurrentMigration();
         $this->migrations[$this->currentMigration]['changedColumns'][] = $column;
     }
 
-    public function addCommand($command)
+    public function addCommand(array $command): void
     {
+        $this->ensureCurrentMigration();
         $this->migrations[$this->currentMigration]['commands'][] = $command;
     }
 
-    public function dropColumn($columns) 
+    public function dropColumn(array|string $columns): void
     {
-        if (!is_array($columns)) {
-            $columns = [$columns];
-        }
+        $this->ensureCurrentMigration();
+        $columns = is_array($columns) ? $columns : [$columns];
 
         foreach ($columns as $column) {
             $this->migrations[$this->currentMigration]['droppedColumns'][] = $column;
         }
     }
 
-    public function renameColumn(string $table, string $from, string $to) 
+    public function renameColumn(string $table, string $from, string $to): void
     {
+        $this->ensureCurrentMigration();
         $this->migrations[$this->currentMigration]['renamedColumns'][] = [
             'table' => $table,
             'from' => $from,
@@ -69,20 +78,22 @@ class MigrationRepository {
         ];
     }
 
-    public function renameTable(string $from, string $to) 
+    public function renameTable(string $from, string $to): void
     {
+        $this->ensureCurrentMigration();
         $this->migrations[$this->currentMigration]['renamedTables'][] = [
             'from' => $from,
             'to' => $to,
         ];
     }
 
-    public function dropTable(string $table) 
+    public function dropTable(string $table): void
     {
+        $this->ensureCurrentMigration();
         $this->migrations[$this->currentMigration]['droppedTables'][] = $table;
     }
 
-    public function getMigrations()
+    public function getMigrations(): array
     {
         return $this->migrations;
     }

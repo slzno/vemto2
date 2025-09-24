@@ -1,12 +1,11 @@
 <?php
-
 use Illuminate\Database\Migrations\Migrator;
-use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class ExtendedMigrator extends Migrator
 {
-    public function resolveMigrationPath($file)
+    public function resolveMigrationPath(string $file)
     {
+        // Solo devuelve la ruta del archivo
         return $this->resolvePath($file);
     }
 }

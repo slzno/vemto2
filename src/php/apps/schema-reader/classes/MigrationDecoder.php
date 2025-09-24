@@ -1,27 +1,41 @@
 <?php
-class MigrationDecoder {
 
-    protected $migration;
+class MigrationDecoder
+{
+    protected $migrationInstance;
+    protected $migrationPath;
     protected $upActions = [];
     protected $downActions = [];
     protected $reflectedMigration = null;
 
-    function __construct($migration) 
+    public function __construct($migrationInstance, string $migrationPath)
     {
-        $this->migration = $migration;    
+        $this->migrationInstance = $migrationInstance;
+        $this->migrationPath = $migrationPath;
     }
 
-    public function decode()
+    public function decode(): void
     {
-        $this->reflectedMigration = new ReflectionClass($this->migration);
+        $ref = new ReflectionClass($this->migrationInstance);
 
-        $methods = $this->reflectedMigration->getMethods();
+        if ($ref->hasMethod('up')) {
+            $method = $ref->getMethod('up');
+            $method->invoke($this->migrationInstance);
+            $this->upActions[] = 'up executed';
+        }
 
-        foreach ($methods as $method) {
-            if ($method->name == 'up') {
-                $this->upActions[] = $method->invoke($this->migration);
-            }
+        if ($ref->hasMethod('down')) {
+            $this->downActions[] = 'down exists';
         }
     }
 
+    public function getUpActions(): array
+    {
+        return $this->upActions;
+    }
+
+    public function getDownActions(): array
+    {
+        return $this->downActions;
+    }
 }

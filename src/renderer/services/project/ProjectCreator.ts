@@ -29,16 +29,25 @@ export default class ProjectCreator {
         this.stateCallback = stateCallback
 
         try {
-            await this.createProject()
-            await this.generateStorageLink()
+            if (["jetstream", "breeze", "empty", "api"].includes(this.data.starterKit) === true) {
+                await this.createProject()
+                await this.generateStorageLink()
 
-            await this.fixFolderPermissions(this.data.completePath)
+                await this.fixFolderPermissions(this.data.completePath)
 
-            await this.installStarterKit()
-            await this.changeDatabase()
+                await this.installStarterKit()
+                await this.changeDatabase()
 
-            if(this.data.mustInstallFilament) {
-                await FilamentInstaller.installFromProjectCreator(this.data, stateCallback)
+                if (this.data.mustInstallFilament) {
+                    await FilamentInstaller.installFromProjectCreator(
+                        this.data,
+                        stateCallback
+                    )
+                }
+            }
+
+            if (this.data.starterKit === "react") {
+                await this.createProject()
             }
 
             await this.fixFolderPermissions(this.data.completePath)
@@ -56,7 +65,15 @@ export default class ProjectCreator {
     async createProject() {
         this.stateCallback("Creating project, please wait! This may take a while")
 
-        await Main.API.executeComposerOnPath(this.data.path, `create-project --prefer-dist laravel/laravel ${this.data.name}`)
+        if (this.data.starterKit === "react") {
+            await Main.API.executeComposerOnPath(this.data.path, `create-project laravel/react-starter-kit ${this.data.name} --stability=dev`)
+        }
+        else {
+            await Main.API.executeComposerOnPath(
+                this.data.path,
+                `create-project --prefer-dist laravel/laravel ${this.data.name}`
+            )
+        }
     }
 
     async generateStorageLink() {

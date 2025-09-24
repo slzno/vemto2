@@ -1,38 +1,41 @@
 <?php
 
 use Illuminate\Database\Schema\Builder;
+use Illuminate\Database\Connection;
+require 'ExtendedBlueprint.php';
 
 class ExtendedBuilder extends Builder
 {
     protected $migrationsRepository;
 
-    public function __construct(Illuminate\Database\Connection $connection)
+    public function __construct(Connection $connection)
     {
         parent::__construct($connection);
-
         $this->migrationsRepository = app('localMigrationsRepository');
+    }
+
+    protected function createBlueprint($table, Closure $callback = null)
+    {
+        $blueprint = new ExtendedBlueprint($this->connection, $table, $callback);
+        $blueprint->setGrammar($this->connection->getSchemaGrammar());
+        return $blueprint;
     }
 
     public function create($table, Closure $callback)
     {
-        tap($this->createBlueprint($table), function ($blueprint) use ($table, $callback) {
+        tap($this->createBlueprint($table, $callback), function ($blueprint) use ($table, $callback) {
             $blueprint->create();
-
             $callback($blueprint);
-            
             $this->migrationsRepository->addCreatedTableName($table);
-
             $this->processTable($table, $blueprint);
         });
     }
 
     public function table($table, Closure $callback)
     {
-        tap($this->createBlueprint($table), function ($blueprint) use ($table, $callback) {
+        tap($this->createBlueprint($table, $callback), function ($blueprint) use ($table, $callback) {
             $blueprint->create();
-
             $callback($blueprint);
-
             $this->processTable($table, $blueprint);
         });
     }
@@ -54,21 +57,15 @@ class ExtendedBuilder extends Builder
 
     protected function processTable($table, $blueprint)
     {
-        $addedColumns = $blueprint->getAddedColumns();
-
-        foreach ($addedColumns as $column) {
+        foreach ($blueprint->getAddedColumns() as $column) {
             $this->migrationsRepository->addColumn($column->toArray());
         }
 
-        $changedColumns = $blueprint->getChangedColumns();
-        
-        foreach ($changedColumns as $column) {
+        foreach ($blueprint->getChangedColumns() as $column) {
             $this->migrationsRepository->changeColumn($column->toArray());
         }
 
-        $addedCommands = $blueprint->getCommands();
-        
-        foreach ($addedCommands as $command) {
+        foreach ($blueprint->getCommands() as $command) {
             $finalCommand = $command->toArray();
             $finalCommand['table'] = $table;
             $this->migrationsRepository->addCommand($finalCommand);

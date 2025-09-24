@@ -1,30 +1,32 @@
 <?php
 
-use \Illuminate\Database\Connection;
-use \Illuminate\Database\Schema\Grammars\Grammar;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Connection;
+use Illuminate\Database\Schema\Grammars\Grammar;
 
-class ExtendedBlueprint extends Illuminate\Database\Schema\Blueprint
+class ExtendedBlueprint extends Blueprint
 {
     protected $migrationsRepository;
 
-    public function __construct($table, $callback = null, $prefix = '')
+    public function __construct(Connection $connection, string $table, $callback = null)
     {
-        parent::__construct($table, $callback, $prefix);
+        parent::__construct($connection, $table, $callback);
         $this->migrationsRepository = app('localMigrationsRepository');
     }
 
-    /**
-     * Lets rewrite the build method to avoid executing any queries
-     */
-    public function build(Connection $connection, Grammar $grammar)
+    public function setGrammar(Grammar $grammar): void
     {
-        return null;
+        $this->grammar = $grammar;
+    }
+
+    public function build(): void
+    {
+        parent::build();
     }
 
     protected function addColumnDefinition($definition)
     {
         $debug = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 10);
-
         $toppestCaller = $this->getToppestCaller($debug);
 
         $definition['table'] = $this->getTable();
@@ -38,7 +40,7 @@ class ExtendedBlueprint extends Illuminate\Database\Schema\Blueprint
         $toppestCaller = null;
 
         foreach ($debug as $caller) {
-            if (isset($caller['class']) && $caller['class'] == 'Illuminate\Database\Schema\Blueprint') {
+            if (isset($caller['class']) && $caller['class'] === 'Illuminate\Database\Schema\Blueprint') {
                 $toppestCaller = $caller;
             }
         }
