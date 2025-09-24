@@ -56,16 +56,16 @@ async function createWindow() {
 
     ProjectHandler.init(mainWindow)
 
-    ProjectHandler.handle()
-
-    HandleDatabase()
-    HandleFileQueue()
-
     HandleRenderableFileQueue(mainWindow)
 }
 
 app.whenReady().then(() => {
     HandleIpcMessages()
+    
+    // Initialize all handlers before creating window
+    ProjectHandler.handle()
+    HandleDatabase()
+    HandleFileQueue()
     
     createWindow()
 
