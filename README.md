@@ -1,5 +1,6 @@
 # Welcome to Vemto
 [![Vemto showcase](https://img.youtube.com/vi/9Ajie_-zcNI/0.jpg)](https://www.youtube.com/watch?v=9Ajie_-zcNI)
+[*Vemto showcase video on Youtube*](https://www.youtube.com/watch?v=9Ajie_-zcNI)
 
 I'm delighted to announce that Vemto is now a fully open-source project, published under the MIT license.
 
