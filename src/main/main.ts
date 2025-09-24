@@ -34,6 +34,12 @@ async function createWindow() {
     })
 
     Storage.setWindow(mainWindow)
+    ProjectHandler.init(mainWindow)
+    ProjectHandler.handle()
+
+    HandleFileQueue()
+    HandleDatabase()
+    HandleRenderableFileQueue(mainWindow)
 
     if (isDevelopment) {
         const rendererPort = process.argv[2]
@@ -53,21 +59,11 @@ async function createWindow() {
     }
 
     mainWindow.maximize()
-
-    ProjectHandler.init(mainWindow)
-
-    ProjectHandler.handle()
-
-    HandleDatabase()
-    HandleFileQueue()
-
-    HandleRenderableFileQueue(mainWindow)
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
     HandleIpcMessages()
-    
-    createWindow()
+    await createWindow()
 
     session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
         callback({
@@ -80,7 +76,7 @@ app.whenReady().then(() => {
         })
     })
 
-    app.on("activate", function () {
+    app.on("activate", function() {
         // On macOS it's common to re-create a window in the app when the
         // dock icon is clicked and there are no other windows open.
         if (BrowserWindow.getAllWindows().length === 0) {
