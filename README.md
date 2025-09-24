@@ -1,4 +1,8 @@
-# Welcome to Vemto
+# Welcome to Vemto ༄
+[![Vemto showcase](https://vemto.app//images/hero.png)](https://www.youtube.com/watch?v=9Ajie_-zcNI)
+
+[**▶️ WATCH - Vemto showcase video on Youtube**](https://www.youtube.com/watch?v=9Ajie_-zcNI)
+
 I'm delighted to announce that Vemto is now a fully open-source project, published under the MIT license.
 
 A few months ago, I (Tiago Rodrigues, creator of Vemto), [wrote a blog post explaining](https://vemto.app/blog/the-future-of-vemto) in detail why Vemto would become open-source.
