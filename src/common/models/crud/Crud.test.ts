@@ -8,6 +8,7 @@ jest.mock('@Renderer/services/wrappers/Main')
 
 beforeEach(() => {
     MockDatabase.start()
+    TestHelper.setCurrentTestsPath(__dirname)
 })
 
 test('It correctly fills a crud name and plural when a model has a composed name', async () => {
@@ -58,15 +59,15 @@ test('It generates a correct API crud routes when it has a hasMany relationship'
         relationship = TestHelper.createHasManyRelation(userModel, postModel),
         userCrud = TestHelper.createCrud({ model: userModel, type: CrudType.API, generateDetails: true })
 
-    expect(userCrud.hasManyDetails[0].routes.length).toBe(2)
+    expect(userCrud.hasManyDetails[0].detailCrud.routes.length).toBe(2)
 
-    expect(userCrud.hasManyDetails[0].routes[0].name).toBe('users.posts.index')
-    expect(userCrud.hasManyDetails[0].routes[0].method).toBe('get')
-    expect(userCrud.hasManyDetails[0].routes[0].path).toBe('/users/{user}/posts')
+    expect(userCrud.hasManyDetails[0].detailCrud.routes[0].name).toBe('users.posts.index')
+    expect(userCrud.hasManyDetails[0].detailCrud.routes[0].method).toBe('get')
+    expect(userCrud.hasManyDetails[0].detailCrud.routes[0].path).toBe('/users/{user}/posts')
 
-    expect(userCrud.hasManyDetails[0].routes[1].name).toBe('users.posts.store')
-    expect(userCrud.hasManyDetails[0].routes[1].method).toBe('post')
-    expect(userCrud.hasManyDetails[0].routes[1].path).toBe('/users/{user}/posts')
+    expect(userCrud.hasManyDetails[0].detailCrud.routes[1].name).toBe('users.posts.store')
+    expect(userCrud.hasManyDetails[0].detailCrud.routes[1].method).toBe('post')
+    expect(userCrud.hasManyDetails[0].detailCrud.routes[1].path).toBe('/users/{user}/posts')
 })
 
 test('It generates a correct API crud routes when it has a belongsToMany relationship', async () => {
@@ -84,17 +85,17 @@ test('It generates a correct API crud routes when it has a belongsToMany relatio
 
     const userCrud = TestHelper.createCrud({ model: userModel, type: CrudType.API, generateDetails: true })
 
-    expect(userCrud.belongsToManyDetails[0].routes.length).toBe(3)
+    expect(userCrud.belongsToManyDetails[0].detailCrud.routes.length).toBe(3)
 
-    expect(userCrud.belongsToManyDetails[0].routes[0].name).toBe('users.tags.index')
-    expect(userCrud.belongsToManyDetails[0].routes[0].method).toBe('get')
-    expect(userCrud.belongsToManyDetails[0].routes[0].path).toBe('/users/{user}/tags')
+    expect(userCrud.belongsToManyDetails[0].detailCrud.routes[0].name).toBe('users.tags.index')
+    expect(userCrud.belongsToManyDetails[0].detailCrud.routes[0].method).toBe('get')
+    expect(userCrud.belongsToManyDetails[0].detailCrud.routes[0].path).toBe('/users/{user}/tags')
 
-    expect(userCrud.belongsToManyDetails[0].routes[1].name).toBe('users.tags.store')
-    expect(userCrud.belongsToManyDetails[0].routes[1].method).toBe('post')
-    expect(userCrud.belongsToManyDetails[0].routes[1].path).toBe('/users/{user}/tags/{tag}')
+    expect(userCrud.belongsToManyDetails[0].detailCrud.routes[1].name).toBe('users.tags.store')
+    expect(userCrud.belongsToManyDetails[0].detailCrud.routes[1].method).toBe('post')
+    expect(userCrud.belongsToManyDetails[0].detailCrud.routes[1].path).toBe('/users/{user}/tags/{tag}')
 
-    expect(userCrud.belongsToManyDetails[0].routes[2].name).toBe('users.tags.destroy')
-    expect(userCrud.belongsToManyDetails[0].routes[2].method).toBe('delete')
-    expect(userCrud.belongsToManyDetails[0].routes[2].path).toBe('/users/{user}/tags/{tag}')
+    expect(userCrud.belongsToManyDetails[0].detailCrud.routes[2].name).toBe('users.tags.destroy')
+    expect(userCrud.belongsToManyDetails[0].detailCrud.routes[2].method).toBe('delete')
+    expect(userCrud.belongsToManyDetails[0].detailCrud.routes[2].path).toBe('/users/{user}/tags/{tag}')
 })

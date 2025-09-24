@@ -5,10 +5,13 @@ import { test, expect, beforeEach } from '@jest/globals'
 
 beforeEach(() => {
     MockDatabase.start()
+    TestHelper.setCurrentTestsPath(__dirname)
 })
 
 test('It can save a new column', () => {
-    const column = new Column()
+    const project = TestHelper.getProject(),
+        table = TestHelper.createTableWithSchemaState({ name: 'users' }),    
+        column = TestHelper.createColumnWithSchemaState({ table })
     
     column.name = 'test_column'
     column.save()
@@ -17,12 +20,21 @@ test('It can save a new column', () => {
 })
 
 test('A column has changes when schema state is empty', () => {
-    const column = new Column()
+    const project = TestHelper.getProject(),
+        table = TestHelper.createTableWithSchemaState({ name: 'users' }),    
+        column = TestHelper.createColumn({ table })
     
-    column.name = 'test_column'
-    column.save()
+    expect(column.isNew()).toBe(true)
+    expect(column.isDirty()).toBe(true)
+})
 
-    expect(column.hasSchemaChanges({})).toBe(true)
+test('A column does not have changes when schema state is not empty', () => {
+    const project = TestHelper.getProject(),
+        table = TestHelper.createTableWithSchemaState({ name: 'users' }),    
+        column = TestHelper.createColumnWithSchemaState({ table })
+
+    expect(column.isNew()).toBe(false)
+    expect(column.isDirty()).toBe(false)
 })
 
 test('It adds column options to the schema state', () => {
@@ -132,44 +144,45 @@ test('It can send a column to the bottom when orders are incorrect', () => {
 test('It can check if a column has changes', () => {
     const column = TestHelper.createColumnWithSchemaState()
 
-    const hasSchemaChanges = column.hasSchemaChanges({
-        name: 'test_column',
-        order: 1,
-        length: 255,
-        type: 'string',
-        autoIncrement: false,
-        nullable: false,
-        unsigned: false,
-    })
+    column.name = 'renamed'
 
-    expect(hasSchemaChanges).toBe(true)
+    expect(column.isDirty()).toBe(true)
+    expect(column.hasLocalChanges()).toBe(true)
 })
 
 test('It can check if a column does not have changes', () => {
     const column = TestHelper.createColumnWithSchemaState()
 
-    const hasSchemaChanges = column.hasSchemaChanges({
-        name: 'name',
-        type: 'string',
-        autoIncrement: false,
-        nullable: false,
-        unsigned: false,
-    })
-
-    expect(hasSchemaChanges).toBe(false)
+    expect(column.isDirty()).toBe(false)
+    expect(column.hasLocalChanges()).toBe(false)
 })
 
 test('It can apply column changes', () => {
     const column = TestHelper.createColumn()
 
+    Column.savingInternally()
+
     column.applyChanges({ name: 'test_column_2' })
+
+    Column.notSavingInternally()
 
     expect(column.name).toBe('test_column_2')
     expect(column.schemaState.name).toBe('test_column_2')
 })
 
+// assure an error is thrown if trying to apply changes when not saving internally
+test('It can not apply column changes when not saving internally', () => {
+    const column = TestHelper.createColumn()
+
+    expect(() => {
+        column.applyChanges({ name: 'test_column_2' })
+    }).toThrow()
+})
+
 test('It can save schema state separately', () => {
     const column = TestHelper.createColumn()
+
+    Column.savingInternally()
 
     column.applyChanges({ name: 'renamed' })
 
@@ -186,19 +199,27 @@ test('It can save schema state separately', () => {
 
     expect(column.fresh().name).toBe('reverted')
     expect(column.fresh().schemaState.name).toBe('reverted')
+
+    Column.notSavingInternally()
 })
 
 test('It does not apply changes when unnecessary', () => {
-    const column = TestHelper.createColumn()
+    const column = TestHelper.createColumnWithSchemaState()
 
-    let changesWereApplied = column.applyChanges({ name: 'renamed' })
+    Column.savingInternally()
+
+    const columnData = column.export()
+    columnData.name = 'renamed'
+
+    let changesWereApplied = column.fresh().applyChanges(columnData)
 
     expect(changesWereApplied).toBe(true)
 
-    // The changes were already applied, so they should not be applied again
-    changesWereApplied = column.applyChanges({ name: 'renamed' })
+    changesWereApplied = column.fresh().applyChanges(columnData)
 
     expect(changesWereApplied).toBe(false)
+
+    Column.notSavingInternally()
 })
 
 test('A column was not considered renamed when schema state is empty', () => {
@@ -212,10 +233,17 @@ test('A column was not considered renamed when schema state is empty', () => {
     expect(wasRenamed).toBe(false)
 })
 
-test('It can check if a column was renamed from interface', () => {
+test('It can check if a column was renamed from interface using the save method', () => {
     const column = TestHelper.createColumn()
 
-    column.applyChanges({ name: 'renamed' })
+    Column.savingInternally()
+
+    const columnData = column.export()
+    columnData.name = 'renamed'
+
+    column.applyChanges(columnData)
+
+    Column.notSavingInternally()
 
     expect(column.wasRenamed()).toBe(false)
 
@@ -402,10 +430,25 @@ test('It can check if a column is a PK by index', () => {
 })
 
 test('It can check if a column is an FK', () => {
-    const column = TestHelper.createColumnWithSchemaState()
+    const usersTable = TestHelper.createTable(),
+        postsTable = TestHelper.createTable({
+            name: 'posts'
+        })
 
-    column.name = 'user_id'
-    column.save()
+    const column = TestHelper.createColumn({
+        name: 'user_id',
+        table: postsTable,
+    })
+
+    const index = TestHelper.createForeignIndex({
+        name: 'posts_user_id_foreign',
+        references: 'id',
+        on: 'users',
+        columns: ['user_id'],
+        table: postsTable,
+    })
+
+    index.relation("indexColumns").attachUnique(column)
 
     expect(column.isForeign()).toBe(true)
 })
@@ -424,7 +467,7 @@ test('It can check if a column is a special PK', () => {
     const column = TestHelper.createColumnWithSchemaState()
 
     column.name = 'special_primary_key'
-    column.type = 'uuid'
+    column.isUuid = true
     column.save()
 
     expect(column.isSpecialPrimaryKey()).toBe(true)

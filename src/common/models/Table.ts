@@ -708,22 +708,24 @@ export default class Table extends AbstractSchemaModel implements SchemaModel {
 
         if (column.isForeign()) return
 
-        const foreignName = `${WordManipulator.snakeCase(
-                this.name
-            )}_${WordManipulator.snakeCase(column.name)}_foreign`.toLowerCase(),
-            primaryKeyColumn = relatedModel.getPrimaryKeyColumn(),
-            foreign = new Index({
-                tableId: this.id,
-                name: foreignName,
-                columns: [column.name],
-                type: "foreign",
-                on: relatedModel.table.name,
-                onTableId: relatedModel.table.id,
-                references: primaryKeyColumn?.name,
-                referencesColumnId: primaryKeyColumn?.id,
-                onUpdate: "cascade",
-                onDelete: "cascade",
-            })
+        const tableName = WordManipulator.snakeCase(this.name)
+        const columnName = WordManipulator.snakeCase(column.name)
+        const foreignName = `${tableName}_${columnName}_foreign`.toLowerCase()
+
+        const primaryKeyColumn = relatedModel.getPrimaryKeyColumn()
+
+        const foreign = new Index({
+            tableId: this.id,
+            name: foreignName,
+            columns: [column.name],
+            type: "foreign",
+            on: relatedModel.table.name,
+            onTableId: relatedModel.table.id,
+            references: primaryKeyColumn?.name,
+            referencesColumnId: primaryKeyColumn?.id,
+            onUpdate: "cascade",
+            onDelete: "cascade",
+        })
 
         foreign.save()
         foreign.relation("indexColumns").attachUnique(column)

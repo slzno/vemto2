@@ -3,9 +3,13 @@ import TestHelper from '@Tests/base/TestHelper'
 import MockDatabase from '@Tests/base/MockDatabase'
 import { test, expect, beforeEach } from '@jest/globals'
 import Column from './Column'
+import SchemaSection from './SchemaSection'
+import { IndexType } from './Index'
+import Project from './Project'
 
 beforeEach(() => {
     MockDatabase.start()
+    TestHelper.setCurrentTestsPath(__dirname)
 })
 
 test('It can save a new table', () => {
@@ -24,6 +28,53 @@ test('A table has changes when schema state is empty', () => {
     table.save()
 
     expect(table.hasSchemaChanges({})).toBe(true)
+})
+
+test('It can validate a table', () => {
+    const table = new Table()
+
+    expect(table.isValid()).toBe(false)
+
+    table.name = 'test_table'
+
+    expect(table.isValid()).toBe(true)
+})
+
+test('It can save from interface', () => {
+    const table = new Table()
+    table.name = 'test_table'
+
+    table.saveFromInterface()
+
+    expect(table.createdFromInterface).toBe(true)
+    expect(table.isSaved()).toBe(true)
+})
+
+test('It can save from interface with model creation', () => {
+    const table = new Table({
+        projectId: TestHelper.getProject().id
+    })
+
+    table.name = 'test_table'
+
+    table.saveFromInterface(true)
+
+    expect(table.createdFromInterface).toBe(true)
+    expect(table.isSaved()).toBe(true)
+})
+
+test('It can remove and undo remove a table', () => {
+    const table = TestHelper.createTableWithSchemaState()
+
+    expect(table.removed).toBeUndefined()
+
+    table.remove()
+
+    expect(table.removed).toBe(true)
+
+    table.undoRemove()
+
+    expect(table.removed).toBe(false)
 })
 
 test('It can check if a table has changes', () => {
@@ -575,4 +626,453 @@ test('It cannot update the latest migration when a table has new related tables'
 
     expect(childTable.fresh().hasNewRelatedTables()).toBe(true)
     expect(childTable.fresh().canUpdateLatestMigration()).toBe(false)
+})
+
+test('It can validate a table', () => {
+    const table = new Table()
+
+    expect(table.isValid()).toBe(false)
+
+    table.name = 'test_table'
+
+    expect(table.isValid()).toBe(true)
+})
+
+test('It can save from interface', () => {
+    const table = new Table()
+    table.name = 'test_table'
+
+    table.saveFromInterface()
+
+    expect(table.createdFromInterface).toBe(true)
+    expect(table.isSaved()).toBe(true)
+})
+
+test('It can save from interface with model creation', () => {
+    const table = new Table({
+        projectId: TestHelper.getProject().id
+    })
+    table.name = 'test_table'
+
+    table.saveFromInterface(true)
+
+    expect(table.createdFromInterface).toBe(true)
+    expect(table.isSaved()).toBe(true)
+})
+
+test('It can remove and undo remove a table', () => {
+    const table = TestHelper.createTableWithSchemaState()
+
+    expect(table.removed).toBeUndefined()
+
+    table.remove()
+
+    expect(table.removed).toBe(true)
+
+    table.undoRemove()
+
+    expect(table.removed).toBe(false)
+})
+
+test('It can check if table has dirty resources', () => {
+    const table = TestHelper.createTableWithSchemaState()
+
+    expect(table.hasDirtyResources()).toBe(false)
+
+    const column = TestHelper.createColumnWithSchemaState({ name: 'test_column', table })
+    column.name = 'renamed_column'
+    column.save()
+
+    expect(table.hasDirtyResources()).toBe(true)
+})
+
+test('It can check if table has dirty columns', () => {
+    const table = TestHelper.createTableWithSchemaState()
+
+    expect(table.hasDirtyColumns()).toBe(false)
+
+    const column = TestHelper.createColumnWithSchemaState({ name: 'test_column', table })
+    column.name = 'renamed_column'
+    column.save()
+
+    expect(table.hasDirtyColumns()).toBe(true)
+})
+
+test('It can check if table has dirty indexes', () => {
+    const table = TestHelper.createTableWithSchemaState()
+
+    expect(table.hasDirtyIndexes()).toBe(false)
+
+    const index = TestHelper.createIndex({ name: 'test_index', table })
+    index.name = 'renamed_index'
+    index.save()
+
+    expect(table.hasDirtyIndexes()).toBe(true)
+})
+
+test('It can check if table has local changes', () => {
+    const table = TestHelper.createTableWithSchemaState()
+
+    expect(table.hasLocalChanges()).toBe(false)
+
+    table.name = 'renamed_table'
+    table.save()
+
+    expect(table.hasLocalChanges()).toBe(true)
+})
+
+test('It can check if table has a primary key', () => {
+    const table = TestHelper.createTable()
+
+    expect(table.hasPrimaryKey()).toBe(false)
+
+    TestHelper.createColumn({ name: 'id', table })
+
+    TestHelper.createIndex({ name: 'test_index', type: IndexType.PRIMARY, table, columns: ['id'] })
+
+    expect(table.hasPrimaryKey()).toBe(true)
+})
+
+test('It can get the primary key column', () => {
+    const table = TestHelper.createTable()
+
+    expect(table.getPrimaryKeyColumn()).toBeUndefined()
+
+    TestHelper.createColumn({ name: 'id', table })
+
+    TestHelper.createIndex({ name: 'test_index', type: IndexType.PRIMARY, table, columns: ['id'] })
+
+    expect(table.getPrimaryKeyColumn().name).toBe('id')
+})
+
+test('It can get the primary key name', () => {
+    const table = TestHelper.createTable()
+
+    expect(table.getPrimaryKeyName()).toBe('')
+
+    TestHelper.createColumn({ name: 'id', table })
+
+    TestHelper.createIndex({ name: 'test_index', type: IndexType.PRIMARY, table, columns: ['id'] })
+
+    expect(table.getPrimaryKeyName()).toBe('id')
+})
+
+test('It can get renamed columns', () => {
+    const table = TestHelper.createTableWithSchemaState()
+
+    const column = TestHelper.createColumnWithSchemaState({ name: 'old_name', table })
+
+    expect(table.getRenamedColumns().length).toBe(0)
+
+    column.name = 'new_name'
+    column.save()
+
+    expect(table.getRenamedColumns().length).toBe(1)
+    expect(table.getRenamedColumns()[0].name).toBe('new_name')
+})
+
+test('It can get new columns', () => {
+    const table = TestHelper.createTableWithSchemaState()
+
+    expect(table.getNewColumns().length).toBe(0)
+
+    TestHelper.createColumn({ name: 'new_column', table })
+
+    expect(table.getNewColumns().length).toBe(1)
+    expect(table.getNewColumns()[0].name).toBe('new_column')
+})
+
+test('It can get changed columns', () => {
+    const table = TestHelper.createTableWithSchemaState()
+
+    const column = TestHelper.createColumnWithSchemaState({ name: 'test_column', table })
+
+    expect(table.getChangedColumns().length).toBe(0)
+
+    column.type = 'varchar'
+    column.save()
+
+    expect(table.getChangedColumns().length).toBe(1)
+    expect(table.getChangedColumns()[0].name).toBe('test_column')
+})
+
+test('It can get removed columns', () => {
+    const table = TestHelper.createTableWithSchemaState()
+
+    const column = TestHelper.createColumnWithSchemaState({ name: 'test_column', table })
+
+    expect(table.getRemovedColumns().length).toBe(0)
+
+    column.remove()
+
+    expect(table.getRemovedColumns().length).toBe(1)
+    expect(table.getRemovedColumns()[0].name).toBe('test_column')
+})
+
+test('It can check if table is parent of another table', () => {
+    const parentTable = TestHelper.createTable({ name: 'users' }),
+        childTable = TestHelper.createTable({ name: 'posts' })
+
+    expect(parentTable.isParentOf(childTable)).toBe(false)
+
+    TestHelper.createColumn({ name: 'user_id', table: childTable })
+    TestHelper.createForeignIndex({
+        name: 'posts_user_id_foreign',
+        references: 'id',
+        on: 'users',
+        columns: ['user_id'],
+        table: childTable,
+    })
+
+    expect(parentTable.isParentOf(childTable)).toBe(true)
+    expect(childTable.isChildrenOf(parentTable)).toBe(true)
+})
+
+test('It can check if table can be children of another table', () => {
+    const parentTable = TestHelper.createTable({ name: 'users' }),
+        childTable = TestHelper.createTable({ name: 'posts' })
+
+    expect(childTable.canBeChildrenOf(parentTable)).toBe(true)
+})
+
+test('It can get children tables', () => {
+    const parentTable = TestHelper.createTable({ name: 'users' }),
+        childTable = TestHelper.createTable({ name: 'posts' })
+
+    expect(parentTable.getChildrenTables().length).toBe(0)
+
+    TestHelper.createColumn({ name: 'user_id', table: childTable })
+    TestHelper.createForeignIndex({
+        name: 'posts_user_id_foreign',
+        references: 'id',
+        on: 'users',
+        columns: ['user_id'],
+        table: childTable,
+    })
+
+    expect(parentTable.getChildrenTables().length).toBe(1)
+    expect(parentTable.getChildrenTables()[0].name).toBe('posts')
+})
+
+test('It can get parent tables', () => {
+    const parentTable = TestHelper.createTable({ name: 'users' }),
+        childTable = TestHelper.createTable({ name: 'posts' })
+
+    expect(childTable.getParentTables().length).toBe(0)
+
+    TestHelper.createColumn({ name: 'user_id', table: childTable })
+    TestHelper.createForeignIndex({
+        name: 'posts_user_id_foreign',
+        references: 'id',
+        on: 'users',
+        columns: ['user_id'],
+        table: childTable,
+    })
+
+    expect(childTable.getParentTables().length).toBe(1)
+    expect(childTable.getParentTables()[0].name).toBe('users')
+})
+
+test('It can add a foreign key', () => {
+    const usersTable = TestHelper.createTable({ name: 'users' }),
+        usersModel = TestHelper.createModel({ name: 'User', table: usersTable }),
+        postsTable = TestHelper.createTable({ name: 'posts' })
+
+    TestHelper.createColumn({ name: 'id', table: usersTable })
+    TestHelper.createIndex({ name: 'users_primary', type: IndexType.PRIMARY, table: usersTable, columns: ['id'] })
+
+    expect(postsTable.hasColumn('user_id')).toBe(false)
+    expect(postsTable.hasIndex('posts_user_id_foreign')).toBe(false)
+
+    const foreignIndex = postsTable.addForeign('user_id', usersModel)
+
+    expect(foreignIndex.name).toBe('posts_user_id_foreign')
+    expect(foreignIndex.columns).toEqual(['user_id'])
+
+    expect(postsTable.hasColumn('user_id')).toBe(true)
+    expect(postsTable.hasIndex('posts_user_id_foreign')).toBe(true)
+})
+
+test('It can get or create foreign column', () => {
+    const usersTable = TestHelper.createTable({ name: 'users' }),
+        usersModel = TestHelper.createModel({ name: 'User', table: usersTable }),
+        postsTable = TestHelper.createTable({ name: 'posts' })
+
+    TestHelper.createColumn({ name: 'id', table: usersTable})
+    TestHelper.createIndex({ name: 'users_primary', type: IndexType.PRIMARY, table: usersTable, columns: ['id'] })
+
+    expect(postsTable.hasColumn('user_id')).toBe(false)
+
+    const foreignColumn = postsTable.getOrCreateForeignColumn('user_id', usersModel)
+
+    expect(foreignColumn.name).toBe('user_id')
+    expect(postsTable.hasColumn('user_id')).toBe(true)
+
+    const existingColumn = postsTable.getOrCreateForeignColumn('user_id', usersModel)
+
+    expect(existingColumn.id).toBe(foreignColumn.id)
+})
+
+test('It can get the label column', () => {
+    const table = TestHelper.createTable()
+
+    TestHelper.createColumn({ name: 'id', table, primaryKey: true })
+    expect(table.getLabelColumn().name).toBe('id')
+
+    TestHelper.createColumn({ name: 'name', table, type: 'varchar' })
+    expect(table.getLabelColumn().name).toBe('name')
+
+    TestHelper.createColumn({ name: 'title', table, type: 'varchar' })
+    expect(table.getLabelColumn().name).toBe('name')
+})
+
+test('It can get the label column name', () => {
+    const table = TestHelper.createTable()
+
+    TestHelper.createColumn({ name: 'id', table, primaryKey: true })
+    TestHelper.createColumn({ name: 'name', table, type: 'varchar' })
+
+    expect(table.getLabelColumnName()).toBe('name')
+})
+
+test('It can undo all changes', () => {
+    const table = TestHelper.createTableWithSchemaState()
+
+    const originalName = table.name
+    table.name = 'changed_name'
+
+    const column = TestHelper.createColumnWithSchemaState({ name: 'old_column', table })
+    column.name = 'new_column'
+
+    const index = TestHelper.createIndexWithSchemaState({ name: 'old_index', table })
+    index.name = 'new_index'
+
+    table.save()
+    column.save()
+    index.save()
+
+    expect(table.name).toBe('changed_name')
+    expect(table.schemaState.name).toBe(originalName)
+
+    expect(column.name).toBe('new_column')
+    expect(column.schemaState.name).toBe('old_column')
+
+    expect(index.name).toBe('new_index')
+    expect(index.schemaState.name).toBe('old_index')
+
+    table.undoAllChanges()
+
+    expect(table.fresh().schemaState.name).toBe(originalName)
+    expect(table.fresh().name).toBe(originalName)
+
+    expect(column.fresh().schemaState.name).toBe('old_column')
+    expect(column.fresh().name).toBe('old_column')
+
+    expect(index.fresh().schemaState.name).toBe('old_index')
+    expect(index.fresh().name).toBe('old_index')
+})
+
+test('It can undo all columns changes', () => {
+    const table = TestHelper.createTableWithSchemaState()
+
+    const column1 = TestHelper.createColumnWithSchemaState({ name: 'column1', table })
+    const column2 = TestHelper.createColumnWithSchemaState({ name: 'column2', table })
+
+    column1.name = 'changed_column1'
+    column2.name = 'changed_column2'
+
+    column1.save()
+    column2.save()
+
+    expect(column1.name).toBe('changed_column1')
+    expect(column2.name).toBe('changed_column2')
+
+    table.undoAllColumnsChanges()
+
+    expect(column1.fresh().name).toBe('column1')
+    expect(column2.fresh().name).toBe('column2')
+})
+
+test('It can undo all indexes changes', () => {
+    const table = TestHelper.createTableWithSchemaState()
+
+    const index1 = TestHelper.createIndexWithSchemaState({ name: 'index1', table })
+    const index2 = TestHelper.createIndexWithSchemaState({ name: 'index2', table })
+
+    index1.name = 'changed_index1'
+    index2.name = 'changed_index2'
+
+    index1.save()
+    index2.save()
+
+    expect(index1.name).toBe('changed_index1')
+    expect(index2.name).toBe('changed_index2')
+
+    table.undoAllIndexesChanges()
+
+    expect(index1.fresh().name).toBe('index1')
+    expect(index2.fresh().name).toBe('index2')
+})
+
+test('It can check if table belongs to a section', () => {
+    const table = TestHelper.createTable()
+    table.sectionId = null
+    
+    // we don't save the table because it always attach a default section when creating or updating
+    // table.save()
+
+    expect(table.belongsToASection()).toBe(false)
+
+    const project = TestHelper.getProject()
+    const section = new SchemaSection({
+        name: 'Test Section',
+        projectId: project.id,
+        scrollX: 0,
+        scrollY: 0,
+        zoom: 100
+    })
+    section.save()
+
+    table.sectionId = section.id
+    table.save()
+
+    expect(table.belongsToASection()).toBe(true)
+})
+
+test('It can move to a section', () => {
+    const table = TestHelper.createTable()
+
+    const project = TestHelper.getProject()
+    const section = new SchemaSection({
+        name: 'Test Section',
+        projectId: project.id,
+        scrollX: 0,
+        scrollY: 0,
+        zoom: 100
+    })
+    section.save()
+
+    expect(table.sectionId).toBe(1)
+
+    table.moveToSection(section)
+
+    expect(table.sectionId).toBe(section.id)
+    expect(table.positionX).toBe(0)
+    expect(table.positionY).toBe(0)
+})
+
+test('It can center position', () => {
+    const table = TestHelper.createTable()
+
+    table.positionX = 100
+    table.positionY = 200
+    table.save()
+
+    expect(table.positionX).toBe(100)
+    expect(table.positionY).toBe(200)
+
+    table.centerPosition()
+
+    expect(table.positionX).toBe(0)
+    expect(table.positionY).toBe(0)
 })

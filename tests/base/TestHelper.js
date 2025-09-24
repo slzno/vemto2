@@ -16,9 +16,19 @@ import { camelCase } from "change-case"
 
 export default new class TestHelper {
 
+    static currentTestsPath = null
+
     static latestFilePath = null
     static currentTestName = null
     static currentTestFile = null
+
+    setCurrentTestsPath(testsPath) {
+        TestHelper.currentTestsPath = testsPath
+    }
+
+    getCurrentTestsPath() {
+        return TestHelper.currentTestsPath
+    }
 
     setCurrentTestName(name) {
         TestHelper.currentTestName = name
@@ -43,6 +53,11 @@ export default new class TestHelper {
     createProject() {
         const project = new Project
         project.name = "Test Project"
+
+        project.settings = {
+            laravelVersion: "12.x",
+        }
+        
         project.save()
 
         this.addProjectBasicData(project)
@@ -91,6 +106,9 @@ export default new class TestHelper {
 
         table.name = data.name || "users"
         table.projectId = project.id
+
+        table.oldNames = data.oldNames || []
+        table.migrations = data.migrations || []
 
         table.save()
 
@@ -141,6 +159,7 @@ export default new class TestHelper {
         column.nullable = data.nullable || false
         column.unsigned = data.unsigned || false
         column.tableId = data.table.id
+        column.options = data.options || []
         column.save()
 
         return column
@@ -148,6 +167,7 @@ export default new class TestHelper {
 
     createColumnWithSchemaState(data = {}) {
         Column.savingInternally()
+
         const column = this.createColumn(data)
 
         column.saveSchemaState()
@@ -256,6 +276,37 @@ export default new class TestHelper {
         relationship.pivotId = pivot.id
 
         relationship.save()
+
+        return relationship
+    }
+
+    createRelationshipWithSchemaState() {
+        const relationship = new Relationship()
+        relationship.name = 'belongs_to_user'
+        relationship.type = 'BelongsTo'
+        relationship.relatedTableName = 'users'
+        relationship.relatedModelName = 'User'
+        relationship.parentTableName = 'posts'
+        relationship.parentModelName = 'Post'
+        relationship.foreignKeyName = 'user_id'
+        relationship.localKeyName = 'id'
+        relationship.ownerKeyName = 'id'
+        relationship.relatedKeyName = 'id'
+        relationship.morphType = null
+        relationship.foreignPivotKeyName = null
+        relationship.relatedPivotKeyName = null
+        relationship.pivotTableName = null
+        relationship.firstKeyName = null
+        relationship.secondKeyName = null
+        relationship.withPivotColumns = false
+        relationship.includedPivotColumns = []
+        relationship.save()
+        
+        Relationship.savingInternally()
+        relationship.saveSchemaState()
+        Relationship.notSavingInternally()
+        
+        return relationship
     }
 
     compareCode(code1, code2) {
@@ -284,10 +335,21 @@ export default new class TestHelper {
         return this.readOrCreateFile(templatePath, contentForCreation)
     }
 
-    readOrCreateFile(filePath, contentForCreation) {
+    readOrCreateOutputFile(filePath, contentForCreation, forceCreate = false) {
+        const currentTestsPath = this.getCurrentTestsPath() || __dirname
+
+        const fullPath = path.join(currentTestsPath, 'tests/output', filePath)
+        return this.readOrCreateFile(fullPath, contentForCreation, forceCreate)
+    }
+
+    readOrCreateFile(filePath, contentForCreation, forceCreate = false) {
         TestHelper.latestFilePath = filePath
 
-        if(!FileSystem.fileExists(filePath)) {
+        if(process.env.FORCE_CREATE_OUTPUT_FILES) {
+            forceCreate = true
+        }
+
+        if(!FileSystem.fileExists(filePath) || forceCreate) {
             console.log('\x1b[33m%s\x1b[0m', `CREATING FILE: ${filePath}`)
 
             FileSystem.writeFile(filePath, contentForCreation, false)

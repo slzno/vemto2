@@ -278,6 +278,10 @@ export default class Index extends AbstractSchemaModel implements SchemaModel {
 
     dataComparisonMap(comparisonData: any) {
         return {
+            /**
+             * We do not compare the name property because renaming an index is not 
+             * considered from inside the app's interface
+             */
             columns: DataComparator.arraysAreDifferent(
                 this.schemaState.columns,
                 comparisonData.columns

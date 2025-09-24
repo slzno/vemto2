@@ -1,7 +1,7 @@
 {
   "name": "vemto",
   "productName": "Vemto",
-  "version": "2.1.13",
+  "version": "2.1.14",
   "description": "The ultimate studio for Laravel",
   "main": "build/src/main/main.js",
   "scripts": {
@@ -29,6 +29,7 @@
     "test:features": "npm run test -- --selectProjects test-features --",
     "test:templates": "npm run test -- --selectProjects test-templates --",
     "test:unit": "npm run test -- --selectProjects test-unit --",
+    "test:replace-outputs": "cross-env FORCE_CREATE_OUTPUT_FILES=1 npm run test",
     "fix:templates": "node fixTemplates.js",
     "list:renderables": "node listRenderables.js",
     "listRenderables": "node listRenderables.js"

@@ -67,8 +67,6 @@ export default class MigrationEditor {
     changeTableOnSchemaDropOnDownMethod(table: string, newTable: string) {
         const tableContent = this.getSchemaDropOnDownMethod(table)
 
-        console.log(tableContent)
-
         this.content = this.content.replace(tableContent, tableContent.replace(table, newTable))
 
         return this

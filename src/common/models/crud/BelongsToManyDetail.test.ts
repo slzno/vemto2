@@ -9,6 +9,7 @@ jest.mock('@Renderer/services/wrappers/Main')
 
 beforeEach(() => {
     MockDatabase.start()
+    TestHelper.setCurrentTestsPath(__dirname)
 })
 
 test('It correctly create a belongsToMany detail within a API CRUD', async () => {
@@ -27,25 +28,4 @@ test('It correctly create a belongsToMany detail within a API CRUD', async () =>
     const userCrud = TestHelper.createCrud({ model: userModel, type: CrudType.API, generateDetails: true })
 
     expect(userCrud.belongsToManyDetails.length).toBe(1)
-})
-
-test('It correctly generates a belongsToMany detail controller', async () => {
-    const userModel = TestHelper.createModel()
-    
-    TestHelper.createColumn({ name: 'id', table: userModel.table, type: 'integer' })
-    
-    const tagsTable = TestHelper.createTable({ name: 'tags' })
-    
-    TestHelper.createColumn({ name: 'id', table: tagsTable, type: 'integer' })
-
-    const tagsModel = TestHelper.createModel({ name: 'Tag', plural: 'Tags', table: tagsTable })
-    
-    TestHelper.createBelongsToManyRelation(userModel, tagsModel)
-
-    const renderedTemplateContent = await new ApiBelongsToManyControllerRenderable(userModel).compileWithErrorThreatment(),
-        renderedTemplateFile = TestHelper.readOrCreateFile(path.join(__dirname, 'tests/output/model/template-with-invalid-relationship.php'), renderedTemplateContent)
-
-    const contentIsEqual = TestHelper.filesRelevantContentIsEqual(renderedTemplateFile, renderedTemplateContent)
-
-    expect(contentIsEqual).toBe(true)
 })

@@ -61,7 +61,6 @@ export default class ModelsBuilder {
         // Delete models that no longer exist
         modelsClasses.forEach((modelClass: string) => {
             if(!this.schemaModelsData.find(m => m.class === modelClass)) {
-                console.log('deleting model' + modelClass)
                 modelsKeyedByClass[modelClass].delete()
             }
         })
