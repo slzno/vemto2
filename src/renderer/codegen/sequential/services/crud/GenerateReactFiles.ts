@@ -12,14 +12,8 @@ import ReactEntityRenderable from "@Renderer/codegen/sequential/services/crud/re
 import ReactControllerRenderable from "@Renderer/codegen/sequential/services/crud/react/controllers/ReactControllerRenderable"
 
 export default class GenerateReactFiles {
-    async start(project: Project) {
+    async start() {
         const cruds: Crud[] = Crud.getBasic()
-
-        console.log(cruds[0].model.table.getColumns())
-
-        for (const column of cruds[0].model.table.getColumns()) {
-            console.log(column.name, column.type, column.default)
-        }
 
         for (const crud of cruds) {
             await new ReactRouteWebRenderable(cruds).render()

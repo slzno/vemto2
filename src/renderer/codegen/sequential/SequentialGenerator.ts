@@ -162,7 +162,7 @@ export default class SequentialGenerator {
          * is identified as a React application.
          */
         if (this.project.isReactApp()) {
-            await new GenerateReactFiles().start(this.project)
+            await new GenerateReactFiles().start()
         }
     }
 
