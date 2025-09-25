@@ -1,10 +1,7 @@
 import * as changeCase from "change-case"
 import Crud from "@Common/models/crud/Crud"
 import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
-import {
-    RenderableFileFormatter,
-    RenderableFileType,
-} from "@Common/models/RenderableFile"
+import { RenderableFileFormatter, RenderableFileType } from "@Common/models/RenderableFile"
 
 export default class ReactTableRenderable extends Renderable {
     crud: Crud
@@ -34,7 +31,7 @@ export default class ReactTableRenderable extends Renderable {
     }
 
     getFilename(): string {
-        return `${this.crud.name}Table.tsx`
+        return `${this.crud.name}.table.tsx`
     }
 
     getFormatter(): RenderableFileFormatter {

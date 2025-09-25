@@ -105,7 +105,7 @@ export default class SequentialGenerator {
 
         templatePaths.forEach((path: string) => {
             const renderableFile: RenderableFile = this.project.fresh().getRenderableFileByTemplatePath(path)
-            if(!renderableFile) return
+            if (!renderableFile) return
             renderableFile.setAsSkipped()
         })
     }
@@ -142,6 +142,7 @@ export default class SequentialGenerator {
          * page files, and Livewire layouts are only relevant for Breeze, Jetstream, or API Starter Kit projects.
          */
         if (!this.project.isReactApp()) {
+            this.project.models
             // Generating not rendered files
             await this.generateNotRenderedFiles()
             await new GenerateUiComponentsFiles().start(this.project)
@@ -174,9 +175,7 @@ export default class SequentialGenerator {
      */
     async generateNotRenderedFiles() {
         if (Renderable.isCheckerMode()) {
-            console.log(
-                "Skipping not rendered files generation because it is running in checker mode"
-            )
+            console.log("Skipping not rendered files generation because it is running in checker mode")
             return
         }
 
@@ -205,9 +204,7 @@ export default class SequentialGenerator {
         // If blueprint mode is enabled, just update the models with the new changes,
         // without rebuilding the them from the application's source code.
         if (this.project.isBlueprintModeEnabled()) {
-            const blueprintSchemaUpdater = new BlueprintSchemaUpdater(
-                this.project
-            )
+            const blueprintSchemaUpdater = new BlueprintSchemaUpdater(this.project)
             await blueprintSchemaUpdater.updateModels()
 
             return

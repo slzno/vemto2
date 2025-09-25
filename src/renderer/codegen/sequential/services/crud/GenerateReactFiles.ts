@@ -8,30 +8,32 @@ import ReactFormRenderable from "@Renderer/codegen/sequential/services/crud/reac
 import ReactTableRenderable from "@Renderer/codegen/sequential/services/crud/react/pages/tables/ReactTableRenderable"
 import ReactRouteWebRenderable from "@Renderer/codegen/sequential/services/crud/react/routes/ReactRouteWebRenderable"
 import ReactRouteAppRenderable from "@Renderer/codegen/sequential/services/crud/react/routes/ReactRouteAppRenderable"
-import ReactEntityRenderable
-    from "@Renderer/codegen/sequential/services/crud/react/pages/entities/ReactEntityRenderable"
-import ReactControllerRenderable
-    from "@Renderer/codegen/sequential/services/crud/react/controllers/ReactControllerRenderable"
+import ReactEntityRenderable from "@Renderer/codegen/sequential/services/crud/react/pages/entities/ReactEntityRenderable"
+import ReactControllerRenderable from "@Renderer/codegen/sequential/services/crud/react/controllers/ReactControllerRenderable"
 
 export default class GenerateReactFiles {
     async start(project: Project) {
-        const cruds = Crud.getBasic()
+        const cruds: Crud[] = Crud.getBasic()
+
+        console.log(cruds[0].model.table.getColumns())
+
+        for (const column of cruds[0].model.table.getColumns()) {
+            console.log(column.name, column.type, column.default)
+        }
 
         for (const crud of cruds) {
-            /* React Pages */
+            await new ReactRouteWebRenderable(cruds).render()
+            await new ReactRouteAppRenderable(crud).render()
+            await new ReactControllerRenderable(crud).render()
+            await new ReactEntityRenderable(crud).render()
             await new ReactIndexPageRenderable(crud).render()
             await new ReactCreatePageRenderable(crud).render()
             await new ReactEditPageRenderable(crud).render()
             await new ReactSowPageRenderable(crud).render()
-
-            /* React Form */
-            await new ReactEntityRenderable(crud).render()
             await new ReactFormRenderable(crud).render()
             await new ReactTableRenderable(crud).render()
 
-            await new ReactRouteWebRenderable(cruds).render()
-            await new ReactRouteAppRenderable(crud).render()
-            await new ReactControllerRenderable(crud).render()
+            /* React Form */
 
             /*await new LivewireIndexViewRenderable(crud).render()
             await new LivewireIndexComponentRenderable(crud).render()
