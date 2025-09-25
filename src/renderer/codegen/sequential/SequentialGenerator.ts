@@ -18,7 +18,7 @@ import GenerateCrudApiFiles from "./services/crud/GenerateCrudApiFiles"
 import GenerateNovaResources from "./services/crud/GenerateNovaResources"
 import AddRoutesToServiceProvider from "./services/routes/AddRoutesToServiceProvider"
 import BlueprintSchemaUpdater from "@Renderer/services/schema/BlueprintSchemaUpdater"
-import GenerateReactFiles from "@Renderer/codegen/sequential/services/crud/GenerateReactFiles"
+import GenerateReactResources from "@Renderer/codegen/sequential/services/crud/GenerateReactResources"
 
 export default class SequentialGenerator {
     static startTime: number = 0
@@ -162,7 +162,7 @@ export default class SequentialGenerator {
          * is identified as a React application.
          */
         if (this.project.isReactApp()) {
-            await new GenerateReactFiles().start()
+            await new GenerateReactResources().start()
         }
     }
 

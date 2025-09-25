@@ -11,7 +11,7 @@ import ReactRouteAppRenderable from "@Renderer/codegen/sequential/services/crud/
 import ReactEntityRenderable from "@Renderer/codegen/sequential/services/crud/react/pages/entities/ReactEntityRenderable"
 import ReactControllerRenderable from "@Renderer/codegen/sequential/services/crud/react/controllers/ReactControllerRenderable"
 
-export default class GenerateReactFiles {
+export default class GenerateReactResources {
     async start() {
         const cruds: Crud[] = Crud.getBasic()
 
