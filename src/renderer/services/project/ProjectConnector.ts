@@ -1,9 +1,6 @@
 import Main from "../wrappers/Main"
 import SchemaBuilder from "../schema/SchemaBuilder"
-import Project, {
-    ProjectSettings,
-    ProjectUIStarterKit,
-} from "@Common/models/Project"
+import Project, { ProjectSettings, ProjectUIStarterKit } from "@Common/models/Project"
 import GenerateBasicProjectData from "@Renderer/services/project/GenerateBasicProjectData"
 import BootstrapAppRenderable from "@Renderer/codegen/sequential/services/routes/BootstrapAppRenderable"
 import RoutesRenderable from "@Renderer/codegen/sequential/services/routes/RoutesRenderable"
@@ -44,10 +41,7 @@ export default class ProjectConnector {
 
     async createVemtoFolder() {
         console.log("Creating vemto folder")
-        await Main.API.copyInternalFolderIfNotExists(
-            "vemto-folder-base",
-            ".vemto"
-        )
+        await Main.API.copyInternalFolderIfNotExists("vemto-folder-base", ".vemto")
     }
 
     async createNecessaryFiles() {
@@ -78,15 +72,13 @@ export default class ProjectConnector {
 
         if (this.isBreezeLivewire()) {
             console.log("Creating files for Breeze project")
-            const templatesPath =
-                "file-templates/starter-kits/breeze-livewire/resources"
+            const templatesPath = "file-templates/starter-kits/breeze-livewire/resources"
             await Main.API.copyInternalFolderToProject(templatesPath, "/")
         }
 
         if (this.isJetstreamLivewire()) {
             console.log("Creating files for Jetstream Livewire project")
-            const templatesPath =
-                "file-templates/starter-kits/jetstream-livewire/resources"
+            const templatesPath = "file-templates/starter-kits/jetstream-livewire/resources"
 
             await Main.API.copyInternalFolderToProject(templatesPath, "/")
         }
@@ -94,9 +86,7 @@ export default class ProjectConnector {
 
     async doFirstSchemaSync() {
         if (this.project.connectionFinished) {
-            throw new Error(
-                "Project connection is already finished, cannot do first schema sync"
-            )
+            throw new Error("Project connection is already finished, cannot do first schema sync")
         }
 
         const schemaBuilder = new SchemaBuilder(this.project),
@@ -107,25 +97,15 @@ export default class ProjectConnector {
     }
 
     isReact() {
-        return (
-            this.projectSettings.uiStarterKit === ProjectUIStarterKit.REACT &&
-            this.projectSettings.usesReact
-        )
+        return this.projectSettings.uiStarterKit === ProjectUIStarterKit.REACT && this.projectSettings.usesReact
     }
 
     isBreezeLivewire() {
-        return (
-            this.projectSettings.uiStarterKit === ProjectUIStarterKit.BREEZE &&
-            this.projectSettings.usesLivewire
-        )
+        return this.projectSettings.uiStarterKit === ProjectUIStarterKit.BREEZE && this.projectSettings.usesLivewire
     }
 
     isJetstreamLivewire() {
-        return (
-            this.projectSettings.uiStarterKit ===
-                ProjectUIStarterKit.JETSTREAM &&
-            this.projectSettings.usesLivewire
-        )
+        return this.projectSettings.uiStarterKit === ProjectUIStarterKit.JETSTREAM && this.projectSettings.usesLivewire
     }
 
     async generateBasicProjectData() {

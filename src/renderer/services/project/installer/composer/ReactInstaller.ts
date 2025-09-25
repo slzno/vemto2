@@ -10,10 +10,7 @@ export default class ReactInstaller {
 
         stateCallback("Running Pest tests to generate configuration files")
         await Main.API.executeComposerOnPath(data.completePath, "require pestphp/pest-plugin-drift --dev")
-        await Main.API.executePhpOnPath(
-            data.completePath,
-            'echo no | ./vendor/bin/pest --drift'
-        )
+        await Main.API.executePhpOnPath(data.completePath, "echo no | ./vendor/bin/pest --drift")
 
         stateCallback("Removing Pest Drift")
         await Main.API.executeComposerOnPath(data.completePath, "remove pestphp/pest-plugin-drift --dev")
