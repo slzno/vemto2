@@ -87,6 +87,7 @@ export default class ProjectInfo {
     }
 
     getStarterKit(): ProjectUIStarterKit {
+        if (this.hasReact) return ProjectUIStarterKit.REACT
         if (this.hasJetstream) return ProjectUIStarterKit.JETSTREAM
         if (this.hasBreeze) return ProjectUIStarterKit.BREEZE
         if (this.hasLaravelUi) return ProjectUIStarterKit.LARAVEL_UI

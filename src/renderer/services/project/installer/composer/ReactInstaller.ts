@@ -15,7 +15,7 @@ export default class ReactInstaller {
             'echo no | ./vendor/bin/pest --drift'
         )
 
-        stateCallback("Removing Pest Drift (not compatible with React Starter Kit)")
+        stateCallback("Removing Pest Drift")
         await Main.API.executeComposerOnPath(data.completePath, "remove pestphp/pest-plugin-drift --dev")
     }
 }

@@ -1,13 +1,15 @@
 import Main from "../wrappers/Main"
 import SchemaBuilder from "../schema/SchemaBuilder"
-import Project, { ProjectSettings, ProjectUIStarterKit } from "@Common/models/Project"
+import Project, {
+    ProjectSettings,
+    ProjectUIStarterKit,
+} from "@Common/models/Project"
 import GenerateBasicProjectData from "@Renderer/services/project/GenerateBasicProjectData"
 import BootstrapAppRenderable from "@Renderer/codegen/sequential/services/routes/BootstrapAppRenderable"
 import RoutesRenderable from "@Renderer/codegen/sequential/services/routes/RoutesRenderable"
 import ApiRoutesRenderable from "@Renderer/codegen/sequential/services/routes/ApiRoutesRenderable"
 
 export default class ProjectConnector {
-
     project: Project
     projectSettings: ProjectSettings
 
@@ -17,16 +19,16 @@ export default class ProjectConnector {
 
     async connect(settings: ProjectSettings) {
         try {
-            if(this.project.connectionFinished) {
+            if (this.project.connectionFinished) {
                 const projectSettings = settings || this.project.settings
                 this.setProjectSettingsDefaults(projectSettings)
 
                 return await this.project.save()
             }
-            
+
             this.projectSettings = settings
             this.setProjectSettingsDefaults(settings)
-    
+
             await this.createVemtoFolder()
             await this.doFirstSchemaSync()
             await this.generateBasicProjectData()
@@ -42,44 +44,59 @@ export default class ProjectConnector {
 
     async createVemtoFolder() {
         console.log("Creating vemto folder")
-        await Main.API.copyInternalFolderIfNotExists("vemto-folder-base", ".vemto")
+        await Main.API.copyInternalFolderIfNotExists(
+            "vemto-folder-base",
+            ".vemto"
+        )
     }
 
     async createNecessaryFiles() {
-        if(!this.projectSettings.isFreshLaravelProject) {
+        if (!this.projectSettings.isFreshLaravelProject) {
             console.log("Skip creating files for non-fresh Laravel project")
             return
         }
 
         console.log("Creating files for fresh Laravel project")
 
-        // Render the bootstrap/app.php file (ignoring conflicts)
-        const renderableBootstrapApp = new BootstrapAppRenderable()
-        await renderableBootstrapApp.render(true)
+        if (!this.isReact()) {
+            // Render the bootstrap/app.php file (ignoring conflicts)
+            const renderableBootstrapApp = new BootstrapAppRenderable()
+            await renderableBootstrapApp.render(true)
 
-        const renderableRoutes = new RoutesRenderable()
-        await renderableRoutes.render(true)
+            const renderableRoutes = new RoutesRenderable()
+            await renderableRoutes.render(true)
 
-        const renderableApiRoutes = new ApiRoutesRenderable()
-        await renderableApiRoutes.render(true)
+            const renderableApiRoutes = new ApiRoutesRenderable()
+            await renderableApiRoutes.render(true)
+        }
 
-        if(this.isBreezeLivewire()) {
-            console.log("Creating files for Breeze project")
-            const templatesPath = "file-templates/starter-kits/breeze-livewire/resources"
+        if (this.isReact()) {
+            console.log("Creating files for React project")
+            const templatesPath = "file-templates/starter-kits/react/resources"
             await Main.API.copyInternalFolderToProject(templatesPath, "/")
         }
 
-        if(this.isJetstreamLivewire()) {
+        if (this.isBreezeLivewire()) {
+            console.log("Creating files for Breeze project")
+            const templatesPath =
+                "file-templates/starter-kits/breeze-livewire/resources"
+            await Main.API.copyInternalFolderToProject(templatesPath, "/")
+        }
+
+        if (this.isJetstreamLivewire()) {
             console.log("Creating files for Jetstream Livewire project")
-            const templatesPath = "file-templates/starter-kits/jetstream-livewire/resources"
-            
+            const templatesPath =
+                "file-templates/starter-kits/jetstream-livewire/resources"
+
             await Main.API.copyInternalFolderToProject(templatesPath, "/")
         }
     }
 
     async doFirstSchemaSync() {
-        if(this.project.connectionFinished) {
-            throw new Error("Project connection is already finished, cannot do first schema sync")
+        if (this.project.connectionFinished) {
+            throw new Error(
+                "Project connection is already finished, cannot do first schema sync"
+            )
         }
 
         const schemaBuilder = new SchemaBuilder(this.project),
@@ -89,14 +106,26 @@ export default class ProjectConnector {
         return await schemaBuilder.build(syncTables, syncModels)
     }
 
+    isReact() {
+        return (
+            this.projectSettings.uiStarterKit === ProjectUIStarterKit.REACT &&
+            this.projectSettings.usesReact
+        )
+    }
+
     isBreezeLivewire() {
-        return this.projectSettings.uiStarterKit === ProjectUIStarterKit.BREEZE
-            && this.projectSettings.usesLivewire
+        return (
+            this.projectSettings.uiStarterKit === ProjectUIStarterKit.BREEZE &&
+            this.projectSettings.usesLivewire
+        )
     }
 
     isJetstreamLivewire() {
-        return this.projectSettings.uiStarterKit === ProjectUIStarterKit.JETSTREAM 
-            && this.projectSettings.usesLivewire
+        return (
+            this.projectSettings.uiStarterKit ===
+                ProjectUIStarterKit.JETSTREAM &&
+            this.projectSettings.usesLivewire
+        )
     }
 
     async generateBasicProjectData() {
@@ -119,5 +148,4 @@ export default class ProjectConnector {
     async organizeTables() {
         this.project.organizeTablesOfAllSectionsByRelations()
     }
-
 }

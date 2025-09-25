@@ -45,10 +45,11 @@ import ApiRoutesRenderable from './services/routes/ApiRoutesRenderable';
 import BootstrapAppRenderable from './services/routes/BootstrapAppRenderable';
 import Routes from './services/routes/Routes';
 import PreviewRenderable from './services/theme/PreviewRenderable';
+import ReactIndexPageRenderable from "@Renderer/codegen/sequential/services/crud/react/pages/ReactIndexPageRenderable"
 
 export default class ListRenderables {
   static getRenderable(name: string) {
-    
+
   const renderables = {
     'crud/api/ApiBelongsToManyTestRenderable': ApiBelongsToManyTestRenderable,
     'crud/api/ApiCollectionRenderable': ApiCollectionRenderable,
@@ -80,6 +81,18 @@ export default class ListRenderables {
     'crud/views/livewire/LivewireUpdateDetailFormComponentRenderable': LivewireUpdateDetailFormComponentRenderable,
     'crud/views/livewire/LivewireUpdateFormComponentRenderable': LivewireUpdateFormComponentRenderable,
     'crud/views/nova/NovaResourceRenderable': NovaResourceRenderable,
+
+    'crud/react/pages/ReactIndexPageRenderable': ReactIndexPageRenderable,
+    /*'crud/react/pages/ReactCreatePageRenderable': ReactCreatePageRenderable,
+    'crud/react/pages/ReactEditPageRenderable': ReactEditPageRenderable,
+    'crud/react/pages/ReactSowPageRenderable': ReactSowPageRenderable,
+    'crud/react/pages/entities/ReactEntityRenderable': ReactEntityRenderable,
+    'crud/react/pages/form/ReactFormRenderable': ReactFormRenderable,
+    'crud/react/pages/tables/ReactTableRenderable': ReactTableRenderable,
+    'crud/react/routes/ReactRouteWebRenderable': ReactRouteWebRenderable,
+    'crud/react/routes/ReactRouteAppRenderable': ReactRouteAppRenderable,
+    'crud/react/controllers/ReactControllerRenderable': ReactControllerRenderable,*/
+
     'database/DatabaseSeederRenderable': DatabaseSeederRenderable,
     'menu/AppMenuRenderable': AppMenuRenderable,
     'menu/AppResponsiveMenuRenderable': AppResponsiveMenuRenderable,
@@ -95,11 +108,11 @@ export default class ListRenderables {
     'routes/Routes': Routes,
     'theme/PreviewRenderable': PreviewRenderable
   };
-  
-    
+
+
     return renderables[name] || null;
   }
-  
+
   static getRenderableNames(): string[] {
     return [
       'crud/api/ApiBelongsToManyTestRenderable',
