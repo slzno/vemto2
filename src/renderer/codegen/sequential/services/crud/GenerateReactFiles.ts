@@ -1,5 +1,4 @@
 import Crud from "@Common/models/crud/Crud"
-import Project from "@Common/models/Project"
 import ReactIndexPageRenderable from "@Renderer/codegen/sequential/services/crud/react/pages/ReactIndexPageRenderable"
 import ReactCreatePageRenderable from "@Renderer/codegen/sequential/services/crud/react/pages/ReactCreatePageRenderable"
 import ReactEditPageRenderable from "@Renderer/codegen/sequential/services/crud/react/pages/ReactEditPageRenderable"
@@ -11,7 +10,7 @@ import ReactRouteAppRenderable from "@Renderer/codegen/sequential/services/crud/
 import ReactEntityRenderable from "@Renderer/codegen/sequential/services/crud/react/pages/entities/ReactEntityRenderable"
 import ReactControllerRenderable from "@Renderer/codegen/sequential/services/crud/react/controllers/ReactControllerRenderable"
 
-export default class GenerateReactResources {
+export default class GenerateReactFiles {
     async start() {
         const cruds: Crud[] = Crud.getBasic()
 

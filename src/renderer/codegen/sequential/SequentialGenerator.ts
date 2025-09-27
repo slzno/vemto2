@@ -18,7 +18,7 @@ import GenerateCrudApiFiles from "./services/crud/GenerateCrudApiFiles"
 import GenerateNovaResources from "./services/crud/GenerateNovaResources"
 import AddRoutesToServiceProvider from "./services/routes/AddRoutesToServiceProvider"
 import BlueprintSchemaUpdater from "@Renderer/services/schema/BlueprintSchemaUpdater"
-import GenerateReactResources from "@Renderer/codegen/sequential/services/crud/GenerateReactResources"
+import GenerateReactFiles from "@Renderer/codegen/sequential/services/crud/GenerateReactFiles"
 
 export default class SequentialGenerator {
     static startTime: number = 0
@@ -142,7 +142,6 @@ export default class SequentialGenerator {
          * page files, and Livewire layouts are only relevant for Breeze, Jetstream, or API Starter Kit projects.
          */
         if (!this.project.isReactApp()) {
-            this.project.models
             // Generating not rendered files
             await this.generateNotRenderedFiles()
             await new GenerateUiComponentsFiles().start(this.project)
@@ -162,7 +161,7 @@ export default class SequentialGenerator {
          * is identified as a React application.
          */
         if (this.project.isReactApp()) {
-            await new GenerateReactResources().start()
+            await new GenerateReactFiles().start()
         }
     }
 

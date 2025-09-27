@@ -39,8 +39,12 @@ export default class ReactFormRenderable extends Renderable {
     }
 
     getData() {
+        const inputTypes: string[] = Array.from(new Set(this.crud.inputs.map((input) => input.type)))
         return {
             crud: this.crud,
+            project: this.project,
+            inputTypes: inputTypes,
+            viewsFolder: this.crud.section.getFolderName(),
         }
     }
 
