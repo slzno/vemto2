@@ -9,6 +9,7 @@ import ReactRouteWebRenderable from "@Renderer/codegen/sequential/services/crud/
 import ReactRouteAppRenderable from "@Renderer/codegen/sequential/services/crud/react/routes/ReactRouteAppRenderable"
 import ReactEntityRenderable from "@Renderer/codegen/sequential/services/crud/react/pages/entities/ReactEntityRenderable"
 import ReactControllerRenderable from "@Renderer/codegen/sequential/services/crud/react/controllers/ReactControllerRenderable"
+import ReactHeadingAppRenderable from "@Renderer/codegen/sequential/services/crud/react/components/ReactHeadingAppRenderable"
 
 export default class GenerateReactFiles {
     async start() {
@@ -24,6 +25,7 @@ export default class GenerateReactFiles {
             await new ReactEditPageRenderable(crud).render()
             await new ReactSowPageRenderable(crud).render()
             await new ReactFormRenderable(crud).render()
+            await new ReactHeadingAppRenderable(crud).render()
             await new ReactTableRenderable(crud).render()
 
             /* React Form */
