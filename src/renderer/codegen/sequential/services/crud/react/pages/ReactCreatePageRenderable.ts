@@ -26,7 +26,7 @@ export default class ReactCreatePageRenderable extends Renderable {
 
     getPath(): string {
         const viewsFolder = this.crud.section.getFolderName()
-        const folder = changeCase.paramCase(this.crud.plural)
+        const folder = changeCase.paramCase(this.crud.model.plural)
         return `resources/js/pages/${viewsFolder}/${folder}`
     }
 
@@ -42,6 +42,7 @@ export default class ReactCreatePageRenderable extends Renderable {
         return {
             crud: this.crud,
             viewsFolder: this.crud.section.getFolderName(),
+            changeCase: changeCase,
         }
     }
 

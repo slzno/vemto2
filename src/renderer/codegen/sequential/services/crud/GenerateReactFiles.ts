@@ -21,8 +21,6 @@ export default class GenerateReactFiles {
         const cruds: Crud[] = Crud.getBasic()
 
         for (const crud of cruds) {
-            await new ReactRouteWebRenderable(cruds).render()
-            await new ReactRouteAppRenderable(crud).render()
             await new ReactControllerRenderable(crud).render()
             await new ReactEntityRenderable(crud).render()
             await new ReactHeadingAppRenderable(crud).render()
@@ -37,6 +35,8 @@ export default class GenerateReactFiles {
             await new ReactDeleteModalRenderable(crud).render()
             await new ReactActionIconsRenderable(crud).render()
             await new ReactUsePermissionRenderable(crud).render()
+            await new ReactRouteWebRenderable(cruds).render()
+            await new ReactRouteAppRenderable(crud).render()
         }
     }
 }

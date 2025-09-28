@@ -3,7 +3,7 @@
 <% const camelCase = this.require('camelCase') %>
 import { Head } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
-import { <$ entityName $>Form } from '@/pages/<$ viewsFolder $>/<$ camelCase(this.crud.model.plural) $>/form/<$ entityName $>.form';
+import { <$ entityName $>Form } from '@/pages/<$ viewsFolder $>/<$ this.changeCase.paramCase(this.crud.model.plural) $>/form/<$ entityName $>.form';
 import <$ camelCase(this.crud.model.plural) $> from '@/routes/<$ camelCase(this.crud.model.plural) $>';
 import { BreadcrumbItem } from '@/types';
 

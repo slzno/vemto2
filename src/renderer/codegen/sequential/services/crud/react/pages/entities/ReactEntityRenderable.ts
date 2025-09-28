@@ -41,8 +41,7 @@ export default class ReactEntityRenderable extends Renderable {
     getData() {
         return {
             crud: this.crud,
-            entityName: `${this.crud.model.name}Entity`,
-            entityInitial: `${changeCase.paramCase(this.crud.model.name)}EntityInitial`,
+            entityName: `${this.crud.model.name}`,
             columns: this.crud.model.table.getColumns(),
             resolveTsType: (columnType: string) => this.resolveTsType(columnType),
         }

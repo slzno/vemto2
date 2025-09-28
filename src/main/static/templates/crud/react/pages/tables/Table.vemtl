@@ -10,7 +10,7 @@ import { DeleteModal } from '@/components/DeleteModal';
 import { Button } from '@/components/ui/button';
 import { Table, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { usePermissions } from '@/hooks/usePermissions';
-import { <$ entityName $>Entity } from '@/pages/<$ viewsFolder $>/<$ camelCase(entityNamePlural) $>/entities/<$ entityName $>.entity';
+import { <$ entityName $>Entity } from '@/pages/<$ viewsFolder $>/<$ this.changeCase.paramCase(this.crud.model.plural) $>/entities/<$ entityName $>.entity';
 import <$ camelCase(entityNamePlural) $> from '@/routes/<$ camelCase(entityNamePlural) $>';
 import { motion } from 'motion/react';
 

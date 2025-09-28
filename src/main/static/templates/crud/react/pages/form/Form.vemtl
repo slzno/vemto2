@@ -26,7 +26,7 @@ import { Textarea } from '@/components/ui/textarea';
 <% } %>
 <% } %>
 import { Label } from '@/components/ui/label';
-import { <$ entityName $>Entity, <$ camelCase(entityName) $>EntityInitial } from '@/pages/<$ viewsFolder $>/<$ camelCase(entityNamePlural) $>/entities/<$ entityName $>.entity';
+import { <$ entityName $>Entity, <$ camelCase(entityName) $>EntityInitial } from '@/pages/<$ viewsFolder $>/<$ this.changeCase.paramCase(this.crud.model.plural) $>/entities/<$ entityName $>.entity';
 import <$ camelCase(entityNamePlural) $> from '@/routes/<$ camelCase(entityNamePlural) $>';
 import { FormEvent, FormEventHandler, useState } from 'react';
 import { toast } from 'sonner';

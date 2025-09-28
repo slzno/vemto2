@@ -1,9 +1,7 @@
 import Crud from "@Common/models/crud/Crud"
 import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
-import {
-    RenderableFileFormatter,
-    RenderableFileType,
-} from "@Common/models/RenderableFile"
+import { RenderableFileFormatter, RenderableFileType } from "@Common/models/RenderableFile"
+import * as changeCase from "change-case"
 
 export default class ReactControllerRenderable extends Renderable {
     crud: Crud
@@ -42,6 +40,10 @@ export default class ReactControllerRenderable extends Renderable {
         return {
             crud: this.crud,
             project: this.project,
+            viewsFolder: this.crud.section.getFolderName(),
+            changeCase: changeCase,
+            controllerName: this.crud.model.getControllerName(),
+            routeName: changeCase.paramCase(this.crud.model.plural),
         }
     }
 }

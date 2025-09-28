@@ -6,7 +6,7 @@
 /**
  * <$ entityName $>.
  */
-export class <$ entityName $> {
+export class <$ entityName $>Entity {
 <% for(let column of columns) { %>
   <$ column.name $>!: <$ resolveTsType(column.type).tsType $>
 <% } %>
@@ -15,7 +15,7 @@ export class <$ entityName $> {
 /**
  * <$ entityName $> Initial Values.
  */
-export const <$ entityInitial $> = {
+export const <$ camelCase(entityName) $>EntityInitial = {
 <% for(let column of columns) { %>
   <$ column.name $>: <$ resolveTsType(column.type).initialValue $>,
 <% } %>

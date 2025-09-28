@@ -1,9 +1,7 @@
+import * as changeCase from "change-case"
 import Crud from "@Common/models/crud/Crud"
 import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
-import {
-    RenderableFileFormatter,
-    RenderableFileType,
-} from "@Common/models/RenderableFile"
+import { RenderableFileFormatter, RenderableFileType } from "@Common/models/RenderableFile"
 
 export default class ReactRouteWebRenderable extends Renderable {
     cruds: Crud[]
@@ -41,6 +39,7 @@ export default class ReactRouteWebRenderable extends Renderable {
     getData() {
         return {
             cruds: this.cruds,
+            changeCase: changeCase,
         }
     }
 
