@@ -41,6 +41,7 @@ export default class ReactIndexPageRenderable extends Renderable {
     getData() {
         return {
             crud: this.crud,
+            project: this.project,
             viewsFolder: this.crud.section.getFolderName(),
         }
     }

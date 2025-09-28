@@ -1,10 +1,12 @@
 <% let viewsFolder = this.viewsFolder %>
 <% let entityName = this.crud.model.name %>
+<% let entityNamePlural = this.crud.model.plural %>
 <% let inputs = this.crud.inputs %>
 <% let inputTypes = this.inputTypes %>
 <% let project = this.project %>
 <% const camelCase = this.require('camelCase') %>
 import { useForm } from '@inertiajs/react';
+import { IconSaved, IconUpdate } from '@/components/ActionIcons';
 import { HeadingApp } from '@/components/HeadingApp';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
@@ -24,9 +26,8 @@ import { Textarea } from '@/components/ui/textarea';
 <% } %>
 <% } %>
 import { Label } from '@/components/ui/label';
-import { <$ entityName $>Entity, <$ camelCase(entityName) $>EntityInitial } from '@/pages/<$ viewsFolder $>/<$ camelCase(this.crud.model.plural) $>/entities/<$ entityName $>.entity';
-import <$ camelCase(this.crud.model.plural) $> from '@/routes/<$ camelCase(this.crud.model.plural) $>';
-import { FilePenLine, Save } from 'lucide-react';
+import { <$ entityName $>Entity, <$ camelCase(entityName) $>EntityInitial } from '@/pages/<$ viewsFolder $>/<$ camelCase(entityNamePlural) $>/entities/<$ entityName $>.entity';
+import <$ camelCase(entityNamePlural) $> from '@/routes/<$ camelCase(entityNamePlural) $>';
 import { FormEvent, FormEventHandler, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -47,13 +48,13 @@ export const <$ entityName $>Form = ({ isEdit, <$ camelCase(entityName) $> }: { 
     setIsSubmitting(true);
 
     if (isEdit) {
-      post(<$ camelCase(this.crud.model.plural) $>.update(data.id).url, {
+      post(<$ camelCase(entityNamePlural) $>.update(data.id).url, {
         onSuccess: () => {
           toast('<$ entityName $> updated successfully.');
         },
       });
     } else {
-      post(<$ camelCase(this.crud.model.plural) $>.store().url, {
+      post(<$ camelCase(entityNamePlural) $>.store().url, {
         onSuccess: () => {
           setIsSubmitting(false);
           toast('The <$ camelCase(entityName) $> has been created successfully.');
@@ -68,10 +69,10 @@ export const <$ entityName $>Form = ({ isEdit, <$ camelCase(entityName) $> }: { 
         <HeadingApp
           heading={isEdit ? `Edit the <$ camelCase(entityName) $> #: ${<$ camelCase(entityName) $>?.id}` : 'Add new <$ camelCase(entityName) $>'}
           description={isEdit ? 'Update the data of the <$ camelCase(entityName) $>.' : 'Create a new <$ camelCase(entityName) $> for your system.'}
-          url={<$ camelCase(this.crud.model.plural) $>.index().url}
+          url={<$ camelCase(entityNamePlural) $>.index().url}
         >
           <Button type={'submit'} disabled={isSubmitting} className={'btn'}>
-            {isEdit ? <FilePenLine className="h-6 w-6 fill-primary-foreground" /> : <Save className="h-6 w-6 fill-primary-foreground" />}
+            {isEdit ? <IconUpdate className="h-6 w-6 stroke-primary-foreground" /> : <IconSaved className="h-6 w-6 stroke-primary-foreground" />}
             {isEdit ? 'Update <$ camelCase(entityName) $>' : 'Add <$ camelCase(entityName) $>'}
           </Button>
         </HeadingApp>
