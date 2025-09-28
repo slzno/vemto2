@@ -2,7 +2,7 @@ import Crud from "@Common/models/crud/Crud"
 import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
 import { RenderableFileFormatter, RenderableFileType } from "@Common/models/RenderableFile"
 
-export default class ReactPaginationListingRenderable extends Renderable {
+export default class ReactUsePermissionRenderable extends Renderable {
     crud: Crud
 
     constructor(crud: Crud) {
@@ -20,15 +20,15 @@ export default class ReactPaginationListingRenderable extends Renderable {
     }
 
     getTemplateFile(): string {
-        return "crud/react/types/PaginationListing.vemtl"
+        return "crud/react/hooks/usePermissions.vemtl"
     }
 
     getPath(): string {
-        return "resources/js/types"
+        return "resources/js/hooks"
     }
 
     getFilename(): string {
-        return "pagination-listing.d.ts"
+        return "usePermissions.ts"
     }
 
     getFormatter(): RenderableFileFormatter {

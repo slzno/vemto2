@@ -38,7 +38,7 @@ export const <$ entityName $>Table = ({ <$ camelCase(entityName) $>List }: { <$ 
       <TableHeader className={'border-y-2'}>
         <TableRow className={'hover:bg-transparent'}>
         <% for(let input of inputs) { %>
-          <TableHead className="text-start"><$ this.helpers.lang(input.label) $></TableHead>
+          <TableHead className="text-start"><$ project.getTranslation("en", input.label) $></TableHead>
         <% } %>
           <TableHead className="text-end">Actions</TableHead>
         </TableRow>

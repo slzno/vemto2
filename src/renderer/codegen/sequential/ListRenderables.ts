@@ -60,6 +60,7 @@ import ReactCustomPaginationRenderable from "@Renderer/codegen/sequential/servic
 import ReactDeleteModalRenderable from "@Renderer/codegen/sequential/services/crud/react/components/ReactDeleteModalRenderable"
 import ReactActionIconsRenderable from "@Renderer/codegen/sequential/services/crud/react/components/ReactActionIconsRenderable"
 import ReactPaginationListingRenderable from "@Renderer/codegen/sequential/services/crud/react/types/ReactPaginationListingRenderable"
+import ReactUsePermissionRenderable from "@Renderer/codegen/sequential/services/crud/react/hooks/ReactUsePermissionRenderable"
 
 export default class ListRenderables {
     static getRenderable(name: string) {
@@ -107,6 +108,7 @@ export default class ListRenderables {
             "crud/react/components/ReactDeleteModalRenderable": ReactDeleteModalRenderable,
             "crud/react/components/ReactActionIconsRenderable": ReactActionIconsRenderable,
             "crud/react/types/ReactPaginationListingRenderable": ReactPaginationListingRenderable,
+            "crud/react/hooks/ReactUsePermissionRenderable": ReactUsePermissionRenderable,
             "crud/react/routes/ReactRouteWebRenderable": ReactRouteWebRenderable,
             "crud/react/routes/ReactRouteAppRenderable": ReactRouteAppRenderable,
             "crud/react/controllers/ReactControllerRenderable": ReactControllerRenderable,
@@ -175,6 +177,7 @@ export default class ListRenderables {
             "crud/react/components/ReactDeleteModalRenderable",
             "crud/react/components/ReactActionIconsRenderable",
             "crud/react/types/ReactPaginationListingRenderable",
+            "crud/react/hooks/ReactUsePermissionRenderable",
             "crud/react/routes/ReactRouteWebRenderable",
             "crud/react/routes/ReactRouteAppRenderable",
             "crud/react/controllers/ReactControllerRenderable",

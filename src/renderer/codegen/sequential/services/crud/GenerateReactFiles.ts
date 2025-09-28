@@ -14,6 +14,7 @@ import ReactPaginationListingRenderable from "@Renderer/codegen/sequential/servi
 import ReactCustomPaginationRenderable from "@Renderer/codegen/sequential/services/crud/react/components/ReactCustomPaginationRenderable"
 import ReactDeleteModalRenderable from "@Renderer/codegen/sequential/services/crud/react/components/ReactDeleteModalRenderable"
 import ReactActionIconsRenderable from "@Renderer/codegen/sequential/services/crud/react/components/ReactActionIconsRenderable"
+import ReactUsePermissionRenderable from "@Renderer/codegen/sequential/services/crud/react/hooks/ReactUsePermissionRenderable"
 
 export default class GenerateReactFiles {
     async start() {
@@ -35,6 +36,7 @@ export default class GenerateReactFiles {
             await new ReactCustomPaginationRenderable(crud).render()
             await new ReactDeleteModalRenderable(crud).render()
             await new ReactActionIconsRenderable(crud).render()
+            await new ReactUsePermissionRenderable(crud).render()
         }
     }
 }
