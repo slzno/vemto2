@@ -1,10 +1,7 @@
 import * as changeCase from "change-case"
 import Crud from "@Common/models/crud/Crud"
 import Renderable from "@Renderer/codegen/sequential/services/foundation/Renderable"
-import {
-    RenderableFileFormatter,
-    RenderableFileType,
-} from "@Common/models/RenderableFile"
+import { RenderableFileFormatter, RenderableFileType } from "@Common/models/RenderableFile"
 
 export default class ReactEditPageRenderable extends Renderable {
     crud: Crud
@@ -44,6 +41,7 @@ export default class ReactEditPageRenderable extends Renderable {
     getData() {
         return {
             crud: this.crud,
+            viewsFolder: this.crud.section.getFolderName(),
         }
     }
 
