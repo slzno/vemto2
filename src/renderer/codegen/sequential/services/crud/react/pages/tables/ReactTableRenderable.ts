@@ -27,7 +27,7 @@ export default class ReactTableRenderable extends Renderable {
     getPath(): string {
         const viewsFolder = this.crud.section.getFolderName()
         const folder = changeCase.paramCase(this.crud.plural)
-        return `resources/js/pages/${viewsFolder}/${folder}/tables`
+        return `resources/js/pages/${viewsFolder}/${folder}/table`
     }
 
     getFilename(): string {
@@ -41,6 +41,7 @@ export default class ReactTableRenderable extends Renderable {
     getData() {
         return {
             crud: this.crud,
+            viewsFolder: this.crud.section.getFolderName(),
         }
     }
 
