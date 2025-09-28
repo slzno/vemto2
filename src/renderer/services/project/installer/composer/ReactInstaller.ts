@@ -14,5 +14,14 @@ export default class ReactInstaller {
 
         stateCallback("Removing Pest Drift")
         await Main.API.executeComposerOnPath(data.completePath, "remove pestphp/pest-plugin-drift --dev")
+
+        stateCallback("Install motion")
+        await Main.API.executeYarnOnPath(data.completePath, "add motion")
+
+        stateCallback("Install use-debounce")
+        await Main.API.executeYarnOnPath(data.completePath, "add use-debounce")
+
+        stateCallback("Install shadcn/ui components")
+        await Main.API.executeYarnOnPath(data.completePath, "yes | npx shadcn@latest add --all")
     }
 }
