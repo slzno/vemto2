@@ -8,6 +8,8 @@ namespace App\Http\Controllers\<$ entityNamePlural $>;
 
 use App\Http\Controllers\Controller;
 use App\Models\<$ entityName $>;
+use App\Http\Requests\<$ entityName $>StoreRequest;
+use App\Http\Requests\<$ entityName $>UpdateRequest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -33,9 +35,10 @@ class <$ controllerName $> extends Controller {
     return Inertia::render('<$ this.viewsFolder $>/<$ this.changeCase.paramCase(this.crud.model.plural) $>/create');
   }
 
-  public function store(Request $request) {
+  public function store(<$ entityName $>StoreRequest $request) {
     $this->authorize('create', <$ entityName $>::class);
-    <$ entityName $>::create($request->all());
+    $validated = $request->validated();
+    <$ entityName $>::create($validated);
 
     return redirect()->route('<$ routeName $>.index');
   }
@@ -56,9 +59,10 @@ class <$ controllerName $> extends Controller {
     ]);
   }
 
-  public function update(Request $request, <$ entityName $> $<$ camelCase(entityName) $>) {
+  public function update(<$ entityName $>UpdateRequest $request, <$ entityName $> $<$ camelCase(entityName) $>) {
     $this->authorize('update', $<$ camelCase(entityName) $>);
-    $<$ camelCase(entityName) $>->update($request->all());
+    $validated = $request->validated();
+    $<$ camelCase(entityName) $>->update($validated);
 
     return redirect()->route('<$ routeName $>.index');
   }
