@@ -10,6 +10,10 @@ import ReactRouteAppRenderable from "@Renderer/codegen/sequential/services/crud/
 import ReactEntityRenderable from "@Renderer/codegen/sequential/services/crud/react/pages/entities/ReactEntityRenderable"
 import ReactControllerRenderable from "@Renderer/codegen/sequential/services/crud/react/controllers/ReactControllerRenderable"
 import ReactHeadingAppRenderable from "@Renderer/codegen/sequential/services/crud/react/components/ReactHeadingAppRenderable"
+import ReactPaginationListingRenderable from "@Renderer/codegen/sequential/services/crud/react/types/ReactPaginationListingRenderable"
+import ReactCustomPaginationRenderable from "@Renderer/codegen/sequential/services/crud/react/components/ReactCustomPaginationRenderable"
+import ReactDeleteModalRenderable from "@Renderer/codegen/sequential/services/crud/react/components/ReactDeleteModalRenderable"
+import ReactActionIconsRenderable from "@Renderer/codegen/sequential/services/crud/react/components/ReactActionIconsRenderable"
 
 export default class GenerateReactFiles {
     async start() {
@@ -20,35 +24,17 @@ export default class GenerateReactFiles {
             await new ReactRouteAppRenderable(crud).render()
             await new ReactControllerRenderable(crud).render()
             await new ReactEntityRenderable(crud).render()
+            await new ReactHeadingAppRenderable(crud).render()
             await new ReactIndexPageRenderable(crud).render()
             await new ReactCreatePageRenderable(crud).render()
             await new ReactEditPageRenderable(crud).render()
             await new ReactSowPageRenderable(crud).render()
             await new ReactFormRenderable(crud).render()
-            await new ReactHeadingAppRenderable(crud).render()
             await new ReactTableRenderable(crud).render()
-
-            /* React Form */
-
-            /*await new LivewireIndexViewRenderable(crud).render()
-            await new LivewireIndexComponentRenderable(crud).render()
-
-            await new LivewireCreateViewRenderable(crud).render()
-            await new LivewireCreateComponentRenderable(crud).render()
-            
-            await new LivewireEditViewRenderable(crud).render()
-            await new LivewireEditComponentRenderable(crud).render()
-
-            await new LivewireCreateFormComponentRenderable(crud).render()
-            await new LivewireUpdateFormComponentRenderable(crud).render()
-
-            for (const hasManyDetail of crud.hasManyDetails) {
-                await new LivewireHasManyDetailViewRenderable(hasManyDetail).render()
-                await new LivewireHasManyDetailComponentRenderable(hasManyDetail).render()
-
-                await new LivewireCreateDetailFormComponentRenderable(hasManyDetail).render()
-                await new LivewireUpdateDetailFormComponentRenderable(hasManyDetail).render()
-            }*/
+            await new ReactPaginationListingRenderable(crud).render()
+            await new ReactCustomPaginationRenderable(crud).render()
+            await new ReactDeleteModalRenderable(crud).render()
+            await new ReactActionIconsRenderable(crud).render()
         }
     }
 }

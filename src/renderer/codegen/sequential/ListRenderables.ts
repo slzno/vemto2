@@ -56,6 +56,10 @@ import ReactRouteWebRenderable from "@Renderer/codegen/sequential/services/crud/
 import ReactRouteAppRenderable from "@Renderer/codegen/sequential/services/crud/react/routes/ReactRouteAppRenderable"
 import ReactControllerRenderable from "@Renderer/codegen/sequential/services/crud/react/controllers/ReactControllerRenderable"
 import ReactHeadingAppRenderable from "@Renderer/codegen/sequential/services/crud/react/components/ReactHeadingAppRenderable"
+import ReactCustomPaginationRenderable from "@Renderer/codegen/sequential/services/crud/react/components/ReactCustomPaginationRenderable"
+import ReactDeleteModalRenderable from "@Renderer/codegen/sequential/services/crud/react/components/ReactDeleteModalRenderable"
+import ReactActionIconsRenderable from "@Renderer/codegen/sequential/services/crud/react/components/ReactActionIconsRenderable"
+import ReactPaginationListingRenderable from "@Renderer/codegen/sequential/services/crud/react/types/ReactPaginationListingRenderable"
 
 export default class ListRenderables {
     static getRenderable(name: string) {
@@ -97,8 +101,12 @@ export default class ListRenderables {
             "crud/react/pages/ReactSowPageRenderable": ReactSowPageRenderable,
             "crud/react/pages/entities/ReactEntityRenderable": ReactEntityRenderable,
             "crud/react/pages/form/ReactFormRenderable": ReactFormRenderable,
-            "crud/react/components/ReactHeadingAppRenderable": ReactHeadingAppRenderable,
             "crud/react/pages/tables/ReactTableRenderable": ReactTableRenderable,
+            "crud/react/components/ReactHeadingAppRenderable": ReactHeadingAppRenderable,
+            "crud/react/components/ReactCustomPaginationRenderable": ReactCustomPaginationRenderable,
+            "crud/react/components/ReactDeleteModalRenderable": ReactDeleteModalRenderable,
+            "crud/react/components/ReactActionIconsRenderable": ReactActionIconsRenderable,
+            "crud/react/types/ReactPaginationListingRenderable": ReactPaginationListingRenderable,
             "crud/react/routes/ReactRouteWebRenderable": ReactRouteWebRenderable,
             "crud/react/routes/ReactRouteAppRenderable": ReactRouteAppRenderable,
             "crud/react/controllers/ReactControllerRenderable": ReactControllerRenderable,
@@ -161,8 +169,12 @@ export default class ListRenderables {
             "crud/react/pages/ReactSowPageRenderable",
             "crud/react/pages/entities/ReactEntityRenderable",
             "crud/react/pages/form/ReactFormRenderable",
-            "crud/react/components/ReactHeadingAppRenderable",
             "crud/react/pages/tables/ReactTableRenderable",
+            "crud/react/components/ReactHeadingAppRenderable",
+            "crud/react/components/ReactCustomPaginationRenderable",
+            "crud/react/components/ReactDeleteModalRenderable",
+            "crud/react/components/ReactActionIconsRenderable",
+            "crud/react/types/ReactPaginationListingRenderable",
             "crud/react/routes/ReactRouteWebRenderable",
             "crud/react/routes/ReactRouteAppRenderable",
             "crud/react/controllers/ReactControllerRenderable",
