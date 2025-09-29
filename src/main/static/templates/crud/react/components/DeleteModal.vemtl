@@ -1,7 +1,7 @@
 <% let entityNamePlural = this.crud.model.plural %>
 <% const camelCase = this.require('camelCase') %>
 import { router } from '@inertiajs/react';
-import { IconDelete } from '@/components/icons/svg/actions/IconDelete';
+import { IconDelete } from '@/components/ActionIcons';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import <$ camelCase(entityNamePlural) $> from '@/routes/<$ camelCase(entityNamePlural) $>';

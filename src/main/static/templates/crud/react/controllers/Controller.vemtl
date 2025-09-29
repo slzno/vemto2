@@ -19,7 +19,7 @@ class <$ controllerName $> extends Controller {
     $this->authorize('view-any', <$ entityName $>::class);
     $search = $request->get('search', '');
 
-    $<$ entityNamePlural $> = <$ entityName $>::when($request->name, function ($query, $search) {
+    $<$ entityNamePlural $> = <$ entityName $>::when($request->search, function ($query, $search) {
       return $query->where('id', 'ilike', "%$search%");
     })->get();
 
