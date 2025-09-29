@@ -27,7 +27,7 @@ export default function <$ entityName $>ShowPage({ <$ camelCase(entityName) $> }
 
       <div className="container mx-auto max-w-6xl px-4 pt-4">
         <HeadingApp heading={'Details of <$ camelCase(entityName) $> #: ' + <$ camelCase(entityName) $>.id} description={'Show the details of <$ camelCase(entityName) $>.'} url={<$ camelCase(entityNamePlural) $>.index().url}>
-          {can('customers.update') && (
+          {can('<$ camelCase(entityNamePlural) $>.update') && (
             <Button asChild>
               <Link href={<$ camelCase(entityNamePlural) $>.edit(<$ camelCase(entityName) $>.id).url} className={'btn'}>
                 <IconUpdate className="h-6 w-6 stroke-primary-foreground" />
